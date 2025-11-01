@@ -1,0 +1,110 @@
+/**** text editor css start *****/
+.jodit-add-new-line {
+  display: none !important;
+}
+.jodit-container:not(.jodit_inline) {
+  border-radius: 6px !important;
+  overflow: hidden;
+}
+.jodit_wysiwyg {
+  display: none;
+}
+.jodit-status-bar {
+  display: none !important;
+}
+.jodit-ui-spacer {
+  display: none;
+}
+.jodit_wysiwyg {
+  height: 550px;
+}
+.jodit-wysiwyg p {
+  font-size: 14px;
+}
+
+.jodit-workplace + .jodit-status-bar:not(:empty) {
+  display: none !important;
+  height: 100px !important;
+}
+.jodit .jodit-workplace .jodit-wysiwyg,
+.jodit .jodit-workplace .jodit-wysiwyg_iframe,
+.jodit-container .jodit-workplace .jodit-wysiwyg,
+.jodit-container .jodit-workplace .jodit-wysiwyg_iframe {
+  width: 100%;
+  /* height: auto !important; */
+  padding: 8px;
+  overflow: auto !important;
+}
+.jodit-add-new-line .jodit-add-new-line_after {
+  display: none !important;
+}
+.jodit-placeholder {
+  /* display: none !important; */
+  font-size: 13px !important;
+  color: var(--gray) !important;
+  font-family: var(--fontGraphik) !important;
+}
+.jodit-wysiwyg ul {
+  list-style-type: unset !important;
+  padding-left: 20px !important;
+}
+.invalid-feedback {
+  width: 100% !important;
+  margin-top: 0.25rem !important;
+  font-size: 0.875em !important;
+  color: #dc3545 !important;
+}
+.activeRow:hover {
+  /* background-image: linear-gradient(to right, #32727c8d, #2f8194d7); */
+  /* background-image: linear-gradient(to right,#32727c15, #2f8194bb); */
+  background-color: #e8f6e8;
+}
+.activeRow.selectedRow {
+  background-color: #e8f6e8;
+}
+
+#txtBranchCode.form-control.is-invalid {
+  /* Your other styles */
+  background-position: right calc(0.375em + 1.5rem) center;
+}
+
+.jodit-wysiwyg p {
+  font-family: var(--fontGraphik) !important;
+}
+.jodit-container:not(.jodit_inline) .jodit-editor__resize svg {
+  display: none;
+}
+
+.jodit-toolbar__box:not(:empty) {
+  background-color: #fff;
+  border-bottom: none !important;
+  border-radius: 3px 3px 0 0;
+  overflow: hidden;
+}
+
+/*** Hiding unwant font family and font size ***/
+/* Hide unwanted font families */
+
+.jodit-ui-group__Arial--Helvetica--sans-serif,
+.jodit-ui-group__-Courier-New---Courier--monospace,
+.jodit-ui-group__Georgia--Palatino--serif,
+.jodit-ui-group__-Times-New-Roman---Times--serif,
+.jodit-ui-group__-Trebuchet-MS---Helvetica--sans-serif,
+.jodit-ui-group__Helvetica--sans-serif,
+.jodit-ui-group__Impact--Charcoal--sans-serif {
+  display: none !important;
+}
+/* Hide unwanted font sizes */
+.jodit-ui-group__8,
+.jodit-ui-group__9,
+.jodit-ui-group__24,
+.jodit-ui-group__30,
+.jodit-ui-group__32,
+.jodit-ui-group__34,
+.jodit-ui-group__36,
+.jodit-ui-group__48,
+.jodit-ui-group__60,
+.jodit-ui-group__72,
+.jodit-ui-group__96 {
+  display: none !important;
+}

@@ -1,0 +1,258 @@
+@import "../../css/variable.css";
+@import "../../css/fonts.css";
+@import "../../css/normalize.css";
+
+.defaultHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.pageHeader {
+  font-size: 18px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--darkBlack);
+  margin-bottom: 16px;
+}
+.defaultHeaderLeft {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+.iconEdit {
+  width: 14px;
+  cursor: pointer;
+}
+
+.iconDeleted {
+  width: 14px;
+  cursor: pointer;
+}
+
+.defaultBG {
+  background-color: var(--white);
+  /* border: 1px solid var(--borderColor); */
+  border-radius: 6px;
+  /* padding: 16px; */
+  margin-bottom: 10px;
+  gap: 30px;
+}
+.pageRow {
+  display: flex;
+  margin-bottom: 15px;
+  &:nth-last-child(1) {
+    margin-bottom: 0px;
+  }
+}
+.infoRow {
+  width: calc(100% - 40px);
+  display: flex;
+}
+.infoLeft {
+  width: 40px;
+}
+.iconDefault {
+  width: 16px;
+}
+
+.userName {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+}
+.userDesignation {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  word-break: break-all;
+}
+.infoRight {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+}
+.defaultRight {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-flow: column;
+}
+.pagePermissionRow {
+  flex-flow: column;
+}
+.infoRowPermission {
+  gap: 30px;
+  width: 100%;
+}
+.defaultBGPermission {
+  padding: 16px 30px;
+}
+.permissionHeader {
+  margin-bottom: 20px;
+}
+.infoManager {
+  flex-flow: row;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.managerToggle {
+  display: flex;
+  align-items: center;
+}
+
+.commonBodyUL {
+  padding: 0px;
+  margin: 0px;
+}
+.commonBodyLi {
+  display: flex;
+  align-items: center;
+  padding-bottom: 14px;
+  &:nth-last-child(1) {
+    padding-bottom: 0px;
+  }
+}
+.detailsLeft {
+  margin-right: 15px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+.detailsRight {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  font-size: 13px;
+  color: var(--lightBlack);
+  font-family: var(--fontGraphik);
+  word-break: break-word;
+}
+
+/** Toggle Design CSS Starts Here **/
+
+.toggle {
+  width: 30px;
+  height: 18px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle.on {
+  background-color: #4caf50;
+}
+
+.toggle.off {
+  background-color: #ecbaba;
+}
+
+.toggleCircle {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  transition: left 0.3s ease;
+}
+
+.toggle.on .toggleCircle {
+  left: 15px;
+}
+
+.toggle.off .toggleCircle {
+  left: 3px;
+}
+/** Toggle Design CSS Ends Here **/
+
+@media (max-width: 767.98px) {
+  .hideDesktop {
+    display: flex;
+
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+.managerToggle {
+  display: flex;
+  align-items: center;
+}
+
+.toggle {
+  width: 30px;
+  height: 18px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle.on {
+  background-color: #4caf50;
+}
+
+.toggle.off {
+  background-color: #ecbaba;
+}
+
+.toggleCircle {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  transition: left 0.3s ease;
+}
+
+.toggle.on .toggleCircle {
+  left: 15px;
+}
+
+.toggle.off .toggleCircle {
+  left: 3px;
+}
+
+.userDesignation {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  word-break: break-all;
+}
+.infoRight {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.infoRow {
+  width: calc(100% - 40px);
+  display: flex;
+}
+.infoLeft {
+  width: 40px;
+}
+
+.infoRowPermission {
+  gap: 30px;
+  width: 100%;
+}
+
+.infoManager {
+  flex-flow: row;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.pagePermissionRow {
+  flex-flow: column;
+}

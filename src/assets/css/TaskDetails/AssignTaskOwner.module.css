@@ -1,0 +1,128 @@
+.teamCard {
+  box-shadow: 0 0px 3px #0000000d;
+  background: linear-gradient(270deg, #ffffff, #edf8ff);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.teamHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.teamHeaderTitle {
+  color: var(--black);
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+}
+.totalTime {
+  color: var(--black);
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+}
+.icconClock {
+  width: 14px;
+  margin-left: 4px;
+}
+
+.teamList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  &:nth-last-child(1) {
+    padding-bottom: 0px;
+  }
+  &:hover {
+    .teamTime {
+      color: var(--black);
+    }
+  }
+}
+.teamListLeft {
+  width: calc(100% - 75px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.teamImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  background-color: var(--whitefa);
+  object-fit: cover;
+}
+.avtarBG {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  background-color: var(--whitefa);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.teamImgIcon {
+  width: 18px;
+}
+.teamText {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--borderColor);
+  background-color: #bae6fd;
+}
+.teamName {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+}
+.teamListRight {
+  width: 75px;
+  display: flex;
+  justify-content: flex-end;
+}
+.teamTime {
+  color: var(--gray);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+}
+
+.StatusDropdown {
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  color: var(--black);
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid var(--borderColor);
+  width: 100%;
+  padding: 0px 16px;
+}
+
+.TaskidInformation {
+  font-size: 13px;
+  font-family: "Poppins", sans-serif;
+}
+
+.loaderContainer {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

@@ -1,0 +1,51 @@
+/*** Welcome Message CSS Starts Here ***/
+.welcomeBox {
+  background-color: var(--white);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.welcomeView {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.welcomeLeft {
+  width: calc(100% - 60px);
+}
+.welcomeName {
+  font-size: 11px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  display: flex;
+  /* margin-bottom: 3px; */
+}
+.sessionFormat {
+  font-size: 18px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+  /* margin-bottom: 3px; */
+}
+.date {
+  font-size: 11px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}
+.textDark{
+    color: var(--darkBlack);
+    font-family: var(--fontGraphikMedium);
+}
+.welcomeRight {
+  width: 60px;
+  display: flex;
+  justify-content: flex-end;
+}
+.imgDayView {
+  width: 55px;
+}
+.afternoonTheme{
+  width: 45px;
+}
+.nightTheme{
+  width: 41px;
+}

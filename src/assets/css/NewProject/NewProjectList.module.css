@@ -1,0 +1,273 @@
+.scrollableContainer {
+  height: calc(100vh - 131px);
+  overflow: auto;
+  background-color: var(--white);
+  border-radius: 6px;
+}
+.statusOptions {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 20px;
+}
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none !important;
+}
+.taskTime {
+  width: 90px;
+  text-align: end;
+}
+.taskstatus {
+  width: 70px;
+  text-align: end;
+}
+.hours {
+  font-family: var(--fontGraphik);
+  font-size: 12px;
+  color: var(--black);
+}
+/* .StatusBtn{
+        color: #fff; 
+        text-align: center;
+        border-radius: 4px;
+        font-family: var(--fontGraphik);
+        font-size: 10px;
+        padding:4px 4px;
+    } */
+/**** Status Classess start *****/
+
+.statusInprogress {
+  background-color: blue;
+  color: white;
+}
+
+.statusInReview {
+  background-color: blue;
+  color: white;
+}
+
+.statusdone {
+  background-color: #48b54920;
+  color: black;
+}
+
+.statusVerified {
+  background-color: #48b54920;
+  color: black;
+}
+
+.statusCompleted {
+  background-color: #48b54920;
+  color: black;
+}
+
+.flexContainer {
+  display: flex;
+  align-items: center;
+}
+
+.flexRow {
+  display: flex;
+  gap: 10px; /* Adjust the gap as needed */
+}
+
+.statusReopen {
+  background-color: red;
+  color: white;
+}
+
+.statusPause {
+  background-color: red;
+  color: white;
+}
+
+.statusOpen {
+  background-color: lightgray;
+  color: black;
+}
+
+.statusReviewed {
+  background-color: #23d9f1;
+  color: black;
+}
+.textChat {
+  position: sticky;
+  padding: 20px 30px;
+  box-shadow: 20px 0px 0px 0 #0000000a;
+  background-color: var(--white);
+
+  /* background: red; */
+}
+.eyeicon {
+  width: 14px;
+  margin-bottom: 4px;
+}
+
+.loaderContainer {
+  width: 100%;
+  height: calc(100vh - 265px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.loaderText {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 10px;
+}
+.loaderText2 {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 8px;
+}
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.btnAction {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  padding: 0px;
+}
+.iconActionBtn {
+  width: 14px;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(2982%)
+      hue-rotate(176deg) brightness(104%) contrast(89%);
+  }
+}
+.iconActionSettingBtn {
+  width: 14px;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(2982%)
+      hue-rotate(176deg) brightness(104%) contrast(89%);
+  }
+}
+.btnDelete:hover {
+  filter: brightness(0) saturate(100%) invert(53%) sepia(48%) saturate(2981%)
+    hue-rotate(332deg) brightness(97%) contrast(93%);
+}
+
+/*** List ang Grid View Table **/
+.scrollableContainer .tblLabel {
+  display: none;
+}
+.tblGrid thead {
+  display: none;
+}
+.tblGrid tbody {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.tblGrid tbody tr {
+  border-radius: 6px;
+  width: calc(100% / 4 - 8px);
+  background-color: var(--white);
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  box-shadow: 0 3px 20px 0 #0000000f;
+  word-break: break-word;
+}
+
+.tblGrid .tblLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}
+.tblGrid tbody tr td {
+  border: none;
+}
+.tblGrid .tblTD1 {
+  width: 36px;
+  height: 32px;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: var(--gray);
+  font-family: var(--fontGraphikMedium);
+  background-color: var(--whitef5);
+  margin-bottom: 15px;
+  padding: 0px;
+}
+.tblGrid .tblTD2 {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: calc(100% - 39px);
+  padding: 0px 0px 0px 10px;
+  font-size: 14px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  margin-bottom: 15px;
+  margin-top: 7px;
+  width: calc(100% - 39px);
+}
+.tblGrid .tblTD3{
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+  padding: 15px 15px 15px 0px;
+  border-top: 1px solid var(--borderColor);
+  border-bottom: 1px solid var(--borderColor)!important;
+}
+.tblGrid .tblTD4{
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+  padding: 15px 0px 15px 0px;
+  border-top: 1px solid var(--borderColor);
+  border-bottom: 1px solid var(--borderColor)!important;
+}
+.tblGrid .tblTD5{
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+  padding: 15px 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  gap: 5px;
+  line-height: 15px;
+}
+.tblGrid .tblTD6{
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
+  padding: 15px 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.scrollableContainer .ownerSpan{
+display: none;
+}
+.tblGrid .ownerSpan{
+display: block;
+}
+.tblGrid :global(.badge-default) {
+  background-color: transparent;
+  padding: 0px;
+}
+/* .tblGrid .tblHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0px;
+} */

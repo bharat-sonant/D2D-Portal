@@ -1,0 +1,313 @@
+.expensePage {
+  display: flex;
+  width: 100%;
+  /* padding: 10px; */
+  margin-top: 60px;
+}
+
+.pageDropdown {
+  margin-top: 60px;
+  width: 320px;
+}
+
+.activeCity {
+  background-color: #e0f7fa;
+}
+
+.ExpenseReportLeft {
+  width: 330px;
+  height: calc(100% - 60px);
+}
+
+.ExpenseReportRight {
+  width: calc(100% - 280px);
+  padding: 10px;
+}
+
+.btnGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dateFilterWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0px 16px;
+}
+
+.dateFilterWrapperReport {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.DatePickerInput {
+  font-size: 13px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+}
+
+.DatePickerHeight {
+  height: 36px;
+}
+
+
+/* .tabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 60px;
+  margin-bottom: 10px;
+} */
+
+.textboxMain {
+  width: 150px;
+}
+
+
+.tabButton {
+  color: var(--themeColor);
+  border: none;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+  gap: 4px;
+  background-color: transparent;
+}
+
+.activeTab {
+  background-color: var(--themeColor);
+  color: var(--white);
+}
+
+.dropdownDesktop {
+  height: calc(100vh - 120px);
+  overflow: auto;
+  padding: 0px 16px;
+}
+
+.dropdownLi:nth-last-child(1) {
+  margin-bottom: 10px;
+}
+
+
+.dropdowmbtn {
+  width: 100%;
+  background-color: var(--white);
+  border: 1px solid #ced4da;
+  position: relative;
+  height: 36px;
+  padding: 0px 35px 0px 10px;
+  border-radius: 4px;
+}
+
+.dropdowmbtn:after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 11px;
+  width: 12px;
+  height: 12px;
+  background-image: url(../../../src/assets/images/icons/iconDown.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.dropDownwwwp {
+  padding: 16px;
+}
+
+.projectNaam {
+  /* max-width: 100px; */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--darkBlack);
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  /* min-width: 150px; */
+  text-align: left;
+}
+
+.selectedProject {
+  width: 100%;
+  max-width: 250px;
+  border: none;
+  background-color: var(--white);
+  box-shadow: 0 0 20px 0 #0000001a;
+  padding: 0px;
+  border-radius: 6px;
+  margin: 0px;
+  overflow: hidden;
+  transform: matrix3d(2px, 0, 0);
+  transition: 0.22s ease-in linear;
+  animation: slideDown 0.3s ease-out forwards;
+
+
+}
+
+.customDropdownItem:hover {
+  background-color: var(--whitef5);
+}
+
+.amountText {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--darkBlack);
+}
+
+
+.customDropdownItem {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  border: none;
+  background: transparent;
+}
+
+.iconRupee {
+  width: 13px;
+}
+
+.amountIcon {
+  display: flex;
+  align-items: center;
+}
+
+.selectedCity {
+  width: calc(100% - 20px);
+  height: calc(100vh - 90px);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.iconNo {
+  width: 100px;
+}
+
+.iconNo2 {
+  width: 90px;
+}
+
+.textNo {
+  font-size: 13px;
+  color: var(--gray);
+  margin-top: 5px;
+  font-family: var(--fontGraphik);
+}
+
+.DatePickerInput:disabled,
+.DatePickerInput[readonly] {
+  border-radius: 4px !important;
+}
+
+.EmployeeReportBtn {
+  color: var(--themeColor);
+  border: none;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+  gap: 4px;
+  background-color: transparent;
+
+}
+
+.EmployeeReportBtn:hover {
+  color: var(--white);
+  background-color: var(--themeColor);
+}
+
+.iconRight {
+  width: 18px;
+  filter: brightness(0) saturate(100%) invert(73%) sepia(62%) saturate(4195%) hue-rotate(174deg) brightness(102%) contrast(89%);
+}
+
+.EmployeeReportBtn:hover .iconRight {
+  filter: invert(1) brightness(2);
+}
+
+.groupBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0px 16px;
+  margin-bottom: 12px;
+}
+
+.sortBtn {
+  border: 1px solid var(--borderColor);
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.TotalAmount {
+  background-color: var(--whitef5);
+  padding: 10px 6px;
+  height: 36px;
+  width: 93px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--fontGraphikMedium);
+  font-size: 12px;
+  flex-direction: column;
+  
+}
+.TotalAmount span{
+  font-size: 10px;
+   font-family: var(--fontGraphik);
+}
+.iconAmount{
+  width: 15px;
+   height: 15px;
+  filter: brightness(0) saturate(100%) invert(44%) sepia(3%) saturate(105%) hue-rotate(314deg) brightness(100%) contrast(99%);
+}
+.iconAmount2{
+  width: 13px;
+  height: 13px;
+}
+.bottomsortBtn {
+  height: 36px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+  gap: 4px;
+  padding: 0px 14px;
+
+  &:hover {
+    background-color: var(--themeColor);
+    color: var(--white);
+  }
+}

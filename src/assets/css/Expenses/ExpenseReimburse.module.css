@@ -1,0 +1,29 @@
+.employeePage {
+   display: flex;
+  width: 100%;
+  height: calc(100vh - 60px);
+}
+.employeeLeft {
+  width: 350px;
+  margin-top: 60px;
+}
+.employeeRight {
+  width: calc(100% - 350px);
+  padding: 10px 10px;
+  margin-top: 60px;
+}
+
+/* .employeeListContainer {
+    width: 300px;
+    background-color: #ffffff;
+    padding-top: 10px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+} */
+
+.expenseReimburseDetailsContainer {
+    width: 700px;
+    margin-left: 1px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+}

@@ -1,0 +1,88 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  width: 300px;
+  height: 375px;
+  /* Adjust height as necessary */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  gap: 5px;
+  transition: background-color 0.3s;
+}
+
+
+.button:hover {
+  background-color: #45a049;
+}
+
+.button:disabled {
+  background-color: #B0BEC5;
+  /* Gray color when disabled */
+  cursor: not-allowed;
+}
+
+.icon {
+  color: white;
+  width: 30px;
+  /* Set width of icon */
+  height: 30px;
+  /* Set height of icon */
+  margin-bottom: 10px;
+  /* Space between icon and text */
+}
+
+.buttonText {
+  font-size: 14px;
+  color: white;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.timeBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-top: 5px;
+  object-fit: cover;
+}
+
+.time {
+  font-size: 14px;
+  margin-top: 3px;
+  color: #333;
+}

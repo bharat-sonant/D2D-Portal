@@ -1,0 +1,458 @@
+.userstory_box {
+    position: relative;
+    margin-top: 2px;
+    background-color: #fff;
+    border-radius: 4px;
+
+}
+
+.list_ul {
+    padding-left: 0px;
+    margin-bottom: 0px;
+    height: calc(100vh - 200px);
+    overflow: auto;
+
+}
+
+.useStory_li {
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.taskSerialNumber,
+.taskOpenLink {
+    width: 39px;
+    padding: 10px 10px;
+    border-right: 1px solid #eeeeee;
+    cursor: pointer;
+}
+
+.taskSerialList {
+    font-size: 13px;
+    color: #000000;
+}
+
+
+.userStory_taskTitle {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding-right: 10px;
+    font-weight: 400;
+    font-size: 13px;
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-family: 'Poppins', sans-serif;
+    color: #333333;
+
+}
+
+.tableFixhead {
+    height: calc(100vh - 150px);
+    overflow: auto;
+    margin-top: 10px;
+}
+
+.tableFixhead thead th {
+    position: sticky !important;
+    top: 0;
+    background-color: #eeeeee;
+}
+
+.tableFixhead thead tr {
+    border: none;
+}
+
+.tableFixhead tbody td {
+    background-color: white;
+}
+
+.Planlist_box {
+    white-space: nowrap;
+    /* width: 100%; */
+}
+
+.tableHeader {
+    position: sticky;
+}
+
+.planlist_li {
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #d5d5d5;
+    justify-content: space-between;
+}
+
+.planlist_title {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding-right: 10px;
+    font-weight: 400;
+    font-size: 13px;
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-family: 'Poppins', sans-serif;
+    color: #333333;
+    flex: 1;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.list_ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.filterPlandropDown {
+    min-width: 450px !important;
+    padding: 16px;
+    margin-top: 10px !important;
+}
+
+.ApplyButton {
+    background-color: #daf4f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    color: #0ab39c;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif !important;
+    margin-right: 8px;
+    height: 40px;
+    margin-top: 30px !important;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.filterIcon {
+    color: #fff;
+    background-color: #3577f1 !important;
+    box-shadow: none !important;
+    font-weight: 400;
+    font-size: .8125rem;
+    text-align: center;
+    line-height: 1.5;
+    font-family: 'Poppins', sans-serif !important;
+    padding: 0.5rem 0.9rem;
+    border: none;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+.textArea {
+    margin-top: 12px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    height: 53px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+
+}
+
+
+.overlay {
+    position: fixed;
+   width: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.editInput {
+    background-color: var(--white);
+    position: absolute;
+    bottom: 0;
+    left: 255px;
+    right: 0px;
+    width: calc(100% - 255px);
+}
+.done_msg {
+    padding: 8px 10px;
+    font-size: 14px;
+    transition: all 300ms ease-out 0s;
+    border-radius: 4px;
+    background:#48b54920;
+}
+.icon_edit {
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) saturate(100%) invert(59%) sepia(13%) saturate(1886%) hue-rotate(71deg) brightness(97%) contrast(96%);
+
+}
+
+
+
+.sendbutton {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    font-size: 25px;
+    cursor: pointer;
+    color: #8a8a8a;
+    background: none;
+    border-left: 1px solid #e5e5e5;
+    padding: 7px 15px;
+}
+
+
+
+.radio>label{
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.radio>input{
+    cursor: pointer;
+
+}
+
+.BoxList{
+    word-wrap: break-word;
+    background-clip: initial;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(56,65,74,.15);
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    justify-content: center;
+    line-height: 15px;
+    min-width: 0;
+    padding: 5px 10px;
+    position: relative;
+    text-align: center;
+    width: auto;
+    font-size:12px;
+}
+.table_header{
+    background-color: var(--whitefa);
+    border-bottom: 1px solid #e9ebec;
+    bottom: 0;
+    left: 0;
+    /* position: '' */
+    position: sticky;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    
+}
+
+
+
+.table_header tr th{
+    padding: 10px 12px;
+}
+
+.tasklist_table{
+    background-color: var(--white);
+    padding: 0px;
+    overflow: auto;
+    white-space: nowrap;
+    height: calc(-240px + 100vh);
+}
+
+.size{
+    min-width: 60px;
+    text-align: end;
+}
+.size_stutes{
+    width: 55px;
+    text-align: end;
+    font-size: 14px;
+    font-weight: 400;
+   
+}
+.open_stutes{
+    font-size: 10px;
+    color: black;
+    padding: 4px 5px ;
+    font-weight:500;
+    background-color: #d3d3d3;
+     display: inline-block;
+    color: #000;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    line-height: 1;
+
+}
+.done_stutes{
+    font-size: 10px;
+    color: black;
+    padding: 4px 5px ;
+    font-weight:500;
+    background-color: #48b54920;
+     display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    line-height: 1;
+}
+.Inprogress_stutes{
+    font-size: 10px;
+    color: #ffffff;
+    padding: 4px 5px ;
+    font-weight:500;
+    background-color: blue;
+     display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    line-height: 1;
+}
+.paused_stutes{
+    font-size: 10px;
+    color: #ffffff;
+    padding: 4px 5px ;
+    font-weight:500;
+    background-color: #d12121;
+     display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    line-height: 1;
+}
+
+
+
+/* Task list css table */
+
+.card_box{
+    background-color: var(--white);
+}
+
+.table{
+   width: 100%; 
+}
+.tbody_maine tr td{
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borderColor);
+}
+.icon_3{
+    margin-right: 13px;
+}
+.iconView{
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) saturate(100%) invert(35%) sepia(7%) saturate(4506%) hue-rotate(314deg) brightness(95%) contrast(93%);
+    margin-right: 13px;
+}
+.iconViewTask{
+    width: 18px;
+    height: 16px;
+    margin-right: 13px;
+    filter: brightness(0) saturate(100%) invert(55%) sepia(79%) saturate(391%) hue-rotate(71deg) brightness(94%) contrast(87%);
+}
+.days_date{
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--regularColor);
+}
+.groom_btn{
+   font-size: 12px;
+   font-weight: 400;
+width: 100px ;
+text-align: end;
+}
+.groom_bg{
+    color: var(--themeColor);
+}
+.groom_bg_2{
+    color: #1290e0;
+}
+.message_point{
+    padding: 4px 8px;
+    background-color: var(--whitef5);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.icon_msg{
+    width: 14px;
+    height: 14px;
+    filter: brightness(0) saturate(100%) invert(10%) sepia(6%) saturate(7%) hue-rotate(2deg) brightness(104%) contrast(80%);
+}
+.main_div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 70vh;
+}
+.taxt_available{
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--lightBlack);
+}
+.IconNoData{
+    width: 130px;
+    height: 130px;
+    margin-bottom: 20px;
+}
+@media (max-width: 768px){
+    .tasklist_table{
+       height: calc(100vh - 278px);
+    }
+    .editInput {
+        background-color: var(--white);
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+        right: 0px;
+        width: 100%;
+    }
+    
+}
+.loadercontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #ddd;
+    border-top: 5px solid #5eb1f4;;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+

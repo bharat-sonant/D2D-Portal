@@ -1,0 +1,907 @@
+.ExpenseReviewerBox {
+    width: 100%;
+    max-width: 650px;
+    background-color: var(--white);
+    padding: 16px;
+    border-radius: 6px;
+
+}
+
+.approved {
+    background-color: #1dc24487;
+    color: #333333;
+}
+
+.boxRights {
+    /* width: calc(100% - 65px); */
+    width: 100%;
+}
+
+.duplicateHighlight {
+    /* border: 1px solid red; */
+    /* ya background color red-ish */
+    background: rgb(185, 37, 37);
+}
+
+
+.branchEdits {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.cityNames {
+    font-size: 13px;
+    font-family: var(--fontGraphikMedium);
+    color: var(--darkBlack);
+    text-transform: capitalize;
+}
+
+.addressLines {
+    margin-bottom: 14px;
+}
+
+.LineAdds {
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--lightBlack);
+}
+
+.cityAmounts {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-size: 15px;
+    color: var(--darkBlack);
+    font-family: var(--fontGraphikMedium);
+    text-transform: capitalize;
+    /* margin-top: 16px; */
+}
+
+.addressLine {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.addressLineLeft {
+    white-space: break-spaces;
+    width: calc(100% - 90px);
+}
+
+
+.titleSection {
+    font-size: 15px;
+    font-family: var(--fontGraphikSemibold);
+    color: var(--darkBlack);
+    text-transform: capitalize;
+    /* margin-bottom: 10px; */
+}
+
+.ExpenseReviewerScroll {
+    max-height: calc(100vh - 145px);
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.scrollableHistory {
+    /* margin-top: 20px; */
+    max-height: calc(100vh - 372px);
+    overflow: auto;
+    min-height: 200px;
+}
+
+.scrollableHistory::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dateShow {
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--gray);
+    margin-top: 2px;
+}
+
+.expenseBoxWrapper {
+    margin-bottom: 15px;
+}
+
+.expenseBox {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #fdfdfd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.expenseBoxHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expenseAmountBlock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.iconRupee1 {
+    width: 14px;
+}
+
+.iconVeiwImg {
+    width: 14px;
+    filter: brightness(0) saturate(100%) invert(44%) sepia(31%) saturate(0%) hue-rotate(196deg) brightness(95%) contrast(108%);
+}
+
+
+.accordionButton::after {
+    display: none !important;
+}
+
+.accordionButton {
+    width: 100%;
+    outline: none;
+    border: none;
+    font-size: 14px;
+    font-family: var(--fontGraphikMedium);
+    padding: 14px;
+    background-color: var(--whitefa);
+    cursor: pointer;
+}
+
+.accordionBody {
+    padding: 10px 16px;
+}
+
+.accordionItem {
+    margin-bottom: 10px;
+    border: 1px solid var(--borderColor) !important;
+    border-radius: 6px !important;
+}
+
+
+.descriptionText {
+    font-size: 13px;
+    font-family: var(--fontGraphik);
+    color: var(--lightBlack);
+}
+
+.toggleIcon {
+    width: 7px;
+    height: 13px;
+    transition: transform 0.3s ease;
+    filter: brightness(0) saturate(100%) invert(47%) sepia(0%) saturate(75%) hue-rotate(136deg) brightness(88%) contrast(84%);
+}
+
+.accordionScroll {
+    max-height: calc(100vh - 460px);
+    overflow: auto;
+    min-height: 50px;
+
+}
+
+
+
+
+
+
+
+.expenseDescription {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #332f2f;
+    white-space: pre-line;
+    /* font-weight: bold; */
+}
+
+/* .expenseListWrapper {
+
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+} */
+
+.expenseListWrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.expenseListWrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 6px;
+}
+
+
+.expenseDescription {
+    margin-top: 10px;
+    background: #f8f9fc;
+    /* border-left: 4px solid #3b82f6; */
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.descriptionLabel {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.descriptionText {
+    font-size: 13px;
+    color: #555;
+    white-space: pre-line;
+    margin: 0;
+}
+
+.purposeWrapper {
+    display: flex;
+    align-items: flex-start;
+    background: #e5f6ff;
+    border: 1px dashed #01a3ff;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    gap: 10px;
+}
+
+.IconSaving {
+    width: 16px;
+    filter: brightness(0) saturate(100%) invert(45%) sepia(0%) saturate(35%) hue-rotate(207deg) brightness(97%) contrast(96%);
+}
+
+.purposeLabel {
+    font-size: 13px;
+    font-family: var(--fontGraphikMedium);
+    color: var(--darkBlack);
+    margin-bottom: 3px;
+}
+
+.purposeDescription {
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--lightBlack);
+}
+
+.purposeIconHolder {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: #3b5998;
+}
+
+.purposeTextBlock {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* .purposeLabel {
+    font-weight: 600;
+    font-size: 14px;
+    color: #0a3669;
+    margin-bottom: 2px;
+} */
+
+/* .purposeDescription {
+    font-size: 14px;
+    color: #2b2b2b;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+} */
+.totalAmount {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-family: var(--fontGraphikSemibold);
+    color: var(--black);
+    padding: 10px 0px;
+}
+
+.titleCategory {
+    font-size: 13px;
+    font-family: var(--fontGraphikMedium);
+    color: var(--black);
+    text-transform: capitalize;
+    text-align: start;
+}
+
+.dateShow {
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--gray);
+    margin-top: 2px;
+}
+
+.iconRupee {
+    width: 16px;
+    height: 16px;
+}
+
+.scrollContainer {
+    max-height: 150px;
+    height: calc(100vh - 400px);
+    margin-bottom: 20px;
+}
+
+.descriptionList {
+    margin-top: 10px;
+    border: 2px solid #beaadf;
+    border-radius: 10px;
+
+}
+
+/* small yellow badge for DRAFTED */
+.draftedSmall {
+    background: #fff7e6;
+    color: #b37b00;
+    border: 1px solid #faad14;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+
+.descriptionHeading {
+    text-align: center;
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 6px;
+    position: relative;
+    top: 5px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--borderColor);
+    margin: 10px 0;
+}
+
+
+.descriptionScrollArea {
+    max-height: 130px;
+    overflow-y: auto;
+    /* border: 1px solid #ccc; */
+    padding: 6px;
+    background-color: #f9f9f9;
+    word-break: break-all;
+}
+
+.descriptionItem {
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.footerButtons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+
+.scrollableHistory::-webkit-scrollbar-thumb {
+    background-color: rgb(87, 168, 243);
+    border-radius: 3px;
+}
+
+.reimburseButton {
+    background-color: var(--themeColor);
+    color: var(--white);
+    font-size: 14px;
+    font-family: var(--fontGraphikSemibold);
+    padding: 0px 0px;
+    border-radius: 4px;
+    width: 100%;
+    height: 48px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+
+.reimburseButton:hover {
+    background-color: var(--themeColorDark);
+}
+
+.reimburseButtonReject {
+    background-color: transparent;
+    color: var(--textDanger);
+    font-size: 14px;
+    font-family: var(--fontGraphikSemibold);
+    padding: 0px 0px;
+    border-radius: 4px;
+    width: 100%;
+    height: 48px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--textDanger);
+
+}
+
+.reimburseButtonReject:hover {
+    background-color: var(--textDanger);
+    color: var(--white);
+}
+
+.priceDiv {
+    display: flex;
+    align-items: center;
+}
+
+
+.card {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px 0 15px;
+}
+
+.totalSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.totalAmount {
+    font-size: 15px;
+    font-family: var(--fontGraphikSemibold);
+    color: var(--black);
+    padding: 10px 0px;
+}
+
+
+.drafted {
+    background-color: #F4E78C;
+    color: #333333;
+}
+
+.approved {
+    background-color: #19875423;
+    color: #198754;
+}
+
+.underReview {
+    background-color: #19875423;
+    color: #198754;
+}
+
+.reimbursed {
+    background-color: #3fb2f130;
+    color: #3fb2f1;
+}
+
+.rejected {
+    background-color: #dc354518;
+    color: #dc3545;
+}
+
+.pendingApproval {
+    background-color: #d9770630;
+    color: #d97706;
+}
+
+.dateRange {
+    font-size: 12px;
+    font-family: var(--fontGraphik);
+    color: var(--gray);
+
+}
+
+.tabContainer {
+    display: flex;
+    border-bottom: 1px solid var(--borderColor);
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 16px 4px 0px 7px;
+    font-size: 13px;
+    font-family: var(--fontGraphikMedium);
+    color: var(--gray);
+    cursor: pointer;
+
+}
+
+.activeTab {
+    color: #33a5ff;
+    border-bottom: 2px solid #33a5ff;
+}
+
+.expenseList {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.expenseItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.border {
+    border-bottom: 1px solid var(--borderColor);
+    margin-bottom: 10px;
+}
+
+/* .expenseTitle {
+    font-size: 12px;
+    color: var(--gray);
+    font-family: var(--fontGraphik);
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+} */
+
+.expenseAmount {
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphikSemibold);
+}
+
+.rejectedReasonBox {
+    position: absolute;
+    left: 560px;
+    top: 55px;
+    width: 100%;
+    background-color: #ffe5e5;
+    padding: 10px;
+    /* border-left: 4px solid red; */
+    font-size: 16px;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+.subTotal,
+.expenseTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    /* font-weight: bold; */
+    align-items: center;
+}
+
+.expenseTotal {
+    font-size: 18px;
+    color: #000;
+}
+
+
+
+/* Confirmation Dialog Styles */
+.dialogOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialogBox {
+    background: white;
+    padding: 20px;
+    width: 500px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dialogBox h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.dialogBox p {
+    font-size: 14px;
+    color: #555;
+}
+
+.dialogActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.confirmButton,
+.cancelButton {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+}
+
+.confirmButton {
+    background-color: #28a745;
+}
+
+.confirmButton:hover {
+    background-color: #218838;
+}
+
+.cancelButton {
+    background-color: #dc3545;
+}
+
+.cancelButton:hover {
+    background-color: #c82333;
+}
+
+
+.dateAttachmentContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.attachmentIcon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.attachmentBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: rgb(4, 98, 32);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    max-width: 400px;
+}
+
+.timelineItem {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 10px;
+    padding-left: 20px;
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    background-color: #2196f3;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 8px;
+    border: 2px solid #bbdefb;
+}
+
+.content {
+    margin-left: 15px;
+}
+
+.title {
+    font-size: 14px;
+    font-family: var(--fontGraphikMedium);
+    color: var(--black);
+    margin-bottom: 4px;
+}
+
+.details {
+    font-size: 12px;
+    font-family: var(--fontGraphik);
+    color: var(--gray);
+}
+
+.subContainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.rejectContainer {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px 0 15px;
+}
+
+.reasonSpan {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+    color: #b00020;
+}
+
+.rejectedLabel {
+    color: #333;
+    word-wrap: break-word;
+    font-size: 12px;
+}
+
+/* new css */
+.boxList {
+
+    background: white;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid var(--borderColor);
+}
+
+.boxList:hover {
+    background-color: var(--whitef5);
+}
+
+.cityName {
+    font-size: 14px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
+}
+
+.branchEdit {
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+    margin-bottom: 10px;
+}
+
+.cityAmount {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-size: 15px;
+    color: var(--darkBlack);
+    font-family: var(--fontGraphikMedium);
+    text-transform: capitalize;
+    /* margin-top: 16px; */
+}
+
+.addressLine {
+    font-size: 11px;
+    color: var(--lightBlack);
+    font-family: var(--fontGraphik);
+}
+
+.LineAdd {
+    text-transform: capitalize;
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
+}
+
+.iconRupee {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) saturate(100%) invert(0%) sepia(90%) saturate(7500%) hue-rotate(347deg) brightness(105%) contrast(111%);
+}
+
+.statusBadge {
+    align-items: center;
+    border-radius: 4px;
+    display: inline-flex;
+    font-family: var(--fontGraphik);
+    font-size: 10px;
+    font-weight: 300;
+    height: 20px;
+    justify-content: center;
+    line-height: 0px;
+    padding: 10px 6px;
+    text-transform: uppercase;
+}
+
+/* new css */
+.expenseCard {
+    background: var(--white);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.expenseCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.expensePurpose {
+    background-color: var(--whitef5);
+}
+
+.iconEdit {
+    width: 15px;
+    cursor: pointer;
+}
+
+.iconDeleted {
+    width: 15px;
+    cursor: pointer;
+}
+
+.buttonStatus {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.iconNo {
+    width: 60px;
+}
+
+.textNo {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 5px;
+    font-family: var(--fontGraphik);
+}
+
+.expenseTotal2 {
+    border: 1px solid var(--borderColor);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.subTotal h4 {
+    font-size: 12px;
+    color: var(--gray);
+    font-family: var(--fontGraphik);
+}
+
+.subTotal p {
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphikSemibold);
+}
+
+.pageScroll {
+    height: calc(100vh - 240px);
+    overflow: auto;
+}
+
+.dCity {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

@@ -1,0 +1,86 @@
+/* DeleteWindow.module.css */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  
+  .dialogbox {
+    background: white;
+    width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .header {
+    background: #cf3535;
+    color: white;
+    padding: 16px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .body {
+    padding: 20px;
+    font-size: 1rem;
+    color: #333;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content:center;
+    gap: 10px;
+    padding: 16px;
+    background: #f9f9f9;
+  }
+  
+  .cancelButton,
+  .deleteButton {
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cancelButton {
+    background: #d3d3d3;
+    color: black;
+  }
+  
+  .cancelButton:hover {
+    background: #b0b0b0;
+  }
+  
+  .deleteButton {
+    background: #6df344;
+    color: white;
+  }
+  
+
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

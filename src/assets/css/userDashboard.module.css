@@ -1,0 +1,548 @@
+@import "./fonts.css";
+@import "./variable.css";
+.floatingDiv {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+}
+.pageContent {
+  padding: 10px 10px;
+  /* margin-bottom: 60px; */
+}
+.userPage {
+  width: 100%;
+  display: flex;
+}
+.userLeft {
+  width: calc(100% - 350px);
+  margin-left: 250px;
+  height: auto;
+  z-index:3;
+}
+/* .userLeftScroll {
+  height: calc(100vh - 90px);
+} */
+.summaryHeader {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+.userRight {
+  width: 250px;
+  position: fixed;
+  left: 0px;
+  top: 60px;
+  height: calc(100vh - 60px);
+}
+
+.userBodyHeader {
+  font-size: 20px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+  margin-bottom: 10px;
+}
+.btnDelete {
+  padding: 0px;
+  margin-right: 16px;
+  &:nth-last-child(1) {
+    margin-right: 0px;
+  }
+  &:hover {
+    .iconDelete {
+      filter: brightness(0) saturate(100%) invert(46%) sepia(38%)
+        saturate(1437%) hue-rotate(328deg) brightness(101%) contrast(88%);
+    }
+  }
+}
+.btnEdit {
+  &:hover {
+    .iconEdit {
+      filter: brightness(0) saturate(100%) invert(85%) sepia(48%)
+        saturate(6277%) hue-rotate(167deg) brightness(94%) contrast(104%);
+    }
+  }
+}
+.permissionItem {
+  flex: 1 1 calc(33.33% - 16px); /* Adjust width and spacing */
+}
+.userBox {
+  padding: 16px 16px;
+  border-radius: 6px;
+  background-color: white;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.userBoxHeader {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.userTitle {
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.userListRow {
+  display: flex;
+  align-items: center;
+  padding-bottom: 14px;
+  &:nth-last-child(1) {
+    padding-bottom: 0px;
+  }
+}
+.detailLeft {
+  margin-right: 15px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+.iconLabel {
+  width: 18px;
+  height: 18px;
+}
+.detailsRight {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+}
+.userName {
+  font-size: 13px;
+  color: var(--lightBlack);
+  font-family: var(--fontGraphik);
+  margin-top: 3px;
+  word-break: break-word;
+}
+.textStatus {
+  color: var(--textDanger);
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+}
+.userStatus {
+  font-family: var(--fontGraphikMedium);
+  font-size: 13px;
+}
+.userFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.userListLeft {
+  display: flex;
+  margin-top: 5px;
+  gap: 10px;
+  align-items: center;
+}
+.userListRight {
+  display: flex;
+  align-items: center;
+}
+.userListStatus {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 15px;
+}
+.pageTitle {
+  font-size: 17px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.permissionBox {
+  border: none;
+  padding: 16px;
+  border-radius: 6px;
+  background-color: var(--white);
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.permissionHeader {
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.permissionTilte {
+  font-size: 15px;
+  color: var(--lightBlack);
+  font-family: var(--fontGraphikMedium);
+}
+.cityAccessLi{
+  background-color: var(--whitefa);
+  border-bottom: 1px solid var(--borderColor)!important;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  width: 100%;
+}
+.cityAccessLi:nth-last-child(1) {
+  border-bottom: none!important;
+}
+.listContent {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.accessLi {
+  background-color: var(--whitefa);
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  width: calc(100% / 2 - 10px);
+}
+
+.permissionBox + .permissionBox {
+  margin-top: 20px; /* Add margin-top to add spacing only between different sections */
+}
+.accessName {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+  width: calc(100% - 44px);
+}
+
+.cityBox {
+  padding: 16px;
+  border-radius: 6px;
+  background-color: var(--white);
+  min-height: 50px;
+  overflow: auto;
+}
+.cityListScroll {
+  min-height: 50px;
+  max-height: 305px;
+  overflow: auto;
+}
+.cityListScroll::-webkit-scrollbar {
+  width: 0px;
+}
+
+.cityBoxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.btnAdd {
+  border-radius: 6px;
+  background-color: var(--themeColor);
+  color: var(--white);
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  font-family: var(--fontGraphikSemibold);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  &:hover {
+    background-color: var(--themeColorDark);
+  }
+}
+.cityListLi {
+  display: flex;
+  padding: 8px 0px;
+}
+.cityName {
+  font-size: 14px;
+  color: var(--lightBlack);
+  font-family: var(--fontGraphik);
+}
+.noDataView {
+  width: 100%;
+  height: 295px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.noData {
+  width: 110px;
+  height: auto;
+  margin-bottom: 12px;
+}
+.noDataText {
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+}
+.hideDesktop {
+  display: none;
+}
+.hideMobile {
+  display: block;
+}
+
+/*** Select and Clear All ***/
+.selectAll,
+.clearAll {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--themeColor);
+  cursor: pointer;
+  margin-right: 16px;
+}
+/* .clearAll{
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+} */
+@media (max-width: 1191.98px) {
+  .orderSecond {
+    order: 2;
+  }
+  .orderFirst {
+    order: 1;
+  }
+
+  .ipadContainer {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .userBox {
+    width: calc(100% / 2);
+    margin-bottom: 0px;
+  }
+  .cityBox {
+    width: calc(100% / 2);
+    height: 260px;
+  }
+  .noDataView {
+    height: 175px;
+  }
+  .cityListScroll {
+    height: 190px;
+    overflow: auto;
+  }
+}
+@media (max-width: 991.98px) {
+  .orderSecond {
+    order: 2;
+  }
+  .orderFirst {
+    order: 1;
+  }
+
+  .ipadContainer {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .userBox {
+    width: calc(100% / 2);
+    margin-bottom: 0px;
+  }
+  .cityBox {
+    width: calc(100% / 2);
+    height: 260px;
+  }
+  .noDataView {
+    height: 175px;
+  }
+  .cityListScroll {
+    height: 190px;
+    overflow: auto;
+  }
+  .accessName {
+    font-size: 14px;
+  }
+  .userTitle {
+    font-size: 16px;
+  }
+  .permissionTilte {
+    font-size: 16px;
+  }
+  .pageTitle {
+    font-size: 18px;
+  }
+  .userName {
+    font-size: 14px;
+  }
+  .userStatus {
+    font-size: 14px;
+  }
+  .accessLi {
+    padding: 10px 16px;
+  }
+}
+@media (max-width: 767.98px) {
+  .floatingDiv {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+  }
+  .hideDesktop {
+    display: block;
+  }
+  .hideMobile {
+    display: none;
+  }
+  /* .userPage{
+    z-index: 3;
+    position: relative;
+  } */
+  .userLeft {
+    width: 100%;
+    margin-left: 0px;
+  }
+  .userRight {
+    width: 100%;
+    position: fixed;
+    left: 0px;
+    top: 56px;
+    background: white;
+    padding: 10px 16px;
+    height: auto;
+    border-bottom: 1px solid var(--borderColor);
+    z-index: 3;
+  }
+  .pageContent {
+    margin-top: 132px;
+  }
+  .permissionItem {
+    flex: 1 1 100%; /* Full width on mobile screens */
+  }
+  .permissionContainer {
+    padding-bottom: 90px;
+  }
+  .permissionBox{
+    padding: 0px;
+    margin-bottom: 0px;
+  }
+  .listContent{
+    gap: 0px;
+  }
+  .accessLi{
+    width: 100%;
+    border-bottom: 1px solid var(--borderColor);
+    &:nth-last-child(1){
+      border-bottom: none;
+    }
+
+  }
+  .ipadContainer {
+    gap: 0px;
+    flex-wrap: wrap;
+    margin-bottom: 0px;
+  }
+  .userBox {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .cityBox {
+    width: 100%;
+    margin-bottom: 16px;
+    height: auto;
+  }
+  .cityListScroll {
+    height: auto;
+  }
+  .orderSecond {
+    order: 2;
+  }
+  .orderFirst {
+    order: 1;
+  }
+}
+
+.customCheckbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid burlywood; /* Customize color */
+  border-radius: 50%; /* Makes it round */
+  position: relative;
+  cursor: pointer;
+  margin-right: 8px; /* Adds space after the checkbox */
+}
+
+.customCheckbox:checked {
+  background-color: white; /* Checkbox fill color */
+  border-color: burlywood;
+}
+
+.customCheckbox:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: grey;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.selectorContainer {
+  display: flex;
+  width: 450px;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.selectorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.dropdown {
+  padding: 10px;
+  font-size: 14px;
+  width: 120px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.dropdown:focus {
+  outline: none;
+  border-color: #4e91ff;
+}
+
+.Left{
+    /* width: 100%; */
+    position: sticky;
+    /* left: 458px; */
+    top: 60px;
+    /* height: calc(100vh - 200px); */
+    
+}
+
+.Left{
+  width: 900px;
+  position: fixed;
+  left: 0px;
+  top: 56px;
+  background: white;
+  /* padding: 10px 16px; */
+  height: auto;
+  border-bottom: 1px solid var(--borderColor);
+  /* z-index: 999; */
+  overflow: auto;
+}

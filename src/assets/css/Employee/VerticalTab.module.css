@@ -1,0 +1,259 @@
+@import "../../css/variable.css";
+@import "../../css/fonts.css";
+@import "../../css/normalize.css";
+
+.verticalTabsContainer {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.tabs {
+  display: flex;
+  flex-flow: column;
+  background-color: var(--white);
+  border-radius: 6px;
+  margin-right: 10px;
+  width: 200px;
+  overflow: hidden;
+}
+
+.tab {
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  transition: background-color 0.3s ease;
+}
+
+.tabHeader {
+  font-size: 15px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikMedium);
+  padding: 10px 16px;
+}
+
+.tab.active {
+  background-color: #eaf8ff;
+  color: var(--black);
+}
+
+.tab:hover {
+  background-color: var(--whitef5);
+}
+
+.tabContent {
+  padding: 20px;
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 6px;
+}
+
+.noData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  width: 100%;
+  flex-flow: column;
+}
+
+.noDataImg {
+  height: 90px;
+  margin-bottom: 16px;
+}
+
+.noDataText {
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+}
+
+/** Toggle Design CSS Starts Here **/
+.toggleRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.toggleLeft {
+  width: calc(100% - 40px);
+}
+
+.toggleText {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  word-break: break-all;
+}
+
+.toggleRight {
+  width: 40px;
+}
+
+.toggle {
+  width: 28px;
+  height: 17px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle.on {
+  background-color: var(--textSuccess);
+}
+
+.toggle.off {
+  background-color: #dbdbdb;
+}
+
+.toggleCircle {
+  width: 10px;
+  height: 10px;
+  background-color: var(--white);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 4px;
+  transition: left 0.3s ease;
+}
+
+.toggle.on .toggleCircle {
+  left: 14px;
+}
+
+.toggle.off .toggleCircle {
+  left: 5px;
+}
+
+/** Toggle Design CSS Ends Here **/
+
+/** Sales Feedback CSS Starts Here **/
+.btnAdd {
+  border: 1px solid var(--themeColor);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--themeColor);
+  gap: 4px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0px;
+  &:hover {
+    background-color: var(--themeColorDark);
+    color: var(--white);
+  }
+}
+
+/** Sales Feedback CSS Ends Here **/
+
+@media (max-width: 767.98px) {
+  .hideDesktop {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .verticalTabsContainer {
+    flex-flow: column;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .tabHeader {
+    display: none;
+  }
+
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .tabs::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .tabs::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+  }
+
+  .tabs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.verticalTabsContainerTwo {
+  background-color: var(--white);
+  border-radius: 6px;
+  display: block;
+  width: 100%;
+}
+.verticalTabsHeader {
+  padding: 5px 0px;
+  border-bottom: 1px solid var(--borderColor);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.verticalTabsBody {
+  display: flex;
+}
+.tabsTwo {
+  border-radius: 0px;
+  border-right: 1px solid var(--borderColor);
+  width: 170px;
+  border-bottom-left-radius: 6px;
+}
+.tabContentTwo {
+  width: calc(100% - 170px);
+  border-bottom-right-radius: 6px;
+  margin-right: 0px;
+      padding: 16px 10px;
+}
+.permissionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+.permissionCard {
+  background: var(--whitefa);
+     padding: 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--gray);
+  cursor: pointer;
+  width: calc(100% / 2 - 10px);
+  transition: 0.3 all;
+  &:hover{
+    background: var(--whitef5);
+  }
+}
+.permissionRow .toggleRow{
+  margin-bottom: 0px;
+}
+
+.permissionSectionTitle {
+  font-size: 14px;
+  color: var(--darkBlack);
+  margin: 20px 0 10px;
+  width: 100%;
+  border-bottom: 1px solid var(--borderColor);
+  padding-bottom: 4px;
+}

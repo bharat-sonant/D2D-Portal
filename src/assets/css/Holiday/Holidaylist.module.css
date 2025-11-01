@@ -1,0 +1,215 @@
+.orderTrack {
+  background-color: var(--white);
+  border-radius: 6px;
+  padding: 40px 30px;
+}
+
+.dayHeader {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--borderColor);
+  padding: 18px 14px;
+}
+
+.heading {
+  font-size: 16px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.leaveCenter {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  /* height: 650px;
+    overflow: auto; */
+  padding: 12px 16px;
+}
+
+.orderTrackStep {
+  display: flex;
+  width: 100%;
+}
+.TrackStep {
+  display: flex;
+  width: 100%;
+}
+
+.orderTrackText {
+  width: 100%;
+  /* Take full width */
+}
+
+.orderTrackStatus {
+  margin-right: 10px;
+  position: relative;
+}
+
+.orderTrackStatusDot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--themeColor);
+}
+
+.orderTrackStatusLine {
+  display: block;
+  margin: 0 auto;
+  width: 1px;
+  height: 100%;
+  background: var(--borderColor);
+}
+
+.StatusLine {
+  display: block;
+  margin: 0 auto;
+  width: 1px;
+  height: 100%;
+  background: var(--textDanger);
+}
+
+.orderTrackColumn {
+  width: 100%;
+}
+
+.orderTrackTextStat {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  text-transform: capitalize;
+  color: var(--black);
+  margin-bottom: -3px;
+}
+
+.orderTrackTextSub {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  text-transform: capitalize;
+}
+
+.orderTrackText {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--white);
+  padding: 12px 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
+    rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.orderTrackText2 {
+  height: 60px;
+}
+
+.Icon {
+  width: 12px;
+  margin-left: 10px;
+}
+
+.IconView {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.orderTrackStep:hover .IconView {
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
+}
+
+.IconLeave {
+  width: 40px;
+}
+
+.monthSetion {
+  display: flex;
+  height: 100%;
+  gap: 10px;
+}
+
+.monthName {
+  width: 30px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--darkBlack);
+  margin-top: -5px;
+  text-transform: capitalize;
+}
+
+.iconImage {
+  display: flex;
+  align-items: center;
+}
+
+.dropdownItemNot {
+  height: 80vh;
+  font-size: 12px;
+  color: #707070;
+  font-family: var(--fontGraphik);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.foundNot {
+  height: 100px;
+}
+
+/** New CSS Starts Here **/
+.tableScroll {
+  min-height: 50px;
+  max-height: calc(100vh - 86px);
+  overflow: auto;
+  background-color: var(--white);
+  border-radius: 6px;
+}
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: end;
+  align-items: center;
+}
+.btnAction {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  padding: 0px;
+}
+.iconActionBtn {
+  width: 14px;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(27%) saturate(2982%)
+      hue-rotate(176deg) brightness(104%) contrast(89%);
+  }
+}
+.btnDelete:hover {
+  filter: brightness(0) saturate(100%) invert(53%) sepia(48%) saturate(2981%)
+    hue-rotate(332deg) brightness(97%) contrast(93%);
+}
+.noDataView {
+  height: 400px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+.noDataImg {
+  width: 80px;
+  margin-bottom: 16px;
+}
+.noDataText {
+  font-size: 13px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}
+
+@media (max-width: 767.98px) {
+  .tableScroll {
+    max-height: calc(100vh - 150px);
+  }
+}

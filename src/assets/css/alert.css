@@ -1,0 +1,180 @@
+
+.toast-container{
+    width: 100%;
+  
+    .toast-close-button {
+      font-weight: 300;
+      text-shadow: none;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      margin-top: -14px;
+      width: 25px;
+      height: 25px;
+  
+      &:focus{
+        outline: none;
+      }
+  
+      &:hover{
+        opacity: 1;
+        color: "#fff";
+      }
+  
+      & > span {
+        display: none;
+      }
+  
+      &:before{
+        display: block;
+        display: inline-block;
+        font: normal normal normal 14px/1 'Nucleo Outline';
+        font-size: inherit;
+        speak: none;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 20px;
+        content: "\ea53";
+        font-weight: 300;
+      }
+    }
+  
+    .alert{
+      z-index: 9999;
+      width: 33.3333%;
+      pointer-events: auto;
+  
+      .toast-message {
+        max-width: 89%;
+      }
+  
+      &.alert-with-icon{
+        .now-ui-icons{
+          position: absolute;
+          left: 24px;
+          top: 50%;
+          margin-top: -14px;
+          font-size: 24px;
+        }
+      }
+    }
+  
+    .toast-error{
+      background-image: none;
+    }
+  
+    .toast-success{
+      background-image: none;
+    }
+  
+    .toast-info{
+      background-image: none;
+    }
+  
+    .toast-warning{
+      background-image: none;
+    }
+  }
+  .toast-top-center, .toast-bottom-center{
+   .alert{
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .toast-top-right, .toast-bottom-right{
+   .alert{
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+  
+  .toast-top-center{
+    top: 12px;
+  }
+  
+  .toast-bottom-center{
+    bottom: 12px;
+  }
+  
+
+  /*** Badge Color CSS Starts Here ***/
+  .uppercase{
+    text-transform: uppercase;
+  }
+  .font-thin{
+    font-weight: 300;
+  }
+  .traking-wider{
+    letter-spacing: 0.05em;
+  }
+  .badge-default{
+    font-size: 10px;
+    font-family: var(--fontGraphik);
+    border-radius: 4px;
+    padding: 10px 6px;
+    height: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 0px;
+    text-transform: uppercase;
+    font-weight: 300;
+    letter-spacing:0.05em;
+  }
+  .badge-draft{
+    background-color: #F4E78C;
+    color: #333333;
+  }
+  .badge-open{
+    background-color: #6c757d12;
+    color: #6c757d;
+  }
+.badge-InProgress{
+  background-color: #3fb2f110;
+  color: #3fb2f1;
+
+}
+.badge-pause{
+  background-color: #dc354512;
+  color: #dc3545;
+}
+.badge-done {
+  background-color: #19875412;
+  color: #178150;
+}
+.badge-InReview {
+  background-color: #d9770612;
+  color: #d97706;
+  letter-spacing: 0.2px;
+}
+
+.badge-light {
+  background-color: #f8f9fa;
+  color: #000;
+}
+.badge-To-Be-Reviewed{
+  background-color:#918cf512 ;
+    color: #918cf5;
+}
+
+.badge-dark-open{
+   background-color: #6c757d;
+}
+.badge-dark-InProgress{
+    background-color: #3fb2f1;
+}
+.badge-dark-pause{
+    background-color: #dc3545;
+}
+.badge-dark-done{
+    background-color: #198754;
+}
+
+
+  @media screen and (max-width: 767px) {
+    .toast-container .alert{
+      width: 91.6666%;
+    }
+  }
+  

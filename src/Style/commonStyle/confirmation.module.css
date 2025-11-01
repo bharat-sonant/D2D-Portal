@@ -1,0 +1,182 @@
+@import "../css/variables.css";
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--transparentBlack);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1072;
+}
+.dialogbox {
+  background: var(--white);
+  padding: 40px 30px;
+  border-radius: 6px;
+  width:750px;
+  height: 85vh;
+  display: flex;
+  box-shadow: 0 2px 10px #0000001a;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  width: 100%;
+}
+
+.headerImg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+.headerText {
+  font-size: 18px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.msgText {
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-bottom: 20px;
+}
+.bodyTitle{
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.bodyOl{
+  margin-left: 10px;
+}
+.bodyDescription{
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  font-weight: normal;
+  padding-bottom: 5px;
+  width: 100%;
+  display: flex;
+}
+.sNumber{
+  width: 20px;
+}
+.info{
+  line-height: 24px;
+  width: calc(100% - 20px);
+}
+.content {
+  padding: 2px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.action {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+}
+.btnCancel {
+  padding: 15px 30px;
+  background-color: var(--white);
+  color: var(--lighBlack);
+  font-size: 14px;
+  font-family: var(--fontGraphik);
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+}
+.btnSuccess{
+  padding: 15px 30px;
+  background-color: var(--textSuccess);
+  color: var(--white);
+  font-size: 14px;
+  font-family: var(--fontGraphikSemibold);
+  border-radius: 6px;
+  border: none;
+  transition: 0.2s ease-in-out;
+  &:hover{
+    background-color: var(--textSuccessDark);
+  }
+}
+.btnDelete {
+  padding: 15px 30px;
+  background-color: var(--textDanger);
+  color: var(--white);
+  font-size: 14px;
+  font-family: var(--fontGraphikSemibold);
+  border-radius: 6px;
+  border: none;
+  transition: 0.2s ease-in-out;
+  &:hover{
+    background-color: #db4b2e;
+  }
+}
+.btnOne:hover {
+  background-color: #0ab39c !important;
+  color: white !important;
+}
+.btnOne:hover .btnOneText {
+  color: rgb(251, 253, 253) !important;
+  cursor: pointer;
+}
+.btnTwo:hover {
+  background-color: rgb(233, 18, 18);
+  color: white;
+}
+.btnTwo:hover .btnTwoText {
+  color: white;
+}
+.btnOneText {
+  font-size: 14px;
+}
+.btnTwoText {
+  font-size: 14px;
+}
+
+
+.notificationEnable{
+  overflow: auto;
+  text-align: left;
+  height: calc(85vh - 330px);
+  padding: 10px;
+}
+.notificationEnable::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+.notificationEnable:hover::-webkit-scrollbar-track {
+  background: var(--whitef5); 
+}
+ 
+/* Handle */
+.notificationEnable:hover::-webkit-scrollbar-thumb {
+  background: var(--themeColor); 
+}
+
+@media (max-width: 767.98px) {
+  .dialogbox {
+  padding: 20px 16px;
+  border-radius: 6px;
+  width: 90%;
+}
+.headerText {
+  font-size: 16px;
+}
+.btnSuccess, .btnCancel, .btnDelete{
+  padding: 15px 15px;
+}
+  
+}

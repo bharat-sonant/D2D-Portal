@@ -1,0 +1,125 @@
+.btnFilter {
+    width: 100%;
+    background-color: var(--white);
+    border: 1px solid var(--themeColor);
+    padding: 0px 16px;
+    height: 36px;
+    border-radius: 4px;
+    transition: 0.3s;
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
+  
+    &:hover {
+      background-color: var(--themeColorDark);
+      color: var(--white);
+    }
+  }
+  
+  .selectedProject {
+    border: none;
+    background-color: var(--white);
+    box-shadow: 0 0 20px 0 #0000001a;
+    padding: 0px;
+    border-radius: 6px;
+    margin: 0px;
+    overflow: hidden;
+    transform: matrix3d(2px, 0, 0);
+    transition: 0.22s ease-in linear;
+    animation: slideDown 0.3s ease-out forwards;
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translateY(-5%);
+    }
+  
+    to {
+      transform: translateY(0);
+    }
+  }
+  .customDropdownLI {
+    border-bottom: 1px solid var(--borderColor);
+  }
+  .customDropdownLIList {
+    color: var(--darkBlack);
+  }
+  .customDropdownLIList .customDropdownItem {
+    &:hover {
+      background-color: var(--whitef5);
+    }
+  }
+  .customDropdownLIList .customDropdownItem {
+    color: var(--lightBlack);
+  }
+  .customDropdownItem {
+    font-size: 13px;
+    font-family: var(--fontGraphik);
+    padding: 10px 16px;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    border: none;
+    background: transparent;
+  }
+  
+  .dropdowmbtn {
+    background-color: var(--white);
+    border: 1px solid #ced4da;
+    position: relative;
+    height: 36px;
+    padding: 0px 35px 0px 10px;
+    border-radius: 4px;
+  }
+  
+  .dropdowmbtn:after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 11px;
+    width: 12px;
+    height: 12px;
+    background-image: url(../../../assets/images/icons/iconDown.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .projectNaam {
+    max-width: 250px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: var(--darkBlack);
+    font-size: 13px;
+    font-family: var(--fontGraphik);
+    min-width: 150px;
+    text-align: left;
+  }
+  
+  /*** Task Page More icon Dropdown CSS Starts Here ***/
+  .btnMore {
+    background-color: var(--white);
+    border: none;
+    position: relative;
+    border-radius: 0px;
+    padding: 0px;
+  }
+  .iconMore {
+    width: 16px;
+    transition: 0.2s;
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(70%) sepia(39%) saturate(4290%)
+        hue-rotate(172deg) brightness(100%) contrast(90%);
+    }
+  }
+  .btnMoreDropdownMenu{
+    transform: translate(0px, 28px) !important;
+  }
+  /*** Task Page More icon Dropdown CSS Ends Here ***/
+  
+  /* Add this style to make options appear "blurred" or "faded" when disabled */
+  .disabledOption {
+    opacity: 0.5; /* Make the option appear faded */
+    pointer-events: none; /* Prevent interaction with the option */
+    
+  }
+  

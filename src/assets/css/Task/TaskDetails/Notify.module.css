@@ -1,0 +1,38 @@
+@import "../../../css/variable.css";
+@import "../../../css/fonts.css";
+@import "../../../css/normalize.css";
+
+.noteBox {
+  margin: 10px 30px;
+  padding: 16px;
+  background-color: #fff7eb;
+  border-radius: 6px;
+  display: flex;
+}
+.noteLeft{
+  width: 30px;
+  margin-top: -2px;
+}
+.iconAlertWarning{
+  width: 18px;
+}
+.boxContent{
+  width: calc(100% - 30px);
+  font-size: 13px;
+  color: #dc3545;
+  font-family: var(--fontGraphik);
+  margin-top: 4px;
+}
+.selectCityScroll{
+  max-height: 250px;
+  overflow: auto;
+}
+.iconNo{
+  width: 90px;
+}
+.textNo{
+      font-size: 12px;
+    color: var(--gray);
+    margin-top: 5px;
+    font-family: var(--fontGraphik);
+}

@@ -1,0 +1,152 @@
+/* PeopleDetails.module.css */
+
+
+.header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.Details {
+    margin-top: 20px; 
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    display: flex;  /* Enable flexbox */
+    flex-direction: column;  /* Arrange items vertically */
+    gap: 20px; 
+}
+
+.icon {
+    color: #007bff;
+    margin-right: 10px;
+    font-size: 1.2rem;
+    vertical-align: middle;
+}
+
+strong {
+    font-weight: 600;
+    color: #333 !important
+}
+
+.actionContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.iconGroup {
+    padding: 1px 13px 12px 13px;
+    border-top: 1px solid #e9ebec;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.manager {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+
+}
+
+.action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.iconGroup .icon {
+    color: #333;
+    font-size: 1.2rem;
+    transition: color 0.3s ease-in-out;
+}
+
+.managerToggle {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.managerToggle label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.toggle {
+    width: 40px;
+    height: 18px;
+    background-color: #ccc;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle.on {
+    background-color: #4CAF50;
+}
+
+.toggle.off {
+    background-color: #ecbaba;
+}
+
+.toggleCircle {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    transition: left 0.3s ease;
+}
+
+.toggle.on .toggleCircle {
+    left: 25px;
+}
+
+.toggle.off .toggleCircle {
+    left: 3px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .header {
+        font-size: 1.2rem;
+    }
+
+    span {
+        font-size: 0.9rem;
+    }
+}
+.card_footer {
+    padding: 1px 13px 12px 13px;
+    border-top: 1px solid #e9ebec;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card_footer h5 {
+    font-size: 13px;
+    font-weight: 400;
+    color: #878a99;
+}
+.invalidfeedback {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 0.5em;
+    display: block;
+  }

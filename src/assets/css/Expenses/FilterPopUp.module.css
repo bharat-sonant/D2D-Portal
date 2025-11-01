@@ -1,0 +1,173 @@
+/* FilterPopUp.module.css */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal {
+  background-color: #fff;
+  width: 90%;
+  max-width: 450px;
+  height: 300px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.headerText {
+  font-size: 18px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.actionBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.closeBtn:hover {
+color: red;
+
+}
+.iconClose {
+  width: 20px;
+  height: 20px;
+}
+.iconClose:hover {
+  color: red;
+  
+  }
+.textboxMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.textboxLeft {
+  flex: 0 0 40%;
+  font-weight: 500;
+  color: #333;
+}
+
+.textboxRight {
+  flex: 1;
+}
+
+.dropdown {
+  width: 100%;
+}
+
+.customDropdownBtn {
+  width: 100%;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.customDropdownBtn:after {
+  float: right;
+}
+
+.selectDropdown {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+.selectDropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.selectDropdown li:hover {
+  background-color: #f5f5f5;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  gap: 1rem;
+}
+
+.applyBtn {
+
+  height: 38px;
+  font-size: 14px;
+  color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+  background-color: var(--white);
+  border-radius: 4px;
+  font-family: var(--fontGraphikMedium);
+  font-weight: 500;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+}
+
+.applyBtn:hover {
+  background-color: var(--themeColor);
+  color: white;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  background-color: var(--white);
+  border: 1px solid var(--borderColor);
+  color: var(--gray);
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  border-radius: 6px;
+  transition: 0.2s ease-in-out;
+  height: 40px;
+}
+
+
+.select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+}

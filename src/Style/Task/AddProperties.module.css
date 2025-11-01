@@ -1,0 +1,55 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .dropdown label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .dropdown select, .dateInput {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .dropdown select:focus, .dateInput:focus {
+    border-color: #007bff;
+  }
+  
+  .dropdown select option, .dateInput option {
+    font-size: 14px;
+  }
+  
+  .dropdown select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+  
+  .dropdown select option:disabled {
+    background-color: #f1f1f1;
+  }
+  
+  .dateInput {
+    width: 100%;
+  }
+  
+  .container .dropdown:last-child {
+    margin-bottom: 0;
+  }
+  

@@ -1,0 +1,141 @@
+.toDoCard {
+  background-color: var(--white);
+  border-radius: 6px;
+  padding: 16px;
+}
+.CardHeader {
+  font-size: 15px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikMedium);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.taskBox {
+  background-color: var(--white);
+  border: 1px solid #eee;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  transition: 0.2s;
+  position: relative;
+  &:hover {
+    .subtaskCount {
+      color: var(--themeColor);
+    }
+    .iconSubTask {
+      filter: brightness(0) saturate(100%) invert(64%) sepia(31%)
+        saturate(2688%) hue-rotate(172deg) brightness(99%) contrast(91%);
+    }
+    /* &:before {
+      content: "";
+      position: absolute;
+      display: block;
+      left: -16px;
+      top: 17px;
+      background-color: var(--themeColor);
+      height: 14px;
+      border-radius: 2px;
+      width: 2px;
+    } */
+  }
+}
+.mainTaskRow {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  font-size: 13px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  background-color: var(--whitefa);
+  padding: 12px 16px;
+}
+/* .noSubtaskPadding {
+  padding-bottom: 0px !important;
+} */
+
+.mainTaskLeft {
+  display: flex;
+  width: calc(100% - 140px);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.sNumber {
+  width: 30px;
+  display: inline-block;
+  color: var(--darkBlack);
+}
+.taskMainTitle {
+  width: calc(100% - 30px);
+  display: inline-block;
+  color: var(--darkBlack);
+  cursor: pointer;
+}
+.subtaskCount {
+  font-size: 12px;
+  color: #999;
+  font-family: var(--fontGraphikMedium);
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.iconSubTask {
+  width: 11px;
+  height: 11px;
+}
+.taskSubTitle {
+  color: var(--gray);
+}
+.mainTaskRight {
+  width: 140px;
+  display: flex;
+  justify-content: flex-end;
+}
+.subTask {
+  padding: 10px 16px 0px 48px;
+  border-bottom: 1px solid var(--borderColor);
+}
+.subTask:last-child {
+  border-bottom: none;
+}
+.subTaskRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  padding-bottom: 10px;
+}
+.noBorder {
+  border-bottom: none;
+}
+/* .lastTR {
+  padding-bottom: 10px !important;
+} */
+
+.noTaskCard {
+  background: var(--whitefa);
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  height: calc(100vh - 150px);
+}
+.noTask {
+  width: 85px;
+  margin-bottom: 10px;
+}
+.noTaskTitle {
+  font-size: 13px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}
+.noTaskSubTitle {
+  font-size: 12px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}

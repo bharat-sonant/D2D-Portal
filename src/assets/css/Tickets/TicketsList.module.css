@@ -1,0 +1,94 @@
+.scrollableContainer {
+  height: calc(100vh - 193px);
+  overflow: auto;
+  background-color: var(--white);
+  /* margin-top: 45px; */
+  border-radius: 6px;
+}
+
+.loaderContainer {
+  width: 100%;
+  height: calc(100vh - 265px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.loaderText {
+  font-size: 16px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 10px;
+}
+
+.loaderText2 {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 8px;
+}
+
+/* Example.module.css */
+.metaInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 15px;
+  color: #555;
+}
+
+.createdAt,
+.createdBy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.createdAt strong,
+.createdBy strong {
+  font-weight: 400;
+  color: #333;
+}
+
+.createdAt div:last-child,
+.createdBy div:last-child {
+  color: #777;
+}
+
+.actionCell {
+  padding: 12px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.editIcon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+
+/* Show icon when hovering over the row */
+.tableHoverRow:hover .editIcon {
+  opacity: 2;
+}
+
+.deleteIcon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.tableHoverRow:hover .deleteIcon {
+  opacity: 2;
+}
+.iconEye {
+  width: 16px;
+  height: 16px;
+}

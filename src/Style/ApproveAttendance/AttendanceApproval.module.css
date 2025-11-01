@@ -1,0 +1,130 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding-top: 60px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.selectorContainer {
+    background-color: #fff;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.attendanceContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    height: calc(100vh - 110px);
+    overflow: auto;
+    width: 100%;
+}
+
+.attendanceDetails {
+    background-color: white;
+    height: calc(100vh - 110px);
+    overflow: auto;
+    width: 25%;
+    margin-top: 1px;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1; 
+    overflow: hidden;
+}
+
+.loaderContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    flex-direction: column;
+}
+
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.noData {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    color: black;
+}
+
+@media(max-width:1797px) {
+    .attendanceDetails {
+        background-color: white;
+        height: calc(100vh - 110px);
+        overflow: auto;
+        width: 30%;
+        margin-top: 1px;
+    }
+}
+
+@media(max-width:1539px) {
+    .attendanceDetails {
+        background-color: white;
+        height: calc(100vh - 110px);
+        overflow: auto;
+        width: 35%;
+        margin-top: 1px;
+    }
+}
+
+@media(max-width:1387px) {
+    .attendanceDetails {
+        background-color: white;
+        height: calc(100vh - 110px);
+        overflow: auto;
+        width: 40%;
+        margin-top: 1px;
+    }
+}
+
+@media(max-width:1259px) {
+    .attendanceDetails {
+        background-color: white;
+        height: calc(100vh - 110px);
+        overflow: auto;
+        width: 45%;
+        margin-top: 1px;
+    }
+}
+
+@media(max-width:1153px) {
+    .attendanceDetails {
+        background-color: white;
+        height: calc(100vh - 110px);
+        overflow: auto;
+        width: 50%;
+        margin-top: 1px;
+    }
+}

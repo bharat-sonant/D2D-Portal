@@ -1,0 +1,321 @@
+.card_container {
+    display: flex;
+    height: calc(100vh - 140px); /* Use calc to set the height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    justify-content: flex-start; /* Center align items */
+    z-index: 0;
+    position: relative;
+    /* border: 1px solid; */
+  }
+  
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Center the cards horizontally */
+    align-items: flex-start;
+    gap: 8px; /* Space between cards */
+    width: 100%; /* Full width */
+    position: absolute;
+    /* border: 1px solid red; */
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    align-items: center;
+    padding: 9px;
+    margin: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    position: relative;
+    flex: 1 1 315px; /* Allow cards to grow and shrink */
+    max-width: 315px;
+    min-height: 158px;
+    max-height: 158px;
+  }
+  
+  .cardImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f6f9;
+    color: #707070;
+    border-radius: 8px;
+    width: 6rem !important;
+    height: 6rem !important;
+    margin-right: 2px;
+    border: 1px solid #eeeeee;
+    font-size: 22px;
+    min-width: 100px;
+    font-family: "poppins", sans-serif;
+    text-transform: uppercase;
+    overflow: hidden;
+  }
+  
+  .cardImageshortText {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .detail_text_header {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: grey;
+  }
+  
+  .detail_text_bottom {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .notActiveText {
+    font-weight: 500;
+    color: red;
+  }
+  .cardDetails {
+    flex-grow: 1;
+    margin-left: 10px;
+    /* border: 1px solid; */
+  }
+  
+  .mobileNumberContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 2px; /* Add some margin if needed */
+    width: 100%; /* Ensure it takes full width */
+    word-break: break-all;
+  }
+  .mobileNumber {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .userActive {
+    position: absolute;
+    bottom: 3px;
+    right: 10px;
+  }
+  
+  .email_container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 2px; /* Add some margin if needed */
+    width: 100%; /* Ensure it takes full width */
+    word-break: break-all;
+  }
+  .email_Text {
+    display: flex;
+    align-items: center;
+  }
+  .email_Text_value {
+    margin-left: 5px; /* Add some margin if needed */
+    font-size: 13px;
+    word-spacing: normal;
+  }
+  
+  .mobileNumber_text {
+    margin-left: 5px; /* Add some margin if needed */
+    font-size: 13px;
+    word-spacing: normal;
+  }
+  
+  .isActive_text {
+    font-weight: 500;
+    color: green;
+  }
+  
+  .isEditIcon {
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    cursor: pointer;
+  }
+  
+  .card:hover .detail_text_header {
+    color: #67b567;
+  }
+  .cardHover {
+    background-color: rgb(203 243 205);
+  }
+  .loader_container {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100% !important;
+    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
+    /* / opacity: 0.2; /
+    margin-bottom: 15px; */
+  }
+  
+  .spinner_border_9 {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    color: #fff;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    font-weight: normal;
+    font-size: 18px;
+    margin-top: 15px;
+    font-family: "poppins" "sans serief";
+  }
+  
+  .wrapper {
+    position: absolute;
+    top: 20%;
+    transform: scale(1.5);
+    /* / left: 50%; / */
+  }
+  
+  .loader {
+    height: 25px;
+    width: 1px;
+    position: absolute;
+    animation: rotate 3.5s linear infinite;
+  }
+  
+  .loader .dot {
+    top: 30px;
+    height: 7px;
+    width: 7px;
+    background: green !important;
+    border-radius: 50%;
+    position: relative;
+  }
+  
+  .text {
+    position: absolute;
+    bottom: -96px;
+    font-size: 18px;
+    /* font-weight: 500; */
+    font-family: "Poppins", sans-serif !important;
+    color: #000000;
+  }
+  
+  @keyframes rotate {
+    30% {
+      transform: rotate(220deg);
+    }
+  
+    40% {
+      transform: rotate(450deg);
+      opacity: 1;
+    }
+  
+    75% {
+      transform: rotate(720deg);
+      opacity: 1;
+    }
+  
+    76% {
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 0;
+      transform: rotate(0deg);
+    }
+  }
+  
+  .loader:nth-child(1) {
+    animation-delay: 0.15s;
+  }
+  
+  .loader:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  
+  .loader:nth-child(3) {
+    animation-delay: 0.45s;
+  }
+  
+  .loader:nth-child(4) {
+    animation-delay: 0.6s;
+  }
+  
+  .loader:nth-child(5) {
+    animation-delay: 0.75s;
+  }
+  
+  .loader:nth-child(6) {
+    animation-delay: 0.9s;
+  }
+  
+  .noDataContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 140px); /* Use calc to set the height */
+  }
+  /* login loader */
+  
+  .Loginloadercontainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .green-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .green-button:disabled {
+    cursor: not-allowed;
+  }
+  
+  
+  .spinnerLogin{
+    margin-right: 10px;
+    animation: spin 1s linear infinite;
+  }
+  
+  
+  .loaderLogin{
+    height: 25px;
+    width: 1px;
+    position: absolute;
+    animation: rotate 3.5s linear infinite;
+  }
+  
+  .loaderLogin .dot {
+    margin-right: 10px;
+    animation: spin 1s linear infinite;
+  }
+  
+  .loaderText {
+    color: white;
+    font-size: 13px;
+    text-transform: none;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }

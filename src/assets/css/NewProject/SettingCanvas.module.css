@@ -1,0 +1,273 @@
+.textboxGroup {
+  margin-bottom: 10px;
+  font-family: var(--fontGraphik);
+  font-size: 15px;
+}
+
+.textboxMain {
+  display: flex;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  width: 100%;
+}
+
+.textboxLeft {
+  font-size: 13px;
+  color: var(--lightBlack);
+  font-family: var(--fontGraphik);
+  background-color: #eff2f7;
+  padding: 0px 10px;
+  height: 36px;
+  width: 131px;
+  display: flex;
+  align-items: center;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.textboxRight {
+  width: calc(100% - 131px);
+  position: relative;
+  /* Ensure proper positioning */
+  overflow: visible !important;
+}
+
+.formCalendarBox {
+  position: relative;
+}
+
+.formCalendarBox::after {
+  content: "";
+  position: absolute;
+  left: auto;
+  right: 16px;
+  top: 11px;
+  background-image: url(../../images/icons/iconCalendar.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.formTextbox::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 16px;
+  cursor: pointer;
+  opacity: 1;
+  filter: invert(30%);
+}
+
+.formTextbox {
+  border: none;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  padding: 0px 10px;
+  height: 36px;
+  position: relative;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  width: 100%;
+}
+
+.buttonRight {
+  padding: 10px;
+}
+
+.ButtonAddDate {
+  color: var(--themeColor);
+  border: none;
+  width: 100%;
+  height: 38px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+  gap: 4px;
+}
+
+.addIcon {
+  font-family: var(--fontGraphikMedium);
+  font-size: 18px;
+  color: var(--themeColor);
+}
+
+.ButtonAddDate {
+  transition: all 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.ButtonAddDate:hover {
+  background-color: var(--themeColor);
+  /* Button ka hover color */
+  color: var(--white);
+}
+
+.ButtonAddDate:hover .addIcon {
+  color: var(--white);
+  /* + icon ka color bhi change ho */
+}
+
+.offcanvasBodyWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.offcanvasContent {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.buttonRight {
+  text-align: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  /* Optional: Adds a separator */
+}
+
+/* .savebutton {
+    flex-grow: 1;
+} */
+
+.errorMessage,
+.invalidfeedback {
+  font-size: 12px;
+  color: var(--textDanger);
+  font-display: var(--fontGraphik);
+  margin-top: 2px;
+}
+
+.buttonRight2 {
+  text-align: center;
+  padding: 10px;
+}
+
+.ButtonDelete:hover .addIcon {
+  color: var(--white);
+  /* + icon ka color bhi change ho */
+}
+
+.projectOffcanvas {
+  width: 500px;
+}
+.offcanvasProjectBody {
+  flex-grow: 1;
+}
+.adminHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0px 20px;
+}
+.adminTitle {
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+.btnAddMember {
+  font-size: 14px;
+  color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+  background-color: var(--white);
+  border-radius: 4px;
+  font-family: var(--fontGraphikMedium);
+  width: 26px;
+  height: 22px;
+  line-height: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+}
+
+.btnAddMember:hover {
+  background-color: var(--themeColor);
+  color: var(--white);
+}
+.adminBody {
+  background-color: var(--whitefa);
+  border-radius: 6px;
+  max-height: 300px;
+  overflow: auto;
+}
+.memberRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--borderColor);
+  transition: all 0.3s;
+  &:hover {
+    .btnRemove {
+      background-color: var(--themeColor);
+      color: var(--white);
+    }
+  }
+  &:nth-last-child{
+    border-bottom: none;
+  }
+}
+.memberName {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+}
+.btnRemove {
+  background-color: #e5e5e5;
+  border: none;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black70);
+  transition: 0.2s;
+  letter-spacing: -4px;
+  padding-left: 4px;
+}
+.offcanvasFooter {
+  padding: 20px 20px;
+}
+.btnDelete {
+  color: var(--white);
+  background-color: var(--textDanger);
+  width: 100%;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+.btnDelete:hover {
+  background-color: var(--textDangerDark);
+  color: var(--white);
+}
+.loaderContainer {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  gap: 8px;
+}

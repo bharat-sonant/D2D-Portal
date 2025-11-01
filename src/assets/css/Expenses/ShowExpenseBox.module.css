@@ -1,0 +1,421 @@
+/* General Styling */
+.container {
+  width: 150%;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #bde0fe;
+  border-radius: 8px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Section Styling */
+.section {
+  padding: 10px;
+}
+
+/* Card Component */
+.card {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Align Total Row with Icons */
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Align Drafted with Date Range */
+.draftedRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Status Labels */
+.drafted {
+  background: #ddd;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.dateShow {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 2px;
+}
+
+/* Ensure Attachment Icon Appears Below Date Range */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.attachment {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-top: 10px;
+}
+
+.activeTab {
+  flex: 1;
+  padding: 10px;
+  background: #bde0fe;
+  border: none;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+}
+
+.inactiveTab {
+  flex: 1;
+  padding: 10px;
+  background: #eee;
+  border: none;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Expense Details */
+.expenseDetails {
+  padding: 10px;
+}
+
+.expenseItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Expense Total */
+.expenseTotal {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.expenseTotal .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: #fff;
+  border-top: 1px solid #ccc;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Buttons */
+.editButton,
+.deleteButton,
+.submitButton {
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.deleteButton {
+  background: #ff6b6b;
+  color: white;
+}
+
+.submitButton {
+  background: #4caf50;
+  color: white;
+}
+
+.editButton {
+  background: #ffc107;
+  color: white;
+}
+
+.btnSave {
+  background-color: var(--themeColor);
+  color: var(--white);
+  font-size: 14px;
+  font-family: var(--fontGraphikSemibold);
+  padding: 0px 15px;
+  border-radius: 4px;
+  width: 100%;
+  height: 48px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  &:hover {
+    background-color: var(--themeColorDark);
+  }
+}
+
+
+/* new css */
+
+.purposeWrapper {
+  background: #e5f6ff;
+  border: 1px dashed #01a3ff;
+}
+
+.purposeLabel {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--darkBlack);
+  margin-bottom: 3px;
+}
+
+.purposeDescription {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+}
+
+.IconSaving {
+  width: 16px;
+  filter: brightness(0) saturate(100%) invert(45%) sepia(0%) saturate(35%) hue-rotate(207deg) brightness(97%) contrast(96%);
+}
+
+.expenseCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.totalAmount {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  padding: 10px 0px;
+}
+
+.iconRupee {
+  width: 16px;
+  height: 16px;
+}
+
+.pageScroll {
+height: calc(100vh - 460px);
+  /* min-height: 150px; */
+  overflow: auto;
+  margin-bottom: 10px;
+}
+
+.expenseBox {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fdfdfd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  /* margin-bottom: 10px; */
+}
+
+.expenseListWrapper {
+  /* padding: 10px; */
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.reimburseButton {
+  background-color: var(--themeColor);
+  color: var(--white);
+  font-size: 14px;
+  font-family: var(--fontGraphikSemibold);
+  padding: 0px 15px;
+  border-radius: 4px;
+  width: 100%;
+  height: 48px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+}
+
+.reimburseButton:hover {
+  background-color: var(--themeColorDark);
+}
+
+.expenseTotal2 {
+  border: 1px dashed var(--borderColor);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.expenseBoxWrapper {
+  margin-bottom: 10px;
+}
+
+
+.priceDiv {
+  display: flex;
+  align-items: center;
+}
+
+.iconRupee1 {
+  width: 14px;
+}
+
+.iconVeiwImg {
+  width: 14px;
+  filter: brightness(0) saturate(100%) invert(44%) sepia(31%) saturate(0%) hue-rotate(196deg) brightness(95%) contrast(108%);
+}
+
+.expenseAmount {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.accordionItem {
+  margin-bottom: 10px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+}
+
+.accordionItem:not(:first-of-type) {
+  border-top: 1px solid var(--borderColor);
+}
+
+.accordionButton::after {
+  display: none !important;
+}
+
+.toggleIcon {
+  width: 7px;
+  height: 13px;
+  transition: transform 0.3s ease;
+  filter: brightness(0) saturate(100%) invert(47%) sepia(0%) saturate(75%) hue-rotate(136deg) brightness(88%) contrast(84%);
+}
+
+
+.accordionButton {
+  width: 100%;
+  outline: none;
+  border: none;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  padding: 14px;
+  background-color: var(--whitefa);
+  cursor: pointer;
+}
+
+.accordionBody {
+  padding: 10px 16px;
+  
+}
+
+
+.descriptionLabel {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--lightBlack);
+}
+
+.descriptionText {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+}
+
+.expenseAmountBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.titleCategory {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  text-transform: capitalize;
+ text-align: start;
+}
+
+.rejectedWrapper2 {
+  background-color: #fff7eb;
+  border: 1px dashed #E04F16;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  gap: 10px;
+}
+
+.purposeLabelreject {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: #dc3545;
+  margin-bottom: 3px;
+}
+
+.purposeDescriptionrej {
+  font-size: 13px;
+  font-family: var(--fontGraphi);
+  color: #dc3545;
+}
+
+.Iconwar {
+  width: 16px;
+}
+
+.footerFixed {
+  position: fixed;
+  /* or absolute if using inside modal */
+  bottom: 20px;
+  background-color: var(--white);
+  max-width: 620px;
+  width: 100%;
+
+}

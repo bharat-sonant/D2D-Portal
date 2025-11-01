@@ -1,0 +1,46 @@
+@import "../../../css/variable.css";
+@import "../../../css/fonts.css";
+@import "../../../css/normalize.css";
+
+.titleBox {
+  background-color: transparent;
+}
+.textEnter {
+  border: 1px solid var(--borderColor);
+  height: 50px;
+  border-radius: 6px;
+  width: 100%;
+  padding: 0px 16px;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+}
+.chatBox {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+.sendbtn {
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  background-color: var(--themeColor);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  position: absolute;
+  right: 16px;
+
+  &:hover {
+    background-color: var(--themeColorDark);
+  }
+}
+.iconSend {
+  width: 28px;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
+    hue-rotate(93deg) brightness(103%) contrast(103%);
+}

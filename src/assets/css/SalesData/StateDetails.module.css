@@ -1,0 +1,443 @@
+.stateContainer {
+  background-color: var(--white);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.stateHeader {
+  border-bottom: 1px solid var(--borderColor);
+}
+.stateHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 16px 0px 16px;
+}
+.stateHeaderLeft {
+  display: flex;
+  gap: 10px;
+}
+.stateHeaderRight {
+  display: flex;
+  justify-content: flex-end;
+  display: flex;
+  gap: 10px;
+}
+.btnFilter {
+  padding: 0px 12px;
+  gap: 5px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--themeColor);
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--themeColor);
+  font-family: var(--fontGraphikSemibold);
+  &:hover {
+     color: var(--white);
+    background-color: var(--themeColor);
+    .iconFilter {
+      filter: brightness(0) saturate(100%) invert(99%) sepia(21%) saturate(105%)
+        hue-rotate(143deg) brightness(114%) contrast(100%);
+        
+    }
+  }
+}
+.iconFilter {
+  width: 16px;
+  filter: brightness(0) saturate(100%) invert(63%) sepia(66%) saturate(2167%) hue-rotate(173deg) brightness(99%) contrast(90%);
+}
+.totalULBCount {
+  padding: 16px 16px 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stateHeaderTitle {
+  font-size: 15px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikMedium);
+}
+.stateHeaderCount {
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikBold);
+  padding-right: 16px;
+}
+.stateWiseTabGroup {
+  display: flex;
+  width: 100%;
+}
+.stateBox {
+  /* width: calc(100% / 4.3); */
+  width: auto;
+  background-color: var(--white);
+  transition: 0.3s;
+  padding: 14px 16px;
+  height: 42px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  &:hover {
+    background-color: var(--whitef5);
+    .stateType {
+      color: var(--darkBlack);
+    }
+    .btnAdd {
+      visibility: visible;
+    }
+  }
+}
+.stateTypeCount {
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikMedium);
+}
+.stateType {
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+}
+.stateBoxLeft {
+  display: flex;
+  gap: 10px;
+}
+.stateBoxRight {
+  display: flex;
+  justify-content: flex-end;
+}
+.btnAdd {
+  background-color: transparent;
+  border: 1px solid var(--themeColor);
+  border-radius: 4px;
+  color: var(--themeColor);
+  font-family: var(--fontGraphikMedium);
+  font-size: 14px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0px;
+  transition: 0.2s;
+  width: 26px;
+  visibility: hidden;
+  &:hover {
+    background-color: var(--themeColor);
+    color: var(--white);
+  }
+}
+
+.stateBody {
+  padding: 10px 16px;
+  background-color: var(--whitefa);
+}
+.ULBTableScroll {
+  height: calc(100vh - 268px);
+  overflow: auto;
+}
+.ULBTableHeader {
+  display: none;
+}
+.ULBCardGroup {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ULBCard {
+  width: calc(100% / 4 - 8px);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  transition: 0.3s;
+  &:hover {
+  border: 1px solid #3fb2f165;
+    .logoWeVOIS{
+      display: none;
+    }
+    .shortULB{
+      display: none;
+    }
+    .iconEdit {
+      display: block;
+      filter: brightness(0) saturate(100%) invert(72%) sepia(63%)
+        saturate(3327%) hue-rotate(172deg) brightness(97%) contrast(94%);
+    }
+  }
+}
+.ULBHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--borderColor);
+}
+.iconEdit {
+  width: 13px;
+  cursor: pointer;
+  display: none;
+}
+.population {
+  font-size: 13px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikMedium);
+  justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  width: 74px;
+}
+.iconPopulation {
+  width: 15px;
+  margin-left: 5px;
+}
+.ULBLogoBox {
+  border: 1px solid var(--borderColor);
+  background-color: var(--white);
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  img {
+    object-fit: contain;
+  }
+}
+.ULBsImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--borderColor);
+  margin-right: 8px;
+}
+.shortULB {
+  font-size: 11px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+  line-height: 0px;
+}
+.ULBName {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  width: calc(100% - 74px);
+}
+.ULBBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 16px;
+  width: 100%;
+}
+.ULBDataGroup {
+  width: calc(100% / 2 - 16px);
+}
+.ULBDataRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.ULBInnerDataLeft {
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  font-size: 13px;
+  width: calc(100% - 40px);
+}
+.ULBLabel {
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  font-size: 11px;
+}
+.ULBInnerDataRight {
+  display: flex;
+  justify-content: flex-end;
+  width: 40px;
+}
+.logoParty {
+  width: 20px;
+}
+.logoWeVOIS {
+  width: 18px;
+}
+
+.activeTab {
+  background-color: #f0f9fe;
+  color: white;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  transition: 0.3s;
+  &:hover {
+    background-color: #e1f4ff;
+  }
+}
+.stateBox.activeTab .stateTypeCount {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.stateBox.activeTab .stateType {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+}
+
+.noDataFound {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 220px);
+  width: 100%;
+}
+.noDataText {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 8px;
+}
+/* .greenCard{
+  background-color: #1f9c4710;
+} */
+
+.btnGridBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--themeColor);
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--themeColor);
+    .iconRight {
+      filter: brightness(0) saturate(100%) invert(91%) sepia(0%) saturate(2428%)
+        hue-rotate(38deg) brightness(112%) contrast(99%);
+    }
+  }
+}
+.iconRight {
+  transition: 0.2s;
+  width: 18px;
+  height: 18px;
+}
+.btnGridBox .gridView {
+  display: none;
+}
+.btnGridBox.iconRotate .listView {
+  display: none;
+}
+
+.btnGridBox.iconRotate .gridView {
+  display: block;
+}
+
+.tableView {
+  .ULBTableHeader {
+    display: flex;
+    width: 100%;
+    gap: 14px;
+    padding: 12px 16px;
+    transition: all 0.3s;
+    border: 1px solid #ffffff00;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    background-color: var(--white);
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
+  }
+  .th1 {
+    width: calc(100% - 60% - 100px);
+  }
+  .th2 {
+    width: 100px;
+    text-align: right;
+  }
+  .th3,
+  .th4 {
+    width: 30%;
+  }
+  .ULBCardGroup {
+    flex-flow: column;
+    gap: 2px;
+  }
+  .ULBCard {
+    width: 100%;
+    border: 1px solid var(--borderColor);
+    border-radius: 6px;
+    display: flex;
+    padding: 7px 16px;
+    gap: 16px;
+    transition: 0.3s;
+    &:hover {
+      background-color: #3fb2f108;
+      border: 1px solid #3fb2f165;
+    }
+  }
+  .ULBHeader {
+    width: 40%;
+    padding: 0px;
+    border-bottom: none;
+    align-items: center;
+  }
+  .ULBName {
+    width: calc(100% - 100px);
+  }
+  .population {
+    width: 100px;
+  }
+  .ULBLabel {
+    display: none;
+  }
+  .iconPopulation {
+    display: none;
+  }
+  .ULBBody {
+    flex-wrap: nowrap;
+    padding: 0px;
+    width: 60%;
+    .th3,
+    .th4 {
+      width: 60%;
+    }
+  }
+  .ULBDataRow {
+    justify-content: flex-start;
+  }
+  .ULBInnerDataLeft {
+    color: var(--black);
+    font-family: var(--fontGraphik);
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+  .population {
+    color: var(--regularColor);
+    font-family: var(--fontGraphik);
+  }
+  .mobileNo {
+    display: block !important;
+    color: var(--regularColor);
+    margin-left: 5px;
+    line-height: 0px;
+  }
+  .ULBInnerDataRight {
+    width: 30px;
+  }
+  .logoParty {
+    width: 18px;
+  }
+}

@@ -1,0 +1,83 @@
+.box {
+  padding: 16px 16px 16px;
+  background: var(--white);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.LeaveHeading {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.totalLeave {
+  font-size: 15px;
+  font-family: var(--fontGraphik);
+  margin-left: 2px;
+  color: var(--gray);
+}
+
+.boxHeader {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.AddMore {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--themeColor);
+  cursor: pointer;
+  display: inline;
+}
+
+.listBox {
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  &:nth-last-child(1) {
+    margin-bottom: 0px;
+  }
+}
+
+.listBox {
+  border: 1px solid var(--borderColor);
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 6px;
+}
+
+.Icon {
+  width: 24px;
+}
+
+.date {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.daysList {
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  text-transform: capitalize;
+}
+
+.dropdownItemNot {
+  height: 150px;
+  font-size: 12px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.foundNotNo {
+  height: 60px;
+}

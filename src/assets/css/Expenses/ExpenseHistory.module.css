@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 100vh;
+  margin-left: 1rem;
+  padding-top: 0.5rem; 
+}
+
+.card {
+  width: 28rem;
+  min-height: 15rem; /* Minimum height set rahegi, lekin height badh sakti hai */
+  height: auto; /* Card ki height automatically content ke hisaab se adjust hogi */
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: height 0.3s ease-in-out; /* Smooth transition jab height increase ho */
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.text {
+  color: rgb(107, 114, 128);
+}

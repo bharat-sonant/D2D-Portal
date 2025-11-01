@@ -1,0 +1,15 @@
+export const holidayImages = {
+    imgNewYear: require('../Holiday/HolidayImages/imgNewYear.png'),
+    imgMakarSankranti: require('../Holiday/HolidayImages/imgMakarSankranti.png'),
+    imgHolikaDehan: require('../Holiday/HolidayImages/imgHolikaDehan.png'),
+    imgDhulandi: require('../Holiday/HolidayImages/imgDhulandi.png'),
+    imgRakhi: require('../Holiday/HolidayImages/imgRakhi.png'),
+    imgJanmashatmi: require('../Holiday/HolidayImages/imgJanmashatmi.png'),
+    imgMahanavmi: require('../Holiday/HolidayImages/imgMahanavmi.png'),
+    imgDussehra: require('../Holiday/HolidayImages/imgDussehra.png'),
+    imgDhanteras: require('../Holiday/HolidayImages/imgDhanteras.png'),
+    imgChhotiDiwali: require('../Holiday/HolidayImages/imgChhotiDiwali.png'),
+    imgDiwali: require('../Holiday/HolidayImages/imgDiwali.png'),
+    imgGoverdhan: require('../Holiday/HolidayImages/imgGovardhan.png'),
+    imgBhaidooj: require('../Holiday/HolidayImages/imgBhaidooj.png'),
+}

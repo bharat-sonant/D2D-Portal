@@ -1,0 +1,235 @@
+.userRight {
+  width: 100%;
+  height: calc(100vh - 60px);
+  padding: 10px 10px;
+}
+
+.userPage {
+  width: 100%;
+  display: flex;
+}
+
+.selectwidth {
+  width: 250px;
+  background-color: var(--white) !important;
+}
+
+.btnAction {
+  display: flex;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+.headerLeft{
+  display: flex;
+  align-items: center;
+    gap: 5px;
+}
+.headerRight{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* .userLeft {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+  } */
+.userLeft {
+  width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .userLeft {
+    width: 100%;
+    margin-top: 80px;
+    margin-left: 0px;
+  }
+
+  .userRight {
+    width: 100%;
+    position: fixed;
+    right: 0px;
+    top: 70px;
+    background: white;
+    padding: 10px 16px;
+    height: auto;
+    border-bottom: 1px solid var(--borderColor);
+    z-index: 3;
+  }
+
+  .orderFirst {
+    order: 1;
+  }
+
+  .orderSecond {
+    order: 2;
+  }
+}
+
+/* .ButtonAddTask{
+    color: var(--themeColor);
+    border: none;
+    width: 120px;
+    height: 38px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: var(--fontGraphikMedium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--themeColor);
+    line-height: 0px;
+  
+}
+.ButtonAddTask:hover{
+    background-color: var(--themeColor);
+    color: var(--white);
+}
+.addicon {
+    width: 10px;
+    filter: brightness(0) saturate(100%) invert(69%) sepia(75%) saturate(2919%) hue-rotate(172deg) brightness(99%) contrast(91%);
+ }
+ .ButtonAddTask:hover .addicon {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(318deg) brightness(103%) contrast(102%);
+} */
+
+.ButtonAddTask {
+  color: var(--themeColor);
+  border: none;
+  width: 110px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+  gap: 4px;
+}
+
+.addIcon {
+  font-family: var(--fontGraphikMedium);
+  font-size: 18px;
+  color: var(--themeColor);
+}
+
+.ButtonAddTask {
+  transition: all 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.ButtonAddTask:hover {
+  background-color: var(--themeColor);
+  /* Button ka hover color */
+  color: var(--white);
+}
+
+.ButtonAddTask:hover .addIcon {
+  color: var(--white);
+  /* + icon ka color bhi change ho */
+}
+.timeTotalBox {
+  word-wrap: break-word;
+  background-color: var(--white);
+  height: 35px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ced4da;
+  transition: 0.3s;
+  &:hover {
+    .clockIcon1 {
+      display: none;
+    }
+    .clockIcon2 {
+      display: block;
+    }
+  }
+}
+.timeTotalBoxLeft {
+  width: 24px;
+  display: flex;
+}
+.defaultClockIcon {
+  width: 16px;
+}
+.clockIcon2 {
+  display: none;
+}
+.timeTotalBoxRight {
+  width: calc(100% - 24px);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.timeTotal {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.timeLabel {
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+}
+
+.checkBoxBG {
+  margin-left: auto;
+  background-color: var(--white);
+  height: 35px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ced4da;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.TaskcheckBoxLabel {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  line-height: 0px;
+}
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.customCheckbox {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-color: var(--white);
+  border: 1px solid #c1c1c1;
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+  transition: background-color 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.hiddenCheckbox:checked + .customCheckbox::after {
+  content: "";
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  border: solid var(--textSuccess);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}

@@ -1,0 +1,274 @@
+.branchBG {
+  position: relative;
+  background-color: var(--whitefa);
+  padding: 16px;
+  height: calc(100vh - 75px);
+  overflow: auto;
+  padding-bottom: 100px;
+}
+
+.buttonAdd {
+  position: fixed;
+  left: 280px;
+  bottom: 30px;
+}
+
+.boxList {
+  background-color: var(--white);
+  padding: 16px 16px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--borderColor);
+}
+
+.boxLeft {
+  width: 65px;
+  height: 55px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  margin-right: 16px;
+}
+
+.boxRight {
+  /* width: calc(100% - 65px); */
+  width: 100%;
+}
+
+.branchEdit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.cityName {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--darkBlack);
+  text-transform: capitalize;
+}
+
+.Logo {
+  width: 44px;
+}
+
+.LineAdd {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+}
+
+.addressLine {
+  margin-bottom: 14px;
+}
+
+.idShort {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  text-transform: uppercase;
+}
+
+.codeEdit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Icon {
+  width: 14px;
+  cursor: pointer;
+}
+
+.Icon:hover {
+  filter: brightness(0) saturate(100%) invert(70%) sepia(22%) saturate(5778%) hue-rotate(172deg) brightness(97%) contrast(95%);
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 60px);
+  align-items: center;
+  flex-direction: column;
+  font-size: 12px;
+  color: #707070;
+  font-family: var(--fontGraphik);
+}
+
+.toggle {
+  width: 30px;
+  height: 18px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle.on {
+  background-color: #4caf50;
+}
+
+.toggle.off {
+  background-color: #ecbaba;
+}
+
+.toggleCircle {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  transition: left 0.3s ease;
+}
+
+.toggle.on .toggleCircle {
+  left: 15px;
+}
+
+.toggle.off .toggleCircle {
+  left: 3px;
+}
+
+.foundNot {
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.expenseAddBtn {
+  font-size: 14px;
+  color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+  background-color: var(--white);
+  border-radius: 4px;
+  font-family: var(--fontGraphikMedium);
+  width: 40px;
+  height: 30px;
+  line-height: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+
+  &:hover {
+    background-color: var(--themeColor);
+    color: var(--white);
+  }
+}
+
+.buttonStyle {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  padding-bottom: 10px;
+  gap: 5px
+}
+
+.filterButton {
+  width: 40px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid var(--themeColor);
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: grey;
+
+  &:hover {
+    background-color: var(--themeColor);
+    color: var(--white);
+  }
+}
+
+.loadercontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 190px);
+  flex-direction: column;
+}
+
+.loadercontainer p {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+  margin-top: 10px;
+}
+
+.loader {
+  width: 35px;
+  height: 35px;
+  position: relative;
+}
+
+.rotatingBorder {
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-top: 1.6px solid #4ab549;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+
+.logo {
+  width: 35px;
+  height: 35px;
+
+}
+
+.fixedContent {
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #333;
+
+}
+.iconNo {
+    width: 80px;
+}
+
+.textNo {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 5px;
+    font-family: var(--fontGraphik);
+}
+.iconnotData{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100vh - 250px);
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.dropDownList {
+  height: calc(100vh - 60px);
+}

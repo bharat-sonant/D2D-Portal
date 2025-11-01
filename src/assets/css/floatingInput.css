@@ -1,0 +1,366 @@
+@import "../css/variable.css";
+
+input:focus {
+  box-shadow: none !important;
+  /* border: 1px solid #ced4da !important; */
+}
+
+select:focus {
+  box-shadow: none !important;
+  /* border: 1px solid #ced4da !important; */
+}
+textarea:focus {
+  box-shadow: none !important;
+  border: 1px solid #ced4da !important;
+}
+
+/**** Validation Class Start *****/
+.form-control.is-valid,
+.was-validated .form-control:valid {
+  border: 1px solid #198754 !important;
+}
+
+.input-password .form-control.is-invalid,
+.was-validated .form-control:invalid {
+  background-position: right 36px top 8px;
+}
+.form-control.is-invalid:focus,
+.was-validated .form-control:invalid:focus {
+  border-color: none;
+  box-shadow: none;
+}
+.formCalendar .form-control.is-invalid,
+.was-validated .form-control:invalid {
+  background-position: right 36px top 10px;
+  background-size: 16px 16px;
+}
+/**** Validation Class End *****/
+
+/**** Floating Input CSS Start ****/
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-floating .form-control {
+  width: 100%;
+  color: var(--black);
+  font-size: 13px;
+  border-color: var(--borderColor);
+  border-width: 1px;
+  border-style: solid;
+  height: 36px;
+  padding-top: 6px;
+  padding-bottom: 4px;
+  font-family: var(--fontGraphik);
+  position: relative;
+}
+.form-floating > label {
+  padding: 12px;
+  color: var(--lightGray);
+  font-family: var(--fontGraphik) !important;
+  font-size: 13px;
+}
+.form-control::placeholder {
+  color: var(--lightGray) !important;
+  font-family: var(--fontGraphik) !important;
+  font-size: 13px;
+}
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+  opacity: 1;
+  transform: scale(0.85) translateY(-22px) translateX(0.15rem);
+  background: #fff;
+  padding: 0px 12px 0px 12px;
+  height: 24px;
+  margin-top: 10px;
+}
+.form-floating > .form-control:focus,
+.form-floating > .form-control:not(:placeholder-shown) {
+  padding-top: 6px;
+  padding-bottom: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+}
+
+/**** Floating Input New CSS Start ****/
+.form-floating-label.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+  opacity: 1;
+  background-color: transparent;
+  transform: scale(0.85) translateY(-6px) translateX(0.15rem);
+  padding: 0px 12px 0px 40px;
+  margin-top: 10px;
+}
+.form-floating-label.form-floating .form-control {
+  height: 52px;
+  border-radius: 6px;
+  position: relative;
+  padding: 0px 36px;
+}
+.form-floating-label.form-floating > .form-control:focus,
+.form-floating > .form-control:not(:placeholder-shown) {
+  padding-top: 15px;
+  padding-bottom: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+}
+.textbox-reason.form-floating > .form-control:not(:placeholder-shown) {
+  padding-top: 0px;
+}
+.form-floating-label.form-floating {
+  margin-bottom: 10px;
+}
+.form-floating-label.form-floating > label {
+  padding: 16px 40px;
+  color: #ababab;
+  font-family: var(--fontGraphik) !important;
+  font-size: 13px;
+}
+.form-floating-label.form-floating .form-control:disabled,
+.form-control[readonly] {
+  background-color: #f5f5f5;
+  opacity: 1;
+  cursor: no-drop;
+}
+.form-floating-label .form-control.is-invalid,
+.was-validated .form-control:invalid {
+  border: 1px solid var(--textDanger) !important;
+}
+.input-password .form-floating-label .form-control.is-invalid,
+.was-validated .form-control:invalid {
+  background-position: right 36px top 16px;
+}
+
+/**** Floating Input New CSS End ****/
+
+/**** Floating Input CSS End ****/
+
+/* select input CSS Start */
+.css-13cymwt-control {
+  width: 100%;
+  color: #333333;
+  font-size: 14px;
+  border-color: #e5e5e5 !important;
+  border-width: 1px !important;
+  border-style: solid;
+  height: 44px;
+  font-family: var(--fontGraphik);
+  font-weight: 400;
+  position: relative;
+}
+
+.css-1fdsijx-ValueContainer {
+  height: 44px;
+}
+.css-b62m3t-container {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: #333333;
+}
+.css-1u9des2-indicatorSeparator {
+  display: none;
+}
+.css-tj5bde-Svg {
+  display: inline-block;
+  fill: #121212 !important;
+  line-height: 1;
+  stroke: white !important;
+  stroke-width: 1px !important;
+}
+.css-1mcso5b-placeholder {
+  font-size: 13px;
+  color: var(--lightGray) !important;
+  font-family: var(--fontGraphik) !important;
+}
+.css-1dimb5e-singleValue {
+  font-family: var(--fontGraphik);
+  font-weight: 400;
+  color: #333333;
+  font-size: 14px;
+}
+.css-1jqq78o-placeholder {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  color: #b6b6b6;
+  font-size: 13px;
+}
+.css-276s69-control {
+  border-color: #e5e5e5 !important;
+}
+
+/*** File Upload ***/
+.labelUpload {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--lightGray);
+  margin-bottom: 5px;
+}
+.file-upload-container {
+  display: flex;
+  gap: 10px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background-color: var(--white);
+  color: var(--black);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  height: 75px;
+  width: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-upload-button:hover {
+  background-color: var(--whitef5);
+}
+
+.add-icon {
+  font-size: 28px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--lightBlack);
+}
+
+.file-preview {
+  padding: 10px;
+  background-color: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+
+  height: 90px;
+  width: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-preview img {
+  height: 80px;
+  width: auto;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/** Checkbox Selected **/
+.checkBox {
+  margin-top: 10px;
+}
+.form-check-input-custom {
+  font-size: 18px;
+  margin: 0px 8px 0px 0px;
+}
+.form-check-input:checked {
+  background-color: var(--themeColor);
+  border-color: var(--themeColor);
+}
+.form-check-text {
+  font-size: 13px;
+  font-family: var(--fontGraphik) !important;
+  color: var(--lightBlack) !important;
+  margin-left: 0px;
+  display: flex;
+}
+
+/** Disabled Input **/
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #eff2f7;
+  opacity: 1;
+  cursor: no-drop;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+/** Custom Select Dropdown **/
+.customDropdownBtn {
+  width: 100%;
+  background: transparent !important;
+  border: none;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  position: relative;
+  height: 36px;
+  &:after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    width: 12px;
+    height: 12px;
+    background-image: url(../images/icons/iconDown.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
+.dropdown .newSelectDropdown {
+  transform: translate(0px, 4px) !important;
+}
+.selectDropdown {
+  width: 100%;
+  background-color: var(--white);
+box-shadow: 0 0 20px 0 #0000001a;
+  padding: 0px;
+  border-radius: 6px;
+  margin: 0px;
+  overflow: hidden;
+  border: 1px solid var(--borderColor);
+  transform: translate(0px, 38px) !important;
+  min-height: 50px;
+  max-height: 250px;
+  overflow: auto;
+  z-index: 2;
+}
+.dropdownOwner.show {
+  transform: translate(0px, 4px) !important;
+  min-height: 50px;
+  max-height: 250px;
+  overflow: auto;
+  top: 100%;
+}
+.customDropdownItem {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  border: none;
+  background: transparent;
+  &:hover {
+    background-color: var(--whitef5);
+  }
+}
+.dropdown .newExpenseDropdown {
+  transform: translate(0px, 4px) !important;
+}
+
+.jodit-wysiwyg b,
+.jodit-wysiwyg strong {
+  font-weight: bold;
+  color: var(--black); /* or any color you want */
+  font-family: var(
+    --fontGraphikSemibold
+  ); /* Optional: use your semibold font */
+}
+/* Accordion open/active state - rotate the icon */
+.accordion-button:not(.collapsed) + .accordion-collapse .toggleIcon {
+  transform: rotate(180deg); /* Rotate image when expanded */
+}

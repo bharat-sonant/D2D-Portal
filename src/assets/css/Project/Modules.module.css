@@ -1,0 +1,60 @@
+.teamMemberBox {
+  padding: 16px 16px;
+  border-radius: 6px;
+  background-color: var(--white);
+  width: 100%;
+  margin-bottom: 10px;
+}
+.teamMemberBoxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.headerTitle {
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+
+.btnAdd {
+  font-size: 14px;
+  color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+  background-color: var(--white);
+  border-radius: 4px;
+  font-family: var(--fontGraphikMedium);
+  width: 26px;
+  height: 22px;
+  line-height: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+  &:hover {
+    background-color: var(--themeColor);
+    color: var(--white);
+  }
+}
+.iconEdit {
+  width: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(57%) saturate(6247%)
+      hue-rotate(164deg) brightness(102%) contrast(102%);
+  }
+}
+.Moduleul {
+  padding: 0px;
+  margin: 0px;
+}
+.ModuleLi {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  list-style-type: none;
+  padding: 6px 0px;
+}
+
+

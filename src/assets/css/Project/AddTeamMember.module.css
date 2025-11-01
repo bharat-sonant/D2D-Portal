@@ -1,0 +1,79 @@
+
+.teamMemberUL {
+  padding: 0px;
+  margin-top: 10px;
+}
+.teamMemberLi {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  list-style-type: none;
+  padding: 6px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.teamMemberLiLeft{
+  width: calc(100% - 195px);
+}
+.teamMemberLiRight{
+  width: 195px;
+  font-size: 13px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  display: flex;
+  justify-content: flex-end;
+}
+.available{
+  color: var(--textSuccess);
+}
+.customCheckbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.customCheckbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+
+/* Hide default checkbox */
+.customCheckbox input {
+  display: none;
+}
+
+/* Custom checkbox style */
+.checkboxMark {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+}
+
+/* Checkmark when checked */
+.customCheckbox input:checked + .checkboxMark {
+  background-color: var(--themeColor);
+  border: 1px solid var(--themeColor);
+}
+
+.customCheckbox input:checked + .checkboxMark::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 2px;
+  width: 4px;
+  height: 9px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}

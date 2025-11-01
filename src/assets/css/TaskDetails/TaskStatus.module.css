@@ -1,0 +1,211 @@
+.DetailsCard {
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 10px;
+  /* overflow: hidden; */
+}
+
+/* Header Section */
+.CardHeader {
+  display: flex;
+  align-items: center;
+  padding: 0px;
+  justify-content: space-evenly;
+  width: 100%;
+}
+.wFull{
+  width: 100%!important;
+}
+.btnDefault {
+  background-color: #0ab39c1c;
+  color: #0ab39c;
+  border: none;
+  border-radius: 0px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+}
+.btnOpen{
+  width: 100%;
+  background-color: #6c757d12;
+  color: #6c757d;
+}
+.dropdown {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.StatusDropdown {
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  color: var(--black);
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid var(--borderColor);
+  width: 100%;
+}
+
+.TaskidInformation {
+  font-size: 13px;
+  font-family: "Poppins", sans-serif;
+}
+.cardBody {
+  padding: 10px 16px;
+}
+.StatusDesign {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.StatusDesignLeft {
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  color: var(--lightBlack);
+  width: 100px;
+}
+
+.StatusDesignRight {
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  color: var(--black);
+  width: calc(100% - 100px);
+}
+.statusPriority {
+  position: relative;
+  cursor: pointer;
+}
+.MenuWrapper {
+  position: absolute;
+  top: 35px;
+  left: 100px;
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: #00000033 0px 2px 5px;
+  padding: 0px;
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  color: var(--black);
+  width: 120px;
+  z-index: 2;
+}
+.MenuItem {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.ButtonCompleted {
+  color: #0ab39c;
+  border: none;
+  width: 160px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #0ab39c;
+  line-height: 0px;
+  gap: 4px;
+  margin-left: auto;
+}
+
+
+
+.ButtonCompleted {
+  transition: all 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.ButtonCompleted:hover {
+  background-color: #0ab39c;
+  /* Button ka hover color */
+  color: var(--white);
+}
+
+.ButtonCompleted:hover .addIcon {
+  color: var(--white)
+    /* + icon ka color bhi change ho */
+}
+
+.ButtonDone {
+  color: #24d34d;
+  border: none;
+  width: 160px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #24d34d;
+  line-height: 0px;
+  gap: 4px;
+  margin-left: auto;
+}
+
+
+
+.ButtonDone {
+  transition: all 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.ButtonDone:hover {
+  background-color: #24d34d;
+  /* Button ka hover color */
+  color: var(--white);
+}
+
+.ButtonDone:hover .addIcon {
+  color: var(--white)
+    /* + icon ka color bhi change ho */
+}
+
+.ButtonOpen {
+  color: #6c757d;
+  border: none;
+  width: 160px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid#6c757d;
+  line-height: 0px;
+  gap: 4px;
+  margin-left: auto;
+}
+
+
+
+.ButtonOpen {
+  transition: all 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.ButtonOpen:hover {
+  background-color: #6c757d12;
+  /* Button ka hover color */
+  color: black;
+}
+
+.ButtonOpen:hover .addIcon {
+  color: black
+    /* + icon ka color bhi change ho */
+}
+
+/* background-color: #6c757d12;
+color: #6c757d; */
