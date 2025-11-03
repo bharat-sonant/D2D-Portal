@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Style/Attendance/AttendanceData.module.css";
-import {  getAllWards } from "../../services/WardsServices/WardsService";
+import {  getAllVehicles, getAllWards } from "../../services/WardsServices/WardsService";
 import { Loader } from "lucide-react";
 import * as common from '../../common/common'
 
 const Wards = () => {
   const [wardList, setWardList] = useState([]);
+  const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true); // 👈 start with loading true
 
   useEffect(() => {
     fetchWardList();
+    fetchVehicles()
   }, []);
 
   const fetchWardList = async () => {
@@ -25,6 +27,25 @@ const Wards = () => {
     } catch (error) {
       common.setAlertMessage("error", "Failed to fetch wards");
       setWardList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    const fetchVehicles = async () => {
+    try {
+      const result = await getAllVehicles();
+      console.log('resulttt', result)
+      if (result?.status === "success") {
+        const cleanedList = result.data.filter(Boolean);
+        setVehicles(cleanedList);
+      } else {
+        setVehicles([]);
+        common.setAlertMessage("error", 'wards not found')
+      }
+    } catch (error) {
+      common.setAlertMessage("error", "Failed to fetch wards");
+      setVehicles([]);
     } finally {
       setLoading(false);
     }
