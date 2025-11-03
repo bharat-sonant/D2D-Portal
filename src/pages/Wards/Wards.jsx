@@ -44,10 +44,7 @@ const Wards = () => {
         common.setAlertMessage("error", 'wards not found')
       }
     } catch (error) {
-      common.setAlertMessage("error", "Failed to fetch wards");
       setVehicles([]);
-    } finally {
-      setLoading(false);
     }
   };
 
