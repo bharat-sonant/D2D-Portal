@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Style/Attendance/AttendanceData.module.css";
-import { getAllVehicles, getAllWards } from "../../services/WardsServices/WardsService";
+import {  getAllWards } from "../../services/WardsServices/WardsService";
 import { Loader } from "lucide-react";
+import * as common from '../../common/common'
 
 const Wards = () => {
   const [wardList, setWardList] = useState([]);
@@ -18,11 +19,11 @@ const Wards = () => {
         const cleanedList = result.data.filter(Boolean);
         setWardList(cleanedList);
       } else {
-        console.error("Invalid ward data:", result);
         setWardList([]);
+        common.setAlertMessage("error", 'wards not found')
       }
     } catch (error) {
-      console.error("Error fetching ward list:", error);
+      common.setAlertMessage("error", "Failed to fetch wards");
       setWardList([]);
     } finally {
       setLoading(false);
@@ -64,14 +65,14 @@ const Wards = () => {
                 }}
               >
                 <tr>
-                  <th>Sr No.</th>
+                  <th style={{ width: "100px", textAlign: "left" }}>Sr No.</th>
                   <th>Ward</th>
                 </tr>
               </thead>
               <tbody>
                 {wardList.map((record, index) => (
                   <tr key={index}>
-                    <td>{index + 1}</td>
+                    <td style={{ width: "100px", textAlign: "left" }}>{index + 1}</td>
                     <td>{record || "--"}</td>
                   </tr>
                 ))}
