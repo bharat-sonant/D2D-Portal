@@ -2,7 +2,6 @@ import {
   ExpenseAdd,
   ExpenseCategoryAdd,
   ExpenseCategoryIdAdd,
-  ExpenseDelete,
   ExpenseEntry,
   ExpenseEntryClear,
   ExpenseEntryDelete,

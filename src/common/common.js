@@ -46,7 +46,7 @@ export const getCurrentMonthName = (monthNumber) => {
   month[9] = "October";
   month[10] = "November";
   month[11] = "December";
-  if (monthNumber != undefined) {
+  if (monthNumber !== undefined) {
     return month[monthNumber];
   } else {
     return month[d.getMonth()];
@@ -185,7 +185,7 @@ export const getGlobalTime = async () => {
       data: { time: formattedTime, date: serverDate },
     };
   } catch (error) {
-    console.error("Error fetching global time:", error.message);
+    console.error("Error fetching global time: - common.js:188", error.message);
     return null;
   }
 };
@@ -195,7 +195,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
   try {
     if (!("geolocation" in navigator)) {
-      console.error("Geolocation is not supported by this browser.");
+      console.error("Geolocation is not supported by this browser. - common.js:198");
       alert("Geolocation is not supported by this browser.");
       return { status: "error", data: fallbackCoords };
     }
@@ -206,12 +206,12 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
         const permissionStatus = await navigator.permissions.query({ name: "geolocation" });
 
         if (permissionStatus.state === "denied") {
-          console.warn("Location permission is denied.");
+          console.warn("Location permission is denied. - common.js:209");
           setIsLocationVisible(true);
           return { status: "error", data: fallbackCoords };
         }
       } catch (permErr) {
-        console.warn("Permissions API check failed:", permErr.message);
+        console.warn("Permissions API check failed: - common.js:214", permErr.message);
         // Continue anyway, not a blocker
       }
     }
@@ -229,7 +229,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
           });
         },
         (error) => {
-          console.error("Error getting location:", error.message);
+          console.error("Error getting location: - common.js:232", error.message);
           setIsLocationVisible(true);
           resolve({ status: "error", data: fallbackCoords });
         },
@@ -239,7 +239,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
     return await locationPromise;
   } catch (error) {
-    console.error("Unexpected error getting location:", error.message);
+    console.error("Unexpected error getting location: - common.js:242", error.message);
     setIsLocationVisible(true);
     return { status: "error", data: fallbackCoords };
   }
@@ -370,7 +370,7 @@ export function base64ToBlob(base64Data, contentType = '') {
     return new Blob(byteArrays, { type: contentType || 'image/jpeg' });
   }
   catch(error){
-    console.error('Error in Blob conversion :',error);
+    console.error('Error in Blob conversion : - common.js:373',error);
     return null;
   }
  

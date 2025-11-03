@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
-import AdminDashboard from "../pages/Dashboard/AdminDashboard";
-import ManagerDashboard from "../pages/Dashboard/ManagerDashboard";
 import { usePermissions } from "../context/PermissionContext";
 import LocationPermissionAlertDialog from "../components/AlertDialog/LocationPermissionAlertDialog";
 import CameraPermissionAlertDialog from "../components/AlertDialog/CameraPermissionAlertDialog";
@@ -17,13 +15,11 @@ import {
   desktopNotificationStep,
 } from "../assets/PermissionAlertMessage/Message";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import dayjs from "dayjs";
 import NotificationPermissionModal from "../components/AlertDialog/NotificationPermissionModal";
 import NewUpdateAlertWindow from "../components/AlertDialog/NewUpdateAlertWindow";
-import { Loader } from "lucide-react";
-import ProtectedRouter from './ProtectedRouter/ProtectedRouter'
 import Wards from "../pages/Wards/Wards";
+import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 
 const RouterComponent = () => {
   const {
@@ -33,14 +29,9 @@ const RouterComponent = () => {
     setIsCameraPermissionGranted,
     setIsNotificationPermissionGranted,
     isNotificationPermissionGranted,
-    isHolidayPermissionGranted,
-    setIsHolidayPermissionGranted,
-    permissionGranted,
-    setPermissionGranted,
     isUserActive,
     ref,
     empCode,
-    ownerStatus,
     setOwnerStatus,
     showUpdateNotification,
     setShowUpdateNotification,
@@ -48,9 +39,6 @@ const RouterComponent = () => {
 
   const loginStatus = localStorage.getItem("islogin");
   const loggedInempCode = localStorage.getItem("empCode");
-  const Company = localStorage.getItem("company");
-  const [userRole, setUserRole] = useState("");
-  const [showReviewer, setShowReviewer] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -87,16 +75,26 @@ const RouterComponent = () => {
             </>
           }
         />
-       
 
-       
+
+
 
         <Route
           path="/wards"
           element={
             <>
               <MainLayout />
-              <Wards/>
+              <Wards />
+            </>
+          }
+        />
+
+        <Route
+          path="/daily-assignment"
+          element={
+            <>
+              <MainLayout />
+              <DailyAssignment />
             </>
           }
         />

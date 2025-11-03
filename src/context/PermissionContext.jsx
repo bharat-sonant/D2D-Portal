@@ -1,4 +1,4 @@
-import  { createContext, useContext, useEffect, useRef, useState } from "react";
+import  { createContext, useContext, useRef, useState } from "react";
 
 const PermissionContext = createContext();
 
@@ -15,7 +15,6 @@ export const PermissionProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [isUserActive, setIsUserActive] = useState('');
     const ref = useRef(null);
-    let company = localStorage.getItem("company")
     let empCode = localStorage.getItem("empCode")
     return (
         <PermissionContext.Provider
