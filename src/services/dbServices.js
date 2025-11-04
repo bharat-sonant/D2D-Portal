@@ -19,9 +19,9 @@ export const getData = (path) => {
  
   return new Promise((resolve) => {
     get(ref(database, path)).then((snapshot) => {
-      console.log(snapshot)
+      // console.log(snapshot)
       let data = snapshot.val();
-      console.log(data)
+      // console.log(data)
       resolve(data);
     });
   });
@@ -96,7 +96,7 @@ export const deleteDirectory = async (directoryPath) => {
             })
             .catch((error) => {
               reject("fail");
-              console.error("Error while deleting items: ", error);
+              console.error("Error while deleting items: - dbServices.js:99", error);
             });
         } else {
           resolve("success");
@@ -104,7 +104,7 @@ export const deleteDirectory = async (directoryPath) => {
       })
       .catch((error) => {
         reject("fail");
-        console.error("Error while listing items: ", error);
+        console.error("Error while listing items: - dbServices.js:107", error);
       });
   });
 };

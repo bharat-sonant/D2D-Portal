@@ -31,6 +31,16 @@ export const getLocalTime = () => {
   return phoneTime;
 };
 
+export const getStorageCity = () => {
+  let city = localStorage.getItem("city");
+  let cityName = "";
+  if (city == "DevTest") {
+    cityName = "DevTest"
+  }
+  return cityName;
+
+}
+
 export const getCurrentMonthName = (monthNumber) => {
   var d = new Date();
   var month = new Array();
@@ -47,7 +57,7 @@ export const getCurrentMonthName = (monthNumber) => {
   month[10] = "November";
   month[11] = "December";
   if (monthNumber !== undefined) {
-    return month[monthNumber];
+    return month[monthNumber - 1];
   } else {
     return month[d.getMonth()];
   }
@@ -86,6 +96,25 @@ export const convertDataUrlToBlob = (dataUrl) => {
   }
 
   return new Blob([arrayBuffer], { type: mimeType });
+};
+
+export const getMonthNumber = (monthName) => {
+  if (!monthName) return '';
+  const months = {
+    January: '01',
+    February: '02',
+    March: '03',
+    April: '04',
+    May: '05',
+    June: '06',
+    July: '07',
+    August: '08',
+    September: '09',
+    October: '10',
+    November: '11',
+    December: '12',
+  };
+  return months[monthName] || '';
 };
 
 export const setAlertMessage = (type, message) => {
@@ -185,7 +214,7 @@ export const getGlobalTime = async () => {
       data: { time: formattedTime, date: serverDate },
     };
   } catch (error) {
-    console.error("Error fetching global time: - common.js:188", error.message);
+    console.error("Error fetching global time: - common.js:217", error.message);
     return null;
   }
 };
@@ -195,7 +224,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
   try {
     if (!("geolocation" in navigator)) {
-      console.error("Geolocation is not supported by this browser. - common.js:198");
+      console.error("Geolocation is not supported by this browser. - common.js:227");
       alert("Geolocation is not supported by this browser.");
       return { status: "error", data: fallbackCoords };
     }
@@ -206,12 +235,12 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
         const permissionStatus = await navigator.permissions.query({ name: "geolocation" });
 
         if (permissionStatus.state === "denied") {
-          console.warn("Location permission is denied. - common.js:209");
+          console.warn("Location permission is denied. - common.js:238");
           setIsLocationVisible(true);
           return { status: "error", data: fallbackCoords };
         }
       } catch (permErr) {
-        console.warn("Permissions API check failed: - common.js:214", permErr.message);
+        console.warn("Permissions API check failed: - common.js:243", permErr.message);
         // Continue anyway, not a blocker
       }
     }
@@ -229,7 +258,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
           });
         },
         (error) => {
-          console.error("Error getting location: - common.js:232", error.message);
+          console.error("Error getting location: - common.js:261", error.message);
           setIsLocationVisible(true);
           resolve({ status: "error", data: fallbackCoords });
         },
@@ -239,7 +268,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
     return await locationPromise;
   } catch (error) {
-    console.error("Unexpected error getting location: - common.js:242", error.message);
+    console.error("Unexpected error getting location: - common.js:271", error.message);
     setIsLocationVisible(true);
     return { status: "error", data: fallbackCoords };
   }
@@ -354,25 +383,24 @@ export function base64ToBlob(base64Data, contentType = '') {
     const sliceSize = 1024;
     const byteCharacters = atob(base64Data.split(',')[1]);
     const byteArrays = [];
- 
+
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
       const slice = byteCharacters.slice(offset, offset + sliceSize);
- 
+
       const byteNumbers = new Array(slice.length);
       for (let i = 0; i < slice.length; i++) {
         byteNumbers[i] = slice.charCodeAt(i);
       }
- 
+
       const byteArray = new Uint8Array(byteNumbers);
       byteArrays.push(byteArray);
     }
- 
+
     return new Blob(byteArrays, { type: contentType || 'image/jpeg' });
   }
-  catch(error){
-    console.error('Error in Blob conversion : - common.js:373',error);
+  catch (error) {
+    console.error('Error in Blob conversion : - common.js:402', error);
     return null;
   }
- 
+
 }
- 

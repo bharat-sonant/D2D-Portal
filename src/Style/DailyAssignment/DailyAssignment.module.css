@@ -1,0 +1,91 @@
+.container {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 120px;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-weight: 600;
+}
+
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.loading,
+.noData {
+  margin-top: 300px;
+  font-size: 15px;
+  color: #666;
+  text-align: center;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* space between spinner and text */
+  height: 200px;
+  /* optional: centers vertically */
+}
+
+.loadingText {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 8px;
+  font-family: sans-serif;
+  font-weight: bold;
+}
