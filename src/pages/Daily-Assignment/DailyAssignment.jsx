@@ -4,7 +4,8 @@ import { getAllWardsList } from '../../actions/DailyAssignment/DailyAssignmentAc
 import styles from '../../Style/DailyAssignment/DailyAssignment.module.css';
 import YearMonthSelector from '../../components/YearMonthSelector/YearMonthSelector';
 import dayjs from 'dayjs';
-import { Spinner } from 'react-bootstrap';
+import { Spinner, Modal, Button } from 'react-bootstrap';
+import { Eye } from 'react-bootstrap-icons'; // npm install react-bootstrap-icons
 
 const DailyAssignment = () => {
     const [filteredData, setFilteredData] = useState([]);
@@ -13,11 +14,13 @@ const DailyAssignment = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedWard, setSelectedWard] = useState('');
+    const [previewData, setPreviewData] = useState(null);
+    const [showPreview, setShowPreview] = useState(false);
+    const [previewType, setPreviewType] = useState('on'); // "on" or "off"
 
     useEffect(() => {
         const fetchWards = async () => {
             const wardsList = await getAllWardsList(setWards);
-            console.log(wardsList)
             if (wardsList && wardsList.length > 0) {
                 setSelectedWard(wardsList[0]);
             }
@@ -46,7 +49,7 @@ const DailyAssignment = () => {
                         workPercentage: item.workPercentageRemark,
                         driver: item.driver || '-',
                         helper: item.helper || '-',
-                        vehicle: item.vehicle || '-',
+                        vehicle: item.vehicle || '-'
                     }));
                     setFilteredData(formatted);
                 } else {
@@ -85,7 +88,6 @@ const DailyAssignment = () => {
 
     const formatTimeWithAMPM = (timeString) => {
         if (!timeString || timeString === '-') return '-';
-
         const [hour, minute] = timeString.split(':');
         let h = parseInt(hour, 10);
         const m = minute || '00';
@@ -94,6 +96,22 @@ const DailyAssignment = () => {
         return `${h}:${m} ${ampm}`;
     };
 
+    // 🔍 Fetch and show Duty On or Off images
+    const getImages = async (zone, date, type) => {
+        setLoading(true);
+        const response = await service.getDutyOnOffImagesByDate(zone, date);
+        setLoading(false);
+
+        console.log('📸 Image Response:', response);
+
+        if (response?.status?.toLowerCase() === 'success' && response.data) {
+            setPreviewData(response.data);
+            setPreviewType(type);
+            setShowPreview(true);
+        } else {
+            alert('No images found for this date.');
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -131,6 +149,8 @@ const DailyAssignment = () => {
                                 <th>Driver</th>
                                 <th>Helper</th>
                                 <th>Vehicle</th>
+                                <th>Duty On Images</th>
+                                <th>Duty Off Images</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,12 +164,109 @@ const DailyAssignment = () => {
                                     <td>{formatMultiline(item.driver)}</td>
                                     <td>{formatMultiline(item.helper)}</td>
                                     <td>{formatMultiline(item.vehicle)}</td>
+                                    <td
+                                        style={{ cursor: 'pointer', color: '#007bff' }}
+                                        onClick={() => getImages(item.zone, item.date, 'on')}
+                                    >
+                                        <Eye size={20} />
+                                    </td>
+                                    <td
+                                        style={{ cursor: 'pointer', color: '#dc3545' }}
+                                        onClick={() => getImages(item.zone, item.date, 'off')}
+                                    >
+                                        <Eye size={20} />
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
             )}
+
+            {/* 🖼️ Modal for image preview */}
+            <Modal
+                show={showPreview}
+                onHide={() => setShowPreview(false)}
+                size="xl"
+                centered
+                scrollable
+                style={{width:'100%'}}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {previewType === 'on' ? 'Duty On Images' : 'Duty Off Images'} ({previewData?.date})
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {previewData ? (
+                        <>
+                            {previewType === 'on' ? (
+                                <>
+                                    <h5>Duty On Images</h5>
+                                    <div className={styles.imageGrid}>
+                                        {previewData.dutyInImages?.map((img, idx) => (
+                                            <>
+                                            {console.log(img)}
+                                            <img
+                                                key={idx}
+                                                src={img}
+                                                alt={`Duty On ${idx + 1}`}
+                                                className={styles.previewImage}
+                                            />
+                                            </>
+                                        ))}
+                                    </div>
+
+                                    <h5>Duty On Meter Images</h5>
+                                    <div className={styles.imageGrid}>
+                                        {previewData.dutyInMeterImages?.map((img, idx) => (
+                                            <img
+                                                key={idx}
+                                                src={img}
+                                                alt={`Duty On Meter ${idx + 1}`}
+                                                className={styles.previewImage}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <h5>Duty Off Images</h5>
+                                    <div className={styles.imageGrid}>
+                                        {previewData.dutyOutImages?.map((img, idx) => (
+                                            <img
+                                                key={idx}
+                                                src={img}
+                                                alt={`Duty Off ${idx + 1}`}
+                                                className={styles.previewImage}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <h5>Duty Off Meter Images</h5>
+                                    <div className={styles.imageGrid}>
+                                        {previewData.dutyOutMeterImages?.map((img, idx) => (
+                                            <img
+                                                key={idx}
+                                                src={img}
+                                                alt={`Duty Off Meter ${idx + 1}`}
+                                                className={styles.previewImage}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <p>No images available.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowPreview(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };
