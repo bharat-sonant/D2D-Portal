@@ -20,6 +20,7 @@ import NotificationPermissionModal from "../components/AlertDialog/NotificationP
 import NewUpdateAlertWindow from "../components/AlertDialog/NewUpdateAlertWindow";
 import Wards from "../pages/Wards/Wards";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
+import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 
 const RouterComponent = () => {
   const {
@@ -95,6 +96,15 @@ const RouterComponent = () => {
             <>
               <MainLayout />
               <DailyAssignment />
+            </>
+          }
+        />
+
+        <Route
+          path="/start-assignment"
+          element={
+            <>
+              <StartAssignment />
             </>
           }
         />
