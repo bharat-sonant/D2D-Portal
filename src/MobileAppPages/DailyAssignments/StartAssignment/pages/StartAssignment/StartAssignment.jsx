@@ -1,11 +1,15 @@
 import React from "react";
 import styles from "../../styles/StartAssignment.module.css";
+import { useLocation } from "react-router-dom";
 
 const StartAssignment = () => {
+  const location = useLocation()
+
+  const queryParams = new URLSearchParams(location.search);
   // Sample data — replace with real data later
-  const ward = "Ward 14 - Shastri Nagar";
-  const user = "Govind Sharma";
-  const city = "Jaipur";
+   const ward = queryParams.get("ward") || "N/A";
+  const user = queryParams.get("user") || "N/A";
+  const city = queryParams.get("city") || "N/A";
 
   return (
     <div className={styles.container}>
