@@ -3,12 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaUser } from "react-icons/fa";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdStart } from "react-icons/md";
 import { RiShutDownLine } from "react-icons/ri";
 import { PulseLoader } from "react-spinners";
 import { usePermissions } from "../context/PermissionContext";
 import { FaCity } from "react-icons/fa6";
-import { LucideUserRoundCheck } from "lucide-react";
+import { AlignStartVertical, ListStartIcon, LucideUserRoundCheck } from "lucide-react";
+import { SkipStartBtn, SkipStartCircleFill } from "react-bootstrap-icons";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const navigate = useNavigate();
@@ -172,6 +173,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 style={{ color: navbarStyle.textColor }}
               >
                 Daily Assignment
+              </span>
+            </Link>
+
+             <Link
+              aria-current="page"
+              to="/start-assignment"
+              title="Start Assignment"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/start-assignment" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/start-assignment"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <AlignStartVertical 
+                className={`${styles.iconNav} ${location.pathname === "/start-assignment"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Start Assignment
               </span>
             </Link>
           </ul>
