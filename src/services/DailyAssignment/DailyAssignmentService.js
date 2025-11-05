@@ -11,7 +11,6 @@ const getDriverHelperData = (zone, date, list, month) => {
         if (zone && date && list && list.length > 0) {
             const year = date.split('-')[0];
 
-            // 🔹 Path matches your Firebase structure
             const response = await db.getData(`WasteCollectionInfo/${zone}/${year}/${month}/${date}/WorkerDetails`);
 
 
@@ -20,7 +19,6 @@ const getDriverHelperData = (zone, date, list, month) => {
                 const helperName = response.helperName || '---';
                 const vehicle = response.vehicle || '---';
 
-                // 🔹 Assign same worker info to all items of that day
                 const updatedList = list.map(item => ({
                     ...item,
                     driver: driverName,
@@ -29,7 +27,6 @@ const getDriverHelperData = (zone, date, list, month) => {
                 }));
                 resolve(updatedList);
             } else {
-                // 🔹 If no worker details, still return the list
                 resolve(list);
             }
         } else {
@@ -72,8 +69,6 @@ export const getDutyOnOffImagesByDate = async (zone, date) => {
             );
         };
 
-
-        // Build all image URL lists
         const dutyInImages = makeImageUrls(dutyOnImage, 'DutyOnImages');
         const dutyOutImages = makeImageUrls(dutyOutImage, 'DutyOutImages');
         const dutyInMeterImages = makeImageUrls(dutyOnMeterImage, 'DutyOnMeterReadingImages');
@@ -89,7 +84,7 @@ export const getDutyOnOffImagesByDate = async (zone, date) => {
         });
 
     } catch (error) {
-        console.error("Error in getDutyOnOffImagesByDate: - DailyAssignmentService.js:92", error);
+        console.error("Error in getDutyOnOffImagesByDate: - DailyAssignmentService.js:87", error);
         return common.setResponse("Fail", "Error fetching data", { error });
     }
 };
@@ -97,71 +92,68 @@ export const getDutyOnOffImagesByDate = async (zone, date) => {
 
 export const getDutyOnOffList = (zone, date) => {
     return new Promise(async (resolve) => {
-        if (zone && date) {
-            try {
-                const year = date.split('-')[0];
-                const month = await common.getCurrentMonthName(Number(date.split('-')[1]));
-                const monthPath = `/WasteCollectionInfo/${zone}/${year}/${month}`;
-                const monthData = await db.getData(monthPath);
+        if (!zone || !date) {
+            return resolve(common.setResponse(failStatus, 'Invalid Params !!', { zone, date }));
+        }
 
-                if (!monthData || Object.keys(monthData).length === 0) {
-                    return resolve(common.setResponse(failStatus, failMessage, {}));
-                }
+        try {
+            const year = date.split('-')[0];
+            const month = await common.getCurrentMonthName(Number(date.split('-')[1]));
+            const datePath = `/WasteCollectionInfo/${zone}/${year}/${month}/${date}`;
+            const dateData = await db.getData(datePath);
 
-                let allDutyRecords = [];
-
-                for (const [dateKey, dateData] of Object.entries(monthData)) {
-                    if (!dateData.Summary) continue;
-
-                    const { dutyInTime, dutyOutTime, workPercentageRemark } = dateData.Summary;
-
-                    let remarkArray = workPercentageRemark ? workPercentageRemark.split(',') : [];
-                    let dayList = [];
-
-                    if (dutyInTime) {
-                        const inTimeList = dutyInTime.split(',');
-                        const outTimeList = dutyOutTime ? dutyOutTime.split(',') : [];
-
-                        for (let i = 0; i < inTimeList.length; i++) {
-                            const inTime = inTimeList[i];
-                            const offTime = outTimeList[i] || '';
-                            const assignId = `${i + 1}`;
-                            const assign = `Duty Assign ${i + 1}`;
-                            const workRemark = remarkArray[i] || '';
-
-                            dayList.push({
-                                assignId,
-                                assign,
-                                date: dateKey,
-                                dutyInTime: inTime,
-                                dutyOutTime: offTime,
-                                workPercentageRemark: workRemark,
-                                dutyInImg: '',
-                                dutyOutImg: '',
-                                dutyInMeterImage: '',
-                                dutyOutMeterImage: ''
-                            });
-                        }
-                    }
-
-                    const driverData = await getDriverHelperData(zone, dateKey, dayList, month);
-                    allDutyRecords.push(...(Array.isArray(driverData) ? driverData : dayList));
-                }
-
-                resolve(
-                    common.setResponse(successStatus, successMessage, {
-                        zoneNo: zone,
-                        isDutyOn: allDutyRecords.length > 0 ? 1 : 0,
-                        dutyImgList: allDutyRecords
-                    })
-                );
-
-            } catch (error) {
-                console.error('Error in getDutyOnOffList (): - DailyAssignmentService.js:160', error);
-                resolve(common.setResponse(failStatus, 'Error fetching monthly data', { error }));
+            if (!dateData || !dateData.Summary) {
+                return resolve(common.setResponse(failStatus, failMessage, {}));
             }
-        } else {
-            resolve(common.setResponse(failStatus, 'Invalid Params !!', { service: 'getDutyOnOffList', params: { zone, date } }));
+
+            const { dutyInTime, dutyOutTime, workPercentageRemark } = dateData.Summary;
+            const remarkArray = workPercentageRemark ? workPercentageRemark.split(',') : [];
+            let dutyList = [];
+
+            if (dutyInTime) {
+                const inTimeList = dutyInTime.split(',');
+                const outTimeList = dutyOutTime ? dutyOutTime.split(',') : [];
+
+                for (let i = 0; i < inTimeList.length; i++) {
+                    dutyList.push({
+                        assignId: `${i + 1}`,
+                        assign: `Duty Assign ${i + 1}`,
+                        date,
+                        dutyInTime: inTimeList[i],
+                        dutyOutTime: outTimeList[i] || '',
+                        workPercentageRemark: remarkArray[i] || '',
+                    });
+                }
+            }
+
+            const driverData = await getDriverHelperData(zone, date, dutyList, month);
+            const imageResponse = await getDutyOnOffImagesByDate(zone, date);
+            let imageData = {};
+            if (imageResponse?.status === "Success" && imageResponse.data) {
+                imageData = imageResponse.data;
+            }
+
+            const mergedDutyList = driverData.map(item => ({
+                ...item,
+                dutyInImages: imageData.dutyInImages || [],
+                dutyOutImages: imageData.dutyOutImages || [],
+                dutyInMeterImages: imageData.dutyInMeterImages || [],
+                dutyOutMeterImages: imageData.dutyOutMeterImages || []
+            }));
+
+            resolve(
+                common.setResponse(successStatus, successMessage, {
+                    zoneNo: zone,
+                    isDutyOn: mergedDutyList.length > 0 ? 1 : 0,
+                    dutyImgList: mergedDutyList
+                })
+            );
+
+        } catch (error) {
+            console.error('Error in getDutyOnOffList(): - DailyAssignmentService.js:153', error);
+            resolve(common.setResponse(failStatus, 'Error fetching data', { error }));
         }
     });
 };
+
+

@@ -1,111 +1,151 @@
 .container {
   padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
-.heading {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
-
-.filters {
+/* Date Row (Top Controls) */
+.dateRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 20px;
+  align-items: center;
+  justify-content: left;
+  gap: 10px;
+  margin-bottom: 13px;
+  margin-top: 47px;
 }
 
-.filterGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.select {
+.navButton {
+  background: #333;
+  border: none;
+  color: white;
+  font-size: 18px;
   padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.navButton:hover {
+  background: #555;
+}
+
+.datePicker {
+  padding: 8px 12px;
+  font-size: 15px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  min-width: 120px;
+  outline: none;
+  text-align: center;
+  width: 140px;
 }
 
-.tableContainer {
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+.datePicker:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
 }
 
+/* Table */
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: top;
 }
 
 .table th {
-  background-color: #f4f4f4;
-  padding: 8px;
-  border: 1px solid #ddd;
-  text-align: left;
+  background-color: #f0f0f0;
   font-weight: 600;
 }
 
-.table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+/* Duty Card */
+.dutyCard {
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
-.table tr:hover {
-  background-color: #f9f9f9;
-}
-
-.loading,
-.noData {
-  margin-top: 300px;
-  font-size: 15px;
-  color: #666;
-  text-align: center;
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  /* space between spinner and text */
-  height: 200px;
-  /* optional: centers vertically */
-}
-
-.loadingText {
-  font-size: 1rem;
-  color: #555;
-  margin-top: 8px;
-  font-family: sans-serif;
-  font-weight: bold;
-}
-
-.imageGrid {
+.imageRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.previewImage {
-  width: 180px;
-  height: 180px;
+.dutyImage {
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
-.previewImage:hover {
-  transform: scale(1.05);
+.dutyInfo {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.noData {
+  color: #888;
+  font-size: 14px;
+}
+
+.dutyZone {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 5px;
+}
+
+.dutyCard {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  width: 400px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.imageGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.dutyInfo {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
 }
