@@ -25,9 +25,6 @@ export const initFirebase = async(cityParam) => {
   database = getDatabase(app);
   storage = getStorage(app);
 
-  database = getDatabase(app);
-  storage = getStorage(app);
-
   const testRef = ref(database, "connectionTest");
   set(testRef, {
     status: "connected",
