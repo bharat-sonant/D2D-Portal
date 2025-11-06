@@ -21,7 +21,7 @@ import NewUpdateAlertWindow from "../components/AlertDialog/NewUpdateAlertWindow
 import Wards from "../pages/Wards/Wards";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
-import PenaltyList from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/PenaltyList";
+import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
 
 const RouterComponent = () => {
   const {
@@ -114,7 +114,7 @@ const RouterComponent = () => {
           path="/penalties"
           element={
             <>
-              <PenaltyList />
+              <Penalty />
             </>
           }
         />
