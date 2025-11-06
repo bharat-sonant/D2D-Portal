@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
 import { fetchAllVehicles } from "../../actions/StartAssignmentActions/StartAssignment";
-import { initFirebase } from "../../../../../firebase/firebaseConfig";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -16,19 +15,18 @@ const StartAssignment = () => {
   const city = queryParams.get("city");
 
   useEffect(() => {
-  const setupAndFetch = async () => {
-    localStorage.setItem("city", city);
-    console.log("✅ City set in localStorage:", city);
+    if (city) {
+      localStorage.setItem("city", city);
+      console.log("✅ City set in localStorage:", city);
+    } else {
+      localStorage.setItem("city", "DevTest");
+      console.warn("⚠️ No city found, defaulting to DevTest");
+    }
+  }, [city]);
 
-    // 🔥 Initialize Firebase first
-    await initFirebase(city);
-
-    // ✅ Then fetch vehicles
+  useEffect(() => {
     fetchAllVehicles(setVehicles, setLoading);
-  };
-
-  if (city) setupAndFetch();
-}, [city]);
+  }, [city]);
 
 
   const handleVehicleChange = (e)=> {

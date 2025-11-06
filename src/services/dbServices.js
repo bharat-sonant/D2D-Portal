@@ -6,7 +6,7 @@ import {
   remove,
 } from "firebase/database";
 
-import {  getDatabaseInstance, getStorageInstance } from "../firebase/firebaseConfig";
+import { database, storage } from "../firebase/firebaseConfig";
 
 import {
   ref as ref_storage,
@@ -14,9 +14,6 @@ import {
   deleteObject,
   listAll
 } from "firebase/storage";
-
-  const storage = getStorageInstance();
-  const database = getDatabaseInstance();
 
 export const getData = (path) => {
  
