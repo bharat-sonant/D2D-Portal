@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
 import { fetchAllVehicles } from "../../actions/StartAssignmentActions/StartAssignment";
+import { initFirebase } from "../../../../../firebase/firebaseConfig";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -12,12 +13,23 @@ const StartAssignment = () => {
   const queryParams = new URLSearchParams(location.search);
    const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
-  const city = queryParams.get("city") || "N/A";
+  const city = queryParams.get("city");
 
+  useEffect(() => {
+  const setupAndFetch = async () => {
+    localStorage.setItem("city", city);
+    console.log("✅ City set in localStorage:", city);
 
-  useEffect(()=>{
-    const vehicles = fetchAllVehicles(setVehicles, setLoading);
-  },[])
+    // 🔥 Initialize Firebase first
+    await initFirebase(city);
+
+    // ✅ Then fetch vehicles
+    fetchAllVehicles(setVehicles, setLoading);
+  };
+
+  if (city) setupAndFetch();
+}, [city]);
+
 
   const handleVehicleChange = (e)=> {
     setSelectedVehicle(e.target.value);
@@ -51,7 +63,6 @@ const StartAssignment = () => {
           <label className={styles.dropdownLabel} htmlFor="vehicle-select">
             Select Vehicle
           </label>
-          {console.log('selected', selectedVehicle)}
           {loading ? (
             <div className={styles.loadingText}>Loading vehicles...</div>
           ) : (

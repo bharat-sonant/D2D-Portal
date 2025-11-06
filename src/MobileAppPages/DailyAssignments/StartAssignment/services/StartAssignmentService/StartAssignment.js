@@ -6,7 +6,7 @@ const fail = "fail";
 export const getAllVehicles = async () => {
   return new Promise(async (resolve) => {
     try {
-      const result = await db.getData("Vehicles");
+      const result = await db.getData(`Vehicles`);
       if (result) {
         resolve(common.setResponse(success, "Vehicles fetched successfully", result));
       } else {
