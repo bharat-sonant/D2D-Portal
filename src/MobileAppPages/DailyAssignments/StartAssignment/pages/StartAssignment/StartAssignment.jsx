@@ -12,8 +12,7 @@ const StartAssignment = () => {
   const queryParams = new URLSearchParams(location.search);
    const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
-  const city = queryParams.get("city") || "DevTest";
-  localStorage.setItem('city',city)
+  const city = queryParams.get("city");
 
   useEffect(() => {
     if (city) {
