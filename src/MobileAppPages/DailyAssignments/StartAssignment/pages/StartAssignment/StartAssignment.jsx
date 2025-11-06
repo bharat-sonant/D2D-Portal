@@ -13,7 +13,7 @@ const StartAssignment = () => {
    const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
   const city = queryParams.get("city") || "N/A";
-
+  localStorage.setItem('city',city)
 
   useEffect(()=>{
     const vehicles = fetchAllVehicles(setVehicles, setLoading);
@@ -51,7 +51,6 @@ const StartAssignment = () => {
           <label className={styles.dropdownLabel} htmlFor="vehicle-select">
             Select Vehicle
           </label>
-          {console.log('selected', selectedVehicle)}
           {loading ? (
             <div className={styles.loadingText}>Loading vehicles...</div>
           ) : (

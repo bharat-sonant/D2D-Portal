@@ -404,3 +404,20 @@ export function base64ToBlob(base64Data, contentType = '') {
   }
 
 }
+
+export const getCityDetailsJSON = () => {
+  return new Promise(async(resolve) => {
+    let url = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+ "CityDetails%2FCityDetails.json?alt=media";
+    await axios.get(url).then((response) => {
+      if (response != null) {
+        resolve(response.data);
+      }
+      else {
+        resolve([]);
+      }
+    }).catch((error) => {
+      console.log('Error in getCityDetailsJSON', error);
+      resolve([]);
+    });
+  });
+}
