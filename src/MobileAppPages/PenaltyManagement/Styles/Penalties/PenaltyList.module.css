@@ -9,7 +9,7 @@
 /* Mobile shell must be a column flex with full viewport height */
 .mobileView {
     width: 100%;
-    max-width: 420px;
+    max-width: 470px;
     height: 100vh;
     /* <--- important for sticky + scroll to work */
     display: flex;
