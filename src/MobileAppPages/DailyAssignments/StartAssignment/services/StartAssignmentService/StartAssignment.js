@@ -2,8 +2,6 @@ import * as db from "../../../../../services/dbServices";
 import * as common from "../../../../../common/common";
 const success = "success";
 const fail = "fail";
-const city = localStorage.getItem('city');
-console.log('city', city)
 
 export const getAllVehicles = async () => {
   return new Promise(async (resolve) => {

@@ -4,6 +4,7 @@ import * as common from '../../../../../common/common'
 export const fetchAllVehicles = async (setVehicles, setLoading) => {
   try {
     setLoading(true)
+    setVehicles([])
     const result = await getAllVehicles();
     if (result.status === "success" && result.data) {
       const vehicleArray = Object.entries(result.data).map(([key,value])=>({
