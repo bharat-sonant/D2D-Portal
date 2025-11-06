@@ -11,10 +11,8 @@ if (!city || city.trim() === "" || city.trim() === "N/A") {
   console.warn("⚠️ No city found in localStorage, falling back to DevTest");
 }
 
-console.log('city', city)
 
 const firebaseConfig = getCityFirebaseConfig(city);
-
 // Prevent duplicate default app initialization
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
