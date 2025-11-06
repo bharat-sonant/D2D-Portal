@@ -15,21 +15,20 @@ const StartAssignment = () => {
   const city = queryParams.get("city") || "DevTest";
   localStorage.setItem('city',city)
 
-   useEffect(() => {
-    const initializeCity = () => {
-      if (city) {
-        localStorage.setItem("city", city);
-        console.log("✅ City set in localStorage:", city);
-      } else {
-        localStorage.setItem("city", "DevTest");
-        console.warn("⚠️ No city found, defaulting to DevTest");
-      }
-    };
+  useEffect(() => {
+    if (city) {
+      localStorage.setItem("city", city);
+      console.log("✅ City set in localStorage:", city);
+    } else {
+      localStorage.setItem("city", "DevTest");
+      console.warn("⚠️ No city found, defaulting to DevTest");
+    }
+  }, [city]);
 
-    // Initialize city and fetch vehicles
-    initializeCity();
+  useEffect(() => {
     fetchAllVehicles(setVehicles, setLoading);
-  }, []); // runs once on mount
+  }, [city]);
+
 
   const handleVehicleChange = (e)=> {
     setSelectedVehicle(e.target.value);
