@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
-import { getAllVehicles } from "../../services/StartAssignmentService/StartAssignment";
 import { fetchAllVehicles } from "../../actions/StartAssignmentActions/StartAssignment";
 
 const StartAssignment = () => {
@@ -25,7 +24,7 @@ const StartAssignment = () => {
   }
 
   const activeVehicles = vehicles.filter(
-    (v) => (v.status) === "1" 
+    (v) => String(v.status) === "1" 
   );
 
  return (
