@@ -1,100 +1,312 @@
-.container {
-  min-height: 100vh;
-  background-color: #f7f8fa;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Inter", sans-serif;
+/* Outer page */
+.pageWrapper {
+    display: flex;
+    justify-content: center;
+    background-color: #f1f5f9;
+    min-height: 100vh;
 }
 
-.card {
-  background: #fff;
-  width: 100%;
-  max-width: 700px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  padding: 20px 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #e5e7eb;
+/* Mobile shell must be a column flex with full viewport height */
+.mobileView {
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    /* <--- important for sticky + scroll to work */
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom, #ffffff, #f9fafb);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    /* prevent double scroll on body */
+    font-family: "Inter", "Roboto", sans-serif;
 }
 
-.userSection {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+/* HEADER - fixed at top */
+.header {
+    height: 56px;
+    /* explicit height makes positioning predictable */
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-.userIcon {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  border-radius: 50%;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.headerInner {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.userDetails {
-  display: flex;
-  flex-direction: column;
+.headerLeft {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.userName {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
+.title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-align: center;
 }
 
-.userMeta {
-  font-size: 14px;
-  color: #6b7280;
-  margin-top: 2px;
+.addButton {
+    position: absolute;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ffffff;
+    color: #2e7d32;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.citySection {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f3f4f6;
-  padding: 8px 14px;
-  border-radius: 10px;
+/* DATE / FILTER SECTION - sticky below header */
+.dateSection {
+    height: 72px;
+    /* explicit height */
+    background: #ffffff;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 56px;
+    /* sits right below header (header height) */
+    z-index: 25;
 }
 
-.cityIcon {
-  color: #2563eb;
+/* nav buttons & date display */
+.navButton {
+    background: #2e7d32;
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.cityName {
-  font-size: 15px;
-  font-weight: 500;
-  color: #374151;
+.dateDisplay {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f4f6;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    justify-content: center;
+    color: #374151;
 }
 
+/* summary items on the right */
+.summaryBox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: nowrap;
+    /* prevents wrapping */
+}
+
+/* each count box */
+.summaryItem {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1b5e20;
+    min-width: 70px;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    /* prevents shrinking */
+}
+
+/* LIST container must be the flex:1 area and scrollable */
 .listContainer {
-  margin-top: 32px;
-  width: 100%;
-  max-width: 700px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px 24px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+    flex: 1;
+    /* <--- this fills remaining space */
+    overflow-y: auto;
+    /* <--- this scrolls independently */
+    padding: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #a5d6a7 transparent;
 }
 
-.sectionTitle {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 12px;
+/* scrollbar for webkit */
+.listContainer::-webkit-scrollbar {
+    width: 6px;
 }
 
-.placeholder {
-  font-size: 14px;
-  color: #9ca3af;
-  text-align: center;
-  padding: 20px 0;
+.listContainer::-webkit-scrollbar-thumb {
+    background-color: #a5d6a7;
+    border-radius: 3px;
+}
+
+/* Card styles */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.employeeName {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.cardBody {
+    font-size: 13px;
+    color: #374151;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+
+.label {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.value {
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* FIXED bottom download button */
+.downloadBtn {
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 14px;
+    font-size: 14px;
+    border-radius: 12px 12px 0 0;
+    text-transform: uppercase;
+    position: fixed;
+    bottom: 8px;
+    /* small gap from bottom of viewport */
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 420px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    z-index: 40;
+}
+
+/* responsive tweaks */
+@media (max-width: 480px) {
+    .dateSection {
+        padding: 8px;
+        height: auto;
+        gap: 6px;
+    }
+
+    .title {
+        font-size: 15px;
+    }
+
+    .employeeName {
+        font-size: 13px;
+    }
+
+    .row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .label,
+    .value {
+        font-size: 12px;
+    }
+}
+
+/* summary section aligned properly */
+.summaryBox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: nowrap;
+    /* prevents wrapping */
+}
+
+/* each count box */
+.summaryItem {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1b5e20;
+    min-width: 70px;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    /* prevents shrinking */
+}
+
+/* if summary items wrap in smaller width, stack nicely */
+@media (max-width: 400px) {
+    .summaryBox {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-left: 0;
+    }
+
+    .summaryItem {
+        min-width: 65px;
+        flex: 1 1 45%;
+    }
 }
