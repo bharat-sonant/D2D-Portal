@@ -1,425 +1,434 @@
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 .pageWrapper {
-  min-height: 100vh;
-  background: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    min-height: 100vh;
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .mobileView {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #f5f5f5;
-  overflow: hidden;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+    overflow: hidden;
 }
 
 /* HEADER */
 .header {
-  background: #00b300;
-  color: #fff;
-  padding: 16px 16px 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #00b300;
+    color: #fff;
+    padding: 16px 16px 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 57px;
 }
 
 .backButton {
-  position: absolute;
-  left: 12px;
-  background: transparent;
-  border: none;
-  color: white;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+    position: absolute;
+    left: 12px;
+    background: transparent;
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: 600;
+    font-size: 18px;
+    font-weight: 600;
 }
 
 .addButton {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 500;
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 500;
 }
 
 /* DATE SECTION */
 .dateSection {
-  background: #ffffff;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: sticky;
-  top: 60px;
-  z-index: 20;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 60px;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+    /* ✅ allows wrapping for small screens */
 }
 
 .dateNavButton {
-  background: transparent;
-  border: 2px solid #00b300;
-  color: #00b300;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
+    background: transparent;
+    border: 2px solid #00b300;
+    color: #00b300;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .dateDisplay {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #ffffff;
-  padding: 8px 12px;
-  border: 2px solid #00b300;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  cursor: pointer;
-  min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 8px 12px;
+    border: 2px solid #00b300;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    min-width: 0;
 }
 
 .summaryBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  padding: 6px 10px;
-  border: 2px solid #00b300;
-  border-radius: 8px;
-  flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 6px 10px;
+    border: 2px solid #00b300;
+    border-radius: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
+    /* ✅ push summary to right side when space available */
 }
 
 .summaryItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 8px;
 }
 
 .summaryItem:first-child {
-  border-right: 1px solid #e0e0e0;
-  padding-right: 12px;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 12px;
 }
 
 .summaryItem p {
-  font-size: 11px;
-  color: #666;
-  margin-bottom: 2px;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 2px;
 }
 
 .summaryItem span {
-  font-size: 18px;
-  font-weight: 700;
-  color: #333;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
 }
 
 /* LIST CONTAINER */
 .listContainer {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  padding-bottom: 90px;
-  -webkit-overflow-scrolling: touch;
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    padding-bottom: 90px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .listContainer::-webkit-scrollbar {
-  width: 4px;
+    width: 4px;
 }
 
 .listContainer::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .listContainer::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 2px;
+    background: #ccc;
+    border-radius: 2px;
 }
 
 /* TABLE CARD */
 .card {
-  background: #ffffff;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  overflow: hidden;
-  border: 1px solid #e0e0e0;
+    background: #ffffff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
 }
 
 .cardHeader {
-  background: #f5f5f5;
-  padding: 10px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+    background: #f5f5f5;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .employeeName {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
 }
 
 .editButton {
-  background: transparent;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 4px;
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
 }
 
 .cardTable {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .cardTable tr {
-  border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .cardTable tr:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .cardTable td {
-  padding: 10px 12px;
-  font-size: 13px;
+    padding: 10px 12px;
+    font-size: 13px;
 }
 
 .cardTable td:first-child {
-  font-weight: 600;
-  color: #333;
-  width: 35%;
-  background: #fafafa;
+    font-weight: 600;
+    color: #333;
+    width: 35%;
+    background: #fafafa;
 }
 
 .cardTable td:last-child {
-  color: #666;
+    color: #666;
 }
 
 .entryValue {
-  font-weight: 600;
+    font-weight: 600;
 }
 
 .entryValue.penalty {
-  color: #d32f2f;
+    color: #d32f2f;
 }
 
 .entryValue.reward {
-  color: #2e7d32;
+    color: #2e7d32;
 }
 
 /* DOWNLOAD BUTTON */
 .downloadBtn {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-width: 480px;
-  margin: 0 auto;
-  background: #00b300;
-  color: white;
-  font-weight: 700;
-  border: none;
-  padding: 18px 16px;
-  padding-bottom: calc(18px + env(safe-area-inset-bottom));
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #00b300;
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 18px 16px;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 50px;
 }
 
 /* CALENDAR MODAL */
 .calendarOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
 }
 
 .calendarModal {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  width: 100%;
-  max-width: 380px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .calendarHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .calendarTitle {
-  font-size: 18px;
-  font-weight: 700;
-  color: #333;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
 }
 
 .closeButton {
-  background: #f5f5f5;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #666;
+    background: #f5f5f5;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
 }
 
 .calendarNav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
 }
 
 .monthButton {
-  background: #f5f5f5;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #00b300;
+    background: #f5f5f5;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #00b300;
 }
 
 .monthDisplay {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
 }
 
 .calendarWeekDays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
 }
 
 .weekDay {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #666;
-  padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    padding: 8px 0;
 }
 
 .calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
 }
 
 .calendarDay {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  color: #333;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #333;
 }
 
 .calendarDay:not(.empty):hover {
-  background: #f5f5f5;
+    background: #f5f5f5;
 }
 
 .calendarDay.today {
-  background: #e8f5e9;
-  color: #00b300;
-  font-weight: 700;
+    background: #e8f5e9;
+    color: #00b300;
+    font-weight: 700;
 }
 
 .calendarDay.selected {
-  background: #00b300;
-  color: white;
-  font-weight: 700;
+    background: #00b300;
+    color: white;
+    font-weight: 700;
 }
 
 .emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: #999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #999;
 }
 
 .emptyState svg {
-  opacity: 0.3;
-  margin-bottom: 16px;
+    opacity: 0.3;
+    margin-bottom: 16px;
 }
 
 .emptyState p {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (max-width: 480px) {
-  .dateSection {
-    flex-wrap: wrap;
-  }
-  
-  .summaryBox {
-    width: 100%;
-    justify-content: center;
-    margin-top: 8px;
-  }
+    .dateSection {
+        flex-direction: row;
+    }
+
+    .summaryBox {
+        justify-content: center;
+    }
+
+    .dateDisplay {
+        flex: 1;
+        justify-content: center;
+    }
 }

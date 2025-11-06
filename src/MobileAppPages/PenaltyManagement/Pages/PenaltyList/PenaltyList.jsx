@@ -223,7 +223,7 @@ const PenaltyList = () => {
                       <td>{item.reason}</td>
                     </tr>
                     <tr>
-                      <td>Penalized by</td>
+                      <td>{item.entry === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
                       <td>{item.penalizedBy}  ({item.time})</td>
                     </tr>
                   </tbody>
