@@ -11,16 +11,17 @@ const Penalty = () => {
       if (showDetails) {
         setShowDetails(false);
       } else {
-        if (window.AndroidApp?.onBackPressed) {
-          window.AndroidApp.onBackPressed();
+        if (window.AndroidApp?.closeWebView) {
+          window.AndroidApp.closeWebView();
         } else {
           window.history.back();
         }
       }
     };
-
     window.addEventListener('androidBackPressed', handleAndroidBack);
-    return () => window.removeEventListener('androidBackPressed', handleAndroidBack);
+    return () => {
+      window.removeEventListener('androidBackPressed', handleAndroidBack);
+    };
   }, [showDetails]);
 
   return (

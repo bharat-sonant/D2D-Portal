@@ -45,7 +45,7 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 0px;
     flex: 1;
 }
 
@@ -117,6 +117,110 @@
     bottom: 0;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* Parent row container */
+.prRowFields {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 2px;
+}
+
+/* Each half field container */
+.prFieldGroupHalf {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+.prLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+/* Input and Select shared styling */
+.prInputHalf,
+.prSelectHalf {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Red error border */
+.inputError {
+    border-color: #e53935;
+    /* background-color: #fff5f5; */
+}
+
+/* Error message */
+.errorText {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 4px;
+    padding-left: 2px;
+}
+
+
+.errorText {
+    color: red;
+    font-size: 13px;
+    margin-top: 0px;
+}
+
+.prFieldGroup {
+    margin-bottom: 0px;
+}
+
+.prFieldGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2px;
+}
+
+/* Label above input */
+.prLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+/* Input field styling */
+.prInputHalf {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+/* Error text below input */
+.errorText {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 4px;
+    padding-left: 2px;
+}
+
+/* Red border if validation fails */
+.inputError {
+    border-color: #e53935;
+    /* background-color: #fff5f5; */
+}
+
+/* Optional wrapper for spacing or icons later */
+.prInputWrapper {
+    position: relative;
+}
+
+
 
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
