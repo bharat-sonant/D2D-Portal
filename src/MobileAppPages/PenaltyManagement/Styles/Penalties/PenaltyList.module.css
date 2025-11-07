@@ -422,7 +422,7 @@
 .floatingAddButton {
     position: absolute;
     bottom: 83px;
-    margin-left: 403px;
+    margin-left: 390px;
     background-color: #31c422;
     color: white;
     border: none;
@@ -436,6 +436,7 @@
     cursor: pointer;
     z-index: 1000;
 }
+
 .floatingAddButton:hover {
     background-color: #43a047;
 }
