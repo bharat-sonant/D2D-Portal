@@ -1,0 +1,140 @@
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Container */
+.modalContainer {
+    background-color: #f5f5f5;
+    width: 100%;
+    max-width: 430px;
+    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Header */
+.modalHeader {
+    background: #00b300;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.backButton {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    transition: opacity 0.2s;
+}
+
+.backButton:hover {
+    opacity: 0.8;
+}
+
+.modalTitle {
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    margin-right: 36px;
+}
+
+/* Search Container */
+.searchContainer {
+    padding: 16px;
+    background-color: #f5f5f5;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.searchInput::placeholder {
+    color: #999;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #00b300;
+}
+
+/* Employee List */
+.employeeList {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    padding: 0 16px 16px;
+}
+
+.employeeItem {
+    background-color: white;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #666;
+    transition: all 0.2s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.employeeItem:hover {
+    background-color: #f0f9f0;
+    border-color: #00b300;
+}
+
+.employeeItem:active {
+    background-color: #e0f5e0;
+}
+
+.noResults {
+    text-align: center;
+    padding: 32px;
+    color: #999;
+    font-size: 16px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+    .modalHeader {
+        padding: 14px;
+    }
+
+    .modalTitle {
+        font-size: 18px;
+    }
+
+    .searchContainer {
+        padding: 14px;
+    }
+
+    .employeeList {
+        padding: 0 14px 14px;
+    }
+}

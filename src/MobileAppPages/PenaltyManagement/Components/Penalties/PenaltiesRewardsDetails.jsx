@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
+import EmployeeSelectionModal from './EmployeeModal';
 
 const PenaltiesRewardsDetails = ({ onBack }) => {
     const [employee, setEmployee] = useState('');
@@ -10,18 +11,24 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [category, setCategory] = useState('');
     const [reason, setReason] = useState('');
     const [errors, setErrors] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
     useEffect(() => {
         // ✅ Listen for Android back press events
         const handleAndroidBack = (event) => {
             if (event.data === 'android_back_pressed') {
-                onBack();
+                // Close modal first if it's open
+                if (isModalOpen) {
+                    setIsModalOpen(false);
+                } else {
+                    onBack();
+                }
             }
         };
 
         window.addEventListener('message', handleAndroidBack);
         return () => window.removeEventListener('message', handleAndroidBack);
-    }, [onBack]);
+    }, [onBack, isModalOpen]);
 
     const onHandleChange = (name, value) => {
         action.handleChange(
@@ -40,7 +47,13 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const handleSave = () => {
         const fields = { employee, entryType, amount, category, reason };
         Object.entries(fields).forEach(([key, value]) => action.validateField(key, value, entryType, setErrors));
+    };
 
+    // Handle employee selection from modal
+    const handleEmployeeSelect = (selectedEmployee) => {
+        setEmployee(selectedEmployee);
+        // Clear employee error if exists
+        setErrors(prev => ({ ...prev, employee: '' }));
     };
 
     return (
@@ -61,7 +74,7 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                         className={styles.prInput}
                         style={{ cursor: 'pointer' }}
                         readOnly
-                        onClick={() => console.log("Open employee selector modal")}
+                        onClick={() => setIsModalOpen(true)} // Open modal on click
                         onBlur={() => action.validateField('employee', employee, entryType, setErrors)}
                     />
                     {errors.employee && <p className={styles.errorText}>{errors.employee}</p>}
@@ -141,6 +154,13 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
             <button className={styles.prSaveButton} onClick={handleSave}>
                 SAVE PENALTY/REWARD
             </button>
+
+            {/* Employee Selection Modal */}
+            <EmployeeSelectionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSelectEmployee={handleEmployeeSelect}
+            />
         </div>
     );
 };
