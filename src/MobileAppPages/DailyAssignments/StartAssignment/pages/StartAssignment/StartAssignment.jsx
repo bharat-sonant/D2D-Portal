@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
 import { fetchAllVehicles } from "../../actions/StartAssignmentActions/StartAssignment";
+import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
+import { connectFirebase } from "../../../../../firebase/firebaseService";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -12,12 +14,14 @@ const StartAssignment = () => {
   const queryParams = new URLSearchParams(location.search);
    const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
-  const city = queryParams.get("city");
+  const city = queryParams.get("city") || "DevTest"; 
 
   useEffect(() => {
     if (city) {
       localStorage.setItem("city", city);
-      console.log("✅ City set in localStorage:", city);
+
+      let config = getCityFirebaseConfig(city);
+      connectFirebase(config, city)
     } else {
       localStorage.setItem("city", "DevTest");
       console.warn("⚠️ No city found, defaulting to DevTest");
