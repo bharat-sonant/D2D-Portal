@@ -1,3 +1,5 @@
+import { getEmployees } from "../../Services/Penalties/PenaltiesService";
+
 export const validateField = (name, value, entryType, setErrors) => {
     let error = '';
     switch (name) {
@@ -61,3 +63,13 @@ export const handleChange = (
     }
     validateField(field, value, entryType, setErrors);
 };
+
+export const getEmployeesData = (setEmployees) => {
+    getEmployees().then((response) => {
+        if (response.status === 'success') {
+            setEmployees(response.data.employees);
+        } else {
+            setEmployees([]);
+        }
+    })
+}

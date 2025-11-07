@@ -2,29 +2,14 @@ import { useState } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
 import styles from '../../Styles/Penalties/EmployeeModal.module.css';
 
-const EmployeeSelectionModal = ({ isOpen, onClose, onSelectEmployee }) => {
+const EmployeeSelectionModal = ({ isOpen, onClose, onSelectEmployee, employees }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Sample employee list - replace with your actual data
-    const employees = [
-        { id: 101, name: "BHARAT SHEKHAR VASHISTHA" },
-        { id: 102, name: "WEVOIS QA" },
-        { id: 103, name: "PRADEEP KUMAR GOYAL" },
-        { id: 104, name: "DRIVER 1 - BHARAT" },
-        { id: 105, name: "HELPER 1 - BHARAT" },
-        { id: 106, name: "PRADEEP - DRIVER" },
-        { id: 107, name: "PRADEEP - HELPER" },
-        { id: 108, name: "HARENDRA-DRIVER" },
-        { id: 109, name: "HARENDRA-HELPER" },
-        { id: 111, name: "KHUSHWANT SHARMA-DRIVER" },
-        { id: 112, name: "KHUSHWANT SHARMA -HELPER" },
-        { id: 113, name: "ROHIT - DRIVER" },
-        { id: 114, name: "PRATAP - HELPER" },
-        { id: 115, name: "FIELD EXECUTIVE 1" }
-    ];
+    const sortedEmployees = [...employees].sort((a, b) =>
+        a.name.localeCompare(b.name)
+    );
 
-    // Filter employees based on search query
-    const filteredEmployees = employees.filter(emp =>
+    const filteredEmployees = sortedEmployees.filter(emp =>
         emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.id.toString().includes(searchQuery)
     );

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const PenaltyList = (props) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -182,7 +183,7 @@ const PenaltyList = (props) => {
 
                 <div className={styles.dateDisplay} onClick={() => setShowCalendar(true)}>
                     <Calendar size={18} />
-                    <span>{formattedDate}</span>
+                    <span>{dayjs(formattedDate).format('DD-MMM-YYYY')}</span>
                 </div>
 
                 <button onClick={() => changeDate(1)} className={styles.dateNavButton}>

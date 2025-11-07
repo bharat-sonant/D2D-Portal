@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 import EmployeeSelectionModal from './EmployeeModal';
+import { getEmployees } from '../../Services/Penalties/PenaltiesService';
 
 const PenaltiesRewardsDetails = ({ onBack }) => {
     const [employee, setEmployee] = useState('');
@@ -11,7 +12,8 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [category, setCategory] = useState('');
     const [reason, setReason] = useState('');
     const [errors, setErrors] = useState({});
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
         // ✅ Listen for Android back press events
@@ -29,6 +31,10 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
         window.addEventListener('message', handleAndroidBack);
         return () => window.removeEventListener('message', handleAndroidBack);
     }, [onBack, isModalOpen]);
+
+    useEffect(() => {
+        action.getEmployeesData(setEmployees)
+    }, [])
 
     const onHandleChange = (name, value) => {
         action.handleChange(
@@ -160,6 +166,7 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSelectEmployee={handleEmployeeSelect}
+                employees={employees}
             />
         </div>
     );
