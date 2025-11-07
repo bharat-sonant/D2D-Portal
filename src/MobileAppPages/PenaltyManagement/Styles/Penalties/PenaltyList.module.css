@@ -418,6 +418,68 @@
     font-size: 14px;
 }
 
+.slide-left {
+    animation: slideLeft 0.3s ease forwards;
+}
+
+/* slide-right: Details → List */
+.slide-right {
+    animation: slideRight 0.3s ease forwards;
+}
+
+/* 🟢 Floating Add Button */
+.floatingAddButton {
+    position: absolute;
+    bottom: 83px;
+    margin-left: 403px;
+    background-color: #31c422;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.floatingAddButton:hover {
+    background-color: #43a047;
+}
+
+@media (max-width: 768px) {
+    .floatingAddButton {
+        display: flex;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 @media (max-width: 480px) {
     .dateSection {
         flex-direction: row;

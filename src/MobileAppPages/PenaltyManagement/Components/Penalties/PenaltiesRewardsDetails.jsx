@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 
@@ -8,6 +8,17 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [reason, setReason] = useState('');
+
+    useEffect(() => {
+        const handleAndroidBack = (event) => {
+            if (event.data === 'android_back_pressed') {
+                onBack();
+            }
+        };
+        window.addEventListener('message', handleAndroidBack);
+        return () => window.removeEventListener('message', handleAndroidBack);
+    }, [onBack]);
+
 
     const handleSave = () => {
         if (!employee || !entryType || !reason) {
@@ -34,9 +45,8 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                     className={styles.prInput}
                     style={{ cursor: 'pointer' }}
                     readOnly
-                    onClick={() => console.log("Open employee selector modal")} // optional
+                    onClick={() => console.log("Open employee selector modal")}
                 />
-
 
                 <div className={styles.prSelectWrapper}>
                     <select

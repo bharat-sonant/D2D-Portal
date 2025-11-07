@@ -10,12 +10,24 @@ import {
     Download,
 } from "lucide-react";
 import styles from '../../Styles/Penalties/PenaltyList.module.css';
+import { useNavigate } from "react-router-dom";
 
 const PenaltyList = (props) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [penalties, setPenalties] = useState([]);
     const [showCalendar, setShowCalendar] = useState(false);
     const [calendarMonth, setCalendarMonth] = useState(new Date());
+    const navigate = useNavigate();
+
+    const handleBack = () => {
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        if (isAndroid && window.AndroidApp && typeof window.AndroidApp.closeWebView === "function") {
+            window.AndroidApp.closeWebView();
+        } else {
+            navigate(-1);
+        }
+    };
+
 
     useEffect(() => {
         const dummyData = [
@@ -148,15 +160,19 @@ const PenaltyList = (props) => {
     return (
         <>
             <div className={styles.header}>
-                <button className={styles.backButton}>
+                <button className={styles.backButton} onClick={handleBack}>
                     <ArrowLeft size={22} />
                 </button>
                 <h1 className={styles.title}>Penalties</h1>
-                <button className={styles.addButton} onClick={props.onAddClick}>
-                    <Plus size={20} />
-                    <span>ADD</span>
-                </button>
             </div>
+            {/* Floating Add Button for mobile */}
+            <button
+                className={styles.floatingAddButton}
+                onClick={props.onAddClick}
+            >
+                <Plus size={24} />
+            </button>
+
 
             {/* Date Section */}
             <div className={styles.dateSection}>
