@@ -10,15 +10,16 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [reason, setReason] = useState('');
 
     useEffect(() => {
+        // ✅ Listen for Android back press events
         const handleAndroidBack = (event) => {
             if (event.data === 'android_back_pressed') {
                 onBack();
             }
         };
+
         window.addEventListener('message', handleAndroidBack);
         return () => window.removeEventListener('message', handleAndroidBack);
     }, [onBack]);
-
 
     const handleSave = () => {
         if (!employee || !entryType || !reason) {

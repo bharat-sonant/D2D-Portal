@@ -418,15 +418,6 @@
     font-size: 14px;
 }
 
-.slide-left {
-    animation: slideLeft 0.3s ease forwards;
-}
-
-/* slide-right: Details → List */
-.slide-right {
-    animation: slideRight 0.3s ease forwards;
-}
-
 /* 🟢 Floating Add Button */
 .floatingAddButton {
     position: absolute;
@@ -445,7 +436,6 @@
     cursor: pointer;
     z-index: 1000;
 }
-
 .floatingAddButton:hover {
     background-color: #43a047;
 }
@@ -456,29 +446,6 @@
     }
 }
 
-@keyframes slideLeft {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-}
-
-@keyframes slideRight {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
 
 @media (max-width: 480px) {
     .dateSection {
