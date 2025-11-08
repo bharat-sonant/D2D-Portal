@@ -105,7 +105,7 @@ export const savePaneltiesData = (
                 amount: Number(amount) || 0,
                 reason: reason || '',
                 created_By: loggedInUserId,
-                created_On: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                created_On: dayjs().format('YYYY-MM-DD HH:mm'),
             };
 
             const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`, penaltyId);
