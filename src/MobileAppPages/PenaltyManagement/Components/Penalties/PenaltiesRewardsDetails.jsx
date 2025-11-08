@@ -3,7 +3,6 @@ import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 import EmployeeSelectionModal from './EmployeeModal';
-import { getEmployees } from '../../Services/Penalties/PenaltiesService';
 
 const PenaltiesRewardsDetails = ({ onBack }) => {
     const [employee, setEmployee] = useState('');
@@ -14,12 +13,13 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [errors, setErrors] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [employees, setEmployees] = useState([]);
+    const [rewardTypes, setRewardTypes] = useState([]);
+    const [penaltyTypes, setPenaltyTypes] = useState([]);
+
 
     useEffect(() => {
-        // ✅ Listen for Android back press events
         const handleAndroidBack = (event) => {
             if (event.data === 'android_back_pressed') {
-                // Close modal first if it's open
                 if (isModalOpen) {
                     setIsModalOpen(false);
                 } else {
@@ -35,6 +35,14 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     useEffect(() => {
         action.getEmployeesData(setEmployees)
     }, [])
+
+    useEffect(() => {
+        if (entryType === 'Penalty') {
+            action.getPenaltiesType(setPenaltyTypes);
+        } else if (entryType === 'Reward') {
+            action.getRewardTypes(setRewardTypes);
+        }
+    }, [entryType])
 
     const onHandleChange = (name, value) => {
         action.handleChange(
@@ -55,10 +63,8 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
         Object.entries(fields).forEach(([key, value]) => action.validateField(key, value, entryType, setErrors));
     };
 
-    // Handle employee selection from modal
     const handleEmployeeSelect = (selectedEmployee) => {
         setEmployee(selectedEmployee);
-        // Clear employee error if exists
         setErrors(prev => ({ ...prev, employee: '' }));
     };
 
@@ -80,7 +86,7 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                         className={styles.prInput}
                         style={{ cursor: 'pointer' }}
                         readOnly
-                        onClick={() => setIsModalOpen(true)} // Open modal on click
+                        onClick={() => setIsModalOpen(true)}
                         onBlur={() => action.validateField('employee', employee, entryType, setErrors)}
                     />
                     {errors.employee && <p className={styles.errorText}>{errors.employee}</p>}
@@ -117,13 +123,21 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                                     onChange={(e) => onHandleChange('category', e.target.value)}
                                     className={`${styles.prSelectHalf} ${errors.category ? styles.inputError : ''}`}
                                 >
-                                    <option value="" disabled>Select Category</option>
-                                    <option value="Late Arrival">Late Arrival</option>
-                                    <option value="Early Departure">Early Departure</option>
-                                    <option value="Misconduct">Misconduct</option>
-                                    <option value="Performance">Performance</option>
-                                    <option value="Other">Other</option>
+                                    <option value="" disabled>
+                                        {entryType === 'Penalty' ? 'Select Penalty Type' : 'Select Reward Type'}
+                                    </option>
+
+                                    {entryType === 'Penalty' &&
+                                        penaltyTypes.map((type, index) => (
+                                            <option key={index} value={type}>{type}</option>
+                                        ))}
+
+                                    {entryType === 'Reward' &&
+                                        rewardTypes.map((type, index) => (
+                                            <option key={index} value={type}>{type}</option>
+                                        ))}
                                 </select>
+
                             </div>
                             {errors.category && <p className={styles.errorText}>{errors.category}</p>}
                         </div>
@@ -160,8 +174,7 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
             <button className={styles.prSaveButton} onClick={handleSave}>
                 SAVE PENALTY/REWARD
             </button>
-
-            {/* Employee Selection Modal */}
+            
             <EmployeeSelectionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

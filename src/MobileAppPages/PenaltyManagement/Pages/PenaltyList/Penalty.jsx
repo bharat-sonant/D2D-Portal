@@ -24,7 +24,6 @@ const Penalty = () => {
     }
   }, [city]);
 
-
   useEffect(() => {
     const handleAndroidBack = () => {
       if (showDetails) {

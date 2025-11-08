@@ -13,6 +13,7 @@ export const getCurrentDateTimeWithAMPM = () => {
   return moment().format("YYYY-MM-DD hh:mm A");
 };
 
+
 export const getCurrentDate = () => {
   let date = moment(new Date()).format("YYYY-MM-DD");
   let year = moment().format("YYYY");
@@ -34,13 +35,145 @@ export const getLocalTime = () => {
 export const getStorageCity = () => {
   let city = localStorage.getItem("city");
   let cityName = "";
-  if (city == "DevTest") {
+  
+  if (city === "DevTest") {
     cityName = "DevTest"
+  }
+  else if (city === "sikar") {
+    cityName = "Sikar";
+  }
+  else if (city === "reengus") {
+    cityName = "Reengus";
+  }
+  else if (city === "jaipur-greater") {
+    cityName = "Jaipur-Greater";
+  }
+  else if (city === "kishangarh") {
+    cityName = "Kishangarh";
+  }
+  else if (city === "tonk") {
+    cityName = "Tonk";
+  }
+  else if (city === "ratangarh") {
+    cityName = "Ratangarh";
+  }
+  else if (city === "nokha") {
+    cityName = "Nokha";
+  }
+  else if (city === "noida") {
+    cityName = "Noida";
+  }
+  else if (city === "losal") {
+    cityName = "Losal";
+  }
+  else if (city === "jammu-survey") {
+    cityName = "Jammu-Survey";
+  }
+  else if (city === "khandela") {
+    cityName = "Khandela";
+  }
+  else if (city === "dehradun") {
+    cityName = "Dehradun";
+  }
+  else if (city === "pali") {
+    cityName = "Pali";
+  }
+  else if (city === "pali") {
+    cityName = "Pali";
+  }
+  else if (city === "jodhpur") {
+    cityName = "Jodhpur";
+  }
+  else if (city === "kuchaman") {
+    cityName = "Kuchaman";
+  }
+  else if (city === "jaipur-malviyanagar") {
+    cityName = "Jaipur-Malviyanagar";
+  }
+  else if (city === "jaipur-murlipura") {
+    cityName = "Jaipur-Murlipura";
+  }
+  else if (city === "jodhpur-north") {
+    cityName = "Jodhpur-North";
+  }
+  else if (city === "chirawa") {
+    cityName = "Chirawa";
+  }
+  else if (city === "nawa") {
+    cityName = "Nawa";
+  }
+  else if (city === "sonipat") {
+    cityName = "Sonipat";
+  }
+  else if (city === "iit-roorkee") {
+    cityName = "IIT-Roorkee";
+  }
+  else if (city === "tonk-raj") {
+    cityName = "Tonk-Raj";
+  }
+  else if (city === "bharatpur") {
+    cityName = "Bharatpur";
+  }
+  else if (city === "etmadpur") {
+    cityName = "Etmadpur";
+  }
+  else if (city === "uniara") {
+    cityName = "Uniara";
+  }
+  else if (city === "sujalpur") {
+    cityName = "Sujalpur";
+  }
+  else if (city === "ajmer") {
+    cityName = "Ajmer";
+  }
+  else if (city === "rajsamand") {
+    cityName = "Rajsamand";
+  }
+  else if (city === "sultanpur") {
+    cityName = "Sultanpur";
+  }
+  else if (city === "khairabad") {
+    cityName = "Khairabad";
+  }
+  else if (city === "sanchore") {
+    cityName = "Sanchore";
+  }
+  else if (city === "jaipur-civil-line") {
+    cityName = "Jaipur-Civil-Line";
+  }
+  else if (city === "jaipur-kishanpole") {
+    cityName = "Jaipur-Kishanpole";
+  }
+  else if (city === "jaunpur") {
+    cityName = "Jaunpur";
+  }
+  else if (city === "mapusa-goa") {
+    cityName = "Mapusa-Goa";
+  }
+  else if (city === "ecogram") {
+    cityName = "Ecogram";
+  }
+  else if (city === "jaipur-textile-recycling-facility") {
+    cityName = "Jaipur-Textile-Recycling-Facility";
+  }
+  else if (city === "chennai") {
+    cityName = "Chennai";
+  }
+  else if (city === "dausa") {
+    cityName = "Dausa";
+  }
+  else if (city === "dei-bundi") {
+    cityName = "Dei-Bundi";
+  }
+  else if (city === "biofics-surat") {
+    cityName = "Biofics-Surat";
+  }
+  else if (city === "nainwa") {
+    cityName = "Nainwa";
   }
   return cityName;
 
 }
-
 export const getCurrentMonthName = (monthNumber) => {
   var d = new Date();
   var month = new Array();
@@ -214,7 +347,7 @@ export const getGlobalTime = async () => {
       data: { time: formattedTime, date: serverDate },
     };
   } catch (error) {
-    console.error("Error fetching global time: - common.js:217", error.message);
+    console.error("Error fetching global time: - common.js:350", error.message);
     return null;
   }
 };
@@ -224,7 +357,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
   try {
     if (!("geolocation" in navigator)) {
-      console.error("Geolocation is not supported by this browser. - common.js:227");
+      console.error("Geolocation is not supported by this browser. - common.js:360");
       alert("Geolocation is not supported by this browser.");
       return { status: "error", data: fallbackCoords };
     }
@@ -235,12 +368,12 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
         const permissionStatus = await navigator.permissions.query({ name: "geolocation" });
 
         if (permissionStatus.state === "denied") {
-          console.warn("Location permission is denied. - common.js:238");
+          console.warn("Location permission is denied. - common.js:371");
           setIsLocationVisible(true);
           return { status: "error", data: fallbackCoords };
         }
       } catch (permErr) {
-        console.warn("Permissions API check failed: - common.js:243", permErr.message);
+        console.warn("Permissions API check failed: - common.js:376", permErr.message);
         // Continue anyway, not a blocker
       }
     }
@@ -258,7 +391,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
           });
         },
         (error) => {
-          console.error("Error getting location: - common.js:261", error.message);
+          console.error("Error getting location: - common.js:394", error.message);
           setIsLocationVisible(true);
           resolve({ status: "error", data: fallbackCoords });
         },
@@ -268,7 +401,7 @@ export const getCurrentLocation = async (setIsLocationVisible) => {
 
     return await locationPromise;
   } catch (error) {
-    console.error("Unexpected error getting location: - common.js:271", error.message);
+    console.error("Unexpected error getting location: - common.js:404", error.message);
     setIsLocationVisible(true);
     return { status: "error", data: fallbackCoords };
   }
@@ -399,15 +532,15 @@ export function base64ToBlob(base64Data, contentType = '') {
     return new Blob(byteArrays, { type: contentType || 'image/jpeg' });
   }
   catch (error) {
-    console.error('Error in Blob conversion : - common.js:402', error);
+    console.error('Error in Blob conversion : - common.js:535', error);
     return null;
   }
 
 }
 
 export const getCityDetailsJSON = () => {
-  return new Promise(async(resolve) => {
-    let url = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"+ "CityDetails%2FCityDetails.json?alt=media";
+  return new Promise(async (resolve) => {
+    let url = "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/" + "CityDetails%2FCityDetails.json?alt=media";
     await axios.get(url).then((response) => {
       if (response != null) {
         resolve(response.data);
@@ -416,7 +549,7 @@ export const getCityDetailsJSON = () => {
         resolve([]);
       }
     }).catch((error) => {
-      console.log('Error in getCityDetailsJSON', error);
+      console.log('Error in getCityDetailsJSON - common.js:552', error);
       resolve([]);
     });
   });

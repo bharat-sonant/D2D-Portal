@@ -1,4 +1,4 @@
-import { getEmployees } from "../../Services/Penalties/PenaltiesService";
+import { getEmployees, getPenaltyType, getRewardType } from "../../Services/Penalties/PenaltiesService";
 
 export const validateField = (name, value, entryType, setErrors) => {
     let error = '';
@@ -73,3 +73,23 @@ export const getEmployeesData = (setEmployees) => {
         }
     })
 }
+
+export const getPenaltiesType = (setPenaltyType) => {
+    getPenaltyType().then((respon) => {
+        if (respon.status === 'success') {
+            setPenaltyType(respon.data);
+        } else {
+            setPenaltyType([]);
+        };
+    });
+};
+
+export const getRewardTypes = (setRewardType) => {
+    getRewardType().then((response) => {
+        if (response.status === 'success') {
+            setRewardType(response.data);
+        } else {
+            setRewardType([]);
+        };
+    });
+};
