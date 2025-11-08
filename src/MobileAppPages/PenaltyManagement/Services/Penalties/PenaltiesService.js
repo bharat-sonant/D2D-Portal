@@ -1,6 +1,7 @@
 import * as db from '../../../../services/dbServices';
 import * as common from '../../../../common/common';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 export const getEmployees = () => {
     return new Promise((resolve, reject) => {
@@ -26,7 +27,7 @@ export const getEmployees = () => {
                 }
             })
             .catch((error) => {
-                console.error('Error fetching employees: - PenaltiesService.js:29', error);
+                console.error('Error fetching employees: - PenaltiesService.js:30', error);
                 reject(error);
             });
     });
@@ -42,12 +43,12 @@ export const getPenaltyType = async () => {
                 const validPenaltyTypes = response.data.filter(item => item !== null && item !== undefined && item !== "");
                 resolve(common.setResponse('success', 'Penalty type received successfully', validPenaltyTypes));
             } else {
-                console.error("Failed to fetch PenaltyTypes, status: - PenaltiesService.js:45", response.status);
+                console.error("Failed to fetch PenaltyTypes, status: - PenaltiesService.js:46", response.status);
                 resolve(common.setResponse('fail', ' No Penalty type received', {}));
                 return [];
             }
         } catch (error) {
-            console.error("Error fetching PenaltyTypes: - PenaltiesService.js:50", error);
+            console.error("Error fetching PenaltyTypes: - PenaltiesService.js:51", error);
             resolve(common.setResponse('fail', ' No Penalty type received', {}));
             return [];
         }
@@ -64,14 +65,66 @@ export const getRewardType = () => {
                 const validRewardTypes = response.data.filter(item => item !== null && item !== undefined && item !== "");
                 resolve(common.setResponse('success', 'Penalty type received successfully', validRewardTypes));
             } else {
-                console.error("Failed to fetch PenaltyTypes, status: - PenaltiesService.js:67", response.status);
+                console.error("Failed to fetch PenaltyTypes, status: - PenaltiesService.js:68", response.status);
                 resolve(common.setResponse('fail', ' No Penalty type received', {}));
                 return [];
             }
         } catch (error) {
-            console.error("Error fetching PenaltyTypes: - PenaltiesService.js:72", error);
+            console.error("Error fetching PenaltyTypes: - PenaltiesService.js:73", error);
             resolve(common.setResponse('fail', ' No Penalty type received', {}));
             return [];
         }
     })
-}
+};
+
+export const savePaneltiesData = (
+    loggedInUserId,
+    entryType,
+    selectedDate,
+    employeeId,
+    amount,
+    category,
+    reason,
+    penaltyId
+) => {
+    return new Promise(async (resolve) => {
+        try {
+            if (!loggedInUserId || !entryType || !selectedDate || !employeeId) {
+                resolve(common.setResponse('fail', 'Invalid parameters!', {}));
+                return;
+            }
+
+            const year = dayjs(selectedDate).format('YYYY');
+            const month = dayjs(selectedDate).format('MMMM');
+            const date = dayjs(selectedDate).format('YYYY-MM-DD');
+
+            const dataToSave = {
+                entryType,
+                employeeId,
+                category,
+                amount: Number(amount) || 0,
+                reason: reason || '',
+                created_By: loggedInUserId,
+                created_On: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+            };
+
+            const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`, penaltyId);
+
+            const path = `Penalties/${year}/${month}/${date}/${employeeId}/${lastKey}`;
+            const saveResponse = await db.saveData(path, dataToSave);
+            await db.saveData(`Penalties/${year}/${month}/${date}/${employeeId}`, { lastKey: lastKey });
+
+            console.log(saveResponse);
+
+            if (saveResponse.success === true) {
+                resolve(common.setResponse('success', 'Penalty/Reward saved successfully', { key: lastKey }));
+            } else {
+                resolve(common.setResponse('fail', 'Error saving penalty/reward!', {}));
+            }
+        } catch (error) {
+            console.error('Error saving penalties data: - PenaltiesService.js:125', error);
+            resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
+        }
+    });
+};
+

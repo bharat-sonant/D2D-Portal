@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const PenaltyList = (props) => {
-    const [selectedDate, setSelectedDate] = useState(new Date());
     const [penalties, setPenalties] = useState([]);
     const [showCalendar, setShowCalendar] = useState(false);
     const [calendarMonth, setCalendarMonth] = useState(new Date());
@@ -73,12 +72,12 @@ const PenaltyList = (props) => {
     }, []);
 
     const changeDate = (days) => {
-        const newDate = new Date(selectedDate);
+        const newDate = new Date(props.selectedDate);
         newDate.setDate(newDate.getDate() + days);
-        setSelectedDate(newDate);
+        props.setSelectedDate(newDate);
     };
 
-    const formattedDate = selectedDate.toISOString().split('T')[0];
+    const formattedDate = props.selectedDate.toISOString().split('T')[0];
 
     const penaltyCount = penalties.filter((p) => p.entry === "Penalty").length;
     const rewardCount = penalties.filter((p) => p.entry === "Reward").length;
@@ -102,7 +101,7 @@ const PenaltyList = (props) => {
 
     const selectDate = (day) => {
         const newDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day);
-        setSelectedDate(newDate);
+        props.setSelectedDate(newDate);
         setShowCalendar(false);
     };
 
@@ -114,9 +113,9 @@ const PenaltyList = (props) => {
     };
 
     const isSelected = (day) => {
-        return day === selectedDate.getDate() &&
-            calendarMonth.getMonth() === selectedDate.getMonth() &&
-            calendarMonth.getFullYear() === selectedDate.getFullYear();
+        return day === props.selectedDate.getDate() &&
+            calendarMonth.getMonth() === props.selectedDate.getMonth() &&
+            calendarMonth.getFullYear() === props.selectedDate.getFullYear();
     };
 
     const renderCalendar = () => {

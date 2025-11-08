@@ -1,7 +1,8 @@
-import { getEmployees, getPenaltyType, getRewardType } from "../../Services/Penalties/PenaltiesService";
+import { getEmployees, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
 
 export const validateField = (name, value, entryType, setErrors) => {
     let error = '';
+
     switch (name) {
         case 'employee':
             if (!value) error = 'Employee is required.';
@@ -11,23 +12,31 @@ export const validateField = (name, value, entryType, setErrors) => {
             break;
         case 'amount':
             if (!value) error = 'Amount is required.';
-            else if (isNaN(value) || Number(value) <= 0) error = 'Enter a valid amount.';
+            else if (isNaN(value) || Number(value) <= 0)
+                error = 'Enter a valid amount.';
             break;
         case 'category':
             if (entryType && !value) {
-                error = entryType === 'Penalty'
-                    ? 'Please select penalty type.'
-                    : 'Please select reward type.';
+                error =
+                    entryType === 'Penalty'
+                        ? 'Please select penalty type.'
+                        : 'Please select reward type.';
             }
             break;
         case 'reason':
             if (!value) error = 'Reason is required.';
-            else if (value.trim().length < 5) error = 'Reason must be at least 5 characters.';
+            else if (value.trim().length < 5)
+                error = 'Reason must be at least 5 characters.';
             break;
         default:
             break;
     }
+
+    // update error state
     setErrors((prev) => ({ ...prev, [name]: error }));
+
+    // ✅ return boolean
+    return error === ''; // true = valid, false = invalid
 };
 
 export const handleChange = (
@@ -92,4 +101,55 @@ export const getRewardTypes = (setRewardType) => {
             setRewardType([]);
         };
     });
+};
+
+export const handleSavePenaltiesData = async (props, employeeId, entryType, amount, category, reason, setErrors, handleClear) => {
+    const fields = { entryType, amount, category, reason };
+
+    let hasError = false;
+
+    Object.entries(fields).forEach(([key, value]) => {
+        const isValid = validateField(key, value, entryType, setErrors);
+        if (!isValid) hasError = true;
+    });
+
+    if (hasError) {
+        alert('❌ Please fill all required fields before saving.');
+        return;
+    }
+
+    const penaltyId = ''
+
+    const result = await savePaneltiesData(
+        props.loggedInUserId,
+        entryType,
+        props.selectedDate,
+        employeeId,
+        amount,
+        category,
+        reason,
+        penaltyId
+    );
+
+    if (result.status === 'success') {
+        handleClear();
+    } else {
+
+    }
+}
+
+export const handleClear = (
+    setEmployee,
+    setEntryType,
+    setAmount,
+    setCategory,
+    setReason,
+    setErrors
+) => {
+    setEmployee('');
+    setEntryType('');
+    setAmount('');
+    setCategory('');
+    setReason('');
+    setErrors('');
 };

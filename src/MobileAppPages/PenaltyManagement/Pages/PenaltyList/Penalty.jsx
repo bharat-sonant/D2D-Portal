@@ -8,9 +8,11 @@ import { connectFirebase } from '../../../../firebase/firebaseService';
 
 const Penalty = () => {
   const [showDetails, setShowDetails] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get("city") || "DevTest";
+  const loggedInUserId = queryParams.get('user') || 'Bharat';
 
   useEffect(() => {
     if (city) {
@@ -46,9 +48,18 @@ const Penalty = () => {
     <div className={styles.pageWrapper}>
       <div className={styles.mobileView}>
         {!showDetails ? (
-          <PenaltyList onAddClick={() => setShowDetails(true)} />
+          <PenaltyList
+            onAddClick={() => setShowDetails(true)}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
         ) : (
-          <PenaltiesRewardsDetails onBack={() => setShowDetails(false)} />
+          <PenaltiesRewardsDetails
+            onBack={() => setShowDetails(false)}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            loggedInUserId={loggedInUserId}
+          />
         )}
       </div>
     </div>

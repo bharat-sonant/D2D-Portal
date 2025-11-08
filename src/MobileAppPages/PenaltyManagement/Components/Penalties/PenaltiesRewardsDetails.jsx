@@ -3,8 +3,9 @@ import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 import EmployeeSelectionModal from './EmployeeModal';
+import { savePaneltiesData } from '../../Services/Penalties/PenaltiesService';
 
-const PenaltiesRewardsDetails = ({ onBack }) => {
+const PenaltiesRewardsDetails = (props) => {
     const [employee, setEmployee] = useState('');
     const [entryType, setEntryType] = useState('');
     const [amount, setAmount] = useState('');
@@ -13,9 +14,9 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
     const [errors, setErrors] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [employees, setEmployees] = useState([]);
+    const [employeeId, setEmployeeId] = useState('');
     const [rewardTypes, setRewardTypes] = useState([]);
     const [penaltyTypes, setPenaltyTypes] = useState([]);
-
 
     useEffect(() => {
         const handleAndroidBack = (event) => {
@@ -23,14 +24,14 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
                 if (isModalOpen) {
                     setIsModalOpen(false);
                 } else {
-                    onBack();
+                    props.onBack();
                 }
             }
         };
 
         window.addEventListener('message', handleAndroidBack);
         return () => window.removeEventListener('message', handleAndroidBack);
-    }, [onBack, isModalOpen]);
+    }, [props.onBack, isModalOpen]);
 
     useEffect(() => {
         action.getEmployeesData(setEmployees)
@@ -58,20 +59,40 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
         );
     };
 
-    const handleSave = () => {
-        const fields = { employee, entryType, amount, category, reason };
-        Object.entries(fields).forEach(([key, value]) => action.validateField(key, value, entryType, setErrors));
+    const handleSave = async () => {
+        action.handleSavePenaltiesData(
+            props,
+            employeeId,
+            entryType,
+            amount,
+            category,
+            reason,
+            setErrors,
+            handleClear
+        );
     };
 
     const handleEmployeeSelect = (selectedEmployee) => {
-        setEmployee(selectedEmployee);
+        setEmployeeId(selectedEmployee.id);
+        setEmployee(selectedEmployee.name);
         setErrors(prev => ({ ...prev, employee: '' }));
+    };
+
+    const handleClear = () => {
+        action.handleClear(
+            setEmployee,
+            setEntryType,
+            setAmount,
+            setCategory,
+            setReason,
+            setErrors
+        );
     };
 
     return (
         <div className={styles.penaltiesRewardsContainer}>
             <div className={styles.prHeader}>
-                <button className={styles.prBackButton} onClick={onBack}>
+                <button className={styles.prBackButton} onClick={() => { props.onBack(); handleClear(); }}>
                     <ArrowLeft size={24} color="white" />
                 </button>
                 <h1 className={styles.prTitle}>Penalty/Rewards Details</h1>
@@ -174,7 +195,7 @@ const PenaltiesRewardsDetails = ({ onBack }) => {
             <button className={styles.prSaveButton} onClick={handleSave}>
                 SAVE PENALTY/REWARD
             </button>
-            
+
             <EmployeeSelectionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

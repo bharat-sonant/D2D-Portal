@@ -15,7 +15,7 @@ const EmployeeSelectionModal = ({ isOpen, onClose, onSelectEmployee, employees }
     );
 
     const handleEmployeeSelect = (employee) => {
-        onSelectEmployee(`${employee.name} (${employee.id})`);
+        onSelectEmployee(employee);
         onClose();
     };
 
