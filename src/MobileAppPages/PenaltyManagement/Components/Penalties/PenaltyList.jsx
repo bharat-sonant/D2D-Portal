@@ -109,6 +109,10 @@ const PenaltyList = (props) => {
         );
     };
 
+    const handleEdit = (item) => {
+        props.handleEdit(item)
+    }
+
     const Loader = () => (
         <div className={styles.loaderContainer}>
             <div className={styles.loader}></div>
@@ -182,9 +186,10 @@ const PenaltyList = (props) => {
                         <div key={item.id} className={styles.card}>
                             <div className={styles.cardHeader}>
                                 <h3 className={styles.employeeName}>{item.employeeName}{' '}({item.employeeId})</h3>
-                                <button className={styles.editButton}>
+                                <button className={styles.editButton} onClick={() => handleEdit(item)}>
                                     <Pencil size={18} />
                                 </button>
+
                             </div>
 
                             <table className={styles.cardTable}>

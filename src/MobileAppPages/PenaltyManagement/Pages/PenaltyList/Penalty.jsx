@@ -15,6 +15,9 @@ const Penalty = () => {
   const [penaltyCount, setPenaltyCount] = useState('0');
   const [rewardCount, setRewardCount] = useState('0');
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get("city") || "DevTest";
@@ -58,12 +61,19 @@ const Penalty = () => {
     getPenaltiesRewardData(selectedDate, employees, setPenaltiesData, setPenaltyCount, setRewardCount, setIsLoading);
   }, [selectedDate, employees])
 
+  const handleEdit = (item) => {
+    console.log(item)
+    setSelectedItem(item);
+    setIsEditing(true);
+    setShowDetails(true);
+  }
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.mobileView}>
         {!showDetails ? (
           <PenaltyList
-            onAddClick={() => setShowDetails(true)}
+            onAddClick={() => { setShowDetails(true); setSelectedItem(null); }}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             penaltiesData={penaltiesData}
@@ -71,6 +81,7 @@ const Penalty = () => {
             penaltyCount={penaltyCount}
             rewardCount={rewardCount}
             isLoading={isLoading}
+            handleEdit={handleEdit}
           />
         ) : (
           <PenaltiesRewardsDetails
@@ -81,6 +92,7 @@ const Penalty = () => {
             employees={employees}
             penaltiesData={penaltiesData}
             setPenaltiesData={setPenaltiesData}
+            selectedItem={selectedItem}
           />
         )}
       </div>

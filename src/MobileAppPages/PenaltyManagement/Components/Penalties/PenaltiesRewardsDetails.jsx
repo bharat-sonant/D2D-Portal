@@ -17,6 +17,20 @@ const PenaltiesRewardsDetails = (props) => {
     const [penaltyTypes, setPenaltyTypes] = useState([]);
 
     useEffect(() => {
+        if (props.selectedItem) {
+            const item = props.selectedItem;
+            setEmployee(item.employeeName || '');
+            setEmployeeId(item.employeeId || '');
+            setEntryType(item.entryType || '');
+            setAmount(item.amount || '');
+            setCategory(item.penaltyType || item.rewardType || '');
+            setReason(item.reason || '');
+        } else {
+            handleClear();
+        }
+    }, [props.selectedItem]);
+
+    useEffect(() => {
         const handleAndroidBack = (event) => {
             if (event.data === 'android_back_pressed') {
                 if (isModalOpen) {
