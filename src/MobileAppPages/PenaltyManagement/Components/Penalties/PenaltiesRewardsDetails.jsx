@@ -4,6 +4,7 @@ import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 import EmployeeSelectionModal from './EmployeeModal';
 import { savePaneltiesData } from '../../Services/Penalties/PenaltiesService';
+import { useNavigate } from 'react-router-dom';
 
 const PenaltiesRewardsDetails = (props) => {
     const [employee, setEmployee] = useState('');
@@ -17,6 +18,7 @@ const PenaltiesRewardsDetails = (props) => {
     const [employeeId, setEmployeeId] = useState('');
     const [rewardTypes, setRewardTypes] = useState([]);
     const [penaltyTypes, setPenaltyTypes] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleAndroidBack = (event) => {
@@ -68,7 +70,8 @@ const PenaltiesRewardsDetails = (props) => {
             category,
             reason,
             setErrors,
-            handleClear
+            handleClear,
+            props.onBack
         );
     };
 

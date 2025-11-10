@@ -12,6 +12,7 @@ import {
 import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 const PenaltyList = (props) => {
     const [penalties, setPenalties] = useState([]);
@@ -27,7 +28,6 @@ const PenaltyList = (props) => {
             navigate(-1);
         }
     };
-
 
     useEffect(() => {
         const dummyData = [

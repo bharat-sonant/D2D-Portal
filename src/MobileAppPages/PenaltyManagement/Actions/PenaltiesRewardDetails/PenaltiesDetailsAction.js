@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { getEmployees, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
 
 export const validateField = (name, value, entryType, setErrors) => {
@@ -103,7 +105,7 @@ export const getRewardTypes = (setRewardType) => {
     });
 };
 
-export const handleSavePenaltiesData = async (props, employeeId, entryType, amount, category, reason, setErrors, handleClear) => {
+export const handleSavePenaltiesData = async (props, employeeId, entryType, amount, category, reason, setErrors, handleClear, onBack) => {
     const fields = { entryType, amount, category, reason };
 
     let hasError = false;
@@ -133,6 +135,11 @@ export const handleSavePenaltiesData = async (props, employeeId, entryType, amou
 
     if (result.status === 'success') {
         handleClear();
+        onBack();
+        toast.success('Successfully Created');
+        setTimeout(() => {
+            onBack();
+        }, 8000);
     } else {
 
     }
