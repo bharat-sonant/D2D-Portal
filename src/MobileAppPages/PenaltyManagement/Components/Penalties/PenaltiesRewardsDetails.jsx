@@ -65,7 +65,9 @@ const PenaltiesRewardsDetails = (props) => {
             reason,
             setErrors,
             handleClear,
-            props.onBack
+            props.onBack,
+            props.setPenaltiesData,
+            props.employees
         );
     };
 

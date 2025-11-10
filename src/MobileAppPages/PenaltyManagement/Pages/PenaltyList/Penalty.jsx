@@ -73,6 +73,8 @@ const Penalty = () => {
             setSelectedDate={setSelectedDate}
             loggedInUserId={loggedInUserId}
             employees={employees}
+            penaltiesData={penaltiesData}
+            setPenaltiesData={setPenaltiesData}
           />
         )}
       </div>

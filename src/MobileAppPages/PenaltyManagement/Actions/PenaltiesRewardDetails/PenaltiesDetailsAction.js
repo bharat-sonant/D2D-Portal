@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { getEmployees, getPenaltiesData, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
+import dayjs from "dayjs";
 
 export const validateField = (name, value, entryType, setErrors) => {
     let error = '';
@@ -105,45 +106,75 @@ export const getRewardTypes = (setRewardType) => {
     });
 };
 
-export const handleSavePenaltiesData = async (props, employeeId, entryType, amount, category, reason, setErrors, handleClear, onBack) => {
-    const fields = { entryType, amount, category, reason };
+export const handleSavePenaltiesData = async (
+  props,
+  employeeId,
+  entryType,
+  amount,
+  category,
+  reason,
+  setErrors,
+  handleClear,
+  onBack,
+  setPenaltiesData,
+  employees
+) => {
+  const fields = { entryType, amount, category, reason };
 
-    let hasError = false;
+  let hasError = false;
+  Object.entries(fields).forEach(([key, value]) => {
+    const isValid = validateField(key, value, entryType, setErrors);
+    if (!isValid) hasError = true;
+  });
 
-    Object.entries(fields).forEach(([key, value]) => {
-        const isValid = validateField(key, value, entryType, setErrors);
-        if (!isValid) hasError = true;
-    });
+  if (hasError) {
+    toast.error("Please fill all the required fields.");
+    return;
+  }
 
-    if (hasError) {
-        toast.error('Please fill all the required fields.');
-        return;
-    }
+  const penaltyId = "";
 
-    const penaltyId = ''
+  const result = await savePaneltiesData(
+    props.loggedInUserId,
+    entryType,
+    props.selectedDate,
+    employeeId,
+    amount,
+    category,
+    reason,
+    penaltyId
+  );
 
-    const result = await savePaneltiesData(
-        props.loggedInUserId,
-        entryType,
-        props.selectedDate,
-        employeeId,
-        amount,
-        category,
-        reason,
-        penaltyId
-    );
+  if (result.status === "success") {
+    const matchedEmployee = employees.find((e) => e.id === employeeId);
+    const employeeName = matchedEmployee ? matchedEmployee.name : "Unknown";
 
-    if (result.status === 'success') {
-        handleClear();
-        onBack();
-        toast.success('Successfully Created');
-        setTimeout(() => {
-            onBack();
-        }, 8000);
-    } else {
+    const newRecord = {
+      key: result.data.Id || Date.now().toString(),
+      employeeId,
+      employeeName,
+      entryType,
+      amount,
+      reason,
+      created_By: props.loggedInUserId,
+      created_On: dayjs().format("YYYY-MM-DD HH:mm"),
+      ...(entryType === "Penalty"
+        ? { penaltyType: category }
+        : { rewardType: category }),
+    };
 
-    }
-}
+    setPenaltiesData((prev) => [...prev, newRecord]);
+
+    handleClear();
+    toast.success("✅ Successfully Created!");
+    setTimeout(() => {
+      onBack();
+    }, 800);
+  } else {
+    toast.error("❌ Failed to save Penalty/Reward!");
+  }
+};
+
 
 export const handleClear = (
     setEmployee,
