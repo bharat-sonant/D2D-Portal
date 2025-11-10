@@ -14,6 +14,7 @@ const Penalty = () => {
   const [penaltiesData, setPenaltiesData] = useState([]);
   const [penaltyCount, setPenaltyCount] = useState('0');
   const [rewardCount, setRewardCount] = useState('0');
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get("city") || "DevTest";
@@ -54,7 +55,7 @@ const Penalty = () => {
   }, [showDetails]);
 
   useEffect(() => {
-    getPenaltiesRewardData(selectedDate, employees, setPenaltiesData, setPenaltyCount, setRewardCount);
+    getPenaltiesRewardData(selectedDate, employees, setPenaltiesData, setPenaltyCount, setRewardCount, setIsLoading);
   }, [selectedDate, employees])
 
   return (
@@ -69,6 +70,7 @@ const Penalty = () => {
             setPenaltiesData={setPenaltiesData}
             penaltyCount={penaltyCount}
             rewardCount={rewardCount}
+            isLoading={isLoading}
           />
         ) : (
           <PenaltiesRewardsDetails

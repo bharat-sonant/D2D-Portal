@@ -109,6 +109,22 @@ const PenaltyList = (props) => {
         );
     };
 
+    const Loader = () => (
+        <div className={styles.loaderContainer}>
+            <div className={styles.loader}></div>
+            <p
+                style={{
+                    fontWeight: 200,
+                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+                }}
+            >
+                Please wait...
+            </p>
+
+        </div>
+    );
+
+
     return (
         <>
             <div className={styles.header}>
@@ -154,7 +170,9 @@ const PenaltyList = (props) => {
             </div>
 
             <div className={styles.listContainer}>
-                {props.penaltiesData.length === 0 ? (
+                {props.isLoading ? (
+                    <Loader />
+                ) : props.penaltiesData.length === 0 ? (
                     <div className={styles.emptyState}>
                         <Calendar size={64} />
                         <p>No entries for this date</p>

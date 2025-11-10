@@ -192,7 +192,7 @@ export const handleClear = (
     setErrors('');
 };
 
-export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesData, setPenaltyCount, setRewardCount) => {
+export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesData, setPenaltyCount, setRewardCount, setIsLoading) => {
     getPenaltiesData(selectedDate).then((response) => {
         if (response.status === 'success') {
             const updatedList = response.data.list.map((item) => {
@@ -205,10 +205,12 @@ export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesD
             setPenaltiesData(updatedList);
             setPenaltyCount(response.data.penaltyCount);
             setRewardCount(response.data.rewardCount);
+            setIsLoading(false);
         } else {
             setPenaltiesData([]);
             setPenaltyCount('0');
             setRewardCount('0');
+            setIsLoading(false);
         };
     });
 };
