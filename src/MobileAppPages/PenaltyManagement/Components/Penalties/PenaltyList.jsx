@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     ArrowLeft,
     Calendar,
@@ -32,7 +32,7 @@ const PenaltyList = (props) => {
         props.setSelectedDate(newDate);
     };
 
-    const formattedDate = props.selectedDate.toISOString().split('T')[0];
+    const formattedDate = dayjs(props.selectedDate).format('YYYY-MM-DD');
 
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
@@ -52,7 +52,7 @@ const PenaltyList = (props) => {
     };
 
     const selectDate = (day) => {
-        const newDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day);
+        const newDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day, 12, 0, 0); // 👈 added hour=12
         props.setSelectedDate(newDate);
         setShowCalendar(false);
     };
