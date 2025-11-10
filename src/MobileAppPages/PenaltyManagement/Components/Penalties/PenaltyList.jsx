@@ -7,7 +7,6 @@ import {
     Plus,
     Pencil,
     X,
-    Download,
 } from "lucide-react";
 import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useNavigate } from "react-router-dom";
@@ -210,7 +209,7 @@ const PenaltyList = (props) => {
                     props.penaltiesData.map((item) => (
                         <div key={item.id} className={styles.card}>
                             <div className={styles.cardHeader}>
-                                <h3 className={styles.employeeName}>{item.employeeName}</h3>
+                                <h3 className={styles.employeeName}>{item.employeeName}{' '}({item.employeeId})</h3>
                                 <button className={styles.editButton}>
                                     <Pencil size={18} />
                                 </button>
@@ -244,7 +243,7 @@ const PenaltyList = (props) => {
                                     <tr>
                                         <td>{item.entryType === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
                                         <td>{item.created_By || item.createdBy}  (
-                                            {dayjs(item.created_On).format("hh:mm A")}
+                                            {dayjs(item.createdOn || item.created_On).format("hh:mm A")}
                                             )</td>
                                     </tr>
                                 </tbody>

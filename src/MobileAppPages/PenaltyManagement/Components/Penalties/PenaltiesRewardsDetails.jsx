@@ -3,8 +3,6 @@ import { ArrowLeft } from 'lucide-react';
 import styles from '../../Styles/Penalties/PenaltiesRewardsDetail.module.css';
 import * as action from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 import EmployeeSelectionModal from './EmployeeModal';
-import { savePaneltiesData } from '../../Services/Penalties/PenaltiesService';
-import { useNavigate } from 'react-router-dom';
 
 const PenaltiesRewardsDetails = (props) => {
     const [employee, setEmployee] = useState('');
