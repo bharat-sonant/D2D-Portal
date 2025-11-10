@@ -12,7 +12,6 @@ import {
 import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { toast } from "react-toastify";
 
 const PenaltyList = (props) => {
     const [penalties, setPenalties] = useState([]);
@@ -201,18 +200,17 @@ const PenaltyList = (props) => {
                 </div>
             </div>
 
-            {/* List Container */}
             <div className={styles.listContainer}>
-                {penalties.length === 0 ? (
+                {props.penaltiesData.length === 0 ? (
                     <div className={styles.emptyState}>
                         <Calendar size={64} />
                         <p>No entries for this date</p>
                     </div>
                 ) : (
-                    penalties.map((item) => (
+                    props.penaltiesData.map((item) => (
                         <div key={item.id} className={styles.card}>
                             <div className={styles.cardHeader}>
-                                <h3 className={styles.employeeName}>{item.employee}</h3>
+                                <h3 className={styles.employeeName}>{item.employeeName}</h3>
                                 <button className={styles.editButton}>
                                     <Pencil size={18} />
                                 </button>
@@ -223,22 +221,32 @@ const PenaltyList = (props) => {
                                     <tr>
                                         <td>Entry</td>
                                         <td>
-                                            <span className={`${styles.entryValue} ${item.entry === 'Penalty' ? styles.penalty : styles.reward}`}>
-                                                {item.entry}
+                                            <span className={`${styles.entryValue} ${item.entryType === 'Penalty' ? styles.penalty : styles.reward}`}>
+                                                {item.entryType}
                                             </span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>{item.entry === 'Penalty' ? 'Penalty' : 'Reward'}</td>
-                                        <td>₹{item.amount} | {item.reason} |</td>
+                                        <td>{item.entryType === 'Penalty' ? 'Penalty' : 'Reward'}</td>
+                                        <td>
+                                            ₹{item.amount}
+                                            {" | "}
+                                            {item.penaltyType && `${item.penaltyType}`}
+                                            {item.penaltyType && item.rewardType && " | "}
+                                            {item.rewardType && `${item.rewardType}`}
+                                        </td>
+
                                     </tr>
                                     <tr>
                                         <td>Reason</td>
                                         <td>{item.reason}</td>
                                     </tr>
+                                    {console.log(item)}
                                     <tr>
-                                        <td>{item.entry === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
-                                        <td>{item.penalizedBy}  ({item.time})</td>
+                                        <td>{item.entryType === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
+                                        <td>{item.created_By || item.createdBy}  (
+                                            {dayjs(item.created_On).format("hh:mm A")}
+                                            )</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -247,13 +255,6 @@ const PenaltyList = (props) => {
                 )}
             </div>
 
-            {/* Download Button */}
-            <button className={styles.downloadBtn}>
-                <Download size={20} />
-                DOWNLOAD PENALTY/REWARD
-            </button>
-
-            {/* Calendar Modal */}
             {showCalendar && (
                 <div className={styles.calendarOverlay} onClick={() => setShowCalendar(false)}>
                     <div className={styles.calendarModal} onClick={(e) => e.stopPropagation()}>

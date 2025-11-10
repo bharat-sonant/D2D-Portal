@@ -5,14 +5,21 @@ import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useLocation } from 'react-router-dom';
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
+import { getEmployeesData, getPenaltiesRewardData } from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 
 const Penalty = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [employees, setEmployees] = useState([]);
+  const [penaltiesData, setPenaltiesData] = useState([]);
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get("city") || "DevTest";
   const loggedInUserId = queryParams.get('username') || 'Bharat';
+
+  useEffect(() => {
+    getEmployeesData(setEmployees);
+  }, []);
 
   useEffect(() => {
     if (city) {
@@ -44,6 +51,10 @@ const Penalty = () => {
     };
   }, [showDetails]);
 
+  useEffect(() => {
+    getPenaltiesRewardData(selectedDate, employees, setPenaltiesData);
+  }, [selectedDate])
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.mobileView}>
@@ -52,6 +63,8 @@ const Penalty = () => {
             onAddClick={() => setShowDetails(true)}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
+            penaltiesData={penaltiesData}
+            setPenaltiesData={setPenaltiesData}
           />
         ) : (
           <PenaltiesRewardsDetails
@@ -59,6 +72,7 @@ const Penalty = () => {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
             loggedInUserId={loggedInUserId}
+            employees={employees}
           />
         )}
       </div>

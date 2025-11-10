@@ -105,8 +105,8 @@ export const savePaneltiesData = (
                 [typeKey]: typeValue,
                 amount: Number(amount) || 0,
                 reason: reason || '',
-                created_By: loggedInUserId,
-                created_On: dayjs().format('YYYY-MM-DD HH:mm'),
+                createdBy: loggedInUserId,
+                createdOn: dayjs().format('YYYY-MM-DD HH:mm'),
             };
 
             const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`, penaltyId);
@@ -123,6 +123,52 @@ export const savePaneltiesData = (
         } catch (error) {
             console.error('Error saving penalties data: - PenaltiesService.js:124', error);
             resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
+        }
+    });
+};
+
+export const getPenaltiesData = (selectedDate) => {
+    return new Promise(async (resolve) => {
+        if (!selectedDate) {
+            resolve(common.setResponse('fail', 'No selected date found', { selectedDate }));
+            return;
+        }
+
+        const year = dayjs(selectedDate).format('YYYY');
+        const month = dayjs(selectedDate).format('MMMM');
+        const date = dayjs(selectedDate).format('YYYY-MM-DD');
+
+        try {
+            const response = await db.getData(`Penalties/${year}/${month}/${date}`);
+
+            if (!response || Object.keys(response).length === 0) {
+                resolve(common.setResponse('fail', 'No penalty/reward data found', {}));
+                return;
+            }
+
+            const penaltiesReward = [];
+
+            await Promise.all(
+                Object.keys(response).map(async (employeeId) => {
+                    const innerObj = response[employeeId];
+
+                    for (let key in innerObj) {
+                        if (key !== 'lastKey') {
+                            const entry = innerObj[key];
+                            penaltiesReward.push({
+                                employeeId,
+                                entryKey: key,
+                                ...entry,
+                            });
+                        }
+                    }
+                })
+            );
+
+            resolve(common.setResponse('success', 'Data fetched successfully', { list: penaltiesReward }));
+        } catch (error) {
+            console.error('Error fetching penalties data: - PenaltiesService.js:170', error);
+            resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', { error }));
         }
     });
 };

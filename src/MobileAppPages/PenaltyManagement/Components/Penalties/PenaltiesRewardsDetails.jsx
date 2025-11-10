@@ -14,7 +14,6 @@ const PenaltiesRewardsDetails = (props) => {
     const [reason, setReason] = useState('');
     const [errors, setErrors] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [employees, setEmployees] = useState([]);
     const [employeeId, setEmployeeId] = useState('');
     const [rewardTypes, setRewardTypes] = useState([]);
     const [penaltyTypes, setPenaltyTypes] = useState([]);
@@ -34,10 +33,6 @@ const PenaltiesRewardsDetails = (props) => {
         window.addEventListener('message', handleAndroidBack);
         return () => window.removeEventListener('message', handleAndroidBack);
     }, [props.onBack, isModalOpen]);
-
-    useEffect(() => {
-        action.getEmployeesData(setEmployees)
-    }, [])
 
     useEffect(() => {
         if (entryType === 'Penalty') {
@@ -203,7 +198,7 @@ const PenaltiesRewardsDetails = (props) => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSelectEmployee={handleEmployeeSelect}
-                employees={employees}
+                employees={props.employees}
             />
         </div>
     );

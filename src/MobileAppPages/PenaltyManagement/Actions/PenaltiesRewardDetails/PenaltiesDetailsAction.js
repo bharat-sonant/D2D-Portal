@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { getEmployees, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
+import { getEmployees, getPenaltiesData, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
 
 export const validateField = (name, value, entryType, setErrors) => {
     let error = '';
@@ -159,4 +159,21 @@ export const handleClear = (
     setCategory('');
     setReason('');
     setErrors('');
+};
+
+export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesData) => {
+    getPenaltiesData(selectedDate).then((response) => {
+        if (response.status === 'success') {
+            const updatedList = response.data.list.map((item) => {
+                const emp = employeeList.find((e) => e.id === item.employeeId);
+                return {
+                    ...item,
+                    employeeName: emp ? emp.name : 'Unknown',
+                };
+            });
+            setPenaltiesData(updatedList);
+        } else {
+            setPenaltiesData([]);
+        };
+    });
 };
