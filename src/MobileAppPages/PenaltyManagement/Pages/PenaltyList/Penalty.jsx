@@ -12,7 +12,7 @@ const Penalty = () => {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get("city") || "DevTest";
-  const loggedInUserId = queryParams.get('user') || 'Bharat';
+  const loggedInUserId = queryParams.get('username') || 'Bharat';
 
   useEffect(() => {
     if (city) {
