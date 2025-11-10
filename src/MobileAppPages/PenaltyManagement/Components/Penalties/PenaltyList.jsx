@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const PenaltyList = (props) => {
-    const [penalties, setPenalties] = useState([]);
     const [showCalendar, setShowCalendar] = useState(false);
     const [calendarMonth, setCalendarMonth] = useState(new Date());
     const navigate = useNavigate();
@@ -27,48 +26,6 @@ const PenaltyList = (props) => {
         }
     };
 
-    useEffect(() => {
-        const dummyData = [
-            {
-                id: 1,
-                employee: "Driver 1 - bharat (104)",
-                entry: "Penalty",
-                amount: 50,
-                reason: "Alcohol consumption in working hours",
-                penalizedBy: "Bharat",
-                time: "12:13",
-            },
-            {
-                id: 2,
-                employee: "Helper 1 - bharat (105)",
-                entry: "Reward",
-                amount: 50,
-                reason: "Uniform wear",
-                penalizedBy: "Bharat",
-                time: "12:14",
-            },
-            {
-                id: 3,
-                employee: "Khushwant sharma -driver (111)",
-                entry: "Penalty",
-                amount: 50,
-                reason: "Absent + Penalty",
-                penalizedBy: "Bharat",
-                time: "09:26",
-            },
-            {
-                id: 4,
-                employee: "Khushwant sharma -helper (112)",
-                entry: "Reward",
-                amount: 100,
-                reason: "Citizen Feedback",
-                penalizedBy: "Bharat",
-                time: "09:27",
-            },
-        ];
-        setPenalties(dummyData);
-    }, []);
-
     const changeDate = (days) => {
         const newDate = new Date(props.selectedDate);
         newDate.setDate(newDate.getDate() + days);
@@ -76,9 +33,6 @@ const PenaltyList = (props) => {
     };
 
     const formattedDate = props.selectedDate.toISOString().split('T')[0];
-
-    const penaltyCount = penalties.filter((p) => p.entry === "Penalty").length;
-    const rewardCount = penalties.filter((p) => p.entry === "Reward").length;
 
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
@@ -190,11 +144,11 @@ const PenaltyList = (props) => {
                 <div className={styles.summaryBox}>
                     <div className={styles.summaryItem}>
                         <p>Penalty</p>
-                        <span>{penaltyCount}</span>
+                        <span>{props.penaltyCount}</span>
                     </div>
                     <div className={styles.summaryItem}>
                         <p>Reward</p>
-                        <span>{rewardCount}</span>
+                        <span>{props.rewardCount}</span>
                     </div>
                 </div>
             </div>

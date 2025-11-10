@@ -142,11 +142,17 @@ export const getPenaltiesData = (selectedDate) => {
             const response = await db.getData(`Penalties/${year}/${month}/${date}`);
 
             if (!response || Object.keys(response).length === 0) {
-                resolve(common.setResponse('fail', 'No penalty/reward data found', {}));
+                resolve(common.setResponse('fail', 'No penalty/reward data found', {
+                    list: [],
+                    penaltyCount: 0,
+                    rewardCount: 0,
+                }));
                 return;
             }
 
             const penaltiesReward = [];
+            let penaltyCount = 0;
+            let rewardCount = 0;
 
             await Promise.all(
                 Object.keys(response).map(async (employeeId) => {
@@ -160,16 +166,29 @@ export const getPenaltiesData = (selectedDate) => {
                                 entryKey: key,
                                 ...entry,
                             });
+
+                            if (entry.entryType === "Penalty") penaltyCount++;
+                            if (entry.entryType === "Reward") rewardCount++;
                         }
                     }
                 })
             );
 
-            resolve(common.setResponse('success', 'Data fetched successfully', { list: penaltiesReward }));
+            resolve(common.setResponse('success', 'Data fetched successfully', {
+                list: penaltiesReward,
+                penaltyCount,
+                rewardCount,
+            }));
         } catch (error) {
-            console.error('Error fetching penalties data: - PenaltiesService.js:170', error);
-            resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', { error }));
+            console.error('Error fetching penalties data: - PenaltiesService.js:183', error);
+            resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', {
+                list: [],
+                penaltyCount: 0,
+                rewardCount: 0,
+                error,
+            }));
         }
     });
 };
+
 

@@ -107,72 +107,72 @@ export const getRewardTypes = (setRewardType) => {
 };
 
 export const handleSavePenaltiesData = async (
-  props,
-  employeeId,
-  entryType,
-  amount,
-  category,
-  reason,
-  setErrors,
-  handleClear,
-  onBack,
-  setPenaltiesData,
-  employees
-) => {
-  const fields = { entryType, amount, category, reason };
-
-  let hasError = false;
-  Object.entries(fields).forEach(([key, value]) => {
-    const isValid = validateField(key, value, entryType, setErrors);
-    if (!isValid) hasError = true;
-  });
-
-  if (hasError) {
-    toast.error("Please fill all the required fields.");
-    return;
-  }
-
-  const penaltyId = "";
-
-  const result = await savePaneltiesData(
-    props.loggedInUserId,
-    entryType,
-    props.selectedDate,
+    props,
     employeeId,
+    entryType,
     amount,
     category,
     reason,
-    penaltyId
-  );
+    setErrors,
+    handleClear,
+    onBack,
+    setPenaltiesData,
+    employees
+) => {
+    const fields = { entryType, amount, category, reason };
 
-  if (result.status === "success") {
-    const matchedEmployee = employees.find((e) => e.id === employeeId);
-    const employeeName = matchedEmployee ? matchedEmployee.name : "Unknown";
+    let hasError = false;
+    Object.entries(fields).forEach(([key, value]) => {
+        const isValid = validateField(key, value, entryType, setErrors);
+        if (!isValid) hasError = true;
+    });
 
-    const newRecord = {
-      key: result.data.Id || Date.now().toString(),
-      employeeId,
-      employeeName,
-      entryType,
-      amount,
-      reason,
-      created_By: props.loggedInUserId,
-      created_On: dayjs().format("YYYY-MM-DD HH:mm"),
-      ...(entryType === "Penalty"
-        ? { penaltyType: category }
-        : { rewardType: category }),
-    };
+    if (hasError) {
+        toast.error("Please fill all the required fields.");
+        return;
+    }
 
-    setPenaltiesData((prev) => [...prev, newRecord]);
+    const penaltyId = "";
 
-    handleClear();
-    toast.success("✅ Successfully Created!");
-    setTimeout(() => {
-      onBack();
-    }, 800);
-  } else {
-    toast.error("❌ Failed to save Penalty/Reward!");
-  }
+    const result = await savePaneltiesData(
+        props.loggedInUserId,
+        entryType,
+        props.selectedDate,
+        employeeId,
+        amount,
+        category,
+        reason,
+        penaltyId
+    );
+
+    if (result.status === "success") {
+        const matchedEmployee = employees.find((e) => e.id === employeeId);
+        const employeeName = matchedEmployee ? matchedEmployee.name : "Unknown";
+
+        const newRecord = {
+            key: result.data.Id || Date.now().toString(),
+            employeeId,
+            employeeName,
+            entryType,
+            amount,
+            reason,
+            created_By: props.loggedInUserId,
+            created_On: dayjs().format("YYYY-MM-DD HH:mm"),
+            ...(entryType === "Penalty"
+                ? { penaltyType: category }
+                : { rewardType: category }),
+        };
+
+        setPenaltiesData((prev) => [...prev, newRecord]);
+
+        handleClear();
+        toast.success("✅ Successfully Created!");
+        setTimeout(() => {
+            onBack();
+        }, 800);
+    } else {
+        toast.error("❌ Failed to save Penalty/Reward!");
+    }
 };
 
 
@@ -192,7 +192,7 @@ export const handleClear = (
     setErrors('');
 };
 
-export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesData) => {
+export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesData, setPenaltyCount, setRewardCount) => {
     getPenaltiesData(selectedDate).then((response) => {
         if (response.status === 'success') {
             const updatedList = response.data.list.map((item) => {
@@ -203,8 +203,12 @@ export const getPenaltiesRewardData = (selectedDate, employeeList, setPenaltiesD
                 };
             });
             setPenaltiesData(updatedList);
+            setPenaltyCount(response.data.penaltyCount);
+            setRewardCount(response.data.rewardCount);
         } else {
             setPenaltiesData([]);
+            setPenaltyCount('0');
+            setRewardCount('0');
         };
     });
 };
