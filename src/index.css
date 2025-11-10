@@ -43,5 +43,5 @@ code {
 }
 
 :root {
-  --toastify-toast-bottom: 60px !important;
+  --toastify-toast-bottom: 200px !important;
 }
