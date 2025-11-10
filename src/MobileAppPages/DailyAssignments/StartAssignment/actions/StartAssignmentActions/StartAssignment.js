@@ -28,6 +28,7 @@ export const startAssignmentAction = async (selectedVehicle, ward) => {
   try {
     const result = await startAssignment(selectedVehicle, ward);
     if (result.status === "success") {
+      selectedVehicle('')
       common.setAlertMessage("success", "Assignment started successfully!");
     } else {
       common.setAlertMessage("error", "Failed to start assignment!");
