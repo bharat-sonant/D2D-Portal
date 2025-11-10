@@ -22,6 +22,7 @@ import Wards from "../pages/Wards/Wards";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
+import WorkMonitoringList from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoringList";
 
 const RouterComponent = () => {
   const {
@@ -118,7 +119,18 @@ const RouterComponent = () => {
             </>
           }
         />
+
+            <Route
+          path="/work-monitoring"
+          element={
+            <>
+              <WorkMonitoringList />
+            </>
+          }
+        />
       </Routes>
+
+   
 
       <LocationPermissionAlertDialog
         visible={isLocationPermissionGranted}
