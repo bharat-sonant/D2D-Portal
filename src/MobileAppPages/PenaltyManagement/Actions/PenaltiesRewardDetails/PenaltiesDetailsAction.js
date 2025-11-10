@@ -116,7 +116,7 @@ export const handleSavePenaltiesData = async (props, employeeId, entryType, amou
     });
 
     if (hasError) {
-        alert('❌ Please fill all required fields before saving.');
+        toast.error('Please fill all the required fields.');
         return;
     }
 
