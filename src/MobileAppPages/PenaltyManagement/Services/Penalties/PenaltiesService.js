@@ -83,7 +83,7 @@ export const savePaneltiesData = (
     selectedDate,
     employeeId,
     amount,
-    category,
+    typeValue,
     reason,
     penaltyId
 ) => {
@@ -98,10 +98,11 @@ export const savePaneltiesData = (
             const month = dayjs(selectedDate).format('MMMM');
             const date = dayjs(selectedDate).format('YYYY-MM-DD');
 
+            const typeKey = entryType === 'Penalty' ? 'penaltyType' : 'rewardType';
+
             const dataToSave = {
                 entryType,
-                employeeId,
-                category,
+                [typeKey]: typeValue,
                 amount: Number(amount) || 0,
                 reason: reason || '',
                 created_By: loggedInUserId,
@@ -114,15 +115,13 @@ export const savePaneltiesData = (
             const saveResponse = await db.saveData(path, dataToSave);
             await db.saveData(`Penalties/${year}/${month}/${date}/${employeeId}`, { lastKey: lastKey });
 
-            console.log(saveResponse);
-
             if (saveResponse.success === true) {
-                resolve(common.setResponse('success', 'Penalty/Reward saved successfully', { key: lastKey }));
+                resolve(common.setResponse('success', 'Penalty/Reward saved successfully', { Id: lastKey }));
             } else {
                 resolve(common.setResponse('fail', 'Error saving penalty/reward!', {}));
             }
         } catch (error) {
-            console.error('Error saving penalties data: - PenaltiesService.js:125', error);
+            console.error('Error saving penalties data: - PenaltiesService.js:124', error);
             resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
         }
     });
