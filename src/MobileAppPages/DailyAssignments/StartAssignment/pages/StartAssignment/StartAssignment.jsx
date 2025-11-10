@@ -83,6 +83,7 @@ const StartAssignment = () => {
             <div className={styles.loadingText}>Loading vehicles...</div>
           ) : (
             <select
+            key={selectedVehicle}
               id="vehicle-select"
               className={styles.dropdown}
               value={selectedVehicle}
