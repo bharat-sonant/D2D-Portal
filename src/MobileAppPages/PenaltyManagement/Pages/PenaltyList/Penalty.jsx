@@ -53,7 +53,7 @@ const Penalty = () => {
 
   useEffect(() => {
     getPenaltiesRewardData(selectedDate, employees, setPenaltiesData);
-  }, [selectedDate])
+  }, [selectedDate, employees])
 
   return (
     <div className={styles.pageWrapper}>

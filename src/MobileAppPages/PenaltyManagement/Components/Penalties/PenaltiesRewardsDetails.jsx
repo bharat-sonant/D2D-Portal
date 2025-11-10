@@ -17,7 +17,6 @@ const PenaltiesRewardsDetails = (props) => {
     const [employeeId, setEmployeeId] = useState('');
     const [rewardTypes, setRewardTypes] = useState([]);
     const [penaltyTypes, setPenaltyTypes] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleAndroidBack = (event) => {

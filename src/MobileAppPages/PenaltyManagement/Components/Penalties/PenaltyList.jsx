@@ -241,7 +241,6 @@ const PenaltyList = (props) => {
                                         <td>Reason</td>
                                         <td>{item.reason}</td>
                                     </tr>
-                                    {console.log(item)}
                                     <tr>
                                         <td>{item.entryType === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
                                         <td>{item.created_By || item.createdBy}  (
