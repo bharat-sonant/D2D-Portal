@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
-import { fetchAllVehicles } from "../../actions/StartAssignmentActions/StartAssignment";
+import { fetchAllVehicles, startAssignmentAction } from "../../actions/StartAssignmentActions/StartAssignment";
 import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../../../firebase/firebaseService";
+import { startAssignment } from "../../services/StartAssignmentService/StartAssignment";
+import * as common from '../../../../../common/common'
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -40,6 +42,14 @@ const StartAssignment = () => {
   const activeVehicles = vehicles.filter(
     (v) => String(v.status) === "1" 
   );
+
+  const handleSubmit = async () => {
+    if (!selectedVehicle) {
+      common.setAlertMessage("error", "Please select a Vehicle !");
+      return;
+    }
+     await startAssignmentAction(selectedVehicle, ward);
+  };
 
  return (
     <div className={styles.container}>
@@ -83,6 +93,13 @@ const StartAssignment = () => {
             </select>
           )}
         </div>
+        <button
+          className={styles.startButton}
+          onClick={handleSubmit}
+          disabled={!selectedVehicle}
+        >
+          Submit
+        </button>
       </div>
     </div>
   );

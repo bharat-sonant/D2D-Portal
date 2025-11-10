@@ -17,3 +17,27 @@ export const getAllVehicles = async () => {
     }
   });
 };
+
+export const startAssignment = async(selectedVehicle, ward) => {
+  return new Promise(async(resolve) => {
+    try{
+      const path = `Vehicles/${selectedVehicle}`;
+      const payload = {
+        "assigned-driver": "",
+        "assigned-helper": "",
+        "assigned-task": ward,
+        "status": "3"
+      }
+
+      const result = await db.saveData(path, payload );
+
+      if (result.success) {
+        resolve(common.setResponse(success, "Assignment started successfully", result));
+      } else {
+        resolve(common.setResponse(fail, "Failed to start assignment", []));
+      }
+    }catch(error){
+      resolve(common.setResponse(fail, "Failed to fetch vehicles", []));
+    }
+  })
+}

@@ -1,4 +1,4 @@
-import { getAllVehicles } from "../../services/StartAssignmentService/StartAssignment";
+import { getAllVehicles, startAssignment } from "../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
 export const fetchAllVehicles = async (setVehicles, setLoading) => {
@@ -21,5 +21,20 @@ export const fetchAllVehicles = async (setVehicles, setLoading) => {
     setVehicles([])
   }finally{
     setLoading(false)
+  }
+};
+
+export const startAssignmentAction = async (selectedVehicle, ward) => {
+  try {
+    const result = await startAssignment(selectedVehicle, ward);
+    if (result.status === "success") {
+      common.setAlertMessage("success", "Assignment started successfully!");
+    } else {
+      common.setAlertMessage("error", "Failed to start assignment!");
+    }
+    return result;
+  } catch (error) {
+    common.setAlertMessage("error", "Error while starting assignment!");
+    return { status: "fail" };
   }
 };

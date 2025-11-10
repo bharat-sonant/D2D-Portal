@@ -269,11 +269,20 @@
     font-size: 16px;
   }
 
-  .startButton {
-    font-size: 17px;
-    padding: 15px 28px;
-    margin-top: 28px;
-  }
+ .startButton {
+  margin-top: 24px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
 
   .loadingText,
   .noVehiclesText {
