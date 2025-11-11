@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { getEmployees, getPenaltiesData, getPenaltyType, getRewardType, savePaneltiesData } from "../../Services/Penalties/PenaltiesService";
+import { getEmployees, getPenaltiesData, getPenaltyType, getRewardType, savePenaltiesData } from "../../Services/Penalties/PenaltiesService";
 import dayjs from "dayjs";
 
 export const validateField = (name, value, entryType, setErrors) => {
@@ -117,11 +117,12 @@ export const handleSavePenaltiesData = async (
     handleClear,
     onBack,
     setPenaltiesData,
-    employees
+    employees,
+    penaltyId // if exists -> edit mode
 ) => {
     const fields = { entryType, amount, category, reason };
-
     let hasError = false;
+
     Object.entries(fields).forEach(([key, value]) => {
         const isValid = validateField(key, value, entryType, setErrors);
         if (!isValid) hasError = true;
@@ -132,9 +133,7 @@ export const handleSavePenaltiesData = async (
         return;
     }
 
-    const penaltyId = "";
-
-    const result = await savePaneltiesData(
+    const result = await savePenaltiesData(
         props.loggedInUserId,
         entryType,
         props.selectedDate,
@@ -150,7 +149,7 @@ export const handleSavePenaltiesData = async (
         const employeeName = matchedEmployee ? matchedEmployee.name : "Unknown";
 
         const newRecord = {
-            key: result.data.Id || Date.now().toString(),
+            key: result.data.Id || penaltyId || Date.now().toString(),
             employeeId,
             employeeName,
             entryType,
@@ -163,17 +162,31 @@ export const handleSavePenaltiesData = async (
                 : { rewardType: category }),
         };
 
-        setPenaltiesData((prev) => [...prev, newRecord]);
+        setPenaltiesData((prev) => {
+            if (penaltyId) {
+                return prev.map((item) =>
+                    item.id === penaltyId ? { ...item, ...newRecord } : item
+                );
+            } else {
+                return [...prev, newRecord];
+            }
+        });
 
         handleClear();
-        toast.success("✅ Successfully Created!");
+        toast.success(
+            penaltyId
+                ? "✅ Successfully Updated!"
+                : "✅ Successfully Created!"
+        );
+
         setTimeout(() => {
             onBack();
-        }, 800);
+        }, 500);
     } else {
         toast.error("❌ Failed to save Penalty/Reward!");
     }
 };
+
 
 
 export const handleClear = (

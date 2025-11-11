@@ -25,6 +25,7 @@ const PenaltiesRewardsDetails = (props) => {
             setAmount(item.amount || '');
             setCategory(item.penaltyType || item.rewardType || '');
             setReason(item.reason || '');
+            props.setPenaltyId(item.id || '');
         } else {
             handleClear();
         }
@@ -79,7 +80,8 @@ const PenaltiesRewardsDetails = (props) => {
             handleClear,
             props.onBack,
             props.setPenaltiesData,
-            props.employees
+            props.employees,
+            props.penaltyId
         );
     };
 

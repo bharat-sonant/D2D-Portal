@@ -15,8 +15,8 @@ const Penalty = () => {
   const [penaltyCount, setPenaltyCount] = useState('0');
   const [rewardCount, setRewardCount] = useState('0');
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [penaltyId, setPenaltyId] = useState('');
 
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
@@ -62,10 +62,9 @@ const Penalty = () => {
   }, [selectedDate, employees])
 
   const handleEdit = (item) => {
-    console.log(item)
     setSelectedItem(item);
-    setIsEditing(true);
     setShowDetails(true);
+    setPenaltyId(item.id);
   }
 
   return (
@@ -93,6 +92,8 @@ const Penalty = () => {
             penaltiesData={penaltiesData}
             setPenaltiesData={setPenaltiesData}
             selectedItem={selectedItem}
+            penaltyId={penaltyId}
+            setPenaltyId={setPenaltyId}
           />
         )}
       </div>

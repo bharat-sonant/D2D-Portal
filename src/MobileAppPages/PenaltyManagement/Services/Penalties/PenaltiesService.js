@@ -77,7 +77,7 @@ export const getRewardType = () => {
     })
 };
 
-export const savePaneltiesData = (
+export const savePenaltiesData = (
     loggedInUserId,
     entryType,
     selectedDate,
@@ -85,7 +85,7 @@ export const savePaneltiesData = (
     amount,
     typeValue,
     reason,
-    penaltyId
+    penaltyId // existing record ID (if editing)
 ) => {
     return new Promise(async (resolve) => {
         try {
@@ -97,7 +97,6 @@ export const savePaneltiesData = (
             const year = dayjs(selectedDate).format('YYYY');
             const month = dayjs(selectedDate).format('MMMM');
             const date = dayjs(selectedDate).format('YYYY-MM-DD');
-
             const typeKey = entryType === 'Penalty' ? 'penaltyType' : 'rewardType';
 
             const dataToSave = {
@@ -105,23 +104,47 @@ export const savePaneltiesData = (
                 [typeKey]: typeValue,
                 amount: Number(amount) || 0,
                 reason: reason || '',
-                createdBy: loggedInUserId,
-                createdOn: dayjs().format('YYYY-MM-DD HH:mm'),
+                updatedBy: loggedInUserId,
+                updatedOn: dayjs().format('YYYY-MM-DD HH:mm'),
             };
 
-            const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`, penaltyId);
+            let path;
+            let recordId;
 
-            const path = `Penalties/${year}/${month}/${date}/${employeeId}/${lastKey}`;
-            const saveResponse = await db.saveData(path, dataToSave);
-            await db.saveData(`Penalties/${year}/${month}/${date}/${employeeId}`, { lastKey: lastKey });
+            // 🔹 If editing existing record
+            if (penaltyId) {
+                recordId = penaltyId;
+                path = `Penalties/${year}/${month}/${date}/${employeeId}/${recordId}`;
 
-            if (saveResponse.success === true) {
-                resolve(common.setResponse('success', 'Penalty/Reward saved successfully', { Id: lastKey }));
+                // Update only changed fields
+                const saveResponse = await db.saveData(path, dataToSave);
+                if (saveResponse.success) {
+                    resolve(common.setResponse('success', 'Penalty/Reward updated successfully', { Id: recordId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Error updating penalty/reward!', {}));
+                }
+
             } else {
-                resolve(common.setResponse('fail', 'Error saving penalty/reward!', {}));
+                // 🔹 Create new record
+                const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`);
+                recordId = lastKey;
+                path = `Penalties/${year}/${month}/${date}/${employeeId}/${recordId}`;
+
+                // Include createdBy info only for new records
+                dataToSave.createdBy = loggedInUserId;
+                dataToSave.createdOn = dayjs().format('YYYY-MM-DD HH:mm');
+
+                const saveResponse = await db.saveData(path, dataToSave);
+                await db.saveData(`Penalties/${year}/${month}/${date}/${employeeId}`, { lastKey: lastKey });
+
+                if (saveResponse.success) {
+                    resolve(common.setResponse('success', 'Penalty/Reward saved successfully', { Id: recordId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Error saving penalty/reward!', {}));
+                }
             }
         } catch (error) {
-            console.error('Error saving penalties data: - PenaltiesService.js:124', error);
+            console.error('Error saving penalties data: - PenaltiesService.js:147', error);
             resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
         }
     });
@@ -163,7 +186,7 @@ export const getPenaltiesData = (selectedDate) => {
                             const entry = innerObj[key];
                             penaltiesReward.push({
                                 employeeId,
-                                entryKey: key,
+                                id: key,
                                 ...entry,
                             });
 
@@ -180,7 +203,7 @@ export const getPenaltiesData = (selectedDate) => {
                 rewardCount,
             }));
         } catch (error) {
-            console.error('Error fetching penalties data: - PenaltiesService.js:183', error);
+            console.error('Error fetching penalties data: - PenaltiesService.js:206', error);
             resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', {
                 list: [],
                 penaltyCount: 0,
