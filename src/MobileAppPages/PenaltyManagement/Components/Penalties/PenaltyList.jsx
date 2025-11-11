@@ -1,263 +1,323 @@
 import { useState } from "react";
 import {
-    ArrowLeft,
-    Calendar,
-    ChevronLeft,
-    ChevronRight,
-    Plus,
-    Pencil,
-    X,
+  ArrowLeft,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Pencil,
+  X,
 } from "lucide-react";
-import styles from '../../Styles/Penalties/PenaltyList.module.css';
+import styles from "../../Styles/Penalties/PenaltyList.module.css";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const PenaltyList = (props) => {
-    const [showCalendar, setShowCalendar] = useState(false);
-    const [calendarMonth, setCalendarMonth] = useState(new Date());
-    const navigate = useNavigate();
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const navigate = useNavigate();
 
-    const handleBack = () => {
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        if (isAndroid && window.AndroidApp && typeof window.AndroidApp.closeWebView === "function") {
-            window.AndroidApp.closeWebView();
-        } else {
-            navigate(-1);
-        }
-    };
+  const handleBack = () => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (
+      isAndroid &&
+      window.AndroidApp &&
+      typeof window.AndroidApp.closeWebView === "function"
+    ) {
+      window.AndroidApp.closeWebView();
+    } else {
+      navigate(-1);
+    }
+  };
 
-    const changeDate = (days) => {
-        const newDate = new Date(props.selectedDate);
-        newDate.setDate(newDate.getDate() + days);
-        props.setSelectedDate(newDate);
-    };
+  const changeDate = (days) => {
+    const newDate = new Date(props.selectedDate);
+    newDate.setDate(newDate.getDate() + days);
+    props.setSelectedDate(newDate);
+  };
 
-    const formattedDate = dayjs(props.selectedDate).format('YYYY-MM-DD');
+  const formattedDate = dayjs(props.selectedDate).format("YYYY-MM-DD");
 
-    const getDaysInMonth = (date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
 
-        return { daysInMonth, startingDayOfWeek };
-    };
+    return { daysInMonth, startingDayOfWeek };
+  };
 
-    const changeMonth = (direction) => {
-        const newMonth = new Date(calendarMonth);
-        newMonth.setMonth(newMonth.getMonth() + direction);
-        setCalendarMonth(newMonth);
-    };
+  const changeMonth = (direction) => {
+    const newMonth = new Date(calendarMonth);
+    newMonth.setMonth(newMonth.getMonth() + direction);
+    setCalendarMonth(newMonth);
+  };
 
-    const selectDate = (day) => {
-        const newDate = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day, 12, 0, 0); // 👈 added hour=12
-        props.setSelectedDate(newDate);
-        setShowCalendar(false);
-    };
+  const selectDate = (day) => {
+    const newDate = new Date(
+      calendarMonth.getFullYear(),
+      calendarMonth.getMonth(),
+      day,
+      12,
+      0,
+      0
+    ); // 👈 added hour=12
+    props.setSelectedDate(newDate);
+    setShowCalendar(false);
+  };
 
-    const isToday = (day) => {
-        const today = new Date();
-        return day === today.getDate() &&
-            calendarMonth.getMonth() === today.getMonth() &&
-            calendarMonth.getFullYear() === today.getFullYear();
-    };
+  const isToday = (day) => {
+    const today = new Date();
+    return (
+      day === today.getDate() &&
+      calendarMonth.getMonth() === today.getMonth() &&
+      calendarMonth.getFullYear() === today.getFullYear()
+    );
+  };
 
-    const isSelected = (day) => {
-        return day === props.selectedDate.getDate() &&
-            calendarMonth.getMonth() === props.selectedDate.getMonth() &&
-            calendarMonth.getFullYear() === props.selectedDate.getFullYear();
-    };
+  const isSelected = (day) => {
+    return (
+      day === props.selectedDate.getDate() &&
+      calendarMonth.getMonth() === props.selectedDate.getMonth() &&
+      calendarMonth.getFullYear() === props.selectedDate.getFullYear()
+    );
+  };
 
-    const renderCalendar = () => {
-        const { daysInMonth, startingDayOfWeek } = getDaysInMonth(calendarMonth);
-        const days = [];
-        const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const renderCalendar = () => {
+    const { daysInMonth, startingDayOfWeek } = getDaysInMonth(calendarMonth);
+    const days = [];
+    const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-        for (let i = 0; i < startingDayOfWeek; i++) {
-            days.push(<div key={`empty-${i}`} className={`${styles.calendarDay} ${styles.empty}`}></div>);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayClasses = [
-                styles.calendarDay,
-                isToday(day) ? styles.today : '',
-                isSelected(day) ? styles.selected : ''
-            ].filter(Boolean).join(' ');
-
-            days.push(
-                <div
-                    key={day}
-                    className={dayClasses}
-                    onClick={() => selectDate(day)}
-                >
-                    {day}
-                </div>
-            );
-        }
-
-        return (
-            <>
-                <div className={styles.calendarWeekDays}>
-                    {weekDays.map(day => (
-                        <div key={day} className={styles.weekDay}>{day}</div>
-                    ))}
-                </div>
-                <div className={styles.calendarGrid}>{days}</div>
-            </>
-        );
-    };
-
-    const handleEdit = (item) => {
-        props.handleEdit(item)
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(
+        <div
+          key={`empty-${i}`}
+          className={`${styles.calendarDay} ${styles.empty}`}
+        ></div>
+      );
     }
 
-    const Loader = () => (
-        <div className={styles.loaderContainer}>
-            <div className={styles.loader}></div>
-            <p
-                style={{
-                    fontWeight: 200,
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
-                }}
-            >
-                Please wait...
-            </p>
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayClasses = [
+        styles.calendarDay,
+        isToday(day) ? styles.today : "",
+        isSelected(day) ? styles.selected : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
 
+      days.push(
+        <div key={day} className={dayClasses} onClick={() => selectDate(day)}>
+          {day}
         </div>
-    );
-
+      );
+    }
 
     return (
-        <>
-            <div className={styles.header}>
-                <button className={styles.backButton} onClick={handleBack}>
-                    <ArrowLeft size={22} />
-                </button>
-                <h1 className={styles.title}>Penalties</h1>
+      <>
+        <div className={styles.calendarWeekDays}>
+          {weekDays.map((day) => (
+            <div key={day} className={styles.weekDay}>
+              {day}
             </div>
-            {/* Floating Add Button for mobile */}
-            <button
-                className={styles.floatingAddButton}
-                onClick={props.onAddClick}
-            >
-                <Plus size={24} />
-            </button>
-
-
-            {/* Date Section */}
-            <div className={styles.dateSection}>
-                <button onClick={() => changeDate(-1)} className={styles.dateNavButton}>
-                    <ChevronLeft size={20} />
-                </button>
-
-                <div className={styles.dateDisplay} onClick={() => setShowCalendar(true)}>
-                    <Calendar size={18} />
-                    <span>{dayjs(formattedDate).format('DD-MMM-YYYY')}</span>
-                </div>
-
-                <button onClick={() => changeDate(1)} className={styles.dateNavButton}>
-                    <ChevronRight size={20} />
-                </button>
-
-                <div className={styles.summaryBox}>
-                    <div className={styles.summaryItem}>
-                        <p>Penalty</p>
-                        <span>{props.penaltyCount}</span>
-                    </div>
-                    <div className={styles.summaryItem}>
-                        <p>Reward</p>
-                        <span>{props.rewardCount}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className={styles.listContainer}>
-                {props.isLoading ? (
-                    <Loader />
-                ) : props.penaltiesData.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <Calendar size={64} />
-                        <p>No entries for this date</p>
-                    </div>
-                ) : (
-                    props.penaltiesData.map((item) => (
-                        <div key={item.id} className={styles.card}>
-                            <div className={styles.cardHeader}>
-                                <h3 className={styles.employeeName}>{item.employeeName}{' '}({item.employeeId})</h3>
-                                <button className={styles.editButton} onClick={() => handleEdit(item)}>
-                                    <Pencil size={18} />
-                                </button>
-
-                            </div>
-
-                            <table className={styles.cardTable}>
-                                <tbody>
-                                    <tr>
-                                        <td>Entry</td>
-                                        <td>
-                                            <span className={`${styles.entryValue} ${item.entryType === 'Penalty' ? styles.penalty : styles.reward}`}>
-                                                {item.entryType}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>{item.entryType === 'Penalty' ? 'Penalty' : 'Reward'}</td>
-                                        <td>
-                                            ₹{item.amount}
-                                            {" | "}
-                                            {item.penaltyType && `${item.penaltyType}`}
-                                            {item.penaltyType && item.rewardType && " | "}
-                                            {item.rewardType && `${item.rewardType}`}
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-                                        <td>Reason</td>
-                                        <td>{item.reason}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{item.entryType === 'Reward' ? 'Rewarded by' : 'Penalized by'}</td>
-                                        <td>{item.created_By || item.createdBy}  (
-                                            {dayjs(item.createdOn || item.created_On).format("hh:mm A")}
-                                            )</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            {showCalendar && (
-                <div className={styles.calendarOverlay} onClick={() => setShowCalendar(false)}>
-                    <div className={styles.calendarModal} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.calendarHeader}>
-                            <h2 className={styles.calendarTitle}>Select Date</h2>
-                            <button className={styles.closeButton} onClick={() => setShowCalendar(false)}>
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        <div className={styles.calendarNav}>
-                            <button className={styles.monthButton} onClick={() => changeMonth(-1)}>
-                                <ChevronLeft size={18} />
-                            </button>
-                            <div className={styles.monthDisplay}>
-                                {calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                            </div>
-                            <button className={styles.monthButton} onClick={() => changeMonth(1)}>
-                                <ChevronRight size={18} />
-                            </button>
-                        </div>
-
-                        {renderCalendar()}
-                    </div>
-                </div>
-            )}
-        </>
+          ))}
+        </div>
+        <div className={styles.calendarGrid}>{days}</div>
+      </>
     );
+  };
+
+  const handleEdit = (item) => {
+    props.handleEdit(item);
+  };
+
+  const Loader = () => (
+    <div className={styles.loaderContainer}>
+      <div className={styles.loader}></div>
+      <p
+        style={{
+          fontWeight: 200,
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+        }}
+      >
+        Please wait...
+      </p>
+    </div>
+  );
+
+  return (
+    <>
+      <div className={styles.header}>
+        <button className={styles.backButton} onClick={handleBack}>
+          <ArrowLeft size={22} />
+        </button>
+        <div className={styles.headerRight}>
+        <h1 className={styles.title}>Penalties</h1>
+        </div>
+      </div>
+      {/* Floating Add Button for mobile */}
+      <button className={styles.floatingAddButton} onClick={props.onAddClick}>
+        <Plus size={24} />
+      </button>
+
+      <div className={styles.pageBody}>
+        {/* Date Section */}
+        <div className={styles.dateSection}>
+          <div className={styles.dateDisplay}>
+            <div
+              className={styles.calendar}
+              onClick={() => setShowCalendar(true)}
+            >
+              <span>{dayjs(formattedDate).format("DD-MMM-YYYY")}</span>
+            </div>
+
+            <button
+              onClick={() => changeDate(-1)}
+              className={styles.dateNavButton}
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={() => changeDate(1)}
+              className={styles.dateNavButton}
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+
+          <div className={styles.summaryBox}>
+            <div className={styles.summaryItem}>
+              <p>Penalty</p>
+              <span>{props.penaltyCount}</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <p>Reward</p>
+              <span>{props.rewardCount}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.listContainer}>
+          {props.isLoading ? (
+            <Loader />
+          ) : props.penaltiesData.length === 0 ? (
+            <div className={styles.emptyState}>
+              <Calendar size={64} />
+              <p>No entries for this date</p>
+            </div>
+          ) : (
+            props.penaltiesData.map((item) => (
+              <div key={item.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.employeeName}>
+                    {item.employeeName} ({item.employeeId})
+                    <div
+                      className={`${styles.entryValue} ${styles.badgePenalty} ${
+                        item.entryType === "Penalty"
+                          ? styles.penalty
+                          : styles.reward
+                      }`}
+                    >
+                      {item.entryType}
+                    </div>
+                  </h3>
+                  <button
+                    className={styles.editButton}
+                    onClick={() => handleEdit(item)}
+                  >
+                    <Pencil size={18} />
+                  </button>
+                </div>
+
+                <table className={styles.cardTable}>
+                  <tbody>
+          
+                    <tr>
+                      <td>
+                        {item.entryType === "Penalty" ? "Penalty" : "Reward"}
+                      </td>
+                      <td>
+                        ₹{item.amount}
+                        {" | "}
+                        {item.penaltyType && `${item.penaltyType}`}
+                        {item.penaltyType && item.rewardType && " | "}
+                        {item.rewardType && `${item.rewardType}`}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Reason</td>
+                      <td>{item.reason}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        {item.entryType === "Reward"
+                          ? "Rewarded by"
+                          : "Penalized by"}
+                      </td>
+                      <td>
+                        {item.created_By || item.createdBy} (
+                        {dayjs(item.createdOn || item.created_On).format(
+                          "hh:mm A"
+                        )}
+                        )
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+      {showCalendar && (
+        <div
+          className={styles.calendarOverlay}
+          onClick={() => setShowCalendar(false)}
+        >
+          <div
+            className={styles.calendarModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.calendarHeader}>
+              <h2 className={styles.calendarTitle}>Select Date</h2>
+              <button
+                className={styles.closeButton}
+                onClick={() => setShowCalendar(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className={styles.calendarNav}>
+              <button
+                className={styles.monthButton}
+                onClick={() => changeMonth(-1)}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <div className={styles.monthDisplay}>
+                {calendarMonth.toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </div>
+              <button
+                className={styles.monthButton}
+                onClick={() => changeMonth(1)}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+
+            {renderCalendar()}
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default PenaltyList;
