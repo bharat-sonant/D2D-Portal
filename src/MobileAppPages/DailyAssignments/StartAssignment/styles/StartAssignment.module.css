@@ -85,6 +85,35 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* ---------- Info Header (Ward, User, City) ---------- */
+.infoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.infoItem {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.infoLabel {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.infoValue {
+  color: #111827;
+  font-weight: 500;
+}
+
+
 .dropdownWrapper {
   position: relative;
 }

@@ -130,6 +130,9 @@ const StartAssignment = () => {
       </div>
       <div className={styles.contentContainer}>
        <VehiclesDropdown
+       ward={ward}
+       user={user}
+       city={city}
         loading={loading}
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
