@@ -69,12 +69,15 @@ const StartAssignment = () => {
     try{
       if(window.Android && window.Android.closeWebView){
         window.Android.closeWebView();
+        common.setAlertMessage('success')
       }else if (window.history.length > 1) {
       window.history.back();
     } else {
+      common.setAlertMessage('issue in back button')
       console.warn("No native bridge or history available.");
     }
     }catch(e){
+      common.setAlertMessage('error in back button')
       console.error("Error handling back:", e);
     }
   };
