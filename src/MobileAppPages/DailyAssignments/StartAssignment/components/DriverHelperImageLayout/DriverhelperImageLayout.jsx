@@ -1,13 +1,10 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Camera } from 'lucide-react';
 import styles from '../../styles/DriverHelperImageLayout/DriverHelperImageLayout.module.css';
 
 const DriverHelperImageLayout = () => {
     const [driverImage, setDriverImage] = useState(null);
-    const [helperImage, setHelperImage] = useState(null);
-
     const driverInputRef = useRef(null);
-    const helperInputRef = useRef(null);
 
     const handleFileChange = (e, type) => {
         const file = e.target.files[0];
@@ -17,17 +14,13 @@ const DriverHelperImageLayout = () => {
         reader.onload = (event) => {
             if (type === 'driver') {
                 setDriverImage(event.target.result);
-            } else {
-                setHelperImage(event.target.result);
-            }
+            };
         };
         reader.readAsDataURL(file);
     };
 
     return (
         <div className={styles.container}>
-
-            {/* DRIVER SECTION */}
             <div className={styles.section}>
                 <h3 className={styles.heading}>कृपया DRIVER AND HELPER की फोटो खींचे ।</h3>
 
