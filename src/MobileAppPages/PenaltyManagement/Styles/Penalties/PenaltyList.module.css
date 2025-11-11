@@ -488,6 +488,9 @@
   .floatingAddButton {
     display: flex;
   }
+  .mobileView{
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
