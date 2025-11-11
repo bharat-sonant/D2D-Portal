@@ -72,7 +72,7 @@ body {
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0px;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -109,7 +109,7 @@ body {
 .leftGroup {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
 .truckIcon {
@@ -123,6 +123,7 @@ body {
 
 .dropdownIcon {
   color: #6b7280;
+  size: 2px;
 }
 
 /* Invisible actual dropdown on top */
@@ -154,3 +155,92 @@ body {
   border-radius: 8px;
 }
 
+/* driver helper section*/
+.idFieldsCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.fieldColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: #151515;
+}
+
+.textInput {
+  padding: 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textInput:focus {
+  border-color: #16a34a;
+}
+
+.textInput::placeholder {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.deviceInputWrapper {
+  display: flex;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.deviceInputWrapper:focus-within {
+  border-color: #16a34a;
+}
+
+.devicePrefix {
+  background-color: #f3f4f6;
+  padding: 12px 10px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+  border-right: 1.5px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.deviceInput {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.deviceInput::placeholder {
+  color: #9ca3af;
+  font-size: 12px;
+}

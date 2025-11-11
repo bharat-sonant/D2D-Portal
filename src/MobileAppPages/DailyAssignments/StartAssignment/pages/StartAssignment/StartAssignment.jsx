@@ -9,12 +9,17 @@ import * as common from '../../../../../common/common'
 import { ArrowLeft } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
+import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [driverId, setDriverId] = useState('')
+  const [driverDeviceId, setDriverDeviceId] = useState('')
+  const [helperId, setHelperID] = useState('');
+  const [helperDeviceId, setHelperDeviceId] = useState('')
   const location = useLocation()
 
   const queryParams = new URLSearchParams(location.search);
@@ -129,6 +134,17 @@ const StartAssignment = () => {
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
         activeVehicles={activeVehicles}
+       />
+
+       <DriverHelperDetails
+        driverId={driverId}
+        setDriverId={setDriverId}
+        driverDeviceId={driverDeviceId}
+        setDriverDeviceId={setDriverDeviceId}
+        helperId={helperId}
+        setHelperID={setHelperID}
+        helperDeviceId={helperDeviceId}
+        setHelperDeviceId={setHelperDeviceId}
        />
 
       </div>

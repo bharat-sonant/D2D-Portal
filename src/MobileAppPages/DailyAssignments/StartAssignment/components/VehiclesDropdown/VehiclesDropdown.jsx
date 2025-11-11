@@ -19,7 +19,7 @@ const VehiclesDropdown = ({loading, selectedVehicle,setSelectedVehicle, activeVe
                   {selectedVehicle || "Select vehicle"}
                 </span>
               </div>
-              <ChevronDown className={styles.dropdownIcon} />
+              <ChevronDown className={styles.dropdownIcon} size={16} />
             </div>
 
             <select
