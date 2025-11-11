@@ -36,7 +36,7 @@ const DriverHelperImageLayout = () => {
                 </div>
                 <input
                     type="file"
-                    accept="image/*;capture=camera"
+                    accept="image/*"
                     capture="environment"
                     ref={driverInputRef}
                     style={{ display: 'none' }}
