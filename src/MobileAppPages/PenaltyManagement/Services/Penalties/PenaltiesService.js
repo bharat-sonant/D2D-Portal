@@ -85,7 +85,7 @@ export const savePenaltiesData = (
     amount,
     typeValue,
     reason,
-    penaltyId // existing record ID (if editing)
+    penaltyId
 ) => {
     return new Promise(async (resolve) => {
         try {

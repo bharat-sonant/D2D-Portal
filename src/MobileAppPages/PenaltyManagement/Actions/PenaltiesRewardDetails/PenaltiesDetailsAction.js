@@ -118,7 +118,7 @@ export const handleSavePenaltiesData = async (
     onBack,
     setPenaltiesData,
     employees,
-    penaltyId // if exists -> edit mode
+    penaltyId
 ) => {
     const fields = { entryType, amount, category, reason };
     let hasError = false;
