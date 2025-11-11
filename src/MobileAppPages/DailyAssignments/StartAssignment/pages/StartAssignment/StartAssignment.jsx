@@ -58,8 +58,7 @@ const StartAssignment = () => {
     );
     }
   };
-console.log('vehicles',vehicles)
-console.log('activevehicles', activeVehicles)
+  
  return (
     <div className={styles.container}>
       <div className={styles.card}>
