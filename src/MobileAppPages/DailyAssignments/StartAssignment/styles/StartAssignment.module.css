@@ -1,362 +1,555 @@
-/* ----------- Mobile-First Base Layout ----------- */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f9fafb;
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  padding: 16px;
+/* ----------- Reset & Base ----------- */
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 24px 20px;
-  width: 100%;
-  max-width: 400px;
+body {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ----------- Page Container ----------- */
+.pageContainer {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* ----------- Green Header ----------- */
+.header {
+  background-color: #16a34a;
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.backButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(0.95);
+}
+
+.headerTitle {
+  font-size: 20px;
+  font-weight: 600;
+  flex: 1;
   text-align: center;
 }
 
-.title {
-  margin: 0 0 24px 0;
-  color: #1f2937;
-  font-size: 22px;
-  font-weight: 600;
-}
-
-/* ----------- Details Section ----------- */
-.details {
-  text-align: left;
-  margin-bottom: 24px;
-}
-
-.detailRow {
+/* ----------- Content Container ----------- */
+.contentContainer {
+  padding: 8px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ---------- Vehicle Selection Card ---------- */
+/* ---------- Vehicle Selection Card ---------- */
+.vehicleCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownWrapper {
+  position: relative;
+}
+
+/* Outer visible box */
+.dropdownDisplay {
+  display: flex;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 15px;
-}
-
-.detailRow:last-child {
-  border-bottom: none;
-}
-
-.label {
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.value {
-  color: #1f2937;
-  font-weight: 600;
-  text-align: right;
-}
-
-/* ----------- Dropdown Section ----------- */
-.dropdownContainer {
-  margin-top: 24px;
-  text-align: left;
-}
-
-.dropdownLabel {
-  display: block;
-  margin-bottom: 8px;
-  color: #374151;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.dropdown {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 15px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 10px;
-  background-color: #ffffff;
-  color: #1f2937;
+  justify-content: space-between;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
   cursor: pointer;
-  outline: none;
-  transition: all 0.2s ease;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 40px;
-  font-family: inherit;
-  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
 }
 
-.dropdown:hover {
+.dropdownDisplay:hover {
   border-color: #9ca3af;
 }
 
-.dropdown:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.dropdown:disabled {
-  background-color: #f3f4f6;
-  cursor: not-allowed;
-  opacity: 0.6;
+.truckIcon {
+  flex-shrink: 0;
 }
 
-.dropdown option {
-  padding: 10px;
+.vehicleLabel {
   font-size: 15px;
+  color: #374151;
+}
+
+.dropdownIcon {
+  color: #6b7280;
+}
+
+/* Invisible actual dropdown on top */
+.vehicleDropdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  
+}
+
+/* Focus style for accessibility */
+.vehicleDropdown:focus + .dropdownDisplay,
+.dropdownDisplay:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
 }
 
 .loadingText {
-  padding: 12px;
+  padding: 16px;
+  text-align: center;
   color: #6b7280;
   font-size: 14px;
-  text-align: center;
   background-color: #f9fafb;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border-radius: 8px;
 }
 
-.noVehiclesText {
-  padding: 12px;
-  color: #ef4444;
-  font-size: 14px;
-  text-align: center;
-  background-color: #fef2f2;
-  border-radius: 10px;
-  border: 1px solid #fecaca;
+
+.idFieldsCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
-/* ----------- Start Button (if needed later) ----------- */
-.startButton {
-  margin-top: 24px;
-  background-color: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 16px;
+.fieldColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 12px;
   font-weight: 500;
-  cursor: pointer;
+  color: #374151;
+}
+
+.textInput {
+  padding: 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
   width: 100%;
-  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.textInput:focus {
+  border-color: #16a34a;
+}
+
+.textInput::placeholder {
+  color: #9ca3af;
+}
+
+.deviceInputWrapper {
+  display: flex;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.deviceInputWrapper:focus-within {
+  border-color: #16a34a;
+}
+
+.devicePrefix {
+  background-color: #f3f4f6;
+  padding: 12px 10px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+  border-right: 1.5px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.deviceInput {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.deviceInput::placeholder {
+  color: #9ca3af;
+}
+
+/* ----------- Action Buttons ----------- */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.addButton {
+  flex: 1;
+  max-width: 100px;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
   font-family: inherit;
 }
 
-.startButton:hover {
-  background-color: #1d4ed8;
+.addButton:hover {
+  background-color: #15803d;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
 }
 
-.startButton:active {
+.addButton:active {
+  background-color: #14532d;
   transform: translateY(0);
 }
 
-.startButton:disabled {
+/* ----------- Camera Upload Sections ----------- */
+.cameraCard {
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cameraLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.cameraBox {
+  border: 2px dashed #d1d5db;
+  border-radius: 10px;
+  padding: 60px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cameraBox:hover {
+  border-color: #9ca3af;
+  background-color: #f3f4f6;
+}
+
+.cameraBox:active {
+  transform: scale(0.99);
+}
+
+.cameraIcon {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.cameraBox:hover .cameraIcon {
+  opacity: 0.8;
+}
+
+.uploadedImage {
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* ----------- Continue Button ----------- */
+.continueButton {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-top: 8px;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+}
+
+.continueButton:hover {
+  background-color: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+}
+
+.continueButton:active {
+  transform: translateY(0);
+}
+
+.continueButton:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+  opacity: 0.6;
 }
 
 /* ----------- Small Mobile Devices (up to 360px) ----------- */
 @media (max-width: 360px) {
-  .container {
+  .contentContainer {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .vehicleCard,
+  .idFieldsCard,
+  .cameraCard {
     padding: 12px;
   }
 
-  .card {
-    padding: 20px 16px;
+  .headerTitle {
+    font-size: 18px;
   }
 
-  .title {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-
-  .detailRow {
-    font-size: 14px;
-    padding: 8px 0;
-  }
-
-  .dropdownLabel {
+  .vehicleLabel {
     font-size: 14px;
   }
 
-  .dropdown {
-    font-size: 14px;
-    padding: 10px 12px;
-    padding-right: 36px;
+  .fieldLabel {
+    font-size: 12px;
   }
 
-  .dropdown option {
-    font-size: 14px;
-  }
-
-  .startButton {
-    font-size: 15px;
-    padding: 12px 20px;
-  }
-
-  .loadingText,
-  .noVehiclesText {
+  .textInput,
+  .deviceInput,
+  .devicePrefix {
     font-size: 13px;
     padding: 10px;
   }
+
+  .addButton {
+    font-size: 13px;
+    padding: 10px 12px;
+    min-width: 130px;
+  }
+
+  .cameraLabel {
+    font-size: 13px;
+  }
+
+  .cameraBox {
+    padding: 40px 16px;
+    min-height: 150px;
+  }
+
+  .continueButton {
+    font-size: 15px;
+    padding: 14px;
+  }
 }
 
-/* ----------- Mobile Landscape & Small Tablets (361px - 599px) ----------- */
-@media (min-width: 361px) and (max-width: 599px) {
-  .card {
-    max-width: 440px;
-    padding: 24px 20px;
+/* ----------- Tablets (600px+) ----------- */
+@media (min-width: 600px) {
+  .header {
+    padding: 16px 24px;
   }
 
-  .title {
-    font-size: 23px;
+  .headerTitle {
+    font-size: 22px;
   }
 
-  .detailRow {
+  .contentContainer {
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .vehicleCard,
+  .idFieldsCard,
+  .cameraCard {
+    padding: 20px;
+  }
+
+  .vehicleHeader {
+    padding: 14px;
+  }
+
+  .vehicleLabel {
+    font-size: 17px;
+  }
+
+  .fieldLabel {
     font-size: 15px;
   }
 
-  .dropdown {
+  .textInput,
+  .deviceInput,
+  .devicePrefix {
     font-size: 15px;
+    padding: 13px;
+  }
+
+  .addButton {
+    font-size: 15px;
+    padding: 14px 20px;
+  }
+
+  .cameraLabel {
+    font-size: 15px;
+  }
+
+  .cameraBox {
+    padding: 70px 20px;
+    min-height: 200px;
+  }
+
+  .continueButton {
+    font-size: 17px;
+    padding: 18px;
   }
 }
 
-/* ----------- Tablets (600px - 1024px) ----------- */
-@media (min-width: 600px) and (max-width: 1024px) {
-  .container {
+/* ----------- Desktops (1024px+) ----------- */
+@media (min-width: 1024px) {
+  .header {
+    padding: 18px 32px;
+  }
+
+  .headerTitle {
+    font-size: 24px;
+  }
+
+  .contentContainer {
+    padding: 32px;
+    gap: 24px;
+    max-width: 800px;
+  }
+
+  .vehicleCard,
+  .idFieldsCard,
+  .cameraCard {
     padding: 24px;
   }
 
-  .card {
-    max-width: 500px;
-    padding: 32px 28px;
+  .vehicleHeader {
+    padding: 16px;
   }
 
-  .title {
-    font-size: 26px;
-    margin-bottom: 28px;
+  .vehicleLabel {
+    font-size: 18px;
   }
 
-  .detailRow {
-    font-size: 17px;
-    padding: 12px 0;
-  }
-
-  .dropdownContainer {
-    margin-top: 28px;
-  }
-
-  .dropdownLabel {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .dropdown {
-    font-size: 16px;
-    padding: 14px 16px;
-    padding-right: 44px;
-  }
-
-  .dropdown option {
+  .fieldLabel {
     font-size: 16px;
   }
 
- .startButton {
-  margin-top: 24px;
-  background-color: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.25s ease;
-  font-family: inherit;
-}
-
-  .loadingText,
-  .noVehiclesText {
-    font-size: 15px;
+  .textInput,
+  .deviceInput,
+  .devicePrefix {
+    font-size: 16px;
     padding: 14px;
   }
-}
 
-/* ----------- Laptops & Desktops (1025px+) ----------- */
-@media (min-width: 1025px) {
-  .container {
-    padding: 40px;
+  .addButton {
+    font-size: 16px;
+    padding: 15px 24px;
   }
 
-  .card {
-    max-width: 560px;
-    padding: 40px 36px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  .cameraLabel {
+    font-size: 16px;
   }
 
-  .title {
-    font-size: 28px;
-    margin-bottom: 32px;
+  .cameraBox {
+    padding: 80px 20px;
+    min-height: 220px;
   }
 
-  .detailRow {
+  .cameraIcon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .continueButton {
     font-size: 18px;
-    padding: 14px 0;
+    padding: 20px;
   }
 
-  .dropdownContainer {
-    margin-top: 32px;
-  }
-
-  .dropdownLabel {
-    font-size: 17px;
-    margin-bottom: 10px;
-  }
-
-  .dropdown {
-    font-size: 17px;
-    padding: 15px 18px;
-    padding-right: 46px;
-    border-width: 2px;
-  }
-
-  .dropdown option {
-    font-size: 17px;
-    padding: 12px;
-  }
-
-  .dropdown:hover {
-    border-color: #6b7280;
-  }
-
-  .startButton {
-    font-size: 18px;
-    padding: 16px 32px;
-    margin-top: 32px;
-    max-width: 360px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .loadingText,
-  .noVehiclesText {
-    font-size: 15px;
-    padding: 14px;
+  .backButton:hover {
+    background-color: rgba(255, 255, 255, 0.15);
   }
 }
 
 /* ----------- Extra Large Screens (1440px+) ----------- */
 @media (min-width: 1440px) {
-  .card {
-    max-width: 600px;
+  .contentContainer {
+    max-width: 900px;
   }
 }
