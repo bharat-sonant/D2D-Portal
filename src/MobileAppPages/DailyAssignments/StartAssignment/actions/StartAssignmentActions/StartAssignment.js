@@ -1,7 +1,7 @@
 import { getAllVehicles, startAssignment } from "../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
-export const fetchAllVehicles = async (setVehicles, setLoading) => {
+export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicles) => {
   try {
     setLoading(true)
     setVehicles([])
@@ -12,6 +12,9 @@ export const fetchAllVehicles = async (setVehicles, setLoading) => {
         ...value
       }))
       setVehicles(vehicleArray);
+
+      const active = vehicleArray.filter((v)=> String(v.status) === '1')
+      setActiveVehicles(active)
     } else {
       common.setAlertMessage('warn', 'No Vehicles found')
       setVehicles([]);

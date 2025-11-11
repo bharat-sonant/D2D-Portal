@@ -9,6 +9,7 @@ import * as common from '../../../../../common/common'
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
+   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const location = useLocation()
@@ -31,17 +32,17 @@ const StartAssignment = () => {
   }, [city]);
 
   useEffect(() => {
-    fetchAllVehicles(setVehicles, setLoading);
-  }, [city]);
+    fetchAllVehicles(setVehicles, setLoading, setActiveVehicles);
+  }, []);
 
 
   const handleVehicleChange = (e)=> {
     setSelectedVehicle(e.target.value);
   }
 
-  const activeVehicles = vehicles.filter(
-    (v) => String(v.status) === "1" 
-  );
+  // const activeVehicles = vehicles.filter(
+  //   (v) => String(v.status) === "1" 
+  // );
 
   const handleSubmit = async () => {
     if (!selectedVehicle) {
@@ -52,9 +53,13 @@ const StartAssignment = () => {
     
     if (result.status === "success") {
       setSelectedVehicle("");
+      setActiveVehicles((prev) =>
+      prev.filter((v) => v.vehcileNo !== selectedVehicle)
+    );
     }
   };
-
+console.log('vehicles',vehicles)
+console.log('activevehicles', activeVehicles)
  return (
     <div className={styles.container}>
       <div className={styles.card}>
