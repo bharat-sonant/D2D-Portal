@@ -8,9 +8,12 @@ import { Provider } from 'react-redux';
 import { store } from './Redux/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import "./assets/css/style.css";
+import globleStyles from "./assets/css/globleStyles.module.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+      <div className={globleStyles.mobileFrame}>
   <BrowserRouter>
     <Provider store={store}>
       <PermissionProvider>
@@ -30,6 +33,7 @@ root.render(
       </PermissionProvider>
     </Provider>
   </BrowserRouter>
+  </div>
 );
 
 // If you want to start measuring performance in your app, pass a function

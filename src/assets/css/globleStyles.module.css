@@ -3,6 +3,38 @@
 @import "../css/normalize.css";
 
 .mainSection {
+  height: calc(100vh - 56px);
+  overflow: auto;
+  padding: 10px 16px;
+}
+.mobileFrame {
+  width: 360px;
+  height: 90vh;
+  margin: 5vh auto;
+  border: 12px solid var(--darkBlack);
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  background:var(--white);
+  position: relative;
+  &::before {
+    content: "";
+    width: 150px;
+    height: 30px;
+    background: var(--darkBlack);
+    border-radius: 20px;
+    position: absolute;
+    top: -20px;
+    left: calc(50% - 75px);
+    z-index: 3;
+  }
+}
+.mobileFrame .mainSection{
+    height: calc(90vh - 56px);
+}
+
+
+.mainSection {
   margin-top: 60px;
 }
 
@@ -1044,6 +1076,18 @@ button:focus:not(:focus-visible) {
 }
 
 @media (max-width: 767.98px) {
+      .mobileFrame{
+        width: 100%;
+        height: 100vh;
+        margin: 0px;
+        border: none;
+        border-radius: 0px;
+        box-shadow: none;
+        &::before{
+            display: none;
+        }
+    }
+    
   .pMobile {
     padding-left: 0px;
     padding-right: 0px;

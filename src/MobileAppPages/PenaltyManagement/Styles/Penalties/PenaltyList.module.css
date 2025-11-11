@@ -16,7 +16,7 @@
   width: 100%;
   max-width: 400px;
   margin: 0 auto;
-  height: 100vh;
+  height: 90vh;
   background: #f3f3f9;
   overflow: hidden;
   position: relative;
@@ -434,7 +434,7 @@
 /* 🟢 Floating Add Button */
 .floatingAddButton {
   position: absolute;
-  bottom: 16px;
+  bottom: 36px;
   right: 16px;
   background-color: #31c422;
   color: white;
@@ -487,9 +487,11 @@
 @media (max-width: 768px) {
   .floatingAddButton {
     display: flex;
+    bottom: 16px;
   }
   .mobileView{
     max-width: 100%;
+    height: 100vh;
   }
 }
 
