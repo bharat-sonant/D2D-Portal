@@ -15,7 +15,7 @@ const DriverHelperDetails = ({
   const [extraHelpers, setExtraHelpers] = useState([]);
 
   const handleAddHelper = () => {
-    setExtraHelpers((prev) => [...prev, { helperId: "", helperDeviceId: "" }]);
+    setExtraHelpers((prev) => [...prev, { helperId: "" }]);
   };
 
   const handleRemoveHelper = (index) => {
@@ -91,7 +91,7 @@ const DriverHelperDetails = ({
         {/* Extra Helpers */}
         {extraHelpers.map((h, index) => (
           <React.Fragment key={index}>
-            <div className={styles.fieldColumn}>
+             <div className={`${styles.fieldColumn} ${styles.extraHelperRow}`}>
               <label className={styles.fieldLabel}>Helper ID</label>
               <input
                 type="text"
@@ -103,19 +103,10 @@ const DriverHelperDetails = ({
                 }
               />
             </div>
-            <div className={styles.fieldColumn}>
+             <div className={`${styles.fieldColumn} ${styles.extraHelperRow}`}>
               <label className={styles.fieldLabel}>Device ID</label>
-              <div className={styles.deviceInputWrapper}>
-                <span className={styles.devicePrefix}>DEV</span>
-                <input
-                  type="text"
-                  className={styles.deviceInput}
-                  placeholder="Device ID"
-                  value={h.helperDeviceId}
-                  onChange={(e) =>
-                    handleHelperChange(index, "helperDeviceId", e.target.value)
-                  }
-                />
+              <div className={styles.notApplicableBox}>
+                Not Applicable
               </div>
             </div>
           </React.Fragment>
@@ -142,12 +133,6 @@ const DriverHelperDetails = ({
               <Plus size={14} color="#00b300" />
             </span>
             Add Helper
-          </button>
-          <button className={styles.addButton} onClick={handleAddOpenDepot}>
-            <span className={styles.iconCircle}>
-              <Plus size={14} color="#00b300" />
-            </span>
-            Add Open Depot
           </button>
         </div>
       </div>

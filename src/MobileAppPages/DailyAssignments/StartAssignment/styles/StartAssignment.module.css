@@ -273,6 +273,29 @@ body {
   color: #9ca3af;
   font-size: 12px;
 }
+
+.extraHelperRow {
+  display: flex;
+  background-color: #f0fff4; /* light green tint */
+  border-radius: 8px;
+  padding: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.notApplicableBox {
+  background-color: #f3f4f6; /* light gray */
+  color: #6b7280; /* muted text */
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 400;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ----------- Action Buttons ----------- */
 .actionButtonsWrapper {
   display: flex;
