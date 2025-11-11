@@ -1,238 +1,242 @@
 /* Container */
 .penaltiesRewardsContainer {
-    min-height: 100vh;
-    background-color: #f5f5f5;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
 .prHeader {
-    background: #00b300;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  background: #00b300;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .prBackButton {
-    background: none;
-    border: none;
-    padding: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    transition: opacity 0.2s;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: opacity 0.2s;
 }
 
 .prTitle {
-    color: white;
-    font-size: 20px;
-    font-weight: 500;
-    margin: 0;
-    flex: 1;
-    text-align: center;
-    margin-right: 36px;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  margin-right: 36px;
 }
 
 /* Form */
 .prForm {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 0px;
-    flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  height: calc(100vh - 230px);
+  overflow: auto;
 }
 
 /* Input Fields */
 .prInput,
 .prSelect,
 .prTextarea {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid #d0d0d0;
-    border-radius: 8px;
-    font-size: 16px;
-    background-color: white;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .prInput::placeholder,
 .prTextarea::placeholder {
-    color: #999;
+  color: #999;
 }
 
 .prInput:focus,
 .prSelect:focus,
 .prTextarea:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Select Dropdown */
 .prSelectWrapper {
-    position: relative;
+  position: relative;
 }
 
 .prSelect {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
-    color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  color: #333;
 }
 
 .prSelect option:first-child {
-    color: #999;
+  color: #999;
 }
 
 /* Textarea */
 .prTextarea {
-    resize: none;
-    min-height: 180px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  resize: none;
+  min-height: 180px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Save Button */
 .prSaveButton {
-    background: #00b300;
-    color: white;
-    border: none;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    letter-spacing: 0.5px;
-    margin: 0;
-    border-radius: 0;
-    position: sticky;
-    bottom: 0;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  background: #00b300;
+  color: white;
+  border: none;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+  margin: 0;
+  border-radius: 0;
+  position: sticky;
+  bottom: 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Parent row container */
 .prRowFields {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 2px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 2px;
 }
 
 /* Each half field container */
 .prFieldGroupHalf {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Labels */
 .prLabel {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
 }
 
 /* Input and Select shared styling */
 .prInputHalf,
 .prSelectHalf {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Red error border */
 .inputError {
-    border-color: #e53935;
-    /* background-color: #fff5f5; */
+  border-color: #e53935;
+  /* background-color: #fff5f5; */
 }
 
 /* Error message */
 .errorText {
-    color: #e53935;
-    font-size: 13px;
-    margin-top: 4px;
-    padding-left: 2px;
+  color: #e53935;
+  font-size: 13px;
+  margin-top: 4px;
+  padding-left: 2px;
 }
-
 
 .errorText {
-    color: red;
-    font-size: 13px;
-    margin-top: 0px;
+  color: red;
+  font-size: 13px;
+  margin-top: 0px;
 }
 
 .prFieldGroup {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 .prFieldGroup {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2px;
 }
 
 /* Label above input */
 .prLabel {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
 }
 
 /* Input field styling */
 .prInputHalf {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 /* Error text below input */
 .errorText {
-    color: #e53935;
-    font-size: 13px;
-    margin-top: 4px;
-    padding-left: 2px;
+  color: #e53935;
+  font-size: 13px;
+  margin-top: 4px;
+  padding-left: 2px;
 }
 
 /* Red border if validation fails */
 .inputError {
-    border-color: #e53935;
-    /* background-color: #fff5f5; */
+  border-color: #e53935;
+  /* background-color: #fff5f5; */
 }
 
 /* Optional wrapper for spacing or icons later */
 .prInputWrapper {
-    position: relative;
+  position: relative;
 }
 
-
-
 /* Mobile Responsiveness */
+@media (max-width: 767.98px) {
+  .prForm {
+    height: calc(100vh - 110px);
+    overflow: auto;
+  }
+}
 @media (max-width: 480px) {
-    .prHeader {
-        padding: 14px;
-    }
+  .prHeader {
+    padding: 14px;
+  }
 
-    .prTitle {
-        font-size: 18px;
-    }
+  .prTitle {
+    font-size: 18px;
+  }
 
-    .prForm {
-        padding: 14px;
-    }
+  .prForm {
+    padding: 14px;
+  }
 }
