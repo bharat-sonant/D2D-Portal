@@ -110,13 +110,11 @@ export const savePenaltiesData = (
 
             let path;
             let recordId;
-
-            // 🔹 If editing existing record
+            
             if (penaltyId) {
                 recordId = penaltyId;
                 path = `Penalties/${year}/${month}/${date}/${employeeId}/${recordId}`;
 
-                // Update only changed fields
                 const saveResponse = await db.saveData(path, dataToSave);
                 if (saveResponse.success) {
                     resolve(common.setResponse('success', 'Penalty/Reward updated successfully', { Id: recordId }));
@@ -125,12 +123,10 @@ export const savePenaltiesData = (
                 }
 
             } else {
-                // 🔹 Create new record
                 const lastKey = await db.getLastKey(`Penalties/${year}/${month}/${date}/${employeeId}/lastKey`);
                 recordId = lastKey;
                 path = `Penalties/${year}/${month}/${date}/${employeeId}/${recordId}`;
 
-                // Include createdBy info only for new records
                 dataToSave.createdBy = loggedInUserId;
                 dataToSave.createdOn = dayjs().format('YYYY-MM-DD HH:mm');
 
@@ -144,7 +140,7 @@ export const savePenaltiesData = (
                 }
             }
         } catch (error) {
-            console.error('Error saving penalties data: - PenaltiesService.js:147', error);
+            console.error('Error saving penalties data: - PenaltiesService.js:143', error);
             resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
         }
     });
@@ -203,7 +199,7 @@ export const getPenaltiesData = (selectedDate) => {
                 rewardCount,
             }));
         } catch (error) {
-            console.error('Error fetching penalties data: - PenaltiesService.js:206', error);
+            console.error('Error fetching penalties data: - PenaltiesService.js:202', error);
             resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', {
                 list: [],
                 penaltyCount: 0,
@@ -213,5 +209,3 @@ export const getPenaltiesData = (selectedDate) => {
         }
     });
 };
-
-
