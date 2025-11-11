@@ -9,6 +9,7 @@ import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
 import WorkMonitoringList from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoringList";
+import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 
 const RouterComponent = () => {
   
@@ -96,7 +97,17 @@ const RouterComponent = () => {
             </>
           }
         />
+        <Route
+          path="/locationTracker"
+          element={
+            <>
+              <LocationTracker/>
+            </>
+          }
+        />
       </Routes>
+    
+      
 
       
     </>
