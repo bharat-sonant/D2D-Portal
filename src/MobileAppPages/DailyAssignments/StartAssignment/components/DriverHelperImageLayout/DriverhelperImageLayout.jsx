@@ -19,6 +19,14 @@ const DriverHelperImageLayout = () => {
         reader.readAsDataURL(file);
     };
 
+    const openCamera = () => {
+        setTimeout(() => {
+            if (driverInputRef.current) {
+                driverInputRef.current.click();
+            }
+        }, 100);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.section}>
@@ -26,7 +34,11 @@ const DriverHelperImageLayout = () => {
 
                 <div
                     className={styles.imageBox}
-                    onClick={() => driverInputRef.current?.click()}
+                    onClick={openCamera}
+                    onTouchEnd={(e) => {
+                        e.preventDefault();
+                        openCamera();
+                    }}
                 >
                     {driverImage ? (
                         <img src={driverImage} alt="Driver" className={styles.image} />
