@@ -116,14 +116,15 @@ const StartAssignment = () => {
     //     </button>
     //   </div>
     // </div>
-      <div className={styles.pageContainer}>
-        <div className={styles.header}>
-          <button className={styles.backButton} onClick={handleBack}>
-            <ArrowLeft />
-          </button>
-          <h1 className={styles.headerTitle}>Ward {ward}</h1>
-        </div>
+     <div className={styles.pageContainer}>
+      <div className={styles.header}>
+        <button className={styles.backButton} onClick={handleBack}>
+          <ArrowLeft />
+        </button>
+        <h1 className={styles.headerTitle}>Ward {ward}</h1>
       </div>
+    </div>
+
   );
 };
 export default StartAssignment;
