@@ -1,6 +1,6 @@
 import React, { act, useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchAllVehicles, startAssignmentAction } from "../../actions/StartAssignmentActions/StartAssignment";
 import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../../../firebase/firebaseService";
@@ -20,7 +20,8 @@ const StartAssignment = () => {
   const [driverDeviceId, setDriverDeviceId] = useState('')
   const [helperId, setHelperID] = useState('');
   const [helperDeviceId, setHelperDeviceId] = useState('')
-  const location = useLocation()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
   const ward = queryParams.get("ward") || "N/A";
@@ -65,20 +66,16 @@ const StartAssignment = () => {
     }
   };
 
-  const handleBack = () => {
-    try{
-      if(window.Android && window.Android.closeWebView){
-        window.Android.closeWebView();
-        common.setAlertMessage('success',"successfully backed")
-      }else if (window.history.length > 1) {
-      window.history.back();
+ const handleBack = () => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (
+      isAndroid &&
+      window.AndroidApp &&
+      typeof window.AndroidApp.closeWebView === "function"
+    ) {
+      window.AndroidApp.closeWebView();
     } else {
-      common.setAlertMessage('warn','issue in back button')
-      console.warn("No native bridge or history available.");
-    }
-    }catch(e){
-      common.setAlertMessage('error','error in back button')
-      console.error("Error handling back:", e);
+      navigate(-1);
     }
   };
 
