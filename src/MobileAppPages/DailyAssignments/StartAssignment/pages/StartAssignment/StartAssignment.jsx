@@ -29,6 +29,15 @@ const StartAssignment = () => {
   const city = queryParams.get("city") || "DevTest";
 
   useEffect(() => {
+    const handleAndroidBack = () => {
+      handleBack();
+    };
+
+    window.addEventListener("androidBackPressed", handleAndroidBack);
+    return () => window.removeEventListener("androidBackPressed", handleAndroidBack);
+  }, []);
+
+  useEffect(() => {
     if (city) {
       localStorage.setItem("city", city);
 
@@ -45,7 +54,7 @@ const StartAssignment = () => {
   }, []);
 
 
-  
+
 
   // const activeVehicles = vehicles.filter(
   //   (v) => String(v.status) === "1" 
@@ -66,18 +75,15 @@ const StartAssignment = () => {
     }
   };
 
- const handleBack = () => {
+  const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
-    if (
-      isAndroid &&
-      window.AndroidApp &&
-      typeof window.AndroidApp.closeWebView === "function"
-    ) {
-      window.AndroidApp.closeWebView();
+    if (isAndroid && window.Android && typeof window.Android.closeWebView === "function") {
+      window.Android.closeWebView();
     } else {
       navigate(-1);
     }
   };
+
 
   return (
     <div className={styles.pageContainer}>
@@ -88,26 +94,26 @@ const StartAssignment = () => {
         <h1 className={styles.headerTitle}>Ward {ward}</h1>
       </div>
       <div className={styles.contentContainer}>
-       <VehiclesDropdown
-       ward={ward}
-       user={user}
-       city={city}
-        loading={loading}
-        selectedVehicle={selectedVehicle}
-        setSelectedVehicle={setSelectedVehicle}
-        activeVehicles={activeVehicles}
-       />
+        <VehiclesDropdown
+          ward={ward}
+          user={user}
+          city={city}
+          loading={loading}
+          selectedVehicle={selectedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+          activeVehicles={activeVehicles}
+        />
 
-       <DriverHelperDetails
-        driverId={driverId}
-        setDriverId={setDriverId}
-        driverDeviceId={driverDeviceId}
-        setDriverDeviceId={setDriverDeviceId}
-        helperId={helperId}
-        setHelperID={setHelperID}
-        helperDeviceId={helperDeviceId}
-        setHelperDeviceId={setHelperDeviceId}
-       />
+        <DriverHelperDetails
+          driverId={driverId}
+          setDriverId={setDriverId}
+          driverDeviceId={driverDeviceId}
+          setDriverDeviceId={setDriverDeviceId}
+          helperId={helperId}
+          setHelperID={setHelperID}
+          helperDeviceId={helperDeviceId}
+          setHelperDeviceId={setHelperDeviceId}
+        />
 
       </div>
 
