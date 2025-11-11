@@ -8,18 +8,19 @@ import { startAssignment } from "../../services/StartAssignmentService/StartAssi
 import * as common from '../../../../../common/common'
 import { ArrowLeft } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
+import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
-   const [activeVehicles, setActiveVehicles] = useState([]);
+  const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const location = useLocation()
 
   const queryParams = new URLSearchParams(location.search);
-   const ward = queryParams.get("ward") || "N/A";
+  const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
-  const city = queryParams.get("city") || "DevTest"; 
+  const city = queryParams.get("city") || "DevTest";
 
   useEffect(() => {
     if (city) {
@@ -49,21 +50,21 @@ const StartAssignment = () => {
       common.setAlertMessage("error", "Please select a Vehicle !");
       return;
     }
-      const result = await startAssignmentAction(selectedVehicle, ward);
-    
+    const result = await startAssignmentAction(selectedVehicle, ward);
+
     if (result.status === "success") {
       setSelectedVehicle("");
       setActiveVehicles((prev) =>
-      prev.filter((v) => v.vehcileNo !== selectedVehicle)
-    );
+        prev.filter((v) => v.vehcileNo !== selectedVehicle)
+      );
     }
   };
 
-   const handleBack = () => {
+  const handleBack = () => {
     window.history.back();
   };
 
- return (
+  return (
     // <div className={styles.container}>
     //   <div className={styles.card}>
     //     <h2 className={styles.title}>Start Assignment</h2>
@@ -115,7 +116,7 @@ const StartAssignment = () => {
     //     </button>
     //   </div>
     // </div>
-     <div className={styles.pageContainer}>
+    <div className={styles.pageContainer}>
       <div className={styles.header}>
         <button className={styles.backButton} onClick={handleBack}>
           <ArrowLeft />
@@ -132,6 +133,7 @@ const StartAssignment = () => {
 
       </div>
 
+      <DriverHelperImageLayout />
     </div>
 
   );
