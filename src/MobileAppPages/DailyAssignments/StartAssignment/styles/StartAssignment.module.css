@@ -134,6 +134,7 @@ body {
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: #fff;
+  width: 100%;
 }
 
 .dropdownDisplay:hover {
