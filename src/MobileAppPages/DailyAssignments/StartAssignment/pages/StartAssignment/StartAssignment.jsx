@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation } from "react-router-dom";
 import { fetchAllVehicles, startAssignmentAction } from "../../actions/StartAssignmentActions/StartAssignment";
@@ -7,6 +7,7 @@ import { connectFirebase } from "../../../../../firebase/firebaseService";
 import { startAssignment } from "../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 import { ArrowLeft } from "lucide-react";
+import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -37,9 +38,7 @@ const StartAssignment = () => {
   }, []);
 
 
-  const handleVehicleChange = (e)=> {
-    setSelectedVehicle(e.target.value);
-  }
+  
 
   // const activeVehicles = vehicles.filter(
   //   (v) => String(v.status) === "1" 
@@ -123,6 +122,16 @@ const StartAssignment = () => {
         </button>
         <h1 className={styles.headerTitle}>Ward {ward}</h1>
       </div>
+      <div className={styles.contentContainer}>
+       <VehiclesDropdown
+        loading={loading}
+        selectedVehicle={selectedVehicle}
+        setSelectedVehicle={setSelectedVehicle}
+        activeVehicles={activeVehicles}
+       />
+
+      </div>
+
     </div>
 
   );

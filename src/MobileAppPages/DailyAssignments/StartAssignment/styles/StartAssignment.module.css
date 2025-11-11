@@ -67,3 +67,90 @@ body {
   text-overflow: ellipsis; 
   flex: 0;
 }
+
+.contentContainer {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ---------- Vehicle Selection Card ---------- */
+.vehicleCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownWrapper {
+  position: relative;
+}
+
+/* Outer visible box */
+.dropdownDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
+}
+
+.dropdownDisplay:hover {
+  border-color: #9ca3af;
+}
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.truckIcon {
+  flex-shrink: 0;
+}
+
+.vehicleLabel {
+  font-size: 15px;
+  color: #374151;
+}
+
+.dropdownIcon {
+  color: #6b7280;
+}
+
+/* Invisible actual dropdown on top */
+.vehicleDropdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  
+}
+
+/* Focus style for accessibility */
+.vehicleDropdown:focus + .dropdownDisplay,
+.dropdownDisplay:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.loadingText {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
