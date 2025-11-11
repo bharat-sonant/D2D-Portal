@@ -193,7 +193,7 @@ body {
 }
 
 .textInput:focus {
-  border-color: #16a34a;
+  border-color: #00b300;
 }
 
 .textInput::placeholder {
@@ -212,7 +212,7 @@ body {
 }
 
 .deviceInputWrapper:focus-within {
-  border-color: #16a34a;
+  border-color: #00b300;
 }
 
 .devicePrefix {
@@ -243,4 +243,73 @@ body {
 .deviceInput::placeholder {
   color: #9ca3af;
   font-size: 12px;
+}
+/* ----------- Action Buttons ----------- */
+.actionButtonsWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.actionButtonsRight {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.addButton {
+  background-color: #00b300;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.addButton:hover {
+  background-color: #00b300;
+  transform: translateY(-1px);
+}
+
+.addButton:active {
+  background-color: #00b300;
+  transform: translateY(0);
+}
+
+/* Red style for remove helper */
+.removeButton {
+  background-color: #dc2626;
+}
+
+.removeButton:hover {
+  background-color: #b91c1c;
+}
+
+.iconCircle {
+  background-color: white;
+  color: inherit; /* icon color follows button color */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+/* Make icons stand out a bit */
+.iconCircle svg {
+  stroke-width: 2.5;
 }

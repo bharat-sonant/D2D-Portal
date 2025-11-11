@@ -1,9 +1,41 @@
-import React from 'react'
-import styles from '../../styles/StartAssignment.module.css'
+import React, { useState } from "react";
+import styles from "../../styles/StartAssignment.module.css";
+import { Plus, Minus } from "lucide-react";
 
-const DriverHelperDetails = ({driverId,setDriverId,driverDeviceId, setDriverDeviceId,helperId,setHelperID, helperDeviceId, setHelperDeviceId}) => {
+const DriverHelperDetails = ({
+  driverId,
+  setDriverId,
+  driverDeviceId,
+  setDriverDeviceId,
+  helperId,
+  setHelperID,
+  helperDeviceId,
+  setHelperDeviceId,
+}) => {
+  const [extraHelpers, setExtraHelpers] = useState([]);
+
+  const handleAddHelper = () => {
+    setExtraHelpers((prev) => [...prev, { helperId: "", helperDeviceId: "" }]);
+  };
+
+  const handleRemoveHelper = (index) => {
+    setExtraHelpers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleHelperChange = (index, field, value) => {
+    const updated = [...extraHelpers];
+    updated[index][field] = value;
+    setExtraHelpers(updated);
+  };
+
+  const handleAddOpenDepot = () => {
+    // TODO: logic for open depot
+  };
+
   return (
-    <div className={styles.idFieldsCard}>
+    <div>
+      <div className={styles.idFieldsCard}>
+        {/* Driver ID */}
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Driver ID</label>
           <input
@@ -14,6 +46,8 @@ const DriverHelperDetails = ({driverId,setDriverId,driverDeviceId, setDriverDevi
             onChange={(e) => setDriverId(e.target.value)}
           />
         </div>
+
+        {/* Driver Device ID */}
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Device ID</label>
           <div className={styles.deviceInputWrapper}>
@@ -28,7 +62,7 @@ const DriverHelperDetails = ({driverId,setDriverId,driverDeviceId, setDriverDevi
           </div>
         </div>
 
-      {/* Helper and Device ID Fields */}
+        {/* Helper 1 */}
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Helper ID</label>
           <input
@@ -39,6 +73,7 @@ const DriverHelperDetails = ({driverId,setDriverId,driverDeviceId, setDriverDevi
             onChange={(e) => setHelperID(e.target.value)}
           />
         </div>
+
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Device ID</label>
           <div className={styles.deviceInputWrapper}>
@@ -52,9 +87,72 @@ const DriverHelperDetails = ({driverId,setDriverId,driverDeviceId, setDriverDevi
             />
           </div>
         </div>
+
+        {/* Extra Helpers */}
+        {extraHelpers.map((h, index) => (
+          <React.Fragment key={index}>
+            <div className={styles.fieldColumn}>
+              <label className={styles.fieldLabel}>Helper ID</label>
+              <input
+                type="text"
+                className={styles.textInput}
+                placeholder="Enter Employee ID"
+                value={h.helperId}
+                onChange={(e) =>
+                  handleHelperChange(index, "helperId", e.target.value)
+                }
+              />
+            </div>
+            <div className={styles.fieldColumn}>
+              <label className={styles.fieldLabel}>Device ID</label>
+              <div className={styles.deviceInputWrapper}>
+                <span className={styles.devicePrefix}>DEV</span>
+                <input
+                  type="text"
+                  className={styles.deviceInput}
+                  placeholder="Device ID"
+                  value={h.helperDeviceId}
+                  onChange={(e) =>
+                    handleHelperChange(index, "helperDeviceId", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+          </React.Fragment>
+        ))}
       </div>
 
-  )
-}
+      {/* Action Buttons */}
+      <div className={styles.actionButtonsWrapper}>
+        {extraHelpers.length > 0 && (
+          <button
+            className={`${styles.addButton} ${styles.removeButton}`}
+            onClick={() => handleRemoveHelper(extraHelpers.length - 1)}
+          >
+            <span className={styles.iconCircle}>
+              <Minus size={14} color="#dc2626" />
+            </span>
+            Remove Helper
+          </button>
+        )}
 
-export default DriverHelperDetails
+        <div className={styles.actionButtonsRight}>
+          <button className={styles.addButton} onClick={handleAddHelper}>
+            <span className={styles.iconCircle}>
+              <Plus size={14} color="#00b300" />
+            </span>
+            Add Helper
+          </button>
+          <button className={styles.addButton} onClick={handleAddOpenDepot}>
+            <span className={styles.iconCircle}>
+              <Plus size={14} color="#00b300" />
+            </span>
+            Add Open Depot
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DriverHelperDetails;
