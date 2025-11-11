@@ -5,7 +5,7 @@ import styles from '../../Styles/Penalties/PenaltyList.module.css';
 import { useLocation } from 'react-router-dom';
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
-import { getEmployeesData, getPenaltiesRewardData } from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
+import { getEmployeesData, getPenaltiesRewardData, getPenaltiesType, getRewardTypes } from '../../Actions/PenaltiesRewardDetails/PenaltiesDetailsAction';
 
 const Penalty = () => {
   const [showDetails, setShowDetails] = useState(false);
@@ -17,6 +17,11 @@ const Penalty = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [penaltyId, setPenaltyId] = useState('');
+  const [trigger, setTrigger] = useState(false);
+  const [rewardTypes, setRewardTypes] = useState([]);
+  const [penaltyTypes, setPenaltyTypes] = useState([]);
+  const [entryType, setEntryType] = useState('');
+
 
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
@@ -25,7 +30,15 @@ const Penalty = () => {
 
   useEffect(() => {
     getEmployeesData(setEmployees);
-  }, []);
+  }, [trigger, selectedDate]);
+
+  useEffect(() => {
+    if (entryType === 'Penalty') {
+      getPenaltiesType(setPenaltyTypes);
+    } else if (entryType === 'Reward') {
+      getRewardTypes(setRewardTypes);
+    }
+  }, [entryType])
 
   useEffect(() => {
     if (city) {
@@ -59,7 +72,7 @@ const Penalty = () => {
 
   useEffect(() => {
     getPenaltiesRewardData(selectedDate, employees, setPenaltiesData, setPenaltyCount, setRewardCount, setIsLoading);
-  }, [selectedDate, employees])
+  }, [selectedDate, employees, trigger])
 
   const handleEdit = (item) => {
     setSelectedItem(item);
@@ -94,6 +107,12 @@ const Penalty = () => {
             selectedItem={selectedItem}
             penaltyId={penaltyId}
             setPenaltyId={setPenaltyId}
+            trigger={trigger}
+            setTrigger={setTrigger}
+            penaltyTypes={penaltyTypes}
+            rewardTypes={rewardTypes}
+            entryType={entryType}
+            setEntryType={setEntryType}
           />
         )}
       </div>

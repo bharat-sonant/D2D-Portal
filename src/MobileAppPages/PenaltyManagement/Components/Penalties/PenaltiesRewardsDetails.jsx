@@ -6,22 +6,19 @@ import EmployeeSelectionModal from './EmployeeModal';
 
 const PenaltiesRewardsDetails = (props) => {
     const [employee, setEmployee] = useState('');
-    const [entryType, setEntryType] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
     const [reason, setReason] = useState('');
     const [errors, setErrors] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [employeeId, setEmployeeId] = useState('');
-    const [rewardTypes, setRewardTypes] = useState([]);
-    const [penaltyTypes, setPenaltyTypes] = useState([]);
 
     useEffect(() => {
         if (props.selectedItem) {
             const item = props.selectedItem;
             setEmployee(item.employeeName || '');
             setEmployeeId(item.employeeId || '');
-            setEntryType(item.entryType || '');
+            props.setEntryType(item.entryType || '');
             setAmount(item.amount || '');
             setCategory(item.penaltyType || item.rewardType || '');
             setReason(item.reason || '');
@@ -46,24 +43,16 @@ const PenaltiesRewardsDetails = (props) => {
         return () => window.removeEventListener('message', handleAndroidBack);
     }, [props.onBack, isModalOpen]);
 
-    useEffect(() => {
-        if (entryType === 'Penalty') {
-            action.getPenaltiesType(setPenaltyTypes);
-        } else if (entryType === 'Reward') {
-            action.getRewardTypes(setRewardTypes);
-        }
-    }, [entryType])
-
     const onHandleChange = (name, value) => {
         action.handleChange(
             name,
             value,
             setEmployee,
-            setEntryType,
+            props.setEntryType,
             setAmount,
             setCategory,
             setReason,
-            entryType,
+            props.entryType,
             setErrors
         );
     };
@@ -72,16 +61,15 @@ const PenaltiesRewardsDetails = (props) => {
         action.handleSavePenaltiesData(
             props,
             employeeId,
-            entryType,
+            props.entryType,
             amount,
             category,
             reason,
             setErrors,
             handleClear,
             props.onBack,
-            props.setPenaltiesData,
-            props.employees,
-            props.penaltyId
+            props.penaltyId,
+            props.setTrigger
         );
     };
 
@@ -94,7 +82,7 @@ const PenaltiesRewardsDetails = (props) => {
     const handleClear = () => {
         action.handleClear(
             setEmployee,
-            setEntryType,
+            props.setEntryType,
             setAmount,
             setCategory,
             setReason,
@@ -121,7 +109,7 @@ const PenaltiesRewardsDetails = (props) => {
                         style={{ cursor: 'pointer' }}
                         readOnly
                         onClick={() => setIsModalOpen(true)}
-                        onBlur={() => action.validateField('employee', employee, entryType, setErrors)}
+                        onBlur={() => action.validateField('employee', employee, props.entryType, setErrors)}
                     />
                     {errors.employee && <p className={styles.errorText}>{errors.employee}</p>}
                 </div>
@@ -132,7 +120,7 @@ const PenaltiesRewardsDetails = (props) => {
                     </label>
                     <div className={styles.prSelectWrapper}>
                         <select
-                            value={entryType}
+                            value={props.entryType}
                             onChange={(e) => onHandleChange('entryType', e.target.value)}
                             className={`${styles.prSelect} ${errors.entryType ? styles.inputError : ''}`}
                             style={{ cursor: 'pointer' }}
@@ -145,11 +133,11 @@ const PenaltiesRewardsDetails = (props) => {
                     {errors.entryType && <p className={styles.errorText}>{errors.entryType}</p>}
                 </div>
 
-                {entryType && (
+                {props.entryType && (
                     <div className={styles.prRowFields}>
                         <div className={styles.prFieldGroupHalf}>
                             <label className={styles.prLabel}>
-                                {entryType === 'Penalty' ? 'Penalty Type' : entryType === 'Reward' ? 'Reward Type' : 'Category'}
+                                {props.entryType === 'Penalty' ? 'Penalty Type' : props.entryType === 'Reward' ? 'Reward Type' : 'Category'}
                             </label>
                             <div className={styles.prSelectWrapper}>
                                 <select
@@ -158,16 +146,16 @@ const PenaltiesRewardsDetails = (props) => {
                                     className={`${styles.prSelectHalf} ${errors.category ? styles.inputError : ''}`}
                                 >
                                     <option value="" disabled>
-                                        {entryType === 'Penalty' ? 'Select Penalty Type' : 'Select Reward Type'}
+                                        {props.entryType === 'Penalty' ? 'Select Penalty Type' : 'Select Reward Type'}
                                     </option>
 
-                                    {entryType === 'Penalty' &&
-                                        penaltyTypes.map((type, index) => (
+                                    {props.entryType === 'Penalty' &&
+                                        props.penaltyTypes.map((type, index) => (
                                             <option key={index} value={type}>{type}</option>
                                         ))}
 
-                                    {entryType === 'Reward' &&
-                                        rewardTypes.map((type, index) => (
+                                    {props.entryType === 'Reward' &&
+                                        props.rewardTypes.map((type, index) => (
                                             <option key={index} value={type}>{type}</option>
                                         ))}
                                 </select>

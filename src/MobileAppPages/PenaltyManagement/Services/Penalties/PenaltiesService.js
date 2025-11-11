@@ -104,16 +104,26 @@ export const savePenaltiesData = (
                 [typeKey]: typeValue,
                 amount: Number(amount) || 0,
                 reason: reason || '',
-                updatedBy: loggedInUserId,
-                updatedOn: dayjs().format('YYYY-MM-DD HH:mm'),
+                createdBy: loggedInUserId,
+                createdOn: dayjs().format('YYYY-MM-DD HH:mm'),
             };
 
             let path;
             let recordId;
-            
+
             if (penaltyId) {
                 recordId = penaltyId;
                 path = `Penalties/${year}/${month}/${date}/${employeeId}/${recordId}`;
+
+                const existingRecord = await db.getData(path);
+
+                if (existingRecord) {
+                    if (entryType === 'Penalty' && existingRecord.rewardType) {
+                        await db.removeData(`${path}/rewardType`);
+                    } else if (entryType === 'Reward' && existingRecord.penaltyType) {
+                        await db.removeData(`${path}/penaltyType`);
+                    }
+                }
 
                 const saveResponse = await db.saveData(path, dataToSave);
                 if (saveResponse.success) {
@@ -140,11 +150,12 @@ export const savePenaltiesData = (
                 }
             }
         } catch (error) {
-            console.error('Error saving penalties data: - PenaltiesService.js:143', error);
+            console.error('Error saving penalties data: - PenaltiesService.js:153', error);
             resolve(common.setResponse('fail', 'Exception while saving penalty/reward!', { error }));
         }
     });
 };
+
 
 export const getPenaltiesData = (selectedDate) => {
     return new Promise(async (resolve) => {
@@ -199,7 +210,7 @@ export const getPenaltiesData = (selectedDate) => {
                 rewardCount,
             }));
         } catch (error) {
-            console.error('Error fetching penalties data: - PenaltiesService.js:202', error);
+            console.error('Error fetching penalties data: - PenaltiesService.js:213', error);
             resolve(common.setResponse('fail', 'Exception while fetching penalty/reward data', {
                 list: [],
                 penaltyCount: 0,

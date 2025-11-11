@@ -116,10 +116,10 @@ export const handleSavePenaltiesData = async (
     setErrors,
     handleClear,
     onBack,
-    setPenaltiesData,
-    employees,
-    penaltyId
+    penaltyId,
+    setTrigger
 ) => {
+    setTrigger(false);
     const fields = { entryType, amount, category, reason };
     let hasError = false;
 
@@ -145,33 +145,7 @@ export const handleSavePenaltiesData = async (
     );
 
     if (result.status === "success") {
-        const matchedEmployee = employees.find((e) => e.id === employeeId);
-        const employeeName = matchedEmployee ? matchedEmployee.name : "Unknown";
-
-        const newRecord = {
-            key: result.data.Id || penaltyId || Date.now().toString(),
-            employeeId,
-            employeeName,
-            entryType,
-            amount,
-            reason,
-            created_By: props.loggedInUserId,
-            created_On: dayjs().format("YYYY-MM-DD HH:mm"),
-            ...(entryType === "Penalty"
-                ? { penaltyType: category }
-                : { rewardType: category }),
-        };
-
-        setPenaltiesData((prev) => {
-            if (penaltyId) {
-                return prev.map((item) =>
-                    item.id === penaltyId ? { ...item, ...newRecord } : item
-                );
-            } else {
-                return [...prev, newRecord];
-            }
-        });
-
+        setTrigger(true);
         handleClear();
         toast.success(
             penaltyId
