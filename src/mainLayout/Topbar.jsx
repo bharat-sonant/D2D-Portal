@@ -6,7 +6,6 @@ import { FaUser } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdStart } from "react-icons/md";
 import { RiShutDownLine } from "react-icons/ri";
 import { PulseLoader } from "react-spinners";
-import { usePermissions } from "../context/PermissionContext";
 import { FaCity } from "react-icons/fa6";
 import { AlignStartVertical, ListStartIcon, LucideUserRoundCheck } from "lucide-react";
 import { SkipStartBtn, SkipStartCircleFill } from "react-bootstrap-icons";
@@ -26,7 +25,6 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const titleToShow = customTitle || "D2D PORTAL";
   const profileImage = ""
 
-  const { loading } = usePermissions();
 
   useEffect(() => {
     if (storedName) {
@@ -209,60 +207,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               className={`dropdown ${styles.dropdown_profile}`}
               style={{ backgroundColor: navbarStyle.activeNavBg }}
             >
-              <button
-                className={`${styles.btn_custom_dropdown}`}
-                id="dropdown-basic"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <div className={`${styles.user_name_group}`}>
-                  <div
-                    className={`${styles.user_img}`}
-                    style={{ background: shouldShowRed ? "red" : "" }}
-                  >
-                    {loading ? (
-                      <PulseLoader color="blue" size={7} />
-                    ) : profileImage &&
-                      profileImage.trim().length > 0 &&
-                      profileImage !== "undefined" &&
-                      profileImage !== "null" ? (
-                      <img
-                        src={profileImage}
-                        alt="Avatar"
-                        style={{
-                          width: "100%",
-                          objectFit: "cover",
-                          height: "100%",
-                        }}
-                      />
-                    ) : (
-                      <span className="avatar">
-                        {firstchar}
-                        {secondchar}
-                      </span>
-                    )}
-                  </div>
-                  <div
-                    className={`${styles.user_name}`}
-                    style={{
-                      color: navbarStyle.textColor,
-                      fontWeight: shouldShowRed && "bold",
-                    }}
-                  >
-                    {storedName}
-                  </div>
-                  <div className={`${styles.dropdownIcon}`}>
-                    <MdKeyboardArrowDown
-                      className={`${styles.drop_down}`}
-                      style={{
-                        color: shouldShowRed ? "red" : "",
-                        fontWeight: shouldShowRed && "bold",
-                      }}
-                    />
-                  </div>
-                </div>
-              </button>
+             
 
               <div className={`dropdown-menu ${styles.custom_drop_profile}`}>
                 <ul className={`${styles.profile_ul}`}>
