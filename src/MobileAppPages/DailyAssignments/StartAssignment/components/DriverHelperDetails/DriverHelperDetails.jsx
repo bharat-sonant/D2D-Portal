@@ -47,7 +47,9 @@ const DriverHelperDetails = ({
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Driver ID</label>
           <input
-            type="text"
+            type="number"
+            inputMode="numeric"
+  pattern="[0-9]*"
             className={styles.textInput}
             placeholder="Enter Employee ID"
             value={driverId}
@@ -67,7 +69,9 @@ const DriverHelperDetails = ({
           <div className={styles.deviceInputWrapper}>
             <span className={styles.devicePrefix}>DEV</span>
             <input
-              type="text"
+             type="number"
+            inputMode="numeric"
+  pattern="[0-9]*"
               className={styles.deviceInput}
               placeholder="Device ID"
               value={driverDeviceId}
@@ -85,7 +89,9 @@ const DriverHelperDetails = ({
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Helper ID</label>
           <input
-            type="text"
+            type="number"
+            inputMode="numeric"
+  pattern="[0-9]*"
             className={styles.textInput}
             placeholder="Enter Employee ID"
             value={helperId}
@@ -103,7 +109,9 @@ const DriverHelperDetails = ({
           <div className={styles.deviceInputWrapper}>
             <span className={styles.devicePrefix}>DEV</span>
             <input
-              type="text"
+              type="number"
+            inputMode="numeric"
+  pattern="[0-9]*"
               className={styles.deviceInput}
               placeholder="Device ID"
               value={helperDeviceId}
@@ -123,7 +131,9 @@ const DriverHelperDetails = ({
             <div className={`${styles.fieldColumn} ${styles.extraHelperRow}`}>
               <label className={styles.fieldLabel}>Helper ID</label>
               <input
-                type="text"
+                type="number"
+            inputMode="numeric"
+  pattern="[0-9]*"
                 className={styles.textInput}
                 placeholder="Enter Employee ID"
                 value={h.helperId}
