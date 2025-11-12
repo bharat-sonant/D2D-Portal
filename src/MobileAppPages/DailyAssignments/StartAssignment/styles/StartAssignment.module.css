@@ -74,14 +74,14 @@ body {
 }
 
 .contentContainer {
-  flex: 1;
-  overflow-y: auto;
+  overflow: auto;
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 0px;
   max-width: 700px;
   margin: 0 auto;
+  height: calc(90vh - 56px);
 }
 
 /* ---------- Vehicle Selection Card ---------- */
@@ -209,6 +209,13 @@ body {
   gap: 4px;
   min-width: 0;
 }
+
+.errorText {
+  color: #dc2626; /* red */
+  font-size: 10px;
+  margin-top: 2px;
+}
+
 
 .fieldLabel {
   font-size: 12px;
@@ -459,4 +466,10 @@ body {
 .submitButton:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+@media (max-width: 767.98px){
+  .contentContainer{
+    height: calc(100vh-56px);
+  }
 }

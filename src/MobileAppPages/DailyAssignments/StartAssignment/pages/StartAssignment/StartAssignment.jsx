@@ -21,7 +21,12 @@ const StartAssignment = () => {
   const [helperId, setHelperID] = useState('');
   const [helperDeviceId, setHelperDeviceId] = useState('')
   const [capturedImage, setCapturedImage] = useState(null);
-  
+  const [errors, setErrors] = useState({
+    driverId: "",
+    driverDeviceId: "",
+    helperId: "",
+    helperDeviceId: "",
+  });
   const fileInputRef = useRef(null);
   
   const location = useLocation();
@@ -58,6 +63,32 @@ const StartAssignment = () => {
   }, []);
 
   const handleSubmit = async () => {
+    let newErrors = {
+      driverId: "",
+      driverDeviceId: "",
+      helperId: "",
+      helperDeviceId: "",
+    };
+
+    if (!driverId.trim()) newErrors.driverId = "Driver ID is required";
+    if (!driverDeviceId.trim()) newErrors.driverDeviceId = "Driver Device ID is required";
+    if (!helperId.trim()) newErrors.helperId = "Helper ID is required";
+    if (!helperDeviceId.trim()) newErrors.helperDeviceId = "Helper Device ID is required";
+
+     if (
+      newErrors.driverId ||
+      newErrors.driverDeviceId ||
+      newErrors.helperId ||
+      newErrors.helperDeviceId
+    ) {
+      setErrors(newErrors);
+      // common.setAlertMessage("error", "Please fill all required fields!");
+      return;
+    }
+
+     // clear errors
+    setErrors({ driverId: "", driverDeviceId: "", helperId: "", helperDeviceId: "" });
+
     if (!selectedVehicle) {
       common.setAlertMessage("error", "Please select a Vehicle !");
       return;
@@ -128,6 +159,8 @@ const StartAssignment = () => {
           setHelperID={setHelperID}
           helperDeviceId={helperDeviceId}
           setHelperDeviceId={setHelperDeviceId}
+          errors={errors}
+           setErrors={setErrors}
         />
 
 
