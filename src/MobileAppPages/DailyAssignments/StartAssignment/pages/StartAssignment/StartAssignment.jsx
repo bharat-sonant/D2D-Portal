@@ -130,7 +130,6 @@ const StartAssignment = () => {
           setHelperDeviceId={setHelperDeviceId}
         />
 
-      </div>
 
       <DriverHelperImageLayout />
       
@@ -159,6 +158,15 @@ const StartAssignment = () => {
           <img src={capturedImage} alt="Meter" className={styles.previewImage} />
         </div>
       )}
+
+      <button 
+        className={styles.submitButton}
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
+      </div>
+
     </div>
   );
 };
