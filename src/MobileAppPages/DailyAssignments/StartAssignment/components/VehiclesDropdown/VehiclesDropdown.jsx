@@ -101,7 +101,9 @@ const VehiclesDropdown = ({
             <Sheet.Container>
               <Sheet.Header />
               <Sheet.Content>
-                  <div className={sheetStyles.sheetTitle}>Vehicle List</div>
+                  <div className={sheetStyles.btnClose}>
+                    <img src={images.iconClose} className={sheetStyles.iconClose} title="Close" alt="Close" />
+                  </div>
                {loading ? (
                 // 🔹 Loader shown only inside sheet
                 <div className={sheetStyles.loadingContainer}>

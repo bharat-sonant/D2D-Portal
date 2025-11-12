@@ -1,7 +1,6 @@
 .sheetContent {
   margin: 10px 16px 10px;
   background: #fff;
-  height: calc(70vh - 140px);
   padding: 16px;
   border-radius: 6px;
 }
@@ -11,6 +10,29 @@
   font-family: var(--fontGraphikSemibold);
   margin-bottom: 10px;
   padding: 0px 16px;
+}
+.btnClose {
+  width: 48px;
+    position: absolute;
+    margin-top: -60px;
+    background-color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    border-radius: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    &:hover{
+      .iconClose{
+        filter: brightness(0) saturate(100%) invert(22%) sepia(93%) saturate(5314%) hue-rotate(354deg) brightness(91%) contrast(123%);
+      }
+    }
+}
+.iconClose {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(1%) saturate(2275%) hue-rotate(315deg) brightness(102%) contrast(81%);
 }
 .searchBox {
   width: 100%;
@@ -29,8 +51,9 @@
 }
 .vehicleList {
   padding: 0px;
-  height: calc(70vh - 240px);
+max-height: calc(70vh - 190px);
   overflow: auto;
+  margin-bottom: 0px;
 }
 .vehicleItem {
   list-style-type: none;
