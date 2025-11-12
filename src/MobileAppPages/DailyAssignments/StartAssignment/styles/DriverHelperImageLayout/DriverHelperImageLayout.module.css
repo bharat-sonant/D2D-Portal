@@ -9,7 +9,7 @@
 .section {
   border: 1px solid var(--borderColor);
   border-radius: 6px;
-  height: 10rem;
+  min-height: 10rem;
   padding: 4px;
   background-color: var(--white);
 }
@@ -21,11 +21,16 @@
   color: var(--lightBlack);
   text-align: center;
 }
-
+.imgTitle{
+    font-size: 11px;
+    text-align: center;
+    color: var(--lightBlack);
+    font-family: var(--fontGraphik);
+}
 .imageBox {
   background-color: var(--white);
   width: 100%;
-  height: 100%;
+  min-height: 10rem;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -47,7 +52,7 @@
   background-color: #00a00010;
   border: 2px dashed #eee;
   width: 100%;
-  height: 100%;
+min-height: 10rem;
 }
 .image {
   width: 100%;

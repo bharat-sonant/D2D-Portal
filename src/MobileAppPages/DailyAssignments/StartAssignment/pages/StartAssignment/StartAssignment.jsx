@@ -185,6 +185,7 @@ const StartAssignment = () => {
           </div>
           <div className={styles.imageRight}>
             <div className={styles.imgSection}>
+              <div className={styles.imgTitle}>Meter</div>
             {/* Hidden file input for camera */}
             <input
               ref={fileInputRef}
@@ -214,7 +215,7 @@ const StartAssignment = () => {
               onClick={handleCaptureMeterImage}
             >
               <Camera className={styles.cameraIcon} />
-              Please capture <br /> vehicle meter image
+              Click to capture 
             </div>
               
             )}

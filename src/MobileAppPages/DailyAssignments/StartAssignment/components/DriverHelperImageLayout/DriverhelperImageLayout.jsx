@@ -30,6 +30,7 @@ const DriverHelperImageLayout = () => {
   return (
     <div className={styles.container}>
       <div className={styles.section}>
+        <div className={styles.imgTitle}>Driver & Helper</div>
         <div
           className={styles.imageBox}
           onClick={openCamera}
@@ -44,7 +45,7 @@ const DriverHelperImageLayout = () => {
             <div className={styles.imageBoxText}>
               <Camera className={styles.cameraIcon} />
               <h3 className={styles.heading}>
-                Please capture <br /> driver and helper photo
+                Click to capture 
               </h3>
             </div>
           )}

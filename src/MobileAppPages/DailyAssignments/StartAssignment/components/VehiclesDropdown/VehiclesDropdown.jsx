@@ -41,7 +41,7 @@ const VehiclesDropdown = ({
     }
   }, [searchTerm]);
 
-  const snapPoints = [0, 0.7];
+const snapPoints = [0, 0.7, 1];
 
   // 🔹 Validate on open-close if needed
   //   const handleDropdownClick = () => {
@@ -93,9 +93,10 @@ const VehiclesDropdown = ({
         <Sheet
           isOpen={isOpen}
           onClose={() => setOpen(false)}
-          snapPoints={[0, 0.7]} // 0 = closed, 0.7 = 70% open
-          initialSnap={1} // pehli baar open hone par 70% pe khule
-          detent="full-height" // prevent full-screen expansion
+          snapPoints={snapPoints}
+          initialSnap={1} 
+          // detent="full-height" 
+          disableDrag={true}
         >
           <Sheet.Container>
             <Sheet.Header />
