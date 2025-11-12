@@ -36,8 +36,10 @@ const DriverHelperDetails = ({
     }
   };
 
-  const handleAddOpenDepot = () => {
-    // TODO: logic for open depot
+   const handleNumericChange = (setter, fieldName) => (e) => {
+    const numericValue = e.target.value.replace(/[^0-9]/g, ""); // digits only
+    setter(numericValue);
+    clearError(fieldName);
   };
 
   return (
@@ -53,10 +55,7 @@ const DriverHelperDetails = ({
             className={styles.textInput}
             placeholder="Enter Employee ID"
             value={driverId}
-            onChange={(e) => {
-              setDriverId(e.target.value);
-              clearError("driverId");
-            }}
+            onChange={handleNumericChange(setDriverId, "driverId")}
           />
           {errors.driverId && (
             <span className={styles.errorText}>{errors.driverId}</span>
@@ -75,9 +74,7 @@ const DriverHelperDetails = ({
               className={styles.deviceInput}
               placeholder="Device ID"
               value={driverDeviceId}
-              onChange={(e) => {setDriverDeviceId(e.target.value)
-                clearError("driverDeviceId");
-              }}
+              onChange={handleNumericChange(setDriverDeviceId, "driverDeviceId")}
             />
           </div>
           {errors.driverDeviceId && (
@@ -95,9 +92,7 @@ const DriverHelperDetails = ({
             className={styles.textInput}
             placeholder="Enter Employee ID"
             value={helperId}
-            onChange={(e) => {setHelperID(e.target.value)
-              clearError("helperId"); }
-            }
+            onChange={handleNumericChange(setHelperID, "helperId")}
           />
           {errors.helperId && (
             <span className={styles.errorText}>{errors.helperId}</span>
@@ -115,9 +110,7 @@ const DriverHelperDetails = ({
               className={styles.deviceInput}
               placeholder="Device ID"
               value={helperDeviceId}
-              onChange={(e) => {setHelperDeviceId(e.target.value)
-                  clearError("helperDeviceId");
-              }}
+               onChange={handleNumericChange(setHelperDeviceId, "helperDeviceId")}
             />
           </div>
           {errors.helperDeviceId && (
@@ -137,8 +130,12 @@ const DriverHelperDetails = ({
                 className={styles.textInput}
                 placeholder="Enter Employee ID"
                 value={h.helperId}
-                onChange={(e) =>
-                  handleHelperChange(index, "helperId", e.target.value)
+                 onChange={(e) =>
+                  handleHelperChange(
+                    index,
+                    "helperId",
+                    e.target.value.replace(/[^0-9]/g, "")
+                  )
                 }
               />
             </div>
