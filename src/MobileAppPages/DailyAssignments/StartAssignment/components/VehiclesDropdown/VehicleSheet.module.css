@@ -1,7 +1,7 @@
 .sheetContent {
     margin: 10px 16px 10px;
     background: #fff;
-height: calc(100vh - 390px);
+height: calc(100vh - 340px);
     padding: 16px;
     border-radius: 6px;
 }
@@ -29,7 +29,7 @@ height: calc(100vh - 390px);
 }
 .vehicleList {
 padding: 0px;
-    height: calc(100vh - 480px);
+    height: calc(100vh - 440px);
     overflow: auto;
 }
 .vehicleItem {
@@ -55,7 +55,7 @@ padding: 0px;
   font-size: 13px;
   color: var(--lightBlack);
   font-family: var(--fontGraphik);
-  height: calc(70vh - 260px);
+  height: calc(70vh - 280px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,7 +75,7 @@ padding: 0px;
 }
 
 
-@media screen and (min-width: 1025px) {
+@media screen and (min-width: 992px) {
   :global(.react-modal-sheet-root) {
 position: fixed;
     inset: 0px;

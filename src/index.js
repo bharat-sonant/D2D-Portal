@@ -6,6 +6,7 @@ import RouterComponent from './router/RouterComponent';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import globleStyles from "./assets/css/globleStyles.module.css";
+import "../src/assets/css/style.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
