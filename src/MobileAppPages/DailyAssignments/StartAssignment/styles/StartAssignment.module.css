@@ -15,9 +15,9 @@ body {
 .pageContainer {
   min-height: 100vh;
   background-color: #f3f4f6;
-   display: flex;
+  display: flex;
   flex-direction: column;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 /* ----------- Green Header ----------- */
@@ -120,7 +120,6 @@ body {
   font-weight: 500;
 }
 
-
 .dropdownWrapper {
   position: relative;
 }
@@ -182,7 +181,6 @@ body {
   font-weight: 500;
 }
 
-
 /* Invisible actual dropdown on top */
 .vehicleDropdown {
   position: absolute;
@@ -193,11 +191,10 @@ body {
   opacity: 0;
   cursor: pointer;
   z-index: 2;
-
 }
 
 /* Focus style for accessibility */
-.vehicleDropdown:focus+.dropdownDisplay,
+.vehicleDropdown:focus + .dropdownDisplay,
 .dropdownDisplay:focus {
   border-color: #16a34a;
   box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
@@ -235,7 +232,6 @@ body {
   font-size: 10px;
   margin-top: 2px;
 }
-
 
 .fieldLabel {
   font-size: 12px;
@@ -408,31 +404,29 @@ body {
 /* Add these styles to your StartAssignment.module.css file */
 
 .captureMeterButton {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 280px;
-  margin: 5px auto;
-  padding: 14px 24px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  flex-flow: column;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.captureMeterButton:hover {
-  background-color: #45a049;
-}
-
-.captureMeterButton:active {
-  transform: scale(0.98);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  font-size: 8px;
+  font-family: var(--fontGraphik);
+  margin-bottom: 0px;
+  color: var(--lightBlack);
+  text-align: center;
+  padding: 4px;
+  transition: 0.3s;
+  background-color: #00a00010;
+      border: 2px dashed #eee;
+  &:hover {
+    background-color: #00a00036;
+  }
 }
 
 .captureMeterButton:disabled {
@@ -441,19 +435,18 @@ body {
 }
 
 .imagePreview {
-  margin: 20px auto;
-  max-width: 400px;
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .previewImage {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .submitButton {
@@ -488,8 +481,31 @@ body {
   cursor: not-allowed;
 }
 
-@media (max-width: 767.98px){
-  .contentContainer{
+.imageRow {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+}
+.imageLeft,
+.imageRight {
+  width: calc(100% / 2 - 5px);
+}
+.imgSection {
+  background-color: var(--white);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  height: 10rem;
+}
+.cameraIcon {
+  width: 24px;
+  height: 24px;
+  color: #9ca3af;
+  margin-bottom: 5px;
+}
+@media (max-width: 767.98px) {
+  .contentContainer {
     height: calc(100vh - 56px);
   }
 }

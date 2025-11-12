@@ -180,33 +180,48 @@ const StartAssignment = () => {
         />
 
 
-      <DriverHelperImageLayout />
-      
-      {/* Hidden file input for camera */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        style={{ display: 'none' }}
-        onChange={handleImageCapture}
-      />
-      
-      {/* Capture Meter Image Button */}
-      <button 
-        className={styles.captureMeterButton} 
-        onClick={handleCaptureMeterImage}
-      >
-        <Camera size={20} />
-        Capture Meter Image
-      </button>
+            <div className={styles.imageRow}>
+          <div className={styles.imageLeft}>
+            <DriverHelperImageLayout />
+          </div>
+          <div className={styles.imageRight}>
+            <div className={styles.imgSection}>
+            {/* Hidden file input for camera */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              style={{ display: "none" }}
+              onChange={handleImageCapture}
+            />
 
-      {/* Preview captured image (optional) */}
-      {capturedImage && (
-        <div className={styles.imagePreview}>
-          <img src={capturedImage} alt="Meter" className={styles.previewImage} />
+            {/* Capture Meter Image Button */}
+            
+
+            {/* Preview captured image (optional) */}
+            {capturedImage ? (
+             
+            <div className={styles.imagePreview}  onClick={handleCaptureMeterImage}>
+                <img
+                  src={capturedImage}
+                  alt="Meter"
+                  className={styles.previewImage}
+                />
+              </div>
+            ): (
+               <div
+              className={styles.captureMeterButton}
+              onClick={handleCaptureMeterImage}
+            >
+              <Camera className={styles.cameraIcon} />
+              Please capture <br /> vehicle meter image
+            </div>
+              
+            )}
+            </div>
+          </div>
         </div>
-      )}
 
       <button 
         className={styles.submitButton}
