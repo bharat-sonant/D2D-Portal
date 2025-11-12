@@ -101,7 +101,8 @@ const VehiclesDropdown = ({
             <Sheet.Container>
               <Sheet.Header />
               <Sheet.Content>
-                  <div className={sheetStyles.btnClose}>
+                  <div className={sheetStyles.btnClose}
+                  onClick={() => setOpen(false)}>
                     <img src={images.iconClose} className={sheetStyles.iconClose} title="Close" alt="Close" />
                   </div>
                {loading ? (
