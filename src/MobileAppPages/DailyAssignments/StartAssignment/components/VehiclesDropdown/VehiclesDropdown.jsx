@@ -77,7 +77,7 @@ const VehiclesDropdown = ({
             <div className={styles.leftGroup}>
               <Truck color="#22c55e" size={24} className={styles.truckIcon} />
               <span className={styles.vehicleLabel}>
-                {selectedVehicle || "Select vehicle"} Image
+                {selectedVehicle || "Please Select vehicle"}
               </span>
             </div>
             <ChevronDown className={styles.dropdownIcon} size={16} />

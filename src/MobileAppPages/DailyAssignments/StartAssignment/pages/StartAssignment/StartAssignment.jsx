@@ -64,6 +64,11 @@ const StartAssignment = () => {
   }, []);
 
   const handleSubmit = async () => {
+     if (!selectedVehicle) {
+  setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
+  return;
+}
+
     let newErrors = {
       driverId: "",
       driverDeviceId: "",
@@ -91,20 +96,25 @@ const StartAssignment = () => {
      // clear errors
     setErrors({ driverId: "", driverDeviceId: "", helperId: "", helperDeviceId: "" });
 
-   if (!selectedVehicle) {
-  setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
-  return;
-}
+  
 
     const result = await startAssignmentAction(selectedVehicle, ward, driverId, helperId);
 
     if (result.status === "success") {
-      setSelectedVehicle("");
+      handleClear();
       setActiveVehicles((prev) =>
         prev.filter((v) => v.vehcileNo !== selectedVehicle)
       );
     }
   };
+
+  const handleClear = () => {
+    setSelectedVehicle('')
+    setDriverId('')
+    setDriverDeviceId('')
+    setHelperID('')
+    setHelperDeviceId('')
+  }
 
   const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
