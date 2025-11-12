@@ -69,9 +69,6 @@ const VehiclesDropdown = ({
       </div>
 
       {/* Vehicle Selector */}
-      {loading ? (
-        <div className={styles.loadingText}>Loading vehicles...</div>
-      ) : (
         <div className={styles.dropdownWrapper}>
           <button
             className={styles.dropdownDisplay}
@@ -104,6 +101,13 @@ const VehiclesDropdown = ({
               <Sheet.Header />
               <Sheet.Content>
                   <div className={sheetStyles.sheetTitle}>Vehicle List</div>
+               {loading ? (
+                // 🔹 Loader shown only inside sheet
+                <div className={sheetStyles.loadingContainer}>
+                  <div className={sheetStyles.loader}></div>
+                  <p className={sheetStyles.loadingText}>Loading vehicles...</p>
+                </div>
+              ) : (
                 <div className={sheetStyles.sheetContent}>
 
                   {/* Search Box */}
@@ -156,12 +160,14 @@ const VehiclesDropdown = ({
                     )}
                   </ul>
                 </div>
+              )}
+
+                
               </Sheet.Content>
             </Sheet.Container>
             <Sheet.Backdrop />
           </Sheet>
         </div>
-      )}
     </div>
   );
 };
