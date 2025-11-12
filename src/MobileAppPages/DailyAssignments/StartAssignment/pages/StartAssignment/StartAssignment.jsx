@@ -98,9 +98,10 @@ const StartAssignment = () => {
 
   
 
-    const result = await startAssignmentAction(selectedVehicle, ward, driverId, helperId);
+    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId);
 
     if (result.status === "success") {
+      // common.setAlertMessage("success", "Assignment started successfully!");
       handleClear();
       setActiveVehicles((prev) =>
         prev.filter((v) => v.vehcileNo !== selectedVehicle)
