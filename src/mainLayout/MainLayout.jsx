@@ -4,7 +4,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Topbar from "./Topbar";
 
-import  "../assets/css/offcanvas.css";
 const MainLayout = () => {
     return (
         <>

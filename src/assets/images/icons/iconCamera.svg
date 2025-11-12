@@ -1,4 +1,0 @@
-<svg id="icon_camera" xmlns="http://www.w3.org/2000/svg" width="13" height="10.636" viewBox="0 0 13 10.636">
-  <path id="Path" d="M13,9.455a1.182,1.182,0,0,1-1.182,1.182H1.182A1.182,1.182,0,0,1,0,9.455v-6.5A1.182,1.182,0,0,1,1.182,1.773H3.545L4.727,0H8.273L9.455,1.773h2.364A1.182,1.182,0,0,1,13,2.955Z" fill="#bdbdbd" fill-rule="evenodd"/>
-  <circle id="Oval" cx="2.364" cy="2.364" r="2.364" transform="translate(4.136 3.545)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
-</svg>

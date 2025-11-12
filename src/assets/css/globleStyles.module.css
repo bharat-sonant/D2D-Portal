@@ -1,6 +1,4 @@
-@import "../css/variable.css";
-@import "../css/fonts.css";
-@import "../css/normalize.css";
+/* @import "../css/normalize.css"; */
 
 .mainSection {
   height: calc(100vh - 56px);

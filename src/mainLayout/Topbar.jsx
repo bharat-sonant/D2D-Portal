@@ -21,7 +21,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const isLoginAsUser = localStorage.getItem("loginAsUser") === "true";
   const isOwnerUser = isOwner === "Yes";
   const shouldShowRed = isLoginAsUser && !isOwnerUser;
-  const logoToShow = customLogo || images.defaultLogo;
+  const logoToShow = customLogo || images.wevoisLogo;
   const titleToShow = customTitle || "D2D PORTAL";
   const profileImage = ""
 

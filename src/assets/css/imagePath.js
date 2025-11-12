@@ -1,147 +1,21 @@
-//** For the SVG Images **//
-// import { ReactComponent as IconBack } from "../images/icons/iconBack.svg";
-import { ReactComponent as IconCamera } from "../images/icons/iconCamera.svg";
-import { ReactComponent as IconUser } from "../images/icons/iconUser.svg";
-import { ReactComponent as IconReOpen } from "../images/icons/iconReOpen.svg";
-import { ReactComponent as IconDone } from "../images/icons/iconDone.svg";
-import { ReactComponent as IconCompleted } from "../images/icons/iconCompleted.svg";
-import { ReactComponent as IconDelete } from "../images/icons/iconDelete.svg";
-import { ReactComponent as IconPause } from "../images/icons/iconPause.svg";
-import { ReactComponent as Logo } from "../images/icons/logoGreen.svg";
-import { ReactComponent as LogoWeVOIS } from "../images/logoWeVOIS.svg";
+
 
 export const images = {
-  iconCamera: require("../images/icons/iconCamera.png"),
-  userDeafultImg: require("../images/icons/userDeafultImg.png"),
-  iconEdit: require("../images/icons/iconEdit.png"),
-  iconUser: require("../images/icons/iconUser.png"),
-  iconGender: require("../images/icons/iconGender.png"),
-  iconID: require("../images/icons/iconID.png"),
-  iconLocation: require("../images/icons/iconLocation.png"),
-  iconPhone: require("../images/icons/iconPhone.png"),
-  iconCalendar: require("../images/icons/iconCalendar.png"),
-  iconDepartment: require("../images/icons/iconDepartment.png"),
-  iconEmail: require("../images/icons/iconEmail.png"),
-  iconDown: require("../images/icons/iconDown.png"),
-  iconUp: require("../images/icons/iconUp.png"),
-  imgComingSoon: require("../images/imgComingSoon.png"),
-  infor: require("../images/icons/infor.png"),
-  rightArrow: require("../images/icons/rightarrow.png"),
-  Add: require("../images/icons/add.png"),
-  noUser: require("../images/noUser.png"),
-  iconClose: require("../images/icons/iconClose.png"),
-  iconWork: require("../images/icons/workExp.png"),
-  iconId: require("../images/icons/iconID.png"),
-  addEmployee: require("../images/addEmployee.png"),
-  iconDeleted: require("../images/icons/deleted.png"),
-  Leave: require("../images/icons/markar.png"),
-  Leave2: require("../images/icons/rakhi.png"),
-  Leave3: require("../images/icons/diwali.png"),
-  JaiLogo: require("../images/icons/jaipurgreater .png"),
-  iconBday: require("../images/icons/iconBday.png"),
-  iconSend: require("../images/icons/iconSend.png"),
-  DeafultImg: require("../images/icons/avtarUser.png"),
-  punchIcon: require("../images/icons/punchbtn.png"),
-  sundayIs: require("../images/icons/img_sunday.png"),
-  sundayNd: require("../images/icons/img_sundayChill.png"),
-  sundayTh: require("../images/icons/img_sundayEmoji.png"),
-  Convert: require("../images/icons/convert.png"),
-  iconLeft: require("../images/icons/iconLeft.png"),
-  iconRight: require("../images/icons/iconRight.png"),
-  iconScanView: require("../images/icons/iconScanView.png"),
+
+
+
   iconSunrise: require("../images/icons/iconSunrise.png"),
-  iconSunshine: require("../images/icons/iconSunshine.png"),
-  iconSunset: require("../images/icons/iconSunset.png"),
-  iconNight: require("../images/icons/iconNight.png"),
-  icon_distance: require("../images/icons/icon_distance.png"),
-  icon_exclaim_round: require("../images/icons/icon_exclaim_round.png"),
-  icon_clock: require("../images/icons/icon_clock.png"),
-  icon_day_type: require("../images/icons/icon_day_type.png"),
-  icon_status_approved: require("../images/icons/icon_status_approved.png"),
-  iconEnable: require("../images/icons/iconEnable.png"),
-  iconModification: require("../images/icons/iconModification.png"),
-  imgHoliday: require("../images/imgHoliday.png"),
-  UserImg: require("../images//icons/UserImg.png"),
-  errorImg: require("../images//icons/errorImg.png"),
-  approve: require("../images/approve.png"),
-  iconReUpload: require("../images/icons/iconReUpload.png"),
-  add: require("../images/icons/add.png"),
-  EyeIcon: require("../images/icons/eye.png"),
-  uploadIcon: require("../images/add_attachment.png"),
-  iconBack: require("../images/icons/iconBack.png"),
-  iconEye: require("../images/icons/iconEye.png"),
-  iconEyeLine: require("../images/icons/iconEyeLine.png"),
-  iconDesignation: require("../images/icons/iconDesignation.png"),
-  statusIcon: require("../images/icons/status.png"),
-  targetIcon: require("../images/icons/target.png"),
-  iconProject: require("../images/icons/iconProject.png"),
-  iconPurpose: require("../images/icons/iconPurpose.png"),
-  iconProjectPurpose: require("../images/icons/iconProjectPurpose.png"),
-  iconMore: require("../images/icons/iconMore.png"),
-  iconAttachement: require("../images/icons/iconAttachement.png"),
-  iconDescription: require("../images/icons/iconDescription.png"),
-  iconList: require("../images/icons/iconList.png"),
-  iconGrid: require("../images/icons/iconGrid.png"),
-  iconSave: require("../images/icons/iconSave.png"),
-  iconCheck: require("../images/icons/iconCheck.png"),
-  iconSubTask: require("../images/icons/iconSubTask.png"),
-  iconSetting: require("../images/icons/iconSetting.png"),
-  iconExcel: require("../images/icons/iconExcel.png"),
-  iconImage: require("../images/icons/iconImage.png"),
-  iconPDF: require("../images/icons/iconPDF.png"),
-  iconPPT: require("../images/icons/iconPPT.png"),
-  iconZip: require("../images/icons/iconZip.png"),
-  iconWord: require("../images/icons/iconWord.png"),
-  iconDocs: require("../images/icons/iconDocs.png"),
-  iconFileInfo: require("../images/icons/iconFileInfo.png"),
-  iconMoreHorizontal: require("../images/icons/iconMoreHorizontal.png"),
-  iconZoomIn: require("../images/icons/iconZoomIn.png"),
-  iconZoomOut: require("../images/icons/iconZoomOut.png"),
-  iconRotate: require("../images/icons/iconRotate.png"),
-  iconDownload: require("../images/icons/iconDownload.png"),
-  iconAlertWarning: require("../images/icons/iconAlertWarning.png"),
-  iconPassword: require("../images/icons/iconPassword.png"),
-  iconCompany: require("../images/icons/iconCompany.png"),
-  iconSales: require("../images/icons/iconSales.png"),
-  imgTask: require("../images/icons/imgTask.png"),
-  iconTask: require("../images/icons/iconTask.png"),
-  iconConfirm: require("../images/confirm.png.png"),
-  iconFilter: require("../images/icons/iconFilter.png"),
-  logoBJP: require("../images/logoBJP.png"),
-  logoCongress: require("../images/logoCongress.png"),
-  logoAap: require("../images/logoAap.png"),
-  logoAap: require("../images/logoAap.png"),
-  logoWeVOIS: require("../images/wevois-logo.png"),
-  logoAttendance: require("../images/logoAttendance.png"),
-  logoTask: require("../images/logoTask.png"),
-  logoSales: require("../images/logoSales.png"),
-  logoExpenses: require("../images/logoExpenses.png"),
-  logoOfficeManagement: require("../images/logoOfficeManagement.png"),
-  attendanceLogo: require("../images/attendanceLogo.png"),
-  logoTask: require("../images/logoTask.png"),
-  logoSales: require("../images/logoSales.png"),
-  logoExpenses: require("../images/logoExpenses.png"),
+
+
+
+ 
+ 
+
+
+
+
+
   defaultLogo: require("../images/wevoisLogo.png"),
   wevoisLogo: require("../images/wevoisLogo.png"),
-  iconFingerprint: require("../images/icons/iconFingerprint.png"),
-  noCityFound: require('../images/NoCityFound.jpg'),
-  iconRupee: require("../images/rupee.png"),
-  IconSavings: require("../images/expensePurposeicon.png"),
-  IconVeiwImg: require("../images/icons/ViewImage.png"),
-  IconSelectCity:  require("../images/citySelect.png"),
-  IconConfirm:  require("../images/icons/confirm.png"),
-  IconSelectEmp:require("../images/Eployees.png"),
-   iconExportDwn:require("../images/icons/iconExport.png")
 };
 
-export {
-  IconCamera,
-  IconUser,
-  IconDone,
-  IconReOpen,
-  IconCompleted,
-  IconDelete,
-  IconPause,
-  Logo,
-  LogoWeVOIS
-};

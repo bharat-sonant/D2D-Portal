@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import RouterComponent from './router/RouterComponent';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import "./assets/css/style.css";
 import globleStyles from "./assets/css/globleStyles.module.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
