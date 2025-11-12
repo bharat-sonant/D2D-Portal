@@ -49,7 +49,7 @@ const DriverHelperDetails = ({
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Driver ID</label>
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
   pattern="[0-9]*"
             className={styles.textInput}
@@ -68,7 +68,7 @@ const DriverHelperDetails = ({
           <div className={styles.deviceInputWrapper}>
             <span className={styles.devicePrefix}>DEV</span>
             <input
-             type="number"
+             type="text"
             inputMode="numeric"
   pattern="[0-9]*"
               className={styles.deviceInput}
@@ -86,7 +86,7 @@ const DriverHelperDetails = ({
         <div className={styles.fieldColumn}>
           <label className={styles.fieldLabel}>Helper ID</label>
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
   pattern="[0-9]*"
             className={styles.textInput}
@@ -104,7 +104,7 @@ const DriverHelperDetails = ({
           <div className={styles.deviceInputWrapper}>
             <span className={styles.devicePrefix}>DEV</span>
             <input
-              type="number"
+              type="text"
             inputMode="numeric"
   pattern="[0-9]*"
               className={styles.deviceInput}
@@ -124,7 +124,7 @@ const DriverHelperDetails = ({
             <div className={`${styles.fieldColumn} ${styles.extraHelperRow}`}>
               <label className={styles.fieldLabel}>Helper ID</label>
               <input
-                type="number"
+                type="text"
             inputMode="numeric"
   pattern="[0-9]*"
                 className={styles.textInput}
