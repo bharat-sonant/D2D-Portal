@@ -6,9 +6,9 @@ height: calc(100vh - 390px);
     border-radius: 6px;
 }
 .sheetTitle {
-  font-size: 15px;
+  font-size: 18px;
   color: var(--darkBlack);
-  font-family: var(--fontGraphikMedium);
+  font-family: var(--fontGraphikSemibold);
   margin-bottom: 10px;
   padding: 0px 16px;
 }
@@ -76,21 +76,20 @@ padding: 0px;
 
 
 @media screen and (min-width: 1025px) {
-  :global(.react-modal-sheet-header-container) {
-    background: #f8fafc;
-    border-radius: 12px 12px 0 0;
-    height: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+  :global(.react-modal-sheet-root) {
+position: fixed;
+    inset: 0px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    visibility: visible;
+        width: 335px;
+        left: 50% !important;
+        transform: translateX(-50%);
+        height: calc(100vh - 13vh);
+        margin-top: 5vh;
+        border-radius: 20px;
   }
 
-  :global(.react-modal-sheet-header-container)::before {
-    content: "";
-    width: 40px;
-    height: 4px;
-    border-radius: 4px;
-    background: #cbd5e1;
-  }
+
 }
