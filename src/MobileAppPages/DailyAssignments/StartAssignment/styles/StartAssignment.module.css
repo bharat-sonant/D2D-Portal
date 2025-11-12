@@ -452,7 +452,7 @@ body {
 .submitButton {
   width: 100%;
   max-width: 400px;
-  margin-top: 20px;
+  margin-top: auto;
   padding: 14px 20px;
   background-color: #00b300;
   color: white;
