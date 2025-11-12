@@ -18,7 +18,6 @@ const VehiclesDropdown = ({
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState("");
 
   // Filter vehicles based on search input
   const filteredVehicles = useMemo(() => {
@@ -37,7 +36,9 @@ const VehiclesDropdown = ({
 
   // 🔹 Auto-clear error when typing in search
   useEffect(() => {
-    if (searchTerm && error) setError("");
+    if (searchTerm) {
+      setErrors((prev) => ({ ...prev, vehicle: "" }));
+    }
   }, [searchTerm]);
 
   const snapPoints = [0, 0.7, 1];
@@ -165,7 +166,7 @@ const VehiclesDropdown = ({
                 
               </Sheet.Content>
             </Sheet.Container>
-            <Sheet.Backdrop />
+             <Sheet.Backdrop onTap={() => setOpen(false)} />
           </Sheet>
         </div>
     </div>
