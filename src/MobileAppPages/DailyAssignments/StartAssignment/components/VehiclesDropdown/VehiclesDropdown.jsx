@@ -1,6 +1,6 @@
-import { ChevronDown, Truck, Search, Check } from "lucide-react";
+import { ChevronDown, Truck, Search, Check, AlertCircle } from "lucide-react";
 import styles from "../../styles/StartAssignment.module.css";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Sheet } from "react-modal-sheet";
 import sheetStyles from "./VehicleSheet.module.css";
 import {images} from "../../../../../assets/css/imagePath.js";
@@ -13,9 +13,12 @@ const VehiclesDropdown = ({
   selectedVehicle,
   setSelectedVehicle,
   activeVehicles,
+  vehicleError, 
+  setErrors
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
 
   // Filter vehicles based on search input
   const filteredVehicles = useMemo(() => {
@@ -28,10 +31,24 @@ const VehiclesDropdown = ({
   // Handle vehicle selection
   const handleSelect = (vehicleNo) => {
     setSelectedVehicle(vehicleNo);
+     setErrors((prev) => ({ ...prev, vehicle: "" })); 
     setOpen(false);
   };
 
+  // 🔹 Auto-clear error when typing in search
+  useEffect(() => {
+    if (searchTerm && error) setError("");
+  }, [searchTerm]);
+
   const snapPoints = [0, 0.7, 1];
+
+    // 🔹 Validate on open-close if needed
+//   const handleDropdownClick = () => {
+//   setErrors((prev) => ({ ...prev, vehicle: "" }));
+//   setOpen(true);
+// };
+
+
 
   return (
     <div className={styles.vehicleCard}>
@@ -68,6 +85,13 @@ const VehiclesDropdown = ({
             </div>
             <ChevronDown className={styles.dropdownIcon} size={16} />
           </button>
+
+{/* Inline Error Message */}
+          {vehicleError && (
+    <div className={styles.errorMessage}>
+      <AlertCircle size={14} /> {vehicleError}
+    </div>
+  )}
 
           {/* Bottom Sheet */}
           <Sheet

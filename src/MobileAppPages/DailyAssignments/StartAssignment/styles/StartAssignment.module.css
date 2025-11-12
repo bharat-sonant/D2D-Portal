@@ -163,6 +163,26 @@ body {
   size: 2px;
 }
 
+.errorBorder {
+  border: 1px solid #ef4444 !important;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.errorPlaceholder {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+
 /* Invisible actual dropdown on top */
 .vehicleDropdown {
   position: absolute;
@@ -437,9 +457,9 @@ body {
 }
 
 .submitButton {
-  width: 90%;
-  max-width: 320px;
-  margin: 20px auto 30px auto;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
   padding: 14px 20px;
   background-color: #00b300;
   color: white;
@@ -470,6 +490,6 @@ body {
 
 @media (max-width: 767.98px){
   .contentContainer{
-    height: calc(100vh-56px);
+    height: calc(100vh - 56px);
   }
 }

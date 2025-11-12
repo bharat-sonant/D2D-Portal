@@ -26,6 +26,7 @@ const StartAssignment = () => {
     driverDeviceId: "",
     helperId: "",
     helperDeviceId: "",
+     vehicle: "",
   });
   const fileInputRef = useRef(null);
   
@@ -68,6 +69,7 @@ const StartAssignment = () => {
       driverDeviceId: "",
       helperId: "",
       helperDeviceId: "",
+      vehicle : ''
     };
 
     if (!driverId.trim()) newErrors.driverId = "Driver ID is required";
@@ -89,10 +91,11 @@ const StartAssignment = () => {
      // clear errors
     setErrors({ driverId: "", driverDeviceId: "", helperId: "", helperDeviceId: "" });
 
-    if (!selectedVehicle) {
-      common.setAlertMessage("error", "Please select a Vehicle !");
-      return;
-    }
+   if (!selectedVehicle) {
+  setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
+  return;
+}
+
     const result = await startAssignmentAction(selectedVehicle, ward, driverId, helperId);
 
     if (result.status === "success") {
@@ -148,6 +151,8 @@ const StartAssignment = () => {
           selectedVehicle={selectedVehicle}
           setSelectedVehicle={setSelectedVehicle}
           activeVehicles={activeVehicles}
+          vehicleError = {errors.vehicle}
+          setErrors={setErrors}
         />
 
         <DriverHelperDetails
