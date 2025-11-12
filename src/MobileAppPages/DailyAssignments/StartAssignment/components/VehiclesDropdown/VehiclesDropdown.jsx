@@ -3,7 +3,7 @@ import styles from "../../styles/StartAssignment.module.css";
 import React, { useState, useMemo, useEffect } from "react";
 import { Sheet } from "react-modal-sheet";
 import sheetStyles from "./VehicleSheet.module.css";
-import {images} from "../../../../../assets/css/imagePath.js";
+import { images } from "../../../../../assets/css/imagePath.js";
 
 const VehiclesDropdown = ({
   ward,
@@ -13,8 +13,8 @@ const VehiclesDropdown = ({
   selectedVehicle,
   setSelectedVehicle,
   activeVehicles,
-  vehicleError, 
-  setErrors
+  vehicleError,
+  setErrors,
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,7 +30,7 @@ const VehiclesDropdown = ({
   // Handle vehicle selection
   const handleSelect = (vehicleNo) => {
     setSelectedVehicle(vehicleNo);
-     setErrors((prev) => ({ ...prev, vehicle: "" })); 
+    setErrors((prev) => ({ ...prev, vehicle: "" }));
     setOpen(false);
   };
 
@@ -41,15 +41,13 @@ const VehiclesDropdown = ({
     }
   }, [searchTerm]);
 
-  const snapPoints = [0, 0.7, 1];
+  const snapPoints = [0, 0.7];
 
-    // 🔹 Validate on open-close if needed
-//   const handleDropdownClick = () => {
-//   setErrors((prev) => ({ ...prev, vehicle: "" }));
-//   setOpen(true);
-// };
-
-
+  // 🔹 Validate on open-close if needed
+  //   const handleDropdownClick = () => {
+  //   setErrors((prev) => ({ ...prev, vehicle: "" }));
+  //   setOpen(true);
+  // };
 
   return (
     <div className={styles.vehicleCard}>
@@ -70,42 +68,50 @@ const VehiclesDropdown = ({
       </div>
 
       {/* Vehicle Selector */}
-        <div className={styles.dropdownWrapper}>
-          <button
-            className={styles.dropdownDisplay}
-            onClick={() => setOpen(true)}
-          >
-            <div className={styles.leftGroup}>
-              <Truck color="#22c55e" size={24} className={styles.truckIcon} />
-              <span className={styles.vehicleLabel}>
-                {selectedVehicle || "Please Select vehicle"}
-              </span>
-            </div>
-            <ChevronDown className={styles.dropdownIcon} size={16} />
-          </button>
+      <div className={styles.dropdownWrapper}>
+        <button
+          className={styles.dropdownDisplay}
+          onClick={() => setOpen(true)}
+        >
+          <div className={styles.leftGroup}>
+            <Truck color="#22c55e" size={24} className={styles.truckIcon} />
+            <span className={styles.vehicleLabel}>
+              {selectedVehicle || "Please Select vehicle"}
+            </span>
+          </div>
+          <ChevronDown className={styles.dropdownIcon} size={16} />
+        </button>
 
-{/* Inline Error Message */}
-          {vehicleError && (
-    <div className={styles.errorMessage}>
-      <AlertCircle size={14} /> {vehicleError}
-    </div>
-  )}
+        {/* Inline Error Message */}
+        {vehicleError && (
+          <div className={styles.errorMessage}>
+            <AlertCircle size={14} /> {vehicleError}
+          </div>
+        )}
 
-          {/* Bottom Sheet */}
-          <Sheet
-            isOpen={isOpen}
-            onClose={() => setOpen(false)}
-            initialSnap={1}
-            snapPoints={snapPoints}
-          >
-            <Sheet.Container>
-              <Sheet.Header />
-              <Sheet.Content>
-                  <div className={sheetStyles.btnClose}
-                  onClick={() => setOpen(false)}>
-                    <img src={images.iconClose} className={sheetStyles.iconClose} title="Close" alt="Close" />
-                  </div>
-               {loading ? (
+        {/* Bottom Sheet */}
+        <Sheet
+          isOpen={isOpen}
+          onClose={() => setOpen(false)}
+          snapPoints={[0, 0.7]} // 0 = closed, 0.7 = 70% open
+          initialSnap={1} // pehli baar open hone par 70% pe khule
+          detent="full-height" // prevent full-screen expansion
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+              <div
+                className={sheetStyles.btnClose}
+                onClick={() => setOpen(false)}
+              >
+                <img
+                  src={images.iconClose}
+                  className={sheetStyles.iconClose}
+                  title="Close"
+                  alt="Close"
+                />
+              </div>
+              {loading ? (
                 // 🔹 Loader shown only inside sheet
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>
@@ -113,7 +119,6 @@ const VehiclesDropdown = ({
                 </div>
               ) : (
                 <div className={sheetStyles.sheetContent}>
-
                   {/* Search Box */}
                   <div className={sheetStyles.searchBox}>
                     <input
@@ -123,7 +128,12 @@ const VehiclesDropdown = ({
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={sheetStyles.searchInput}
                     />
-                    <img src={images.iconSearch} className={sheetStyles.iconSearch} title="" alt="" />
+                    <img
+                      src={images.iconSearch}
+                      className={sheetStyles.iconSearch}
+                      title=""
+                      alt=""
+                    />
                   </div>
 
                   {/* Vehicle List */}
@@ -166,13 +176,11 @@ const VehiclesDropdown = ({
                   </ul>
                 </div>
               )}
-
-                
-              </Sheet.Content>
-            </Sheet.Container>
-             <Sheet.Backdrop onTap={() => setOpen(false)} />
-          </Sheet>
-        </div>
+            </Sheet.Content>
+          </Sheet.Container>
+          <Sheet.Backdrop onTap={() => setOpen(false)} />
+        </Sheet>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 .sheetContent {
-  margin: 10px 16px 10px;
-  background: #fff;
-  padding: 16px;
+  margin: 0px 0px 10px;
+  padding: 0px 16px;
   border-radius: 6px;
 }
 .sheetTitle {
@@ -11,43 +10,43 @@
   margin-bottom: 10px;
   padding: 0px 16px;
 }
-.iconSearch{
+.iconSearch {
   width: 16px;
   height: 16px;
-      position: absolute;
-    right: 20px;
-    top: 15px;
+  position: absolute;
+  right: 20px;
+  top: 15px;
 }
 .btnClose {
   width: 48px;
-    position: absolute;
-    margin-top: -60px;
-    background-color: var(--white);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 48px;
-    border-radius: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    &:hover{
-      .iconClose{
-        filter: brightness(0) saturate(100%) invert(22%) sepia(93%) saturate(5314%) hue-rotate(354deg) brightness(91%) contrast(123%);
-      }
+  position: absolute;
+  margin-top: -42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  border-radius: 50px;
+  right: 20px;
+  &:hover {
+    .iconClose {
+      filter: brightness(0) saturate(100%) invert(22%) sepia(93%)
+        saturate(5314%) hue-rotate(354deg) brightness(91%) contrast(123%);
     }
+  }
 }
 .iconClose {
   width: 16px;
   height: 16px;
-  filter: brightness(0) saturate(100%) invert(42%) sepia(1%) saturate(2275%) hue-rotate(315deg) brightness(102%) contrast(81%);
+  filter: brightness(0) saturate(100%) invert(42%) sepia(1%) saturate(2275%)
+    hue-rotate(315deg) brightness(102%) contrast(81%);
 }
 .searchBox {
   width: 100%;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 .searchInput {
-padding: 0px 46px 0px 16px;
+  padding: 0px 46px 0px 16px;
   font-size: 13px;
   width: 100%;
   color: var(--gray);
@@ -58,9 +57,11 @@ padding: 0px 46px 0px 16px;
 }
 .vehicleList {
   padding: 0px;
-max-height: calc(70vh - 190px);
+  max-height: calc(70vh - 130px);
   overflow: auto;
   margin-bottom: 0px;
+  background-color: var(--white);
+  border-radius: 6px;
 }
 .vehicleItem {
   list-style-type: none;
@@ -69,11 +70,13 @@ max-height: calc(70vh - 190px);
   font-family: var(--fontGraphik);
   padding: 12px 16px;
   transition: 0.2s;
+  border-bottom: 1px solid #eee;
   &:hover {
     background: #fafafa;
   }
-  &:nth-last-child(1){
-    margin-bottom: 20px;
+  &:nth-last-child(1) {
+    margin-bottom: 30px;
+    border-bottom: 0px solid #eee;
   }
 }
 .vehicleItem.activeVehicle {
@@ -97,6 +100,9 @@ max-height: calc(70vh - 190px);
 }
 .noResultImg {
   height: 80px;
+}
+:global(.react-modal-sheet-drag-indicator) {
+  background-color: #00b300 !important;
 }
 :global(.react-modal-sheet-header-container) {
   background: #f3f3f9;
