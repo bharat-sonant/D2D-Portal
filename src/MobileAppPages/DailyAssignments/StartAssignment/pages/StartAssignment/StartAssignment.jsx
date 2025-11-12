@@ -62,7 +62,7 @@ const StartAssignment = () => {
       common.setAlertMessage("error", "Please select a Vehicle !");
       return;
     }
-    const result = await startAssignmentAction(selectedVehicle, ward);
+    const result = await startAssignmentAction(selectedVehicle, ward, driverId, helperId);
 
     if (result.status === "success") {
       setSelectedVehicle("");

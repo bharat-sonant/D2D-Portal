@@ -18,13 +18,13 @@ export const getAllVehicles = async () => {
   });
 };
 
-export const startAssignment = async(selectedVehicle, ward) => {
+export const startAssignment = async(selectedVehicle, ward, driverId, helperId) => {
   return new Promise(async(resolve) => {
     try{
       const path = `Vehicles/${selectedVehicle}`;
       const payload = {
-        "assigned-driver": "",
-        "assigned-helper": "",
+        "assigned-driver": driverId,
+        "assigned-helper": helperId,
         "assigned-task": ward,
         "status": "3"
       }
