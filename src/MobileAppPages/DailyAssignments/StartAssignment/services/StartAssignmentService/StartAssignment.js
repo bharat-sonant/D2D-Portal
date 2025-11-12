@@ -18,51 +18,60 @@ export const getAllVehicles = async () => {
   });
 };
 
-export const startAssignment = async(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId) => {
-  return new Promise(async(resolve) => {
-    try{
-      const path = `Vehicles/${selectedVehicle}`;
-      const payload = {
+export const startAssignment = async (
+  selectedVehicle,
+  ward,
+  driverId,
+  driverDeviceId,
+  helperId,
+  helperDeviceId
+) => {
+  return new Promise(async (resolve) => {
+    try {
+      const vehiclePath = `Vehicles/${selectedVehicle}`;
+      const driverPath = `WorkAssignment/${driverId}`;
+      const helperPath = `WorkAssignment/${helperId}`;
+
+      const vehiclePayload = {
         "assigned-driver": driverId,
         "assigned-helper": helperId,
         "assigned-task": ward,
-        "status": "3"
-      }
-
-      const vehicleResult = await db.saveData(path, payload );
-
-      if (!vehicleResult.success) {
-        return resolve(common.setResponse(fail, "Failed to update vehicle assignment", []));
-      }
-
-       const driverPath = `WorkAssignment/${driverId}`;
-      const helperPath = `WorkAssignment/${helperId}`;
+        status: "3",
+      };
 
       const driverPayload = {
         "current-assignment": ward,
-        "device": driverDeviceId,
-        "vehicle": selectedVehicle,
+        device: driverDeviceId,
+        vehicle: selectedVehicle,
       };
 
       const helperPayload = {
         "current-assignment": ward,
-        "device": helperDeviceId,
-        "vehicle": selectedVehicle,
+        device: helperDeviceId,
+        vehicle: selectedVehicle,
       };
 
-      const [driverResult, helperResult] = await Promise.all([
+      const [vehicleResult, driverResult, helperResult] = await Promise.all([
+        db.saveData(vehiclePath, vehiclePayload),
         db.saveData(driverPath, driverPayload),
         db.saveData(helperPath, helperPayload),
       ]);
 
-      if (driverResult.success && helperResult.success) {
-        resolve(common.setResponse(success, "Assignment started successfully", {}));
-      } else {
-        resolve(common.setResponse(fail, "Failed to update work assignment", []));
-      }
+      const allSuccess =
+        vehicleResult?.success && driverResult?.success && helperResult?.success;
 
-    }catch(error){
-      resolve(common.setResponse(fail, "Failed to fetch vehicles", []));
+        const result = {
+vehicle: vehicleResult,
+          driver: driverResult,
+          helper: helperResult,
+        }
+      if (allSuccess) {
+         resolve(common.setResponse(success, "Assignment started successfully", result));
+      } else {
+        resolve(common.setResponse(fail, "Failed to  start assignment", []));
+      }
+    } catch (error) {
+      resolve(common.setResponse(fail, "error occurred while starting assignment. Please try again.", []));
     }
-  })
-}
+  });
+};

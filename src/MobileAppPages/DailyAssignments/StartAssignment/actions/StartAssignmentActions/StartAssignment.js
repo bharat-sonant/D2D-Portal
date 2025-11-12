@@ -30,7 +30,6 @@ export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicle
 export const startAssignmentAction = async (selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId) => {
   try {
     const result = await startAssignment(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId);
-    console.log('result', result)
     if (result.status === "success") {
       common.setAlertMessage("success", "Assignment started successfully!");
     } else {
