@@ -5,4 +5,5 @@ export const images = {
   wevoisLogo: require("../images/wevoisLogo.png"),
   imgComingSoon: require("../images/imgComingSoon.png"),
   iconClose: require("../images/icons/iconClose.png"),
+  iconSearch: require("../images/icons/iconSearch.png"),
 };

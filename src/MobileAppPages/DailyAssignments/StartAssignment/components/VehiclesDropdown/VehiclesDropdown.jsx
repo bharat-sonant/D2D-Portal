@@ -122,6 +122,7 @@ const VehiclesDropdown = ({
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={sheetStyles.searchInput}
                     />
+                    <img src={images.iconSearch} className={sheetStyles.iconSearch} title="" alt="" />
                   </div>
 
                   {/* Vehicle List */}

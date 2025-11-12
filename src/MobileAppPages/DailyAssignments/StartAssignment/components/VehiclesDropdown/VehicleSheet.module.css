@@ -11,6 +11,13 @@
   margin-bottom: 10px;
   padding: 0px 16px;
 }
+.iconSearch{
+  width: 16px;
+  height: 16px;
+      position: absolute;
+    right: 20px;
+    top: 15px;
+}
 .btnClose {
   width: 48px;
     position: absolute;
@@ -40,7 +47,7 @@
   margin-bottom: 20px;
 }
 .searchInput {
-  padding: 0px 16px;
+padding: 0px 46px 0px 16px;
   font-size: 13px;
   width: 100%;
   color: var(--gray);
@@ -65,6 +72,9 @@ max-height: calc(70vh - 190px);
   &:hover {
     background: #fafafa;
   }
+  &:nth-last-child(1){
+    margin-bottom: 20px;
+  }
 }
 .vehicleItem.activeVehicle {
   display: flex;
@@ -78,12 +88,12 @@ max-height: calc(70vh - 190px);
   font-size: 13px;
   color: var(--lightBlack);
   font-family: var(--fontGraphik);
-  height: calc(70vh - 280px);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-flow: column;
   gap: 10px;
+  margin-bottom: 15px;
 }
 .noResultImg {
   height: 80px;
