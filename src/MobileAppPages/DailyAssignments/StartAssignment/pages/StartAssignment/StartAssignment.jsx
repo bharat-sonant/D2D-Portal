@@ -98,7 +98,7 @@ const StartAssignment = () => {
 
   
 
-    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId);
+    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city);
     if (result.status === "success") {
       // common.setAlertMessage("success", "Assignment started successfully!");
       handleClear();

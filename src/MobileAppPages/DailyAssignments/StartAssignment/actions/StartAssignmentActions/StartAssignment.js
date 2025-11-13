@@ -27,9 +27,9 @@ export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicle
   }
 };
 
-export const startAssignmentAction = async (selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId) => {
+export const startAssignmentAction = async (selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city) => {
   try {
-    const result = await startAssignment(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId);
+    const result = await startAssignment(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId,city);
     if (result.status === "success") {
       common.setAlertMessage("success", "Assignment started successfully!");
     } else {
