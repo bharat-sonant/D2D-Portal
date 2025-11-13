@@ -405,7 +405,7 @@ body {
 
 .captureMeterButton {
   width: 100%;
-  height: 100%;
+  min-height: 10rem;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -414,16 +414,15 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.2s ease;
+
   font-size: 8px;
   font-family: var(--fontGraphik);
   margin-bottom: 0px;
   color: var(--lightBlack);
   text-align: center;
   padding: 4px;
-  transition: 0.3s;
   background-color: #00a00010;
-      border: 2px dashed #eee;
+  border: 2px dashed #eee;
   &:hover {
     background-color: #00a00036;
   }
@@ -433,7 +432,13 @@ body {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
+.imgTitle {
+  font-size: 11px;
+  text-align: center;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  padding: 4px 0px;
+}
 .imagePreview {
   width: 100%;
   height: 100%;
@@ -443,10 +448,10 @@ body {
 }
 
 .previewImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 .submitButton {
@@ -466,6 +471,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 28px;
 }
 
 .submitButton:hover {
@@ -486,6 +492,7 @@ body {
   width: 100%;
   gap: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 .imageLeft,
 .imageRight {
@@ -496,7 +503,6 @@ body {
   padding: 4px;
   border-radius: 6px;
   border: 1px solid var(--borderColor);
-  height: 10rem;
 }
 .cameraIcon {
   width: 24px;
@@ -504,8 +510,29 @@ body {
   color: #9ca3af;
   margin-bottom: 5px;
 }
+
+.imagePreview {
+  position: relative;
+}
+.closeBtn {
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  background-color: var(--white);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.iconClose {
+  width: 16px;
+}
 @media (max-width: 767.98px) {
   .contentContainer {
     height: calc(100vh - 56px);
+  }
+  .submitButton {
+    margin-bottom: 10px;
   }
 }

@@ -9,7 +9,6 @@
 .section {
   border: 1px solid var(--borderColor);
   border-radius: 6px;
-  height: 10rem;
   padding: 4px;
   background-color: var(--white);
 }
@@ -21,11 +20,16 @@
   color: var(--lightBlack);
   text-align: center;
 }
-
+.imgTitle {
+  font-size: 11px;
+  text-align: center;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  padding: 4px 0px;
+}
 .imageBox {
   background-color: var(--white);
   width: 100%;
-  height: 100%;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -47,7 +51,7 @@
   background-color: #00a00010;
   border: 2px dashed #eee;
   width: 100%;
-  height: 100%;
+  min-height: 10rem;
 }
 .image {
   width: 100%;
@@ -82,4 +86,21 @@
 
 .continueBtn:active {
   transform: scale(0.98);
+}
+.imageWrapper {
+  position: relative;
+}
+.closeBtn {
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  background-color: var(--white);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.iconClose {
+  width: 16px;
 }

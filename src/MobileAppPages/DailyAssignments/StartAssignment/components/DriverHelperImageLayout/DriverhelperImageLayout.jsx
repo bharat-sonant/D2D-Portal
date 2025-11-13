@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import styles from "../../styles/DriverHelperImageLayout/DriverHelperImageLayout.module.css";
+import { images } from "../../../../../assets/css/imagePath";
 
 const DriverHelperImageLayout = () => {
   const [driverImage, setDriverImage] = useState(null);
@@ -27,9 +28,19 @@ const DriverHelperImageLayout = () => {
     }, 100);
   };
 
+  const removeImage = (e) => {
+    e.stopPropagation(); // prevent re-opening camera
+    setDriverImage(null);
+    if (driverInputRef.current) {
+      driverInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.section}>
+        <div className={styles.imgTitle}>Driver & Helper</div>
+
         <div
           className={styles.imageBox}
           onClick={openCamera}
@@ -39,16 +50,24 @@ const DriverHelperImageLayout = () => {
           }}
         >
           {driverImage ? (
-            <img src={driverImage} alt="Driver" className={styles.image} />
+            <div className={styles.imageWrapper}>
+              <img src={driverImage} alt="Driver" className={styles.image} />
+              <button
+                type="button"
+                className={styles.closeBtn}
+                onClick={removeImage}
+              >
+                <img src={images.iconClose} className={styles.iconClose} title="close" alt="Icon Close" />
+              </button>
+            </div>
           ) : (
             <div className={styles.imageBoxText}>
               <Camera className={styles.cameraIcon} />
-              <h3 className={styles.heading}>
-                Please capture <br /> driver and helper photo
-              </h3>
+              <h3 className={styles.heading}>Click to capture</h3>
             </div>
           )}
         </div>
+
         <input
           type="file"
           accept="image/*"
