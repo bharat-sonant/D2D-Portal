@@ -20,7 +20,7 @@
 .btnClose {
   width: 48px;
   position: absolute;
-  margin-top: -44px;
+  margin-top: -40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,7 +80,7 @@ background-size: 16px 16px;
 }
 .vehicleItem {
   list-style-type: none;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--lightBlack);
   font-family: var(--fontGraphik);
   padding: 12px 16px;
@@ -117,8 +117,15 @@ background-size: 16px 16px;
 .noResultImg {
   height: 60px;
 }
+:global(.react-modal-sheet-header-container ){
+  height: 30px;
+}
+:global(.react-modal-sheet-drag-indicator-container ){
+  margin-top: -18px;
+}
 :global(.react-modal-sheet-drag-indicator) {
   background-color: #00b300 !important;
+  width: 21px!important ;
 }
 :global(.react-modal-sheet-header-container) {
   background: #f3f3f9;
