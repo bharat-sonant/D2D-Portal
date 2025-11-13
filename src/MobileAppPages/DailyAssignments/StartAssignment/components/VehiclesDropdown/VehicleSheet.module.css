@@ -20,13 +20,13 @@
 .btnClose {
   width: 48px;
   position: absolute;
-  margin-top: -42px;
+  margin-top: -44px;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 48px;
   border-radius: 50px;
-  right: 20px;
+  right: 0px;
   &:hover {
     .iconClose {
       filter: brightness(0) saturate(100%) invert(22%) sepia(93%)
@@ -35,10 +35,14 @@
   }
 }
 .iconClose {
-  width: 16px;
-  height: 16px;
-  filter: brightness(0) saturate(100%) invert(42%) sepia(1%) saturate(2275%)
-    hue-rotate(315deg) brightness(102%) contrast(81%);
+  width: 14px;
+  height: 14px;
+  background: red;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
 }
 .searchBox {
   width: 100%;
@@ -46,7 +50,7 @@
   margin-bottom: 5px;
 }
 .searchInput {
-  padding: 0px 46px 0px 16px;
+  padding: 0px 46px 0px 36px;
   font-size: 13px;
   width: 100%;
   color: var(--gray);
@@ -54,6 +58,17 @@
   border: 1px solid var(--borderColor);
   height: 48px;
   border-radius: 6px;
+
+  background-image: url(../../../../../assets/images/icons/iconSearch.png);
+  background-repeat: no-repeat;
+  background-position: 12px center;
+background-size: 16px 16px;
+  transition: all ease 0.1s;
+  &:focus {
+    background-position: 95% 12px;
+    color: var(--black);
+    padding: 13px 32px 13px 16px;
+  }
 }
 .vehicleList {
   padding: 0px;

@@ -6,4 +6,5 @@ export const images = {
   imgComingSoon: require("../images/imgComingSoon.png"),
   iconClose: require("../images/icons/iconClose.png"),
   iconSearch: require("../images/icons/iconSearch.png"),
+  iconCloseWhite: require("../images/icons/iconCloseWhite.png"),
 };

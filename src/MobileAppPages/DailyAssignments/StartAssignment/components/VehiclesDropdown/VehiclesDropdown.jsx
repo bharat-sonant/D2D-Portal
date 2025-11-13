@@ -41,14 +41,7 @@ const VehiclesDropdown = ({
     }
   }, [searchTerm]);
 
-const snapPoints = [0, 0.7, 1];
-
-  // 🔹 Validate on open-close if needed
-  //   const handleDropdownClick = () => {
-  //   setErrors((prev) => ({ ...prev, vehicle: "" }));
-  //   setOpen(true);
-  // };
-
+  const snapPoints = [0, 0.7, 1];
   return (
     <div className={styles.vehicleCard}>
       {/* Info Header (Ward, User, City) */}
@@ -93,10 +86,12 @@ const snapPoints = [0, 0.7, 1];
         <Sheet
           isOpen={isOpen}
           onClose={() => setOpen(false)}
+          initialSnap={1}
           snapPoints={snapPoints}
-          initialSnap={1} 
-          // detent="full-height" 
-          disableDrag={true}
+          disableDrag={true} // disable stretch/drag gestures
+          // detent="content" // uses content height but bounded to snap point
+          // disableSnap={true} // prevent user snap changes
+          // disableDismiss={false} // still closable by backdrop tap
         >
           <Sheet.Container>
             <Sheet.Header />
@@ -106,7 +101,7 @@ const snapPoints = [0, 0.7, 1];
                 onClick={() => setOpen(false)}
               >
                 <img
-                  src={images.iconClose}
+                  src={images.iconCloseWhite}
                   className={sheetStyles.iconClose}
                   title="Close"
                   alt="Close"
@@ -128,12 +123,6 @@ const snapPoints = [0, 0.7, 1];
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={sheetStyles.searchInput}
-                    />
-                    <img
-                      src={images.iconSearch}
-                      className={sheetStyles.iconSearch}
-                      title=""
-                      alt=""
                     />
                   </div>
 
