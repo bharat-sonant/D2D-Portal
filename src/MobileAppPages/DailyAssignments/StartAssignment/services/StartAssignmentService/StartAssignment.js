@@ -104,7 +104,6 @@ export const startAssignment = async (
           )
         );
       }
-      console.log("format", formattedDate);
       const deviceUpdatePayload = {
         status: "2",
         lastActive: formattedDate,
@@ -114,11 +113,11 @@ export const startAssignment = async (
       const helperDevicePath = `${devicesPath}/${helperDeviceKey}`;
 
       const whoAssignData = await db.getData(whoAssignWorkPath);
-      console.log("dddd", whoAssignData);
 
-      const nextIndex = whoAssignData
-        ? Object.keys(whoAssignData).length + 1
-        : 1;
+      //filter null or empty entries 
+      const validEntries = whoAssignData && whoAssignData.length > 0 ? whoAssignData?.filter((item) =>item) : [];
+
+      const nextIndex = validEntries.length + 1;
 
       const whoAssignPayload = {
         task: ward,
@@ -142,7 +141,6 @@ export const startAssignment = async (
         db.saveData(helperDevicePath, deviceUpdatePayload),
         db.saveData(whoAssignPath, whoAssignPayload),
       ]);
-      console.log("whoassign", whoAssignResult);
 
       const allSuccess =
         vehicleResult?.success &&
