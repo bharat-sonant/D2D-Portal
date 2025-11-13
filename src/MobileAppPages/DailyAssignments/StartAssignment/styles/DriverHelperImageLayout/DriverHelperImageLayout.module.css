@@ -11,6 +11,7 @@
   border-radius: 6px;
   padding: 4px;
   background-color: var(--white);
+height: 255px;
 }
 
 .heading {
@@ -51,7 +52,7 @@
   background-color: #00a00010;
   border: 2px dashed #eee;
   width: 100%;
-  min-height: 10rem;
+height: 220px;
 }
 .image {
   width: 100%;
@@ -89,6 +90,8 @@
 }
 .imageWrapper {
   position: relative;
+  
+      height: 220px;
 }
 .closeBtn {
   border: none;

@@ -103,7 +103,7 @@ background-size: 16px 16px;
 }
 .noResult {
   list-style-type: none;
-  font-size: 13px;
+  font-size: 11px;
   color: var(--lightBlack);
   font-family: var(--fontGraphik);
   display: flex;
@@ -112,9 +112,10 @@ background-size: 16px 16px;
   flex-flow: column;
   gap: 10px;
   margin-bottom: 15px;
+  margin-top: 8px;
 }
 .noResultImg {
-  height: 80px;
+  height: 60px;
 }
 :global(.react-modal-sheet-drag-indicator) {
   background-color: #00b300 !important;
