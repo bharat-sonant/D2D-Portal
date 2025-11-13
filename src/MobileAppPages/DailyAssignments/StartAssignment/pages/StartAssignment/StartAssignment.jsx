@@ -1,11 +1,14 @@
 import React, { act, useEffect, useState, useRef } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchAllVehicles, startAssignmentAction } from "../../actions/StartAssignmentActions/StartAssignment";
+import {
+  fetchAllVehicles,
+  startAssignmentAction,
+} from "../../actions/StartAssignmentActions/StartAssignment";
 import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../../../firebase/firebaseService";
 import { startAssignment } from "../../services/StartAssignmentService/StartAssignment";
-import * as common from '../../../../../common/common'
+import * as common from "../../../../../common/common";
 import { ArrowLeft, Camera } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
@@ -17,20 +20,20 @@ const StartAssignment = () => {
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [driverId, setDriverId] = useState('')
-  const [driverDeviceId, setDriverDeviceId] = useState('')
-  const [helperId, setHelperID] = useState('');
-  const [helperDeviceId, setHelperDeviceId] = useState('')
+  const [driverId, setDriverId] = useState("");
+  const [driverDeviceId, setDriverDeviceId] = useState("");
+  const [helperId, setHelperID] = useState("");
+  const [helperDeviceId, setHelperDeviceId] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const [errors, setErrors] = useState({
     driverId: "",
     driverDeviceId: "",
     helperId: "",
     helperDeviceId: "",
-     vehicle: "",
+    vehicle: "",
   });
   const fileInputRef = useRef(null);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,7 +49,8 @@ const StartAssignment = () => {
     };
 
     window.addEventListener("androidBackPressed", handleAndroidBack);
-    return () => window.removeEventListener("androidBackPressed", handleAndroidBack);
+    return () =>
+      window.removeEventListener("androidBackPressed", handleAndroidBack);
   }, []);
 
   useEffect(() => {
@@ -54,7 +58,7 @@ const StartAssignment = () => {
       localStorage.setItem("city", city);
 
       let config = getCityFirebaseConfig(city);
-      connectFirebase(config, city)
+      connectFirebase(config, city);
     } else {
       localStorage.setItem("city", "DevTest");
       console.warn("⚠️ No city found, defaulting to DevTest");
@@ -66,25 +70,27 @@ const StartAssignment = () => {
   }, []);
 
   const handleSubmit = async () => {
-     if (!selectedVehicle) {
-  setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
-  return;
-}
+    if (!selectedVehicle) {
+      setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
+      return;
+    }
 
     let newErrors = {
       driverId: "",
       driverDeviceId: "",
       helperId: "",
       helperDeviceId: "",
-      vehicle : ''
+      vehicle: "",
     };
 
     if (!driverId.trim()) newErrors.driverId = "Driver ID is required";
-    if (!driverDeviceId.trim()) newErrors.driverDeviceId = "Driver Device ID is required";
+    if (!driverDeviceId.trim())
+      newErrors.driverDeviceId = "Driver Device ID is required";
     if (!helperId.trim()) newErrors.helperId = "Helper ID is required";
-    if (!helperDeviceId.trim()) newErrors.helperDeviceId = "Helper Device ID is required";
+    if (!helperDeviceId.trim())
+      newErrors.helperDeviceId = "Helper Device ID is required";
 
-     if (
+    if (
       newErrors.driverId ||
       newErrors.driverDeviceId ||
       newErrors.helperId ||
@@ -95,12 +101,24 @@ const StartAssignment = () => {
       return;
     }
 
-     // clear errors
-    setErrors({ driverId: "", driverDeviceId: "", helperId: "", helperDeviceId: "" });
+    // clear errors
+    setErrors({
+      driverId: "",
+      driverDeviceId: "",
+      helperId: "",
+      helperDeviceId: "",
+    });
 
-  
-
-    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city,loginId);
+    const result = await startAssignmentAction(
+      selectedVehicle,
+      ward,
+      driverId,
+      driverDeviceId,
+      helperId,
+      helperDeviceId,
+      city,
+      loginId
+    );
     if (result.status === "success") {
       // common.setAlertMessage("success", "Assignment started successfully!");
       handleClear();
@@ -111,16 +129,20 @@ const StartAssignment = () => {
   };
 
   const handleClear = () => {
-    setSelectedVehicle('')
-    setDriverId('')
-    setDriverDeviceId('')
-    setHelperID('')
-    setHelperDeviceId('')
-  }
+    setSelectedVehicle("");
+    setDriverId("");
+    setDriverDeviceId("");
+    setHelperID("");
+    setHelperDeviceId("");
+  };
 
   const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
-    if (isAndroid && window.Android && typeof window.Android.closeWebView === "function") {
+    if (
+      isAndroid &&
+      window.Android &&
+      typeof window.Android.closeWebView === "function"
+    ) {
       window.Android.closeWebView();
     } else {
       navigate(-1);
@@ -133,11 +155,7 @@ const StartAssignment = () => {
       fileInputRef.current.click();
     }
   };
-  const handleRemoveImage = (e) => {
-    e.stopPropagation();
-    setCapturedImage(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+
   const handleImageCapture = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -167,7 +185,7 @@ const StartAssignment = () => {
           selectedVehicle={selectedVehicle}
           setSelectedVehicle={setSelectedVehicle}
           activeVehicles={activeVehicles}
-          vehicleError = {errors.vehicle}
+          vehicleError={errors.vehicle}
           setErrors={setErrors}
         />
 
@@ -181,69 +199,60 @@ const StartAssignment = () => {
           helperDeviceId={helperDeviceId}
           setHelperDeviceId={setHelperDeviceId}
           errors={errors}
-           setErrors={setErrors}
+          setErrors={setErrors}
         />
 
-
-            <div className={styles.imageRow}>
+        <div className={styles.imageRow}>
           <div className={styles.imageLeft}>
             <DriverHelperImageLayout />
           </div>
-        <div className={styles.imageRight}>
-      <div className={styles.imgSection}>
-        <div className={styles.imgTitle}>Meter</div>
+          <div className={styles.imageRight}>
+            <div className={styles.imgSection}>
+              <div className={styles.imgTitle}>Meter</div>
 
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style={{ display: "none" }}
-          onChange={handleImageCapture}
-        />
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                style={{ display: "none" }}
+                onChange={handleImageCapture}
+              />
 
-        {/* Display captured image or capture button */}
-        {capturedImage ? (
-          <div
-            className={styles.imagePreview}
-            onClick={handleCaptureMeterImage}
-          >
-            <img
-              src={capturedImage}
-              alt="Meter"
-              className={styles.previewImage}
-            />
-            <button
-              type="button"
-              className={styles.closeBtn}
-              onClick={handleRemoveImage}
-            >
-             <img src={images.iconClose} className={styles.iconClose} title="close" alt="Icon Close" />
-            </button>
-         
+              {/* Display captured image or capture button */}
+              {capturedImage ? (
+                <div className={styles.imagePreview}>
+                  <img
+                    src={capturedImage}
+                    alt="Meter"
+                    className={styles.previewImage}
+                  />
+                  <button
+                    type="button"
+                    className={styles.closeBtn}
+                    onClick={handleCaptureMeterImage}
+                  >
+                    Retake
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className={styles.captureMeterButton}
+                  onClick={handleCaptureMeterImage}
+                >
+                  <Camera className={styles.cameraIcon} />
+                  Click to capture
+                </div>
+              )}
+            </div>
           </div>
-        ) : (
-          <div
-            className={styles.captureMeterButton}
-            onClick={handleCaptureMeterImage}
-          >
-            <Camera className={styles.cameraIcon} />
-            Click to capture
-          </div>
-        )}
-      </div>
-    </div>
         </div>
 
-      <button 
-        className={styles.submitButton}
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+        <button className={styles.submitButton} onClick={handleSubmit}>
+          Submit
+        </button>
       </div>
-
     </div>
   );
 };
