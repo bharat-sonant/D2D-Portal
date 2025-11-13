@@ -435,7 +435,7 @@ body {
 .imgTitle {
   font-size: 11px;
   text-align: center;
-  color: var(--lightBlack);
+  color: var(--darkBlack);
   font-family: var(--fontGraphik);
   padding: 4px 0px;
 }

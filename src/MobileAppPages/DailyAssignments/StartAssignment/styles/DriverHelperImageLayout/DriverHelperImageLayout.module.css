@@ -20,12 +20,12 @@
   color: var(--lightBlack);
   text-align: center;
 }
-.imgTitle{
-    font-size: 11px;
-    text-align: center;
-    color: var(--lightBlack);
-    font-family: var(--fontGraphik);
-    padding: 4px 0px;
+.imgTitle {
+  font-size: 11px;
+  text-align: center;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  padding: 4px 0px;
 }
 .imageBox {
   background-color: var(--white);
@@ -51,7 +51,7 @@
   background-color: #00a00010;
   border: 2px dashed #eee;
   width: 100%;
-min-height: 10rem;
+  min-height: 10rem;
 }
 .image {
   width: 100%;
@@ -87,10 +87,10 @@ min-height: 10rem;
 .continueBtn:active {
   transform: scale(0.98);
 }
-.imageWrapper{
+.imageWrapper {
   position: relative;
 }
-.closeBtn{
+.closeBtn {
   border: none;
   outline: none;
   border-radius: 50%;
@@ -101,6 +101,6 @@ min-height: 10rem;
   right: 5px;
   top: 5px;
 }
-.iconClose{
+.iconClose {
   width: 16px;
 }
