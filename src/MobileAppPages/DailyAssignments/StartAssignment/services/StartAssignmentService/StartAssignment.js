@@ -3,6 +3,31 @@ import * as common from "../../../../../common/common";
 const success = "success";
 const fail = "fail";
 
+// 🕒 Utility for date/time formatting
+const getDateTimeDetails = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const date = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate()
+  ).padStart(2, "0")}`;
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(
+    now.getMinutes()
+  ).padStart(2, "0")}`;
+  const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}/${year} ${time}`;
+
+  return { now, year, monthName, date, time, formattedDate };
+};
+
+// 🧭 Helper for device name formatting
+const formatDeviceName = (id) => {
+  const formattedId = id.toString().padStart(2, "0");
+  return `DEV-${formattedId}`;
+};
+
+
 export const getAllVehicles = async () => {
   return new Promise(async (resolve) => {
     try {
@@ -26,37 +51,14 @@ export const startAssignment = async (
   helperId,
   helperDeviceId,
   city,
-  loginId
+  user
 ) => {
   return new Promise(async (resolve) => {
     try {
-      const now = new Date();
-      // 🔹 Format components
-      const year = now.getFullYear();
-      const monthName = now.toLocaleString("default", { month: "long" }); // e.g. November
-      const date = `${year}-${String(now.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(now.getDate()).padStart(2, "0")}`; // YYYY-MM-DD
-      const time = `${String(now.getHours()).padStart(2, "0")}:${String(
-        now.getMinutes()
-      ).padStart(2, "0")}`; // 24-hour format
+      const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
 
-      // 🔹 For backward compatibility with your formattedDate
-      const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
-        now.getMonth() + 1
-      ).padStart(2, "0")}/${now.getFullYear()} ${time}`;
-
-      const formatDeviceName = (id) => {
-        const formattedId = id.toString().padStart(2, "0"); // ensures 9 → "09"
-        return `DEV-${formattedId}`;
-      };
-
-      const vehiclePath = `Vehicles/${selectedVehicle}`;
-      const driverPath = `WorkAssignment/${driverId}`;
-      const helperPath = `WorkAssignment/${helperId}`;
       const devicesPath = `Devices/${city}`;
-      const whoAssignWorkPath = `WhoAssignWork/${year}/${monthName}/${date}/${loginId}`;
+      const whoAssignWorkPath = `WhoAssignWork/${year}/${monthName}/${date}/${user}`;
 
       const vehiclePayload = {
         "assigned-driver": driverId,
@@ -85,42 +87,25 @@ export const startAssignment = async (
         );
       }
 
-      const devicesData = devicesResult;
-
-      const driverDeviceKey = Object.keys(devicesData).find(
-        (key) => devicesData[key]?.name === formatDeviceName(driverDeviceId)
+      const driverDeviceKey = Object.keys(devicesResult).find(
+        (key) => devicesResult[key]?.name === formatDeviceName(driverDeviceId)
       );
 
-      const helperDeviceKey = Object.keys(devicesData).find(
-        (key) => devicesData[key]?.name === formatDeviceName(helperDeviceId)
+      const helperDeviceKey = Object.keys(devicesResult).find(
+        (key) => devicesResult[key]?.name === formatDeviceName(helperDeviceId)
       );
 
-      if (!driverDeviceKey) {
-        return resolve(
-          common.setResponse(
-            fail,
-            "Device record not found for driver.",
-            []
-          )
-        );
+      if (!driverDeviceKey || !helperDeviceKey) {
+        const msg = !driverDeviceKey
+          ? "Device record not found for driver."
+          : "Device record not found for helper.";
+        return resolve(common.setResponse(fail, msg, []));
       }
 
-      if (!helperDeviceKey) {
-        return resolve(
-          common.setResponse(
-            fail,
-            "Device record not found for helper.",
-            []
-          )
-        );
-      }
       const deviceUpdatePayload = {
         status: "2",
         lastActive: formattedDate,
       };
-
-      const driverDevicePath = `${devicesPath}/${driverDeviceKey}`;
-      const helperDevicePath = `${devicesPath}/${helperDeviceKey}`;
 
       const whoAssignData = await db.getData(whoAssignWorkPath);
 
@@ -134,7 +119,16 @@ export const startAssignment = async (
         time: time,
       };
 
-      const whoAssignPath = `${whoAssignWorkPath}/${nextIndex}`;
+      const wasteInfoPayload = {
+        Summary : {
+          dutyInTime : time,
+        },
+        WorkerDetails : {
+          driver: driverId,
+          helper: helperId,
+          vehicle: selectedVehicle,
+        }
+      }
 
       const [
         vehicleResult,
@@ -143,13 +137,15 @@ export const startAssignment = async (
         driverDeviceResult,
         helperDeviceResult,
         whoAssignResult,
+        wasteInfoResult,
       ] = await Promise.all([
-        db.saveData(vehiclePath, vehiclePayload),
-        db.saveData(driverPath, driverPayload),
-        db.saveData(helperPath, helperPayload),
-        db.saveData(driverDevicePath, deviceUpdatePayload),
-        db.saveData(helperDevicePath, deviceUpdatePayload),
-        db.saveData(whoAssignPath, whoAssignPayload),
+        db.saveData(`Vehicles/${selectedVehicle}`, vehiclePayload),
+        db.saveData(`WorkAssignment/${driverId}`, driverPayload),
+        db.saveData(`WorkAssignment/${helperId}`, helperPayload),
+        db.saveData(`${devicesPath}/${driverDeviceKey}`, deviceUpdatePayload),
+        db.saveData(`${devicesPath}/${helperDeviceKey}`, deviceUpdatePayload),
+        db.saveData(`${whoAssignWorkPath}/${nextIndex}`, whoAssignPayload),
+        db.saveData(`WasteCollectionInfo/${ward}/${year}/${monthName}/${date}`, wasteInfoPayload)
       ]);
 
       const allSuccess =
@@ -158,7 +154,8 @@ export const startAssignment = async (
         helperResult?.success &&
         driverDeviceResult?.success &&
         helperDeviceResult?.success &&
-        whoAssignResult?.success;
+        whoAssignResult?.success &&
+        wasteInfoResult?.success;
 
       const result = {
         vehicle: vehicleResult,
@@ -167,6 +164,7 @@ export const startAssignment = async (
         driverDevice: driverDeviceResult,
         helperDevice: helperDeviceResult,
         whoAssignWork: whoAssignResult,
+        wasteInfo : wasteInfoResult,
       };
       if (allSuccess) {
         resolve(

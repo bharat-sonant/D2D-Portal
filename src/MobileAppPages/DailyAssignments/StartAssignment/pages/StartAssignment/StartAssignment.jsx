@@ -117,7 +117,7 @@ const StartAssignment = () => {
       helperId,
       helperDeviceId,
       city,
-      loginId
+      user
     );
     if (result.status === "success") {
       // common.setAlertMessage("success", "Assignment started successfully!");
