@@ -1,5 +1,5 @@
-import * as db from "../../../../../services/dbServices";
-import * as common from "../../../../../common/common";
+import * as db from "../../../services/dbServices";
+import * as common from "../../../common/common";
 const success = "success";
 const fail = "fail";
 

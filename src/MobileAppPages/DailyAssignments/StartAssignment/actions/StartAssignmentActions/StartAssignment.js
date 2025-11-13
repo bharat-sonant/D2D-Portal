@@ -1,4 +1,4 @@
-import { getAllVehicles, startAssignment } from "../../services/StartAssignmentService/StartAssignment";
+import { getAllVehicles, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
 export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicles) => {

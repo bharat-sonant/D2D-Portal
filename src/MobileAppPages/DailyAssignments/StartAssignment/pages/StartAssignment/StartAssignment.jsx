@@ -7,13 +7,11 @@ import {
 } from "../../actions/StartAssignmentActions/StartAssignment";
 import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../../../firebase/firebaseService";
-import { startAssignment } from "../../services/StartAssignmentService/StartAssignment";
 import * as common from "../../../../../common/common";
 import { ArrowLeft, Camera } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
-import { images } from "../../../../../assets/css/imagePath";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
