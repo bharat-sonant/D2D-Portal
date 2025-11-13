@@ -38,6 +38,7 @@ const StartAssignment = () => {
   const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
   const city = queryParams.get("city") || "DevTest";
+  const loginId = queryParams.get("loginId") || "N/A";
 
   useEffect(() => {
     const handleAndroidBack = () => {
@@ -99,7 +100,7 @@ const StartAssignment = () => {
 
   
 
-    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city);
+    const result = await startAssignmentAction(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city,loginId);
     if (result.status === "success") {
       // common.setAlertMessage("success", "Assignment started successfully!");
       handleClear();
