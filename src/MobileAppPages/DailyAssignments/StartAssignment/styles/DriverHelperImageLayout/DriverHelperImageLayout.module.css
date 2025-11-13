@@ -9,7 +9,6 @@
 .section {
   border: 1px solid var(--borderColor);
   border-radius: 6px;
-  min-height: 10rem;
   padding: 4px;
   background-color: var(--white);
 }
@@ -26,11 +25,11 @@
     text-align: center;
     color: var(--lightBlack);
     font-family: var(--fontGraphik);
+    padding: 4px 0px;
 }
 .imageBox {
   background-color: var(--white);
   width: 100%;
-  min-height: 10rem;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -87,4 +86,21 @@ min-height: 10rem;
 
 .continueBtn:active {
   transform: scale(0.98);
+}
+.imageWrapper{
+  position: relative;
+}
+.closeBtn{
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  background-color: var(--white);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.iconClose{
+  width: 16px;
 }

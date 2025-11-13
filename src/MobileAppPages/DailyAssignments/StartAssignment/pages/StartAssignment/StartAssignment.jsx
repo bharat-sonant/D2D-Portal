@@ -10,6 +10,7 @@ import { ArrowLeft, Camera } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
+import { images } from "../../../../../assets/css/imagePath";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -131,7 +132,11 @@ const StartAssignment = () => {
       fileInputRef.current.click();
     }
   };
-
+  const handleRemoveImage = (e) => {
+    e.stopPropagation();
+    setCapturedImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
   const handleImageCapture = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -183,44 +188,51 @@ const StartAssignment = () => {
           <div className={styles.imageLeft}>
             <DriverHelperImageLayout />
           </div>
-          <div className={styles.imageRight}>
-            <div className={styles.imgSection}>
-              <div className={styles.imgTitle}>Meter</div>
-            {/* Hidden file input for camera */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              style={{ display: "none" }}
-              onChange={handleImageCapture}
+        <div className={styles.imageRight}>
+      <div className={styles.imgSection}>
+        <div className={styles.imgTitle}>Meter</div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style={{ display: "none" }}
+          onChange={handleImageCapture}
+        />
+
+        {/* Display captured image or capture button */}
+        {capturedImage ? (
+          <div
+            className={styles.imagePreview}
+            onClick={handleCaptureMeterImage}
+          >
+            <img
+              src={capturedImage}
+              alt="Meter"
+              className={styles.previewImage}
             />
-
-            {/* Capture Meter Image Button */}
-            
-
-            {/* Preview captured image (optional) */}
-            {capturedImage ? (
-             
-            <div className={styles.imagePreview}  onClick={handleCaptureMeterImage}>
-                <img
-                  src={capturedImage}
-                  alt="Meter"
-                  className={styles.previewImage}
-                />
-              </div>
-            ): (
-               <div
-              className={styles.captureMeterButton}
-              onClick={handleCaptureMeterImage}
+            <button
+              type="button"
+              className={styles.closeBtn}
+              onClick={handleRemoveImage}
             >
-              <Camera className={styles.cameraIcon} />
-              Click to capture 
-            </div>
-              
-            )}
-            </div>
+             <img src={images.iconClose} className={styles.iconClose} title="close" alt="Icon Close" />
+            </button>
+         
           </div>
+        ) : (
+          <div
+            className={styles.captureMeterButton}
+            onClick={handleCaptureMeterImage}
+          >
+            <Camera className={styles.cameraIcon} />
+            Click to capture
+          </div>
+        )}
+      </div>
+    </div>
         </div>
 
       <button 

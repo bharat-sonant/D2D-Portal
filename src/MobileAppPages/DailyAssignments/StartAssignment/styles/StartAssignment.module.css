@@ -414,14 +414,13 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.2s ease;
+
   font-size: 8px;
   font-family: var(--fontGraphik);
   margin-bottom: 0px;
   color: var(--lightBlack);
   text-align: center;
   padding: 4px;
-  transition: 0.3s;
   background-color: #00a00010;
   border: 2px dashed #eee;
   &:hover {
@@ -438,6 +437,7 @@ body {
   text-align: center;
   color: var(--lightBlack);
   font-family: var(--fontGraphik);
+  padding: 4px 0px;
 }
 .imagePreview {
   width: 100%;
@@ -471,7 +471,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-      margin-bottom: 28px;
+  margin-bottom: 28px;
 }
 
 .submitButton:hover {
@@ -503,7 +503,6 @@ body {
   padding: 4px;
   border-radius: 6px;
   border: 1px solid var(--borderColor);
-  min-height: 10rem;
 }
 .cameraIcon {
   width: 24px;
@@ -511,11 +510,29 @@ body {
   color: #9ca3af;
   margin-bottom: 5px;
 }
+
+.imagePreview {
+  position: relative;
+}
+.closeBtn {
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  background-color: var(--white);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.iconClose {
+  width: 16px;
+}
 @media (max-width: 767.98px) {
   .contentContainer {
     height: calc(100vh - 56px);
   }
   .submitButton {
-      margin-bottom: 10px;
-}
+    margin-bottom: 10px;
+  }
 }
