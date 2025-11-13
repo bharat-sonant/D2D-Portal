@@ -81,7 +81,7 @@ export const startAssignment = async (
 
       if (!devicesResult) {
         return resolve(
-          common.setResponse(fail, "Could not fetch devices list", [])
+          common.setResponse(fail, "Failed to fetch devices", [])
         );
       }
 
@@ -95,11 +95,21 @@ export const startAssignment = async (
         (key) => devicesData[key]?.name === formatDeviceName(helperDeviceId)
       );
 
-      if (!driverDeviceKey || !helperDeviceKey) {
+      if (!driverDeviceKey) {
         return resolve(
           common.setResponse(
             fail,
-            "Device record not found for driver or helper. Please verify Device IDs.",
+            "Device record not found for driver.",
+            []
+          )
+        );
+      }
+
+      if (!helperDeviceKey) {
+        return resolve(
+          common.setResponse(
+            fail,
+            "Device record not found for helper.",
             []
           )
         );
