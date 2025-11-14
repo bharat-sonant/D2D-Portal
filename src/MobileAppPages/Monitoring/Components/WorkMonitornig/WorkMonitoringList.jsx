@@ -43,7 +43,7 @@ const WorkMonitoringList = () => {
           <button className={styles.backButton}>
             <ArrowLeft size={22} />
           </button>
-          <h1 className={styles.title}>Penalties</h1>
+          <h1 className={styles.title}>Work Monitoring</h1>
         </div>
 
         {/* DATE SECTION */}
