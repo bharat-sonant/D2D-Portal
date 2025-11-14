@@ -54,10 +54,9 @@ const saveVehicleAssignment = async(selectedVehicle, driverId, helperId, ward) =
   };
   const result = await db.saveData(`Vehicles/${selectedVehicle}`, payload);
 
-    if (!result?.success)
-      return common.setResponse(fail, "Vehicle assignment failed", result);
-
-    return result;
+    return result?.success
+    ? result
+    : common.setResponse(fail, "Vehicle assignment failed", result);
   }
 
 const saveWorkAssignments = async(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward)=> {
@@ -114,10 +113,9 @@ const updateDeviceStatus = async (devicesPath, driverDeviceKey, helperDeviceKey,
       const whoAssignPath = `${path}/${nextIndex}`;
       const res = await db.saveData(whoAssignPath, whoAssignPayload);
 
-      if (!res?.success)
-        return common.setResponse(fail, "Saving whoAssignWork failed", res);
-
-      return res;
+      return res?.success
+    ? res
+    : common.setResponse(fail, "Saving whoAssignWork failed", res);
     };
 
 // ✅ Save WasteCollectionInfo
@@ -142,20 +140,18 @@ const saveWasteCollectionInfo = async (
   };
   const res = await db.saveData(path, payload);
 
-  if (!res?.success)
-    return common.setResponse(fail, "WasteCollectionInfo saving failed", res);
-
-  return res;
+  return res?.success
+    ? res
+    : common.setResponse(fail, "WasteCollectionInfo saving failed", res);
 };
 
 const updateTaskStatus = async (ward) => {
   const path = `Tasks`;
   const res = await db.saveData(path, {[ward] : "Assigned"});
 
-  if (!res?.success)
-    return common.setResponse(fail, "Failed to update task status", res);
-
-  return res;
+  return res?.success
+    ? res
+    : common.setResponse(fail, "Failed to update task status", res);
 };
 
 
@@ -212,11 +208,6 @@ export const startAssignment = async (
         saveWhoAssignWork(whoAssignWorkPath, ward, time),
         saveWasteCollectionInfo(ward, year, monthName, date, time, driverId, helperId, selectedVehicle),
       ]);
-      console.log(vehicleResult)
-      console.log(workAssignRes)
-      console.log(deviceStatusRes)
-      console.log(whoAssignResult)
-      console.log(wasteInfoResult)
 
       if (isFail(vehicleResult)) return resolve(vehicleResult);
       if (isFail(workAssignRes)) return resolve(workAssignRes);
