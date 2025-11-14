@@ -27,6 +27,8 @@ const formatDeviceName = (id) => {
   return `DEV-${formattedId}`;
 };
 
+const isFail = (res) => res?.status === "fail";
+
 
 export const getAllVehicles = async () => {
   return new Promise(async (resolve) => {
@@ -41,6 +43,109 @@ export const getAllVehicles = async () => {
       resolve(common.setResponse(fail, "Failed to fetch vehicles", []));
     }
   });
+};
+
+const saveVehicleAssignment = async(selectedVehicle, driverId, helperId, ward) => {
+  const payload = {
+    "assigned-driver": driverId,
+    "assigned-helper": helperId,
+    "assigned-task": ward,
+    status: "3",
+  };
+  const result = await db.saveData(`Vehicles/${selectedVehicle}`, payload);
+
+    if (!result?.success)
+      return common.setResponse(fail, "Vehicle assignment failed", result);
+
+    return result;
+  }
+
+const saveWorkAssignments = async(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward)=> {
+  const driverPayload = {
+    "current-assignment": ward,
+    device: driverDeviceId,
+    vehicle: selectedVehicle,
+  };
+
+  const helperPayload = {
+    "current-assignment": ward,
+    device: helperDeviceId,
+    vehicle: selectedVehicle,
+  };
+
+  const [driverResult, helperResult] = await Promise.all([
+     db.saveData(`WorkAssignment/${driverId}`, driverPayload),
+    db.saveData(`WorkAssignment/${helperId}`, helperPayload),
+  ])
+
+  if (!driverResult?.success)
+      return common.setResponse(fail, "Driver work assignment failed", driverResult);
+
+    if (!helperResult?.success)
+      return common.setResponse(fail, "Helper work assignment failed", helperResult);
+
+    return { driverResult, helperResult };
+  };
+
+const updateDeviceStatus = async (devicesPath, driverDeviceKey, helperDeviceKey, formattedDate) => {
+  const deviceUpdatePayload = { status: "2", lastActive: formattedDate };
+  const [driverDeviceResult, helperDeviceResult] = await Promise.all([
+    db.saveData(`${devicesPath}/${driverDeviceKey}`, deviceUpdatePayload),
+    db.saveData(`${devicesPath}/${helperDeviceKey}`, deviceUpdatePayload),
+  ]);
+  if (!driverDeviceResult?.success)
+      return common.setResponse(fail, "Driver device update failed", driverDeviceResult);
+
+    if (!helperDeviceResult?.success)
+      return common.setResponse(fail, "Helper device update failed", helperDeviceResult);
+
+    return { driverDeviceResult, helperDeviceResult };
+  };
+
+    const saveWhoAssignWork = async (path, ward, time) => {
+      const whoAssignData = await db.getData(path);
+      const validEntries =
+        whoAssignData && whoAssignData.length > 0
+          ? whoAssignData.filter((item) => item)
+          : [];
+      const nextIndex = validEntries.length + 1;
+
+      const whoAssignPayload = { task: ward, time };
+      const whoAssignPath = `${path}/${nextIndex}`;
+      const res = await db.saveData(whoAssignPath, whoAssignPayload);
+
+      if (!res?.success)
+        return common.setResponse(fail, "Saving whoAssignWork failed", res);
+
+      return res;
+    };
+
+// ✅ Save WasteCollectionInfo
+const saveWasteCollectionInfo = async (
+  ward,
+  year,
+  monthName,
+  date,
+  time,
+  driverId,
+  helperId,
+  selectedVehicle
+) => {
+  const path = `WasteCollectionInfo/${ward}/${year}/${monthName}/${date}`;
+  const payload = {
+    Summary: { dutyInTime: time },
+    WorkerDetails: {
+      driver: driverId,
+      helper: helperId,
+      vehicle: selectedVehicle,
+    },
+  };
+  const res = await db.saveData(path, payload);
+
+  if (!res?.success)
+    return common.setResponse(fail, "WasteCollectionInfo saving failed", res);
+
+  return res;
 };
 
 export const startAssignment = async (
@@ -59,25 +164,6 @@ export const startAssignment = async (
 
       const devicesPath = `Devices/${city}`;
       const whoAssignWorkPath = `WhoAssignWork/${year}/${monthName}/${date}/${user}`;
-
-      const vehiclePayload = {
-        "assigned-driver": driverId,
-        "assigned-helper": helperId,
-        "assigned-task": ward,
-        status: "3",
-      };
-
-      const driverPayload = {
-        "current-assignment": ward,
-        device: driverDeviceId,
-        vehicle: selectedVehicle,
-      };
-
-      const helperPayload = {
-        "current-assignment": ward,
-        device: helperDeviceId,
-        vehicle: selectedVehicle,
-      };
 
       const devicesResult = await db.getData(devicesPath);
 
@@ -102,62 +188,36 @@ export const startAssignment = async (
         return resolve(common.setResponse(fail, msg, []));
       }
 
-      const deviceUpdatePayload = {
-        status: "2",
-        lastActive: formattedDate,
-      };
-
-      const whoAssignData = await db.getData(whoAssignWorkPath);
-
-      //filter null or empty entries 
-      const validEntries = whoAssignData && whoAssignData.length > 0 ? whoAssignData?.filter((item) =>item) : [];
-
-      const nextIndex = validEntries.length + 1;
-
-      const whoAssignPayload = {
-        task: ward,
-        time: time,
-      };
-
-      const wasteInfoPayload = {
-        Summary : {
-          dutyInTime : time,
-        },
-        WorkerDetails : {
-          driver: driverId,
-          helper: helperId,
-          vehicle: selectedVehicle,
-        }
-      }
-
       const [
-        vehicleResult,
-        driverResult,
-        helperResult,
-        driverDeviceResult,
-        helperDeviceResult,
+        vehicleResult, 
+        workAssignRes,
+        deviceStatusRes,
         whoAssignResult,
         wasteInfoResult,
       ] = await Promise.all([
-        db.saveData(`Vehicles/${selectedVehicle}`, vehiclePayload),
-        db.saveData(`WorkAssignment/${driverId}`, driverPayload),
-        db.saveData(`WorkAssignment/${helperId}`, helperPayload),
-        db.saveData(`${devicesPath}/${driverDeviceKey}`, deviceUpdatePayload),
-        db.saveData(`${devicesPath}/${helperDeviceKey}`, deviceUpdatePayload),
-        db.saveData(`${whoAssignWorkPath}/${nextIndex}`, whoAssignPayload),
-        db.saveData(`WasteCollectionInfo/${ward}/${year}/${monthName}/${date}`, wasteInfoPayload)
+        saveVehicleAssignment(selectedVehicle,driverId, helperId, ward),
+        saveWorkAssignments(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward),
+        updateDeviceStatus(devicesPath, driverDeviceKey, helperDeviceKey, formattedDate),
+        saveWhoAssignWork(whoAssignWorkPath, ward, time),
+        saveWasteCollectionInfo(ward, year, monthName, date, time, driverId, helperId, selectedVehicle),
       ]);
+      console.log(vehicleResult)
+      console.log(workAssignRes)
+      console.log(deviceStatusRes)
+      console.log(whoAssignResult)
+      console.log(wasteInfoResult)
 
-      const allSuccess =
-        vehicleResult?.success &&
-        driverResult?.success &&
-        helperResult?.success &&
-        driverDeviceResult?.success &&
-        helperDeviceResult?.success &&
-        whoAssignResult?.success &&
-        wasteInfoResult?.success;
+      if (isFail(vehicleResult)) return resolve(vehicleResult);
+      if (isFail(workAssignRes)) return resolve(workAssignRes);
+      if (isFail(deviceStatusRes)) return resolve(deviceStatusRes);
+      if (isFail(whoAssignResult)) return resolve(whoAssignResult);
+      if (isFail(wasteInfoResult)) return resolve(wasteInfoResult);
 
-      const result = {
+      
+      const { driverResult, helperResult } = workAssignRes;
+      const { driverDeviceResult, helperDeviceResult } = deviceStatusRes;
+
+      const finalResult = {
         vehicle: vehicleResult,
         driver: driverResult,
         helper: helperResult,
@@ -166,18 +226,14 @@ export const startAssignment = async (
         whoAssignWork: whoAssignResult,
         wasteInfo : wasteInfoResult,
       };
-      if (allSuccess) {
-        resolve(
-          common.setResponse(success, "Assignment started successfully", result)
-        );
-      } else {
-        resolve(common.setResponse(fail, "Failed to  start assignment", []));
-      }
+       return resolve(
+        common.setResponse(success, "Assignment started successfully", finalResult)
+      );
     } catch (error) {
       resolve(
         common.setResponse(
           fail,
-          "error occurred while starting assignment. Please try again.",
+          "Unexpected error while starting assignment.",
           []
         )
       );
