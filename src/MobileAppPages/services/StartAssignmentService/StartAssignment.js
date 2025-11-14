@@ -62,13 +62,13 @@ const saveVehicleAssignment = async(selectedVehicle, driverId, helperId, ward) =
 const saveWorkAssignments = async(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward)=> {
   const driverPayload = {
     "current-assignment": ward,
-    device: driverDeviceId,
+    device: formatDeviceName(driverDeviceId),
     vehicle: selectedVehicle,
   };
 
   const helperPayload = {
     "current-assignment": ward,
-    device: helperDeviceId,
+    device: formatDeviceName(helperDeviceId),
     vehicle: selectedVehicle,
   };
 

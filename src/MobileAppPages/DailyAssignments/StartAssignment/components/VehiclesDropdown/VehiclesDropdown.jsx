@@ -44,21 +44,6 @@ const VehiclesDropdown = ({
   const snapPoints = [0, 0.7, 1];
   return (
     <div className={styles.vehicleCard}>
-      {/* Info Header (Ward, User, City) */}
-      {/* <div className={styles.infoHeader}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>Ward:</span>
-          <span className={styles.infoValue}>{ward || "-"}</span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>User:</span>
-          <span className={styles.infoValue}>{user || "-"}</span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>City:</span>
-          <span className={styles.infoValue}>{city || "-"}</span>
-        </div>
-      </div> */}
 
       {/* Vehicle Selector */}
       <div className={styles.dropdownWrapper}>
