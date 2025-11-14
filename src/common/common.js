@@ -258,7 +258,7 @@ export const setAlertMessage = (type, message) => {
       fontSize: "14px",
       fontFamily: "Graphik-regular",
       fontWeight: "normal",
-      color: "#333333",
+      color: "#FFFFFF",
       marginBottom: isMobile ? "20px" : "0px",
       marginLeft: isMobile ? "auto" : "0px",
       marginRight: isMobile ? "auto" : "0",
