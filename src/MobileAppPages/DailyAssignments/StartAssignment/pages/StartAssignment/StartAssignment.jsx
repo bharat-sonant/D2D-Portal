@@ -30,6 +30,7 @@ const StartAssignment = () => {
     helperDeviceId: "",
     vehicle: "",
   });
+  const [isSaving, setIsSaving] = useState(false)
   const fileInputRef = useRef(null);
 
   const location = useLocation();
@@ -115,7 +116,8 @@ const StartAssignment = () => {
       helperId,
       helperDeviceId,
       city,
-      user
+      user,
+      setIsSaving
     );
     if (result.status === "success") {
       // common.setAlertMessage("success", "Assignment started successfully!");
@@ -247,9 +249,21 @@ const StartAssignment = () => {
           </div>
         </div>
 
-        <button className={styles.submitButton} onClick={handleSubmit}>
-          Submit
-        </button>
+          <button
+            className={styles.submitButton}
+            onClick={handleSubmit}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <div className={styles.loaderWrapper}>
+                <span className={styles.loaderCircle}></span>
+                Saving...
+              </div>
+            ) : (
+              "Submit"
+            )}
+          </button>
+
       </div>
     </div>
   );

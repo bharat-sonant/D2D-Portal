@@ -27,8 +27,9 @@ export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicle
   }
 };
 
-export const startAssignmentAction = async (selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city,user) => {
+export const startAssignmentAction = async (selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId, city,user, setIsSaving) => {
   try {
+    setIsSaving(true)
     const result = await startAssignment(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId,city , user);
     console.log('result',result)
      if (result.status === "success") {
@@ -40,5 +41,7 @@ export const startAssignmentAction = async (selectedVehicle, ward, driverId,driv
   } catch (error) {
     common.setAlertMessage("error", "Error while starting assignment!");
     return { status: "fail" };
+  }finally{
+    setIsSaving(false)
   }
 };
