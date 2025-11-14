@@ -148,6 +148,17 @@ const saveWasteCollectionInfo = async (
   return res;
 };
 
+const updateTaskStatus = async (ward) => {
+  const path = `Tasks`;
+  const res = await db.saveData(path, {[ward] : "Assigned"});
+
+  if (!res?.success)
+    return common.setResponse(fail, "Failed to update task status", res);
+
+  return res;
+};
+
+
 export const startAssignment = async (
   selectedVehicle,
   ward,
@@ -213,6 +224,11 @@ export const startAssignment = async (
       if (isFail(whoAssignResult)) return resolve(whoAssignResult);
       if (isFail(wasteInfoResult)) return resolve(wasteInfoResult);
 
+      const taskStatusRes = await updateTaskStatus(ward);
+
+      if (!taskStatusRes?.success)
+        return resolve(taskStatusRes);    
+
       
       const { driverResult, helperResult } = workAssignRes;
       const { driverDeviceResult, helperDeviceResult } = deviceStatusRes;
@@ -225,7 +241,9 @@ export const startAssignment = async (
         helperDevice: helperDeviceResult,
         whoAssignWork: whoAssignResult,
         wasteInfo : wasteInfoResult,
+        taskStatus : taskStatusRes
       };
+
        return resolve(
         common.setResponse(success, "Assignment started successfully", finalResult)
       );
