@@ -40,7 +40,6 @@ const StartAssignment = () => {
   const ward = queryParams.get("ward") || "N/A";
   const user = queryParams.get("user") || "N/A";
   const city = queryParams.get("city") || "DevTest";
-  const loginId = queryParams.get("loginId") || "N/A";
 
   useEffect(() => {
     const handleAndroidBack = () => {
