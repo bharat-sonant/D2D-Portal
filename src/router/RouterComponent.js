@@ -8,7 +8,7 @@ import Wards from "../pages/Wards/Wards";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
-import WorkMonitoringList from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoringList";
+import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoring";
 import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 
 const RouterComponent = () => {
@@ -93,7 +93,7 @@ const RouterComponent = () => {
           path="/work-monitoring"
           element={
             <>
-              <WorkMonitoringList />
+              <WorkMonitoring/>
             </>
           }
         />
@@ -109,8 +109,7 @@ const RouterComponent = () => {
     
       
 
-      
-    </>
+          </>
   );
 };
 const AutoLogoutComponent = ({
