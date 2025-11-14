@@ -18,15 +18,20 @@
   top: 15px;
 }
 .btnClose {
-  width: 48px;
   position: absolute;
-  margin-top: -40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 48px;
-  border-radius: 50px;
-  right: 0px;
+    margin-top: -30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+    right: 12px;
+    gap: 5px;
+    font-size: 12px;
+    font-family: var(--fontGraphikMedium);
+    text-transform: uppercase;
+    padding: 3px 5px;
+    color: #000000;
+    letter-spacing: 0.5px;
   &:hover {
     .iconClose {
       filter: brightness(0) saturate(100%) invert(22%) sepia(93%)
@@ -35,9 +40,9 @@
   }
 }
 .iconClose {
-  width: 14px;
-  height: 14px;
-  background: red;
+  width: 16px;
+  height: 16px;
+  background: white;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -62,7 +67,7 @@
   background-image: url(../../../../../assets/images/icons/iconSearch.png);
   background-repeat: no-repeat;
   background-position: 12px center;
-background-size: 16px 16px;
+  background-size: 16px 16px;
   transition: all ease 0.1s;
   &:focus {
     background-position: 95% 12px;
@@ -118,19 +123,23 @@ background-size: 16px 16px;
   height: 60px;
 }
 :global(.react-modal-sheet-header-container ){
-  height: 30px;
+  height: 45px;
 }
-:global(.react-modal-sheet-drag-indicator-container ){
+:global(.react-modal-sheet-drag-indicator-container) {
   margin-top: -18px;
 }
 :global(.react-modal-sheet-drag-indicator) {
   background-color: #00b300 !important;
-  width: 21px!important ;
+  width: 21px !important ;
 }
 :global(.react-modal-sheet-header-container) {
   background: #f3f3f9;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+}
+:global(.react-modal-sheet-container ){
+    border-top-left-radius: 12px!important;
+  border-top-right-radius: 12px!important;
 }
 :global(.react-modal-sheet-content-scroller) {
   background: #f3f3f9;

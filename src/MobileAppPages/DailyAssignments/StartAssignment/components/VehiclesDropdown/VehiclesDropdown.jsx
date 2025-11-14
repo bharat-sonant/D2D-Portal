@@ -88,10 +88,7 @@ const VehiclesDropdown = ({
           onClose={() => setOpen(false)}
           initialSnap={1}
           snapPoints={snapPoints}
-          disableDrag={true} // disable stretch/drag gestures
-          // detent="content" // uses content height but bounded to snap point
-          // disableSnap={true} // prevent user snap changes
-          // disableDismiss={false} // still closable by backdrop tap
+          disableDrag={true} 
         >
           <Sheet.Container>
             <Sheet.Header />
@@ -100,12 +97,7 @@ const VehiclesDropdown = ({
                 className={sheetStyles.btnClose}
                 onClick={() => setOpen(false)}
               >
-                <img
-                  src={images.iconCloseWhite}
-                  className={sheetStyles.iconClose}
-                  title="Close"
-                  alt="Close"
-                />
+                Close
               </div>
               {loading ? (
                 // 🔹 Loader shown only inside sheet
