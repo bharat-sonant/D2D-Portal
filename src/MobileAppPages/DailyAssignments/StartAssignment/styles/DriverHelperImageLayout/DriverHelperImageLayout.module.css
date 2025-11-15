@@ -21,6 +21,7 @@
   color: var(--lightBlack);
   text-align: center;
 }
+
 .imgTitle {
   font-size: 11px;
   text-align: center;
@@ -28,6 +29,7 @@
   font-family: var(--fontGraphik);
   padding: 4px 0px;
 }
+
 .imageBox {
   background-color: var(--white);
   width: 100%;
@@ -44,6 +46,7 @@
 .imageBoxText:hover {
   background-color: #00a00036;
 }
+
 .imageBoxText {
   display: flex;
   justify-content: center;
@@ -54,6 +57,7 @@
   width: 100%;
   height: 220px;
 }
+
 .image {
   width: 100%;
   height: 100%;
@@ -88,12 +92,14 @@
 .continueBtn:active {
   transform: scale(0.98);
 }
+
 .imageWrapper {
   position: relative;
   height: 220px;
   display: flex;
   justify-content: center;
 }
+
 .closeBtn {
   border: none;
   outline: none;
@@ -108,6 +114,30 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .iconClose {
   width: 16px;
+}
+
+.saveBtn {
+  width: 60%;
+  background-color: #00b300;
+  color: #fff;
+  padding: 5px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s ease-in-out;
+}
+
+.saveBtn:hover {
+  background-color: #00b300;
+}
+
+.saveBtn:active {
+  background-color: #00b300;
+  transform: scale(0.98);
 }

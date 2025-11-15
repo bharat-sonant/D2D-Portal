@@ -37,48 +37,62 @@ const DriverHelperImageLayout = () => {
     }
   };
 
+  const handleSave = () => {
+    if (!driverImage) {
+      common.setAlertMessage('error',"Please capture driver/helper image first");
+      return;
+    };
+
+    
+
+  };
+
+
   return (
-    <div className={styles.container}>
-      <div className={styles.section}>
-        <div className={styles.imgTitle}>Driver & Helper</div>
+    <>
+      <div className={styles.container}>
+        <div className={styles.section}>
+          <div className={styles.imgTitle}>Driver & Helper</div>
 
-        <div className={styles.imageBox}>
-          {driverImage ? (
-            <div className={styles.imageWrapper}>
-              <img src={driverImage} alt="Driver" className={styles.image} />
-              <button
-                type="button"
-                className={styles.closeBtn}
+          <div className={styles.imageBox}>
+            {driverImage ? (
+              <div className={styles.imageWrapper}>
+                <img src={driverImage} alt="Driver" className={styles.image} />
+                <button
+                  type="button"
+                  className={styles.closeBtn}
+                  onClick={openCamera}
+                >
+                  Retake
+                </button>
+              </div>
+            ) : (
+              <div
+                className={styles.imageBoxText}
                 onClick={openCamera}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  openCamera();
+                }}
               >
-                Retake
-              </button>
-            </div>
-          ) : (
-            <div
-              className={styles.imageBoxText}
-              onClick={openCamera}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                openCamera();
-              }}
-            >
-              <Camera className={styles.cameraIcon} />
-              <h3 className={styles.heading}>Click to capture</h3>
-            </div>
-          )}
-        </div>
+                <Camera className={styles.cameraIcon} />
+                <h3 className={styles.heading}>Click to capture</h3>
+              </div>
+            )}
+          </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          ref={driverInputRef}
-          style={{ display: "none" }}
-          onChange={(e) => handleFileChange(e, "driver")}
-        />
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            ref={driverInputRef}
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e, "driver")}
+          />
+        </div>
       </div>
-    </div>
+      <button className={styles.saveBtn} onClick={handleSave} >Save</button>
+    </>
   );
 };
 
