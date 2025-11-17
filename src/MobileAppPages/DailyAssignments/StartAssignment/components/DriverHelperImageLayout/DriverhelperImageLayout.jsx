@@ -3,8 +3,9 @@ import { Camera, X } from "lucide-react";
 import styles from "../../styles/DriverHelperImageLayout/DriverHelperImageLayout.module.css";
 import { images } from "../../../../../assets/css/imagePath";
 import * as common from '../../../../../common/common'
+import { saveDriverHelperImage } from "../../../../services/StartAssignmentService/StartAssignment";
 
-const DriverHelperImageLayout = () => {
+const DriverHelperImageLayout = (props) => {
   const [driverImage, setDriverImage] = useState(null);
   const driverInputRef = useRef(null);
 
@@ -37,14 +38,48 @@ const DriverHelperImageLayout = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!driverImage) {
-      common.setAlertMessage('error',"Please capture driver/helper image first");
+      common.setAlertMessage('error', "Please capture driver/helper image first");
       return;
-    };
+    }
 
-    
+    try {
+      // Convert Base64 → Blob
+      const blob = await fetch(driverImage).then(res => res.blob());
+      console.log(blob, "sd")
+      // Get ward/date values (you can replace these with real values)
+      const selectedWard = props.ward !== 'N/A' ? props.ward : 'Bharat';
+      const now = new Date();
 
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const monthName = now.toLocaleString("default", { month: "long" });
+      const date = String(now.getDate()).padStart(2, "0");
+
+      const formattedDate = `${year}-${month}-${date}`;
+
+
+      const result = await saveDriverHelperImage(
+        selectedWard,
+        year,
+        monthName,
+        formattedDate,
+        blob
+      );
+
+      common.setAlertMessage("success", `Image saved as ${result.fileName}`);
+
+      // Clear image after save
+      setDriverImage(null);
+      if (driverInputRef.current) {
+        driverInputRef.current.value = "";
+      }
+
+    } catch (error) {
+      console.error(error);
+      common.setAlertMessage("error", "Failed to upload image");
+    }
   };
 
 

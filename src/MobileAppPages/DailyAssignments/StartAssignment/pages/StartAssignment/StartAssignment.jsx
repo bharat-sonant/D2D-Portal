@@ -196,7 +196,7 @@ const StartAssignment = () => {
           loading={loading}
           selectedDriver={selectedDriver}
           setSelectedDriver={setSelectedDriver}
-          driverError = {errors.driver}
+          driverError={errors.driver}
           setErrors={setErrors}
           drivers={drivers}
         />
@@ -216,7 +216,7 @@ const StartAssignment = () => {
 
         <div className={styles.imageRow}>
           <div className={styles.imageLeft}>
-            <DriverHelperImageLayout />
+            <DriverHelperImageLayout ward={ward} />
           </div>
           <div className={styles.imageRight}>
             <div className={styles.imgSection}>
@@ -261,20 +261,20 @@ const StartAssignment = () => {
           </div>
         </div>
 
-          <button
-            className={styles.submitButton}
-            onClick={handleSubmit}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <div className={styles.loaderWrapper}>
-                <span className={styles.loaderCircle}></span>
-                Saving...
-              </div>
-            ) : (
-              "Submit"
-            )}
-          </button>
+        <button
+          className={styles.submitButton}
+          onClick={handleSubmit}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <div className={styles.loaderWrapper}>
+              <span className={styles.loaderCircle}></span>
+              Saving...
+            </div>
+          ) : (
+            "Submit"
+          )}
+        </button>
 
       </div>
     </div>

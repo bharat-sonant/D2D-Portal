@@ -9,7 +9,7 @@ const getReadyDatabase = async () => {
   return getDatabaseInstance();
 };
  
-const getReadyStorage = async () => {
+export const getReadyStorage = async () => {
   await waitForFirebaseReady();
   return getStorageInstance();
 };

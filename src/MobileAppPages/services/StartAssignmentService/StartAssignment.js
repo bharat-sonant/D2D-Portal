@@ -1,5 +1,8 @@
 import * as db from "../../../services/dbServices";
 import * as common from "../../../common/common";
+import { ref, listAll, uploadBytes } from "firebase/storage";
+import { getReadyStorage } from "../../../services/dbServices";
+
 const success = "success";
 const fail = "fail";
 
@@ -45,7 +48,7 @@ export const getAllVehicles = async () => {
   });
 };
 
-const saveVehicleAssignment = async(selectedVehicle, driverId, helperId, ward) => {
+const saveVehicleAssignment = async (selectedVehicle, driverId, helperId, ward) => {
   const payload = {
     "assigned-driver": driverId,
     "assigned-helper": helperId,
@@ -54,12 +57,12 @@ const saveVehicleAssignment = async(selectedVehicle, driverId, helperId, ward) =
   };
   const result = await db.saveData(`Vehicles/${selectedVehicle}`, payload);
 
-    return result?.success
+  return result?.success
     ? result
     : common.setResponse(fail, "Vehicle assignment failed", result);
-  }
+}
 
-const saveWorkAssignments = async(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward)=> {
+const saveWorkAssignments = async (driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward) => {
   const driverPayload = {
     "current-assignment": ward,
     device: formatDeviceName(driverDeviceId),
@@ -73,18 +76,18 @@ const saveWorkAssignments = async(driverId, driverDeviceId, helperId, helperDevi
   };
 
   const [driverResult, helperResult] = await Promise.all([
-     db.saveData(`WorkAssignment/${driverId}`, driverPayload),
+    db.saveData(`WorkAssignment/${driverId}`, driverPayload),
     db.saveData(`WorkAssignment/${helperId}`, helperPayload),
   ])
 
   if (!driverResult?.success)
-      return common.setResponse(fail, "Driver work assignment failed", driverResult);
+    return common.setResponse(fail, "Driver work assignment failed", driverResult);
 
-    if (!helperResult?.success)
-      return common.setResponse(fail, "Helper work assignment failed", helperResult);
+  if (!helperResult?.success)
+    return common.setResponse(fail, "Helper work assignment failed", helperResult);
 
-    return { driverResult, helperResult };
-  };
+  return { driverResult, helperResult };
+};
 
 const updateDeviceStatus = async (devicesPath, driverDeviceKey, helperDeviceKey, formattedDate) => {
   const deviceUpdatePayload = { status: "2", lastActive: formattedDate };
@@ -93,30 +96,30 @@ const updateDeviceStatus = async (devicesPath, driverDeviceKey, helperDeviceKey,
     db.saveData(`${devicesPath}/${helperDeviceKey}`, deviceUpdatePayload),
   ]);
   if (!driverDeviceResult?.success)
-      return common.setResponse(fail, "Driver device update failed", driverDeviceResult);
+    return common.setResponse(fail, "Driver device update failed", driverDeviceResult);
 
-    if (!helperDeviceResult?.success)
-      return common.setResponse(fail, "Helper device update failed", helperDeviceResult);
+  if (!helperDeviceResult?.success)
+    return common.setResponse(fail, "Helper device update failed", helperDeviceResult);
 
-    return { driverDeviceResult, helperDeviceResult };
-  };
+  return { driverDeviceResult, helperDeviceResult };
+};
 
-    const saveWhoAssignWork = async (path, ward, time) => {
-      const whoAssignData = await db.getData(path);
-      const validEntries =
-        whoAssignData && whoAssignData.length > 0
-          ? whoAssignData.filter((item) => item)
-          : [];
-      const nextIndex = validEntries.length + 1;
+const saveWhoAssignWork = async (path, ward, time) => {
+  const whoAssignData = await db.getData(path);
+  const validEntries =
+    whoAssignData && whoAssignData.length > 0
+      ? whoAssignData.filter((item) => item)
+      : [];
+  const nextIndex = validEntries.length + 1;
 
-      const whoAssignPayload = { task: ward, time };
-      const whoAssignPath = `${path}/${nextIndex}`;
-      const res = await db.saveData(whoAssignPath, whoAssignPayload);
+  const whoAssignPayload = { task: ward, time };
+  const whoAssignPath = `${path}/${nextIndex}`;
+  const res = await db.saveData(whoAssignPath, whoAssignPayload);
 
-      return res?.success
+  return res?.success
     ? res
     : common.setResponse(fail, "Saving whoAssignWork failed", res);
-    };
+};
 
 // ✅ Save WasteCollectionInfo
 const saveWasteCollectionInfo = async (
@@ -147,7 +150,7 @@ const saveWasteCollectionInfo = async (
 
 const updateTaskStatus = async (ward) => {
   const path = `Tasks`;
-  const res = await db.saveData(path, {[ward] : "Assigned"});
+  const res = await db.saveData(path, { [ward]: "Assigned" });
 
   return res?.success
     ? res
@@ -196,13 +199,13 @@ export const startAssignment = async (
       }
 
       const [
-        vehicleResult, 
+        vehicleResult,
         workAssignRes,
         deviceStatusRes,
         whoAssignResult,
         wasteInfoResult,
       ] = await Promise.all([
-        saveVehicleAssignment(selectedVehicle,driverId, helperId, ward),
+        saveVehicleAssignment(selectedVehicle, driverId, helperId, ward),
         saveWorkAssignments(driverId, driverDeviceId, helperId, helperDeviceId, selectedVehicle, ward),
         updateDeviceStatus(devicesPath, driverDeviceKey, helperDeviceKey, formattedDate),
         saveWhoAssignWork(whoAssignWorkPath, ward, time),
@@ -218,9 +221,9 @@ export const startAssignment = async (
       const taskStatusRes = await updateTaskStatus(ward);
 
       if (!taskStatusRes?.success)
-        return resolve(taskStatusRes);    
+        return resolve(taskStatusRes);
 
-      
+
       const { driverResult, helperResult } = workAssignRes;
       const { driverDeviceResult, helperDeviceResult } = deviceStatusRes;
 
@@ -231,11 +234,11 @@ export const startAssignment = async (
         driverDevice: driverDeviceResult,
         helperDevice: helperDeviceResult,
         whoAssignWork: whoAssignResult,
-        wasteInfo : wasteInfoResult,
-        taskStatus : taskStatusRes
+        wasteInfo: wasteInfoResult,
+        taskStatus: taskStatusRes
       };
 
-       return resolve(
+      return resolve(
         common.setResponse(success, "Assignment started successfully", finalResult)
       );
     } catch (error) {
@@ -250,11 +253,11 @@ export const startAssignment = async (
   });
 };
 
-export const getDriversList = async() => {
-  return new Promise (async(resolve)=> {
-    try{
+export const getDriversList = async () => {
+  return new Promise(async (resolve) => {
+    try {
       const result = await db.getData('Employees')
-      const {lastEmpId, ...employeeObj} = result || {};
+      const { lastEmpId, ...employeeObj } = result || {};
 
       // Convert to entries → [empId, data]
       const entries = Object.entries(employeeObj);
@@ -267,14 +270,55 @@ export const getDriversList = async() => {
           ...emp
         }));
 
-      if(driverList && driverList.length > 0){
+      if (driverList && driverList.length > 0) {
         resolve(common.setResponse(success, "Drivers fetched successfully", driverList))
       }
-      else{
+      else {
         resolve(common.setResponse(fail, "No drivers found.", []))
       }
-    }catch(error){
+    } catch (error) {
       resolve(common.setResponse(fail, "failed to fetch driver list", []))
     }
   })
 }
+
+export const saveDriverHelperImage = async (
+  selectedWard,
+  year,
+  month,
+  date,
+  file
+) => {
+  try {
+    const city = localStorage.getItem("city") || "UnknownCity";
+    const storage = await getReadyStorage();
+
+    const ward =
+      selectedWard && selectedWard !== "N/A" ? selectedWard : "Bharat";
+
+    const safeMonth = String(month).padStart(2, "0");
+    const safeDate = String(date).padStart(2, "0");
+
+    const basePath = `${city}/DutyOnImages/${ward}/${year}/${safeMonth}/${safeDate}`;
+    const folderRef = ref(storage, basePath);
+
+    const listResult = await listAll(folderRef);
+    const nextNumber = listResult.items.length + 1;
+    const fileName = `${nextNumber}.jpg`;
+
+    const fileRef = ref(storage, `${basePath}/${fileName}`);
+    await db.uploadImageToStorage(file, fileRef);
+
+    return {
+      success: true,
+      fileName,
+      path: `${basePath}/${fileName}`,
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || "Image upload failed",
+    };
+  }
+};
