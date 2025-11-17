@@ -56,6 +56,6 @@ export const fetchAllDrivers = async(setDrivers) => {
       setDrivers([]);
     }
   }catch(error){
-    common.setAlertMessage('error', result.message ||'Failed to fetch driver list')
+    common.setAlertMessage('error','Failed to fetch driver list')
   }
 }
