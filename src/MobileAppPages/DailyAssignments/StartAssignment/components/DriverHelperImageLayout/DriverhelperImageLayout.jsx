@@ -45,10 +45,7 @@ const DriverHelperImageLayout = (props) => {
     }
 
     try {
-      // Convert Base64 → Blob
       const blob = await fetch(driverImage).then(res => res.blob());
-      console.log(blob, "sd")
-      // Get ward/date values (you can replace these with real values)
       const selectedWard = props.ward !== 'N/A' ? props.ward : 'Bharat';
       const now = new Date();
 
@@ -58,8 +55,6 @@ const DriverHelperImageLayout = (props) => {
       const date = String(now.getDate()).padStart(2, "0");
 
       const formattedDate = `${year}-${month}-${date}`;
-
-
       const result = await saveDriverHelperImage(
         selectedWard,
         year,
@@ -67,15 +62,13 @@ const DriverHelperImageLayout = (props) => {
         formattedDate,
         blob
       );
-
-      common.setAlertMessage("success", `Image saved as ${result.fileName}`);
-
-      // Clear image after save
-      setDriverImage(null);
-      if (driverInputRef.current) {
-        driverInputRef.current.value = "";
-      }
-
+      if (result.status === 'success') {
+        common.setAlertMessage("success", `Image saved as ${result.fileName}`);
+        setDriverImage(null);
+        if (driverInputRef.current) {
+          driverInputRef.current.value = "";
+        };
+      };
     } catch (error) {
       console.error(error);
       common.setAlertMessage("error", "Failed to upload image");
