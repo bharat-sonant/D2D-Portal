@@ -1,19 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../Style/WorkMonitoringList/WorkMonitoring.module.css';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getBasicWorkMonitoringData } from '../../Services/WorkersDetail/WorkersDetailService';
+import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
+import { connectFirebase } from '../../../../firebase/firebaseService';
 
 const WorkMonitoringList = () => {
+
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [workData, setWorkData] = useState([]);
 
-  const workData = [];
+  let city = "devTest";
 
-  const formatDate = (date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString('en-US', { month: 'short' });
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+  // 🔹 Firebase Connect
+  useEffect(() => {
+    if (city) {
+      localStorage.setItem("city", city);
+      let config = getCityFirebaseConfig(city);
+      connectFirebase(config, city);
+    } else {
+      localStorage.setItem("city", "DevTest");
+      console.warn("⚠ No city found, defaulting to DevTest");
+    }
+  }, []);
 
+  // 🔹 Fetch Data whenever selectedDate changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getBasicWorkMonitoringData(selectedDate);
+
+        console.log("API Response:", res);
+
+        if (res.status === "success") {
+          setWorkData(res.data); // <-- final array set
+        } else {
+          setWorkData([]);
+        }
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    localStorage.setItem("city", "DevTest");
+    fetchData();
+
+  }, [selectedDate]); // <-- important!
+
+  // Date Picker Functions
   const handlePrevDay = () => {
     setSelectedDate(prev => {
       const newDate = new Date(prev);
@@ -48,13 +83,11 @@ const WorkMonitoringList = () => {
 
         {/* DATE SECTION */}
         <div className={styles.dateSection}>
-
           <div className={styles.dateNavigation}>
             <button className={styles.dateNavButton} onClick={handlePrevDay}>
               <ChevronLeft size={20} />
             </button>
 
-            {/* DATE PICKER */}
             <input
               type="date"
               className={styles.datePicker}
@@ -66,47 +99,59 @@ const WorkMonitoringList = () => {
               <ChevronRight size={20} />
             </button>
           </div>
-
         </div>
 
-        {/* LIST section remains same */}
+        {/* LIST SECTION */}
         <div className={styles.listContainer}>
-          {workData.map((item, index) => (
-            <div key={index} className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardHeaderLeft}>
-                  <div className={styles.employeeName}>{item.name}</div>
-                  <div className={styles.penaltyTag}>{item.type}</div>
+          {workData.length === 0 ? (
+            <p>No Data Found</p>
+          ) : (
+            workData.map((item, index) => (
+              <div key={index} className={styles.card}>
+
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderLeft}>
+                    <div className={styles.employeeName}>{item.wardName}</div>
+                  </div>
                 </div>
-                {/* <button className={styles.editButton}>
-                  <Edit2 size={18} color="#666" />
-                </button> */}
-              </div>
 
-              <div className={styles.cardBody}>
-                <table className={styles.cardTable}>
-                  <tbody>
-                    <tr>
-                      <td>Penalty</td>
-                      <td>{item.details.penalty}</td>
-                    </tr>
-                    <tr>
-                      <td>Reason</td>
-                      <td>{item.details.reason}</td>
-                    </tr>
-                    <tr>
-                      <td>Penalized by</td>
-                      <td>{item.details.penalizedBy}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                <div className={styles.cardBody}>
+                  <table className={styles.cardTable}>
+                    <tbody>
+                      <tr>
+                        <td>Driver</td>
+                        <td>{item.workerDetails.driver || "-"}</td>
+                      </tr>
 
-            </div>
-          ))}
+                      <tr>
+                        <td>Helper</td>
+                        <td>{item.workerDetails.helper || "-"}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Vehicle</td>
+                        <td>{item.workerDetails.vehicle || "-"}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Duty In</td>
+                        <td>{item.summary.dutyInTime || "-"}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Duty Out</td>
+                        <td>{item.summary.dutyOutTime || "-"}</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            ))
+          )}
         </div>
 
-       
       </div>
     </div>
   );
