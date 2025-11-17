@@ -264,10 +264,10 @@ export const getDriversList = async () => {
 
       // Filter only drivers (designationId = "5")
       const driverList = entries
-        .filter(([empId, emp]) => emp?.GeneralDetails?.designationId === "5")
+        .filter(([empId, emp]) => String(emp?.GeneralDetails?.designationId) === "5" && String(emp?.GeneralDetails?.status) === "1")
         .map(([empId, emp]) => ({
-          empId,
-          ...emp
+          Id :empId,
+          name : emp?.GeneralDetails?.name
         }));
 
       if (driverList && driverList.length > 0) {

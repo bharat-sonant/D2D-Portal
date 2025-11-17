@@ -46,16 +46,17 @@ export const startAssignmentAction = async (selectedVehicle, ward, driverId,driv
   }
 };
 
-export const fetchAllDrivers = async(setDrivers) => {
+export const fetchAllDrivers = async() => {
   try{
     const result = await getDriversList();
     if(result.status === 'success' && result.data){
-      setDrivers(result.data)
+      return result.data;
     }else{
       common.setAlertMessage('warn', result.message || 'No Drivers found')
-      setDrivers([]);
+      return [];
     }
   }catch(error){
     common.setAlertMessage('error','Failed to fetch driver list')
+    return [];
   }
 }

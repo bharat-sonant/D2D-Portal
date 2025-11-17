@@ -70,8 +70,13 @@ const StartAssignment = () => {
 
   useEffect(() => {
     fetchAllVehicles(setVehicles, setLoading, setActiveVehicles);
-    fetchAllDrivers(setDrivers)
+    loadDrivers()
   }, []);
+
+  const loadDrivers = async() => {
+    const result = await fetchAllDrivers();
+    setDrivers(result)
+  }
 
   const handleSubmit = async () => {
     if (!selectedVehicle) {
@@ -174,6 +179,26 @@ const StartAssignment = () => {
     }
   };
 
+  const refreshDrivers = async() => {
+    setLoading(true)
+
+    const newList = await fetchAllDrivers()
+     const updated = [];
+
+  // Convert to map for comparison
+  const newMap = {};
+  newList?.forEach(d => newMap[d.empId] = d);
+
+  // 1️⃣ Update existing + keep active ones
+  newList.forEach(d => {
+    updated.push(d);
+  });
+
+  setDrivers(updated);
+
+  setLoading(false);
+  }
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
@@ -199,6 +224,7 @@ const StartAssignment = () => {
           driverError={errors.driver}
           setErrors={setErrors}
           drivers={drivers}
+          onRefresh={refreshDrivers}
         />
 
         <DriverHelperDetails

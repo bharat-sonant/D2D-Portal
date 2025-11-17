@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styles from '../../styles/StartAssignment.module.css'
 import { Sheet } from 'react-modal-sheet';
 import sheetStyles from "../VehiclesDropdown/VehicleSheet.module.css";
-import { AlertCircle, Check, ChevronDown, UserRound } from 'lucide-react';
+import { AlertCircle, Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
 import {images} from '../../../../../assets/css/imagePath'
+import { fetchAllDrivers } from '../../actions/StartAssignmentActions/StartAssignment';
 
-const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers}) => {
+const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   console.log('drivers', drivers)
@@ -19,17 +20,23 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
   const snapPoints = [0, 0.7, 1];
 
    // Filter vehicles based on search input
-    const filteredDrivers = useMemo(() => {
-      if (!searchTerm) return drivers || [];
-      return drivers?.filter((d) =>{
-        const name = d?.GeneralDetails?.name?.toLowerCase() || "";
-        // const id = d?.empId?.toLowerCase() || "";
-        const term = searchTerm.toLowerCase();
+   const filteredDrivers = useMemo(() => {
+  let list = drivers || [];
 
-        return name.includes(term) 
-        // || id.includes(term);
-    });
-    }, [searchTerm, drivers]);
+  // filter
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    list = list.filter(d => 
+      d?.name?.toLowerCase().includes(term)
+    );
+  }
+
+  // sort alphabetically
+  return [...list].sort((a, b) =>
+    a?.name?.localeCompare(b?.name, undefined, { sensitivity: "base" })
+  );
+}, [searchTerm, drivers]);
+
   
     // Handle vehicle selection
     const handleSelect = (name) => {
@@ -37,6 +44,11 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
       setErrors((prev) => ({ ...prev, driver: "" }));
       setOpen(false);
     };
+
+    const handleRefresh = async() => {
+      onRefresh();
+      setSelectedDriver('')
+    }
 
     return (
     <div className={styles.vehicleCard}>
@@ -100,16 +112,16 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                     {filteredDrivers?.length > 0 ? (
                       filteredDrivers.map((driver, index) => {
                         const isSelected =
-                          driver.GeneralDetails?.name === selectedDriver;
+                          driver?.name === selectedDriver;
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(driver.GeneralDetails?.name)}
+                            onClick={() => handleSelect(driver?.name)}
                             className={`${sheetStyles.vehicleItem} ${
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{`${driver.GeneralDetails?.name}` || "N/A"}</span>
+                            <span>{`${driver?.name}` || "N/A"}</span>
 
                             {isSelected && (
                               <Check
@@ -134,8 +146,17 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                   </ul>
                 </div>
               )}
+
+              {!loading && (
+                <div className={sheetStyles.refreshBox}>
+                <span>If driver is not in the list, please refresh.</span>
+
+                <RefreshCcw onClick={handleRefresh}/>
+              </div>
+              )}
             </Sheet.Content>
           </Sheet.Container>
+
           <Sheet.Backdrop onTap={() => setOpen(false)} />
         </Sheet>
       </div>
