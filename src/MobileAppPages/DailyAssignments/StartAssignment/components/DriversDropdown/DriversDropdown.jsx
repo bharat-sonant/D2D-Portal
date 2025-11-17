@@ -23,16 +23,17 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
       if (!searchTerm) return drivers || [];
       return drivers?.filter((d) =>{
         const name = d?.GeneralDetails?.name?.toLowerCase() || "";
-        const id = d?.empId?.toLowerCase() || "";
+        // const id = d?.empId?.toLowerCase() || "";
         const term = searchTerm.toLowerCase();
 
-        return name.includes(term) || id.includes(term);
+        return name.includes(term) 
+        // || id.includes(term);
     });
     }, [searchTerm, drivers]);
   
     // Handle vehicle selection
-    const handleSelect = (empId) => {
-      setSelectedDriver(empId);
+    const handleSelect = (name) => {
+      setSelectedDriver(name);
       setErrors((prev) => ({ ...prev, driver: "" }));
       setOpen(false);
     };
@@ -99,16 +100,16 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                     {filteredDrivers?.length > 0 ? (
                       filteredDrivers.map((driver, index) => {
                         const isSelected =
-                          driver.empId === selectedDriver;
+                          driver.GeneralDetails?.name === selectedDriver;
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(driver.empId)}
+                            onClick={() => handleSelect(driver.GeneralDetails?.name)}
                             className={`${sheetStyles.vehicleItem} ${
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{`${driver.empId} - ${driver.GeneralDetails?.name}` || "N/A"}</span>
+                            <span>{`${driver.GeneralDetails?.name}` || "N/A"}</span>
 
                             {isSelected && (
                               <Check
