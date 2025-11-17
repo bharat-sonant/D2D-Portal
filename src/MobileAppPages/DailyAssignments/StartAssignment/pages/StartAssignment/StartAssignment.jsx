@@ -2,6 +2,7 @@ import React, { act, useEffect, useState, useRef } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  fetchAllDrivers,
   fetchAllVehicles,
   startAssignmentAction,
 } from "../../actions/StartAssignmentActions/StartAssignment";
@@ -12,12 +13,15 @@ import { ArrowLeft, Camera } from "lucide-react";
 import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown";
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
+import DriversDropdown from "../../components/DriversDropdown/DriversDropdown";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
+  const [drivers, setDrivers] = useState([])
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [selectedDriver, setSelectedDriver] = useState("")
   const [driverId, setDriverId] = useState("");
   const [driverDeviceId, setDriverDeviceId] = useState("");
   const [helperId, setHelperID] = useState("");
@@ -29,6 +33,7 @@ const StartAssignment = () => {
     helperId: "",
     helperDeviceId: "",
     vehicle: "",
+    driver: ""
   });
   const [isSaving, setIsSaving] = useState(false)
   const fileInputRef = useRef(null);
@@ -65,6 +70,7 @@ const StartAssignment = () => {
 
   useEffect(() => {
     fetchAllVehicles(setVehicles, setLoading, setActiveVehicles);
+    fetchAllDrivers(setDrivers)
   }, []);
 
   const handleSubmit = async () => {
@@ -79,6 +85,7 @@ const StartAssignment = () => {
       helperId: "",
       helperDeviceId: "",
       vehicle: "",
+      driver: ""
     };
 
     if (!driverId.trim()) newErrors.driverId = "Driver ID is required";
@@ -177,15 +184,21 @@ const StartAssignment = () => {
       </div>
       <div className={styles.contentContainer}>
         <VehiclesDropdown
-          ward={ward}
-          user={user}
-          city={city}
           loading={loading}
           selectedVehicle={selectedVehicle}
           setSelectedVehicle={setSelectedVehicle}
           activeVehicles={activeVehicles}
           vehicleError={errors.vehicle}
           setErrors={setErrors}
+        />
+
+        <DriversDropdown
+          loading={loading}
+          selectedDriver={selectedDriver}
+          setSelectedDriver={setSelectedDriver}
+          driverError = {errors.driver}
+          setErrors={setErrors}
+          drivers={drivers}
         />
 
         <DriverHelperDetails

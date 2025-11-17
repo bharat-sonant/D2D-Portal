@@ -249,3 +249,32 @@ export const startAssignment = async (
     }
   });
 };
+
+export const getDriversList = async() => {
+  return new Promise (async(resolve)=> {
+    try{
+      const result = await db.getData('Employees')
+      const {lastEmpId, ...employeeObj} = result || {};
+
+      // Convert to entries → [empId, data]
+      const entries = Object.entries(employeeObj);
+
+      // Filter only drivers (designationId = "5")
+      const driverList = entries
+        .filter(([empId, emp]) => emp?.GeneralDetails?.designationId === "5")
+        .map(([empId, emp]) => ({
+          empId,
+          ...emp
+        }));
+
+      if(driverList && driverList.length > 0){
+        resolve(common.setResponse(success, "Drivers fetched successfully", driverList))
+      }
+      else{
+        resolve(common.setResponse(fail, "No drivers found.", []))
+      }
+    }catch(error){
+      resolve(common.setResponse(fail, "failed to fetch driver list", []))
+    }
+  })
+}

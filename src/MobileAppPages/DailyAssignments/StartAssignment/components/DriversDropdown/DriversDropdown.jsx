@@ -1,45 +1,43 @@
-import { ChevronDown, Truck, Search, Check, AlertCircle } from "lucide-react";
-import styles from "../../styles/StartAssignment.module.css";
-import React, { useState, useMemo, useEffect } from "react";
-import { Sheet } from "react-modal-sheet";
-import sheetStyles from "./VehicleSheet.module.css";
-import { images } from "../../../../../assets/css/imagePath.js";
+import React, { useEffect, useMemo, useState } from 'react'
+import styles from '../../styles/StartAssignment.module.css'
+import { Sheet } from 'react-modal-sheet';
+import sheetStyles from "../VehiclesDropdown/VehicleSheet.module.css";
+import { AlertCircle, Check, ChevronDown, UserRound } from 'lucide-react';
+import {images} from '../../../../../assets/css/imagePath'
 
-const VehiclesDropdown = ({
-  loading,
-  selectedVehicle,
-  setSelectedVehicle,
-  activeVehicles,
-  vehicleError,
-  setErrors,
-}) => {
+const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  console.log('drivers', drivers)
 
-  // Filter vehicles based on search input
-  const filteredVehicles = useMemo(() => {
-    if (!searchTerm) return activeVehicles || [];
-    return activeVehicles?.filter((v) =>
-      v?.vehcileNo?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, activeVehicles]);
-
-  // Handle vehicle selection
-  const handleSelect = (vehicleNo) => {
-    setSelectedVehicle(vehicleNo);
-    setErrors((prev) => ({ ...prev, vehicle: "" }));
-    setOpen(false);
-  };
-
-  // 🔹 Auto-clear error when typing in search
   useEffect(() => {
-    if (searchTerm) {
-      setErrors((prev) => ({ ...prev, vehicle: "" }));
-    }
-  }, [searchTerm]);
+      if (searchTerm) {
+        setErrors((prev) => ({ ...prev, driver: "" }));
+      }
+    }, [searchTerm]);
 
   const snapPoints = [0, 0.7, 1];
-  return (
+
+   // Filter vehicles based on search input
+    const filteredDrivers = useMemo(() => {
+      if (!searchTerm) return drivers || [];
+      return drivers?.filter((d) =>{
+        const name = d?.GeneralDetails?.name?.toLowerCase() || "";
+        const id = d?.empId?.toLowerCase() || "";
+        const term = searchTerm.toLowerCase();
+
+        return name.includes(term) || id.includes(term);
+    });
+    }, [searchTerm, drivers]);
+  
+    // Handle vehicle selection
+    const handleSelect = (empId) => {
+      setSelectedDriver(empId);
+      setErrors((prev) => ({ ...prev, driver: "" }));
+      setOpen(false);
+    };
+
+    return (
     <div className={styles.vehicleCard}>
 
       {/* Vehicle Selector */}
@@ -49,22 +47,20 @@ const VehiclesDropdown = ({
           onClick={() => setOpen(true)}
         >
           <div className={styles.leftGroup}>
-            <Truck color="#22c55e" size={24} className={styles.truckIcon} />
+            <UserRound color="#22c55e" size={24} className={styles.truckIcon} />
             <span className={styles.vehicleLabel}>
-              {selectedVehicle || "Please Select vehicle"}
+              {selectedDriver || "Please Select Driver"}
             </span>
           </div>
           <ChevronDown className={styles.dropdownIcon} size={16} />
         </button>
 
-        {/* Inline Error Message */}
-        {vehicleError && (
+        {driverError && (
           <div className={styles.errorMessage}>
-            <AlertCircle size={14} /> {vehicleError}
+            <AlertCircle size={14} /> {driverError}
           </div>
         )}
 
-        {/* Bottom Sheet */}
         <Sheet
           isOpen={isOpen}
           onClose={() => setOpen(false)}
@@ -85,38 +81,35 @@ const VehiclesDropdown = ({
                 // 🔹 Loader shown only inside sheet
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>
-                  <p className={sheetStyles.loadingText}>Loading vehicles...</p>
+                  <p className={sheetStyles.loadingText}>Loading drivers...</p>
                 </div>
               ) : (
                 <div className={sheetStyles.sheetContent}>
-                  {/* Search Box */}
                   <div className={sheetStyles.searchBox}>
                     <input
                       type="text"
-                      placeholder="Search vehicle..."
+                      placeholder="Search driver..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={sheetStyles.searchInput}
                     />
                   </div>
 
-                  {/* Vehicle List */}
                   <ul className={sheetStyles.vehicleList}>
-                    {filteredVehicles?.length > 0 ? (
-                      filteredVehicles.map((vehicle, index) => {
+                    {filteredDrivers?.length > 0 ? (
+                      filteredDrivers.map((driver, index) => {
                         const isSelected =
-                          vehicle.vehcileNo === selectedVehicle;
+                          driver.empId === selectedDriver;
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(vehicle.vehcileNo)}
+                            onClick={() => handleSelect(driver.empId)}
                             className={`${sheetStyles.vehicleItem} ${
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{vehicle.vehcileNo || "N/A"}</span>
+                            <span>{`${driver.empId} - ${driver.GeneralDetails?.name}` || "N/A"}</span>
 
-                            {/* ✅ Check icon for selected vehicle */}
                             {isSelected && (
                               <Check
                                 size={18}
@@ -134,7 +127,7 @@ const VehiclesDropdown = ({
                           className={sheetStyles.noResultImg}
                           alt=""
                         />
-                        No vehicle found
+                        No driver found
                       </li>
                     )}
                   </ul>
@@ -147,6 +140,6 @@ const VehiclesDropdown = ({
       </div>
     </div>
   );
-};
+}
 
-export default VehiclesDropdown;
+export default DriversDropdown

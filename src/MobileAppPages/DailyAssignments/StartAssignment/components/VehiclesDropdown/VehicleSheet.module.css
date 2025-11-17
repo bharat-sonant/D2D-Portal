@@ -18,6 +18,7 @@
   top: 15px;
 }
 .btnClose {
+  cursor: pointer;
   position: absolute;
     margin-top: -34px;
     display: flex;

@@ -1,4 +1,4 @@
-import { getAllVehicles, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
+import { getAllVehicles, getDriversList, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
 export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicles) => {
@@ -16,7 +16,7 @@ export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicle
       const active = vehicleArray.filter((v)=> String(v.status) === '1')
       setActiveVehicles(active)
     } else {
-      common.setAlertMessage('warn', 'No Vehicles found')
+      common.setAlertMessage('warn', result.message || 'No Vehicles found')
       setVehicles([]);
     }
   } catch (error) {
@@ -45,3 +45,17 @@ export const startAssignmentAction = async (selectedVehicle, ward, driverId,driv
     setIsSaving(false)
   }
 };
+
+export const fetchAllDrivers = async(setDrivers) => {
+  try{
+    const result = await getDriversList();
+    if(result.status === 'success' && result.data){
+      setDrivers(result.data)
+    }else{
+      common.setAlertMessage('warn', result.message || 'No Drivers found')
+      setDrivers([]);
+    }
+  }catch(error){
+    common.setAlertMessage('error', 'Failed to fetch Vehicle list')
+  }
+}
