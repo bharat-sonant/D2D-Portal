@@ -4,15 +4,17 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getBasicWorkMonitoringData } from '../../Services/WorkersDetail/WorkersDetailService';
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
+import { PulseLoader } from "react-spinners";  // <-- Loader import
 
 const WorkMonitoringList = () => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [workData, setWorkData] = useState([]);
+  const [loading, setLoading] = useState(false); // <-- Loader state
 
   let city = "devTest";
 
-  // 🔹 Firebase Connect
+  // Firebase Connect
   useEffect(() => {
     if (city) {
       localStorage.setItem("city", city);
@@ -24,31 +26,34 @@ const WorkMonitoringList = () => {
     }
   }, []);
 
-  // 🔹 Fetch Data whenever selectedDate changes
+  // Fetch Data on Date Change
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // loader start
+
         const res = await getBasicWorkMonitoringData(selectedDate);
 
         console.log("API Response:", res);
 
         if (res.status === "success") {
-          setWorkData(res.data); // <-- final array set
+          setWorkData(res.data);
         } else {
           setWorkData([]);
         }
 
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // loader stop
       }
     };
 
-    localStorage.setItem("city", "DevTest");
     fetchData();
 
-  }, [selectedDate]); // <-- important!
+  }, [selectedDate]);
 
-  // Date Picker Functions
+  // Date Handlers
   const handlePrevDay = () => {
     setSelectedDate(prev => {
       const newDate = new Date(prev);
@@ -101,9 +106,23 @@ const WorkMonitoringList = () => {
           </div>
         </div>
 
-        {/* LIST SECTION */}
+        {/* LIST SECTION (Loader + Message Here) */}
         <div className={styles.listContainer}>
-          {workData.length === 0 ? (
+
+          {loading ? (
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "40px 0"
+            }}>
+              <PulseLoader color="#3fb2f1" size={12} />
+              <p style={{ marginTop: "12px", fontSize: "14px", color: "#555" }}>
+                Loading work monitoring data...
+              </p>
+            </div>
+          ) : workData.length === 0 ? (
             <p>No Data Found</p>
           ) : (
             workData.map((item, index) => (
@@ -142,7 +161,6 @@ const WorkMonitoringList = () => {
                         <td>Duty Out</td>
                         <td>{item.summary.dutyOutTime || "-"}</td>
                       </tr>
-
                     </tbody>
                   </table>
                 </div>
@@ -150,6 +168,7 @@ const WorkMonitoringList = () => {
               </div>
             ))
           )}
+
         </div>
 
       </div>
