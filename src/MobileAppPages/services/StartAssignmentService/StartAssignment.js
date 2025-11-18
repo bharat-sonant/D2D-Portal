@@ -266,8 +266,8 @@ export const getDriversList = async () => {
       const driverList = entries
         .filter(([empId, emp]) => String(emp?.GeneralDetails?.designationId) === "5" && String(emp?.GeneralDetails?.status) === "1")
         .map(([empId, emp]) => ({
-          Id :empId,
-          name : emp?.GeneralDetails?.name
+          Id: empId,
+          name: emp?.GeneralDetails?.name
         }));
 
       if (driverList && driverList.length > 0) {
@@ -291,29 +291,41 @@ export const saveDriverHelperImage = async (
 ) => {
   return new Promise(async (resolve) => {
     try {
-      if (selectedWard && year && month && date && file) {
-        const city = localStorage.getItem("city") || "UnknownCity";
-        const storage = await getReadyStorage();
-        const ward = selectedWard && selectedWard !== "N/A" ? selectedWard : "Bharat";
-        const safeMonth = String(month).padStart(2, "0");
-        const safeDate = String(date).padStart(2, "0");
+      if (!selectedWard || !year || !month || !date || !file) {
+        resolve(
+          common.setResponse("fail", "Invalid Params !!!", {
+            selectedWard,
+            year,
+            month,
+            date,
+            file,
+          })
+        );
+        return;
+      }
 
-        const basePath = `${city}/DutyOnImages/${ward}/${year}/${safeMonth}/${safeDate}`;
-        const folderRef = ref(storage, basePath);
+      const city = localStorage.getItem("city");
+      const storage = await getReadyStorage();
+      const ward = selectedWard !== "N/A" ? selectedWard : "Bharat";
 
-        const listResult = await listAll(folderRef);
-        const nextNumber = listResult.items.length + 1;
-        const fileName = `${nextNumber}.jpg`;
+      const basePath = `${city}/DutyOnImages/${ward}/${year}/${month}/${date}`;
+      const fileRef = ref(storage, `${basePath}/1.jpg`);
 
-        const fileRef = ref(storage, `${basePath}/${fileName}`);
-        await db.uploadImageToStorage(file, fileRef);
+      await Promise.all([
+        db.uploadImageToStorage(file, fileRef)
+      ]);
 
-        resolve(common.setResponse('success', 'Driver/Helper Image saved successfully', {}));
-      } else {
-        resolve(common.setResponse('fail', 'Invalid Params !!!', { selectedWard, year, month, date, file }));
-      };
+      resolve(
+        common.setResponse(
+          "success",
+          "Driver/Helper Image saved successfully",
+          {}
+        )
+      );
     } catch (error) {
-      resolve(common.setResponse('fail', 'Failed to save Images', error));
+      resolve(
+        common.setResponse("fail", "Failed to save Images", error)
+      );
     }
   });
 };
