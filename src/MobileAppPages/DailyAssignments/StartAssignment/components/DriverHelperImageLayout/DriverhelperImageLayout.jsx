@@ -63,7 +63,7 @@ const DriverHelperImageLayout = (props) => {
         blob
       );
       if (result.status === 'success') {
-        common.setAlertMessage("success", `Image saved as ${result.fileName}`);
+        common.setAlertMessage("success", result.message);
         setDriverImage(null);
         if (driverInputRef.current) {
           driverInputRef.current.value = "";
