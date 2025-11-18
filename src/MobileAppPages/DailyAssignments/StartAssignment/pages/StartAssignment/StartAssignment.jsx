@@ -23,7 +23,7 @@ const StartAssignment = () => {
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [selectedDriver, setSelectedDriver] = useState("")
+  const [selectedDriver, setSelectedDriver] = useState({})
   const [driverId, setDriverId] = useState("");
   const [driverDeviceId, setDriverDeviceId] = useState("");
   const [availableDevices, setAvailableDevices] = useState([])
@@ -67,7 +67,6 @@ const StartAssignment = () => {
       connectFirebase(config, city);
     } else {
       localStorage.setItem("city", "DevTest");
-      console.warn("⚠️ No city found, defaulting to DevTest");
     }
   }, [city]);
 
@@ -169,6 +168,17 @@ const StartAssignment = () => {
     }
   };
 
+  const updateDriverDeviceInUI = (driverId, device) => {
+  setActiveDrivers((prev) =>
+    prev.map((d) =>
+      d.Id === driverId
+        ? { ...d, DeviceId: device.DeviceId, DeviceName: device.DeviceName }
+        : d
+    )
+  );
+};
+
+
   const handleCaptureMeterImage = () => {
     // Mobile camera open karne ke liye
     if (fileInputRef.current) {
@@ -219,6 +229,7 @@ const StartAssignment = () => {
           drivers={activeDrivers}
           onRefresh={refreshDrivers}
           availableDevices={availableDevices}
+          onDeviceMapped={updateDriverDeviceInUI}
         />
 
         <DriverHelperDetails

@@ -370,6 +370,28 @@ export const getAvailableDevices = async (city) => {
   })
 }
 
+export const mapDeviceWithActiveDriver = async(driverId, device) => {
+  return new Promise(async(resolve) => {
+    try{
+      const path = `ActiveDrivers/${driverId}`
+
+      const payload = {
+        DeviceId: device.DeviceId,
+        DeviceName: device.DeviceName
+      }
+
+      const result = await db.saveData(path, payload)
+      if(result.success){
+        resolve(common.setResponse(success, "Device mapped successfully", result))
+      }else{
+        resolve(common.setResponse(fail, "failed to map device"))
+      }
+    }catch(error){
+      resolve(common.setResponse(fail, "failed to map device"))
+    }
+  })
+}
+
 export const saveDriverHelperImage = async (
   selectedWard,
   year,

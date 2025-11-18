@@ -4,8 +4,9 @@ import { Sheet } from 'react-modal-sheet';
 import sheetStyles from "../VehiclesDropdown/VehicleSheet.module.css";
 import { AlertCircle, Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
 import {images} from '../../../../../assets/css/imagePath'
+import { mapDeviceWithActiveDriver } from '../../../../services/StartAssignmentService/StartAssignment';
 
-const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh, availableDevices}) => {
+const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh, availableDevices, onDeviceMapped}) => {
   const [isOpen, setOpen] = useState(false);
   const [deviceListOpen, setDeviceListOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,24 +59,33 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
 
   
     // Handle vehicle selection
-    const handleSelect = (name) => {
-      setSelectedDriver(name);
+    const handleSelect = (driver) => {
+      setSelectedDriver(driver);
       setErrors((prev) => ({ ...prev, driver: "" }));
       setOpen(false);
     };
 
     const handleRefresh = async() => {
       onRefresh();
-      setSelectedDriver('')
+      setSelectedDriver({})
     }
 
-    const handleDeviceSelect = (device) => {
-      setSelectedDevice(device.DeviceId)
-      console.log('device selected -', device)
-      setDeviceListOpen(false)
-    }
+    const handleDeviceSelect = async (device) => {
+      setSelectedDevice(device.DeviceId);
+
+      if (!selectedDriver || !selectedDriver.Id) return;
+
+      const response = await mapDeviceWithActiveDriver(selectedDriver.Id, device);
+
+      if (response.status === "success") {
+        onDeviceMapped(selectedDriver.Id, device);
+      }
+      setDeviceListOpen(false);
+    };
+
 
     const handleMapDevice = async(driver) => {
+      setSelectedDriver(driver)
       setDeviceListOpen(true);
     }
 
@@ -91,7 +101,7 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
           <div className={styles.leftGroup}>
             <UserRound color="#22c55e" size={24} className={styles.truckIcon} />
             <span className={styles.vehicleLabel}>
-              {selectedDriver || "Please Select Driver"}
+              {selectedDriver?.name || "Please Select Driver"}
             </span>
           </div>
           <ChevronDown className={styles.dropdownIcon} size={16} />
@@ -141,11 +151,11 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                     {filteredDrivers?.length > 0 ? (
                       filteredDrivers.map((driver, index) => {
                         const isDeviceSelected =
-                          driver?.name === selectedDriver;
+                          driver?.name === selectedDriver.name;
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(driver?.name)}
+                            onClick={() => handleSelect(driver)}
                             className={`${sheetStyles.vehicleItem} ${
                               isDeviceSelected ? sheetStyles.activeVehicle : ""
                             }`}
@@ -244,7 +254,7 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                   </div>
 
                   <ul className={sheetStyles.vehicleList}>
-                    {console.log('available', availableDevices)}
+                    {/* {console.log('available', availableDevices)} */}
                     {filteredDevices?.length > 0 ? (
                       filteredDevices.map((device, index) => {
                         const isDeviceSelected =
