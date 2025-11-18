@@ -253,7 +253,7 @@ export const startAssignment = async (
   });
 };
 
-export const getDriversList = async () => {
+export const refreshActiveDrivers = async (activeDrivers) => {
   return new Promise(async (resolve) => {
     try {
       const result = await db.getData('Employees')
@@ -278,6 +278,29 @@ export const getDriversList = async () => {
       }
     } catch (error) {
       resolve(common.setResponse(fail, "failed to fetch driver list", []))
+    }
+  })
+}
+
+export const getActiveDriversList = async () => {
+  return new Promise(async (resolve) => {
+    try {
+      const result = await db.getData('ActiveDrivers');
+      const { lastEmpId, ...employeeObj } = result || {};
+
+      const driverList = Object.entries(employeeObj).map(([empId, data])=>( {
+        empId,
+        ...data
+      }))
+
+      if (driverList.length > 0) {
+        resolve(common.setResponse(success, "Active Drivers fetched successfully", driverList))
+      }
+      else {
+        resolve(common.setResponse(fail, "No Active drivers found.", []))
+      }
+    } catch (error) {
+      resolve(common.setResponse(fail, "failed to fetch Active driver list", []))
     }
   })
 }

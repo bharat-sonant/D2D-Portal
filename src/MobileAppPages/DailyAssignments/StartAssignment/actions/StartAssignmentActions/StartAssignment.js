@@ -1,4 +1,4 @@
-import { getAllVehicles, getDriversList, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
+import { getActiveDriversList, getAllVehicles, getDriversList, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
 export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicles) => {
@@ -46,9 +46,9 @@ export const startAssignmentAction = async (selectedVehicle, ward, driverId,driv
   }
 };
 
-export const fetchAllDrivers = async() => {
+export const fetchAllActiveDrivers = async() => {
   try{
-    const result = await getDriversList();
+    const result = await getActiveDriversList();
     if(result.status === 'success' && result.data){
       return result.data;
     }else{

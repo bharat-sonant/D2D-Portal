@@ -2,7 +2,7 @@ import React, { act, useEffect, useState, useRef } from "react";
 import styles from "../../styles/StartAssignment.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  fetchAllDrivers,
+  fetchAllActiveDrivers,
   fetchAllVehicles,
   startAssignmentAction,
 } from "../../actions/StartAssignmentActions/StartAssignment";
@@ -17,7 +17,7 @@ import DriversDropdown from "../../components/DriversDropdown/DriversDropdown";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
-  const [drivers, setDrivers] = useState([])
+  const [activeDrivers, setActiveDrivers] = useState([])
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("");
@@ -74,8 +74,8 @@ const StartAssignment = () => {
   }, []);
 
   const loadDrivers = async() => {
-    const result = await fetchAllDrivers();
-    setDrivers(result)
+    const result = await fetchAllActiveDrivers();
+    setActiveDrivers(result)
   }
 
   const handleSubmit = async () => {
@@ -182,7 +182,7 @@ const StartAssignment = () => {
   const refreshDrivers = async() => {
     setLoading(true)
 
-    const newList = await fetchAllDrivers()
+    const newList = await fetchAllActiveDrivers()
      const updated = [];
 
   // Convert to map for comparison
@@ -194,7 +194,7 @@ const StartAssignment = () => {
     updated.push(d);
   });
 
-  setDrivers(updated);
+  setActiveDrivers(updated);
 
   setLoading(false);
   }
@@ -223,7 +223,7 @@ const StartAssignment = () => {
           setSelectedDriver={setSelectedDriver}
           driverError={errors.driver}
           setErrors={setErrors}
-          drivers={drivers}
+          drivers={activeDrivers}
           onRefresh={refreshDrivers}
         />
 
