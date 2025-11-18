@@ -4,13 +4,22 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getBasicWorkMonitoringData } from '../../Services/WorkersDetail/WorkersDetailService';
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
-import { PulseLoader } from "react-spinners";  // <-- Loader import
+import { PulseLoader } from "react-spinners";
+
+// ⬅️ Duplicate Remove Function
+const formatWorkerValue = (value) => {
+  if (!value) return "-";
+
+  const parts = value.split(",").map(v => v.trim());
+  const unique = [...new Set(parts)];
+  return unique.join(", ");
+};
 
 const WorkMonitoringList = () => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [workData, setWorkData] = useState([]);
-  const [loading, setLoading] = useState(false); // <-- Loader state
+  const [loading, setLoading] = useState(false);
 
   let city = "devTest";
 
@@ -30,7 +39,7 @@ const WorkMonitoringList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // loader start
+        setLoading(true);
 
         const res = await getBasicWorkMonitoringData(selectedDate);
 
@@ -45,7 +54,7 @@ const WorkMonitoringList = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // loader stop
+        setLoading(false);
       }
     };
 
@@ -106,7 +115,7 @@ const WorkMonitoringList = () => {
           </div>
         </div>
 
-        {/* LIST SECTION (Loader + Message Here) */}
+        {/* LIST SECTION */}
         <div className={styles.listContainer}>
 
           {loading ? (
@@ -139,17 +148,17 @@ const WorkMonitoringList = () => {
                     <tbody>
                       <tr>
                         <td>Driver</td>
-                        <td>{item.workerDetails.driver || "-"}</td>
+                        <td>{formatWorkerValue(item.workerDetails.driver)}</td>
                       </tr>
 
                       <tr>
                         <td>Helper</td>
-                        <td>{item.workerDetails.helper || "-"}</td>
+                        <td>{formatWorkerValue(item.workerDetails.helper)}</td>
                       </tr>
 
                       <tr>
                         <td>Vehicle</td>
-                        <td>{item.workerDetails.vehicle || "-"}</td>
+                        <td>{formatWorkerValue(item.workerDetails.vehicle)}</td>
                       </tr>
 
                       <tr>
