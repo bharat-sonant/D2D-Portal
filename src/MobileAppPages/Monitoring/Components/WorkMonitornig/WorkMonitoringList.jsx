@@ -89,9 +89,19 @@ const WorkMonitoringList = () => {
 
         {/* HEADER */}
         <div className={styles.header}>
-          <button className={styles.backButton}>
+          <button
+            className={styles.backButton}
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = "/";
+              }
+            }}
+          >
             <ArrowLeft size={22} />
           </button>
+
           <h1 className={styles.title}>Work Monitoring</h1>
         </div>
 
