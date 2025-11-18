@@ -5,22 +5,25 @@ import * as common from '../../../../../common/common'
 import { saveDriverHelperImage } from "../../../../services/StartAssignmentService/StartAssignment";
 
 const DriverHelperImageLayout = (props) => {
-  const [driverImage, setDriverImage] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
   const driverInputRef = useRef(null);
 
-  const handleFileChange = (e, type) => {
+  const handleFileChange = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
-      if (type === "driver") {
-        setDriverImage(event.target.result);
+    reader.onload = async (event) => {
+      if (type === "driverImage") {
+        props.setDriverImage(event.target.result);
+        clearError(type);
+        // ===== Auto Upload =====
+        await handleSave(event.target.result);
       }
     };
+
     reader.readAsDataURL(file);
   };
+
 
   const openCamera = () => {
     setTimeout(() => {
@@ -30,23 +33,17 @@ const DriverHelperImageLayout = (props) => {
     }, 100);
   };
 
-  const removeImage = (e) => {
-    e.stopPropagation(); // prevent re-opening camera
-    setDriverImage(null);
-    if (driverInputRef.current) {
-      driverInputRef.current.value = "";
+  const clearError = (fieldName) => {
+    if (props.errors[fieldName]) {
+      props.setErrors((prev) => ({ ...prev, [fieldName]: "" }));
     }
   };
 
-  const handleSave = async () => {
-    if (!driverImage) {
-      common.setAlertMessage('error', "Please capture driver/helper image first");
-      return;
-    }
-
+  const handleSave = async (imgData) => {
+    const finalImage = imgData || props.driverImage;
     try {
-      setIsUploading(true);
-      const blob = await fetch(driverImage).then(res => res.blob());
+
+      const blob = await fetch(finalImage).then(res => res.blob());
       const selectedWard = props.ward !== 'N/A' ? props.ward : 'Bharat';
       const now = new Date();
 
@@ -63,23 +60,15 @@ const DriverHelperImageLayout = (props) => {
         formattedDate,
         blob
       );
-      if (result.status === 'success') {
-        common.setAlertMessage("success", result.message);
-        setDriverImage(null);
-        if (driverInputRef.current) {
-          driverInputRef.current.value = "";
-        };
-        setIsUploading(false);
-      } else {
-        setIsUploading(false);
+      if (result === 'fail') {
+        common.setAlertMessage("error", "Image upload failed, please recapture.");
       }
     } catch (error) {
       console.error(error);
-      common.setAlertMessage("error", "Failed to upload image");
-    } finally {
-      setIsUploading(false);
+      common.setAlertMessage("error", "Image upload failed, please recapture.");
     }
   };
+
 
 
   return (
@@ -89,32 +78,15 @@ const DriverHelperImageLayout = (props) => {
           <div className={styles.imgTitle}>Driver & Helper</div>
 
           <div className={styles.imageBox}>
-            {driverImage ? (
+            {props.driverImage ? (
               <div className={styles.imageWrapper}>
-                <img
-                  src={driverImage}
-                  alt="Driver"
-                  className={`${styles.image} ${isUploading ? styles.blur : ""}`}
+                <img src={props.driverImage} alt="Driver" className={`${styles.image}`}
                 />
-
-                {isUploading && (
-                  <div className={styles.loaderOverlay}>
-                    <div className={styles.loader}></div>
-                  </div>
-                )}
-
-                {!isUploading && (
-                  <button
-                    type="button"
-                    className={styles.closeBtn}
-                    onClick={openCamera}
-                  >
-                    Retake
-                  </button>
-                )}
+                <button type="button" className={styles.closeBtn} onClick={openCamera} >
+                  Retake
+                </button>
               </div>
             ) : (
-
               <div
                 className={styles.imageBoxText}
                 onClick={openCamera}
@@ -126,8 +98,13 @@ const DriverHelperImageLayout = (props) => {
                 <Camera className={styles.cameraIcon} />
                 <h3 className={styles.heading}>Click to capture</h3>
               </div>
+
             )}
+
           </div>
+          {props.errors.driverImage && (
+            <span className={styles.errorText}>{props.errors.driverImage}</span>
+          )}
 
           <input
             type="file"
@@ -135,7 +112,7 @@ const DriverHelperImageLayout = (props) => {
             capture="environment"
             ref={driverInputRef}
             style={{ display: "none" }}
-            onChange={(e) => handleFileChange(e, "driver")}
+            onChange={(e) => handleFileChange(e, "driverImage")}
           />
         </div>
       </div>
