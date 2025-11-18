@@ -97,7 +97,6 @@ const DriverHelperImageLayout = (props) => {
                   className={`${styles.image} ${isUploading ? styles.blur : ""}`}
                 />
 
-                {/* 🔥 Loader Overlay (only when uploading) */}
                 {isUploading && (
                   <div className={styles.loaderOverlay}>
                     <div className={styles.loader}></div>
@@ -140,7 +139,6 @@ const DriverHelperImageLayout = (props) => {
           />
         </div>
       </div>
-      <button className={styles.saveBtn} onClick={handleSave} >Save</button>
     </>
   );
 };
