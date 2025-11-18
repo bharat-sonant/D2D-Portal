@@ -38,7 +38,8 @@ const StartAssignment = () => {
     vehicle: "",
     driver: ""
   });
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
+  const [driverImage, setDriverImage] = useState(null);
   const fileInputRef = useRef(null);
 
   const location = useLocation();
@@ -76,12 +77,12 @@ const StartAssignment = () => {
     loadAvailableDevices();
   }, []);
 
-  const loadDrivers = async() => {
+  const loadDrivers = async () => {
     const result = await fetchAllActiveDrivers();
     setActiveDrivers(result)
   }
 
-  const loadAvailableDevices = async() => {
+  const loadAvailableDevices = async () => {
     const result = await fetchAvailableDevices(city, setLoading)
     setAvailableDevices(result);
   }
@@ -98,7 +99,8 @@ const StartAssignment = () => {
       helperId: "",
       helperDeviceId: "",
       vehicle: "",
-      driver: ""
+      driver: "",
+      driverImage
     };
 
     if (!driverId.trim()) newErrors.driverId = "Driver ID is required";
@@ -108,11 +110,15 @@ const StartAssignment = () => {
     if (!helperDeviceId.trim())
       newErrors.helperDeviceId = "Helper Device ID is required";
 
+    if (!driverImage)
+      newErrors.driverImage = "Driver/Helper Image is required";
+
     if (
       newErrors.driverId ||
       newErrors.driverDeviceId ||
       newErrors.helperId ||
-      newErrors.helperDeviceId
+      newErrors.helperDeviceId ||
+      newErrors.driverImage
     ) {
       setErrors(newErrors);
       // common.setAlertMessage("error", "Please fill all required fields!");
@@ -125,6 +131,7 @@ const StartAssignment = () => {
       driverDeviceId: "",
       helperId: "",
       helperDeviceId: "",
+      driverImage: ""
     });
 
     const result = await startAssignmentAction(
@@ -169,14 +176,14 @@ const StartAssignment = () => {
   };
 
   const updateDriverDeviceInUI = (driverId, device) => {
-  setActiveDrivers((prev) =>
-    prev.map((d) =>
-      d.Id === driverId
-        ? { ...d, DeviceId: device.DeviceId, DeviceName: device.DeviceName }
-        : d
-    )
-  );
-};
+    setActiveDrivers((prev) =>
+      prev.map((d) =>
+        d.Id === driverId
+          ? { ...d, DeviceId: device.DeviceId, DeviceName: device.DeviceName }
+          : d
+      )
+    );
+  };
 
 
   const handleCaptureMeterImage = () => {
@@ -198,8 +205,8 @@ const StartAssignment = () => {
     }
   };
 
-  const refreshDrivers = async() => {
-     await refreshActiveDriverlist(setActiveDrivers, setLoading)
+  const refreshDrivers = async () => {
+    await refreshActiveDriverlist(setActiveDrivers, setLoading)
   }
 
   return (
@@ -247,7 +254,13 @@ const StartAssignment = () => {
 
         <div className={styles.imageRow}>
           <div className={styles.imageLeft}>
-            <DriverHelperImageLayout ward={ward} />
+            <DriverHelperImageLayout
+              ward={ward}
+              driverImage={driverImage}
+              setDriverImage={setDriverImage}
+              errors={errors}
+              setErrors={setErrors}
+            />
           </div>
           <div className={styles.imageRight}>
             <div className={styles.imgSection}>
