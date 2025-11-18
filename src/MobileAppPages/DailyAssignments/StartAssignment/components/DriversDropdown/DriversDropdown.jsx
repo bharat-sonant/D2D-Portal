@@ -7,7 +7,10 @@ import {images} from '../../../../../assets/css/imagePath'
 
 const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh, availableDevices}) => {
   const [isOpen, setOpen] = useState(false);
+  const [deviceListOpen, setDeviceListOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [deviceSearch, setDeviceSearch] = useState("");
+  const [selectedDevice, setSelectedDevice] = useState("");
 
   useEffect(() => {
       if (searchTerm) {
@@ -35,6 +38,24 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
   );
 }, [searchTerm, drivers]);
 
+ const filteredDevices = useMemo(() => {
+  let list = availableDevices || [];
+
+  // filter
+  if (deviceSearch) {
+    const term = deviceSearch.toLowerCase();
+    list = list.filter(d => 
+      d?.DeviceName?.toLowerCase().includes(term) ||
+      d?.DeviceId?.toLowerCase().includes(term)
+    );
+  }
+
+  // sort alphabetically
+  return [...list].sort((a, b) =>
+    a?.DeviceName?.localeCompare(b?.DeviceName, undefined, { sensitivity: "base" })
+  );
+}, [deviceSearch, availableDevices]);
+
   
     // Handle vehicle selection
     const handleSelect = (name) => {
@@ -46,6 +67,16 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
     const handleRefresh = async() => {
       onRefresh();
       setSelectedDriver('')
+    }
+
+    const handleDeviceSelect = (device) => {
+      setSelectedDevice(device.DeviceId)
+      console.log('device selected -', device)
+      setDeviceListOpen(false)
+    }
+
+    const handleMapDevice = async(driver) => {
+      setDeviceListOpen(true);
     }
 
     return (
@@ -109,14 +140,14 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                   <ul className={sheetStyles.vehicleList}>
                     {filteredDrivers?.length > 0 ? (
                       filteredDrivers.map((driver, index) => {
-                        const isSelected =
+                        const isDeviceSelected =
                           driver?.name === selectedDriver;
                         return (
                           <li
                             key={index}
                             onClick={() => handleSelect(driver?.name)}
                             className={`${sheetStyles.vehicleItem} ${
-                              isSelected ? sheetStyles.activeVehicle : ""
+                              isDeviceSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
                           <div className={sheetStyles.row}>
@@ -133,7 +164,7 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                                 className={sheetStyles.mapBtn}
                                 onClick={(e) => {
                                   e.stopPropagation(); // stop row click
-                                  // handleMapDevice(driver);
+                                  handleMapDevice(driver);
                                 }}
                               >
                                 Map Device
@@ -141,7 +172,7 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                             )}
                           </div>
 
-                          {isSelected && (
+                          {isDeviceSelected && (
                             <Check
                               size={18}
                               color="#22c55e"
@@ -176,6 +207,88 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
           </Sheet.Container>
 
           <Sheet.Backdrop onTap={() => setOpen(false)} />
+        </Sheet>
+
+         <Sheet
+          isOpen={deviceListOpen}
+          onClose={() => setDeviceListOpen(false)}
+          initialSnap={1}
+          snapPoints={snapPoints}
+          disableDrag={true} 
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+              <div
+                className={sheetStyles.btnClose}
+                onClick={() => setDeviceListOpen(false)}
+              >
+                Close
+              </div>
+              {loading ? (
+                // 🔹 Loader shown only inside sheet
+                <div className={sheetStyles.loadingContainer}>
+                  <div className={sheetStyles.loader}></div>
+                  <p className={sheetStyles.loadingText}>Loading devices...</p>
+                </div>
+              ) : (
+                <div className={sheetStyles.sheetContent}>
+                  <div className={sheetStyles.searchBox}>
+                    <input
+                      type="text"
+                      placeholder="Search device..."
+                      value={deviceSearch}
+                      onChange={(e) => setDeviceSearch(e.target.value)}
+                      className={sheetStyles.searchInput}
+                    />
+                  </div>
+
+                  <ul className={sheetStyles.vehicleList}>
+                    {console.log('available', availableDevices)}
+                    {filteredDevices?.length > 0 ? (
+                      filteredDevices.map((device, index) => {
+                        const isDeviceSelected =
+                          device?.DeviceId === selectedDevice;
+                        return (
+                          <li
+                            key={device.DeviceId}
+                            onClick={() => handleDeviceSelect(device)}
+                            className={`${sheetStyles.vehicleItem}`}
+                          >
+                          <div className={sheetStyles.row}>
+                            {/* LEFT: device Name */}
+                            <span className={sheetStyles.driverName}>{device?.DeviceName}</span>
+
+                             {isDeviceSelected && (
+                            <Check
+                              size={18}
+                              color="#22c55e"
+                              className={sheetStyles.checkIcon}
+                            />
+                          )}
+                          </div>
+
+                         
+                        </li>
+                        );
+                      })
+                    ) : (
+                      <li className={sheetStyles.noResult}>
+                        <img
+                          src={images.imgComingSoon}
+                          className={sheetStyles.noResultImg}
+                          alt=""
+                        />
+                        No device found
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </Sheet.Content>
+          </Sheet.Container>
+
+          <Sheet.Backdrop onTap={() => setDeviceListOpen(false)} />
         </Sheet>
       </div>
     </div>
