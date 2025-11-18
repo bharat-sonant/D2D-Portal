@@ -343,6 +343,33 @@ export const getActiveDriversList = async () => {
   })
 }
 
+export const getAvailableDevices = async (city) => {
+  return new Promise(async(resolve)=>{
+    try{
+      const result = await db.getData(`Devices/${city}`)
+      
+      const deviceArray = Object.entries(result).map(([deviceId, device])=> ({
+        deviceId,
+        ...device
+      }))
+
+      const availableDevices = deviceArray.filter((device)=>device.status === "1")
+        .map((device)=>({
+          DeviceId : device.deviceId,
+          DeviceName : device.name
+        }))
+
+      if(availableDevices.length > 0){
+        resolve(common.setResponse(success, "available devices fetched successfully", availableDevices))
+      }else{
+        resolve(common.setResponse(fail, "No available devices Available", []))
+      }
+    }catch(error){
+      resolve(common.setResponse(fail, "failed to fetch Available Devices"))
+    }
+  })
+}
+
 export const saveDriverHelperImage = async (
   selectedWard,
   year,

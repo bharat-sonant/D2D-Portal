@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchAllActiveDrivers,
   fetchAllVehicles,
+  fetchAvailableDevices,
   refreshActiveDriverlist,
   startAssignmentAction,
 } from "../../actions/StartAssignmentActions/StartAssignment";
@@ -15,7 +16,6 @@ import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
 import DriversDropdown from "../../components/DriversDropdown/DriversDropdown";
-import { refreshActiveDrivers } from "../../../../services/StartAssignmentService/StartAssignment";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -26,6 +26,7 @@ const StartAssignment = () => {
   const [selectedDriver, setSelectedDriver] = useState("")
   const [driverId, setDriverId] = useState("");
   const [driverDeviceId, setDriverDeviceId] = useState("");
+  const [availableDevices, setAvailableDevices] = useState([])
   const [helperId, setHelperID] = useState("");
   const [helperDeviceId, setHelperDeviceId] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
@@ -73,11 +74,17 @@ const StartAssignment = () => {
   useEffect(() => {
     fetchAllVehicles(setVehicles, setLoading, setActiveVehicles);
     loadDrivers()
+    loadAvailableDevices();
   }, []);
 
   const loadDrivers = async() => {
     const result = await fetchAllActiveDrivers();
     setActiveDrivers(result)
+  }
+
+  const loadAvailableDevices = async() => {
+    const result = await fetchAvailableDevices(city, setLoading)
+    setAvailableDevices(result);
   }
 
   const handleSubmit = async () => {
@@ -211,6 +218,7 @@ const StartAssignment = () => {
           setErrors={setErrors}
           drivers={activeDrivers}
           onRefresh={refreshDrivers}
+          availableDevices={availableDevices}
         />
 
         <DriverHelperDetails

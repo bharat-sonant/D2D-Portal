@@ -4,9 +4,8 @@ import { Sheet } from 'react-modal-sheet';
 import sheetStyles from "../VehiclesDropdown/VehicleSheet.module.css";
 import { AlertCircle, Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
 import {images} from '../../../../../assets/css/imagePath'
-import { fetchAllDrivers } from '../../actions/StartAssignmentActions/StartAssignment';
 
-const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh}) => {
+const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh, availableDevices}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -120,16 +119,36 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{`${driver?.name}` || "N/A"}</span>
+                          <div className={sheetStyles.row}>
+                            {/* LEFT: Driver Name */}
+                            <span className={sheetStyles.driverName}>{driver?.name}</span>
 
-                            {isSelected && (
-                              <Check
-                                size={18}
-                                color="#22c55e"
-                                className={sheetStyles.checkIcon}
-                              />
+                            {/* RIGHT: Device Name OR Map Device button */}
+                            {driver?.DeviceName && driver?.DeviceId ? (
+                              <span className={sheetStyles.deviceName}>
+                                {driver?.DeviceName}
+                              </span>
+                            ) : (
+                              <button
+                                className={sheetStyles.mapBtn}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // stop row click
+                                  // handleMapDevice(driver);
+                                }}
+                              >
+                                Map Device
+                              </button>
                             )}
-                          </li>
+                          </div>
+
+                          {isSelected && (
+                            <Check
+                              size={18}
+                              color="#22c55e"
+                              className={sheetStyles.checkIcon}
+                            />
+                          )}
+                        </li>
                         );
                       })
                     ) : (

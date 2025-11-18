@@ -146,6 +146,40 @@
   background: #f3f3f9;
 }
 
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.driverName {
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+}
+
+.deviceName {
+  font-size: 14px;
+  font-weight: 400;
+  color: #00b300; /* Indigo / Highlight color */
+}
+
+.mapBtn {
+  background: #00b300;      /* Blue */
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mapBtn:hover {
+  background: #00b300;
+}
+
+
 /* @media (max-width: 767.98px) {
   .sheetContent {
     height: calc(100vh - 450px);
