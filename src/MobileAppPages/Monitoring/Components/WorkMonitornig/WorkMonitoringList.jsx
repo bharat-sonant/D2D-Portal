@@ -5,6 +5,7 @@ import { getBasicWorkMonitoringData } from '../../Services/WorkersDetail/Workers
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
 import { PulseLoader } from "react-spinners";
+import { useNavigate } from 'react-router-dom';
 
 // ⬅️ Duplicate Remove Function
 const formatWorkerValue = (value) => {
@@ -20,8 +21,22 @@ const WorkMonitoringList = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [workData, setWorkData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  let city = "devTest";
+  let city = "DevTest";
+
+  const handleBack = () => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (
+      isAndroid &&
+      window.AndroidApp &&
+      typeof window.AndroidApp.closeWebView === "function"
+    ) {
+      window.AndroidApp.closeWebView();
+    } else {
+      navigate(-1);
+    }
+  };
 
   // Firebase Connect
   useEffect(() => {
@@ -91,13 +106,7 @@ const WorkMonitoringList = () => {
         <div className={styles.header}>
           <button
             className={styles.backButton}
-            onClick={() => {
-              if (window.history.length > 1) {
-                window.history.back();
-              } else {
-                window.location.href = "/";
-              }
-            }}
+            onClick={handleBack}
           >
             <ArrowLeft size={22} />
           </button>
