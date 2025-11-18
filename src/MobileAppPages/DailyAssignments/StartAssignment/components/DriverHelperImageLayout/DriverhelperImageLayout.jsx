@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-import { Camera, X } from "lucide-react";
+import { Camera } from "lucide-react";
 import styles from "../../styles/DriverHelperImageLayout/DriverHelperImageLayout.module.css";
-import { images } from "../../../../../assets/css/imagePath";
 import * as common from '../../../../../common/common'
 import { saveDriverHelperImage } from "../../../../services/StartAssignmentService/StartAssignment";
 
 const DriverHelperImageLayout = (props) => {
   const [driverImage, setDriverImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const driverInputRef = useRef(null);
 
   const handleFileChange = (e, type) => {
@@ -45,6 +45,7 @@ const DriverHelperImageLayout = (props) => {
     }
 
     try {
+      setIsUploading(true);
       const blob = await fetch(driverImage).then(res => res.blob());
       const selectedWard = props.ward !== 'N/A' ? props.ward : 'Bharat';
       const now = new Date();
@@ -68,10 +69,15 @@ const DriverHelperImageLayout = (props) => {
         if (driverInputRef.current) {
           driverInputRef.current.value = "";
         };
-      };
+        setIsUploading(false);
+      } else {
+        setIsUploading(false);
+      }
     } catch (error) {
       console.error(error);
       common.setAlertMessage("error", "Failed to upload image");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -85,16 +91,31 @@ const DriverHelperImageLayout = (props) => {
           <div className={styles.imageBox}>
             {driverImage ? (
               <div className={styles.imageWrapper}>
-                <img src={driverImage} alt="Driver" className={styles.image} />
-                <button
-                  type="button"
-                  className={styles.closeBtn}
-                  onClick={openCamera}
-                >
-                  Retake
-                </button>
+                <img
+                  src={driverImage}
+                  alt="Driver"
+                  className={`${styles.image} ${isUploading ? styles.blur : ""}`}
+                />
+
+                {/* 🔥 Loader Overlay (only when uploading) */}
+                {isUploading && (
+                  <div className={styles.loaderOverlay}>
+                    <div className={styles.loader}></div>
+                  </div>
+                )}
+
+                {!isUploading && (
+                  <button
+                    type="button"
+                    className={styles.closeBtn}
+                    onClick={openCamera}
+                  >
+                    Retake
+                  </button>
+                )}
               </div>
             ) : (
+
               <div
                 className={styles.imageBoxText}
                 onClick={openCamera}

@@ -141,3 +141,36 @@
   background-color: #00b300;
   transform: scale(0.98);
 }
+
+.loaderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #eee;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.blur {
+  filter: blur(2px);
+  opacity: 0.6;
+}
