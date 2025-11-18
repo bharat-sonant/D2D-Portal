@@ -1,4 +1,4 @@
-import { getActiveDriversList, getAllVehicles, getDriversList, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
+import { getActiveDriversList, getAllVehicles, getDriversList, refreshActiveDrivers, startAssignment } from "../../../../services/StartAssignmentService/StartAssignment";
 import * as common from '../../../../../common/common'
 
 export const fetchAllVehicles = async (setVehicles, setLoading, setActiveVehicles) => {
@@ -58,5 +58,23 @@ export const fetchAllActiveDrivers = async() => {
   }catch(error){
     common.setAlertMessage('error','Failed to fetch driver list')
     return [];
+  }
+}
+
+export const refreshActiveDriverlist = async(setActiveDrivers, setLoading) => {
+  try{
+    setLoading(true)
+    const result = await refreshActiveDrivers()
+
+    if(result.status === "success"){
+      const activeDriversArray = Object.values(result.data)
+      setActiveDrivers(activeDriversArray)
+    }else{
+      common.setAlertMessage('warn', result.message || "no active drivers available")
+    }
+  }catch(error){
+    common.setAlertMessage('error', "failed to fetch active drivers")
+  }finally{
+    setLoading(false)
   }
 }

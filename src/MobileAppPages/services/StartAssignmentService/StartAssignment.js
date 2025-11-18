@@ -253,29 +253,67 @@ export const startAssignment = async (
   });
 };
 
-export const refreshActiveDrivers = async (activeDrivers) => {
+export const refreshActiveDrivers = async () => {
   return new Promise(async (resolve) => {
     try {
       const result = await db.getData('Employees')
       const { lastEmpId, ...employeeObj } = result || {};
 
-      // Convert to entries → [empId, data]
-      const entries = Object.entries(employeeObj);
 
-      // Filter only drivers (designationId = "5")
-      const driverList = entries
-        .filter(([empId, emp]) => String(emp?.GeneralDetails?.designationId) === "5" && String(emp?.GeneralDetails?.status) === "1")
-        .map(([empId, emp]) => ({
-          Id: empId,
-          name: emp?.GeneralDetails?.name
-        }));
+      const freshList = Object.entries(employeeObj).filter(([empId, emp])=>
+        String(emp?.GeneralDetails?.designationId) === "5" &&
+        String(emp?.GeneralDetails?.status) === "1"
+      ).map(
+        ([empId, emp])=>({
+          Id : empId,
+          name : emp?.GeneralDetails?.name
+        })
+      )
 
-      if (driverList && driverList.length > 0) {
-        resolve(common.setResponse(success, "Drivers fetched successfully", driverList))
+      const freshMap = new Map(freshList.map((d)=> [d.Id, d]));
+
+       const activeDrivers = (await db.getData("ActiveDrivers")) || {};
+       const updatedDrivers = { ...activeDrivers };
+
+       for(const driverId of Object.keys(activeDrivers)){
+        if(!freshMap.has(driverId)){
+          await db.removeData(`ActiveDrivers/${driverId}`)
+          delete updatedDrivers[driverId];
+        }
+       }
+
+          for (const freshDriver of freshList) {
+        const existing = activeDrivers[freshDriver.Id];
+
+        if (!existing) {
+          // ADD new driver
+          await db.saveData(`ActiveDrivers/${freshDriver.Id}`, {
+            Id: freshDriver.Id,
+            name: freshDriver.name,
+          });
+
+          updatedDrivers[freshDriver.Id] = {
+            Id: freshDriver.Id,
+            name: freshDriver.name,
+          };
+        } else if (existing.name !== freshDriver.name) {
+          // UPDATE only name
+          await db.saveData(`ActiveDrivers/${freshDriver.Id}`, {
+            // Id: freshDriver.Id,
+            name: freshDriver.name,
+          });
+
+          updatedDrivers[freshDriver.Id].name = freshDriver.name;
+        }
       }
-      else {
-        resolve(common.setResponse(fail, "No drivers found.", []))
-      }
+
+       resolve(
+        common.setResponse(
+          success,
+          "Drivers refreshed successfully",
+          updatedDrivers
+        )
+      );
     } catch (error) {
       resolve(common.setResponse(fail, "failed to fetch driver list", []))
     }
@@ -289,7 +327,7 @@ export const getActiveDriversList = async () => {
       const { lastEmpId, ...employeeObj } = result || {};
 
       const driverList = Object.entries(employeeObj).map(([empId, data])=>( {
-        empId,
+        // empId,
         ...data
       }))
 

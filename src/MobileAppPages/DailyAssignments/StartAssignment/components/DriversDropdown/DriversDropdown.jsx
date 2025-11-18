@@ -9,7 +9,6 @@ import { fetchAllDrivers } from '../../actions/StartAssignmentActions/StartAssig
 const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  console.log('drivers', drivers)
 
   useEffect(() => {
       if (searchTerm) {

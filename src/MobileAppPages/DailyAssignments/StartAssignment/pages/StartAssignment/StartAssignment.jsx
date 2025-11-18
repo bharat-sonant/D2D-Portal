@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   fetchAllActiveDrivers,
   fetchAllVehicles,
+  refreshActiveDriverlist,
   startAssignmentAction,
 } from "../../actions/StartAssignmentActions/StartAssignment";
 import { getCityFirebaseConfig } from "../../../../../configurations/cityDBConfig";
@@ -14,6 +15,7 @@ import VehiclesDropdown from "../../components/VehiclesDropdown/VehiclesDropdown
 import DriverHelperImageLayout from "../../components/DriverHelperImageLayout/DriverhelperImageLayout";
 import DriverHelperDetails from "../../components/DriverHelperDetails/DriverHelperDetails";
 import DriversDropdown from "../../components/DriversDropdown/DriversDropdown";
+import { refreshActiveDrivers } from "../../../../services/StartAssignmentService/StartAssignment";
 
 const StartAssignment = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -180,23 +182,7 @@ const StartAssignment = () => {
   };
 
   const refreshDrivers = async() => {
-    setLoading(true)
-
-    const newList = await fetchAllActiveDrivers()
-     const updated = [];
-
-  // Convert to map for comparison
-  const newMap = {};
-  newList?.forEach(d => newMap[d.empId] = d);
-
-  // 1️⃣ Update existing + keep active ones
-  newList.forEach(d => {
-    updated.push(d);
-  });
-
-  setActiveDrivers(updated);
-
-  setLoading(false);
+     await refreshActiveDriverlist(setActiveDrivers, setLoading)
   }
 
   return (
