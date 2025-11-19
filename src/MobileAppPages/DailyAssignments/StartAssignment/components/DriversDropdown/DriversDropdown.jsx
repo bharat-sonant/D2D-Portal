@@ -9,10 +9,7 @@ import DeviceDropdown from '../DeviceDropdown/DeviceDropdown';
 
 const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverError, setErrors, drivers, onRefresh, availableDevices, onDeviceMapped}) => {
   const [isOpen, setOpen] = useState(false);
-  const [deviceListOpen, setDeviceListOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deviceSearch, setDeviceSearch] = useState("");
-  const [selectedDevice, setSelectedDevice] = useState("");
   const [deviceDropdownDriver, setDeviceDropdownDriver] = useState(null);
 
   useEffect(() => {
@@ -54,7 +51,6 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
     }
 
     const handleMapDevice = async(driver) => {
-      setSelectedDriver(driver)
       setDeviceDropdownDriver(driver)
     }
 
@@ -129,7 +125,11 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(driver)}
+                            onClick={() => {
+                              if(driver?.DeviceName && driver?.DeviceId){
+                                handleSelect(driver);
+                              }
+                            }}
                             className={`${sheetStyles.vehicleItem} ${
                               isDeviceSelected ? sheetStyles.activeVehicle : ""
                             }`}

@@ -78,7 +78,7 @@
 }
 .vehicleList {
   padding: 0px;
-  max-height: calc(70vh - 130px);
+  max-height: calc(70vh - 170px);
   overflow: auto;
   margin-bottom: 0px;
   background-color: var(--white);
