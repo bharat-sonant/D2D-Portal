@@ -5,7 +5,7 @@ import { Check } from 'lucide-react';
 import {images} from '../../../../../assets/css/imagePath'
 import { mapDeviceWithActiveDriver } from '../../../../services/StartAssignmentService/StartAssignment';
 
-const DeviceDropdown = ({driver, availableDevices, onDeviceMapped, onClose, loading}) => {
+const DeviceDropdown = ({driver,setSelectedDriver, availableDevices, onDeviceMapped, onClose, loading}) => {
   const [deviceSearch, setDeviceSearch] = useState("");
   const [selectedDevice, setSelectedDevice] = useState("");
 
@@ -38,6 +38,7 @@ const DeviceDropdown = ({driver, availableDevices, onDeviceMapped, onClose, load
 
     if (response.status === "success") {
       onDeviceMapped(driver.Id, device);
+      setSelectedDriver(driver);
     }
     onClose();
   };

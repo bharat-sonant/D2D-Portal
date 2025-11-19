@@ -195,6 +195,7 @@ const DriversDropdown = ({loading, selectedDriver, setSelectedDriver, driverErro
 
       <DeviceDropdown
         driver={deviceDropdownDriver}
+        setSelectedDriver={setSelectedDriver}
           availableDevices={availableDevices}
           onDeviceMapped={handleDeviceMapped}
           onClose={() => setDeviceDropdownDriver(null)}
