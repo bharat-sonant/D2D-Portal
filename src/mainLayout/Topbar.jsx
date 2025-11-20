@@ -3,12 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaUser } from "react-icons/fa";
-import { MdKeyboardArrowDown, MdStart } from "react-icons/md";
 import { RiShutDownLine } from "react-icons/ri";
-import { PulseLoader } from "react-spinners";
 import { FaCity } from "react-icons/fa6";
-import { AlignStartVertical, ListStartIcon, LucideUserRoundCheck } from "lucide-react";
-import { SkipStartBtn, SkipStartCircleFill } from "react-bootstrap-icons";
+import { AlignStartVertical, LucideUserRoundCheck, NotepadText } from "lucide-react";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const navigate = useNavigate();
@@ -197,6 +194,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 style={{ color: navbarStyle.textColor }}
               >
                 Start Assignment
+              </span>
+            </Link>
+
+             <Link
+              aria-current="page"
+              to="/duty-on"
+              title="Duty-On"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/duty-on" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/duty-on"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <NotepadText
+                className={`${styles.iconNav} ${location.pathname === "/duty-on"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Duty On
               </span>
             </Link>
           </ul>

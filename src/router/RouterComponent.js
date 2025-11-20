@@ -11,6 +11,8 @@ import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penal
 import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoring";
 import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
+import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
+
 
 const RouterComponent = () => {
 
@@ -112,6 +114,15 @@ const RouterComponent = () => {
           element={
             <>
               <AssignmentSummary />
+            </>
+          }
+        />
+
+        <Route
+          path="/duty-on"
+          element={
+            <>
+              <DutyOn/>
             </>
           }
         />
