@@ -60,16 +60,18 @@ export const getActiveHelpers = () => {
 export const startAssignmentService = (ward, selectedVehicle, selectedDriver, selectedHelper) => {
   return new Promise(async(resolve)=> {
     try{
-      console.log(selectedVehicle, selectedDriver, selectedHelper)
       
-      const [userAssignmentResult, workAssignmentResult] = await Promise.all([
-        saveUserAssignment(selectedDriver, ward, selectedVehicle),
+      const [driverAssignmentResult, helperAssignmentResult, workAssignmentResult] = await Promise.all([
+        saveDriverAssignment(selectedDriver, ward, selectedVehicle),
+        saveHelperAssignment(selectedHelper, ward, selectedVehicle),
         saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper)
       ])
-      if (isFail(userAssignmentResult)) return resolve(userAssignmentResult);
+      if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
       if (isFail(workAssignmentResult)) return resolve(workAssignmentResult);
+      if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult)
       const finalResult = {
-        userAssignment: userAssignmentResult,
+        driverAssignment: driverAssignmentResult,
+        helperAssignment: helperAssignmentResult,
         workAssignment: workAssignmentResult,
       }
 
@@ -82,7 +84,7 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
   })
 }
 
-const saveUserAssignment = async(selectedDriver, ward, selectedVehicle) => {
+const saveDriverAssignment = async(selectedDriver, ward, selectedVehicle) => {
   const userAssignmentPath = `AssignmentData/UserAssignments/${selectedDriver.Id}`
       const userAssignmentPayload = {
         task : ward,
@@ -93,7 +95,21 @@ const saveUserAssignment = async(selectedDriver, ward, selectedVehicle) => {
 
     return result?.success
         ? result
-        : common.setResponse(fail, "Vehicle assignment failed", result);
+        : common.setResponse(fail, "driver assignment failed", result);
+}
+
+const saveHelperAssignment = async(selectedHelper, ward, selectedVehicle) => {
+  const userAssignmentPath = `AssignmentData/UserAssignments/${selectedHelper.Id}`
+      const userAssignmentPayload = {
+        task : ward,
+        vehicle: selectedVehicle
+      }
+
+    const result = await db.saveData(userAssignmentPath, userAssignmentPayload);
+
+    return result?.success
+        ? result
+        : common.setResponse(fail, "helper assignment failed", result);
 }
 
 const saveWorkAssignment = async(ward, selectedVehicle, selectedDriver, selectedHelper) => {
@@ -108,5 +124,5 @@ const saveWorkAssignment = async(ward, selectedVehicle, selectedDriver, selected
 
     return result?.success
         ? result
-        : common.setResponse(fail, "Vehicle assignment failed", result);
+        : common.setResponse(fail, "work assignment failed", result);
 }
