@@ -32,3 +32,22 @@ export const RemoveValue = async () => {
         return common.setResponse("fail", "Error while removing DailyAssignmentViaWeb", { error });
     }
 };
+
+
+// Get DailyAssignmentViaWeb value
+export const getValue = async () => {
+    try {
+        const path = `Settings/BackOfficeApplicationSettings/DailyAssignmentViaWeb`;
+        const response = await db.getData(path);
+
+        if (response) {
+            return common.setResponse("success", "Value fetched successfully", {
+                value: response 
+            });
+        } else {
+            return common.setResponse("fail", "Failed to fetch value", {});
+        }
+    } catch (error) {
+        return common.setResponse("fail", "Error while fetching DailyAssignmentViaWeb", { error });
+    }
+};

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Settings/Style/Settings.module.css";
-import {  RemoveValue, saveValue } from "../Services/DailyAssignmentViaWebService";
+import {  getValue, RemoveValue, saveValue } from "../Services/DailyAssignmentViaWebService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 
@@ -19,6 +19,21 @@ const Settings = () => {
             console.warn("⚠️ No city found, defaulting to DevTest");
         }
     }, [city]);
+
+    useEffect(() => {
+    async function fetchSetting() {
+        const response = await getValue();  
+
+        if (response.status === "success") {
+            setIsOn(response.data.value === "yes");  
+        } else {
+            setIsOn(false);  
+        }
+    }
+
+    fetchSetting();
+}, []);
+
 
     const handleToggle = () => {
         const newValue = !isOn;
