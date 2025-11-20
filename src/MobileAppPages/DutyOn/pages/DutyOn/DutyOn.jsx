@@ -4,7 +4,7 @@ import { connectFirebase } from '../../../../firebase/firebaseService';
 import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles, startAssignmentAction } from '../../actions/DutyOnAction';
 import styles from '../../styles/DutyOn.module.css'
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import VehicleDropdown from '../../components/vehicleDropdown/VehicleDropdown';
 import DriverDropdown from '../../components/driverDropdown/DriverDropdown';
 import HelperDropdown from '../../components/helperDropdown/HelperDropdown';
@@ -18,9 +18,8 @@ const DutyOn = () => {
   const [activeHelpers, setActiveHelpers] = useState([]);
   const [selectedHelper, setSelectedHelper] = useState('');
   const [isSaving, setIsSaving] = useState(false)
+  const location = useLocation();
   const navigate = useNavigate();
-  const city = "DevTest"
-  const ward = "Govind"
   const [errors, setErrors] = useState({
     driverId: "",
     driverDeviceId: "",
@@ -30,6 +29,11 @@ const DutyOn = () => {
     driver: "",
     helper: ""
   });
+
+  const queryParams = new URLSearchParams(location.search);
+  const ward = queryParams.get("task");
+  const user = queryParams.get("user") || "N/A";
+  const city = queryParams.get("city") || "DevTest";
 
    useEffect(() => {
       if (city) {
