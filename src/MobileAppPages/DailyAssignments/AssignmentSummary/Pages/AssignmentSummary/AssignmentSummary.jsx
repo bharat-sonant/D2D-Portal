@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import styles from '../../Styles/AssignmentSummary/AssignmentSummary.module.css'
 import { ArrowLeft } from 'lucide-react'
 import AssignmentSummaryBox from '../../Components/AssignmentSummary/AssignmentSummaryBox'
