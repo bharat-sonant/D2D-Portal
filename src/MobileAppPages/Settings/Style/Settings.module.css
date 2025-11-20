@@ -1,0 +1,74 @@
+/* Page center */
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/* Card */
+.card {
+    width: 450px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Toggle row aligned right */
+.toggleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* pushes toggle to right */
+    margin-top: 10px;
+}
+
+.toggleLabel {
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    margin-right: 20px;
+}
+
+/* Toggle switch box */
+.toggleSwitch {
+    width: 70px;
+    height: 30px;
+    border-radius: 20px;
+    padding: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+}
+
+/* ON = Green */
+.on {
+    background-color: #0ab39c;
+    justify-content: flex-end;
+}
+
+/* OFF = Red */
+.off {
+    background-color: #d9534f;
+    justify-content: flex-start;
+}
+
+.toggleCircle {
+    width: 26px;
+    height: 26px;
+    background: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 600;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
