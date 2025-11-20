@@ -353,7 +353,7 @@ export const getAvailableDevices = async (city) => {
         ...device
       }))
 
-      const availableDevices = deviceArray.filter((device)=>device.status === "1")
+      const availableDevices = deviceArray.filter((device)=>device.appType === "1" && device.status === "1")
         .map((device)=>({
           DeviceId : device.deviceId,
           DeviceName : device.name
