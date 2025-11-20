@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
 import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles } from '../../actions/DutyOnAction';
-import styles from '../../../DailyAssignments/StartAssignment/styles/StartAssignment.module.css'
+import styles from '../../styles/DutyOn.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import VehicleDropdown from '../../components/vehicleDropdown/VehicleDropdown';
-import { getActiveDrivers } from '../../../services/DutyOnService/DutyOn';
 import DriverDropdown from '../../components/driverDropdown/DriverDropdown';
 import HelperDropdown from '../../components/helperDropdown/HelperDropdown';
 

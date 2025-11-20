@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import {images} from '../../../../assets/css/imagePath'
 import { Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
 import { Sheet } from 'react-modal-sheet';
-import styles from '../../../DailyAssignments/StartAssignment/styles/StartAssignment.module.css';
+import styles from '../../styles/DutyOn.module.css'
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
 
 const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver}) => {

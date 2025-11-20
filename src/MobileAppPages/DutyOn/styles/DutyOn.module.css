@@ -1,0 +1,566 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 
+body {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+/* ----------- Page Container ----------- */
+.pageContainer {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ----------- Green Header ----------- */
+.header {
+  background-color: #00b300;
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky; /* ✅ keeps it fixed on top */
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 56px;
+}
+
+/* Back button */
+.backButton {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 10%;
+  /* Fixed width */
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.backButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.backButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(0.95);
+}
+
+/* Title always centered across the full header width */
+.headerTitle {
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 0;
+}
+
+.contentContainer {
+  overflow: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  max-width: 700px;
+  /* margin: 0 auto; */
+  height: calc(90vh - 56px);
+}
+
+/* ---------- Vehicle Selection Card ---------- */
+.vehicleCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Info Header (Ward, User, City) ---------- */
+.infoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.infoItem {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.infoLabel {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.infoValue {
+  color: #111827;
+  font-weight: 500;
+}
+
+.dropdownWrapper {
+  position: relative;
+}
+
+/* Outer visible box */
+.dropdownDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
+  width: 100%;
+}
+
+.dropdownDisplay:hover {
+  border-color: #9ca3af;
+}
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.truckIcon {
+  flex-shrink: 0;
+}
+
+.vehicleLabel {
+  font-size: 15px;
+  color: #374151;
+}
+
+.dropdownIcon {
+  color: #6b7280;
+  size: 2px;
+}
+
+.errorBorder {
+  border: 1px solid #ef4444 !important;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.errorPlaceholder {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Invisible actual dropdown on top */
+.vehicleDropdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* Focus style for accessibility */
+.vehicleDropdown:focus + .dropdownDisplay,
+.dropdownDisplay:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.loadingText {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+/* driver helper section*/
+.idFieldsCard {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.fieldColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.errorText {
+  color: #dc2626; /* red */
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: #151515;
+}
+
+.textInput {
+  padding: 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textInput:focus {
+  border-color: #00b300;
+}
+
+.textInput::placeholder {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.deviceInputWrapper {
+  display: flex;
+  border: 1.5px solid #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.deviceInputWrapper:focus-within {
+  border-color: #00b300;
+}
+
+.devicePrefix {
+  background-color: #f3f4f6;
+  padding: 12px 10px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+  border-right: 1.5px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.deviceInput {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  color: #374151;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.deviceInput::placeholder {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.extraHelperRow {
+  display: flex;
+  background-color: #f0fff4;
+  /* light green tint */
+  border-radius: 8px;
+  padding: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.notApplicableBox {
+  background-color: #f3f4f6;
+  /* light gray */
+  color: #6b7280;
+  /* muted text */
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 400;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ----------- Action Buttons ----------- */
+.actionButtonsWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.actionButtonsRight {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.addButton {
+  background-color: #00b300;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.addButton:hover {
+  background-color: #00b300;
+  transform: translateY(-1px);
+}
+
+.addButton:active {
+  background-color: #00b300;
+  transform: translateY(0);
+}
+
+/* Red style for remove helper */
+.removeButton {
+  background-color: #dc2626;
+}
+
+.removeButton:hover {
+  background-color: #b91c1c;
+}
+
+.iconCircle {
+  background-color: white;
+  color: inherit;
+  /* icon color follows button color */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+/* Make icons stand out a bit */
+.iconCircle svg {
+  stroke-width: 2.5;
+}
+
+/* Add these styles to your StartAssignment.module.css file */
+
+.captureMeterButton {
+  width: 100%;
+  height: 220px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  font-size: 8px;
+  font-family: var(--fontGraphik);
+  margin-bottom: 0px;
+  color: var(--lightBlack);
+  text-align: center;
+  padding: 4px;
+  background-color: #00a00010;
+  border: 2px dashed #eee;
+  &:hover {
+    background-color: #00a00036;
+  }
+}
+
+.captureMeterButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.imgTitle {
+  font-size: 11px;
+  text-align: center;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  padding: 4px 0px;
+}
+.imagePreview {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.submitButton {
+  width: 100%;
+  max-width: 400px;
+  margin-top: auto;
+  padding: 14px 20px;
+  background-color: #00b300;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.submitButton:hover {
+  background-color: #00a000;
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+.submitButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.loaderWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loaderCircle {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.imageRow {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.imageLeft,
+.imageRight {
+  width: calc(100% / 2 - 5px);
+}
+.imgSection {
+  background-color: var(--white);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  height: 255px;
+}
+.cameraIcon {
+  width: 24px;
+  height: 24px;
+  color: #9ca3af;
+  margin-bottom: 5px;
+}
+
+.imagePreview {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.closeBtn {
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  background-color: #00b300;
+  position: absolute;
+  bottom: 10px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.iconClose {
+  width: 16px;
+}
+@media (max-width: 767.98px) {
+  .contentContainer {
+    height: calc(100vh - 56px);
+  }
+  .submitButton {
+    margin-bottom: 10px;
+  }
+}

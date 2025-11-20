@@ -1,5 +1,5 @@
 import { ChevronDown, Truck, Search, Check, AlertCircle, UserRound } from "lucide-react";
-import styles from '../../../DailyAssignments/StartAssignment/styles/StartAssignment.module.css';
+import styles from '../../styles/DutyOn.module.css'
 import React, { useState, useMemo, useEffect } from "react";
 import { Sheet } from "react-modal-sheet";
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
