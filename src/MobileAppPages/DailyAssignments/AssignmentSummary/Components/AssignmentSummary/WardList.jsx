@@ -6,7 +6,7 @@ const WardList = (props) => {
     const navigate = useNavigate();
 
     const goToDutyOn = (wardName) => {
-        navigate(`/duty-on?ward=${encodeURIComponent(wardName)}`);
+        navigate(`/duty-on?task=${encodeURIComponent(wardName)}`);
     };
 
     return (
