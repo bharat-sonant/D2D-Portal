@@ -6,20 +6,36 @@ import sheetStyles from "../../../DailyAssignments/StartAssignment/components/Ve
 import { images } from "../../../../assets/css/imagePath";
 
 
-const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVehicle}) => {
+const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVehicle, vehicleError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+   useEffect(() => {
+        if (searchTerm) {
+          setErrors((prev) => ({ ...prev, vehicleError: "" }));
+        }
+      }, [searchTerm]);
+
     const filteredVehicles = useMemo(() => {
-      if (!searchTerm) return activeVehicles || [];
-      return activeVehicles?.filter((v) =>
-        v?.vehcileNo?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }, [searchTerm, activeVehicles]);
+     let list = activeVehicles || [];
+   
+     // filter
+     if (searchTerm) {
+       const term = searchTerm.toLowerCase();
+       list = list.filter(d => 
+         d?.vehicleNo?.toLowerCase().includes(term)
+       );
+     }
+   
+     // sort alphabetically
+     return [...list].sort((a, b) =>
+       a?.name?.localeCompare(b?.name, undefined, { sensitivity: "base" })
+     );
+   }, [searchTerm, activeVehicles]);
 
       const handleSelect = (vehicleNo) => {
     setSelectedVehicle(vehicleNo);
-    // setErrors((prev) => ({ ...prev, vehicle: "" }));
+    setErrors((prev) => ({ ...prev, vehicle: "" }));
     setOpen(false);
   };
 
@@ -43,11 +59,11 @@ const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVe
         </button>
 
         {/* Inline Error Message */}
-        {/* {vehicleError && (
+        {vehicleError && (
           <div className={styles.errorMessage}>
             <AlertCircle size={14} /> {vehicleError}
           </div>
-        )} */}
+        )}
 
         {/* Bottom Sheet */}
         <Sheet

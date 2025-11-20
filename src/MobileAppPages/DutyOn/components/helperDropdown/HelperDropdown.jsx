@@ -6,13 +6,13 @@ import sheetStyles from "../../../DailyAssignments/StartAssignment/components/Ve
 import { images } from "../../../../assets/css/imagePath";
 
 
-const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper}) => {
+const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, helperError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
    useEffect(() => {
         if (searchTerm) {
-          // setErrors((prev) => ({ ...prev, driver: "" }));
+          setErrors((prev) => ({ ...prev, helperError: "" }));
         }
       }, [searchTerm]);
   
@@ -39,7 +39,7 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper}) =
       // Handle vehicle selection
       const handleSelect = (helper) => {
         setSelectedHelper(helper);
-        // setErrors((prev) => ({ ...prev, driver: "" }));
+        setErrors((prev) => ({ ...prev, helper: "" }));
         setOpen(false);
       };
   
@@ -61,11 +61,11 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper}) =
           <ChevronDown className={styles.dropdownIcon} size={16} />
         </button>
 
-        {/* {driverError && (
+        {helperError && (
           <div className={styles.errorMessage}>
-            <AlertCircle size={14} /> {driverError}
+            <AlertCircle size={14} /> {helperError}
           </div>
-        )} */}
+        )}
 
         <Sheet
           isOpen={isOpen}

@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {images} from '../../../../assets/css/imagePath'
-import { Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
+import { AlertCircle, Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-react';
 import { Sheet } from 'react-modal-sheet';
 import styles from '../../styles/DutyOn.module.css'
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
 
-const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver}) => {
+const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, driverError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [deviceDropdownDriver, setDeviceDropdownDriver] = useState(null);
 
   useEffect(() => {
       if (searchTerm) {
-        // setErrors((prev) => ({ ...prev, driver: "" }));
+        setErrors((prev) => ({ ...prev, driverError: "" }));
       }
     }, [searchTerm]);
 
@@ -39,7 +39,7 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver}) =
     // Handle vehicle selection
     const handleSelect = (driver) => {
       setSelectedDriver(driver);
-      // setErrors((prev) => ({ ...prev, driver: "" }));
+      setErrors((prev) => ({ ...prev, driver: "" }));
       setOpen(false);
     };
 
@@ -75,11 +75,11 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver}) =
           <ChevronDown className={styles.dropdownIcon} size={16} />
         </button>
 
-        {/* {driverError && (
+        {driverError && (
           <div className={styles.errorMessage}>
             <AlertCircle size={14} /> {driverError}
           </div>
-        )} */}
+        )}
 
         <Sheet
           isOpen={isOpen}

@@ -1,5 +1,5 @@
 import * as common from '../../../common/common'
-import { getActiveDrivers, getActiveHelpers, getAllActiveVehicles } from '../../services/DutyOnService/DutyOn'
+import { getActiveDrivers, getActiveHelpers, getAllActiveVehicles, startAssignmentService } from '../../services/DutyOnService/DutyOn'
 
 export const fetchAllVehicles = async(setLoading, setActiveVehicles) => {
   try{
@@ -53,5 +53,23 @@ export const fetchAllActiveHelpers = async(setLoading, setActiveHelpers) => {
     common.setAlertMessage('fail', "Failed to fetch drivers")
   }finally{
     setLoading(false)
+  }
+}
+
+export const startAssignmentAction = async(setIsSaving, ward, selectedVehicle, selectedDriver, selectedHelper) => {
+  try{
+    setIsSaving(true);
+    const result = await startAssignmentService(ward, selectedVehicle, selectedDriver, selectedHelper)
+    if (result.status === "success") {
+      common.setAlertMessage("success", result.message);
+    } else {
+      common.setAlertMessage("error", result.message || "Failed to start assignment!");
+    }
+      return result;
+  }catch(error){
+    common.setResponse('fail', 'failed to start assignment')
+    return { status: "fail" };
+  }finally{
+    setIsSaving(false)
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
-import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles } from '../../actions/DutyOnAction';
+import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles, startAssignmentAction } from '../../actions/DutyOnAction';
 import styles from '../../styles/DutyOn.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -17,9 +17,19 @@ const DutyOn = () => {
   const [selectedDriver, setSelectedDriver] = useState('')
   const [activeHelpers, setActiveHelpers] = useState([]);
   const [selectedHelper, setSelectedHelper] = useState('');
+  const [isSaving, setIsSaving] = useState(false)
   const navigate = useNavigate();
   const city = "DevTest"
   const ward = "Govind"
+  const [errors, setErrors] = useState({
+    driverId: "",
+    driverDeviceId: "",
+    helperId: "",
+    helperDeviceId: "",
+    vehicle: "",
+    driver: "",
+    helper: ""
+  });
 
    useEffect(() => {
       if (city) {
@@ -51,6 +61,41 @@ const DutyOn = () => {
     }
   };
 
+  const handleSubmit = async() => {
+    if (!selectedVehicle) {
+      setErrors((prev) => ({ ...prev, vehicle: "Please select vehicle" }));
+      return;
+    }
+    if (!selectedDriver) {
+      setErrors((prev) => ({ ...prev, driver: "Please select Driver" }));
+      return;
+    }
+    if (!selectedHelper) {
+      setErrors((prev) => ({ ...prev, helper: "Please select Helper" }));
+      return;
+    }
+
+    const result = await startAssignmentAction(setIsSaving, ward,selectedVehicle, selectedDriver, selectedHelper);
+    if(result.status === "success"){
+       handleClear();
+       setActiveVehicles((prev) =>
+        prev.filter((v) => v.vehicleNo !== selectedVehicle)
+      );
+      setActiveDrivers((prev) =>
+        prev.filter((d) => d.Id !== selectedDriver.Id)
+      );
+      setActiveHelpers((prev) =>
+        prev.filter((h) => h.Id !== selectedHelper.Id)
+      );
+    }
+  }
+
+  const handleClear = () => {
+    setSelectedDriver('')
+    setSelectedHelper('')
+    setSelectedVehicle('')
+  }
+
  
   return (
      <div className={styles.pageContainer}>
@@ -66,6 +111,8 @@ const DutyOn = () => {
         activeVehicles={activeVehicles}
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
+        vehicleError={errors.vehicle}
+        setErrors={setErrors}
         />
 
         <DriverDropdown
@@ -73,6 +120,8 @@ const DutyOn = () => {
         drivers={activerDrivers}
         selectedDriver={selectedDriver}
         setSelectedDriver={setSelectedDriver}
+        driverError={errors.driver}
+        setErrors={setErrors}
         />
 
         <HelperDropdown
@@ -80,7 +129,24 @@ const DutyOn = () => {
           helpers={activeHelpers}
           selectedHelper={selectedHelper}
           setSelectedHelper={setSelectedHelper}
+          helperError={errors.helper}
+          setErrors={setErrors}
         />
+
+        <button
+          className={styles.submitButton}
+          onClick={handleSubmit}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <div className={styles.loaderWrapper}>
+              <span className={styles.loaderCircle}></span>
+              Saving...
+            </div>
+          ) : (
+            "Submit"
+          )}
+        </button>
     </div>
     </div>
   )
