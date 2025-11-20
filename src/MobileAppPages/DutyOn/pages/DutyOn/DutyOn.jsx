@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
-import { fetchAllActiveDrivers, fetchAllVehicles } from '../../actions/DutyOnAction';
+import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles } from '../../actions/DutyOnAction';
 import styles from '../../../DailyAssignments/StartAssignment/styles/StartAssignment.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import VehicleDropdown from '../../components/vehicleDropdown/VehicleDropdown';
 import { getActiveDrivers } from '../../../services/DutyOnService/DutyOn';
 import DriverDropdown from '../../components/driverDropdown/DriverDropdown';
+import HelperDropdown from '../../components/helperDropdown/HelperDropdown';
 
 const DutyOn = () => {
   const [loading, setLoading] = useState(false)
-  const [activeVehicles, setActiveVehicles] = useState('');
+  const [activeVehicles, setActiveVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [activerDrivers, setActiveDrivers] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState('')
+  const [activeHelpers, setActiveHelpers] = useState([]);
+  const [selectedHelper, setSelectedHelper] = useState('');
   const navigate = useNavigate();
   const city = "DevTest"
   const ward = "Govind"
@@ -32,7 +35,8 @@ const DutyOn = () => {
 
   useEffect(()=> {
     fetchAllVehicles( setLoading, setActiveVehicles);
-    fetchAllActiveDrivers(setLoading, setActiveDrivers)
+    fetchAllActiveDrivers(setLoading, setActiveDrivers);
+    fetchAllActiveHelpers(setLoading, setActiveHelpers);
   },[])
 
    const handleBack = () => {
@@ -70,6 +74,13 @@ const DutyOn = () => {
         drivers={activerDrivers}
         selectedDriver={selectedDriver}
         setSelectedDriver={setSelectedDriver}
+        />
+
+        <HelperDropdown
+          loading={loading}
+          helpers={activeHelpers}
+          selectedHelper={selectedHelper}
+          setSelectedHelper={setSelectedHelper}
         />
     </div>
     </div>

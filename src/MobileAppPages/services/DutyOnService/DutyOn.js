@@ -37,3 +37,21 @@ export const getActiveDrivers = () => {
     }
   })
 }
+
+export const getActiveHelpers = () => {
+  return new Promise(async(resolve)=> {
+    try{
+      const result = await db.getData('ActiveHelpers');
+
+      // const activeDrivers = Object.values(result)
+      const activeHelpers = Object.entries(result).map(([Key, value])=>({
+        Id : Key,
+        name: value.name
+      }))
+
+      resolve(common.setResponse(success, "fetched active drivers successfully", activeHelpers))
+    }catch(error){
+      resolve(common.setResponse(fail, "failed to fetch active drivers"))
+    }
+  })
+}
