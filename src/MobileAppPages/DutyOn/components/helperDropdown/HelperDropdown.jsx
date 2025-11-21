@@ -4,11 +4,15 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Sheet } from "react-modal-sheet";
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
 import { images } from "../../../../assets/css/imagePath";
+import { fetchAllActiveHelpers } from "../../actions/DutyOnAction";
 
 
-const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, helperError, setErrors}) => {
+const HelperDropdown = ({ selectedHelper, setSelectedHelper, helperError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [activeHelpers, setActiveHelpers] = useState([]);
+  const [hasFetched, setHasFetched] = useState(false)
 
    useEffect(() => {
         if (searchTerm) {
@@ -20,7 +24,7 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, he
   
      // Filter vehicles based on search input
      const filteredHelpers = useMemo(() => {
-    let list = helpers || [];
+    let list = activeHelpers || [];
   
     // filter
     if (searchTerm) {
@@ -34,7 +38,7 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, he
     return [...list].sort((a, b) =>
       a?.name?.localeCompare(b?.name, undefined, { sensitivity: "base" })
     );
-  }, [searchTerm, helpers]);
+  }, [searchTerm, activeHelpers]);
   
       // Handle vehicle selection
       const handleSelect = (helper) => {
@@ -42,6 +46,16 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, he
         setErrors((prev) => ({ ...prev, helper: "" }));
         setOpen(false);
       };
+
+       const handleOpen = () => {
+            setOpen(true);
+      
+            if (!hasFetched) {
+            fetchAllActiveHelpers(setLoading, setActiveHelpers);
+            setHasFetched(true);
+          }
+          }
+      
   
   return (
       <div className={styles.vehicleCard}>
@@ -50,7 +64,7 @@ const HelperDropdown = ({loading, helpers, selectedHelper, setSelectedHelper, he
       <div className={styles.dropdownWrapper}>
         <button
           className={styles.dropdownDisplay}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           <div className={styles.leftGroup}>
             <UserRound color="#22c55e" size={24} className={styles.truckIcon} />

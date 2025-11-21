@@ -4,12 +4,17 @@ import { AlertCircle, Check, ChevronDown, RefreshCcw, UserRound } from 'lucide-r
 import { Sheet } from 'react-modal-sheet';
 import styles from '../../styles/DutyOn.module.css'
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
+import { fetchAllActiveDrivers } from '../../actions/DutyOnAction';
 
-const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, driverError, setErrors}) => {
+const DriverDropdown = ({selectedDriver, setSelectedDriver, driverError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [deviceDropdownDriver, setDeviceDropdownDriver] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [activeDrivers, setActiveDrivers] = useState([])
+  const [hasFetched, setHasFetched] = useState(false);
 
+ 
   useEffect(() => {
       if (searchTerm) {
         setErrors((prev) => ({ ...prev, driverError: "" }));
@@ -20,7 +25,7 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, dr
 
    // Filter vehicles based on search input
    const filteredDrivers = useMemo(() => {
-  let list = drivers || [];
+  let list = activeDrivers || [];
 
   // filter
   if (searchTerm) {
@@ -34,7 +39,7 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, dr
   return [...list].sort((a, b) =>
     a?.name?.localeCompare(b?.name, undefined, { sensitivity: "base" })
   );
-}, [searchTerm, drivers]);
+}, [searchTerm, activeDrivers]);
 
     // Handle vehicle selection
     const handleSelect = (driver) => {
@@ -57,6 +62,15 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, dr
     //   setDeviceDropdownDriver(null);
     // }
 
+    const handleOpen = () => {
+      setOpen(true);
+
+      if (!hasFetched) {
+      fetchAllActiveDrivers(setLoading, setActiveDrivers);
+      setHasFetched(true);
+    }
+    }
+
     return (
     <div className={styles.vehicleCard}>
 
@@ -64,7 +78,7 @@ const DriverDropdown = ({loading, drivers, selectedDriver, setSelectedDriver, dr
       <div className={styles.dropdownWrapper}>
         <button
           className={styles.dropdownDisplay}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           <div className={styles.leftGroup}>
             <UserRound color="#22c55e" size={24} className={styles.truckIcon} />

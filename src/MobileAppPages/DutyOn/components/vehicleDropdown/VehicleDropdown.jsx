@@ -4,11 +4,15 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Sheet } from "react-modal-sheet";
 import sheetStyles from "../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css";
 import { images } from "../../../../assets/css/imagePath";
+import { fetchAllVehicles } from "../../actions/DutyOnAction";
 
 
-const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVehicle, vehicleError, setErrors}) => {
+const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, setErrors}) => {
   const [isOpen, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeVehicles, setActiveVehicles] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const [hasFetched, setHasFetched] = useState(false)
 
    useEffect(() => {
         if (searchTerm) {
@@ -39,6 +43,16 @@ const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVe
     setOpen(false);
   };
 
+   const handleOpen = () => {
+        setOpen(true);
+  
+        if (!hasFetched) {
+        fetchAllVehicles(setLoading, setActiveVehicles);
+        setHasFetched(true);
+      }
+      }
+  
+
   const snapPoints = [0, 0.7, 1];
    return (
     <div className={styles.vehicleCard}>
@@ -47,7 +61,7 @@ const VehicleDropdown = ({loading,activeVehicles, selectedVehicle, setSelectedVe
       <div className={styles.dropdownWrapper}>
         <button
           className={styles.dropdownDisplay}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           <div className={styles.leftGroup}>
             <Truck color="#22c55e" size={24} className={styles.truckIcon} />

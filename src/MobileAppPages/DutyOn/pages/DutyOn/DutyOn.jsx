@@ -31,7 +31,7 @@ const DutyOn = () => {
   });
 
   const queryParams = new URLSearchParams(location.search);
-  const ward = queryParams.get("task");
+  const ward = queryParams.get("task") || "Govind";
   const user = queryParams.get("user") || "N/A";
   const city = queryParams.get("city") || "DevTest";
 
@@ -46,11 +46,6 @@ const DutyOn = () => {
       }
     }, [city]);
 
-  useEffect(()=> {
-    fetchAllVehicles( setLoading, setActiveVehicles);
-    fetchAllActiveDrivers(setLoading, setActiveDrivers);
-    fetchAllActiveHelpers(setLoading, setActiveHelpers);
-  },[])
 
    const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
@@ -111,8 +106,6 @@ const DutyOn = () => {
       </div>
       <div className={styles.contentContainer}>
         <VehicleDropdown
-        loading={loading}
-        activeVehicles={activeVehicles}
         selectedVehicle={selectedVehicle}
         setSelectedVehicle={setSelectedVehicle}
         vehicleError={errors.vehicle}
@@ -120,8 +113,6 @@ const DutyOn = () => {
         />
 
         <DriverDropdown
-        loading={loading}
-        drivers={activerDrivers}
         selectedDriver={selectedDriver}
         setSelectedDriver={setSelectedDriver}
         driverError={errors.driver}
@@ -129,8 +120,6 @@ const DutyOn = () => {
         />
 
         <HelperDropdown
-          loading={loading}
-          helpers={activeHelpers}
           selectedHelper={selectedHelper}
           setSelectedHelper={setSelectedHelper}
           helperError={errors.helper}
