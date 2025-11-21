@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Settings/Style/Settings.module.css"
+
 import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
+
 import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
+
 import {savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue} from "../../Settings/Services/PaneltiesViaWebServise";
+
+import {getWorkMonitoringValue,saveWorkMonitoringValue,RemoveWorkMonitoringValue, removeWorkMonitoringValue} from "../../Settings/Services/WorkMonitoringViaWebService";
+
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { setAlertMessage } from "../../../common/common";
-
 
 const Settings = () => {
 
     const [isAssignmentOn, setIsAssignmentOn] = useState(false);
     const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
 
+    // ⭐ now controlled by Firebase
+    const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
+
     const [webviewUrl, setWebviewUrl] = useState("");
     const [urlError, setUrlError] = useState("");
 
     const city = localStorage.getItem('city') || "DevTest";
+
 
     /* ----------------------------------------------------
        Firebase Init
@@ -61,6 +70,24 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
+       ⭐ Load Work Monitoring Toggle (NEW)
+    ---------------------------------------------------- */
+    useEffect(() => {
+        async function fetchWorkMonitoringSetting() {
+            const response = await getWorkMonitoringValue();
+
+            if (response.status === "success" && response.data.value === "yes") {
+                setIsWorkMonitoringOn(true);
+            } else {
+                setIsWorkMonitoringOn(false);
+            }
+        }
+
+        fetchWorkMonitoringSetting();
+    }, []);
+
+
+    /* ----------------------------------------------------
        Load Webview URL
     ---------------------------------------------------- */
     useEffect(() => {
@@ -78,7 +105,7 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       Assignment Toggle Handler (with rollback)
+       Assignment Toggle Handler
     ---------------------------------------------------- */
     const handleAssignmentToggle = async () => {
         const newValue = !isAssignmentOn;
@@ -89,7 +116,7 @@ const Settings = () => {
         else res = await RemoveValue();
 
         if (res?.status !== "success") {
-            setIsAssignmentOn(isAssignmentOn); // rollback
+            setIsAssignmentOn(isAssignmentOn);
             setAlertMessage("error", "Failed to update Daily Assignment");
         } else {
             setAlertMessage("success", "Daily Assignment updated");
@@ -98,7 +125,7 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       Penalties Toggle Handler (with rollback)
+       Penalties Toggle Handler
     ---------------------------------------------------- */
     const handlePenaltiesToggle = async () => {
         const newValue = !isPenaltiesOn;
@@ -111,10 +138,32 @@ const Settings = () => {
             res = await RemovePaneltiesValue();
 
         if (res?.status !== "success") {
-            setIsPenaltiesOn(isPenaltiesOn); // rollback
+            setIsPenaltiesOn(isPenaltiesOn);
             setAlertMessage("error", "Failed to update Penalties");
         } else {
             setAlertMessage("success", "Penalties updated");
+        }
+    };
+
+
+    /* ----------------------------------------------------
+       ⭐ Work Monitoring Toggle Handler (with service)
+    ---------------------------------------------------- */
+    const handleWorkMonitoringToggle = async () => {
+        const newValue = !isWorkMonitoringOn;
+        setIsWorkMonitoringOn(newValue);
+
+        let res;
+        if (newValue)
+            res = await saveWorkMonitoringValue();
+        else
+            res = await removeWorkMonitoringValue();
+
+        if (res?.status !== "success") {
+            setIsWorkMonitoringOn(isWorkMonitoringOn);
+            setAlertMessage("error", "Failed to update Work Monitoring");
+        } else {
+            setAlertMessage("success", "Work Monitoring updated");
         }
     };
 
@@ -170,11 +219,8 @@ const Settings = () => {
                         </div>
                     </div>
                 </div>
-
-                <p className={style.helpText}>
-                    When ON, Daily Assignment opens WebView (AssignmentSummary).
-                </p>
             </div>
+
 
             {/* ================= PENALTIES ================= */}
             <div className={style.card}>
@@ -192,11 +238,27 @@ const Settings = () => {
                         </div>
                     </div>
                 </div>
-
-                <p className={style.helpText}>
-                    When ON, Penalties will open in WebView.
-                </p>
             </div>
+
+
+            {/* ================= ⭐ WORK MONITORING ================= */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>Work Monitoring</h3>
+
+                <div className={style.toggleWrapper}>
+                    <label className={style.toggleLabel}>WorkMonitoringViaWeb</label>
+
+                    <div
+                        className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`}
+                        onClick={handleWorkMonitoringToggle}
+                    >
+                        <div className={style.toggleCircle}>
+                            {isWorkMonitoringOn ? "ON" : "OFF"}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             {/* ================= URL CONFIG ================= */}
             <div className={style.card}>
@@ -222,10 +284,6 @@ const Settings = () => {
                         {urlError}
                     </p>
                 )}
-
-                <p className={style.helpText}>
-                    Enter full AssignmentSummary webview URL.
-                </p>
 
                 <div className={style.saveRow}>
                     <button
