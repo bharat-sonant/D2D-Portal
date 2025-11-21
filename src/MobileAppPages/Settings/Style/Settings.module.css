@@ -2,7 +2,7 @@
 .pageContainer {
     display: flex;
     justify-content: center;
-    margin-top: 40px;
+    margin-top: 70px;
 }
 
 /* Card */
@@ -35,8 +35,12 @@
     font-family: 'Poppins', sans-serif;
     margin-right: 20px;
 }
-
+:global(body.settingspage) .mobileFrame {
+  display: none !important;
+}
 /* Toggle switch box */
+
+
 .toggleSwitch {
     width: 70px;
     height: 30px;
