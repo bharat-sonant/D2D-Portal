@@ -12,6 +12,7 @@ import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/Wo
 import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 import Settings from "../MobileAppPages/Settings/Pages/Settings";
 import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
+import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 
 const RouterComponent = () => {
 
@@ -90,6 +91,16 @@ const RouterComponent = () => {
             </>
           }
         />
+
+        <Route
+          path="/duty-on"
+          element={
+            <>
+              <DutyOn />
+            </>
+          }
+        />
+
 
         <Route
           path="/work-monitoring"
