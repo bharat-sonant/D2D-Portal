@@ -200,6 +200,29 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               </span>
             </Link>
 
+            <Link
+              to="/duty-on" 
+              className={`nav-link ${styles.navLink} ${ 
+                hideNavLinks ? styles.hide : ""           
+              } ${location.pathname === "/duty-on" ? styles.activeNav : ""}`} 
+              style={                                  
+                location.pathname === "/duty-on"        
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" } 
+                  : {}                               
+              }
+            >
+              <ListStartIcon                   
+                className={`${styles.iconNav} ${
+                  location.pathname === "/duty-on"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
+              />
+              <span className={styles.iconText} style={{ color: navbarStyle.textColor }}>
+                Duty-On                                  
+              </span>
+            </Link>
+
              <Link
               to="/settings" 
               className={`nav-link ${styles.navLink} ${ 

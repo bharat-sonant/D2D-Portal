@@ -82,15 +82,15 @@ const DutyOn = () => {
     const result = await startAssignmentAction(setIsSaving, ward,selectedVehicle, selectedDriver, selectedHelper);
     if(result.status === "success"){
        handleClear();
-       setActiveVehicles((prev) =>
-        prev.filter((v) => v.vehicleNo !== selectedVehicle)
-      );
-      setActiveDrivers((prev) =>
-        prev.filter((d) => d.Id !== selectedDriver.Id)
-      );
-      setActiveHelpers((prev) =>
-        prev.filter((h) => h.Id !== selectedHelper.Id)
-      );
+      //  setActiveVehicles((prev) =>
+      //   prev.filter((v) => v.vehicleNo !== selectedVehicle)
+      // );
+      // setActiveDrivers((prev) =>
+      //   prev.filter((d) => d.Id !== selectedDriver.Id)
+      // );
+      // setActiveHelpers((prev) =>
+      //   prev.filter((h) => h.Id !== selectedHelper.Id)
+      // );
     }
   }
 
