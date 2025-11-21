@@ -11,9 +11,10 @@ import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penal
 import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoring";
 import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 import Settings from "../MobileAppPages/Settings/Pages/Settings";
+import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
 
 const RouterComponent = () => {
-  
+
 
   const loginStatus = localStorage.getItem("islogin");
   const loggedInempCode = localStorage.getItem("empCode");
@@ -90,11 +91,11 @@ const RouterComponent = () => {
           }
         />
 
-            <Route
+        <Route
           path="/work-monitoring"
           element={
             <>
-              <WorkMonitoring/>
+              <WorkMonitoring />
             </>
           }
         />
@@ -102,24 +103,33 @@ const RouterComponent = () => {
           path="/locationTracker"
           element={
             <>
-              <LocationTracker/>
+              <LocationTracker />
             </>
           }
         />
-          <Route
+        <Route
           path="/Settings"
           element={
             <>
               <MainLayout />
-              <Settings/>
+              <Settings />
+            </>
+          }
+        />
+
+        <Route
+          path="/AssignmentSummary"
+          element={
+            <>
+              <AssignmentSummary />
             </>
           }
         />
       </Routes>
-    
-      
 
-          </>
+
+
+    </>
   );
 };
 const AutoLogoutComponent = ({
