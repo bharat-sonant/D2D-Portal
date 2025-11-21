@@ -1,8 +1,10 @@
 /* Page center */
 .pageContainer {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     margin-top: 70px;
+    gap: 25px;
 }
 
 /* Card */
@@ -25,7 +27,7 @@
 .toggleWrapper {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* pushes toggle to right */
+    justify-content: space-between;
     margin-top: 10px;
 }
 
@@ -33,14 +35,9 @@
     font-size: 14px;
     font-weight: 500;
     font-family: 'Poppins', sans-serif;
-    margin-right: 20px;
 }
-:global(body.settingspage) .mobileFrame {
-  display: none !important;
-}
+
 /* Toggle switch box */
-
-
 .toggleSwitch {
     width: 70px;
     height: 30px;
@@ -75,4 +72,65 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Help text */
+.helpText {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Input section layout */
+.inputRow {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Label for input */
+.inputLabel {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Textbox */
+.textInput {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.textInput:focus {
+    border-color: #0ab39c;
+    box-shadow: 0 0 4px rgba(10, 179, 156, 0.3);
+}
+
+/* Save button aligned right */
+.saveRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.saveButton {
+    padding: 10px 14px;
+    background-color: #0ab39c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    width: 120px;
+}
+
+.saveButton:hover {
+    background-color: #089e8a;
 }
