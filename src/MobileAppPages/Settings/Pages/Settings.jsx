@@ -1,45 +1,68 @@
 import React, { useEffect, useState } from "react";
-import style from "../../Settings/Style/Settings.module.css";
+import style from "../../Settings/Style/Settings.module.css"
 import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
 import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
+import {savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue} from "../../Settings/Services/PaneltiesViaWebServise";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { setAlertMessage } from "../../../common/common";
 
+
 const Settings = () => {
 
-    const [isOn, setIsOn] = useState(false);
+    const [isAssignmentOn, setIsAssignmentOn] = useState(false);
+    const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
+
     const [webviewUrl, setWebviewUrl] = useState("");
     const [urlError, setUrlError] = useState("");
 
     const city = localStorage.getItem('city') || "DevTest";
 
-    // -------------------- Firebase Init --------------------
+    /* ----------------------------------------------------
+       Firebase Init
+    ---------------------------------------------------- */
     useEffect(() => {
         if (city) {
             localStorage.setItem("city", city);
             let config = getCityFirebaseConfig(city);
             connectFirebase(config, city);
-        } else {
-            localStorage.setItem("city", "DevTest");
         }
     }, [city]);
 
-    // -------------------- Load Toggle Value --------------------
-    useEffect(() => {
-        async function fetchSetting() {
-            const response = await getValue();
 
-            if (response.status === "success") {
-                setIsOn(response.data.value === "yes");
-            } else {
-                setIsOn(false);
-            }
+    /* ----------------------------------------------------
+       Load Daily Assignment Toggle
+    ---------------------------------------------------- */
+    useEffect(() => {
+        async function fetchAssignmentSetting() {
+            const response = await getValue();
+            setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
         }
-        fetchSetting();
+        fetchAssignmentSetting();
     }, []);
 
-    // -------------------- Load Webview URL --------------------
+
+    /* ----------------------------------------------------
+       Load Penalties Toggle
+    ---------------------------------------------------- */
+    useEffect(() => {
+        async function fetchPenaltiesSetting() {
+            const response = await getPaneltiesValue();
+
+            if (response.status === "success" && response.data.value === "yes") {
+                setIsPenaltiesOn(true);
+            } else {
+                setIsPenaltiesOn(false);
+            }
+        }
+
+        fetchPenaltiesSetting();
+    }, []);
+
+
+    /* ----------------------------------------------------
+       Load Webview URL
+    ---------------------------------------------------- */
     useEffect(() => {
         async function loadURL() {
             const res = await getWebviewUrl();
@@ -47,36 +70,67 @@ const Settings = () => {
             if (res.status === "success" && res.data?.url) {
                 setWebviewUrl(res.data.url);
             } else {
-                setWebviewUrl(""); // no URL found → empty box
+                setWebviewUrl("");
             }
         }
         loadURL();
     }, []);
 
-    // -------------------- Toggle Handler --------------------
-    const handleToggle = () => {
-        const newValue = !isOn;
-        setIsOn(newValue);
 
-        if (newValue) {
-            saveValue();
+    /* ----------------------------------------------------
+       Assignment Toggle Handler (with rollback)
+    ---------------------------------------------------- */
+    const handleAssignmentToggle = async () => {
+        const newValue = !isAssignmentOn;
+        setIsAssignmentOn(newValue);
+
+        let res;
+        if (newValue) res = await saveValue();
+        else res = await RemoveValue();
+
+        if (res?.status !== "success") {
+            setIsAssignmentOn(isAssignmentOn); // rollback
+            setAlertMessage("error", "Failed to update Daily Assignment");
         } else {
-            RemoveValue();
+            setAlertMessage("success", "Daily Assignment updated");
         }
     };
 
-    // -------------------- Save URL Handler --------------------
+
+    /* ----------------------------------------------------
+       Penalties Toggle Handler (with rollback)
+    ---------------------------------------------------- */
+    const handlePenaltiesToggle = async () => {
+        const newValue = !isPenaltiesOn;
+        setIsPenaltiesOn(newValue);
+
+        let res;
+        if (newValue)
+            res = await savePaneltiesValue();
+        else
+            res = await RemovePaneltiesValue();
+
+        if (res?.status !== "success") {
+            setIsPenaltiesOn(isPenaltiesOn); // rollback
+            setAlertMessage("error", "Failed to update Penalties");
+        } else {
+            setAlertMessage("success", "Penalties updated");
+        }
+    };
+
+
+    /* ----------------------------------------------------
+       Save Webview URL
+    ---------------------------------------------------- */
     const saveUrlHandler = async () => {
 
         setUrlError("");
 
-        // Empty validation
         if (!webviewUrl.trim()) {
             setUrlError("URL cannot be empty");
             return;
         }
 
-        // URL format validation
         const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
 
         if (!urlPattern.test(webviewUrl.trim())) {
@@ -93,33 +147,58 @@ const Settings = () => {
         }
     };
 
-    // -------------------- Page --------------------
+
+    /* ----------------------------------------------------
+       PAGE UI
+    ---------------------------------------------------- */
     return (
         <div className={style.pageContainer}>
 
-            {/* ================= CARD 1 ================= */}
+            {/* ================= DAILY ASSIGNMENT ================= */}
             <div className={style.card}>
-                <h3 className={style.cardTitle}>Settings</h3>
+                <h3 className={style.cardTitle}>Daily Assignment</h3>
 
                 <div className={style.toggleWrapper}>
                     <label className={style.toggleLabel}>DailyAssignmentViaWeb</label>
 
                     <div
-                        className={`${style.toggleSwitch} ${isOn ? style.on : style.off}`}
-                        onClick={handleToggle}
+                        className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`}
+                        onClick={handleAssignmentToggle}
                     >
                         <div className={style.toggleCircle}>
-                            {isOn ? "ON" : "OFF"}
+                            {isAssignmentOn ? "ON" : "OFF"}
                         </div>
                     </div>
                 </div>
 
                 <p className={style.helpText}>
-                    When ON, Daily Assignment clicks redirect to webview (AssignmentSummary).
+                    When ON, Daily Assignment opens WebView (AssignmentSummary).
                 </p>
             </div>
 
-            {/* ================= CARD 2 ================= */}
+            {/* ================= PENALTIES ================= */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>Penalties</h3>
+
+                <div className={style.toggleWrapper}>
+                    <label className={style.toggleLabel}>PenaltiesViaWeb</label>
+
+                    <div
+                        className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`}
+                        onClick={handlePenaltiesToggle}
+                    >
+                        <div className={style.toggleCircle}>
+                            {isPenaltiesOn ? "ON" : "OFF"}
+                        </div>
+                    </div>
+                </div>
+
+                <p className={style.helpText}>
+                    When ON, Penalties will open in WebView.
+                </p>
+            </div>
+
+            {/* ================= URL CONFIG ================= */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
 
@@ -133,7 +212,7 @@ const Settings = () => {
                         value={webviewUrl}
                         onChange={(e) => {
                             setWebviewUrl(e.target.value);
-                            setUrlError(""); // clear inline error during typing
+                            setUrlError("");
                         }}
                     />
                 </div>
@@ -145,7 +224,7 @@ const Settings = () => {
                 )}
 
                 <p className={style.helpText}>
-                    Enter full URL of portal AssignmentSummary page (https://...).
+                    Enter full AssignmentSummary webview URL.
                 </p>
 
                 <div className={style.saveRow}>
