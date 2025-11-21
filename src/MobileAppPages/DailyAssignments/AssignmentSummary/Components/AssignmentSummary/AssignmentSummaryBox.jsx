@@ -1,28 +1,12 @@
-import { useEffect, useState } from 'react';
 import styles from '../../Styles/AssignmentSummary/AssignmentSummaryBox.module.css';
-import { getWards } from '../../Action/AssignmentSummary/AssignmentSummaryAction';
 import WardList from './WardList';
 
-const AssignmentSummaryBox = () => {
-  const [wardsList, setWardsList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showWards, setShowWards] = useState(false);
-
-  useEffect(() => {
-    getWards(setWardsList, setLoading);
-  }, [])
-
-  const handleBoxClick = (status) => {
-    if (status.id === 1) {
-      setShowWards(true);
-    };
-  };
-
+const AssignmentSummaryBox = (props) => {
   const statusData = [
     {
       id: 1,
       title: 'Not Started',
-      count: wardsList ? wardsList.length : '0',
+      count: props.wardsList ? props.wardsList.length : '0',
       colorClass: 'notStarted'
     },
     {
@@ -47,7 +31,6 @@ const AssignmentSummaryBox = () => {
           className={`${styles.card} ${styles[status.colorClass + 'Card']}`}
           role="button"
           tabIndex={0}
-          onClick={() => handleBoxClick(status)}
         >
           <div className={styles.number}>{status.count}</div>
           <div className={styles.label}>
@@ -55,9 +38,10 @@ const AssignmentSummaryBox = () => {
           </div>
         </div>
       ))}
-      {showWards && (
-        <WardList wards={wardsList} loading={loading} />
-      )}
+      <WardList
+        wards={props.wardsList}
+        loading={props.loading}
+      />
     </div>
   );
 };

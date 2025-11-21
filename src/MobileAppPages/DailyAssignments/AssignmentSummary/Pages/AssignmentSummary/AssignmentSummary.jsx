@@ -1,16 +1,24 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '../../Styles/AssignmentSummary/AssignmentSummary.module.css'
 import { ArrowLeft } from 'lucide-react'
 import AssignmentSummaryBox from '../../Components/AssignmentSummary/AssignmentSummaryBox'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getCityFirebaseConfig } from '../../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../../firebase/firebaseService';
+import * as action from '../../Action/AssignmentSummary/AssignmentSummaryAction';
 
 const AssignmentSummary = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const city = queryParams.get("city") || "DevTest";
     const navigate = useNavigate();
+    const [wardsList, setWardsList] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        action.getWards(setWardsList, setLoading);
+        action.checkNotAssignedValue(setWardsList, setLoading);
+    }, [])
 
     useEffect(() => {
         if (city) {
@@ -49,7 +57,10 @@ const AssignmentSummary = () => {
 
                     <h1 className={styles.title}>Assignment Summary</h1>
                 </div>
-                <AssignmentSummaryBox />
+                <AssignmentSummaryBox
+                    wardsList={wardsList}
+                    loading={loading}
+                />
             </div>
         </div>
     )
