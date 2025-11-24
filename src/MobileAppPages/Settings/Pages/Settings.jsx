@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import style from "../../Settings/Style/Settings.module.css"
+import style from "../../Settings/Style/Settings.module.css";
 
 import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
 
 import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
+import { savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue } from "../../Settings/Services/PaneltiesViaWebServise";
 
-import {savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue} from "../../Settings/Services/PaneltiesViaWebServise";
+import { getWorkMonitoringValue,saveWorkMonitoringValue,removeWorkMonitoringValue } from "../../Settings/Services/WorkMonitoringViaWebService";
 
-import {getWorkMonitoringValue,saveWorkMonitoringValue,RemoveWorkMonitoringValue, removeWorkMonitoringValue} from "../../Settings/Services/WorkMonitoringViaWebService";
+// ⭐ NEW SERVICES (YOU MUST CREATE THESE)
+import { getNavigatorSetting,saveNavigatorSetting, removeNavigatorSetting } from "../../Settings/Services/NavigatorApplicationSettingsService";
 
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
@@ -17,9 +19,10 @@ const Settings = () => {
 
     const [isAssignmentOn, setIsAssignmentOn] = useState(false);
     const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
-
-    // ⭐ now controlled by Firebase
     const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
+
+    // ⭐ NEW NAVIGATOR STATE
+    const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
 
     const [webviewUrl, setWebviewUrl] = useState("");
     const [urlError, setUrlError] = useState("");
@@ -40,7 +43,7 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       Load Daily Assignment Toggle
+       Load Daily Assignment
     ---------------------------------------------------- */
     useEffect(() => {
         async function fetchAssignmentSetting() {
@@ -52,53 +55,50 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       Load Penalties Toggle
+       Load Penalties
     ---------------------------------------------------- */
     useEffect(() => {
         async function fetchPenaltiesSetting() {
             const response = await getPaneltiesValue();
-
-            if (response.status === "success" && response.data.value === "yes") {
-                setIsPenaltiesOn(true);
-            } else {
-                setIsPenaltiesOn(false);
-            }
+            setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
         }
-
         fetchPenaltiesSetting();
     }, []);
 
 
     /* ----------------------------------------------------
-       ⭐ Load Work Monitoring Toggle (NEW)
+       Load Work Monitoring
     ---------------------------------------------------- */
     useEffect(() => {
         async function fetchWorkMonitoringSetting() {
             const response = await getWorkMonitoringValue();
-
-            if (response.status === "success" && response.data.value === "yes") {
-                setIsWorkMonitoringOn(true);
-            } else {
-                setIsWorkMonitoringOn(false);
-            }
+            setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
         }
-
         fetchWorkMonitoringSetting();
     }, []);
 
 
     /* ----------------------------------------------------
-       Load Webview URL
+       ⭐ Load NavigatorApplicationSettings
+    ---------------------------------------------------- */
+    useEffect(() => {
+        async function fetchNavigatorSetting() {
+            const response = await getNavigatorSetting();
+            // console.log(response,"hjhj");
+            
+            setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
+        }
+        fetchNavigatorSetting();
+    }, []);
+
+
+    /* ----------------------------------------------------
+       Load URL
     ---------------------------------------------------- */
     useEffect(() => {
         async function loadURL() {
             const res = await getWebviewUrl();
-
-            if (res.status === "success" && res.data?.url) {
-                setWebviewUrl(res.data.url);
-            } else {
-                setWebviewUrl("");
-            }
+            setWebviewUrl(res.status === "success" && res.data?.url ? res.data.url : "");
         }
         loadURL();
     }, []);
@@ -111,9 +111,7 @@ const Settings = () => {
         const newValue = !isAssignmentOn;
         setIsAssignmentOn(newValue);
 
-        let res;
-        if (newValue) res = await saveValue();
-        else res = await RemoveValue();
+        const res = newValue ? await saveValue() : await RemoveValue();
 
         if (res?.status !== "success") {
             setIsAssignmentOn(isAssignmentOn);
@@ -131,11 +129,7 @@ const Settings = () => {
         const newValue = !isPenaltiesOn;
         setIsPenaltiesOn(newValue);
 
-        let res;
-        if (newValue)
-            res = await savePaneltiesValue();
-        else
-            res = await RemovePaneltiesValue();
+        const res = newValue ? await savePaneltiesValue() : await RemovePaneltiesValue();
 
         if (res?.status !== "success") {
             setIsPenaltiesOn(isPenaltiesOn);
@@ -147,23 +141,37 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       ⭐ Work Monitoring Toggle Handler (with service)
+       Work Monitoring Toggle Handler
     ---------------------------------------------------- */
     const handleWorkMonitoringToggle = async () => {
         const newValue = !isWorkMonitoringOn;
         setIsWorkMonitoringOn(newValue);
 
-        let res;
-        if (newValue)
-            res = await saveWorkMonitoringValue();
-        else
-            res = await removeWorkMonitoringValue();
+        const res = newValue ? await saveWorkMonitoringValue() : await removeWorkMonitoringValue();
 
         if (res?.status !== "success") {
             setIsWorkMonitoringOn(isWorkMonitoringOn);
             setAlertMessage("error", "Failed to update Work Monitoring");
         } else {
             setAlertMessage("success", "Work Monitoring updated");
+        }
+    };
+
+
+    /* ----------------------------------------------------
+       ⭐ NavigatorApplicationSettings Toggle Handler
+    ---------------------------------------------------- */
+    const handleNavigatorToggle = async () => {
+        const newValue = !isNavigatorSettingOn;
+        setIsNavigatorSettingOn(newValue);
+
+        const res = newValue ? await saveNavigatorSetting() : await removeNavigatorSetting();
+
+        if (res?.status !== "success") {
+            setIsNavigatorSettingOn(isNavigatorSettingOn);
+            setAlertMessage("error", "Failed to update Navigator Setting");
+        } else {
+            setAlertMessage("success", "Navigator Setting updated");
         }
     };
 
@@ -241,7 +249,7 @@ const Settings = () => {
             </div>
 
 
-            {/* ================= ⭐ WORK MONITORING ================= */}
+            {/* ================= WORK MONITORING ================= */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Work Monitoring</h3>
 
@@ -254,6 +262,25 @@ const Settings = () => {
                     >
                         <div className={style.toggleCircle}>
                             {isWorkMonitoringOn ? "ON" : "OFF"}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            {/* ================= ⭐ NAVIGATOR APPLICATION SETTINGS ================= */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>Navigator Application Settings</h3>
+
+                <div className={style.toggleWrapper}>
+                    <label className={style.toggleLabel}>NavigationViaEmployeeCode</label>
+
+                    <div
+                        className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`}
+                        onClick={handleNavigatorToggle}
+                    >
+                        <div className={style.toggleCircle}>
+                            {isNavigatorSettingOn ? "ON" : "OFF"}
                         </div>
                     </div>
                 </div>
