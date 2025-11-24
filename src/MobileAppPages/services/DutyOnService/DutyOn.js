@@ -46,11 +46,12 @@ export const getActiveHelpers = () => {
     try{
       const result = await db.getData('ActiveHelpers');
 
-      // const activeDrivers = Object.values(result)
-      const activeHelpers = Object.entries(result).map(([Key, value])=>({
-        Id : Key,
-        name: value.name
-      }))
+      const activeHelpers = Object.entries(result)
+        .filter(([key, value]) => value.taskAssigned !== "yes")   
+        .map(([key, value]) => ({
+          Id: key,
+          name: value.name,
+        }));
 
       resolve(common.setResponse(success, "fetched active drivers successfully", activeHelpers))
     }catch(error){
@@ -63,20 +64,23 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
   return new Promise(async(resolve)=> {
     try{
       
-      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, workAssignmentResult] = await Promise.all([
+      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, workAssignmentResult] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),
         SaveDriverTaskStatus(selectedDriver),
         saveHelperAssignment(selectedHelper, ward, selectedVehicle),
+        saveHelperTaskStatus(selectedHelper),
         saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper)
       ])
       if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
       if (isFail(driverTaskStatusResult)) return resolve(driverTaskStatusResult);
+      if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult);
+      if(isFail(helperTaskStatusResult)) return resolve(helperTaskStatusResult);
       if (isFail(workAssignmentResult)) return resolve(workAssignmentResult);
-      if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult)
       const finalResult = {
         driverAssignment: driverAssignmentResult,
         driverTaskStatus : driverTaskStatusResult,
         helperAssignment: helperAssignmentResult,
+        helperTaskStatus : helperTaskStatusResult,
         workAssignment: workAssignmentResult,
       }
 
@@ -113,7 +117,22 @@ const SaveDriverTaskStatus = async(selectedDriver) => {
 
     return result?.success
         ? result
-        : common.setResponse(fail, "driver assignment failed", result);
+        : common.setResponse(fail, "driver task assignment status save failed", result);
+}
+
+const saveHelperTaskStatus = async(selectedHelper) => {
+  const path = `ActiveHelpers/${selectedHelper.Id}`
+  const payload = {
+    taskAssigned : "yes"
+  }
+
+  const result = await db.saveData(path, payload);
+
+  return result.success
+      ? result
+      : common.setResponse(fail, "Helper task assignment status save failed", result)
+
+
 }
 
 const saveHelperAssignment = async(selectedHelper, ward, selectedVehicle) => {

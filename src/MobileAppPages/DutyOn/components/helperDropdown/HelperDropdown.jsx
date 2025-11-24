@@ -49,11 +49,11 @@ const HelperDropdown = ({ selectedHelper, setSelectedHelper, helperError, setErr
 
        const handleOpen = () => {
             setOpen(true);
-      
-            if (!hasFetched) {
-            fetchAllActiveHelpers(setLoading, setActiveHelpers);
-            setHasFetched(true);
-          }
+       fetchAllActiveHelpers(setLoading, setActiveHelpers);
+          //   if (!hasFetched) {
+          //   fetchAllActiveHelpers(setLoading, setActiveHelpers);
+          //   setHasFetched(true);
+          // }
           }
       
   

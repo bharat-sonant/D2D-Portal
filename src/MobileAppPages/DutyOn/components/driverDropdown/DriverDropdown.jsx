@@ -64,11 +64,11 @@ const DriverDropdown = ({selectedDriver, setSelectedDriver, driverError, setErro
 
     const handleOpen = () => {
       setOpen(true);
-
-      if (!hasFetched) {
       fetchAllActiveDrivers(setLoading, setActiveDrivers);
-      setHasFetched(true);
-    }
+    //   if (!hasFetched) {
+    //   
+    //   setHasFetched(true);
+    // }
     }
 
     return (
