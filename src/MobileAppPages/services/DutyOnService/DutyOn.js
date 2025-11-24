@@ -9,10 +9,13 @@ export const getAllActiveVehicles = () => {
     try{
       const result = await db.getData('Vehicles')
 
-      const vehicleList = Object.entries(result).map(([vehicleNo, data])=>({
-        vehicleNo,
-        ...data
-      }))
+      const vehicleList = Object.entries(result)
+  .filter(([vehicleNo, data]) => data.taskAssigned !== "yes")   
+  .map(([vehicleNo, data]) => ({
+    vehicleNo,
+    ...data
+  }));
+
 
       resolve(common.setResponse(success, "vehicels fetched successfully", vehicleList))
     }catch(error){
@@ -64,11 +67,12 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
   return new Promise(async(resolve)=> {
     try{
       
-      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, workAssignmentResult] = await Promise.all([
+      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, vehicleTaskStatusResult, workAssignmentResult] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),
         SaveDriverTaskStatus(selectedDriver),
         saveHelperAssignment(selectedHelper, ward, selectedVehicle),
         saveHelperTaskStatus(selectedHelper),
+        saveVehicleTaskStatus(selectedVehicle),
         saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper)
       ])
       if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
@@ -131,8 +135,19 @@ const saveHelperTaskStatus = async(selectedHelper) => {
   return result.success
       ? result
       : common.setResponse(fail, "Helper task assignment status save failed", result)
+}
 
+const saveVehicleTaskStatus = async(selectedVehicle) => {
+  const path = `Vehicles/${selectedVehicle}`
+  const payload = {
+    taskAssigned : "yes"
+  }
 
+  const result = await db.saveData(path, payload);
+
+  return result.success
+      ? result
+      : common.setResponse(fail, "Vehicle task assignment status save failed", result)
 }
 
 const saveHelperAssignment = async(selectedHelper, ward, selectedVehicle) => {

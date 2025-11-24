@@ -45,11 +45,11 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
 
    const handleOpen = () => {
         setOpen(true);
-  
-        if (!hasFetched) {
-        fetchAllVehicles(setLoading, setActiveVehicles);
-        setHasFetched(true);
-      }
+    fetchAllVehicles(setLoading, setActiveVehicles);
+      //   if (!hasFetched) {
+      //   fetchAllVehicles(setLoading, setActiveVehicles);
+      //   setHasFetched(true);
+      // }
       }
   
 
