@@ -4,6 +4,23 @@ const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
 
+const getDateTimeDetails = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const date = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate()
+  ).padStart(2, "0")}`;
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(
+    now.getMinutes()
+  ).padStart(2, "0")}`;
+  const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}/${year} ${time}`;
+
+  return { now, year, monthName, date, time, formattedDate };
+};
+
 export const getAllActiveVehicles = () => {
   return new Promise(async(resolve)=> {
     try{
@@ -66,26 +83,32 @@ export const getActiveHelpers = () => {
 export const startAssignmentService = (ward, selectedVehicle, selectedDriver, selectedHelper) => {
   return new Promise(async(resolve)=> {
     try{
-      
-      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, vehicleTaskStatusResult, workAssignmentResult] = await Promise.all([
+      console.log('ward', ward)
+      const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, vehicleTaskStatusResult, workAssignmentResult, assignmentSummaryResult] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),
         SaveDriverTaskStatus(selectedDriver),
         saveHelperAssignment(selectedHelper, ward, selectedVehicle),
         saveHelperTaskStatus(selectedHelper),
         saveVehicleTaskStatus(selectedVehicle),
-        saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper)
+        saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper),
+        saveAssignmentSummaryStatus(year, monthName, date, ward),
       ])
       if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
       if (isFail(driverTaskStatusResult)) return resolve(driverTaskStatusResult);
       if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult);
       if(isFail(helperTaskStatusResult)) return resolve(helperTaskStatusResult);
+      if(isFail(vehicleTaskStatusResult)) return resolve(vehicleTaskStatusResult);
       if (isFail(workAssignmentResult)) return resolve(workAssignmentResult);
+      if(isFail(assignmentSummaryResult)) return resolve(assignmentSummaryResult);
       const finalResult = {
         driverAssignment: driverAssignmentResult,
         driverTaskStatus : driverTaskStatusResult,
         helperAssignment: helperAssignmentResult,
         helperTaskStatus : helperTaskStatusResult,
+        vehicleTaskStatus : vehicleTaskStatusResult,
         workAssignment: workAssignmentResult,
+        assignmentSummary : assignmentSummaryResult,
       }
 
       return resolve(
@@ -148,6 +171,19 @@ const saveVehicleTaskStatus = async(selectedVehicle) => {
   return result.success
       ? result
       : common.setResponse(fail, "Vehicle task assignment status save failed", result)
+}
+
+const saveAssignmentSummaryStatus = async(year, monthName, date, ward) => {
+  const path = `AssignmentData/AssignmentSummary/${year}/${monthName}/${date}/Task`;
+  const payload ={
+    [ward] : "Assigned"
+  }
+
+  const result = await db.saveData(path, payload);
+
+  return result.success
+    ? result
+    : common.setResponse(fail, "assignment summary status update failed", result)
 }
 
 const saveHelperAssignment = async(selectedHelper, ward, selectedVehicle) => {
