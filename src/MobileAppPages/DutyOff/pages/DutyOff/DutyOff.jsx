@@ -1,13 +1,38 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../../styles/DutyOff.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getTaskDetails } from '../../../services/DutyOffService/DutyOff';
+import ConfirmationModal from '../../../../components/confirmationModal/ConfirmationModal';
 
 const DutyOff = () => {
+  const [isSaving, setIsSaving] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [details, setDetails] = useState({})
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const ward = queryParams.get("task") || "Govind";
+  //  const details = {
+  //   vehicle: "RJ14 GG 9921",
+  //   driver: "Mahesh Kumar",
+  //   helper: "Raju",
+  //   assignedAt: "24 Nov 2025, 08:45 AM"
+  // };
+
+  useEffect(() => {
+    getDetails(ward)
+  },[])
+
+  const getDetails = async(ward) => {
+    const result = await getTaskDetails(ward)
+    if(result.status === "success"){
+      setDetails(result.data)
+    }else{
+      setDetails({});
+    }
+  }
+
 
    const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
@@ -22,6 +47,14 @@ const DutyOff = () => {
     }
   };
 
+  const handleSubmit = async() => {
+    setShowModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+  }
+
   return (
       <div className={styles.pageContainer}>
       <div className={styles.header}>
@@ -31,10 +64,62 @@ const DutyOff = () => {
         <h1 className={styles.headerTitle}>Duty Off {ward}</h1>
       </div>
 
-      <div className={styles.centerMessage}>
-        Duty Off — Page coming soon. <br />
-        <span className={styles.highlight}>Selected Task : {ward}</span>
-      </div>
+        <div className={styles.contentContainer}>
+         <div className={styles.detailCard}>
+          <h2 className={styles.sectionTitle}>Assigned Details</h2>
+
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Ward:</span>
+            <span className={styles.value}>{ward}</span>
+          </div>
+
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Vehicle:</span>
+            <span className={styles.value}>{details.vehicle || "N/A"}</span>
+          </div>
+
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Driver:</span>
+            <span className={styles.value}>{details.driver || "N/A"}</span>
+          </div>
+
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Helper:</span>
+            <span className={styles.value}>{details.helper || "N/A"}</span>
+          </div>
+
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Assigned At:</span>
+            <span className={styles.value}>{details.assignedAt || "N/A"} </span>
+          </div>
+        </div>
+
+
+        <button
+          className={styles.submitButton}
+          onClick={handleSubmit}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <div className={styles.loaderWrapper}>
+              <span className={styles.loaderCircle}></span>
+              Saving...
+            </div>
+          ) : (
+            "Complete Task"
+          )}
+        </button>
+    </div>
+
+    <ConfirmationModal
+    visible={showModal}
+    title='Complete Task ?'
+    message='Are you sure you want to complete this task? This will mark the task as completed and release the vehicle/driver/helper.'
+    confirmText='Confirm'
+    cancelText='Cancel'
+    onConfirm={handleCloseModal}
+    onCancel={handleCloseModal}
+    />
 
      
     </div>
