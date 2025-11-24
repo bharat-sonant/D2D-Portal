@@ -19,7 +19,6 @@ const WardList = (props) => {
     const handleRouting = async(ward) => {
         setLoading(true);
         const result = await checkTaskStatus(ward);
-        setLoading(false);
         if(result.data === "Assigned"){
             goToDutyOff(ward)
         }else{
