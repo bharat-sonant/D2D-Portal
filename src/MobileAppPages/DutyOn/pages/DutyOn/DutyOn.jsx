@@ -10,12 +10,8 @@ import DriverDropdown from '../../components/driverDropdown/DriverDropdown';
 import HelperDropdown from '../../components/helperDropdown/HelperDropdown';
 
 const DutyOn = () => {
-  const [loading, setLoading] = useState(false)
-  const [activeVehicles, setActiveVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [activerDrivers, setActiveDrivers] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState('')
-  const [activeHelpers, setActiveHelpers] = useState([]);
   const [selectedHelper, setSelectedHelper] = useState('');
   const [isSaving, setIsSaving] = useState(false)
   const location = useLocation();
