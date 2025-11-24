@@ -2,8 +2,10 @@ import styles from '../../Styles/AssignmentSummary/WardList.module.css';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { checkTaskStatus } from '../../Action/AssignmentSummary/AssignmentSummaryAction';
+import { useState } from 'react';
 
 const WardList = (props) => {
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const goToDutyOn = (wardName) => {
@@ -15,7 +17,9 @@ const WardList = (props) => {
     }
 
     const handleRouting = async(ward) => {
+        setLoading(true);
         const result = await checkTaskStatus(ward);
+        setLoading(false);
         if(result.data === "Assigned"){
             goToDutyOff(ward)
         }else{
@@ -24,6 +28,14 @@ const WardList = (props) => {
     }
     return (
         <div className={styles.listContainer}>
+            {loading && (
+                <div className={styles.overlayLoader}>
+                    <div className={styles.spinner}></div>
+                    <p>Checking task...</p>
+                </div>
+            )}
+
+
 
             {props.loading ? (
                 <div className={styles.loaderContainer}>
