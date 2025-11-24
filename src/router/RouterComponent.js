@@ -13,6 +13,7 @@ import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
 import Settings from "../MobileAppPages/Settings/Pages/Settings";
 import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
 import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
+import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 
 const RouterComponent = () => {
 
@@ -101,6 +102,14 @@ const RouterComponent = () => {
           }
         />
 
+          <Route
+          path="/duty-off"
+          element={
+            <>
+              <DutyOff/>
+            </>
+          }
+        />
 
         <Route
           path="/work-monitoring"

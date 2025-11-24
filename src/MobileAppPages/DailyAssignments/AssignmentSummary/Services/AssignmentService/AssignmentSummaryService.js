@@ -2,6 +2,23 @@ import * as db from '../../../../../services/dbServices';
 import * as common from '../../../../../common/common';
 import dayjs from 'dayjs';
 
+const getDateTimeDetails = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const date = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate()
+  ).padStart(2, "0")}`;
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(
+    now.getMinutes()
+  ).padStart(2, "0")}`;
+  const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}/${year} ${time}`;
+
+  return { now, year, monthName, date, time, formattedDate };
+};
+
 export const getAllWards = async () => {
     return new Promise(async (resolve) => {
         try {
@@ -90,3 +107,18 @@ const pushDataInAssignmentSummary = () => {
             });
     });
 };
+
+export const getTaskStatus = async(ward) => {
+    const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+    return new Promise(async(resolve) => {
+        try{    
+            const path = `AssignmentData/AssignmentSummary/${year}/${monthName}/${date}/Task/${ward}`
+            const result = await db.getData(path);
+
+            resolve(common.setResponse("success", "task status fetched successfully", result))
+
+        }catch(error){
+            resolve(common.setResponse("fail", "failed to fetch task status"))
+        }
+    })
+}

@@ -1,4 +1,5 @@
-import { checkNotAssignedKey, getAllWards } from "../../Services/AssignmentService/AssignmentSummaryService"
+import { checkNotAssignedKey, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
+import * as common from '../../../../../common/common'
 
 export const getWards = (setWardsList, setLoading) => {
     getAllWards().then((response) => {
@@ -22,3 +23,16 @@ export const checkNotAssignedValue = (setWardsList, setLoading) => {
         setLoading(false);
     });
 };
+
+export const checkTaskStatus = async(ward) => {
+    try{
+        const result = await getTaskStatus(ward);
+        if (result.status !== "success") {
+              common.setAlertMessage("error", result.message);
+        }
+        return result;
+    }catch(error){
+        common.setResponse('fail', 'failed to fetch task status')
+        return { status: "fail" };
+    }
+}
