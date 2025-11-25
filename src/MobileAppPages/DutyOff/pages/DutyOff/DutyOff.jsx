@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import styles from '../../styles/DutyOff.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getTaskDetails } from '../../../services/DutyOffService/DutyOff';
+import { completeAssignment, getTaskDetails } from '../../../services/DutyOffService/DutyOff';
 import ConfirmationModal from '../../../../components/confirmationModal/ConfirmationModal';
+import { CompleteAssignmentAction, getDutyOffDetails } from '../../actions/DutyOffAction';
 
 const DutyOff = () => {
   const [isSaving, setIsSaving] = useState(false)
@@ -13,24 +14,13 @@ const DutyOff = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const ward = queryParams.get("task") || "Govind";
-  //  const details = {
-  //   vehicle: "RJ14 GG 9921",
-  //   driver: "Mahesh Kumar",
-  //   helper: "Raju",
-  //   assignedAt: "24 Nov 2025, 08:45 AM"
-  // };
 
   useEffect(() => {
     getDetails(ward)
   },[])
 
   const getDetails = async(ward) => {
-    const result = await getTaskDetails(ward)
-    if(result.status === "success"){
-      setDetails(result.data)
-    }else{
-      setDetails({});
-    }
+    await getDutyOffDetails(ward, setDetails);
   }
 
 
@@ -46,6 +36,11 @@ const DutyOff = () => {
       navigate(-1);
     }
   };
+
+  const handleConfirm = async()=> {
+    await CompleteAssignmentAction(ward, details.vehicle, details.driver, details.helper);
+    setShowModal(false);
+  }
 
   const handleSubmit = async() => {
     setShowModal(true)
@@ -117,7 +112,7 @@ const DutyOff = () => {
     message='Are you sure you want to complete this task? This will mark the task as completed and release the vehicle/driver/helper.'
     confirmText='Confirm'
     cancelText='Cancel'
-    onConfirm={handleCloseModal}
+    onConfirm={handleConfirm}
     onCancel={handleCloseModal}
     />
 

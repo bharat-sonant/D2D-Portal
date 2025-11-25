@@ -4,7 +4,7 @@ const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
 
-const getDateTimeDetails = () => {
+export const getDateTimeDetails = () => {
   const now = new Date();
   const year = now.getFullYear();
   const monthName = now.toLocaleString("default", { month: "long" });
