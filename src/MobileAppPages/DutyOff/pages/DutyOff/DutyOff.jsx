@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import styles from '../../styles/DutyOff.module.css'
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { completeAssignment, getTaskDetails } from '../../../services/DutyOffService/DutyOff';
 import ConfirmationModal from '../../../../components/confirmationModal/ConfirmationModal';
 import { CompleteAssignmentAction, getDutyOffDetails } from '../../actions/DutyOffAction';
 
@@ -40,6 +39,7 @@ const DutyOff = () => {
   const handleConfirm = async()=> {
     await CompleteAssignmentAction(ward, details.vehicle, details.driver, details.helper);
     setShowModal(false);
+    navigate('/AssignmentSummary')
   }
 
   const handleSubmit = async() => {
