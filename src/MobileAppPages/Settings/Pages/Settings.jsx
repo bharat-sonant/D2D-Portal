@@ -1,112 +1,99 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Settings/Style/Settings.module.css";
-
 import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
-
 import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
 import { savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue } from "../../Settings/Services/PaneltiesViaWebServise";
-
-import { getWorkMonitoringValue,saveWorkMonitoringValue,removeWorkMonitoringValue } from "../../Settings/Services/WorkMonitoringViaWebService";
-
-// ⭐ NEW SERVICES (YOU MUST CREATE THESE)
-import { getNavigatorSetting,saveNavigatorSetting, removeNavigatorSetting } from "../../Settings/Services/NavigatorApplicationSettingsService";
-
+import { getWorkMonitoringValue, saveWorkMonitoringValue, removeWorkMonitoringValue } from "../../Settings/Services/WorkMonitoringViaWebService";
+import { getNavigatorSetting, saveNavigatorSetting, removeNavigatorSetting } from "../../Settings/Services/NavigatorApplicationSettingsService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { setAlertMessage } from "../../../common/common";
 
 const Settings = () => {
 
+    /* ----------------------------------------------------
+       STATES
+    ---------------------------------------------------- */
     const [isAssignmentOn, setIsAssignmentOn] = useState(false);
     const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
     const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
-
-    // ⭐ NEW NAVIGATOR STATE
     const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
 
     const [webviewUrl, setWebviewUrl] = useState("");
     const [urlError, setUrlError] = useState("");
 
+    const [loader, setLoader] = useState(false);
+    const [pageLoader, setPageLoader] = useState(true); // ⭐ MAIN LOADER
+
     const city = localStorage.getItem('city') || "DevTest";
 
 
     /* ----------------------------------------------------
-       Firebase Init
+       LOAD FUNCTIONS (these were inside useEffect earlier)
     ---------------------------------------------------- */
-    useEffect(() => {
+
+    const initFirebase = async () => {
         if (city) {
             localStorage.setItem("city", city);
             let config = getCityFirebaseConfig(city);
             connectFirebase(config, city);
         }
-    }, [city]);
+    };
+    const loadAssignment = async () => {
+        const response = await getValue(setLoader);
+        setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
+    };
 
+    const loadPenalties = async () => {
+        const response = await getPaneltiesValue(setLoader);
+        setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
+    };
+
+    const loadWorkMonitoring = async () => {
+        const response = await getWorkMonitoringValue(setLoader);
+        setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
+    };
+
+    const loadNavigator = async () => {
+        const response = await getNavigatorSetting(setLoader);
+        setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
+    };
+
+    const loadWebviewURL = async () => {
+        const res = await getWebviewUrl(setLoader);
+        if (res.status === "success") {
+            setWebviewUrl(res.data.url);
+        } else {
+            setWebviewUrl("");
+        }
+    };
 
     /* ----------------------------------------------------
-       Load Daily Assignment
+       ⭐ SINGLE USE EFFECT (Merged all previous useEffects)
     ---------------------------------------------------- */
     useEffect(() => {
-        async function fetchAssignmentSetting() {
-            const response = await getValue();
-            setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
+        async function initialize() {
+            setPageLoader(true);
+
+            await initFirebase();
+            await loadAssignment();
+            await loadPenalties();
+            await loadWorkMonitoring();
+            await loadNavigator();
+            await loadWebviewURL();
+
+            setPageLoader(false);
         }
-        fetchAssignmentSetting();
+
+        initialize();
     }, []);
 
 
-    /* ----------------------------------------------------
-       Load Penalties
-    ---------------------------------------------------- */
-    useEffect(() => {
-        async function fetchPenaltiesSetting() {
-            const response = await getPaneltiesValue();
-            setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
-        }
-        fetchPenaltiesSetting();
-    }, []);
-
 
     /* ----------------------------------------------------
-       Load Work Monitoring
+       TOGGLE HANDLERS (Untouched)
     ---------------------------------------------------- */
-    useEffect(() => {
-        async function fetchWorkMonitoringSetting() {
-            const response = await getWorkMonitoringValue();
-            setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
-        }
-        fetchWorkMonitoringSetting();
-    }, []);
 
-
-    /* ----------------------------------------------------
-       ⭐ Load NavigatorApplicationSettings
-    ---------------------------------------------------- */
-    useEffect(() => {
-        async function fetchNavigatorSetting() {
-            const response = await getNavigatorSetting();
-            // console.log(response,"hjhj");
-            
-            setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
-        }
-        fetchNavigatorSetting();
-    }, []);
-
-
-    /* ----------------------------------------------------
-       Load URL
-    ---------------------------------------------------- */
-    useEffect(() => {
-        async function loadURL() {
-            const res = await getWebviewUrl();
-            setWebviewUrl(res.status === "success" && res.data?.url ? res.data.url : "");
-        }
-        loadURL();
-    }, []);
-
-
-    /* ----------------------------------------------------
-       Assignment Toggle Handler
-    ---------------------------------------------------- */
     const handleAssignmentToggle = async () => {
         const newValue = !isAssignmentOn;
         setIsAssignmentOn(newValue);
@@ -121,10 +108,6 @@ const Settings = () => {
         }
     };
 
-
-    /* ----------------------------------------------------
-       Penalties Toggle Handler
-    ---------------------------------------------------- */
     const handlePenaltiesToggle = async () => {
         const newValue = !isPenaltiesOn;
         setIsPenaltiesOn(newValue);
@@ -139,10 +122,6 @@ const Settings = () => {
         }
     };
 
-
-    /* ----------------------------------------------------
-       Work Monitoring Toggle Handler
-    ---------------------------------------------------- */
     const handleWorkMonitoringToggle = async () => {
         const newValue = !isWorkMonitoringOn;
         setIsWorkMonitoringOn(newValue);
@@ -157,10 +136,6 @@ const Settings = () => {
         }
     };
 
-
-    /* ----------------------------------------------------
-       ⭐ NavigatorApplicationSettings Toggle Handler
-    ---------------------------------------------------- */
     const handleNavigatorToggle = async () => {
         const newValue = !isNavigatorSettingOn;
         setIsNavigatorSettingOn(newValue);
@@ -177,10 +152,9 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       Save Webview URL
+       SAVE URL HANDLER
     ---------------------------------------------------- */
     const saveUrlHandler = async () => {
-
         setUrlError("");
 
         if (!webviewUrl.trim()) {
@@ -206,10 +180,32 @@ const Settings = () => {
 
 
     /* ----------------------------------------------------
-       PAGE UI
+       PAGE LOADER (Full Screen)
+    ---------------------------------------------------- */
+
+    if (pageLoader) {
+        return (
+            <div style={{
+                height: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "22px",
+                fontWeight: "bold"
+            }}>
+                Loading Settings...
+            </div>
+        );
+    }
+
+
+    /* ----------------------------------------------------
+       MAIN PAGE
     ---------------------------------------------------- */
     return (
         <div className={style.pageContainer}>
+
+            {loader && <div>Loading...</div>}
 
             {/* ================= DAILY ASSIGNMENT ================= */}
             <div className={style.card}>
@@ -229,14 +225,11 @@ const Settings = () => {
                 </div>
             </div>
 
-
             {/* ================= PENALTIES ================= */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Penalties</h3>
-
                 <div className={style.toggleWrapper}>
                     <label className={style.toggleLabel}>PenaltiesViaWeb</label>
-
                     <div
                         className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`}
                         onClick={handlePenaltiesToggle}
@@ -247,8 +240,6 @@ const Settings = () => {
                     </div>
                 </div>
             </div>
-
-
             {/* ================= WORK MONITORING ================= */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Work Monitoring</h3>
@@ -267,8 +258,7 @@ const Settings = () => {
                 </div>
             </div>
 
-
-            {/* ================= ⭐ NAVIGATOR APPLICATION SETTINGS ================= */}
+            {/* ================= NAVIGATOR SETTINGS ================= */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Navigator Application Settings</h3>
 
@@ -285,7 +275,6 @@ const Settings = () => {
                     </div>
                 </div>
             </div>
-
 
             {/* ================= URL CONFIG ================= */}
             <div className={style.card}>
@@ -321,7 +310,6 @@ const Settings = () => {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 };
