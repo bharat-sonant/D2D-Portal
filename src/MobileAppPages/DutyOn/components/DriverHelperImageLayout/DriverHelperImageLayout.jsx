@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import styles from '../../styles/DriverHelperImageLayout.module.css'
 import * as common from '../../../../common/common'
-// import { saveDriverHelperImage } from "../../../../services/StartAssignmentService/StartAssignment";
+import { saveDriverHelperImage } from '../../../services/DutyOnService/DutyOn'
 
 const DriverHelperImageLayout = (props) => {
   const driverInputRef = useRef(null);
@@ -53,16 +53,16 @@ const DriverHelperImageLayout = (props) => {
       const date = String(now.getDate()).padStart(2, "0");
 
       const formattedDate = `${year}-${month}-${date}`;
-      // const result = await saveDriverHelperImage(
-      //   selectedWard,
-      //   year,
-      //   monthName,
-      //   formattedDate,
-      //   blob
-      // );
-      // if (result === 'fail') {
-      //   common.setAlertMessage("error", "Image upload failed, please recapture.");
-      // }
+      const result = await saveDriverHelperImage(
+        selectedWard,
+        year,
+        monthName,
+        formattedDate,
+        blob
+      );
+      if (result === 'fail') {
+        common.setAlertMessage("error", "Image upload failed, please recapture.");
+      }
     } catch (error) {
       console.error(error);
       common.setAlertMessage("error", "Image upload failed, please recapture.");

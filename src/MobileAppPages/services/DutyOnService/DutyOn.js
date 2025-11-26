@@ -1,3 +1,4 @@
+import { ref } from 'firebase/storage';
 import * as common from '../../../common/common'
 import * as db from '../../../services/dbServices'
 const fail = 'fail'
@@ -214,3 +215,51 @@ const saveWorkAssignment = async(ward, selectedVehicle, selectedDriver, selected
         ? result
         : common.setResponse(fail, "work assignment failed", result);
 }
+
+export const saveDriverHelperImage = async (
+  selectedWard,
+  year,
+  month,
+  date,
+  file
+) => {
+  return new Promise(async (resolve) => {
+    try {
+      if (!selectedWard || !year || !month || !date || !file) {
+        resolve(
+          common.setResponse("fail", "Invalid Params !!!", {
+            selectedWard,
+            year,
+            month,
+            date,
+            file,
+          })
+        );
+        return;
+      }
+
+      const city = localStorage.getItem("city");
+      const storage = await db.getReadyStorage();
+      const ward = selectedWard !== "N/A" ? selectedWard : "Bharat";
+
+      const basePath = `${city}/DutyOnImages/${ward}/${year}/${month}/${date}`;
+      const fileRef = ref(storage, `${basePath}/1.jpg`);
+
+      await Promise.all([
+        db.uploadImageToStorage(file, fileRef)
+      ]);
+
+      resolve(
+        common.setResponse(
+          "success",
+          "Driver/Helper Image saved successfully",
+          {}
+        )
+      );
+    } catch (error) {
+      resolve(
+        common.setResponse("fail", "Failed to save Images", error)
+      );
+    }
+  });
+};
