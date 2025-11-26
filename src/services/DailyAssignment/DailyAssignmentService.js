@@ -1,5 +1,6 @@
 import * as db from '../dbServices';
 import * as common from '../../common/common';
+import dayjs from 'dayjs';
 
 const failStatus = "Fail";
 const successStatus = "Success";
@@ -156,4 +157,66 @@ export const getDutyOnOffList = (zone, date) => {
     });
 };
 
+export const getOrPushDailyAssignmentData = async (ward, date) => {
+    try {
+        const year = date.split("-")[0];
+        const monthNumber = Number(date.split("-")[1]);
+        const month = await common.getCurrentMonthName(monthNumber);
+
+        const assignmentPath = `AssignmentData/DailyWorkAssignmentDetails/${year}/${month}/${date}/${ward}`;
+        const wastePath = `WasteCollectionInfo/${ward}/${year}/${month}/${date}`;
+
+        // STEP 1: CHECK IF ALREADY EXISTS
+        const existingData = await db.getData(assignmentPath);
+        if (existingData) {
+            return common.setResponse(
+                "Success",
+                "Data found in DailyWorkAssignmentDetails",
+                existingData
+            );
+        }
+
+        // STEP 2: FETCH FROM WasteCollectionInfo
+        const wasteData = await db.getData(wastePath);
+
+        if (!wasteData || !wasteData.Summary) {
+            return common.setResponse("Fail", "No data found in WasteCollectionInfo", {});
+        }
+
+        const summary = wasteData.Summary;
+        const worker = wasteData.WorkerDetails || {};
+
+        // STEP 3: FORMAT LIKE YOUR REQUIRED STRUCTURE
+        const dataToSave = {
+            1: {
+                driver: worker.driverName,
+                helper: worker.helperName,
+                vehicle: worker.vehicle,
+
+                "duty-on-by": worker.driverName,
+                "duty-on-time": summary.dutyInTime,
+                dutyOnImg: summary.dutyOnImage,
+                dutyOnMeterImg: summary.dutyOnMeterImage,
+
+                "duty-off-by": worker.driverName,
+                "duty-off-time": summary.dutyOutTime,
+                dutyOffImg: summary.dutyOutImage,
+                dutyOffMeterImg: summary.dutyOutMeterImage
+            },
+        };
+
+        // STEP 4: SAVE in correct format
+        await db.setData(assignmentPath, dataToSave);
+
+        return common.setResponse(
+            "Success",
+            "Data saved in DailyWorkAssignmentDetails",
+            dataToSave
+        );
+
+    } catch (error) {
+        console.error("Error:", error);
+        return common.setResponse("Fail", "Error occurred", { error });
+    }
+};
 

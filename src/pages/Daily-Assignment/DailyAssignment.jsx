@@ -7,12 +7,30 @@ import * as service from '../../services/DailyAssignment/DailyAssignmentService'
 import * as wardService from '../../services/WardsServices/WardsService';
 import moment from 'moment';
 import { Spinner } from 'react-bootstrap';
+import { connectFirebase } from '../../firebase/firebaseService';
+import { getCityFirebaseConfig } from '../../configurations/cityDBConfig';
+import { useLocation } from 'react-router-dom';
 
 const DailyAssignment = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [wards, setWards] = useState([]);
     const [zoneData, setZoneData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+
+    const city = queryParams.get("city") || "DevTest";
+
+    useEffect(() => {
+        if (city) {
+            localStorage.setItem("city", city);
+
+            let config = getCityFirebaseConfig(city);
+            connectFirebase(config, city);
+        } else {
+            localStorage.setItem("city", "DevTest");
+        }
+    }, [city]);
 
     useEffect(() => {
         getWards();
@@ -55,11 +73,11 @@ const DailyAssignment = () => {
             const responses = await Promise.all(
                 wards.map(async (ward) => {
                     if (!ward) return null;
-                    const res = await service.getDutyOnOffList(ward, formattedDate);
+                    const res = await service.getOrPushDailyAssignmentData(ward, formattedDate);
                     if (res?.status === "Success" && res.data) {
                         return { wardName: ward, data: res.data };
                     }
-                    return { wardName: ward, data: null }; 
+                    return { wardName: ward, data: null };
                 })
             );
 
