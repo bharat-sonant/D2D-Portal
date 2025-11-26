@@ -248,19 +248,39 @@ export const saveDriverHelperImage = async (
         getOriginalImageSizes(),
         getThumbnailImageSizes(),
       ]);
-      const originalWidth = parseInt(originalSizeRes.data.replace(/\D/g, ""));
-      const thumbnailWidth = parseInt(thumbnailSizeRes.data.replace(/\D/g, ""));
 
-      const resizedOriginalBlob = await resizeImage(file, originalWidth);
-      const resizedThumbnailBlob = await resizeImage(file, thumbnailWidth);
+      let originalWidth = 0;
+      let thumbnailWidth = 70;
+
+      if (originalSizeRes?.data) {
+        const parsedLarge = parseInt(originalSizeRes.data.replace(/\D/g, ""));
+        if (!isNaN(parsedLarge) && parsedLarge > 0) {
+          originalWidth = parsedLarge; // Large width, else keep as 0 (no resizing)
+        }
+      }
+      if (thumbnailSizeRes?.data) {
+        const parsedThumb = parseInt(thumbnailSizeRes.data.replace(/\D/g, ""));
+        if (!isNaN(parsedThumb) && parsedThumb > 0) {
+          thumbnailWidth = parsedThumb;
+        }
+      }
+
+      let largeFileToUpload = file;
+      let thumbFileToUpload = null;
+
+      if (originalWidth > 0) {
+        largeFileToUpload = await resizeImage(file, originalWidth);
+      }
+      thumbFileToUpload = await resizeImage(file, thumbnailWidth);
+
 
       const basePath = `${city}/DutyOnImages/${ward}/${year}/${month}/${date}`;
       const fileRef = ref(storage, `${basePath}/1.jpg`);
 
       const thumbnailFileRef = ref(storage, `${basePath}/Thumbnail-1.jpg`);
       const result = await Promise.all([
-        db.uploadImageToStorage(resizedOriginalBlob, fileRef),
-        db.uploadImageToStorage(resizedThumbnailBlob, thumbnailFileRef)
+        db.uploadImageToStorage(largeFileToUpload, fileRef),
+        db.uploadImageToStorage(thumbFileToUpload, thumbnailFileRef)
       ]);
 
       resolve(
