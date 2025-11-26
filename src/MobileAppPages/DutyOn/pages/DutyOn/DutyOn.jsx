@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { getCityFirebaseConfig } from '../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../firebase/firebaseService';
-import { fetchAllActiveDrivers, fetchAllActiveHelpers, fetchAllVehicles, startAssignmentAction } from '../../actions/DutyOnAction';
+import { startAssignmentAction } from '../../actions/DutyOnAction';
 import styles from '../../styles/DutyOn.module.css'
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Camera } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VehicleDropdown from '../../components/vehicleDropdown/VehicleDropdown';
 import DriverDropdown from '../../components/driverDropdown/DriverDropdown';
 import HelperDropdown from '../../components/helperDropdown/HelperDropdown';
+import DriverHelperImageLayout from '../../components/DriverHelperImageLayout/DriverHelperImageLayout';
+import * as common from '../../../../common/common'
 
 const DutyOn = () => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedDriver, setSelectedDriver] = useState('')
   const [selectedHelper, setSelectedHelper] = useState('');
   const [isSaving, setIsSaving] = useState(false)
+  const [driverImage, setDriverImage] = useState(null)
+  const fileInputRef = useRef(null);
+  const [capturedImage, setCapturedImage] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({
@@ -91,6 +96,26 @@ const DutyOn = () => {
     setSelectedVehicle('')
   }
 
+    const handleImageCapture = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setCapturedImage(reader.result);
+          common.setAlertMessage("success", "Meter image captured successfully!");
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+      const handleCaptureMeterImage = () => {
+    // Mobile camera open karne ke liye
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+
  
   return (
      <div className={styles.pageContainer}>
@@ -121,6 +146,57 @@ const DutyOn = () => {
           helperError={errors.helper}
           setErrors={setErrors}
         />
+
+         <div className={styles.imageRow}>
+          <div className={styles.imageLeft}>
+            <DriverHelperImageLayout
+              ward={ward}
+              driverImage={driverImage}
+              setDriverImage={setDriverImage}
+              errors={errors}
+              setErrors={setErrors}
+            />
+          </div>
+          <div className={styles.imageRight}>
+            <div className={styles.imgSection}>
+              <div className={styles.imgTitle}>Meter</div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                style={{ display: "none" }}
+                // onChange={handleImageCapture}
+              />
+
+              {capturedImage ? (
+                <div className={styles.imagePreview}>
+                  <img
+                    src={capturedImage}
+                    alt="Meter"
+                    className={styles.previewImage}
+                  />
+                  <button
+                    type="button"
+                    className={styles.closeBtn}
+                    // onClick={handleCaptureMeterImage}
+                  >
+                    Retake
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className={styles.captureMeterButton}
+                  // onClick={handleCaptureMeterImage}
+                >
+                  <Camera className={styles.cameraIcon} />
+                  Click to capture
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
         <button
           className={styles.submitButton}

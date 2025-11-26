@@ -1,0 +1,150 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  padding: 4px;
+  background-color: var(--white);
+  height: 255px;
+}
+
+.heading {
+  font-size: 8px;
+  font-family: var(--fontGraphik);
+  margin-bottom: 0px;
+  color: var(--lightBlack);
+  text-align: center;
+}
+
+.imgTitle {
+  font-size: 11px;
+  text-align: center;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphik);
+  padding: 4px 0px;
+}
+
+.imageBox {
+  background-color: var(--white);
+  width: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+}
+
+.imageBoxText:hover {
+  background-color: #00a00036;
+}
+
+.imageBoxText {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  background-color: #00a00010;
+  border: 2px dashed #eee;
+  width: 100%;
+  height: 220px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.cameraIcon {
+  width: 24px;
+  height: 24px;
+  color: #9ca3af;
+  margin-bottom: 5px;
+}
+
+.continueBtn {
+  width: 100%;
+  background-color: #16a34a;
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 1rem;
+}
+
+.continueBtn:hover {
+  background-color: #15803d;
+}
+
+.continueBtn:active {
+  transform: scale(0.98);
+}
+
+.imageWrapper {
+  position: relative;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+}
+
+.closeBtn {
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  background-color: #00b300;
+  position: absolute;
+  bottom: 10px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.iconClose {
+  width: 16px;
+}
+
+.saveBtn {
+  width: 60%;
+  background-color: #00b300;
+  color: #fff;
+  padding: 5px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s ease-in-out;
+}
+
+.saveBtn:hover {
+  background-color: #00b300;
+}
+
+.saveBtn:active {
+  background-color: #00b300;
+  transform: scale(0.98);
+}
+
+.errorText {
+  color: #dc2626;
+  /* red */
+  font-size: 10px;
+  margin-top: 2px;
+}
