@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "../../Settings/Style/Settings.module.css";
+
 import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
 import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
 import { savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue } from "../../Settings/Services/PaneltiesViaWebServise";
@@ -8,6 +9,7 @@ import { getNavigatorSetting, saveNavigatorSetting, removeNavigatorSetting } fro
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { setAlertMessage } from "../../../common/common";
+import { getBackOfficeSetting, saveBackOfficeSettings } from "../Services/BackOfficeApplicationSettingsService";
 
 const Settings = () => {
 
@@ -18,20 +20,19 @@ const Settings = () => {
     const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
     const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
     const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
-
     const [webviewUrl, setWebviewUrl] = useState("");
     const [urlError, setUrlError] = useState("");
-
     const [loader, setLoader] = useState(false);
-    const [pageLoader, setPageLoader] = useState(true); // ⭐ MAIN LOADER
+    const [pageLoader, setPageLoader] = useState(true);
+    const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
+    const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
 
     const city = localStorage.getItem('city') || "DevTest";
 
 
     /* ----------------------------------------------------
-       LOAD FUNCTIONS (these were inside useEffect earlier)
+       LOAD FUNCTIONS
     ---------------------------------------------------- */
-
     const initFirebase = async () => {
         if (city) {
             localStorage.setItem("city", city);
@@ -39,6 +40,7 @@ const Settings = () => {
             connectFirebase(config, city);
         }
     };
+
     const loadAssignment = async () => {
         const response = await getValue(setLoader);
         setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
@@ -68,8 +70,48 @@ const Settings = () => {
         }
     };
 
+    const loadBackOfficeSettings = async () => {
+        try {
+            const resp = await getBackOfficeSetting();
+            if (resp.status === "success") {
+                setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
+                setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
+            } else {
+                setDriverLargeImageWidth("");
+                setDriverThumbnailWidth("");
+            }
+        } catch (error) {
+            setDriverLargeImageWidth("");
+            setDriverThumbnailWidth("");
+        }
+    };
+
+
     /* ----------------------------------------------------
-       ⭐ SINGLE USE EFFECT (Merged all previous useEffects)
+       SAVE BACKOFFICE SETTINGS
+    ---------------------------------------------------- */
+    const handleSaveWidth = async () => {
+
+        if (driverLargeImageWidth === 'px' || driverThumbnailWidth === 'px') {
+            setAlertMessage("error", "Both width fields are required");
+            return;
+        }
+
+        const res = await saveBackOfficeSettings({
+            DriverLargeImageWidthInPx: driverLargeImageWidth,
+            DriverThumbnailWidthInPx: driverThumbnailWidth
+        });
+
+        if (res?.status === "success") {
+            setAlertMessage("success", "Back Office settings saved successfully!");
+        } else {
+            setAlertMessage("error", "Failed to save Back Office settings");
+        }
+    };
+
+
+    /* ----------------------------------------------------
+       USE EFFECT
     ---------------------------------------------------- */
     useEffect(() => {
         async function initialize() {
@@ -81,7 +123,7 @@ const Settings = () => {
             await loadWorkMonitoring();
             await loadNavigator();
             await loadWebviewURL();
-
+            await loadBackOfficeSettings();
             setPageLoader(false);
         }
 
@@ -89,11 +131,9 @@ const Settings = () => {
     }, []);
 
 
-
     /* ----------------------------------------------------
-       TOGGLE HANDLERS (Untouched)
+       TOGGLE HANDLERS
     ---------------------------------------------------- */
-
     const handleAssignmentToggle = async () => {
         const newValue = !isAssignmentOn;
         setIsAssignmentOn(newValue);
@@ -172,17 +212,16 @@ const Settings = () => {
         const res = await saveWebviewUrl(webviewUrl);
 
         if (res.status === "success") {
-            setAlertMessage("success", "URL updated successfully!");
+            setAlertMessage("success", "Webview URL saved successfully!");
         } else {
-            setAlertMessage("error", "Failed to update URL");
+            setAlertMessage("error", "Failed to save Webview URL");
         }
     };
 
 
     /* ----------------------------------------------------
-       PAGE LOADER (Full Screen)
+       PAGE LOADER
     ---------------------------------------------------- */
-
     if (pageLoader) {
         return (
             <div style={{
@@ -207,7 +246,7 @@ const Settings = () => {
 
             {loader && <div>Loading...</div>}
 
-            {/* ================= DAILY ASSIGNMENT ================= */}
+            {/* DAILY ASSIGNMENT */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Daily Assignment</h3>
 
@@ -225,7 +264,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* ================= PENALTIES ================= */}
+            {/* PENALTIES */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Penalties</h3>
                 <div className={style.toggleWrapper}>
@@ -240,7 +279,8 @@ const Settings = () => {
                     </div>
                 </div>
             </div>
-            {/* ================= WORK MONITORING ================= */}
+
+            {/* WORK MONITORING */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Work Monitoring</h3>
 
@@ -258,7 +298,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* ================= NAVIGATOR SETTINGS ================= */}
+            {/* NAVIGATOR SETTINGS */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Navigator Application Settings</h3>
 
@@ -276,7 +316,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* ================= URL CONFIG ================= */}
+            {/* URL CONFIG */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
 
@@ -310,6 +350,54 @@ const Settings = () => {
                     </button>
                 </div>
             </div>
+
+            {/* BACK OFFICE SETTINGS */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>BackOfficeApplicationSettings</h3>
+
+                {/* DriverLargeImageWidthInPx */}
+                <div className={style.inputRow}>
+                    <label className={style.inputLabel}>DriverLargeImageWidthInPx</label>
+
+                    <input
+                        type="text"
+                        className={style.textInput}
+                        placeholder="Enter large image width (px)"
+                        value={driverLargeImageWidth}
+                        onChange={(e) => {
+                            let v = e.target.value;
+                            if (/^\d{0,4}(px)?$/i.test(v)) {
+                                setDriverLargeImageWidth(v);
+                            }
+                        }}
+                    />
+                </div>
+
+                {/* DriverThumbnailWidthInPx */}
+                <div className={style.inputRow}>
+                    <label className={style.inputLabel}>DriverThumbnailWidthInPx</label>
+
+                    <input
+                        type="text"
+                        className={style.textInput}
+                        placeholder="Enter thumbnail width (px)"
+                        value={driverThumbnailWidth}
+                        onChange={(e) => {
+                            let v = e.target.value;
+                            if (/^\d{0,4}(px)?$/i.test(v)) {
+                                setDriverThumbnailWidth(v);
+                            }
+                        }}
+                    />
+                </div>
+
+                <div className={style.saveRow}>
+                    <button className={style.saveButton} onClick={handleSaveWidth}>
+                        Save
+                    </button>
+                </div>
+            </div>
+
         </div>
     );
 };
