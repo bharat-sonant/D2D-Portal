@@ -1,6 +1,7 @@
 import { ref } from 'firebase/storage';
 import * as common from '../../../common/common'
 import * as db from '../../../services/dbServices'
+import { resizeImage } from '../UtilServices/ImageUtils';
 const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
@@ -242,18 +243,31 @@ export const saveDriverHelperImage = async (
       const storage = await db.getReadyStorage();
       const ward = selectedWard !== "N/A" ? selectedWard : "Bharat";
 
+      // Fetch sizes from DB
+      const [originalSizeRes, thumbnailSizeRes] = await Promise.all([
+        getOriginalImageSizes(),
+        getThumbnailImageSizes(),
+      ]);
+      const originalWidth = parseInt(originalSizeRes.data.replace(/\D/g, ""));
+      const thumbnailWidth = parseInt(thumbnailSizeRes.data.replace(/\D/g, ""));
+
+      const resizedOriginalBlob = await resizeImage(file, originalWidth);
+      const resizedThumbnailBlob = await resizeImage(file, thumbnailWidth);
+
       const basePath = `${city}/DutyOnImages/${ward}/${year}/${month}/${date}`;
       const fileRef = ref(storage, `${basePath}/1.jpg`);
 
-      await Promise.all([
-        db.uploadImageToStorage(file, fileRef)
+      const thumbnailFileRef = ref(storage, `${basePath}/Thumbnail-1.jpg`);
+      const result = await Promise.all([
+        db.uploadImageToStorage(resizedOriginalBlob, fileRef),
+        db.uploadImageToStorage(resizedThumbnailBlob, thumbnailFileRef)
       ]);
 
       resolve(
         common.setResponse(
           "success",
           "Driver/Helper Image saved successfully",
-          {}
+          result
         )
       );
     } catch (error) {
@@ -263,3 +277,36 @@ export const saveDriverHelperImage = async (
     }
   });
 };
+
+export const getOriginalImageSizes = async() => {
+  return new Promise(async(resolve) => {
+    try{
+      const path = `Settings/BackOfficeApplicationSettings/DriverLargeImageWidthInPx`
+      const result = await db.getData(path);
+      if(result){
+      resolve(common.setResponse("success", "image sizes fetched successfully", result))
+      }else{
+        resolve(common.setResponse("fail", "No data found for image sizes"))
+      }
+    }catch(error){
+      resolve(common.setResponse("fail", "failed to get sizes for the images", error))
+    }
+  })
+}
+
+export const getThumbnailImageSizes = async() => {
+  return new Promise(async(resolve) => {
+    try{
+      const path = `Settings/BackOfficeApplicationSettings/DriverThumbnailWidthInPx`
+      const result = await db.getData(path);
+      if(result){
+      resolve(common.setResponse("success", "image sizes fetched successfully", result))
+      }else{
+        resolve(common.setResponse("fail", "No data found for image sizes"))
+      }
+    }catch(error){
+      resolve(common.setResponse("fail", "failed to get sizes for the images", error))
+    }
+  })
+}
+
