@@ -1,40 +1,13 @@
 import * as db from '../dbServices';
 import * as common from '../../common/common';
 import dayjs from 'dayjs';
+import moment from 'moment';
 
 const failStatus = "Fail";
 const successStatus = "Success";
 const failMessage = "No Data Found.";
 const successMessage = "Data Found.";
 
-const getDriverHelperData = (zone, date, list, month) => {
-    return new Promise(async (resolve) => {
-        if (zone && date && list && list.length > 0) {
-            const year = date.split('-')[0];
-
-            const response = await db.getData(`WasteCollectionInfo/${zone}/${year}/${month}/${date}/WorkerDetails`);
-
-
-            if (response) {
-                const driverName = response.driverName || '---';
-                const helperName = response.helperName || '---';
-                const vehicle = response.vehicle || '---';
-
-                const updatedList = list.map(item => ({
-                    ...item,
-                    driver: driverName,
-                    helper: helperName,
-                    vehicle: vehicle
-                }));
-                resolve(updatedList);
-            } else {
-                resolve(list);
-            }
-        } else {
-            resolve(list || []);
-        }
-    });
-};
 
 export const getDutyOnOffImagesByDate = async (zone, date) => {
     if (!zone || !date) {
@@ -42,57 +15,57 @@ export const getDutyOnOffImagesByDate = async (zone, date) => {
     }
 
     try {
-        const year = date.split('-')[0];
-        const month = await common.getCurrentMonthName(Number(date.split('-')[1]));
+        const year = date.split("-")[0];
+        const month = await common.getCurrentMonthName(Number(date.split("-")[1]));
+        const path = `/AssignmentData/DailyWorkAssignmentDetails/${year}/${month}/${date}/${zone}`;
 
-        const summaryPath = `/WasteCollectionInfo/${zone}/${year}/${month}/${date}/Summary`;
+        const data = await db.getData(path);
 
-        const summaryData = await db.getData(summaryPath);
-
-        if (!summaryData) {
+        if (!data) {
             return common.setResponse("Fail", "No Data Found.", {});
         }
 
-        const {
-            dutyOnImage,
-            dutyOnMeterImage,
-            dutyOutImage,
-            dutyOutMeterImage
-        } = summaryData;
+        // 🔥 Only numeric keys (1,2,3…) — ignore lastKey
+        const dutyKeys = Object.keys(data).filter(key => key !== "lastKey");
 
-        const makeImageUrls = (imgField, folderName) => {
+        const makeImageUrls = (imgField, folderName, dutyKey) => {
             if (!imgField) return [];
-            const imgList = imgField.split(',');
-            return imgList.map(
-                (imgName) =>
-                    `https://firebasestorage.googleapis.com/v0/b/devtest-62768.firebasestorage.app/o/DevTest%2F${folderName}%2F${zone}%2F${year}%2F${month}%2F${date}%2F${imgName}?alt=media`
-                // `https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/DevTest%2FDutyOnImages%2F${zone}%2F${year}%2F${month}%2F${date}%2F${imgName}?alt=media`
+
+            const imgList = imgField.split(",");
+
+            return imgList.map(imgName =>
+                `https://firebasestorage.googleapis.com/v0/b/devtest-62768.firebasestorage.app/o/DevTest%2F${folderName}%2F${zone}%2F${year}%2F${month}%2F${date}%2F${imgName}?alt=media`
             );
         };
 
-        const dutyInImages = makeImageUrls(dutyOnImage, 'DutyOnImages');
-        const dutyOutImages = makeImageUrls(dutyOutImage, 'DutyOutImages');
-        const dutyInMeterImages = makeImageUrls(dutyOnMeterImage, 'DutyOnMeterReadingImages');
-        const dutyOutMeterImages = makeImageUrls(dutyOutMeterImage, 'DutyOutMeterReadingImages');
+        const dutyImgList = dutyKeys.map((key) => {
+            const entry = data[key];
+            return {
+                assignId: key,
+                dutyInImages: makeImageUrls(entry.dutyOnImg, "DutyOnImages", key),
+                dutyOutImages: makeImageUrls(entry.dutyOffImg, "DutyOutImages", key),
+                dutyInMeterImages: makeImageUrls(entry.dutyOnMeterImg, "DutyOnMeterReadingImages", key),
+                dutyOutMeterImages: makeImageUrls(entry.dutyOffMeterImg, "DutyOutMeterReadingImages", key)
+            };
+        });
 
         return common.setResponse("Success", "Data Found.", {
             zone,
             date,
-            dutyInImages,
-            dutyOutImages,
-            dutyInMeterImages,
-            dutyOutMeterImages
+            dutyImgList
         });
 
     } catch (error) {
-        console.error("Error in getDutyOnOffImagesByDate: - DailyAssignmentService.js:87", error);
+        console.error("Error in getDutyOnOffImagesByDate:", error);
         return common.setResponse("Fail", "Error fetching data", { error });
     }
 };
 
 
+
 export const getDutyOnOffList = (zone, date) => {
     return new Promise(async (resolve) => {
+
         if (!zone || !date) {
             return resolve(common.setResponse(failStatus, 'Invalid Params !!', { zone, date }));
         }
@@ -107,8 +80,11 @@ export const getDutyOnOffList = (zone, date) => {
                 return resolve(common.setResponse(failStatus, failMessage, {}));
             }
 
-            // 🔥 FIXED → Convert Firebase {1:{}, 2:{}} into array
-            const dutyList = Object.keys(dateData).map((key, index) => {
+            // 🔥 Remove lastKey before mapping
+            const filteredKeys = Object.keys(dateData).filter(k => k !== "lastKey");
+
+            // Convert object {1:{},2:{}} → array
+            const dutyList = filteredKeys.map((key, index) => {
                 const d = dateData[key];
 
                 return {
@@ -125,20 +101,25 @@ export const getDutyOnOffList = (zone, date) => {
                 };
             });
 
-            // Fetch driver/helper details
-            const driverData = await getDriverHelperData(zone, date, dutyList, month);
-
             // Fetch images
             const imageResponse = await getDutyOnOffImagesByDate(zone, date);
-            const imageData = imageResponse?.status === "Success" ? imageResponse.data : {};
+            const imageData =
+                imageResponse?.status === "Success" ? imageResponse.data : {};
 
-            const mergedDutyList = driverData.map(item => ({
-                ...item,
-                dutyInImages: imageData.dutyInImages || [],
-                dutyOutImages: imageData.dutyOutImages || [],
-                dutyInMeterImages: imageData.dutyInMeterImages || [],
-                dutyOutMeterImages: imageData.dutyOutMeterImages || []
-            }));
+            // 🔥 Merge images based on assignId
+            const mergedDutyList = dutyList.map(item => {
+                const imgData = imageData.dutyImgList?.find(
+                    img => img.assignId === item.assignId
+                ) || {};
+
+                return {
+                    ...item,
+                    dutyInImages: imgData.dutyInImages || [],
+                    dutyOutImages: imgData.dutyOutImages || [],
+                    dutyInMeterImages: imgData.dutyInMeterImages || [],
+                    dutyOutMeterImages: imgData.dutyOutMeterImages || []
+                };
+            });
 
             resolve(
                 common.setResponse(successStatus, successMessage, {
@@ -158,26 +139,46 @@ export const getDutyOnOffList = (zone, date) => {
 
 export const getOrPushDailyAssignmentData = async (ward, date) => {
     try {
+        if (!ward || !date) {
+            return common.setResponse("Fail", "Invalid Params !!", { ward, date });
+        }
+
+        // 🔥 Skip if date == today
+        const today = moment().format("YYYY-MM-DD");
+        if (date === today) {
+            return common.setResponse(
+                "Success",
+                "Today's data is not allowed to save.",
+                {}
+            );
+        }
+
         const year = date.split("-")[0];
         const monthNumber = Number(date.split("-")[1]);
         const month = await common.getCurrentMonthName(monthNumber);
 
-        const assignmentPath = `AssignmentData/DailyWorkAssignmentDetails/${year}/${month}/${date}/${ward}`;
-        const wastePath = `WasteCollectionInfo/${ward}/${year}/${month}/${date}`;
+        const assignmentPath =
+            `AssignmentData/DailyWorkAssignmentDetails/${year}/${month}/${date}/${ward}`;
 
-        // STEP 1: CHECK IF ALREADY EXISTS
+        const wastePath =
+            `WasteCollectionInfo/${ward}/${year}/${month}/${date}`;
+
+        // Fetch existing assignment
         const existingData = await db.getData(assignmentPath);
-        if (existingData) {
+
+        // Full Duplicate Protection
+        const existingKeys = Object.keys(existingData || {}).filter(k => !isNaN(k));
+
+        if (existingKeys.length > 0) {
             return common.setResponse(
                 "Success",
-                "Data found in DailyWorkAssignmentDetails",
+                "Already saved earlier. No new entries added.",
                 existingData
             );
         }
 
-        // STEP 2: FETCH FROM WasteCollectionInfo
+        // Fetch waste collection summary
         const wasteData = await db.getData(wastePath);
-
         if (!wasteData || !wasteData.Summary) {
             return common.setResponse("Fail", "No data found in WasteCollectionInfo", {});
         }
@@ -185,32 +186,59 @@ export const getOrPushDailyAssignmentData = async (ward, date) => {
         const summary = wasteData.Summary;
         const worker = wasteData.WorkerDetails || {};
 
-        // STEP 3: FORMAT LIKE YOUR REQUIRED STRUCTURE
-        const dataToSave = {
-            1: {
-                driver: worker.driverName,
-                helper: worker.helperName,
-                vehicle: worker.vehicle,
+        // Convert comma-separated values to arrays
+        const dutyOnArr = summary.dutyInTime?.split(",") || [""];
+        const dutyOffArr = summary.dutyOutTime?.split(",") || [""];
+        const driverArr = worker.driverName?.split(",") || [""];
+        const helperArr = worker.helperName?.split(",") || [""];
+        const vehicleArr = worker.vehicle?.split(",") || [""];
+        const dutyOnImgArr = summary.dutyOnImage?.split(",") || [""];
+        const dutyOffImgArr = summary.dutyOutImage?.split(",") || [""];
+        const dutyOnMeterImgArr = summary.dutyOnMeterImage?.split(",") || [""];
+        const dutyOffMeterImgArr = summary.dutyOutMeterImage?.split(",") || [""];
 
-                "duty-on-by": worker.driverName,
-                "duty-on-time": summary.dutyInTime,
-                dutyOnImg: summary.dutyOnImage,
-                dutyOnMeterImg: summary.dutyOnMeterImage,
+        // Count number of entries
+        const entryCount = Math.max(
+            dutyOnArr.length,
+            dutyOffArr.length,
+            driverArr.length,
+            helperArr.length,
+            vehicleArr.length,
+            dutyOnImgArr.length,
+            dutyOffImgArr.length,
+            dutyOnMeterImgArr.length,
+            dutyOffMeterImgArr.length
+        );
 
-                "duty-off-by": worker.driverName,
-                "duty-off-time": summary.dutyOutTime,
-                dutyOffImg: summary.dutyOutImage,
-                dutyOffMeterImg: summary.dutyOutMeterImage
-            },
-        };
+        // Prepare object
+        let updatedData = {};
+        let startKey = 1;
 
-        // STEP 4: SAVE in correct format
-        await db.setData(assignmentPath, dataToSave);
+        for (let i = 0; i < entryCount; i++) {
+            const key = startKey + i;
+            updatedData[key] = {
+                driver: driverArr[i] || driverArr[0] || "",
+                helper: helperArr[i] || helperArr[0] || "",
+                vehicle: vehicleArr[i] || vehicleArr[0] || "",
+                "duty-on-by": driverArr[i] || driverArr[0] || "",
+                "duty-on-time": dutyOnArr[i] || dutyOnArr[0] || "",
+                dutyOnImg: dutyOnImgArr[i] || dutyOnImgArr[0] || "",
+                dutyOnMeterImg: dutyOnMeterImgArr[i] || dutyOnMeterImgArr[0] || "",
+                "duty-off-by": driverArr[i] || driverArr[0] || "",
+                "duty-off-time": dutyOffArr[i] || dutyOffArr[0] || "",
+                dutyOffImg: dutyOffImgArr[i] || dutyOffImgArr[0] || "",
+                dutyOffMeterImg: dutyOffMeterImgArr[i] || dutyOffMeterImgArr[0] || ""
+            };
+        }
+
+        updatedData.lastKey = entryCount;
+
+        await db.saveData(assignmentPath, updatedData);
 
         return common.setResponse(
             "Success",
-            "Data saved in DailyWorkAssignmentDetails",
-            dataToSave
+            `${entryCount} entries saved successfully.`,
+            updatedData
         );
 
     } catch (error) {
@@ -218,4 +246,3 @@ export const getOrPushDailyAssignmentData = async (ward, date) => {
         return common.setResponse("Fail", "Error occurred", { error });
     }
 };
-
