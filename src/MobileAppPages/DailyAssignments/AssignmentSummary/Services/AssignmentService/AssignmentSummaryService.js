@@ -206,5 +206,92 @@ const pushDataInDailyAssignmentVehicleSummary = () => {
     });
 };
 
+export const checkDailyAssignmentDriverData = async() => {
+    return new Promise(async(resolve)=> {
+        try{
+            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+            const path = `AssignmentData/DailyAssignmentSummary/${year}/${monthName}/${date}/Drivers`
+
+            const response = await db.getData(path);
+            if (response !== null && response !== undefined) {
+            return { success: true, data: response };
+        } else {
+            await pushDataInDailyAssignmentDriverSummary();
+            
+            return { success: false };
+        };
+    } catch (error) {
+        return { success: false, error: error.message };
+    };
+    })
+}
+
+const pushDataInDailyAssignmentDriverSummary = () => {
+    return new Promise(async(resolve) => {
+        await db.getData(`ActiveDrivers`)
+            .then(async (resp) => {
+                if (resp !== null) {
+                    const year = dayjs().format("YYYY");
+                    const month = dayjs().format("MMMM");
+                    const date = dayjs().format("YYYY-MM-DD");
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/NotAssigned`;
+
+                    const result = await db.saveData(summaryTaskPath, resp);
+
+                    resolve(common.setResponse("success", "Driver Data successfully in DailyAssignmentSummary", result));
+                } else {
+                    resolve(common.setResponse("fail", "No DriverData found !!!", {}));
+                }
+            })
+            .catch((err) => {
+                console.log("Error occuring while saving/fetching: ", err);
+                resolve(common.setResponse("fail", "No DriverData found !!!", {}));
+            });
+    });
+};
+
+export const checkDailyAssignmentHelperData = async() => {
+    return new Promise(async(resolve)=> {
+        try{
+            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+            const path = `AssignmentData/DailyAssignmentSummary/${year}/${monthName}/${date}/Helpers`
+
+            const response = await db.getData(path);
+            if (response !== null && response !== undefined) {
+            return { success: true, data: response };
+        } else {
+            await pushDataInDailyAssignmentHelperSummary();
+            
+            return { success: false };
+        };
+    } catch (error) {
+        return { success: false, error: error.message };
+    };
+    })
+}
+
+const pushDataInDailyAssignmentHelperSummary = () => {
+    return new Promise(async(resolve) => {
+        await db.getData(`ActiveHelpers`)
+            .then(async (resp) => {
+                if (resp !== null) {
+                    const year = dayjs().format("YYYY");
+                    const month = dayjs().format("MMMM");
+                    const date = dayjs().format("YYYY-MM-DD");
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Helpers/NotAssigned`;
+
+                    const result = await db.saveData(summaryTaskPath, resp);
+
+                    resolve(common.setResponse("success", "Helper Data successfully in DailyAssignmentSummary", result));
+                } else {
+                    resolve(common.setResponse("fail", "No HelperData found !!!", {}));
+                }
+            })
+            .catch((err) => {
+                console.log("Error occuring while saving/fetching: ", err);
+                resolve(common.setResponse("fail", "No HelperData found !!!", {}));
+            });
+    });
+};
 
 

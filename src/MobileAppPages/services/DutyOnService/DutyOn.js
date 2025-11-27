@@ -188,7 +188,7 @@ const moveVehicleToInProgress = async(selectedVehicle) => {
 
   return result?.success
         ? result
-        : common.setResponse(fail, "Task failed to move into inProgress bucket", result);
+        : common.setResponse(fail, "Vehicle failed to move into inProgress bucket", result);
 }
 
 const removeVehicleFromNotAssigned = async(selectedVehicle) => {
@@ -213,7 +213,7 @@ const removeVehicleFromNotAssigned = async(selectedVehicle) => {
 
    return result?.success
         ? result
-        : common.setResponse(fail, "Task failed to remove from not assigned bucket", result);
+        : common.setResponse(fail, "Vehicle failed to remove from not assigned bucket", result);
 }
 
 const saveDriverAssignment = async(selectedDriver, ward, selectedVehicle) => {

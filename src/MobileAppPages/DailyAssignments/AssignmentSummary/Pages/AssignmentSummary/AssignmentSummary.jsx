@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getCityFirebaseConfig } from '../../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../../firebase/firebaseService';
 import * as action from '../../Action/AssignmentSummary/AssignmentSummaryAction';
-import { checkDailyAssignmentSummaryData, checkDailyAssignmentVehicleData } from '../../Services/AssignmentService/AssignmentSummaryService'
+import { checkDailyAssignmentDriverData, checkDailyAssignmentHelperData, checkDailyAssignmentSummaryData, checkDailyAssignmentVehicleData } from '../../Services/AssignmentService/AssignmentSummaryService'
 
 const AssignmentSummary = () => {
     const location = useLocation();
@@ -21,6 +21,8 @@ const AssignmentSummary = () => {
         action.checkNotAssignedValue(setWardsList, setLoading);
         checkDailyAssignmentSummaryData();
         checkDailyAssignmentVehicleData();
+        checkDailyAssignmentDriverData();
+        checkDailyAssignmentHelperData();
     }, [])
 
     useEffect(() => {
