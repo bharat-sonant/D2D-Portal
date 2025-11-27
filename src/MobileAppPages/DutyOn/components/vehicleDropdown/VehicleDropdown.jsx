@@ -12,7 +12,6 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVehicles, setActiveVehicles] = useState([]);
   const [loading, setLoading] = useState(false)
-  const [hasFetched, setHasFetched] = useState(false)
 
    useEffect(() => {
         if (searchTerm) {
@@ -27,7 +26,7 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
      if (searchTerm) {
        const term = searchTerm.toLowerCase();
        list = list.filter(d => 
-         d?.vehicleNo?.toLowerCase().includes(term)
+         d?.toLowerCase().includes(term)
        );
      }
    
@@ -46,11 +45,8 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
    const handleOpen = () => {
         setOpen(true);
     fetchAllVehicles(setLoading, setActiveVehicles);
-      //   if (!hasFetched) {
-      //   fetchAllVehicles(setLoading, setActiveVehicles);
-      //   setHasFetched(true);
-      // }
       }
+      console.log('active',activeVehicles)
   
 
   const snapPoints = [0, 0.7, 1];
@@ -117,16 +113,16 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
                     {filteredVehicles?.length > 0 ? (
                       filteredVehicles.map((vehicle, index) => {
                         const isSelected =
-                          vehicle.vehicleNo === selectedVehicle;
+                          vehicle === selectedVehicle;
                         return (
                           <li
                             key={index}
-                            onClick={() => handleSelect(vehicle.vehicleNo)}
+                            onClick={() => handleSelect(vehicle)}
                             className={`${sheetStyles.vehicleItem} ${
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{vehicle?.vehicleNo || "N/A"}</span>
+                            <span>{vehicle || "N/A"}</span>
 
                             {isSelected && (
                               <Check

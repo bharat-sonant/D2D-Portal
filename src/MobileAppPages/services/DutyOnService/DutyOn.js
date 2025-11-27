@@ -3,6 +3,7 @@ import * as common from '../../../common/common'
 import * as db from '../../../services/dbServices'
 import { resizeImage } from '../UtilServices/ImageUtils';
 import { getDateTimeDetails } from '../UtilServices/DateTImeUtil';
+import dayjs from 'dayjs';
 const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
@@ -10,17 +11,14 @@ const isFail = (res) => res?.status === "fail";
 export const getAllActiveVehicles = () => {
   return new Promise(async(resolve)=> {
     try{
-      const result = await db.getData('Vehicles')
-
-      const vehicleList = Object.entries(result)
-  .filter(([vehicleNo, data]) => data.taskAssigned !== "yes")   
-  .map(([vehicleNo, data]) => ({
-    vehicleNo,
-    ...data
-  }));
+      const year = dayjs().format("YYYY");
+      const month = dayjs().format("MMMM");
+      const date = dayjs().format("YYYY-MM-DD");
+      const path = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Vehicles/NotAssigned`
+      const result = await db.getData(path)
 
 
-      resolve(common.setResponse(success, "vehicels fetched successfully", vehicleList))
+      resolve(common.setResponse(success, "vehicels fetched successfully", result))
     }catch(error){
       resolve(common.setResponse(fail, "failed to fetch vehicles"))
     }

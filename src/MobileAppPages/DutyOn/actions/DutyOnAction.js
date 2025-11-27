@@ -6,8 +6,7 @@ export const fetchAllVehicles = async(setLoading, setActiveVehicles) => {
     setLoading(true)
     const result = await getAllActiveVehicles();
     if (result.status === "success" && result.data.length > 0) {
-      const active = result?.data?.filter((v)=> String(v.status) === '1')
-      setActiveVehicles(active)
+      setActiveVehicles(result?.data)
     }else{
       common.setAlertMessage('fail', 'No vehicles found')
       setActiveVehicles([])
