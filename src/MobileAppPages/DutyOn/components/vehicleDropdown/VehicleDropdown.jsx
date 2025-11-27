@@ -46,8 +46,6 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
         setOpen(true);
     fetchAllVehicles(setLoading, setActiveVehicles);
       }
-      console.log('active',activeVehicles)
-  
 
   const snapPoints = [0, 0.7, 1];
    return (

@@ -189,7 +189,7 @@ const pushDataInDailyAssignmentVehicleSummary = () => {
                     const activeKeys = Object.keys(resp).filter((key)=> resp[key].status === '1')
                     const converted = {};
                     activeKeys.forEach((key, index) => {
-                        converted[index] = key;   
+                        converted[index+1] = key;   
                     });
 
                     const result = await db.saveData(summaryTaskPath, converted);
