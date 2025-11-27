@@ -223,7 +223,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>Daily Assignment</h3>
 
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>DailyAssignment ViaWeb</label>
+                    <label className={style.toggleLabel}>DailyAssignment Via Web</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`}
@@ -240,7 +240,7 @@ const Settings = () => {
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Penalties</h3>
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>Penalties ViaWeb</label>
+                    <label className={style.toggleLabel}>Penalties Via Web</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`}
@@ -258,7 +258,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>Work Monitoring</h3>
 
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>WorkMonitoring Via Web</label>
+                    <label className={style.toggleLabel}>Work Monitoring Via Web</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`}
@@ -346,7 +346,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
 
                 <div className={style.inputRow}>
-                    <label className={style.inputLabel}>Driver Large Image Width In Px</label>
+                    <label className={style.inputLabel}>Driver Large Image Width In px</label>
 
                     <input
                         type="text"
@@ -363,7 +363,7 @@ const Settings = () => {
                 </div>
 
                 <div className={style.inputRow}>
-                    <label className={style.inputLabel}>DriverThumbnailWidthInPx</label>
+                    <label className={style.inputLabel}>Driver Thumbnail Width In px</label>
 
                     <input
                         type="text"

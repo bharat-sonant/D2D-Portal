@@ -1,25 +1,25 @@
 /* Page center */
 .pageContainer {
         display: flex;
-    align-items: center;
+    /* align-items: center; */
     flex-wrap: wrap;
     margin-top: 70px;
-    gap: 25px;
+    gap: 10px;
     padding: 20px;
 
 }
 
 /* Card */
 .card {
-    width: calc(100% / 3 - 25px);
-    padding: 25px;
+    width: calc(100% / 4 - 10px);
+    padding: 25px 16px;
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .cardTitle {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
     margin-bottom: 20px;
     font-family: 'Poppins', sans-serif;
@@ -34,14 +34,13 @@
 }
 
 .toggleLabel {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
     font-family: 'Poppins', sans-serif;
 }
 
 /* Toggle switch box */
 .toggleSwitch {
-    width: 70px;
+    width: 60px;
     height: 30px;
     border-radius: 20px;
     padding: 3px;
@@ -122,7 +121,7 @@
 }
 
 .saveButton {
-    padding: 10px 14px;
+    padding: 8px 12px;
     background-color: #0ab39c;
     color: white;
     border: none;
