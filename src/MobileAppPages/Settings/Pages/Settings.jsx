@@ -299,7 +299,7 @@ const Settings = () => {
 
       {/* DUTY ON/OFF IMAGE REPORT */}
       <div className={style.card}>
-        <h3 className={style.cardTitle}>Report via new structure</h3>
+        <h3 className={style.cardTitle}>Report Via New Structure</h3>
         <div className={style.toggleWrapper}>
           <label className={style.toggleLabel}>Duty On Off Image Report</label>
           <div className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`} onClick={toggleDutyOnOffImageReport}>
