@@ -12,11 +12,8 @@ import { setAlertMessage } from "../../../common/common";
 import { getBackOfficeSetting, saveBackOfficeSettings } from "../Services/BackOfficeApplicationSettingsService";
 
 // ⭐ YOUR NEW SERVICE
-import { 
-    getDutyOnOffImageReport,
-    saveDutyOnOffImageReport,
-    removeDutyOnOffImageReport 
-} from "../Services/DutyOnOffImageReportShowViaNewStructureServise.js";
+import { getDutyOnOffImageReport,saveDutyOnOffImageReport, removeDutyOnOffImageReport } from "../Services/DutyOnOffImageReportShowViaNewStructureServise.js";
+import { getDutyOnOffImageReportUrl,saveDutyOnOffImageReportUrl } from "../Services/DutyOnOffImageReportUrl.js";
 
 
 const Settings = () => {
@@ -35,14 +32,14 @@ const Settings = () => {
     const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
     const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
 
+    const [dutyOnOffImageReportUrl, setDutyOnOffImageReportUrl] = useState("");
+    const [dutyUrlError, setDutyUrlError] = useState("");
+
     const city = localStorage.getItem('city') || "DevTest";
 
     const initFirebase = async () => {
-        if (city) {
-            localStorage.setItem("city", city);
-            let config = getCityFirebaseConfig(city);
-            connectFirebase(config, city);
-        }
+        let config = getCityFirebaseConfig(city);
+        connectFirebase(config, city);
     };
 
     const loadAssignment = async () => {
@@ -70,14 +67,17 @@ const Settings = () => {
         setWebviewUrl(res.status === "success" ? res.data.url : "");
     };
 
+    const loadDutyOnOffImageReportUrlHandler = async () => {
+        const res = await getDutyOnOffImageReportUrl();
+        setDutyOnOffImageReportUrl(res.status === "success" ? res.data.url : "");
+    };
+
     const loadBackOfficeSettings = async () => {
-        try {
-            const resp = await getBackOfficeSetting();
-            if (resp.status === "success") {
-                setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
-                setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
-            }
-        } catch (_) { }
+        const resp = await getBackOfficeSetting();
+        if (resp.status === "success") {
+            setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
+            setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
+        }
     };
 
     const loadDutyOnOffImageReport = async () => {
@@ -94,9 +94,7 @@ const Settings = () => {
         if (res?.status !== "success") {
             setIsAssignmentOn(isAssignmentOn);
             setAlertMessage("error", "Failed to update Daily Assignment");
-        } else {
-            setAlertMessage("success", "Daily Assignment updated");
-        }
+        } else setAlertMessage("success", "Daily Assignment updated");
     };
 
     const handlePenaltiesToggle = async () => {
@@ -108,9 +106,7 @@ const Settings = () => {
         if (res?.status !== "success") {
             setIsPenaltiesOn(isPenaltiesOn);
             setAlertMessage("error", "Failed to update Penalties");
-        } else {
-            setAlertMessage("success", "Penalties updated");
-        }
+        } else setAlertMessage("success", "Penalties updated");
     };
 
     const handleWorkMonitoringToggle = async () => {
@@ -122,9 +118,7 @@ const Settings = () => {
         if (res?.status !== "success") {
             setIsWorkMonitoringOn(isWorkMonitoringOn);
             setAlertMessage("error", "Failed to update Work Monitoring");
-        } else {
-            setAlertMessage("success", "Work Monitoring updated");
-        }
+        } else setAlertMessage("success", "Work Monitoring updated");
     };
 
     const handleNavigatorToggle = async () => {
@@ -136,9 +130,7 @@ const Settings = () => {
         if (res?.status !== "success") {
             setIsNavigatorSettingOn(isNavigatorSettingOn);
             setAlertMessage("error", "Failed to update Navigator Setting");
-        } else {
-            setAlertMessage("success", "Navigator Setting updated");
-        }
+        } else setAlertMessage("success", "Navigator Setting updated");
     };
 
     const handleDutyOnOffImageReportToggle = async () => {
@@ -150,9 +142,7 @@ const Settings = () => {
         if (res?.status !== "success") {
             setIsDutyOnOffImageReportShow(isDutyOnOffImageReportShow);
             setAlertMessage("error", "Failed to update Duty On/Off Image Setting");
-        } else {
-            setAlertMessage("success", "Duty On/Off Image Setting updated");
-        }
+        } else setAlertMessage("success", "Duty On/Off Image Setting updated");
     };
 
     const saveUrlHandler = async () => {
@@ -172,15 +162,15 @@ const Settings = () => {
 
         const res = await saveWebviewUrl(webviewUrl);
 
-        if (res.status === "success") {
+        if (res.status === "success")
             setAlertMessage("success", "Webview URL saved successfully!");
-        } else {
+        else
             setAlertMessage("error", "Failed to save Webview URL");
-        }
     };
 
     useEffect(() => {
         async function initialize() {
+
             setPageLoader(true);
 
             await initFirebase();
@@ -191,6 +181,7 @@ const Settings = () => {
             await loadWebviewURL();
             await loadBackOfficeSettings();
             await loadDutyOnOffImageReport();
+            await loadDutyOnOffImageReportUrlHandler();
 
             setPageLoader(false);
         }
@@ -290,7 +281,7 @@ const Settings = () => {
             </div>
 
 
-             {/* ---------------- DUTY ON/OFF IMAGE REPORT ---------------- */}
+            {/* ---------------- DUTY ON/OFF IMAGE REPORT ---------------- */}
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Duty On/Off Image</h3>
 
@@ -305,6 +296,63 @@ const Settings = () => {
                             {isDutyOnOffImageReportShow ? "ON" : "OFF"}
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* ---------------- DUTY ON/OFF IMAGE REPORT URL ---------------- */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>Duty On/Off Image Report URL</h3>
+
+                <div className={style.inputRow}>
+                    <label className={style.inputLabel}>Report Webview URL</label>
+
+                    <input
+                        type="text"
+                        className={style.textInput}
+                        placeholder="https://yourdomain.com/DutyOnOffImageReport"
+                        value={dutyOnOffImageReportUrl}
+                        onChange={(e) => {
+                            setDutyOnOffImageReportUrl(e.target.value);
+                            setDutyUrlError("");
+                        }}
+                    />
+                </div>
+
+                {dutyUrlError && (
+                    <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>
+                        {dutyUrlError}
+                    </p>
+                )}
+
+                <div className={style.saveRow}>
+                    <button
+                        className={style.saveButton}
+                        onClick={async () => {
+                            setDutyUrlError("");
+
+                            if (!dutyOnOffImageReportUrl.trim()) {
+                                setDutyUrlError("URL cannot be empty");
+                                return;
+                            }
+
+                            const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
+
+                            if (!urlPattern.test(dutyOnOffImageReportUrl.trim())) {
+                                setDutyUrlError("Invalid URL format. Must start with http:// or https://");
+                                return;
+                            }
+
+                            const res = await saveDutyOnOffImageReportUrl(dutyOnOffImageReportUrl.trim());
+
+                            if (res.status === "success") {
+                                setAlertMessage("success", "Duty On/Off Image Report URL saved successfully!");
+                            } else {
+                                setAlertMessage("error", "Failed to save Duty On/Off Image Report URL");
+                            }
+                        }}
+                    >
+                        Save
+                    </button>
                 </div>
             </div>
 
@@ -355,7 +403,7 @@ const Settings = () => {
                         value={driverLargeImageWidth}
                         onChange={(e) => {
                             let v = e.target.value;
-                            if (/^\d{0,4}$/.test(v)) {   // NUMERIC ONLY
+                            if (/^\d{0,4}$/.test(v)) {
                                 setDriverLargeImageWidth(v);
                             }
                         }}
@@ -372,7 +420,7 @@ const Settings = () => {
                         value={driverThumbnailWidth}
                         onChange={(e) => {
                             let v = e.target.value;
-                            if (/^\d{0,4}$/.test(v)) {   // NUMERIC ONLY
+                            if (/^\d{0,4}$/.test(v)) {
                                 setDriverThumbnailWidth(v);
                             }
                         }}
@@ -389,7 +437,7 @@ const Settings = () => {
                                 return;
                             }
 
-                            const numericPattern = /^[1-9]\d{0,3}$/; // 1–9999 only
+                            const numericPattern = /^[1-9]\d{0,3}$/;
 
                             if (!numericPattern.test(driverLargeImageWidth)) {
                                 setAlertMessage("error", "Large Image Width must be a valid number (1–9999).");
@@ -418,11 +466,8 @@ const Settings = () => {
                 </div>
             </div>
 
-           
-
         </div>
     );
 };
-
 
 export default Settings;
