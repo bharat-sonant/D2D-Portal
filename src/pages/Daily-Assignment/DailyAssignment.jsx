@@ -10,15 +10,21 @@ import { Spinner } from 'react-bootstrap';
 import { connectFirebase } from '../../firebase/firebaseService';
 import { getCityFirebaseConfig } from '../../configurations/cityDBConfig';
 import { useLocation } from 'react-router-dom';
+import ImageModal from '../../components/ImageModal/ImageModal';
 
 const DailyAssignment = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [wards, setWards] = useState([]);
     const [zoneData, setZoneData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [modalTitle, setModalTitle] = useState("");
+
+    // Modal
+    const [showImgModal, setShowImgModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-
     const city = queryParams.get("city") || "DevTest";
 
     useEffect(() => {
@@ -74,7 +80,9 @@ const DailyAssignment = () => {
             const responses = await Promise.all(
                 wards.map(async (ward) => {
                     if (!ward) return null;
+
                     await service.getOrPushDailyAssignmentData(ward, formattedDate);
+
                     const res = await service.getDutyOnOffList(ward, formattedDate);
 
                     if (res?.status === "Success" && res.data) {
@@ -93,6 +101,11 @@ const DailyAssignment = () => {
         }
     };
 
+    const openModal = (img, title) => {
+        setSelectedImage(img);
+        setModalTitle(title);
+        setShowImgModal(true);
+    };
 
 
     return (
@@ -127,16 +140,16 @@ const DailyAssignment = () => {
                     }}
                 >
                     <Spinner size={50} />
-                    <p style={{ marginTop: '8px' }}>Please wait... Processing your data.</p>
+                    <p>Please wait... Processing your data.</p>
                 </div>
 
             ) : (
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th style={{ width: '50px', fontFamily: 'sans-serif', fontWeight: 'bold' }}>S.No.</th>
-                            <th style={{ width: '180px', fontFamily: 'sans-serif', fontWeight: 'bold' }}>Zone</th>
-                            <th style={{ fontFamily: 'sans-serif', fontWeight: 'bold' }}>Duty On/Off Images</th>
+                            <th>S.No.</th>
+                            <th>Zone</th>
+                            <th>Duty On/Off Images</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -150,7 +163,7 @@ const DailyAssignment = () => {
                             wards.map((ward, index) => {
                                 const zone = zoneData.find(z => z?.wardName === ward);
                                 const dutyData = zone?.data;
-                                console.log(dutyData)
+
                                 return (
                                     <tr key={ward}>
                                         <td>{index + 1}</td>
@@ -161,37 +174,53 @@ const DailyAssignment = () => {
                                                     {dutyData.dutyImgList.map((item, idx) => (
                                                         <div key={idx} className={styles.dutyCard}>
                                                             <div className={styles.imageRow}>
-                                                                {item.dutyInImages?.length > 0 && (
-                                                                    <>
-                                                                        {item.dutyInImages.map((imgUrl, i) => (
-                                                                            <img key={`in-${i}`} src={imgUrl} className={styles.dutyImage} alt="Duty In" />
-                                                                        ))}
-                                                                    </>
-                                                                )}
+                                                                {/* Duty In */}
+                                                                {item.dutyInImages?.map((imgUrl, i) => (
+                                                                    <img
+                                                                        key={`in-${i}`}
+                                                                        src={imgUrl}
+                                                                        className={styles.dutyImage}
+                                                                        alt="Duty In"
+                                                                        onClick={() => openModal(imgUrl, "Duty On Image")}
+                                                                        style={{ cursor: 'pointer' }}
+                                                                    />
+                                                                ))}
 
-                                                                {item.dutyInMeterImages?.length > 0 && (
-                                                                    <>
-                                                                        {item.dutyInMeterImages.map((imgUrl, i) => (
-                                                                            <img key={`in-meter-${i}`} src={imgUrl} className={styles.dutyImage} alt="In Meter" />
-                                                                        ))}
-                                                                    </>
-                                                                )}
+                                                                {/* Duty In Meter */}
+                                                                {item.dutyInMeterImages?.map((imgUrl, i) => (
+                                                                    <img
+                                                                        key={`in-meter-${i}`}
+                                                                        src={imgUrl}
+                                                                        className={styles.dutyImage}
+                                                                        alt="In Meter"
+                                                                        onClick={() => openModal(imgUrl, "Duty On Meter Image")}
+                                                                        style={{ cursor: 'pointer' }}
+                                                                    />
+                                                                ))}
 
-                                                                {item.dutyOutImages?.length > 0 && (
-                                                                    <>
-                                                                        {item.dutyOutImages.map((imgUrl, i) => (
-                                                                            <img key={`out-${i}`} src={imgUrl} className={styles.dutyImage} alt="Duty Out" />
-                                                                        ))}
-                                                                    </>
-                                                                )}
+                                                                {/* Duty Out */}
+                                                                {item.dutyOutImages?.map((imgUrl, i) => (
+                                                                    <img
+                                                                        key={`out-${i}`}
+                                                                        src={imgUrl}
+                                                                        className={styles.dutyImage}
+                                                                        alt="Duty Out"
+                                                                        onClick={() => openModal(imgUrl, "Duty Out Image")}
+                                                                        style={{ cursor: 'pointer' }}
+                                                                    />
+                                                                ))}
 
-                                                                {item.dutyOutMeterImages?.length > 0 && (
-                                                                    <>
-                                                                        {item.dutyOutMeterImages.map((imgUrl, i) => (
-                                                                            <img key={`out-meter-${i}`} src={imgUrl} className={styles.dutyImage} alt="Out Meter" />
-                                                                        ))}
-                                                                    </>
-                                                                )}
+                                                                {/* Duty Out Meter */}
+                                                                {item.dutyOutMeterImages?.map((imgUrl, i) => (
+                                                                    <img
+                                                                        key={`out-meter-${i}`}
+                                                                        src={imgUrl}
+                                                                        className={styles.dutyImage}
+                                                                        alt="Out Meter"
+                                                                        onClick={() => openModal(imgUrl, "Duty Out Meter Image")}
+                                                                        style={{ cursor: 'pointer' }}
+                                                                    />
+                                                                ))}
                                                             </div>
 
                                                             <div className={styles.dutyInfo}>
@@ -207,16 +236,26 @@ const DailyAssignment = () => {
                                             ) : (
                                                 <div style={{ textAlign: 'center', fontStyle: 'italic' }}>No records</div>
                                             )}
-
                                         </td>
-
                                     </tr>
                                 );
                             })
                         )}
                     </tbody>
-
                 </table>
+            )}
+
+            {/* 🔥 MODAL SHOW */}
+            {showImgModal && (
+                <ImageModal
+                    imageUrl={selectedImage}
+                    title={modalTitle}
+                    onClose={() => {
+                        setShowImgModal(false);
+                        setSelectedImage(null);
+                        setModalTitle("");
+                    }}
+                />
             )}
         </div>
     );
