@@ -20,8 +20,11 @@ export const getAllActiveVehicles = () => {
       const path = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Vehicles/NotAssigned`
       const result = await db.getData(path)
 
+      const cleaned = Object.values(result || {}).filter(
+        (v) => typeof v === "string" && v.trim() !== ""
+      );
 
-      resolve(common.setResponse(success, "vehicels fetched successfully", result))
+      resolve(common.setResponse(success, "vehicels fetched successfully", cleaned))
     }catch(error){
       resolve(common.setResponse(fail, "failed to fetch vehicles"))
     }
