@@ -223,7 +223,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>Daily Assignment</h3>
 
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>DailyAssignmentViaWeb</label>
+                    <label className={style.toggleLabel}>DailyAssignment ViaWeb</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`}
@@ -240,7 +240,7 @@ const Settings = () => {
             <div className={style.card}>
                 <h3 className={style.cardTitle}>Penalties</h3>
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>PenaltiesViaWeb</label>
+                    <label className={style.toggleLabel}>Penalties ViaWeb</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`}
@@ -258,7 +258,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>Work Monitoring</h3>
 
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>WorkMonitoringViaWeb</label>
+                    <label className={style.toggleLabel}>WorkMonitoring Via Web</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`}
@@ -276,7 +276,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>Navigator Application Settings</h3>
 
                 <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>NavigationViaEmployeeCode</label>
+                    <label className={style.toggleLabel}>Navigation Via Employee Code</label>
 
                     <div
                         className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`}
@@ -288,6 +288,26 @@ const Settings = () => {
                     </div>
                 </div>
             </div>
+
+
+             {/* ---------------- DUTY ON/OFF IMAGE REPORT ---------------- */}
+            <div className={style.card}>
+                <h3 className={style.cardTitle}>Duty On/Off Image</h3>
+
+                <div className={style.toggleWrapper}>
+                    <label className={style.toggleLabel}>Duty On Off Image Report</label>
+
+                    <div
+                        className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`}
+                        onClick={handleDutyOnOffImageReportToggle}
+                    >
+                        <div className={style.toggleCircle}>
+                            {isDutyOnOffImageReportShow ? "ON" : "OFF"}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             {/* ---------------- WEBVIEW URL ---------------- */}
             <div className={style.card}>
@@ -326,7 +346,7 @@ const Settings = () => {
                 <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
 
                 <div className={style.inputRow}>
-                    <label className={style.inputLabel}>DriverLargeImageWidthInPx</label>
+                    <label className={style.inputLabel}>Driver Large Image Width In Px</label>
 
                     <input
                         type="text"
@@ -398,23 +418,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* ---------------- DUTY ON/OFF IMAGE REPORT ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Duty On/Off Image</h3>
-
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>DutyOnOffImageReportShowViaNewStructure</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`}
-                        onClick={handleDutyOnOffImageReportToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isDutyOnOffImageReportShow ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
 
         </div>
     );
