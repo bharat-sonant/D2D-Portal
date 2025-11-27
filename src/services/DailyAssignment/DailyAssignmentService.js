@@ -100,39 +100,37 @@ export const getDutyOnOffList = (zone, date) => {
         try {
             const year = date.split('-')[0];
             const month = await common.getCurrentMonthName(Number(date.split('-')[1]));
-            const datePath = `/WasteCollectionInfo/${zone}/${year}/${month}/${date}`;
+            const datePath = `/AssignmentData/DailyWorkAssignmentDetails/${year}/${month}/${date}/${zone}`;
             const dateData = await db.getData(datePath);
 
-            if (!dateData || !dateData.Summary) {
+            if (!dateData) {
                 return resolve(common.setResponse(failStatus, failMessage, {}));
             }
 
-            const { dutyInTime, dutyOutTime, workPercentageRemark } = dateData.Summary;
-            const remarkArray = workPercentageRemark ? workPercentageRemark.split(',') : [];
-            let dutyList = [];
+            // 🔥 FIXED → Convert Firebase {1:{}, 2:{}} into array
+            const dutyList = Object.keys(dateData).map((key, index) => {
+                const d = dateData[key];
 
-            if (dutyInTime) {
-                const inTimeList = dutyInTime.split(',');
-                const outTimeList = dutyOutTime ? dutyOutTime.split(',') : [];
+                return {
+                    assignId: key,
+                    assign: `Duty Assign ${index + 1}`,
+                    date,
 
-                for (let i = 0; i < inTimeList.length; i++) {
-                    dutyList.push({
-                        assignId: `${i + 1}`,
-                        assign: `Duty Assign ${i + 1}`,
-                        date,
-                        dutyInTime: inTimeList[i],
-                        dutyOutTime: outTimeList[i] || '',
-                        workPercentageRemark: remarkArray[i] || '',
-                    });
-                }
-            }
+                    dutyInTime: d["duty-on-time"] || "",
+                    dutyOutTime: d["duty-off-time"] || "",
 
+                    driver: d.driver || "",
+                    helper: d.helper || "",
+                    vehicle: d.vehicle || ""
+                };
+            });
+
+            // Fetch driver/helper details
             const driverData = await getDriverHelperData(zone, date, dutyList, month);
+
+            // Fetch images
             const imageResponse = await getDutyOnOffImagesByDate(zone, date);
-            let imageData = {};
-            if (imageResponse?.status === "Success" && imageResponse.data) {
-                imageData = imageResponse.data;
-            }
+            const imageData = imageResponse?.status === "Success" ? imageResponse.data : {};
 
             const mergedDutyList = driverData.map(item => ({
                 ...item,
@@ -151,11 +149,12 @@ export const getDutyOnOffList = (zone, date) => {
             );
 
         } catch (error) {
-            console.error('Error in getDutyOnOffList(): - DailyAssignmentService.js:153', error);
+            console.error("Error in getDutyOnOffList():", error);
             resolve(common.setResponse(failStatus, 'Error fetching data', { error }));
         }
     });
 };
+
 
 export const getOrPushDailyAssignmentData = async (ward, date) => {
     try {

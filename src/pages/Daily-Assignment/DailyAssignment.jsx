@@ -67,16 +67,20 @@ const DailyAssignment = () => {
     const getDutyOnOffDataList = async (date) => {
         if (wards.length === 0) return;
         setLoading(true);
+
         const formattedDate = moment(date).format('YYYY-MM-DD');
 
         try {
             const responses = await Promise.all(
                 wards.map(async (ward) => {
                     if (!ward) return null;
-                    const res = await service.getOrPushDailyAssignmentData(ward, formattedDate);
+                    await service.getOrPushDailyAssignmentData(ward, formattedDate);
+                    const res = await service.getDutyOnOffList(ward, formattedDate);
+
                     if (res?.status === "Success" && res.data) {
                         return { wardName: ward, data: res.data };
                     }
+
                     return { wardName: ward, data: null };
                 })
             );
@@ -88,6 +92,7 @@ const DailyAssignment = () => {
             setLoading(false);
         }
     };
+
 
 
     return (
