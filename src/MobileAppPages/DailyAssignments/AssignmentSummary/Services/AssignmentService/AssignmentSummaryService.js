@@ -144,7 +144,7 @@ const pushDataInDailyAssignmentSummary = () => {
 
                     const result = await db.saveData(summaryTaskPath, converted);
 
-                    resolve(common.setResponse("success", "TaskData & NotAssigned count saved successfully in AssignmentSummary", result));
+                    resolve(common.setResponse("success", "TaskData saved successfully in DailyAssignmentSummary", result));
                 } else {
                     resolve(common.setResponse("fail", "No TaskData found !!!", {}));
                 }
@@ -155,5 +155,56 @@ const pushDataInDailyAssignmentSummary = () => {
             });
     });
 };
+
+export const checkDailyAssignmentVehicleData = async() => {
+    return new Promise(async(resolve)=> {
+        try{
+            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+            const path = `AssignmentData/DailyAssignmentSummary/${year}/${monthName}/${date}/Vehicles`
+
+            const response = await db.getData(path);
+            if (response !== null && response !== undefined) {
+            return { success: true, data: response };
+        } else {
+            await pushDataInDailyAssignmentVehicleSummary();
+            
+            return { success: false };
+        };
+    } catch (error) {
+        return { success: false, error: error.message };
+    };
+    })
+}
+
+const pushDataInDailyAssignmentVehicleSummary = () => {
+    return new Promise(async(resolve) => {
+        await db.getData(`Vehicles`)
+            .then(async (resp) => {
+                if (resp !== null) {
+                    const year = dayjs().format("YYYY");
+                    const month = dayjs().format("MMMM");
+                    const date = dayjs().format("YYYY-MM-DD");
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Vehicles/NotAssigned`;
+
+                    const activeKeys = Object.keys(resp).filter((key)=> resp[key].status === '1')
+                    const converted = {};
+                    activeKeys.forEach((key, index) => {
+                        converted[index + 1] = key;   
+                    });
+
+                    const result = await db.saveData(summaryTaskPath, converted);
+
+                    resolve(common.setResponse("success", "Vehicle Data successfully in DailyAssignmentSummary", result));
+                } else {
+                    resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+                }
+            })
+            .catch((err) => {
+                console.log("Error occuring while saving/fetching: ", err);
+                resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+            });
+    });
+};
+
 
 
