@@ -1,4 +1,4 @@
-import { checkNotAssignedKey, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
+import { checkDailyAssignmentSummaryData, checkNotAssignedKey, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
 import * as common from '../../../../../common/common'
 
 export const getWards = (setWardsList, setLoading) => {
@@ -36,3 +36,5 @@ export const checkTaskStatus = async(ward) => {
         return { status: "fail" };
     }
 }
+
+

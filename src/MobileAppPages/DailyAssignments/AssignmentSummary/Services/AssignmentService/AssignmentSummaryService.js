@@ -1,23 +1,7 @@
 import * as db from '../../../../../services/dbServices';
 import * as common from '../../../../../common/common';
 import dayjs from 'dayjs';
-
-const getDateTimeDetails = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const monthName = now.toLocaleString("default", { month: "long" });
-  const date = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
-    now.getDate()
-  ).padStart(2, "0")}`;
-  const time = `${String(now.getHours()).padStart(2, "0")}:${String(
-    now.getMinutes()
-  ).padStart(2, "0")}`;
-  const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}/${year} ${time}`;
-
-  return { now, year, monthName, date, time, formattedDate };
-};
+import { getDateTimeDetails } from '../../../../services/UtilServices/DateTImeUtil';
 
 export const getAllWards = async () => {
     return new Promise(async (resolve) => {
@@ -122,3 +106,54 @@ export const getTaskStatus = async(ward) => {
         }
     })
 }
+
+export const checkDailyAssignmentSummaryData = async() => {
+    return new Promise(async(resolve)=> {
+        try{
+            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+            const path = `AssignmentData/DailyAssignmentSummary/${year}/${monthName}/${date}/Task`
+
+            const response = await db.getData(path);
+            if (response !== null && response !== undefined) {
+            return { success: true, data: response };
+        } else {
+            await pushDataInDailyAssignmentSummary();
+            
+            return { success: false };
+        };
+    } catch (error) {
+        return { success: false, error: error.message };
+    };
+    })
+}
+
+const pushDataInDailyAssignmentSummary = () => {
+    return new Promise(async(resolve) => {
+        await db.getData(`TaskData/Task`)
+            .then(async (resp) => {
+                if (resp !== null) {
+                    const year = dayjs().format("YYYY");
+                    const month = dayjs().format("MMMM");
+                    const date = dayjs().format("YYYY-MM-DD");
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task/NotAssigned`;
+                    console.log(summaryTaskPath)
+                    const converted = {};
+                    resp.forEach((item, index) => {
+                        converted[index] = item;
+                    });
+
+                    const result = await db.saveData(summaryTaskPath, converted);
+
+                    resolve(common.setResponse("success", "TaskData & NotAssigned count saved successfully in AssignmentSummary", result));
+                } else {
+                    resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+                }
+            })
+            .catch((err) => {
+                console.log("Error occuring while saving/fetching: ", err);
+                resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+            });
+    });
+};
+
+

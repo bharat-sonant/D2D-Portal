@@ -2,26 +2,10 @@ import { ref } from 'firebase/storage';
 import * as common from '../../../common/common'
 import * as db from '../../../services/dbServices'
 import { resizeImage } from '../UtilServices/ImageUtils';
+import { getDateTimeDetails } from '../UtilServices/DateTImeUtil';
 const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
-
-export const getDateTimeDetails = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const monthName = now.toLocaleString("default", { month: "long" });
-  const date = `${year}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
-    now.getDate()
-  ).padStart(2, "0")}`;
-  const time = `${String(now.getHours()).padStart(2, "0")}:${String(
-    now.getMinutes()
-  ).padStart(2, "0")}`;
-  const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}/${year} ${time}`;
-
-  return { now, year, monthName, date, time, formattedDate };
-};
 
 export const getAllActiveVehicles = () => {
   return new Promise(async(resolve)=> {
@@ -85,7 +69,6 @@ export const getActiveHelpers = () => {
 export const startAssignmentService = (ward, selectedVehicle, selectedDriver, selectedHelper) => {
   return new Promise(async(resolve)=> {
     try{
-      console.log('ward', ward)
       const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
       const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, vehicleTaskStatusResult, workAssignmentResult, assignmentSummaryResult] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),

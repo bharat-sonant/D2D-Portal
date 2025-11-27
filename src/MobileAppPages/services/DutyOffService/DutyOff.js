@@ -1,6 +1,6 @@
 import * as common from '../../../common/common'
 import * as db from '../../../services/dbServices'
-import { getDateTimeDetails } from '../DutyOnService/DutyOn'
+import { getDateTimeDetails } from '../UtilServices/DateTImeUtil';
 const fail = 'fail'
 const success = 'success'
 const isFail = (res) => res?.status === "fail";
