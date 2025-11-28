@@ -11,418 +11,374 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { setAlertMessage } from "../../../common/common";
 import { getBackOfficeSetting, saveBackOfficeSettings } from "../Services/BackOfficeApplicationSettingsService";
 
-// ⭐ YOUR NEW SERVICE
-import { 
-    getDutyOnOffImageReport,
-    saveDutyOnOffImageReport,
-    removeDutyOnOffImageReport 
-} from "../Services/DutyOnOffImageReportShowViaNewStructureServise.js";
-
+// ⭐ New Service
+import { getDutyOnOffImageReport, saveDutyOnOffImageReport, removeDutyOnOffImageReport } from "../Services/DutyOnOffImageReportShowViaNewStructureServise.js";
+import { getDutyOnOffImageReportUrl, saveDutyOnOffImageReportUrl } from "../Services/DutyOnOffImageReportUrl.js";
 
 const Settings = () => {
+  const [isAssignmentOn, setIsAssignmentOn] = useState(false);
+  const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
+  const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
+  const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
+  const [isDutyOnOffImageReportShow, setIsDutyOnOffImageReportShow] = useState(false);
 
-    const [isAssignmentOn, setIsAssignmentOn] = useState(false);
-    const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
-    const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
-    const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
-    const [isDutyOnOffImageReportShow, setIsDutyOnOffImageReportShow] = useState(false);
+  const [webviewUrl, setWebviewUrl] = useState("");
+  const [urlError, setUrlError] = useState("");
+  const [loader, setLoader] = useState(false);
+  const [pageLoader, setPageLoader] = useState(true);
 
-    const [webviewUrl, setWebviewUrl] = useState("");
-    const [urlError, setUrlError] = useState("");
-    const [loader, setLoader] = useState(false);
-    const [pageLoader, setPageLoader] = useState(true);
+  const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
+  const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
 
-    const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
-    const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
+  const [dutyOnOffImageReportUrl, setDutyOnOffImageReportUrl] = useState("");
+  const [dutyUrlError, setDutyUrlError] = useState("");
 
-    const city = localStorage.getItem('city') || "DevTest";
+  const city = localStorage.getItem('city') || "DevTest";
 
-    const initFirebase = async () => {
-        if (city) {
-            localStorage.setItem("city", city);
-            let config = getCityFirebaseConfig(city);
-            connectFirebase(config, city);
-        }
-    };
+  // ----------------------- Firebase Init -----------------------
+  const initFirebase = async () => {
+    const config = getCityFirebaseConfig(city);
+    connectFirebase(config, city);
+  };
 
-    const loadAssignment = async () => {
-        const response = await getValue(setLoader);
-        setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
-    };
+  // ----------------------- Loaders -----------------------
+  const loadAssignment = async () => {
+    const response = await getValue(setLoader);
+    setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
+  };
 
-    const loadPenalties = async () => {
-        const response = await getPaneltiesValue(setLoader);
-        setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
-    };
+  const loadPenalties = async () => {
+    const response = await getPaneltiesValue(setLoader);
+    setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
+  };
 
-    const loadWorkMonitoring = async () => {
-        const response = await getWorkMonitoringValue(setLoader);
-        setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
-    };
+  const loadWorkMonitoring = async () => {
+    const response = await getWorkMonitoringValue(setLoader);
+    setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
+  };
 
-    const loadNavigator = async () => {
-        const response = await getNavigatorSetting(setLoader);
-        setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
-    };
+  const loadNavigator = async () => {
+    const response = await getNavigatorSetting(setLoader);
+    setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
+  };
 
-    const loadWebviewURL = async () => {
-        const res = await getWebviewUrl(setLoader);
-        setWebviewUrl(res.status === "success" ? res.data.url : "");
-    };
+  const loadWebviewURL = async () => {
+    const res = await getWebviewUrl(setLoader);
+    setWebviewUrl(res.status === "success" ? res.data.url : "");
+  };
 
-    const loadBackOfficeSettings = async () => {
-        try {
-            const resp = await getBackOfficeSetting();
-            if (resp.status === "success") {
-                setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
-                setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
-            }
-        } catch (_) { }
-    };
+  const loadDutyOnOffImageReportUrlHandler = async () => {
+    const res = await getDutyOnOffImageReportUrl();
+    setDutyOnOffImageReportUrl(res.status === "success" ? res.data.url : "");
+  };
 
-    const loadDutyOnOffImageReport = async () => {
-        const response = await getDutyOnOffImageReport(setLoader);
-        setIsDutyOnOffImageReportShow(response.status === "success" && response.data.value === "yes");
-    };
+  const loadBackOfficeSettings = async () => {
+    const resp = await getBackOfficeSetting();
+    if (resp.status === "success") {
+      setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
+      setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
+    }
+  };
 
-    const handleAssignmentToggle = async () => {
-        const newValue = !isAssignmentOn;
-        setIsAssignmentOn(newValue);
+  const loadDutyOnOffImageReport = async () => {
+    const response = await getDutyOnOffImageReport(setLoader);
+    setIsDutyOnOffImageReportShow(response.status === "success" && response.data.value === "yes");
+  };
 
-        const res = newValue ? await saveValue() : await RemoveValue();
+  // ----------------------- Button Handlers -----------------------
+  const toggleAssignment = async () => {
+    const newValue = !isAssignmentOn;
+    setIsAssignmentOn(newValue);
 
-        if (res?.status !== "success") {
-            setIsAssignmentOn(isAssignmentOn);
-            setAlertMessage("error", "Failed to update Daily Assignment");
-        } else {
-            setAlertMessage("success", "Daily Assignment updated");
-        }
-    };
+    const res = newValue ? await saveValue() : await RemoveValue();
+    if (res?.status !== "success") {
+      setIsAssignmentOn(isAssignmentOn);
+      setAlertMessage("error", "Failed to update Daily Assignment");
+    } else setAlertMessage("success", "Daily Assignment updated");
+  };
 
-    const handlePenaltiesToggle = async () => {
-        const newValue = !isPenaltiesOn;
-        setIsPenaltiesOn(newValue);
+  const togglePenalties = async () => {
+    const newValue = !isPenaltiesOn;
+    setIsPenaltiesOn(newValue);
 
-        const res = newValue ? await savePaneltiesValue() : await RemovePaneltiesValue();
+    const res = newValue ? await savePaneltiesValue() : await RemovePaneltiesValue();
+    if (res?.status !== "success") {
+      setIsPenaltiesOn(isPenaltiesOn);
+      setAlertMessage("error", "Failed to update Penalties");
+    } else setAlertMessage("success", "Penalties updated");
+  };
 
-        if (res?.status !== "success") {
-            setIsPenaltiesOn(isPenaltiesOn);
-            setAlertMessage("error", "Failed to update Penalties");
-        } else {
-            setAlertMessage("success", "Penalties updated");
-        }
-    };
+  const toggleWorkMonitoring = async () => {
+    const newValue = !isWorkMonitoringOn;
+    setIsWorkMonitoringOn(newValue);
 
-    const handleWorkMonitoringToggle = async () => {
-        const newValue = !isWorkMonitoringOn;
-        setIsWorkMonitoringOn(newValue);
+    const res = newValue ? await saveWorkMonitoringValue() : await removeWorkMonitoringValue();
+    if (res?.status !== "success") {
+      setIsWorkMonitoringOn(isWorkMonitoringOn);
+      setAlertMessage("error", "Failed to update Work Monitoring");
+    } else setAlertMessage("success", "Work Monitoring updated");
+  };
 
-        const res = newValue ? await saveWorkMonitoringValue() : await removeWorkMonitoringValue();
+  const toggleNavigator = async () => {
+    const newValue = !isNavigatorSettingOn;
+    setIsNavigatorSettingOn(newValue);
 
-        if (res?.status !== "success") {
-            setIsWorkMonitoringOn(isWorkMonitoringOn);
-            setAlertMessage("error", "Failed to update Work Monitoring");
-        } else {
-            setAlertMessage("success", "Work Monitoring updated");
-        }
-    };
+    const res = newValue ? await saveNavigatorSetting() : await removeNavigatorSetting();
+    if (res?.status !== "success") {
+      setIsNavigatorSettingOn(isNavigatorSettingOn);
+      setAlertMessage("error", "Failed to update Navigator Setting");
+    } else setAlertMessage("success", "Navigator Setting updated");
+  };
 
-    const handleNavigatorToggle = async () => {
-        const newValue = !isNavigatorSettingOn;
-        setIsNavigatorSettingOn(newValue);
+  const toggleDutyOnOffImageReport = async () => {
+    const newValue = !isDutyOnOffImageReportShow;
+    setIsDutyOnOffImageReportShow(newValue);
 
-        const res = newValue ? await saveNavigatorSetting() : await removeNavigatorSetting();
+    const res = newValue ? await saveDutyOnOffImageReport() : await removeDutyOnOffImageReport();
+    if (res?.status !== "success") {
+      setIsDutyOnOffImageReportShow(isDutyOnOffImageReportShow);
+      setAlertMessage("error", "Failed to update Duty On/Off Image Setting");
+    } else setAlertMessage("success", "Duty On/Off Image Setting updated");
+  };
 
-        if (res?.status !== "success") {
-            setIsNavigatorSettingOn(isNavigatorSettingOn);
-            setAlertMessage("error", "Failed to update Navigator Setting");
-        } else {
-            setAlertMessage("success", "Navigator Setting updated");
-        }
-    };
+  const saveDailyAssignmentUrl = async () => {
+    setUrlError("");
 
-    const handleDutyOnOffImageReportToggle = async () => {
-        const newValue = !isDutyOnOffImageReportShow;
-        setIsDutyOnOffImageReportShow(newValue);
-
-        const res = newValue ? await saveDutyOnOffImageReport() : await removeDutyOnOffImageReport();
-
-        if (res?.status !== "success") {
-            setIsDutyOnOffImageReportShow(isDutyOnOffImageReportShow);
-            setAlertMessage("error", "Failed to update Duty On/Off Image Setting");
-        } else {
-            setAlertMessage("success", "Duty On/Off Image Setting updated");
-        }
-    };
-
-    const saveUrlHandler = async () => {
-        setUrlError("");
-
-        if (!webviewUrl.trim()) {
-            setUrlError("URL cannot be empty");
-            return;
-        }
-
-        const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
-
-        if (!urlPattern.test(webviewUrl.trim())) {
-            setUrlError("Invalid URL format. Must start with http:// or https://");
-            return;
-        }
-
-        const res = await saveWebviewUrl(webviewUrl);
-
-        if (res.status === "success") {
-            setAlertMessage("success", "Webview URL saved successfully!");
-        } else {
-            setAlertMessage("error", "Failed to save Webview URL");
-        }
-    };
-
-    useEffect(() => {
-        async function initialize() {
-            setPageLoader(true);
-
-            await initFirebase();
-            await loadAssignment();
-            await loadPenalties();
-            await loadWorkMonitoring();
-            await loadNavigator();
-            await loadWebviewURL();
-            await loadBackOfficeSettings();
-            await loadDutyOnOffImageReport();
-
-            setPageLoader(false);
-        }
-
-        initialize();
-    }, []);
-
-    if (pageLoader) {
-        return (
-            <div style={{
-                height: "100vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "22px",
-                fontWeight: "bold"
-            }}>
-                Loading Settings...
-            </div>
-        );
+    if (!webviewUrl.trim()) {
+      setUrlError("URL cannot be empty");
+      return;
     }
 
+    const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
+    if (!urlPattern.test(webviewUrl.trim())) {
+      setUrlError("Invalid URL format. Must start with http:// or https://");
+      return;
+    }
+
+    const res = await saveWebviewUrl(webviewUrl.trim());
+    if (res.status === "success") {
+      setAlertMessage("success", "Webview URL saved successfully!");
+    } else {
+      setAlertMessage("error", "Failed to save Webview URL");
+    }
+  };
+
+  const saveDutyOnOffImageReportUrlHandlerFn = async () => {
+    setDutyUrlError("");
+
+    if (!dutyOnOffImageReportUrl.trim()) {
+      setDutyUrlError("URL cannot be empty");
+      return;
+    }
+
+    const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
+    if (!urlPattern.test(dutyOnOffImageReportUrl.trim())) {
+      setDutyUrlError("Invalid URL format. Must start with http:// or https://");
+      return;
+    }
+
+    const res = await saveDutyOnOffImageReportUrl(dutyOnOffImageReportUrl.trim());
+    if (res.status === "success") {
+      setAlertMessage("success", "Duty On/Off Image Report URL saved successfully!");
+    } else {
+      setAlertMessage("error", "Failed to save Duty On/Off Image Report URL");
+    }
+  };
+
+  const saveBackOfficeSettingsHandler = async () => {
+    if (!driverLargeImageWidth.trim() || !driverThumbnailWidth.trim()) {
+      setAlertMessage("error", "Both width fields are required");
+      return;
+    }
+
+    const numericPattern = /^[1-9]\d{0,3}$/;
+    if (!numericPattern.test(driverLargeImageWidth)) {
+      setAlertMessage("error", "Large Image Width must be a valid number (1–9999).");
+      return;
+    }
+
+    if (!numericPattern.test(driverThumbnailWidth)) {
+      setAlertMessage("error", "Thumbnail Width must be a valid number (1–9999).");
+      return;
+    }
+
+    const res = await saveBackOfficeSettings({
+      DriverLargeImageWidthInPx: driverLargeImageWidth,
+      DriverThumbnailWidthInPx: driverThumbnailWidth
+    });
+
+    if (res?.status === "success") {
+      setAlertMessage("success", "Back Office settings saved successfully!");
+    } else {
+      setAlertMessage("error", "Failed to save Back Office settings");
+    }
+  };
+
+  // ----------------------- useEffect -----------------------
+  useEffect(() => {
+    async function initialize() {
+      setPageLoader(true);
+      await initFirebase();
+      await loadAssignment();
+      await loadPenalties();
+      await loadWorkMonitoring();
+      await loadNavigator();
+      await loadWebviewURL();
+      await loadBackOfficeSettings();
+      await loadDutyOnOffImageReport();
+      await loadDutyOnOffImageReportUrlHandler();
+      setPageLoader(false);
+    }
+    initialize();
+  }, []);
+
+  if (pageLoader) {
     return (
-        <div className={style.pageContainer}>
-
-            {loader && <div>Loading...</div>}
-
-            {/* ---------------- DAILY ASSIGNMENT ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Daily Assignment</h3>
-
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>DailyAssignment Via Web</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`}
-                        onClick={handleAssignmentToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isAssignmentOn ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ---------------- PENALTIES ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Penalties</h3>
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>Penalties Via Web</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`}
-                        onClick={handlePenaltiesToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isPenaltiesOn ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ---------------- WORK MONITORING ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Work Monitoring</h3>
-
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>Work Monitoring Via Web</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`}
-                        onClick={handleWorkMonitoringToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isWorkMonitoringOn ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ---------------- NAVIGATOR ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Navigator Application Settings</h3>
-
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>Navigation Via Employee Code</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`}
-                        onClick={handleNavigatorToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isNavigatorSettingOn ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-             {/* ---------------- DUTY ON/OFF IMAGE REPORT ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Duty On/Off Image</h3>
-
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>Duty On Off Image Report</label>
-
-                    <div
-                        className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`}
-                        onClick={handleDutyOnOffImageReportToggle}
-                    >
-                        <div className={style.toggleCircle}>
-                            {isDutyOnOffImageReportShow ? "ON" : "OFF"}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            {/* ---------------- WEBVIEW URL ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
-
-                <div className={style.inputRow}>
-                    <label className={style.inputLabel}>Webview URL</label>
-
-                    <input
-                        type="text"
-                        className={style.textInput}
-                        placeholder="https://yourdomain.com/AssignmentSummary"
-                        value={webviewUrl}
-                        onChange={(e) => {
-                            setWebviewUrl(e.target.value);
-                            setUrlError("");
-                        }}
-                    />
-                </div>
-
-                {urlError && (
-                    <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>
-                        {urlError}
-                    </p>
-                )}
-
-                <div className={style.saveRow}>
-                    <button className={style.saveButton} onClick={saveUrlHandler}>
-                        Save
-                    </button>
-                </div>
-            </div>
-
-            {/* ---------------- BACKOFFICE SETTINGS ---------------- */}
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
-
-                <div className={style.inputRow}>
-                    <label className={style.inputLabel}>Driver Large Image Width In px</label>
-
-                    <input
-                        type="text"
-                        className={style.textInput}
-                        placeholder="Enter large image width"
-                        value={driverLargeImageWidth}
-                        onChange={(e) => {
-                            let v = e.target.value;
-                            if (/^\d{0,4}$/.test(v)) {   // NUMERIC ONLY
-                                setDriverLargeImageWidth(v);
-                            }
-                        }}
-                    />
-                </div>
-
-                <div className={style.inputRow}>
-                    <label className={style.inputLabel}>Driver Thumbnail Width In px</label>
-
-                    <input
-                        type="text"
-                        className={style.textInput}
-                        placeholder="Enter thumbnail image width"
-                        value={driverThumbnailWidth}
-                        onChange={(e) => {
-                            let v = e.target.value;
-                            if (/^\d{0,4}$/.test(v)) {   // NUMERIC ONLY
-                                setDriverThumbnailWidth(v);
-                            }
-                        }}
-                    />
-                </div>
-
-                <div className={style.saveRow}>
-                    <button
-                        className={style.saveButton}
-                        onClick={async () => {
-
-                            if (!driverLargeImageWidth.trim() || !driverThumbnailWidth.trim()) {
-                                setAlertMessage("error", "Both width fields are required");
-                                return;
-                            }
-
-                            const numericPattern = /^[1-9]\d{0,3}$/; // 1–9999 only
-
-                            if (!numericPattern.test(driverLargeImageWidth)) {
-                                setAlertMessage("error", "Large Image Width must be a valid number (1–9999).");
-                                return;
-                            }
-
-                            if (!numericPattern.test(driverThumbnailWidth)) {
-                                setAlertMessage("error", "Thumbnail Width must be a valid number (1–9999).");
-                                return;
-                            }
-
-                            const res = await saveBackOfficeSettings({
-                                DriverLargeImageWidthInPx: driverLargeImageWidth,
-                                DriverThumbnailWidthInPx: driverThumbnailWidth
-                            });
-
-                            if (res?.status === "success") {
-                                setAlertMessage("success", "Back Office settings saved successfully!");
-                            } else {
-                                setAlertMessage("error", "Failed to save Back Office settings");
-                            }
-                        }}
-                    >
-                        Save
-                    </button>
-                </div>
-            </div>
-
-           
-
-        </div>
+      <div style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "22px",
+        fontWeight: "bold"
+      }}>
+        Loading Settings...
+      </div>
     );
-};
+  }
 
+  // ----------------------- JSX -----------------------
+  return (
+    <div className={style.pageContainer}>
+
+      {loader && <div>Loading...</div>}
+
+      {/* DAILY ASSIGNMENT */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Daily Assignment</h3>
+        <div className={style.toggleWrapper}>
+          <label className={style.toggleLabel}>DailyAssignment Via Web</label>
+          <div className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`} onClick={toggleAssignment}>
+            <div className={style.toggleCircle}>{isAssignmentOn ? "ON" : "OFF"}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* PENALTIES */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Penalties</h3>
+        <div className={style.toggleWrapper}>
+          <label className={style.toggleLabel}>Penalties Via Web</label>
+          <div className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`} onClick={togglePenalties}>
+            <div className={style.toggleCircle}>{isPenaltiesOn ? "ON" : "OFF"}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* WORK MONITORING */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Work Monitoring</h3>
+        <div className={style.toggleWrapper}>
+          <label className={style.toggleLabel}>Work Monitoring Via Web</label>
+          <div className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`} onClick={toggleWorkMonitoring}>
+            <div className={style.toggleCircle}>{isWorkMonitoringOn ? "ON" : "OFF"}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* NAVIGATOR */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Navigator Application Settings</h3>
+        <div className={style.toggleWrapper}>
+          <label className={style.toggleLabel}>Navigation Via Employee Code</label>
+          <div className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`} onClick={toggleNavigator}>
+            <div className={style.toggleCircle}>{isNavigatorSettingOn ? "ON" : "OFF"}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* DUTY ON/OFF IMAGE REPORT */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Report Via New Structure</h3>
+        <div className={style.toggleWrapper}>
+          <label className={style.toggleLabel}>Duty On Off Image Report</label>
+          <div className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`} onClick={toggleDutyOnOffImageReport}>
+            <div className={style.toggleCircle}>{isDutyOnOffImageReportShow ? "ON" : "OFF"}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* DUTY ON/OFF IMAGE REPORT URL */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Duty On/Off Image Report URL</h3>
+        <div className={style.inputRow}>
+          <label className={style.inputLabel}>Report Webview URL</label>
+          <input
+            type="text"
+            className={style.textInput}
+            placeholder="https://yourdomain.com/DutyOnOffImageReport"
+            value={dutyOnOffImageReportUrl}
+            onChange={(e) => {
+              setDutyOnOffImageReportUrl(e.target.value);
+              setDutyUrlError("");
+            }}
+          />
+        </div>
+        {dutyUrlError && <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>{dutyUrlError}</p>}
+        <div className={style.saveRow}>
+          <button className={style.saveButton} onClick={saveDutyOnOffImageReportUrlHandlerFn}>Save</button>
+        </div>
+      </div>
+
+      {/* DAILY ASSIGNMENT WEBVIEW URL */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
+        <div className={style.inputRow}>
+          <label className={style.inputLabel}>Webview URL</label>
+          <input
+            type="text"
+            className={style.textInput}
+            placeholder="https://yourdomain.com/AssignmentSummary"
+            value={webviewUrl}
+            onChange={(e) => { setWebviewUrl(e.target.value); setUrlError(""); }}
+          />
+        </div>
+        {urlError && <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>{urlError}</p>}
+        <div className={style.saveRow}>
+          <button className={style.saveButton} onClick={saveDailyAssignmentUrl}>Save</button>
+        </div>
+      </div>
+
+      {/* BACKOFFICE SETTINGS */}
+      <div className={style.card}>
+        <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
+        <div className={style.inputRow}>
+          <label className={style.inputLabel}>Driver Large Image Width In px</label>
+          <input
+            type="text"
+            className={style.textInput}
+            placeholder="Enter large image width"
+            value={driverLargeImageWidth}
+            onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) setDriverLargeImageWidth(e.target.value); }}
+          />
+        </div>
+        <div className={style.inputRow}>
+          <label className={style.inputLabel}>Driver Thumbnail Width In px</label>
+          <input
+            type="text"
+            className={style.textInput}
+            placeholder="Enter thumbnail image width"
+            value={driverThumbnailWidth}
+            onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) setDriverThumbnailWidth(e.target.value); }}
+          />
+        </div>
+        <div className={style.saveRow}>
+          <button className={style.saveButton} onClick={saveBackOfficeSettingsHandler}>Save</button>
+        </div>
+      </div>
+
+    </div>
+  );
+};
 
 export default Settings;
