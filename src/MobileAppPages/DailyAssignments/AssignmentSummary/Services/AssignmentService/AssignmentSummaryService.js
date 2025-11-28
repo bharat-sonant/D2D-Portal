@@ -119,14 +119,13 @@ export const checkDailyAssignmentSummaryData = async() => {
 
             const response = await db.getData(path);
             if (response !== null && response !== undefined) {
-            return { success: true, data: response };
+            resolve ({ success: true, data: response });
         } else {
             await pushDataInDailyAssignmentSummary();
-            
-            return { success: false };
+            resolve ({ success: false });
         };
     } catch (error) {
-        return { success: false, error: error.message };
+        resolve ({ success: false, error: error.message });
     };
     })
 }
@@ -165,17 +164,16 @@ export const checkDailyAssignmentVehicleData = async() => {
         try{
             const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
             const path = `AssignmentData/DailyAssignmentSummary/${year}/${monthName}/${date}/Vehicles`
-
+            
             const response = await db.getData(path);
             if (response !== null && response !== undefined) {
-            return { success: true, data: response };
+            resolve ({ success: true, data: response });
         } else {
             await pushDataInDailyAssignmentVehicleSummary();
-            
-            return { success: false };
+            resolve ({ success: false });
         };
     } catch (error) {
-        return { success: false, error: error.message };
+        resolve ({ success: false, error: error.message });
     };
     })
 }
@@ -218,14 +216,13 @@ export const checkDailyAssignmentDriverData = async() => {
 
             const response = await db.getData(path);
             if (response !== null && response !== undefined) {
-            return { success: true, data: response };
+            resolve ({ success: true, data: response });
         } else {
             await pushDataInDailyAssignmentDriverSummary();
-            
-            return { success: false };
+            resolve ({ success: false });
         };
     } catch (error) {
-        return { success: false, error: error.message };
+        resolve ({ success: false, error: error.message });
     };
     })
 }
@@ -262,14 +259,13 @@ export const checkDailyAssignmentHelperData = async() => {
 
             const response = await db.getData(path);
             if (response !== null && response !== undefined) {
-            return { success: true, data: response };
+            resolve ({ success: true, data: response });
         } else {
             await pushDataInDailyAssignmentHelperSummary();
-            
-            return { success: false };
+            resolve ({ success: false });
         };
     } catch (error) {
-        return { success: false, error: error.message };
+        resolve ({ success: false, error: error.message });
     };
     })
 }

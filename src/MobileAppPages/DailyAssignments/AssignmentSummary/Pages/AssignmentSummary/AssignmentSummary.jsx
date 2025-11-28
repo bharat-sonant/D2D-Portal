@@ -17,13 +17,24 @@ const AssignmentSummary = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        action.getWards(setWardsList, setLoading);
-        action.checkNotAssignedValue(setWardsList, setLoading);
-        checkDailyAssignmentSummaryData();
-        checkDailyAssignmentVehicleData();
-        checkDailyAssignmentDriverData();
-        checkDailyAssignmentHelperData();
+        initialize();
     }, [])
+
+    const initialize = async () => {
+        setLoading(true);
+
+        // Step 1: Ensure all daily assignment base data is created
+        await checkDailyAssignmentSummaryData();
+        await checkDailyAssignmentVehicleData();
+        await checkDailyAssignmentDriverData();
+        await checkDailyAssignmentHelperData();
+
+        // Step 2: Now safely fetch wards – data exists for sure
+        await action.getWards(setWardsList, setLoading);
+        await action.checkNotAssignedValue(setWardsList, setLoading);
+
+        setLoading(false);
+    };
 
     useEffect(() => {
         if (city) {

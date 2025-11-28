@@ -1,29 +1,40 @@
 import { checkDailyAssignmentSummaryData, checkNotAssignedKey, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
 import * as common from '../../../../../common/common'
 
-export const getWards = (setWardsList, setLoading) => {
-    getAllWards().then((response) => {
-        if (response.status === 'success') {
-            console.log('resposn',response)
+
+    export const getWards = async (setWardsList, setLoading) => {
+        return new Promise(async (resolve) => {
+            const response = await getAllWards();
+
+            if (response.status === "success") {
             setWardsList(response.data.wardKeys);
             setLoading(false);
-        } else {
+            resolve(response);
+            } else {
             setWardsList([]);
             setLoading(false);
-        }
-    });
+            resolve(response);
+            }
+        });
+    };
+
+
+
+export const checkNotAssignedValue = async (setWardsList, setLoading) => {
+  return new Promise(async (resolve) => {
+    const resp = await checkNotAssignedKey();
+
+    if (resp.success === true && resp.data?.data?.wardKeys) {
+      setWardsList(resp.data.data.wardKeys);
+      resolve(resp);
+    } else {
+      const res = await getWards(setWardsList, setLoading);
+      resolve(res);
+    }
+      setLoading(false);
+  });
 };
 
-export const checkNotAssignedValue = (setWardsList, setLoading) => {
-    checkNotAssignedKey().then((resp) => {
-        if (resp.success === true && resp.data?.data?.wardKeys) {
-            setWardsList(resp.data.data.wardKeys);
-        } else {
-            getWards(setWardsList, setLoading);
-        }
-        setLoading(false);
-    });
-};
 
 export const checkTaskStatus = async(ward) => {
     try{
