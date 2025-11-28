@@ -2,7 +2,7 @@ import styles from '../../Style/DailyAssignment/DailyAssignment.module.css';
 import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaClock, FaUser, FaTruck, FaCamera } from 'react-icons/fa';
 import * as service from '../../services/DailyAssignment/DailyAssignmentService';
 import * as wardService from '../../services/WardsServices/WardsService';
 import moment from 'moment';
@@ -11,6 +11,7 @@ import { connectFirebase } from '../../firebase/firebaseService';
 import { getCityFirebaseConfig } from '../../configurations/cityDBConfig';
 import { useLocation } from 'react-router-dom';
 import ImageModal from '../../components/ImageModal/ImageModal';
+import dayjs from 'dayjs';
 
 const DailyAssignment = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -19,7 +20,6 @@ const DailyAssignment = () => {
     const [loading, setLoading] = useState(true);
     const [modalTitle, setModalTitle] = useState("");
 
-    // Modal
     const [showImgModal, setShowImgModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -30,7 +30,6 @@ const DailyAssignment = () => {
     useEffect(() => {
         if (city) {
             localStorage.setItem("city", city);
-
             let config = getCityFirebaseConfig(city);
             connectFirebase(config, city);
         } else {
@@ -82,13 +81,11 @@ const DailyAssignment = () => {
                     if (!ward) return null;
 
                     await service.getOrPushDailyAssignmentData(ward, formattedDate);
-
                     const res = await service.getDutyOnOffList(ward, formattedDate);
 
                     if (res?.status === "Success" && res.data) {
                         return { wardName: ward, data: res.data };
                     }
-
                     return { wardName: ward, data: null };
                 })
             );
@@ -107,145 +104,168 @@ const DailyAssignment = () => {
         setShowImgModal(true);
     };
 
+    const isToday = moment(selectedDate).isSame(moment(), 'day');
 
     return (
         <div className={styles.container}>
-            <div className={styles.dateRow}>
-                <button className={styles.navButton} onClick={handlePrevDay}>
-                    <FaChevronLeft />
-                </button>
 
-                <DatePicker
-                    selected={selectedDate}
-                    onChange={(date) => setSelectedDate(date)}
-                    dateFormat="dd-MM-yyyy"
-                    className={styles.datePicker}
-                    calendarClassName={styles.customCalendar}
-                />
+            {/* HEADER SECTION - Fixed */}
+            <div className={styles.headerSection}>
+                <div className={styles.dateControls}>
+                    <button className={styles.navButton} onClick={handlePrevDay}>
+                        <FaChevronLeft />
+                    </button>
 
-                <button className={styles.navButton} onClick={handleNextDay}>
-                    <FaChevronRight />
-                </button>
+                    <div className={styles.datePickerWrapper}>
+                        <DatePicker
+                            selected={selectedDate}
+                            onChange={(date) => setSelectedDate(date)}
+                            dateFormat="dd MMM yyyy"
+                            className={styles.datePicker}
+                            calendarClassName={styles.customCalendar}
+                        />
+                        {isToday && <span className={styles.todayBadge}>Today</span>}
+                    </div>
+
+                    <button className={styles.navButton} onClick={handleNextDay}>
+                        <FaChevronRight />
+                    </button>
+                </div>
             </div>
 
+            {/* LOADER */}
             {loading ? (
-                <div
-                    style={{
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        marginTop: '240px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Spinner size={50} />
-                    <p>Please wait... Processing your data.</p>
+                <div className={styles.loaderBox}>
+                    <Spinner animation="border" variant="primary" />
+                    <p className={styles.loaderText}>Loading assignment data...</p>
                 </div>
-
             ) : (
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>S.No.</th>
-                            <th>Zone</th>
-                            <th>Duty On/Off Images</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {wards.length === 0 ? (
-                            <tr>
-                                <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                                    No wards available
-                                </td>
-                            </tr>
-                        ) : (
-                            wards.map((ward, index) => {
-                                const zone = zoneData.find(z => z?.wardName === ward);
-                                const dutyData = zone?.data;
+                <div className={styles.gridContainer}>
+                    {zoneData.map((zone, index) => (
+                        <div key={index} className={styles.zoneCard}>
 
-                                return (
-                                    <tr key={ward}>
-                                        <td>{index + 1}</td>
-                                        <td>{ward}</td>
-                                        <td>
-                                            {dutyData?.dutyImgList?.length > 0 ? (
-                                                <div className={styles.cardContainer}>
-                                                    {dutyData.dutyImgList.map((item, idx) => (
-                                                        <div key={idx} className={styles.dutyCard}>
-                                                            <div className={styles.imageRow}>
-                                                                {/* Duty In */}
-                                                                {item.dutyInImages?.map((imgUrl, i) => (
-                                                                    <img
-                                                                        key={`in-${i}`}
-                                                                        src={imgUrl}
-                                                                        className={styles.dutyImage}
-                                                                        alt="Duty In"
-                                                                        onClick={() => openModal(imgUrl, "Duty On Image")}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                ))}
+                            {/* Zone Header */}
+                            <div className={styles.zoneHeader}>
+                                <div className={styles.zoneHeaderLeft}>
+                                    <span className={styles.zoneIndex}>{zone?.wardName}</span>
+                                    {/* <h3 className={styles.zoneTitle}>{zone?.wardName}</h3> */}
+                                </div>
+                                <div className={styles.entriesCount}>
+                                    {zone?.data?.dutyImgList?.length || 0} {zone?.data?.dutyImgList?.length === 1 ? 'Entry' : 'Entries'}
+                                </div>
+                            </div>
 
-                                                                {/* Duty In Meter */}
-                                                                {item.dutyInMeterImages?.map((imgUrl, i) => (
-                                                                    <img
-                                                                        key={`in-meter-${i}`}
-                                                                        src={imgUrl}
-                                                                        className={styles.dutyImage}
-                                                                        alt="In Meter"
-                                                                        onClick={() => openModal(imgUrl, "Duty On Meter Image")}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                ))}
+                            {/* Multiple entries per ward */}
+                            <div className={styles.entriesContainer}>
+                                {zone?.data?.dutyImgList?.length > 0 ? (
+                                    zone.data.dutyImgList.map((item, eIndex) => (
+                                        <div key={eIndex} className={styles.entryCard}>
 
-                                                                {/* Duty Out */}
-                                                                {item.dutyOutImages?.map((imgUrl, i) => (
-                                                                    <img
-                                                                        key={`out-${i}`}
-                                                                        src={imgUrl}
-                                                                        className={styles.dutyImage}
-                                                                        alt="Duty Out"
-                                                                        onClick={() => openModal(imgUrl, "Duty Out Image")}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                ))}
-
-                                                                {/* Duty Out Meter */}
-                                                                {item.dutyOutMeterImages?.map((imgUrl, i) => (
-                                                                    <img
-                                                                        key={`out-meter-${i}`}
-                                                                        src={imgUrl}
-                                                                        className={styles.dutyImage}
-                                                                        alt="Out Meter"
-                                                                        onClick={() => openModal(imgUrl, "Duty Out Meter Image")}
-                                                                        style={{ cursor: 'pointer' }}
-                                                                    />
-                                                                ))}
-                                                            </div>
-
-                                                            <div className={styles.dutyInfo}>
-                                                                <p><strong>Driver:</strong> {item.driver || "---"}</p>
-                                                                <p><strong>Helper:</strong> {item.helper || "---"}</p>
-                                                                <p><strong>Vehicle:</strong> {item.vehicle || "---"}</p>
-                                                                <p><strong>In Time:</strong> {item.dutyInTime || "---"}</p>
-                                                                <p><strong>Out Time:</strong> {item.dutyOutTime || "---"}</p>
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                            <div className={styles.entryHeader}>
+                                                <h4 className={styles.entryTitle}>Duty On/Off {eIndex + 1}</h4>
+                                                <div className={styles.timeBadge}>
+                                                    <FaClock size={12} />
+                                                    <span>{item.dutyInTime || "---"} - {item.dutyOutTime || "---"}</span>
                                                 </div>
-                                            ) : (
-                                                <div style={{ textAlign: 'center', fontStyle: 'italic' }}>No records</div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                        )}
-                    </tbody>
-                </table>
+                                            </div>
+
+                                            {/* Images Grid */}
+                                            {(item.dutyInImages?.length > 0 ||
+                                                item.dutyInMeterImages?.length > 0 ||
+                                                item.dutyOutImages?.length > 0 ||
+                                                item.dutyOutMeterImages?.length > 0) && (
+                                                    <div className={styles.imagesSection}>
+                                                        <div className={styles.imagesSectionHeader}>
+                                                            <FaCamera size={14} />
+                                                            <span>Duty Images</span>
+                                                        </div>
+                                                        <div className={styles.imageRow}>
+                                                            {item.dutyInImages?.map((img, i) => (
+                                                                <div key={i} className={styles.imageWrapper}>
+                                                                    <img src={img} className={styles.dutyImage}
+                                                                        onClick={() => openModal(img, "Duty In")} alt="Duty In" />
+                                                                    <span className={styles.imageLabel} style={{ width: '72px' }}>Duty On</span>
+                                                                </div>
+                                                            ))}
+
+                                                            {item.dutyInMeterImages?.map((img, i) => (
+                                                                <div key={i} className={styles.imageWrapper}>
+                                                                    <img src={img} className={styles.dutyImage}
+                                                                        onClick={() => openModal(img, "Meter In")} alt="Meter In" />
+                                                                    <span className={styles.imageLabel} style={{ width: '86px' }}>Meter On</span>
+                                                                </div>
+                                                            ))}
+
+                                                            {item.dutyOutImages?.map((img, i) => (
+                                                                <div key={i} className={styles.imageWrapper}>
+                                                                    <img src={img} className={styles.dutyImage}
+                                                                        onClick={() => openModal(img, "Duty Out")} alt="Duty Out" />
+                                                                    <span className={styles.imageLabel} style={{ width: '80px' }}>Duty Out</span>
+                                                                </div>
+                                                            ))}
+
+                                                            {item.dutyOutMeterImages?.map((img, i) => (
+                                                                <div key={i} className={styles.imageWrapper}>
+                                                                    <img src={img} className={styles.dutyImage}
+                                                                        onClick={() => openModal(img, "Meter Out")} alt="Meter Out" />
+                                                                    <span className={styles.imageLabel}>Meter Off</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                            {/* Info Section */}
+                                            <div className={styles.infoGrid}>
+                                                <div className={styles.infoItem}>
+                                                    <div className={styles.infoIcon}>
+                                                        <FaUser />
+                                                    </div>
+                                                    <div className={styles.infoContent}>
+                                                        <span className={styles.infoLabel}>Driver</span>
+                                                        <span className={styles.infoValue}>{item.driver || "Not Assigned"}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.infoItem}>
+                                                    <div className={styles.infoIcon}>
+                                                        <FaUser />
+                                                    </div>
+                                                    <div className={styles.infoContent}>
+                                                        <span className={styles.infoLabel}>Helper</span>
+                                                        <span className={styles.infoValue}>{item.helper || "Not Assigned"}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.infoItem}>
+                                                    <div className={styles.infoIcon}>
+                                                        <FaTruck />
+                                                    </div>
+                                                    <div className={styles.infoContent}>
+                                                        <span className={styles.infoLabel}>Vehicle</span>
+                                                        <span className={styles.infoValue}>{item.vehicle || "Not Assigned"}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={styles.noRecord}>
+                                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M9 11l3 3L22 4" />
+                                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                                        </svg>
+                                        <p>
+                                            No duty on/off data found on {moment(selectedDate).format('DD-MMM-YYYY')}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
             )}
 
-            {/* 🔥 MODAL SHOW */}
             {showImgModal && (
                 <ImageModal
                     imageUrl={selectedImage}
