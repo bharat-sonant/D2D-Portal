@@ -9,19 +9,28 @@ export const getAllWards = async () => {
             const year = dayjs().format('YYYY');
             const month = dayjs().format('MMMM');
             const date = dayjs().format('YYYY-MM-DD');
+            let basePath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task`;
 
-            let path = `AssignmentData/AssignmentSummary/${year}/${month}/${date}/Task`;
+            // all three paths
+            const paths = [
+                `${basePath}/NotAssigned`,
+                `${basePath}/InProgress`,
+                `${basePath}/Completed`
+            ];
+            const responses = await Promise.all(paths.map((p) => db.getData(p)));
+            const allWards = responses.filter((x) => x !== null)
+                .map((obj)=> Object.values(obj))
 
-            const promises = [db.getData(path)];
-            const responses = await Promise.all(promises);
-            const data = responses[0];
-
-            if (data !== null) {
-                const wardKeys = Object.keys(data);
-                resolve(common.setResponse("success", "Ward list fetched successfully", { wardKeys }));
-            } else {
-                resolve(common.setResponse("fail", "No data found !!!", {}));
-            }
+           const merged = allWards.flat();
+        if (merged.length > 0) {
+            resolve(
+            common.setResponse("success", "Ward list fetched successfully", {
+                wardKeys: merged,
+            })
+            );
+        } else {
+            resolve(common.setResponse("fail", "No wards found!", {}));
+        }
         } catch (error) {
             console.error("Error fetching wards:", error);
             resolve(common.setResponse('fail', "Something went wrong!", { error: error.message }));
