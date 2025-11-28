@@ -182,7 +182,7 @@ const DailyAssignment = () => {
                                                             {item.dutyInImages?.map((img, i) => (
                                                                 <div key={i} className={styles.imageWrapper}>
                                                                     <img src={img} className={styles.dutyImage}
-                                                                        onClick={() => openModal(img, "Duty In")} alt="Duty In" />
+                                                                        onClick={() => openModal(img, "Duty On Image")} alt="Duty On" />
                                                                     <span className={styles.imageLabel} style={{ width: '72px' }}>Duty On</span>
                                                                 </div>
                                                             ))}
@@ -190,7 +190,7 @@ const DailyAssignment = () => {
                                                             {item.dutyInMeterImages?.map((img, i) => (
                                                                 <div key={i} className={styles.imageWrapper}>
                                                                     <img src={img} className={styles.dutyImage}
-                                                                        onClick={() => openModal(img, "Meter In")} alt="Meter In" />
+                                                                        onClick={() => openModal(img, "Duty On Meter Image")} alt="Meter In" />
                                                                     <span className={styles.imageLabel} style={{ width: '86px' }}>Meter On</span>
                                                                 </div>
                                                             ))}
@@ -198,7 +198,7 @@ const DailyAssignment = () => {
                                                             {item.dutyOutImages?.map((img, i) => (
                                                                 <div key={i} className={styles.imageWrapper}>
                                                                     <img src={img} className={styles.dutyImage}
-                                                                        onClick={() => openModal(img, "Duty Out")} alt="Duty Out" />
+                                                                        onClick={() => openModal(img, "Duty Off Image")} alt="Duty Out" />
                                                                     <span className={styles.imageLabel} style={{ width: '80px' }}>Duty Out</span>
                                                                 </div>
                                                             ))}
@@ -206,8 +206,8 @@ const DailyAssignment = () => {
                                                             {item.dutyOutMeterImages?.map((img, i) => (
                                                                 <div key={i} className={styles.imageWrapper}>
                                                                     <img src={img} className={styles.dutyImage}
-                                                                        onClick={() => openModal(img, "Meter Out")} alt="Meter Out" />
-                                                                    <span className={styles.imageLabel}>Meter Off</span>
+                                                                        onClick={() => openModal(img, "Duty Off Meter Image")} alt="Meter Out" />
+                                                                    <span className={styles.imageLabel} style={{ width: '86px' }} >Meter Off</span>
                                                                 </div>
                                                             ))}
                                                         </div>
