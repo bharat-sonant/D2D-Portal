@@ -11,7 +11,6 @@ import { connectFirebase } from '../../firebase/firebaseService';
 import { getCityFirebaseConfig } from '../../configurations/cityDBConfig';
 import { useLocation } from 'react-router-dom';
 import ImageModal from '../../components/ImageModal/ImageModal';
-import dayjs from 'dayjs';
 
 const DailyAssignment = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
