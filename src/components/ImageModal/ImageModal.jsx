@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./ImageModal.module.css";
-import { FaTimes, FaDownload, FaExpand, FaCompress, FaSearchPlus, FaSearchMinus } from "react-icons/fa";
+import { FaTimes, FaDownload, FaExpand, FaCompress, FaSearchPlus, FaSearchMinus, FaCamera } from "react-icons/fa";
 
 const ImageModal = ({ imageUrl, title, onClose }) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -61,23 +61,23 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
 
     return (
         <div className={style.modalOverlay} onClick={onClose}>
-            <div 
-                className={`${style.modalContent} ${isFullscreen ? style.fullscreen : ''}`} 
+            <div
+                className={`${style.modalContent} ${isFullscreen ? style.fullscreen : ''}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                
+
                 {/* Header */}
                 <div className={style.modalHeader}>
                     <div className={style.titleSection}>
-                        <div className={style.titleIcon}>📸</div>
+                        <div className={style.titleIcon}><FaCamera /></div>
                         <h3 className={style.modalTitle}>{title}</h3>
                     </div>
-                    
+
                     <div className={style.headerActions}>
                         {/* Zoom Controls */}
                         <div className={style.zoomControls}>
-                            <button 
-                                className={style.iconBtn} 
+                            <button
+                                className={style.iconBtn}
                                 onClick={handleZoomOut}
                                 disabled={zoom <= 0.5}
                                 title="Zoom Out"
@@ -85,8 +85,8 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                                 <FaSearchMinus />
                             </button>
                             <span className={style.zoomLevel}>{Math.round(zoom * 100)}%</span>
-                            <button 
-                                className={style.iconBtn} 
+                            <button
+                                className={style.iconBtn}
                                 onClick={handleZoomIn}
                                 disabled={zoom >= 3}
                                 title="Zoom In"
@@ -94,8 +94,8 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                                 <FaSearchPlus />
                             </button>
                             {zoom !== 1 && (
-                                <button 
-                                    className={`${style.iconBtn} ${style.resetBtn}`} 
+                                <button
+                                    className={`${style.iconBtn} ${style.resetBtn}`}
                                     onClick={resetZoom}
                                     title="Reset Zoom"
                                 >
@@ -105,8 +105,8 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                         </div>
 
                         {/* Download Button */}
-                        <button 
-                            className={`${style.iconBtn} ${style.downloadBtn}`} 
+                        <button
+                            className={`${style.iconBtn} ${style.downloadBtn}`}
                             onClick={handleDownload}
                             title="Download Image"
                         >
@@ -114,8 +114,8 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                         </button>
 
                         {/* Fullscreen Toggle */}
-                        <button 
-                            className={style.iconBtn} 
+                        <button
+                            className={style.iconBtn}
                             onClick={toggleFullscreen}
                             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
                         >
@@ -123,8 +123,8 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                         </button>
 
                         {/* Close Button */}
-                        <button 
-                            className={`${style.iconBtn} ${style.closeBtnHeader}`} 
+                        <button
+                            className={`${style.iconBtn} ${style.closeBtnHeader}`}
                             onClick={onClose}
                             title="Close (ESC)"
                         >
@@ -141,11 +141,11 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                             <p>Loading image...</p>
                         </div>
                     )}
-                    <img 
-                        src={imageUrl} 
-                        alt={title || "Preview"} 
+                    <img
+                        src={imageUrl}
+                        alt={title || "Preview"}
                         className={style.modalImage}
-                        style={{ 
+                        style={{
                             transform: `scale(${zoom})`,
                             opacity: imageLoaded ? 1 : 0
                         }}
