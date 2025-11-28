@@ -1,235 +1,35 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import style from "../../Settings/Style/Settings.module.css";
-
-import { saveWebviewUrl, getWebviewUrl } from "../Services/DailyAssignmentWebviewUrlService";
-import { getValue, RemoveValue, saveValue } from '../Services/DailyAssignmentViaWebService';
-import { savePaneltiesValue, getPaneltiesValue, RemovePaneltiesValue } from "../../Settings/Services/PaneltiesViaWebServise";
-import { getWorkMonitoringValue, saveWorkMonitoringValue, removeWorkMonitoringValue } from "../../Settings/Services/WorkMonitoringViaWebService";
-import { getNavigatorSetting, saveNavigatorSetting, removeNavigatorSetting } from "../../Settings/Services/NavigatorApplicationSettingsService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
-import { setAlertMessage } from "../../../common/common";
-import { getBackOfficeSetting, saveBackOfficeSettings } from "../Services/BackOfficeApplicationSettingsService";
-
-// ⭐ New Service
-import { getDutyOnOffImageReport, saveDutyOnOffImageReport, removeDutyOnOffImageReport } from "../Services/DutyOnOffImageReportShowViaNewStructureServise.js";
-import { getDutyOnOffImageReportUrl, saveDutyOnOffImageReportUrl } from "../Services/DutyOnOffImageReportUrl.js";
+import DailyAssignment from "../Component/DailyAssignment/DailyAssignment.jsx";
+import Penalties from "../Component/Penalties/Penalties.jsx";
+import WorkMonitoring from "../Component/WorkMonitoring/WorkMonitoring.jsx";
+import Navigator from "../Component/Navigator/Navigator.jsx";
+import DutyReport from "../Component/DutyReport/DutyReport.jsx";
+import BackOffice from "../Component/BackOffice/BackOffice.jsx";
 
 const Settings = () => {
-  const [isAssignmentOn, setIsAssignmentOn] = useState(false);
-  const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
-  const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
-  const [isNavigatorSettingOn, setIsNavigatorSettingOn] = useState(false);
-  const [isDutyOnOffImageReportShow, setIsDutyOnOffImageReportShow] = useState(false);
 
-  const [webviewUrl, setWebviewUrl] = useState("");
-  const [urlError, setUrlError] = useState("");
+  const [activeTab, setActiveTab] = useState("daily");
   const [loader, setLoader] = useState(false);
   const [pageLoader, setPageLoader] = useState(true);
-
-  const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
-  const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
-
-  const [dutyOnOffImageReportUrl, setDutyOnOffImageReportUrl] = useState("");
-  const [dutyUrlError, setDutyUrlError] = useState("");
-
   const city = localStorage.getItem('city') || "DevTest";
 
-  // ----------------------- Firebase Init -----------------------
+  // ------------ Firebase Init ------------
   const initFirebase = async () => {
     const config = getCityFirebaseConfig(city);
     connectFirebase(config, city);
   };
 
-  // ----------------------- Loaders -----------------------
-  const loadAssignment = async () => {
-    const response = await getValue(setLoader);
-    setIsAssignmentOn(response.status === "success" && response.data.value === "yes");
-  };
-
-  const loadPenalties = async () => {
-    const response = await getPaneltiesValue(setLoader);
-    setIsPenaltiesOn(response.status === "success" && response.data.value === "yes");
-  };
-
-  const loadWorkMonitoring = async () => {
-    const response = await getWorkMonitoringValue(setLoader);
-    setIsWorkMonitoringOn(response.status === "success" && response.data.value === "yes");
-  };
-
-  const loadNavigator = async () => {
-    const response = await getNavigatorSetting(setLoader);
-    setIsNavigatorSettingOn(response.status === "success" && response.data === "yes");
-  };
-
-  const loadWebviewURL = async () => {
-    const res = await getWebviewUrl(setLoader);
-    setWebviewUrl(res.status === "success" ? res.data.url : "");
-  };
-
-  const loadDutyOnOffImageReportUrlHandler = async () => {
-    const res = await getDutyOnOffImageReportUrl();
-    setDutyOnOffImageReportUrl(res.status === "success" ? res.data.url : "");
-  };
-
-  const loadBackOfficeSettings = async () => {
-    const resp = await getBackOfficeSetting();
-    if (resp.status === "success") {
-      setDriverLargeImageWidth(resp.data.data[0].DriverLargeImageWidthInPx);
-      setDriverThumbnailWidth(resp.data.data[0].DriverThumbnailWidthInPx);
-    }
-  };
-
-  const loadDutyOnOffImageReport = async () => {
-    const response = await getDutyOnOffImageReport(setLoader);
-    setIsDutyOnOffImageReportShow(response.status === "success" && response.data.value === "yes");
-  };
-
-  // ----------------------- Button Handlers -----------------------
-  const toggleAssignment = async () => {
-    const newValue = !isAssignmentOn;
-    setIsAssignmentOn(newValue);
-
-    const res = newValue ? await saveValue() : await RemoveValue();
-    if (res?.status !== "success") {
-      setIsAssignmentOn(isAssignmentOn);
-      setAlertMessage("error", "Failed to update Daily Assignment");
-    } else setAlertMessage("success", "Daily Assignment updated");
-  };
-
-  const togglePenalties = async () => {
-    const newValue = !isPenaltiesOn;
-    setIsPenaltiesOn(newValue);
-
-    const res = newValue ? await savePaneltiesValue() : await RemovePaneltiesValue();
-    if (res?.status !== "success") {
-      setIsPenaltiesOn(isPenaltiesOn);
-      setAlertMessage("error", "Failed to update Penalties");
-    } else setAlertMessage("success", "Penalties updated");
-  };
-
-  const toggleWorkMonitoring = async () => {
-    const newValue = !isWorkMonitoringOn;
-    setIsWorkMonitoringOn(newValue);
-
-    const res = newValue ? await saveWorkMonitoringValue() : await removeWorkMonitoringValue();
-    if (res?.status !== "success") {
-      setIsWorkMonitoringOn(isWorkMonitoringOn);
-      setAlertMessage("error", "Failed to update Work Monitoring");
-    } else setAlertMessage("success", "Work Monitoring updated");
-  };
-
-  const toggleNavigator = async () => {
-    const newValue = !isNavigatorSettingOn;
-    setIsNavigatorSettingOn(newValue);
-
-    const res = newValue ? await saveNavigatorSetting() : await removeNavigatorSetting();
-    if (res?.status !== "success") {
-      setIsNavigatorSettingOn(isNavigatorSettingOn);
-      setAlertMessage("error", "Failed to update Navigator Setting");
-    } else setAlertMessage("success", "Navigator Setting updated");
-  };
-
-  const toggleDutyOnOffImageReport = async () => {
-    const newValue = !isDutyOnOffImageReportShow;
-    setIsDutyOnOffImageReportShow(newValue);
-
-    const res = newValue ? await saveDutyOnOffImageReport() : await removeDutyOnOffImageReport();
-    if (res?.status !== "success") {
-      setIsDutyOnOffImageReportShow(isDutyOnOffImageReportShow);
-      setAlertMessage("error", "Failed to update Duty On/Off Image Setting");
-    } else setAlertMessage("success", "Duty On/Off Image Setting updated");
-  };
-
-  const saveDailyAssignmentUrl = async () => {
-    setUrlError("");
-
-    if (!webviewUrl.trim()) {
-      setUrlError("URL cannot be empty");
-      return;
-    }
-
-    const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
-    if (!urlPattern.test(webviewUrl.trim())) {
-      setUrlError("Invalid URL format. Must start with http:// or https://");
-      return;
-    }
-
-    const res = await saveWebviewUrl(webviewUrl.trim());
-    if (res.status === "success") {
-      setAlertMessage("success", "Webview URL saved successfully!");
-    } else {
-      setAlertMessage("error", "Failed to save Webview URL");
-    }
-  };
-
-  const saveDutyOnOffImageReportUrlHandlerFn = async () => {
-    setDutyUrlError("");
-
-    if (!dutyOnOffImageReportUrl.trim()) {
-      setDutyUrlError("URL cannot be empty");
-      return;
-    }
-
-    const urlPattern = /^(http:\/\/|https:\/\/)[^\s]+$/;
-    if (!urlPattern.test(dutyOnOffImageReportUrl.trim())) {
-      setDutyUrlError("Invalid URL format. Must start with http:// or https://");
-      return;
-    }
-
-    const res = await saveDutyOnOffImageReportUrl(dutyOnOffImageReportUrl.trim());
-    if (res.status === "success") {
-      setAlertMessage("success", "Duty On/Off Image Report URL saved successfully!");
-    } else {
-      setAlertMessage("error", "Failed to save Duty On/Off Image Report URL");
-    }
-  };
-
-  const saveBackOfficeSettingsHandler = async () => {
-    if (!driverLargeImageWidth.trim() || !driverThumbnailWidth.trim()) {
-      setAlertMessage("error", "Both width fields are required");
-      return;
-    }
-
-    const numericPattern = /^[1-9]\d{0,3}$/;
-    if (!numericPattern.test(driverLargeImageWidth)) {
-      setAlertMessage("error", "Large Image Width must be a valid number (1–9999).");
-      return;
-    }
-
-    if (!numericPattern.test(driverThumbnailWidth)) {
-      setAlertMessage("error", "Thumbnail Width must be a valid number (1–9999).");
-      return;
-    }
-
-    const res = await saveBackOfficeSettings({
-      DriverLargeImageWidthInPx: driverLargeImageWidth,
-      DriverThumbnailWidthInPx: driverThumbnailWidth
-    });
-
-    if (res?.status === "success") {
-      setAlertMessage("success", "Back Office settings saved successfully!");
-    } else {
-      setAlertMessage("error", "Failed to save Back Office settings");
-    }
-  };
-
-  // ----------------------- useEffect -----------------------
+  // ------------ useEffect ------------
   useEffect(() => {
-    async function initialize() {
+    async function init() {
       setPageLoader(true);
       await initFirebase();
-      await loadAssignment();
-      await loadPenalties();
-      await loadWorkMonitoring();
-      await loadNavigator();
-      await loadWebviewURL();
-      await loadBackOfficeSettings();
-      await loadDutyOnOffImageReport();
-      await loadDutyOnOffImageReportUrlHandler();
       setPageLoader(false);
     }
-    initialize();
+    init();
   }, []);
 
   if (pageLoader) {
@@ -247,136 +47,64 @@ const Settings = () => {
     );
   }
 
-  // ----------------------- JSX -----------------------
   return (
-    <div className={style.pageContainer}>
+    <div className={style.verticalContainer}>
 
-      {loader && <div>Loading...</div>}
-
-      {/* DAILY ASSIGNMENT */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Daily Assignment</h3>
-        <div className={style.toggleWrapper}>
-          <label className={style.toggleLabel}>DailyAssignment Via Web</label>
-          <div className={`${style.toggleSwitch} ${isAssignmentOn ? style.on : style.off}`} onClick={toggleAssignment}>
-            <div className={style.toggleCircle}>{isAssignmentOn ? "ON" : "OFF"}</div>
-          </div>
+      {/* Left Vertical Tabs */}
+      <div className={style.verticalTabs}>
+        <div className={`${style.tabItem} ${activeTab === "daily" ? style.activeTab : ""}`} onClick={() => setActiveTab("daily")}>
+          Daily Assignment
+        </div>
+        <div className={`${style.tabItem} ${activeTab === "penalties" ? style.activeTab : ""}`} onClick={() => setActiveTab("penalties")}>
+          Penalties
+        </div>
+        <div className={`${style.tabItem} ${activeTab === "work" ? style.activeTab : ""}`} onClick={() => setActiveTab("work")}>
+          Work Monitoring
+        </div>
+        <div className={`${style.tabItem} ${activeTab === "navigator" ? style.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
+          Navigator Settings
+        </div>
+        <div className={`${style.tabItem} ${activeTab === "report" ? style.activeTab : ""}`} onClick={() => setActiveTab("report")}>
+          Duty On/Off Report
+        </div>
+        <div className={`${style.tabItem} ${activeTab === "backoffice" ? style.activeTab : ""}`} onClick={() => setActiveTab("backoffice")}>
+          BackOffice Settings
         </div>
       </div>
 
-      {/* PENALTIES */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Penalties</h3>
-        <div className={style.toggleWrapper}>
-          <label className={style.toggleLabel}>Penalties Via Web</label>
-          <div className={`${style.toggleSwitch} ${isPenaltiesOn ? style.on : style.off}`} onClick={togglePenalties}>
-            <div className={style.toggleCircle}>{isPenaltiesOn ? "ON" : "OFF"}</div>
-          </div>
-        </div>
-      </div>
+      {/* Right Content */}
+      <div className={style.verticalContent}>
 
-      {/* WORK MONITORING */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Work Monitoring</h3>
-        <div className={style.toggleWrapper}>
-          <label className={style.toggleLabel}>Work Monitoring Via Web</label>
-          <div className={`${style.toggleSwitch} ${isWorkMonitoringOn ? style.on : style.off}`} onClick={toggleWorkMonitoring}>
-            <div className={style.toggleCircle}>{isWorkMonitoringOn ? "ON" : "OFF"}</div>
-          </div>
-        </div>
-      </div>
+        {/* ---------------- DAILY ASSIGNMENT ---------------- */}
+        {activeTab === "daily" && (
+          <DailyAssignment />
+        )}
 
-      {/* NAVIGATOR */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Navigator Application Settings</h3>
-        <div className={style.toggleWrapper}>
-          <label className={style.toggleLabel}>Navigation Via Employee Code</label>
-          <div className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`} onClick={toggleNavigator}>
-            <div className={style.toggleCircle}>{isNavigatorSettingOn ? "ON" : "OFF"}</div>
-          </div>
-        </div>
-      </div>
+        {/* ---------------- PENALTIES ---------------- */}
+        {activeTab === "penalties" && (
+          <Penalties />
+        )}
 
-      {/* DUTY ON/OFF IMAGE REPORT */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Report Via New Structure</h3>
-        <div className={style.toggleWrapper}>
-          <label className={style.toggleLabel}>Duty On Off Image Report</label>
-          <div className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`} onClick={toggleDutyOnOffImageReport}>
-            <div className={style.toggleCircle}>{isDutyOnOffImageReportShow ? "ON" : "OFF"}</div>
-          </div>
-        </div>
-      </div>
+        {/* ---------------- WORK MONITORING ---------------- */}
+        {activeTab === "work" && (
+          <WorkMonitoring />
+        )}
 
-      {/* DUTY ON/OFF IMAGE REPORT URL */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Duty On/Off Image Report URL</h3>
-        <div className={style.inputRow}>
-          <label className={style.inputLabel}>Report Webview URL</label>
-          <input
-            type="text"
-            className={style.textInput}
-            placeholder="https://yourdomain.com/DutyOnOffImageReport"
-            value={dutyOnOffImageReportUrl}
-            onChange={(e) => {
-              setDutyOnOffImageReportUrl(e.target.value);
-              setDutyUrlError("");
-            }}
-          />
-        </div>
-        {dutyUrlError && <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>{dutyUrlError}</p>}
-        <div className={style.saveRow}>
-          <button className={style.saveButton} onClick={saveDutyOnOffImageReportUrlHandlerFn}>Save</button>
-        </div>
-      </div>
+        {/* ---------------- NAVIGATOR ---------------- */}
+        {activeTab === "navigator" && (
+          <Navigator />
+        )}
 
-      {/* DAILY ASSIGNMENT WEBVIEW URL */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
-        <div className={style.inputRow}>
-          <label className={style.inputLabel}>Webview URL</label>
-          <input
-            type="text"
-            className={style.textInput}
-            placeholder="https://yourdomain.com/AssignmentSummary"
-            value={webviewUrl}
-            onChange={(e) => { setWebviewUrl(e.target.value); setUrlError(""); }}
-          />
-        </div>
-        {urlError && <p style={{ color: "red", marginTop: "5px", fontSize: "12px" }}>{urlError}</p>}
-        <div className={style.saveRow}>
-          <button className={style.saveButton} onClick={saveDailyAssignmentUrl}>Save</button>
-        </div>
-      </div>
+        {/* ---------------- DUTY REPORT TOGGLE ---------------- */}
+        {activeTab === "report" && (
+          <DutyReport />
+        )}
 
-      {/* BACKOFFICE SETTINGS */}
-      <div className={style.card}>
-        <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
-        <div className={style.inputRow}>
-          <label className={style.inputLabel}>Driver Large Image Width In px</label>
-          <input
-            type="text"
-            className={style.textInput}
-            placeholder="Enter large image width"
-            value={driverLargeImageWidth}
-            onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) setDriverLargeImageWidth(e.target.value); }}
-          />
-        </div>
-        <div className={style.inputRow}>
-          <label className={style.inputLabel}>Driver Thumbnail Width In px</label>
-          <input
-            type="text"
-            className={style.textInput}
-            placeholder="Enter thumbnail image width"
-            value={driverThumbnailWidth}
-            onChange={(e) => { if (/^\d{0,4}$/.test(e.target.value)) setDriverThumbnailWidth(e.target.value); }}
-          />
-        </div>
-        <div className={style.saveRow}>
-          <button className={style.saveButton} onClick={saveBackOfficeSettingsHandler}>Save</button>
-        </div>
+        {/* ---------------- BACKOFFICE SETTINGS ---------------- */}
+        {activeTab === "backoffice" && (
+          <BackOffice />
+        )}
       </div>
-
     </div>
   );
 };
