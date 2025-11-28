@@ -62,6 +62,7 @@ const AssignmentSummary = () => {
 
                     <h1 className={styles.title}>Assignment Summary</h1>
                 </div>
+                {console.log('wardlis',wardsList)}
                 <AssignmentSummaryBox
                     wardsList={wardsList}
                     loading={loading}

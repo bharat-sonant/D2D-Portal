@@ -21,16 +21,11 @@ export const getAllWards = async () => {
             const allWards = responses.filter((x) => x !== null)
                 .map((obj)=> Object.values(obj))
 
-           const merged = allWards.flat();
-        if (merged.length > 0) {
             resolve(
             common.setResponse("success", "Ward list fetched successfully", {
-                wardKeys: merged,
+                wardKeys: allWards,
             })
-            );
-        } else {
-            resolve(common.setResponse("fail", "No wards found!", {}));
-        }
+        )
         } catch (error) {
             console.error("Error fetching wards:", error);
             resolve(common.setResponse('fail', "Something went wrong!", { error: error.message }));

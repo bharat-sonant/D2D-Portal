@@ -2,23 +2,30 @@ import styles from '../../Styles/AssignmentSummary/AssignmentSummaryBox.module.c
 import WardList from './WardList';
 
 const AssignmentSummaryBox = (props) => {
+  const notAssigned = props.wardsList?.[0] || [];
+  const inProgress = props.wardsList?.[1] || [];
+  const completed = props.wardsList?.[2] || [];
+
+  const flatWards = props.wardsList ? props?.wardsList?.flat() : [];
+
+
   const statusData = [
     {
       id: 1,
       title: 'Not Started',
-      count: props.wardsList ? props.wardsList.length : '0',
+      count: notAssigned.length,
       colorClass: 'notStarted'
     },
     {
       id: 2,
       title: 'In Progress',
-      count: 0,
+      count: inProgress.length,
       colorClass: 'inProgress'
     },
     {
       id: 3,
       title: 'Completed',
-      count: 0,
+      count: completed.length,
       colorClass: 'completed'
     }
   ];
@@ -39,7 +46,7 @@ const AssignmentSummaryBox = (props) => {
         </div>
       ))}
       <WardList
-        wards={props.wardsList}
+        wards={flatWards}
         loading={props.loading}
       />
     </div>

@@ -4,6 +4,7 @@ import * as common from '../../../../../common/common'
 export const getWards = (setWardsList, setLoading) => {
     getAllWards().then((response) => {
         if (response.status === 'success') {
+            console.log('resposn',response)
             setWardsList(response.data.wardKeys);
             setLoading(false);
         } else {
