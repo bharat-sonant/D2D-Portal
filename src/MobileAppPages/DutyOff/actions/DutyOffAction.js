@@ -4,6 +4,7 @@ import { completeAssignment, getTaskDetails } from "../../services/DutyOffServic
 export const getDutyOffDetails = async(ward, setDetails) => {
   try{
     const result = await getTaskDetails(ward);
+    console.log('action',result)
   if(result.status === "success"){
     setDetails(result.data)
   }else{

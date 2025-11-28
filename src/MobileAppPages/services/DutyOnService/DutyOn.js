@@ -74,24 +74,19 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
   return new Promise(async(resolve)=> {
     try{
       const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
-      const [driverAssignmentResult, driverTaskStatusResult, helperAssignmentResult, helperTaskStatusResult, vehicleTaskStatusResult, workAssignmentResult, assignmentSummaryResult, moveToInProgressResult, removeFromNotAssignedResult,  moveVehicleToInProgressResult, removeVehicleFromNotAssignedResult] = await Promise.all([
+      const [driverAssignmentResult, helperAssignmentResult, workAssignmentResult, assignmentSummaryResult, moveToInProgressResult, removeFromNotAssignedResult,  moveVehicleToInProgressResult, removeVehicleFromNotAssignedResult,
+      ] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),
-        SaveDriverTaskStatus(selectedDriver),
         saveHelperAssignment(selectedHelper, ward, selectedVehicle),
-        saveHelperTaskStatus(selectedHelper),
-        saveVehicleTaskStatus(selectedVehicle),
         saveWorkAssignment(ward, selectedVehicle, selectedDriver, selectedHelper),
         saveAssignmentSummaryStatus(year, monthName, date, ward),
         moveToInProgress(ward),
         removeFromNotAssigned(ward),
         moveVehicleToInProgress(selectedVehicle),
-        removeVehicleFromNotAssigned(selectedVehicle)
+        removeVehicleFromNotAssigned(selectedVehicle),
       ])
       if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
-      if (isFail(driverTaskStatusResult)) return resolve(driverTaskStatusResult);
       if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult);
-      if(isFail(helperTaskStatusResult)) return resolve(helperTaskStatusResult);
-      if(isFail(vehicleTaskStatusResult)) return resolve(vehicleTaskStatusResult);
       if (isFail(workAssignmentResult)) return resolve(workAssignmentResult);
       if(isFail(assignmentSummaryResult)) return resolve(assignmentSummaryResult);
       if(isFail(moveToInProgressResult)) return resolve(moveToInProgressResult);
@@ -100,10 +95,7 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
 if (isFail(removeVehicleFromNotAssignedResult)) return resolve(removeVehicleFromNotAssignedResult);
       const finalResult = {
         driverAssignment: driverAssignmentResult,
-        driverTaskStatus : driverTaskStatusResult,
         helperAssignment: helperAssignmentResult,
-        helperTaskStatus : helperTaskStatusResult,
-        vehicleTaskStatus : vehicleTaskStatusResult,
         workAssignment: workAssignmentResult,
         assignmentSummary : assignmentSummaryResult,
         moveToInProgress : moveToInProgressResult,
@@ -126,18 +118,11 @@ const moveToInProgress = async(ward) => {
 
   const existing = await db.getData(inProgressPath);
 
-  const payload = {};
+  const payload = existing ? { ...existing } : {};
 
-  if(existing){
-    Object.keys(existing).forEach((key)=>{
-      payload[key] = existing[key]
-    })
-  }
-
-  const nextIndex = existing ? Object.keys(existing).length+1 : 1;
+  const nextIndex = existing ? Object.keys(existing).length + 1 : 1;
 
   payload[nextIndex] = ward;
-
   const result = await db.saveData(inProgressPath, payload);
 
   return result?.success
@@ -165,25 +150,21 @@ const removeFromNotAssigned = async(ward) => {
   const removePath = `${notAssignedPath}/${keyToRemove}`
   const result = await db.removeData(removePath);
 
+  console.log('result of remove from not assined ward',result)
+
    return result?.success
         ? result
         : common.setResponse(fail, "Task failed to remove from not assigned bucket", result);
 }
 
 const moveVehicleToInProgress = async(selectedVehicle) => {
-  const inProgressPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Vehicles/InProgress`
+  const inProgressPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Vehicles/CurrentlyInUse`
 
   const existing = await db.getData(inProgressPath);
 
-  const payload = {};
+  const payload = existing ? { ...existing } : {};
 
-  if(existing){
-    Object.keys(existing).forEach((key)=>{
-      payload[key] = existing[key]
-    })
-  }
-
-  const nextIndex = existing ? Object.keys(existing).length+1 : 1;
+  const nextIndex = existing ? Object.keys(existing).length + 1 : 1;
 
   payload[nextIndex] = selectedVehicle;
 

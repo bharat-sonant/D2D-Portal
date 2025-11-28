@@ -50,7 +50,6 @@ const VehicleDropdown = ({ selectedVehicle, setSelectedVehicle, vehicleError, se
   const snapPoints = [0, 0.7, 1];
    return (
     <div className={styles.vehicleCard}>
-{console.log('activeeee', activeVehicles)}
       {/* Vehicle Selector */}
       <div className={styles.dropdownWrapper}>
         <button
