@@ -20,19 +20,19 @@ const AssignmentSummaryBox = ({wardsList, loading}) => {
 
   const statusData = [
     {
-      id: notAssigned,
+      id: 'notAssigned',
       title: 'Not Started',
       count: notAssigned.length,
       colorClass: 'notStarted'
     },
     {
-      id: inProgress,
+      id: 'inProgress',
       title: 'In Progress',
       count: inProgress.length,
       colorClass: 'inProgress'
     },
     {
-      id: completed,
+      id: 'completed',
       title: 'Completed',
       count: completed.length,
       colorClass: 'completed'
