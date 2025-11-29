@@ -34,13 +34,13 @@ export const getAllActiveVehicles = () => {
 export const getActiveDrivers = () => {
   return new Promise(async(resolve)=> {
     try{
-      const result = await db.getData('ActiveDrivers');
-
+      const path = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/NotAssigned`
+      const result = await db.getData(path);
       // const activeDrivers = Object.values(result)
        const activeDrivers = Object.entries(result)
         .filter(([key, value]) => value.taskAssigned !== "yes")   
         .map(([key, value]) => ({
-          Id: key,
+          Id: value.id,
           name: value.name,
         }));
 
@@ -54,12 +54,13 @@ export const getActiveDrivers = () => {
 export const getActiveHelpers = () => {
   return new Promise(async(resolve)=> {
     try{
-      const result = await db.getData('ActiveHelpers');
+      const path = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Helpers/NotAssigned`
+      const result = await db.getData(path);
 
       const activeHelpers = Object.entries(result)
         .filter(([key, value]) => value.taskAssigned !== "yes")   
         .map(([key, value]) => ({
-          Id: key,
+          Id: value.id,
           name: value.name,
         }));
 
@@ -75,6 +76,7 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
     try{
       const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
       const [driverAssignmentResult, helperAssignmentResult, workAssignmentResult, assignmentSummaryResult, moveToInProgressResult, removeFromNotAssignedResult,  moveVehicleToInProgressResult, removeVehicleFromNotAssignedResult,
+        moveDriverToInProgressResult, removeDriverFromNotAssignedResult, moveHelperToInProgressResult, removeHelperFromNotAssignedResult
       ] = await Promise.all([
         saveDriverAssignment(selectedDriver, ward, selectedVehicle),
         saveHelperAssignment(selectedHelper, ward, selectedVehicle),
@@ -84,6 +86,10 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
         removeFromNotAssigned(ward),
         moveVehicleToInProgress(selectedVehicle),
         removeVehicleFromNotAssigned(selectedVehicle),
+        moveDriverToInProgress(selectedDriver),
+        removeDriverFromNotAssigned(selectedDriver),
+        moveHelperToInProgress(selectedHelper),
+        removeHelperFromNotAssigned(selectedHelper)
       ])
       if (isFail(driverAssignmentResult)) return resolve(driverAssignmentResult);
       if(isFail(helperAssignmentResult)) return resolve(helperAssignmentResult);
@@ -93,6 +99,10 @@ export const startAssignmentService = (ward, selectedVehicle, selectedDriver, se
        if(isFail(removeFromNotAssignedResult)) return resolve(removeFromNotAssignedResult);
        if (isFail(moveVehicleToInProgressResult)) return resolve(moveVehicleToInProgressResult);
 if (isFail(removeVehicleFromNotAssignedResult)) return resolve(removeVehicleFromNotAssignedResult);
+ if (isFail(moveDriverToInProgressResult)) return resolve(moveDriverToInProgressResult);
+if (isFail(removeDriverFromNotAssignedResult)) return resolve(removeDriverFromNotAssignedResult);
+ if (isFail(moveHelperToInProgressResult)) return resolve(moveHelperToInProgressResult);
+if (isFail(removeHelperFromNotAssignedResult)) return resolve(removeHelperFromNotAssignedResult);
       const finalResult = {
         driverAssignment: driverAssignmentResult,
         helperAssignment: helperAssignmentResult,
@@ -102,6 +112,9 @@ if (isFail(removeVehicleFromNotAssignedResult)) return resolve(removeVehicleFrom
         removeFromNotAssigned : removeFromNotAssignedResult,
         moveVehicleToInProgress : moveVehicleToInProgressResult,
         removeVehicleFromNotAssigned : removeVehicleFromNotAssignedResult,
+        moveDriverToInProgressResult,
+removeDriverFromNotAssignedResult,moveHelperToInProgressResult,removeHelperFromNotAssignedResult
+
       }
 
       return resolve(
@@ -150,7 +163,6 @@ const removeFromNotAssigned = async(ward) => {
   const removePath = `${notAssignedPath}/${keyToRemove}`
   const result = await db.removeData(removePath);
 
-  console.log('result of remove from not assined ward',result)
 
    return result?.success
         ? result
@@ -184,6 +196,91 @@ const removeVehicleFromNotAssigned = async(selectedVehicle) => {
 
   Object.keys(existing).forEach((key)=>{
     if(existing[key] === selectedVehicle){
+      keyToRemove = key
+    }
+  })
+
+  if(keyToRemove === null){
+    return
+  }
+
+  const removePath = `${notAssignedPath}/${keyToRemove}`
+  const result = await db.removeData(removePath);
+
+   return result?.success
+        ? result
+        : common.setResponse(fail, "Vehicle failed to remove from not assigned bucket", result);
+}
+
+const moveDriverToInProgress = async(selectedDriver) => {
+  const inProgressPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/CurrentlyWorking`
+
+  const existing = await db.getData(inProgressPath);
+
+  const payload = existing ? { ...existing } : {};
+
+  const nextIndex = existing ? Object.keys(existing).length + 1 : 1;
+
+  payload[nextIndex] = selectedDriver;
+
+  const result = await db.saveData(inProgressPath, payload);
+
+  return result?.success
+        ? result
+        : common.setResponse(fail, "Driver failed to move into inProgress bucket", result);
+}
+
+const removeDriverFromNotAssigned = async(selectedDriver) => {
+  const notAssignedPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/NotAssigned`
+
+  const existing = await db.getData(notAssignedPath);
+
+  let keyToRemove = null;
+
+  Object.keys(existing).forEach((key)=>{
+    if(existing[key]?.id === selectedDriver.Id){
+      keyToRemove = key
+    }
+  })
+
+  if(keyToRemove === null){
+    return
+  }
+
+  const removePath = `${notAssignedPath}/${keyToRemove}`
+  const result = await db.removeData(removePath);
+   return result?.success
+        ? result
+        : common.setResponse(fail, "Driver failed to remove from not assigned bucket", result);
+}
+
+const moveHelperToInProgress = async(selectedVehicle) => {
+  const inProgressPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Helpers/CurrentlyWorking`
+
+  const existing = await db.getData(inProgressPath);
+
+  const payload = existing ? { ...existing } : {};
+
+  const nextIndex = existing ? Object.keys(existing).length + 1 : 1;
+
+  payload[nextIndex] = selectedVehicle;
+
+  const result = await db.saveData(inProgressPath, payload);
+
+  return result?.success
+        ? result
+        : common.setResponse(fail, "Vehicle failed to move into inProgress bucket", result);
+}
+
+const removeHelperFromNotAssigned = async(selectedVehicle) => {
+  const notAssignedPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Helpers/NotAssigned`
+
+  const existing = await db.getData(notAssignedPath);
+
+  let keyToRemove = null;
+
+  Object.keys(existing).forEach((key)=>{
+    if(existing[key]?.id === selectedVehicle.Id){
       keyToRemove = key
     }
   })

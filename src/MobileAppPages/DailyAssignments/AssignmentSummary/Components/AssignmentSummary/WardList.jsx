@@ -5,6 +5,8 @@ import { checkTaskStatus } from '../../Action/AssignmentSummary/AssignmentSummar
 import { useState } from 'react';
 
 const WardList = (props) => {
+
+    console.log('props',props)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 

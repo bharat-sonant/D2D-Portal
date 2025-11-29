@@ -1,41 +1,54 @@
+import { useState } from 'react';
 import styles from '../../Styles/AssignmentSummary/AssignmentSummaryBox.module.css';
 import WardList from './WardList';
 
-const AssignmentSummaryBox = (props) => {
-  const notAssigned = props.wardsList?.[0] || [];
-  const inProgress = props.wardsList?.[1] || [];
-  const completed = props.wardsList?.[2] || [];
+const AssignmentSummaryBox = ({wardsList, loading}) => {
+ const { notAssigned = [], inProgress = [], completed = [] } = wardsList || {};
 
-  const flatWards = props.wardsList ? props?.wardsList?.flat() : [];
+  // 👇 selected tab: 'notAssigned', 'inProgress', 'completed'
+  const [activeTab, setActiveTab] = useState("notAssigned");
+
+  // 👇 select correct array
+  const selectedWards =
+    activeTab === "notAssigned"
+      ? notAssigned
+      : activeTab === "inProgress"
+      ? inProgress
+      : completed;
+
 
 
   const statusData = [
     {
-      id: 1,
+      id: notAssigned,
       title: 'Not Started',
       count: notAssigned.length,
       colorClass: 'notStarted'
     },
     {
-      id: 2,
+      id: inProgress,
       title: 'In Progress',
       count: inProgress.length,
       colorClass: 'inProgress'
     },
     {
-      id: 3,
+      id: completed,
       title: 'Completed',
       count: completed.length,
       colorClass: 'completed'
     }
   ];
+  console.log('status data',statusData)
 
   return (
     <div className={styles.container}>
       {statusData.map((status) => (
         <div
           key={status.id}
-          className={`${styles.card} ${styles[status.colorClass + 'Card']}`}
+          onClick={() => setActiveTab(status.id)}
+          className={`${styles.card} ${styles[status.class + "Card"]} ${
+            activeTab === status.id ? styles.activeCard : ""
+          }`}
           role="button"
           tabIndex={0}
         >
@@ -46,8 +59,8 @@ const AssignmentSummaryBox = (props) => {
         </div>
       ))}
       <WardList
-        wards={flatWards}
-        loading={props.loading}
+        wards={selectedWards}
+        loading={loading}
       />
     </div>
   );

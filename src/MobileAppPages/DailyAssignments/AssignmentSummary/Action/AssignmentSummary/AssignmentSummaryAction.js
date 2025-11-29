@@ -5,9 +5,8 @@ import * as common from '../../../../../common/common'
     export const getWards = async (setWardsList, setLoading) => {
         return new Promise(async (resolve) => {
             const response = await getAllWards();
-
             if (response.status === "success") {
-            setWardsList(response.data.wardKeys);
+            setWardsList(response.data);
             setLoading(false);
             resolve(response);
             } else {

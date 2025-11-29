@@ -17,15 +17,21 @@ export const getAllWards = async () => {
                 `${basePath}/InProgress`,
                 `${basePath}/Completed`
             ];
-            const responses = await Promise.all(paths.map((p) => db.getData(p)));
-            const allWards = responses.filter((x) => x !== null)
-                .map((obj)=> Object.values(obj))
 
-            resolve(
-            common.setResponse("success", "Ward list fetched successfully", {
-                wardKeys: allWards,
-            })
-        )
+             const [notAssignedData, inProgressData, completedData] = await Promise.all([
+                db.getData(paths[0]),
+                db.getData(paths[1]),
+                db.getData(paths[2]),
+            ]);
+
+
+      const notAssigned = notAssignedData ? Object.values(notAssignedData) : [];
+      const inProgress = inProgressData ? Object.values(inProgressData) : [];
+      const completed = completedData ? Object.values(completedData) : [];
+
+      resolve(
+        common.setResponse("success", "Ward list fetched successfully", {notAssigned, inProgress, completed})
+      );
         } catch (error) {
             console.error("Error fetching wards:", error);
             resolve(common.setResponse('fail', "Something went wrong!", { error: error.message }));
@@ -139,7 +145,6 @@ const pushDataInDailyAssignmentSummary = () => {
                     const month = dayjs().format("MMMM");
                     const date = dayjs().format("YYYY-MM-DD");
                     const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task/NotAssigned`;
-                    console.log(summaryTaskPath)
                     const converted = {};
                     resp.forEach((item, index) => {
                         converted[index] = item;
@@ -236,8 +241,14 @@ const pushDataInDailyAssignmentDriverSummary = () => {
                     const month = dayjs().format("MMMM");
                     const date = dayjs().format("YYYY-MM-DD");
                     const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/NotAssigned`;
+                    const driverArray = Object.values(resp);
 
-                    const result = await db.saveData(summaryTaskPath, resp);
+                    const converted = {};
+                    driverArray.forEach((item,index)=> {
+                        converted[index+1] = item
+                    })
+                   
+                    const result = await db.saveData(summaryTaskPath, converted);
 
                     resolve(common.setResponse("success", "Driver Data successfully in DailyAssignmentSummary", result));
                 } else {
@@ -279,9 +290,13 @@ const pushDataInDailyAssignmentHelperSummary = () => {
                     const month = dayjs().format("MMMM");
                     const date = dayjs().format("YYYY-MM-DD");
                     const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Helpers/NotAssigned`;
+                    const helperArray = Object.values(resp);
 
-                    const result = await db.saveData(summaryTaskPath, resp);
-
+                    const converted = {};
+                    helperArray.forEach((item,index)=> {
+                        converted[index+1] = item
+                    })
+                    const result = await db.saveData(summaryTaskPath, converted);
                     resolve(common.setResponse("success", "Helper Data successfully in DailyAssignmentSummary", result));
                 } else {
                     resolve(common.setResponse("fail", "No HelperData found !!!", {}));
