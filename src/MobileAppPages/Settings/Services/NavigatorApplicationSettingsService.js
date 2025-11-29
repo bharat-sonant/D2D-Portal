@@ -1,11 +1,10 @@
-import { getDatabase, ref, set, remove, get } from "firebase/database";
 import { setResponse } from "../../../common/common";
 import * as db from '../../../services/dbServices'
 /* ----------------------------------------------------
    SAVE NavigatorApplicationSettings
    Path: /Settings/NavigatorApplicationSettings/NavigationViaEmployeeCode
 ---------------------------------------------------- */
-export const saveNavigatorSetting = async () => {
+export const saveNavigatorSetting = async (setLoader) => {
     return new Promise(async (resolve) => {
         try {
             const path = "Settings/NavigatorApplicationSettings/";
@@ -14,7 +13,7 @@ export const saveNavigatorSetting = async () => {
             }
             const result = db.saveData(path, payload)
 
-            console.log('result', result)
+            // console.log('result', result)
 
             resolve(setResponse("success", "Value saved", result));
         } catch (error) {
@@ -33,7 +32,7 @@ export const removeNavigatorSetting = async () => {
             const path = "Settings/NavigatorApplicationSettings/NavigationViaEmployeeCode"
             
             const result = await db.removeData(path)
-            console.log('resussss', result)
+            // console.log('resussss', result)
             resolve(setResponse("success", "Value removed", {}));
         } catch (error) {
             resolve(setResponse("fail", "Error removing value", error));

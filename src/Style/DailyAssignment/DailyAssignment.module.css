@@ -93,7 +93,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 350px;
+  position: relative;
+  top: 400px;
   gap: 20px;
 }
 
@@ -104,14 +105,10 @@
   margin: 0;
 }
 
-/* ==================== GRID CONTAINER ==================== */
-.gridContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 24px;
-  padding: 0px 0px;
-  margin-top: 140px;
-  animation: fadeIn 0.5s ease;
+/* ==================== TABLE WRAPPER ==================== */
+.tableWrapper {
+  padding: 0px 2px;
+  margin-top: 125px;
 }
 
 @keyframes fadeIn {
@@ -126,109 +123,122 @@
   }
 }
 
-/* ==================== ZONE CARD ==================== */
-.zoneCard {
+/* ==================== TABLE CONTAINER ==================== */
+.tableContainer {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  /* transition: all 0.3s ease; */
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.zoneHeader {
-  background: white;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ==================== TABLE ==================== */
+.dutyTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dutyTable thead th {
+  position: sticky;
+  top: 125px;
+  z-index: 1000;
+  background: linear-gradient(135deg, #d8d8d8 0%, #e2e2e2 100%) !important;
+}
+
+.dutyTable thead tr th {
+  padding: 18px 20px;
+  text-align: left;
+  font-weight: 700;
+  color: black;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.wardHeader {
+  width: 200px;
+  text-align: center !important;
+}
+
+.dataHeader {
+  text-align: center !important;
+}
+
+.dutyTable tbody tr {
   border-bottom: 1px solid #e2e8f0;
 }
 
-.zoneHeaderLeft {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.dutyTable tbody tr:last-child {
+  border-bottom: none;
 }
 
-.zoneIndex {
-  background: linear-gradient(135deg, #d4d4d4 0%, #c9c9c9 100%);
-  backdrop-filter: blur(10px);
+/* ==================== WARD CELL ==================== */
+.wardCell {
+  width: 200px;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  vertical-align: top;
+  padding: 24px 16px !important;
+  text-align: center;
+  border-right: 2px solid #e2e8f0;
+}
+
+.wardName {
+  font-size: 18px;
+  font-weight: 700;
   color: black;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.zoneTitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #2d3748;
-  margin: 0;
-  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
 }
 
 .entriesCount {
   background: linear-gradient(135deg, #d4d4d4 0%, #c9c9c9 100%);
-  backdrop-filter: blur(10px);
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: black;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-block;
 }
 
-/* ==================== ENTRIES CONTAINER ==================== */
-.entriesContainer {
-  padding: 20px;
+/* ==================== DATA CELL ==================== */
+.dataCell {
+  padding: 20px !important;
+  vertical-align: top;
+}
+
+.cardsContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 16px;
-  max-height: 600px;
-  overflow-y: auto;
+  flex-wrap: wrap;
 }
 
-.entriesContainer::-webkit-scrollbar {
-  width: 6px;
-}
-
-.entriesContainer::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
-}
-
-.entriesContainer::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-}
-
-/* ==================== ENTRY CARD ==================== */
-.entryCard {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+/* ==================== DUTY CARD ==================== */
+.dutyCard {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   padding: 18px;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  min-width: 350px;
+  max-width: 450px;
 }
 
-.entryCard:hover {
+.dutyCard:hover {
   border-color: #cbd5e0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.entryHeader {
+.cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 14px;
 }
 
-.entryTitle {
-  font-size: 17px;
+.cardTitle {
+  font-size: 16px;
   font-weight: 700;
   color: #2d3748;
   margin: 0;
@@ -308,6 +318,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 /* ==================== INFO GRID ==================== */
@@ -374,12 +385,12 @@
 /* ==================== NO RECORD ==================== */
 .noRecord {
   text-align: center;
-  padding: 60px 20px;
+  padding: 40px 20px;
   color: #a0aec0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .noRecord svg {
@@ -388,7 +399,7 @@
 }
 
 .noRecord p {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   margin: 0;
   color: #718096;
@@ -396,17 +407,20 @@
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1200px) {
-  .gridContainer {
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  .tableWrapper {
+    padding: 20px 16px;
+  }
+
+  .wardCell {
+    width: 160px;
+  }
+
+  .wardHeader {
+    width: 160px;
   }
 }
 
 @media (max-width: 768px) {
-  .gridContainer {
-    padding: 20px 16px;
-    grid-template-columns: 1fr;
-  }
-
   .headerSection {
     padding: 16px 20px;
   }
@@ -414,6 +428,34 @@
   .dateControls {
     width: 100%;
     justify-content: center;
+  }
+
+  .tableWrapper {
+    margin-top: 120px;
+    padding: 16px 12px;
+  }
+
+  .dutyTable {
+    display: block;
+  }
+
+  .dutyTable thead,
+  .dutyTable tbody,
+  .dutyTable tr,
+  .dutyTable td,
+  .dutyTable th {
+    display: block;
+    width: 100%;
+  }
+
+  .wardCell {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .dataCell {
+    padding: 16px !important;
   }
 
   .infoGrid {

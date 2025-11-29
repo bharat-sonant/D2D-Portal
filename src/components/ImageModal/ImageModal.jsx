@@ -138,7 +138,7 @@ const ImageModal = ({ imageUrl, title, onClose }) => {
                     {!imageLoaded && (
                         <div className={style.imageLoader}>
                             <div className={style.spinner}></div>
-                            <p>Loading image...</p>
+                            <p>Please wait... Loading image</p>
                         </div>
                     )}
                     <img
