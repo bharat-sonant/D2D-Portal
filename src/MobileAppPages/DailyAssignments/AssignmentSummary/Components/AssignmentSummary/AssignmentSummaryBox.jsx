@@ -38,7 +38,6 @@ const AssignmentSummaryBox = ({wardsList, loading}) => {
       colorClass: 'completed'
     }
   ];
-  console.log('status data',statusData)
 
   return (
     <div className={styles.container}>
@@ -46,7 +45,7 @@ const AssignmentSummaryBox = ({wardsList, loading}) => {
         <div
           key={status.id}
           onClick={() => setActiveTab(status.id)}
-          className={`${styles.card} ${styles[status.class + "Card"]} ${
+          className={`${styles.card} ${styles[status.colorClass  + "Card"]} ${
             activeTab === status.id ? styles.activeCard : ""
           }`}
           role="button"

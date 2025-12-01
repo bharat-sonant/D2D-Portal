@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 const WardList = (props) => {
 
-    console.log('props',props)
+    // console.log('props',props)
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 

@@ -1,4 +1,4 @@
-import { checkDailyAssignmentSummaryData, checkNotAssignedKey, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
+import { checkDailyAssignmentSummaryData, getAllWards, getTaskStatus } from "../../Services/AssignmentService/AssignmentSummaryService"
 import * as common from '../../../../../common/common'
 
 
@@ -16,23 +16,6 @@ import * as common from '../../../../../common/common'
             }
         });
     };
-
-
-
-export const checkNotAssignedValue = async (setWardsList, setLoading) => {
-  return new Promise(async (resolve) => {
-    const resp = await checkNotAssignedKey();
-
-    if (resp.success === true && resp.data?.data?.wardKeys) {
-      setWardsList(resp.data.data.wardKeys);
-      resolve(resp);
-    } else {
-      const res = await getWards(setWardsList, setLoading);
-      resolve(res);
-    }
-      setLoading(false);
-  });
-};
 
 
 export const checkTaskStatus = async(ward) => {

@@ -31,8 +31,6 @@ const AssignmentSummary = () => {
 
         // Step 2: Now safely fetch wards – data exists for sure
         await action.getWards(setWardsList, setLoading);
-        await action.checkNotAssignedValue(setWardsList, setLoading);
-
         setLoading(false);
     };
 

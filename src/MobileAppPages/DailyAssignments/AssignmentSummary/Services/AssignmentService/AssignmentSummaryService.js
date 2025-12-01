@@ -51,55 +51,12 @@ export const checkNotAssignedKey = async () => {
         if (response !== null && response !== undefined) {
             return { success: true, data: response };
         } else {
-            pushDataInAssignmentSummary();
             const wardsResponse = await getAllWards();
             return { success: false, data: wardsResponse };
         };
     } catch (error) {
         return { success: false, error: error.message };
     };
-};
-
-const pushDataInAssignmentSummary = () => {
-    return new Promise((resolve) => {
-        db.getData(`TaskData/Task`)
-            .then(async (resp) => {
-                if (resp !== null) {
-
-                    const year = dayjs().format("YYYY");
-                    const month = dayjs().format("MMMM");
-                    const date = dayjs().format("YYYY-MM-DD");
-
-                    const summaryTaskPath = `AssignmentData/AssignmentSummary/${year}/${month}/${date}/Task`;
-                    const summaryNotAssignedPath = `AssignmentData/AssignmentSummary/${year}/${month}/${date}`;
-
-                    const updatedObject = {};
-                    const keys = Object.keys(resp);
-
-                    let notAssignedCount = 0;
-
-                    for (let i = 0; i < keys.length; i++) {
-                        const key = keys[i];
-                        const name = resp[key];
-
-                        updatedObject[name] = "NotAssigned";
-                        notAssignedCount++;
-                    }
-
-                    await db.saveData(summaryTaskPath, updatedObject);
-
-                    await db.saveData(summaryNotAssignedPath, { NotAssigned: notAssignedCount });
-
-                    resolve(common.setResponse("success", "TaskData & NotAssigned count saved successfully in AssignmentSummary", {}));
-                } else {
-                    resolve(common.setResponse("fail", "No TaskData found !!!", {}));
-                }
-            })
-            .catch((err) => {
-                console.log("Error occuring while saving/fetching: ", err);
-                resolve(common.setResponse("fail", "No TaskData found !!!", {}));
-            });
-    });
 };
 
 export const getTaskStatus = async(ward) => {
