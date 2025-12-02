@@ -137,6 +137,7 @@ const RouterComponent = () => {
           path="/tasks"
           element={
             <>
+              <MainLayout />
               <Task />
             </>
           }
