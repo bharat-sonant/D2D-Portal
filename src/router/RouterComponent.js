@@ -148,7 +148,6 @@ const RouterComponent = () => {
           path="/duty-start"
           element={
             <>
-              <MainLayout />
               <DutyStart />
             </>
           }
