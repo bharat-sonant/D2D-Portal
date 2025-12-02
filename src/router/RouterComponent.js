@@ -14,6 +14,7 @@ import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSumm
 import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
+import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 
 const RouterComponent = () => {
 
@@ -142,9 +143,19 @@ const RouterComponent = () => {
             </>
           }
         />
+
+         <Route
+          path="/duty-start"
+          element={
+            <>
+              <MainLayout />
+              <DutyStart />
+            </>
+          }
+        />
       </Routes>
 
-
+        
 
     </>
   );
