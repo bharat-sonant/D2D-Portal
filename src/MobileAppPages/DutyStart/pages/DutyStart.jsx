@@ -21,7 +21,7 @@ const DutyStart = () => {
 
   // sample "details" that come from API/props — can be replaced by actual API
   const details = {
-    vehicle: 'EV-2025',
+    // vehicle: 'EV-2025',
     driver: 'Nishant-Driver',
     helper: 'Vikram-Helper'
   }
@@ -137,10 +137,10 @@ const DutyStart = () => {
             value={selectedVehicle}
             onChange={(e) => setSelectedVehicle(e.target.value)}
             disabled>
-            <option value="">Select Vehicle</option>
+            <option value="">Please select Vehicle</option>
             {vehicles.map((v, i) => <option key={i} value={v}>{v}</option>)}
           </select>
-          <button className={styles.changeButton} onClick={() => openSheet('vehicle')}>Change</button>
+          <button className={styles.changeButton} onClick={() => openSheet('vehicle')}>{details.vehicle ? 'Change' : 'Select'}</button>
         </div>
 
         {/* DRIVER */}
@@ -150,10 +150,10 @@ const DutyStart = () => {
             value={selectedDriver}
             onChange={(e) => setSelectedDriver(e.target.value)}
             disabled>
-            <option value="">Select Driver</option>
+            <option value="">Please select Driver</option>
             {drivers.map((d, i) => <option key={i} value={d}>{d}</option>)}
           </select>
-          <button className={styles.changeButton} onClick={() => openSheet('driver')}>Change</button>
+          <button className={styles.changeButton} onClick={() => openSheet('driver')}>{details.driver ? 'Change' : 'Select'}</button>
         </div>
 
         {/* HELPER */}
@@ -163,10 +163,10 @@ const DutyStart = () => {
             value={selectedHelper}
             onChange={(e) => setSelectedHelper(e.target.value)}
             disabled>
-            <option value="">Select Helper</option>
+            <option value="">Please select Helper</option>
             {helpers.map((h, i) => <option key={i} value={h}>{h}</option>)}
           </select>
-          <button className={styles.changeButton} onClick={() => openSheet('helper')}>Change</button>
+          <button className={styles.changeButton} onClick={() => openSheet('helper')}>{details.helper ? 'Change' : 'Select'}</button>
         </div>
 
         <button className={styles.submitButton} onClick={handleSubmit}>
