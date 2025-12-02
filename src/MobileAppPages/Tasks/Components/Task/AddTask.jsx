@@ -2,7 +2,7 @@ import styles from '../../../../assets/css/modal.module.css';
 import { images } from '../../../../assets/css/imagePath';
 import { FaSpinner } from "react-icons/fa";
 import { useState } from 'react';
-import * as action from '../../Action/AddTask/AddTaskAction';
+import * as action from '../../Action/Task/TaskAction';
 
 const AddTask = (props) => {
     const [displayName, setDisplayName] = useState('');
@@ -32,7 +32,8 @@ const AddTask = (props) => {
             displayName,
             setError,
             setLoader,
-            setDisplayName
+            setDisplayName,
+            props.setTaskList
         );
     };
 

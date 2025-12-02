@@ -2,7 +2,7 @@ import * as db from '../../../../services/dbServices';
 import * as common from '../../../../common/common';
 import dayjs from 'dayjs';
 
-export const generateTaskId = () => {
+const generateTaskId = () => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const numbers = "0123456789";
 
@@ -57,5 +57,36 @@ export const saveTaskData = (displayName) => {
             resolve(common.setResponse('fail', "Error while saving task data.", { error }));
             console.log('Error while saving task data', error);
         };
+    });
+};
+
+export const getTaskData = () => {
+    return new Promise((resolve) => {
+        let path = `TaskData/Tasks`;
+
+        db.getData(path).then((response) => {
+            if (response !== null) {
+                let taskList = [];
+
+                for (let key in response) {
+                    const taskId = key;
+                    const name = response[key].name || "";
+                    const status = response[key].status || "";
+
+                    taskList.push({
+                        taskId,
+                        name,
+                        status
+                    });
+                }
+                taskList.sort((a, b) => a.name.localeCompare(b.name));
+
+                resolve(common.setResponse("success", "Task data fetched.", taskList));
+            } else {
+                resolve(common.setResponse("fail", "No tasks found.", []));
+            }
+        }).catch((error) => {
+            resolve(common.setResponse("fail", "Error while fetching task data.", { error }));
+        });
     });
 };

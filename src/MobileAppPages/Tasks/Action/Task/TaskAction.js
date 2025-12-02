@@ -1,4 +1,4 @@
-import { saveTaskData } from "../../Service/Tasks/TaskService";
+import { getTaskData, saveTaskData } from "../../Service/Tasks/TaskService";
 
 export const handleChange = (type, value, setDisplayName, setError) => {
     if (type === "name") {
@@ -12,8 +12,7 @@ export const handleChange = (type, value, setDisplayName, setError) => {
     };
 };
 
-
-export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName) => {
+export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName, setTaskList) => {
     if (displayName.trim() === "") {
         setError("Please provide display name of task.");
         return;
@@ -21,8 +20,16 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
     setLoader(true);
     saveTaskData(displayName).then((res) => {
         if (res.status === 'success') {
+            console.log(res)
             handleClearFields(setError, setDisplayName, setLoader);
             setLoader(false);
+            const newTask = {
+                taskId: res.data.taskId,
+                name: displayName,
+                status: "Active"
+            };
+
+            setTaskList((prev) => [newTask, ...prev]);
         } else {
             setLoader(false);
         };
@@ -34,3 +41,15 @@ export const handleClearFields = (setError, setDisplayName, setLoader) => {
     setError('');
     setLoader(false);
 }
+
+export const getTasks = (setTaskList, setLoading) => {
+    getTaskData().then((response) => {
+        if (response.status === 'success') {
+            setTaskList(response.data);
+            setLoading(false);
+        } else {
+            setTaskList('');
+            setLoading(false);
+        };
+    });
+};

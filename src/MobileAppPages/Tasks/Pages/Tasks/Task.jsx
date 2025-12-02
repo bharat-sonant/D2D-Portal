@@ -6,9 +6,14 @@ import { useEffect, useState } from "react";
 import TaskDetails from "../../Components/Task/TaskDetails";
 import * as firebaseService from '../../../../firebase/firebaseService';
 import * as dbConfig from '../../../../configurations/cityDBConfig';
+import { getTasks } from "../../Action/Task/TaskAction";
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
+    const [taskList, setTaskList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedTaskId, setSelectedTaskId] = useState("");
+    const [selectedTask, setSelectedTask] = useState(null);
     const city = localStorage.getItem('city') || "DevTest";
 
     useEffect(() => {
@@ -16,9 +21,22 @@ const Task = () => {
         firebaseService.connectFirebase(config, city);
     }, []);
 
+    useEffect(() => {
+        getTasks(setTaskList, setLoading)
+    }, [])
+
     const handleOpenModal = () => {
         setShowCanvas(true);
     }
+
+    const handleTaskSelection = (task) => {
+        setSelectedTaskId(task.taskId);
+        setSelectedTask(task);
+
+        console.log("Selected Task ID:", task.taskId);
+        console.log("Selected Task Name:", task.name);
+        console.log("Selected Task Status:", task.status);
+    };
 
     return (
         <>
@@ -32,7 +50,12 @@ const Task = () => {
             </div>
             <div className={`${TaskStyles.employeePage}`}>
                 <div className={`${TaskStyles.employeeLeft}`}>
-                    <TaskList />
+                    <TaskList
+                        taskList={taskList}
+                        loading={loading}
+                        selectedTaskId={selectedTaskId}
+                        onSelectTask={handleTaskSelection}
+                    />
                 </div>
 
                 <div className={`${TaskStyles.employeeRight}`}>
@@ -47,6 +70,7 @@ const Task = () => {
                 <AddTask
                     showCanvas={showCanvas}
                     setShowCanvas={setShowCanvas}
+                    setTaskList={setTaskList}
                 />
             </div>
         </>
