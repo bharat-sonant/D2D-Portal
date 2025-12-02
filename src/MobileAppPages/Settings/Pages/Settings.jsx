@@ -8,21 +8,31 @@ import WorkMonitoring from "../Component/WorkMonitoring/WorkMonitoring.jsx";
 import Navigator from "../Component/Navigator/Navigator.jsx";
 import DutyReport from "../Component/DutyReport/DutyReport.jsx";
 import BackOffice from "../Component/BackOffice/BackOffice.jsx";
+import { getBackOfficeSettingKey } from "../Action/BackOffice/BackOfficeAction.js";
+import { getDailyAssignmentKey, getWebViewUrl } from "../Action/DailyAssignment/DailyAssignment.js";
+import { getPenaltiesKey } from "../Action/Penalties/PenaltiesAction.js";
+import { getWorkMonitoringKey } from "../Action/WorkMonitoring/WorkMonitoringAction.js";
 
 const Settings = () => {
-
-  const [activeTab, setActiveTab] = useState("daily");
-  const [loader, setLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState("navigator");
   const [pageLoader, setPageLoader] = useState(true);
+  //Image width setting.
+  const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
+  const [driverThumbnailWidth, setDriverThumbnailWidth] = useState("");
+  //DailyAssignment Url & Toggle.
+  const [isAssignmentOn, setIsAssignmentOn] = useState(false);
+  const [webviewUrl, setWebviewUrl] = useState("");
+  //Penalties setting toggle.
+  const [isPenaltiesOn, setIsPenaltiesOn] = useState(false);
+  //Work Monitoring setting toggle.
+  const [isWorkMonitoringOn, setIsWorkMonitoringOn] = useState(false);
   const city = localStorage.getItem('city') || "DevTest";
 
-  // ------------ Firebase Init ------------
   const initFirebase = async () => {
     const config = getCityFirebaseConfig(city);
     connectFirebase(config, city);
   };
 
-  // ------------ useEffect ------------
   useEffect(() => {
     async function init() {
       setPageLoader(true);
@@ -30,6 +40,14 @@ const Settings = () => {
       setPageLoader(false);
     }
     init();
+  }, []);
+
+  useEffect(() => {
+    getBackOfficeSettingKey(setDriverLargeImageWidth, setDriverThumbnailWidth);
+    getDailyAssignmentKey(setIsAssignmentOn);
+    getWebViewUrl(setWebviewUrl);
+    getPenaltiesKey(setIsPenaltiesOn);
+    getWorkMonitoringKey(setIsWorkMonitoringOn);
   }, []);
 
   if (pageLoader) {
@@ -49,18 +67,7 @@ const Settings = () => {
 
   return (
     <div className={style.verticalContainer}>
-
-      {/* Left Vertical Tabs */}
       <div className={style.verticalTabs}>
-        <div className={`${style.tabItem} ${activeTab === "daily" ? style.activeTab : ""}`} onClick={() => setActiveTab("daily")}>
-          Daily Assignment
-        </div>
-        <div className={`${style.tabItem} ${activeTab === "penalties" ? style.activeTab : ""}`} onClick={() => setActiveTab("penalties")}>
-          Penalties
-        </div>
-        <div className={`${style.tabItem} ${activeTab === "work" ? style.activeTab : ""}`} onClick={() => setActiveTab("work")}>
-          Work Monitoring
-        </div>
         <div className={`${style.tabItem} ${activeTab === "navigator" ? style.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
           Navigator Settings
         </div>
@@ -72,37 +79,41 @@ const Settings = () => {
         </div>
       </div>
 
-      {/* Right Content */}
       <div className={style.verticalContent}>
-
-        {/* ---------------- DAILY ASSIGNMENT ---------------- */}
-        {activeTab === "daily" && (
-          <DailyAssignment />
-        )}
-
-        {/* ---------------- PENALTIES ---------------- */}
-        {activeTab === "penalties" && (
-          <Penalties />
-        )}
-
-        {/* ---------------- WORK MONITORING ---------------- */}
-        {activeTab === "work" && (
-          <WorkMonitoring />
-        )}
-
-        {/* ---------------- NAVIGATOR ---------------- */}
         {activeTab === "navigator" && (
           <Navigator />
         )}
 
-        {/* ---------------- DUTY REPORT TOGGLE ---------------- */}
         {activeTab === "report" && (
           <DutyReport />
         )}
 
-        {/* ---------------- BACKOFFICE SETTINGS ---------------- */}
         {activeTab === "backoffice" && (
-          <BackOffice />
+          <>
+            <BackOffice
+              driverLargeImageWidth={driverLargeImageWidth}
+              driverThumbnailWidth={driverThumbnailWidth}
+              setDriverLargeImageWidth={setDriverLargeImageWidth}
+              setDriverThumbnailWidth={setDriverThumbnailWidth}
+            />
+
+            <DailyAssignment
+              isAssignmentOn={isAssignmentOn}
+              setIsAssignmentOn={setIsAssignmentOn}
+              webviewUrl={webviewUrl}
+              setWebviewUrl={setWebviewUrl}
+            />
+
+            <Penalties
+              isPenaltiesOn={isPenaltiesOn}
+              setIsPenaltiesOn={setIsPenaltiesOn}
+            />
+
+            <WorkMonitoring
+              isWorkMonitoringOn={isWorkMonitoringOn}
+              setIsWorkMonitoringOn={setIsWorkMonitoringOn}
+            />
+          </>
         )}
       </div>
     </div>
