@@ -89,32 +89,41 @@ const Settings = () => {
         )}
 
         {activeTab === "backoffice" && (
-          <>
-            <BackOffice
-              driverLargeImageWidth={driverLargeImageWidth}
-              driverThumbnailWidth={driverThumbnailWidth}
-              setDriverLargeImageWidth={setDriverLargeImageWidth}
-              setDriverThumbnailWidth={setDriverThumbnailWidth}
-            />
+          <div className={style.backofficeRow}>
 
-            <DailyAssignment
-              isAssignmentOn={isAssignmentOn}
-              setIsAssignmentOn={setIsAssignmentOn}
-              webviewUrl={webviewUrl}
-              setWebviewUrl={setWebviewUrl}
-            />
+            <div className={style.backofficeCol}>
+              <BackOffice
+                driverLargeImageWidth={driverLargeImageWidth}
+                driverThumbnailWidth={driverThumbnailWidth}
+                setDriverLargeImageWidth={setDriverLargeImageWidth}
+                setDriverThumbnailWidth={setDriverThumbnailWidth}
+              />
 
-            <Penalties
-              isPenaltiesOn={isPenaltiesOn}
-              setIsPenaltiesOn={setIsPenaltiesOn}
-            />
+              <DailyAssignment
+                isAssignmentOn={isAssignmentOn}
+                setIsAssignmentOn={setIsAssignmentOn}
+                webviewUrl={webviewUrl}
+                setWebviewUrl={setWebviewUrl}
+              />
+            </div>
 
-            <WorkMonitoring
-              isWorkMonitoringOn={isWorkMonitoringOn}
-              setIsWorkMonitoringOn={setIsWorkMonitoringOn}
-            />
-          </>
+            <div className={style.backofficeCol}>
+              <Penalties
+                isPenaltiesOn={isPenaltiesOn}
+                setIsPenaltiesOn={setIsPenaltiesOn}
+              />
+
+              <WorkMonitoring
+                isWorkMonitoringOn={isWorkMonitoringOn}
+                setIsWorkMonitoringOn={setIsWorkMonitoringOn}
+              />
+            </div>
+
+          </div>
         )}
+
+
+
       </div>
     </div>
   );
