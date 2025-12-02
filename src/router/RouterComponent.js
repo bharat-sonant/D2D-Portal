@@ -4,7 +4,6 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import Wards from "../pages/Wards/Wards";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
@@ -48,19 +47,6 @@ const RouterComponent = () => {
             <>
               <MainLayout />
               <Dashboard />
-            </>
-          }
-        />
-
-
-
-
-        <Route
-          path="/wards"
-          element={
-            <>
-              <MainLayout />
-              <Wards />
             </>
           }
         />

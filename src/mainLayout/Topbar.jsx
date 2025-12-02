@@ -123,33 +123,6 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
 
             <Link
               aria-current="page"
-              to="/wards"
-              title="wards"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/wards" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/wards"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
-                  : {}
-              }
-            >
-              <FaCity
-                className={`${styles.iconNav} ${location.pathname === "/wards"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
-              >
-                Ward List
-              </span>
-            </Link>
-
-
-            <Link
-              aria-current="page"
               to="/daily-assignment"
               title="Daily Assignment"
               className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
@@ -173,56 +146,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 Daily Assignment
               </span>
             </Link>
-
-             <Link
-              aria-current="page"
-              to="/start-assignment"
-              title="Start Assignment"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/start-assignment" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/start-assignment"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
-                  : {}
-              }
-            >
-              <AlignStartVertical 
-                className={`${styles.iconNav} ${location.pathname === "/start-assignment"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
-              >
-                Start Assignment
-              </span>
-            </Link>
-
-            <Link
-              to="/duty-on" 
-              className={`nav-link ${styles.navLink} ${ 
-                hideNavLinks ? styles.hide : ""           
-              } ${location.pathname === "/duty-on" ? styles.activeNav : ""}`} 
-              style={                                  
-                location.pathname === "/duty-on"        
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" } 
-                  : {}                               
-              }
-            >
-              <ListStartIcon                   
-                className={`${styles.iconNav} ${
-                  location.pathname === "/duty-on"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
-                }`}
-              />
-              <span className={styles.iconText} style={{ color: navbarStyle.textColor }}>
-                Duty-On                                  
-              </span>
-            </Link>
-
+            
              <Link
               to="/settings" 
               className={`nav-link ${styles.navLink} ${ 
