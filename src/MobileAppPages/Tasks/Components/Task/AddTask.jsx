@@ -1,11 +1,37 @@
 import styles from '../../../../assets/css/modal.module.css';
 import { images } from '../../../../assets/css/imagePath';
+import { FaSpinner } from "react-icons/fa";
+import { useState } from 'react';
+import * as action from '../../Action/AddTask/AddTaskAction';
 
 const AddTask = (props) => {
+    const [displayName, setDisplayName] = useState('');
+    const [loader, setLoader] = useState(false);
+    const [error, setError] = useState('');
 
     const handleCloseModal = () => {
         props.setShowCanvas(false);
-    }
+        action.handleClearFields(
+            setError,
+            setDisplayName
+        );
+    };
+
+    const handleInputChange = (type, value) => {
+        action.handleChange(
+            type,
+            value,
+            setDisplayName,
+            setError
+        );
+    };
+
+    const handleSave = () => {
+        action.handleSaveTasks(
+            displayName,
+            setError
+        );
+    };
 
     if (!props.showCanvas) {
         return null;
@@ -35,20 +61,20 @@ const AddTask = (props) => {
                                         <input
                                             type="text"
                                             id="Name"
-                                            className={`form-control ${styles.formTextbox}`}
+                                            className={`form-control ${styles.formTextbox} ${error ? 'is-invalid' : ""}`}
                                             placeholder=" "
-                                        // value={name}
-                                        // onChange={(e) =>
-                                        //     handleInputChange("name", e.target.value)
-                                        // }
+                                            value={displayName}
+                                            onChange={(e) =>
+                                                handleInputChange("name", e.target.value)
+                                            }
                                         />
                                     </div>
                                 </div>
-                                {/* {nameError && (
+                                {error && (
                                     <div className={`${styles.invalidfeedback}`}>
-                                        {nameError}
+                                        {error}
                                     </div>
-                                )} */}
+                                )}
                             </div>
                         </div>
                     </div>
@@ -56,17 +82,17 @@ const AddTask = (props) => {
                         <button
                             type="submit"
                             className={`mt-3 ${styles.btnSave}`}
-                        // onClick={() => savePeopleData()}
-                        // disabled={isLoading}
+                            onClick={handleSave}
+                            disabled={loader}
                         >
-                            {/* {isLoading ? (
+                            {loader ? (
                                 <div className={styles.Loginloadercontainer}>
                                     <FaSpinner className={styles.spinnerLogin} />
                                     <span className={styles.loaderText}>Please wait...</span>
                                 </div>
                             ) : (
                                 "Save"
-                            )} */}
+                            )}
                             Save
                         </button>
                     </div>
