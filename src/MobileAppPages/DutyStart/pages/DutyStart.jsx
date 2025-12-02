@@ -5,21 +5,19 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/DutyStart.module.css'
 import { ArrowLeft } from 'lucide-react';
 import ConfirmationModal from '../../../components/confirmationModal/ConfirmationModal';
-import BottomSheet from '../components/bottomSheet/BottomSheet' // <- ensure correct import path
+import BottomSheet from '../components/bottomSheet/BottomSheet';
 
 const DutyStart = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
-  // which sheet is open: 'vehicle' | 'driver' | 'helper' | null
   const [sheetType, setSheetType] = useState(null);
 
   const [selectedVehicle, setSelectedVehicle] = useState('');
   const [selectedDriver, setSelectedDriver] = useState('');
   const [selectedHelper, setSelectedHelper] = useState('');
 
-  // sample "details" that come from API/props — can be replaced by actual API
   const details = {
     // vehicle: 'EV-2025',
     driver: 'Nishant-Driver',
@@ -176,7 +174,7 @@ const DutyStart = () => {
 
       <ConfirmationModal
         visible={showModal}
-        title='Complete Task ?'
+        title='Continue ?'
         message='Are you sure you want to continue with this record ?'
         confirmText='Confirm'
         cancelText='Cancel'
@@ -184,7 +182,6 @@ const DutyStart = () => {
         onCancel={handleCloseModal}
       />
 
-      {/* BottomSheet: open only when sheetType !== null */}
       <BottomSheet
         isOpen={!!sheetType}
         onClose={closeSheet}
