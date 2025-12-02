@@ -12,9 +12,10 @@ const DailyAssignment = (props) => {
     return (
         <div>
             <div className={style.card}>
-                <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3>
-                <div className={style.inputRow}>
+                {/* <h3 className={style.cardTitle}>Daily Assignment Webview URL</h3> */}
                     <label className={style.inputLabel}>Webview URL</label>
+
+                <div className={style.inputRow}>
                     <input
                         type="text"
                         className={style.textInput}
@@ -30,16 +31,9 @@ const DailyAssignment = (props) => {
                     <button className={style.saveButton} onClick={handleSaveUrl}>Save</button>
                 </div>
             </div>
-            <div className={style.card}>
-                <h3 className={style.cardTitle}>Daily Assignment Via Web</h3>
-                <div className={style.toggleWrapper}>
-                    <label className={style.toggleLabel}>DailyAssignment Via Web</label>
-                    <div className={`${style.toggleSwitch} ${props.isAssignmentOn ? style.on : style.off}`} onClick={() => toggleAssignment(props)}>
-                        <div className={style.toggleCircle}>{props.isAssignmentOn ? "ON" : "OFF"}</div>
-                    </div>
-                </div>
-            </div>
+          
         </div>
+
     )
 }
 

@@ -5,7 +5,7 @@ const Penalties = (props) => {
     return (
         <div>
             <div className={style.card}>
-                <h3 className={style.cardTitle}>Penalties via Web</h3>
+                {/* <h3 className={style.cardTitle}>Penalties via Web</h3> */}
                 <div className={style.toggleWrapper}>
                     <label className={style.toggleLabel}>Penalties Via Web</label>
                     <div className={`${style.toggleSwitch} ${props.isPenaltiesOn ? style.on : style.off}`} onClick={() => togglePenalties(props)}>

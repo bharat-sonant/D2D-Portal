@@ -12,6 +12,7 @@ import { getBackOfficeSettingKey } from "../Action/BackOffice/BackOfficeAction.j
 import { getDailyAssignmentKey, getWebViewUrl } from "../Action/DailyAssignment/DailyAssignment.js";
 import { getPenaltiesKey } from "../Action/Penalties/PenaltiesAction.js";
 import { getWorkMonitoringKey } from "../Action/WorkMonitoring/WorkMonitoringAction.js";
+import DailyAssignmentToggle from "../Component/DailyAssignment/DailyAssignmentToggle.jsx";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("backoffice");
@@ -81,23 +82,41 @@ const Settings = () => {
 
       <div className={style.verticalContent}>
         {activeTab === "navigator" && (
-          <Navigator />
+          <div className={style.backofficeRow}>
+            <Navigator />
+          </div>
         )}
 
         {activeTab === "report" && (
-          <DutyReport />
+          <div className={style.backofficeRow}>
+            <DutyReport />
+          </div>
         )}
 
         {activeTab === "backoffice" && (
-          <div className={style.backofficeRow}>
+          <>
+            <div className={style.backofficeRow}>
+              <Penalties
+                isPenaltiesOn={isPenaltiesOn}
+                setIsPenaltiesOn={setIsPenaltiesOn}
+              />
+              <WorkMonitoring
+                isWorkMonitoringOn={isWorkMonitoringOn}
+                setIsWorkMonitoringOn={setIsWorkMonitoringOn}
+              />
 
-            <div className={style.backofficeCol}>
+              <DailyAssignmentToggle
+                isAssignmentOn={isAssignmentOn}
+                setIsAssignmentOn={setIsAssignmentOn}
+              />
+
               <DailyAssignment
                 isAssignmentOn={isAssignmentOn}
                 setIsAssignmentOn={setIsAssignmentOn}
                 webviewUrl={webviewUrl}
                 setWebviewUrl={setWebviewUrl}
               />
+
               <BackOffice
                 driverLargeImageWidth={driverLargeImageWidth}
                 driverThumbnailWidth={driverThumbnailWidth}
@@ -105,24 +124,8 @@ const Settings = () => {
                 setDriverThumbnailWidth={setDriverThumbnailWidth}
               />
             </div>
-
-            <div className={style.backofficeCol}>
-              <Penalties
-                isPenaltiesOn={isPenaltiesOn}
-                setIsPenaltiesOn={setIsPenaltiesOn}
-              />
-
-              <WorkMonitoring
-                isWorkMonitoringOn={isWorkMonitoringOn}
-                setIsWorkMonitoringOn={setIsWorkMonitoringOn}
-              />
-            </div>
-
-          </div>
+          </>
         )}
-
-
-
       </div>
     </div>
   );
