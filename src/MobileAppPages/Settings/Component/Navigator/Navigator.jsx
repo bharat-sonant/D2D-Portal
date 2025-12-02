@@ -33,7 +33,7 @@ const Navigator = () => {
   return (
     <div>
          <div className={style.card}>
-            <h3 className={style.cardTitle}>Navigator Application Settings</h3>
+            {/* <h3 className={style.cardTitle}>Navigator Application Settings</h3> */}
             <div className={style.toggleWrapper}>
               <label className={style.toggleLabel}>Navigation Via Employee Code</label>
               <div className={`${style.toggleSwitch} ${isNavigatorSettingOn ? style.on : style.off}`} onClick={toggleNavigator}>

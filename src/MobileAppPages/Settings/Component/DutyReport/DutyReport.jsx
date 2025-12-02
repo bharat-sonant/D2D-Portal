@@ -61,7 +61,7 @@ const DutyReport = () => {
   return (
      <>
             <div className={style.card}>
-              <h3 className={style.cardTitle}>Report Via New Structure</h3>
+              {/* <h3 className={style.cardTitle}>Report Via New Structure</h3> */}
               <div className={style.toggleWrapper}>
                 <label className={style.toggleLabel}>Duty On Off Image Report</label>
                 <div className={`${style.toggleSwitch} ${isDutyOnOffImageReportShow ? style.on : style.off}`} onClick={toggleDutyOnOffImageReport}>
@@ -71,7 +71,7 @@ const DutyReport = () => {
             </div>
 
             <div className={style.card}>
-              <h3 className={style.cardTitle}>Duty On/Off Image Report URL</h3>
+              {/* <h3 className={style.cardTitle}>Duty On/Off Image Report URL</h3> */}
               <div className={style.inputRow}>
                 <label className={style.inputLabel}>Report Webview URL</label>
                 <input
