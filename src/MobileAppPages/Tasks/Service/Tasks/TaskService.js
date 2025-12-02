@@ -46,6 +46,12 @@ export const saveTaskData = (displayName) => {
                 ]).then(([taskRes, detailRes]) => {
                     if (taskRes.success === true && detailRes.success === true) {
                         resolve(common.setResponse('success', 'Task data & details saved successfully.', { taskId }));
+                        saveTaskHistory(
+                            detailsPath,
+                            taskId,
+                            dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                            `Task created with name ${displayName}`
+                        );
                     } else {
                         resolve(common.setResponse('fail', 'Issue while saving task or details.', {}));
                     }
@@ -111,4 +117,43 @@ export const getTaskDetails = (taskId) => {
             console.log('Error while fetching task details', error);
         };
     });
+};
+
+export const saveTaskHistory = async (
+    taskDetailsPath,
+    taskId,
+    dateAndTime,
+    eventMessage
+) => {
+    try {
+        if (!taskId || !dateAndTime || !taskDetailsPath || !eventMessage) {
+            return common.setResponse("fail", "Invalid Params !!", {
+                taskId,
+                dateAndTime,
+                taskDetailsPath,
+                eventMessage
+            });
+        }
+        const historyPath = `${taskDetailsPath}/${taskId}/UpdateHistory`;
+
+        let historyData = (await db.getData(historyPath)) || { lastKey: 0 };
+
+        const nextKey = (historyData.lastKey || 0) + 1;
+
+        const entry = {
+            _at: dateAndTime,
+            _by: 'Admin',
+            event: eventMessage,
+        };
+
+        await Promise.all([
+            db.saveData(`${historyPath}/${nextKey}`, entry),
+            db.saveData(historyPath, { lastKey: nextKey }),
+        ]);
+
+        return common.setResponse("success", "Task history saved.", { taskId, entry });
+
+    } catch (error) {
+        console.error("Error while saving task history:", error);
+    }
 };
