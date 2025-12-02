@@ -31,10 +31,10 @@ const DailyAssignment = (props) => {
                 </div>
             </div>
             <div className={style.card}>
-                <h3 className={style.cardTitle}>Daily Assignment</h3>
+                <h3 className={style.cardTitle}>Daily Assignment Via Web</h3>
                 <div className={style.toggleWrapper}>
                     <label className={style.toggleLabel}>DailyAssignment Via Web</label>
-                    <div className={`${style.toggleSwitch} ${props.isAssignmentOn ? style.on : style.off}`} onClick={toggleAssignment}>
+                    <div className={`${style.toggleSwitch} ${props.isAssignmentOn ? style.on : style.off}`} onClick={() => toggleAssignment(props)}>
                         <div className={style.toggleCircle}>{props.isAssignmentOn ? "ON" : "OFF"}</div>
                     </div>
                 </div>

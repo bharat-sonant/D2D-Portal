@@ -39,5 +39,5 @@ export const toggleAssignment = async (props) => {
     if (res?.status !== "success") {
         props.setIsAssignmentOn(props.isAssignmentOn);
         setAlertMessage("error", "Failed to update Daily Assignment");
-    } else setAlertMessage("success", "Daily Assignment updated");
+    } else setAlertMessage("success", "Daily Assignment via web is updated successfully.");
 };

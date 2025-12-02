@@ -35,7 +35,7 @@ export const saveBackOfficeSettingsHandler = async (props) => {
     });
 
     if (res?.status === "success") {
-        setAlertMessage("success", "Back Office settings saved successfully!");
+        setAlertMessage("success", "Image settings saved successfully!");
     } else {
         setAlertMessage("error", "Failed to save Back Office settings");
     }

@@ -9,7 +9,7 @@ const BackOffice = (props) => {
     return (
         <div>
             <div className={style.card}>
-                <h3 className={style.cardTitle}>BackOffice Application Settings</h3>
+                <h3 className={style.cardTitle}>Images Settings</h3>
 
                 <div className={style.inputRow}>
                     <label className={style.inputLabel}>Driver Large Image Width In px</label>

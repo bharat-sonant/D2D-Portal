@@ -14,5 +14,5 @@ export const togglePenalties = async (props) => {
     if (res?.status !== "success") {
         props.setIsPenaltiesOn(props.isPenaltiesOn);
         setAlertMessage("error", "Failed to update Penalties");
-    } else setAlertMessage("success", "Penalties updated");
+    } else setAlertMessage("success", "Penalties via web is updated successfully");
 };

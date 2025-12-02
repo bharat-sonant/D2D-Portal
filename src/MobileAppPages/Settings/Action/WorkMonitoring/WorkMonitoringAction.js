@@ -14,5 +14,5 @@ export const toggleWorkMonitoring = async (props) => {
     if (res?.status !== "success") {
         props.setIsWorkMonitoringOn(props.isWorkMonitoringOn);
         setAlertMessage("error", "Failed to update Work Monitoring");
-    } else setAlertMessage("success", "Work Monitoring updated");
+    } else setAlertMessage("success", "Work Monitoring via web is updated successfully");
 };
