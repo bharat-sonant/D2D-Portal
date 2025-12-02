@@ -2,6 +2,35 @@
 @import '../../../../assets/css/fonts.css';
 @import '../../../../assets/css/normalize.css';
 
+.employeePage {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+.ExpenseReviewerList {
+    width: 100%;
+    display: flex;
+}
+
+.employeeLeft {
+    width: 250px;
+    margin-top: 60px;
+}
+
+.ExpenseReviewerLeft {
+    width: 250px;
+    margin-top: 60px;
+}
+
+.employeeRight {
+    width: calc(100% - 250px);
+    padding: 10px 10px;
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+    overflow: auto;
+}
+
 .hideDesktop {
     display: none;
 }
@@ -102,4 +131,54 @@
         justify-content: space-between;
         width: 100%;
     }
+}
+
+@media (max-width: 767.98px) {
+    .employeeLeft {
+        width: 100%;
+        position: fixed;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        background: var(--white);
+        padding: 10px 16px;
+        height: 60px;
+        border-bottom: 1px solid var(--borderColor);
+        z-index: 2;
+        display: flex;
+    }
+
+    .employeeRight {
+        margin-top: 120px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .userLeft {
+        width: 100%;
+        margin-top: 80px;
+        margin-left: 0px;
+    }
+
+    .userRight {
+        width: 100%;
+        position: fixed;
+        right: 0px;
+        top: 70px;
+        background: white;
+        padding: 10px 16px;
+        height: auto;
+        border-bottom: 1px solid var(--borderColor);
+        z-index: 3;
+    }
+
+    .orderFirst {
+        order: 1;
+    }
+
+    .orderSecond {
+        order: 2;
+    }
+
 }

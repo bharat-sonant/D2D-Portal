@@ -13,7 +13,7 @@ const TaskList = () => {
                     //   ref={dropdownMenuRef}
                     className={`dropdown-menu ${GlobalStyles.dropdownMenu} ${GlobalStyles.dropdownDesktop} ${styles.pageDropdown}`}
                     style={{
-                        display: "block", position: 'absolute', top: '60px'
+                        display: "block",
                     }}
                     aria-labelledby="drop downMenuButton"
                 >
