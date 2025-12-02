@@ -82,13 +82,14 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 /* LABEL */
 .label {
   width: 80px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   margin-left: 12px;
 }
 
@@ -96,6 +97,7 @@
 .dropdown {
   flex: 1;
   padding: 10px;
+  width: 100%;
   font-size: 15px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -127,6 +129,18 @@
 .changeButton:active {
   transform: scale(0.96);
 }
+
+.selectWrapper {
+  flex: 1;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+.selectWrapper select {
+  pointer-events: none; /* Prevent native dropdown ALWAYS */
+}
+
 
 
 .submitButton {
