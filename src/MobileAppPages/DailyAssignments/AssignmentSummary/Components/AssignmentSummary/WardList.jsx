@@ -11,7 +11,7 @@ const WardList = (props) => {
     const navigate = useNavigate();
 
     const goToDutyOn = (wardName) => {
-        navigate(`/duty-on?task=${encodeURIComponent(wardName)}`);
+        navigate(`/duty-start?task=${encodeURIComponent(wardName)}`);
     };
 
     const goToDutyOff = (wardName) => {
