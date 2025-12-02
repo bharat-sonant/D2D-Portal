@@ -187,3 +187,13 @@
     align-items: start;
     /* ensure saare widgets top se align ho */
 }
+
+.twoColRow {
+    display: flex;
+    gap: 20px;
+}
+
+.twoColRow .inputRow {
+    flex: 1;
+    /* Both inputs same width */
+}
