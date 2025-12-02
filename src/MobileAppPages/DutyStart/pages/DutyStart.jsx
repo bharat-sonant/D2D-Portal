@@ -26,9 +26,9 @@ const DutyStart = () => {
     helper: 'Vikram-Helper'
   }
 
-  const [vehicles, setVehicles] = useState(['EV-2025', 'EV-2024', 'EV-2023']);
-  const [drivers, setDrivers] = useState(['Nishant-Driver', 'Rohit-Driver', 'Suresh-Driver']);
-  const [helpers, setHelpers] = useState(['Vikram-Helper', 'Ashok-Helper', 'Ramesh-Helper']);
+  const vehicles = ['EV-2025', 'EV-2024', 'EV-2023'];
+  const drivers = ['Nishant-Driver', 'Rohit-Driver', 'Suresh-Driver'];
+  const helpers = ['Vikram-Helper', 'Ashok-Helper', 'Ramesh-Helper'];
 
   const [loadingVehicles, setLoadingVehicles] = useState(false);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
