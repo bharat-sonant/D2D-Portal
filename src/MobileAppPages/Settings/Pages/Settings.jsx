@@ -14,7 +14,7 @@ import { getPenaltiesKey } from "../Action/Penalties/PenaltiesAction.js";
 import { getWorkMonitoringKey } from "../Action/WorkMonitoring/WorkMonitoringAction.js";
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState("navigator");
+  const [activeTab, setActiveTab] = useState("backoffice");
   const [pageLoader, setPageLoader] = useState(true);
   //Image width setting.
   const [driverLargeImageWidth, setDriverLargeImageWidth] = useState("");
@@ -68,14 +68,14 @@ const Settings = () => {
   return (
     <div className={style.verticalContainer}>
       <div className={style.verticalTabs}>
-        <div className={`${style.tabItem} ${activeTab === "navigator" ? style.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
-          Navigator Settings
+        <div className={`${style.tabItem} ${activeTab === "backoffice" ? style.activeTab : ""}`} onClick={() => setActiveTab("backoffice")}>
+          BackOffice Settings
         </div>
         <div className={`${style.tabItem} ${activeTab === "report" ? style.activeTab : ""}`} onClick={() => setActiveTab("report")}>
           Duty On/Off Report
         </div>
-        <div className={`${style.tabItem} ${activeTab === "backoffice" ? style.activeTab : ""}`} onClick={() => setActiveTab("backoffice")}>
-          BackOffice Settings
+        <div className={`${style.tabItem} ${activeTab === "navigator" ? style.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
+          Navigator Settings
         </div>
       </div>
 
@@ -92,18 +92,17 @@ const Settings = () => {
           <div className={style.backofficeRow}>
 
             <div className={style.backofficeCol}>
-              <BackOffice
-                driverLargeImageWidth={driverLargeImageWidth}
-                driverThumbnailWidth={driverThumbnailWidth}
-                setDriverLargeImageWidth={setDriverLargeImageWidth}
-                setDriverThumbnailWidth={setDriverThumbnailWidth}
-              />
-
               <DailyAssignment
                 isAssignmentOn={isAssignmentOn}
                 setIsAssignmentOn={setIsAssignmentOn}
                 webviewUrl={webviewUrl}
                 setWebviewUrl={setWebviewUrl}
+              />
+              <BackOffice
+                driverLargeImageWidth={driverLargeImageWidth}
+                driverThumbnailWidth={driverThumbnailWidth}
+                setDriverLargeImageWidth={setDriverLargeImageWidth}
+                setDriverThumbnailWidth={setDriverThumbnailWidth}
               />
             </div>
 

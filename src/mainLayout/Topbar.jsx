@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { FaUser } from "react-icons/fa";
+import { FaTasks, FaUser } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdStart } from "react-icons/md";
 import { RiShutDownLine } from "react-icons/ri";
 import { PulseLoader } from "react-spinners";
@@ -133,7 +133,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                   : {}
               }
             >
-              <LucideUserRoundCheck 
+              <LucideUserRoundCheck
                 className={`${styles.iconNav} ${location.pathname === "/daily-assignment"
                   ? navbarStyle.iconFilter
                   : "icon-filter-black"
@@ -146,24 +146,48 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 Daily Assignment
               </span>
             </Link>
-            
-             <Link
-              to="/settings" 
-              className={`nav-link ${styles.navLink} ${ 
-                hideNavLinks ? styles.hide : ""           
-              } ${location.pathname === "/settings" ? styles.activeNav : ""}`} 
-              style={                                  
-                location.pathname === "/settings"        
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" } 
-                  : {}                               
+
+            <Link
+              aria-current="page"
+              to="/tasks"
+              title="Tasks"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/tasks" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/tasks"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
               }
             >
-              <CiSettings                   
-                className={`${styles.iconNav} ${
-                  location.pathname === "/settings"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
-                }`}
+              <FaTasks
+                className={`${styles.iconNav} ${location.pathname === "/tasks"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Tasks
+              </span>
+            </Link>
+
+            <Link
+              to="/settings"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/settings" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/settings"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <CiSettings
+                className={`${styles.iconNav} ${location.pathname === "/settings"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
               />
               <span className={styles.iconText} style={{ color: navbarStyle.textColor }}>
                 Settings                                  {/* 👉 ADDED SETTINGS LABEL */}
@@ -177,7 +201,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               className={`dropdown ${styles.dropdown_profile}`}
               style={{ backgroundColor: navbarStyle.activeNavBg }}
             >
-             
+
 
               <div className={`dropdown-menu ${styles.custom_drop_profile}`}>
                 <ul className={`${styles.profile_ul}`}>
