@@ -90,3 +90,25 @@ export const getTaskData = () => {
         });
     });
 };
+
+export const getTaskDetails = (taskId) => {
+    return new Promise((resolve) => {
+        try {
+            if (taskId) {
+                let path = `TaskData/TaskDetails/${taskId}`;
+                db.getData(path).then((response) => {
+                    if (response !== null) {
+                        resolve(common.setResponse('success', 'Task Details fetched successfully', { details: response }));
+                    } else {
+                        resolve(common.setResponse('fail', 'Issue in fetching task data.', {}));
+                    };
+                });
+            } else {
+                resolve(common.setResponse('fail', 'Issue in fetching task data.', {}));
+            };
+        } catch (error) {
+            resolve(common.setResponse('fail', 'Issue in fetching task data.', error));
+            console.log('Error while fetching task details', error);
+        };
+    });
+};

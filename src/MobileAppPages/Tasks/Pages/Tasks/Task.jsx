@@ -13,7 +13,6 @@ const Task = () => {
     const [taskList, setTaskList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTaskId, setSelectedTaskId] = useState("");
-    const [selectedTask, setSelectedTask] = useState(null);
     const city = localStorage.getItem('city') || "DevTest";
 
     useEffect(() => {
@@ -25,17 +24,18 @@ const Task = () => {
         getTasks(setTaskList, setLoading)
     }, [])
 
+    useEffect(() => {
+        if (taskList.length > 0 && !selectedTaskId) {
+            setSelectedTaskId(taskList[0].taskId);
+        }
+    }, [taskList]);
+
     const handleOpenModal = () => {
         setShowCanvas(true);
     }
 
     const handleTaskSelection = (task) => {
         setSelectedTaskId(task.taskId);
-        setSelectedTask(task);
-
-        console.log("Selected Task ID:", task.taskId);
-        console.log("Selected Task Name:", task.name);
-        console.log("Selected Task Status:", task.status);
     };
 
     return (
