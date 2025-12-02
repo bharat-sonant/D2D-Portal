@@ -2,11 +2,19 @@ import TaskList from "../../Components/Task/TaskList"
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import TaskStyles from '../../Styles/TaskList/TaskList.module.css';
 import AddTask from "../../Components/Task/AddTask";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskDetails from "../../Components/Task/TaskDetails";
+import * as firebaseService from '../../../../firebase/firebaseService';
+import * as dbConfig from '../../../../configurations/cityDBConfig';
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
+    const city = localStorage.getItem('city') || "DevTest";
+
+    useEffect(() => {
+        const config = dbConfig.getCityFirebaseConfig(city);
+        firebaseService.connectFirebase(config, city);
+    }, []);
 
     const handleOpenModal = () => {
         setShowCanvas(true);

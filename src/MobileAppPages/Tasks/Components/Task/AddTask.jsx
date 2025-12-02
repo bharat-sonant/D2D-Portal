@@ -13,7 +13,8 @@ const AddTask = (props) => {
         props.setShowCanvas(false);
         action.handleClearFields(
             setError,
-            setDisplayName
+            setDisplayName,
+            setLoader
         );
     };
 
@@ -29,7 +30,9 @@ const AddTask = (props) => {
     const handleSave = () => {
         action.handleSaveTasks(
             displayName,
-            setError
+            setError,
+            setLoader,
+            setDisplayName
         );
     };
 
@@ -93,7 +96,6 @@ const AddTask = (props) => {
                             ) : (
                                 "Save"
                             )}
-                            Save
                         </button>
                     </div>
                 </div>
