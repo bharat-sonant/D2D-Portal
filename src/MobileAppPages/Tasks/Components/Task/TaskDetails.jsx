@@ -18,7 +18,7 @@ const TaskDetails = (props) => {
         return <div className={styles.emptyState}></div>;
     }
 
-    const { name, _by, _at, status } = props.selectedTask;
+    const { name, _by, _at } = props.selectedTask;
 
     const handleToggle = () => {
         ActiveInactiveTask(props, setToggle, toggle)
@@ -63,7 +63,7 @@ const TaskDetails = (props) => {
                         >
                             <RiDeleteBin6Fill />
                         </button>
-                    )}
+                    )}  
                 </div>
             </div>
 
