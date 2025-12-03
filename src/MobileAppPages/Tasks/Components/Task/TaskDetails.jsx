@@ -29,7 +29,7 @@ const TaskDetails = (props) => {
     };
 
     const handleDelete = () => {
-        console.log("Delete clicked");
+        
     };
 
     return (

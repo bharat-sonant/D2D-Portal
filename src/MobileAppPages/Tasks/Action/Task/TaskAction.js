@@ -1,5 +1,5 @@
-import { AppAlert, setAlertMessage } from "../../../../common/common";
-import { activeInactiveTask, getTaskData, getTaskDetails, saveTaskData } from "../../Service/Tasks/TaskService";
+import * as common from "../../../../common/common";
+import * as service from "../../Service/Tasks/TaskService";
 
 export const handleChange = (type, value, setDisplayName, setError) => {
     if (type === "name") {
@@ -19,7 +19,7 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
         return;
     };
     setLoader(true);
-    saveTaskData(displayName, taskId).then((res) => {
+    service.saveTaskData(displayName, taskId).then((res) => {
         if (res.status === 'success') {
             console.log(res)
             handleClearFields(setError, setDisplayName, setLoader, setTaskId);
@@ -60,7 +60,7 @@ export const handleClearFields = (setError, setDisplayName, setLoader, setTaskId
 }
 
 export const getTasks = (setTaskList, setLoading) => {
-    getTaskData().then((response) => {
+    service.getTaskData().then((response) => {
         if (response.status === 'success') {
             let taskList = [...response.data];
             taskList.sort((a, b) => {
@@ -77,9 +77,8 @@ export const getTasks = (setTaskList, setLoading) => {
     });
 };
 
-
 export const getTaskDetail = (setSelectedTask, selectedTaskId) => {
-    getTaskDetails(selectedTaskId).then((response) => {
+    service.getTaskDetails(selectedTaskId).then((response) => {
         if (response.status === 'success') {
             setSelectedTask(response.data.details);
         } else {
@@ -91,7 +90,7 @@ export const getTaskDetail = (setSelectedTask, selectedTaskId) => {
 export const ActiveInactiveTask = (props, setToggle, toggle) => {
     const newStatus = toggle ? "inactive" : "active";
     setToggle(!toggle);
-    activeInactiveTask(props.selectedTask.taskId, newStatus).then(() => {
+    service.activeInactiveTask(props.selectedTask.taskId, newStatus).then(() => {
         props.setSelectedTask(prev => ({
             ...prev,
             status: newStatus
@@ -108,7 +107,7 @@ export const ActiveInactiveTask = (props, setToggle, toggle) => {
                 return 0;
             });
         });
-        setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
+        common.setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
     }).catch((err) => {
         console.log("Error updating status", err);
     });

@@ -230,3 +230,31 @@ export const activeInactiveTask = (taskId, status) => {
         });
     });
 };
+
+export const deleteInactiveTask = (taskId) => {
+    return new Promise((resolve) => {
+        try {
+            if (!taskId) {
+                resolve(common.setResponse('fail', "Invalid Params !!!", { taskId }));
+                return;
+            };
+
+            let taskPath = `TaskData/Tasks/${taskId}`;
+            let detailPath = `TaskData/TaskDetails/${taskId}`;
+
+            Promise.all([
+                db.removeData(taskPath),
+                db.removeData(detailPath)
+            ]).then(async ([taskRes, detailRes]) => {
+                if (taskRes.success === true && detailRes.success === true) {
+                    resolve(common.setResponse('success', "Task and Task detail deleted successfully", { taskId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Error deleting task and task details.', {}));
+                };
+            });
+        } catch (error) {
+            resolve(common.setResponse('fail', 'Error deleting task and task details.', error));
+            console.log('Error while delete the task and task details', error);
+        };
+    });
+};
