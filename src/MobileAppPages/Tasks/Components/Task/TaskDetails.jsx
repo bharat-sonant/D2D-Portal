@@ -1,8 +1,88 @@
-import React from 'react'
+import React, { useState } from 'react'
+import styles from '../../Styles/TaskDetails/TaskDetails.module.css';
+import dayjs from 'dayjs';
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 
-const TaskDetails = () => {
+const TaskDetails = (props) => {
+    const [toggle, setToggle] = useState(props.selectedTask?.status || false);
+
+    React.useEffect(() => {
+        if (props.selectedTask) {
+            setToggle(props.selectedTask.status || false);
+        }
+    }, [props.selectedTask]);
+
+    if (!props.selectedTask) {
+        return (
+            <div className={styles.emptyState}>
+            </div>
+        )
+    }
+
+    const { name, _by, _at, status } = props.selectedTask;
+
+    const handleToggle = () => {
+        setToggle(!toggle);
+
+    };
+
+    const handleEdit = (item) => {
+        props.onEditClick(item)
+    };
+
+    const handleDelete = () => {
+        console.log('Delete clicked');
+    };
+
     return (
-        <div>TaskDetails</div>
+        <div className={styles.card}>
+            <div className={styles.header}>
+                <div className={styles.headerLeft}>
+                    <h2 className={styles.name}>{name || 'Untitled Task'}</h2>
+                    <p className={styles.createdBy}>
+                        Created by: {_by || 'Unknown'}
+                    </p>
+                    <p className={styles.createdAt}>
+                        Created at: {_at ? dayjs(_at).format('DD-MMM-YYYY') : 'N/A'}
+                    </p>
+                </div>
+
+                <div className={styles.actions}>
+                    <button
+                        className={`${styles.iconButton} ${styles.editIcon}`}
+                        onClick={() => handleEdit(props.selectedTask)}
+                        title="Edit"
+                    >
+                        <FaEdit />
+                    </button>
+
+                    {status === 'inactive' && (
+                        <button
+                            className={`${styles.iconButton} ${styles.deleteIcon}`}
+                            onClick={handleDelete}
+                            title="Delete"
+                        >
+                            <RiDeleteBin6Fill />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            <div className={styles.statusSection}>
+                <span className={`${styles.statusLabel} ${toggle ? styles.activeText : styles.inactiveText}`}>
+                    {toggle ? 'Active' : 'Inactive'}
+                </span>
+
+                <div
+                    className={`${styles.toggleSwitch} ${toggle ? styles.active : styles.inactive}`}
+                    onClick={handleToggle}
+                >
+                    <div className={styles.toggleSlider}></div>
+                </div>
+            </div>
+
+        </div>
     )
 }
 

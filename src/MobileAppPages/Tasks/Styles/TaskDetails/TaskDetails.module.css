@@ -1,0 +1,168 @@
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-family: sans-serif;
+}
+
+.createdBy {
+    font-size: 14px;
+    color: #464242;
+    font-weight: 400;
+    font-family: sans-serif;
+    margin: 4px 0;
+}
+
+.createdAt {
+    font-size: 14px;
+    color: #464242;
+    font-weight: 400;
+    font-family: sans-serif;
+    margin: 4px 0;
+}
+
+.actions {
+    display: flex;
+    /* gap: 16px; */
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .actions {
+    opacity: 1;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.iconButton:hover {
+    transform: scale(1.1);
+}
+
+.editIcon {
+    color: #007bff;
+}
+
+.editIcon:hover {
+    color: #0056b3;
+}
+
+.deleteIcon {
+    color: #dc3545;
+}
+
+.deleteIcon:hover {
+    color: #c82333;
+}
+
+.statusSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Text Color */
+.activeText {
+    color: #0da30d;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    /* green */
+}
+
+.inactiveText {
+    color: #d23b3b;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    /* red */
+}
+
+/* Toggle switch base */
+.toggleSwitch {
+    width: 48px;
+    height: 24px;
+    border-radius: 20px;
+    background-color: #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Slider circle */
+.toggleSlider {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s;
+}
+
+/* ACTIVE → Green */
+.toggleSwitch.active {
+    background-color: #0da30d;
+    /* green */
+}
+
+.toggleSwitch.active .toggleSlider {
+    left: 26px;
+    /* right side */
+}
+
+/* INACTIVE → Red */
+.toggleSwitch.inactive {
+    background-color: #ff8282;
+    /* red */
+}
+
+.toggleSwitch.inactive .toggleSlider {
+    left: 2px;
+    /* left side */
+}
+
+
+.emptyState {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 16px;
+}

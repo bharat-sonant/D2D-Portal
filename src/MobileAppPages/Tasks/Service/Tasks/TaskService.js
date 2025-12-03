@@ -19,50 +19,50 @@ const generateTaskId = () => {
     return id;
 };
 
-export const saveTaskData = (displayName) => {
+export const saveTaskData = (displayName, taskId) => {
     return new Promise((resolve) => {
         try {
-            if (displayName) {
-                let taskId = generateTaskId();
-
-                let taskPath = `TaskData/Tasks/${taskId}`;
-                let detailsPath = `TaskData/TaskDetails/${taskId}`;
-
-                let taskData = {
-                    name: displayName,
-                    status: 'Active'
-                };
-
-                let detailsData = {
-                    name: displayName,
-                    _at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                    _by: "Admin",
-                    status: 'Active'
-                };
-
-                Promise.all([
-                    db.saveData(taskPath, taskData),
-                    db.saveData(detailsPath, detailsData)
-                ]).then(([taskRes, detailRes]) => {
-                    if (taskRes.success === true && detailRes.success === true) {
-                        resolve(common.setResponse('success', 'Task data & details saved successfully.', { taskId }));
-                        saveTaskHistory(
-                            detailsPath,
-                            taskId,
-                            dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                            `Task created with name ${displayName}`
-                        );
-                    } else {
-                        resolve(common.setResponse('fail', 'Issue while saving task or details.', {}));
-                    }
-                });
-            } else {
-                resolve(common.setResponse('fail', 'Invalid params !!!', { displayName }));
+            if (!displayName) {
+                return resolve(common.setResponse('fail', 'Invalid params !!!', { displayName }));
             }
+
+            let finalTaskId = taskId || generateTaskId();
+            let taskPath = `TaskData/Tasks/${finalTaskId}`;
+            let detailsPath = `TaskData/TaskDetails/${finalTaskId}`;
+
+            let taskData = {
+                name: displayName,
+                status: 'active'
+            };
+
+            let detailsData = {
+                name: displayName,
+                _at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                _by: "Admin",
+                status: 'active'
+            };
+
+            Promise.all([
+                db.saveData(taskPath, taskData),
+                db.saveData(detailsPath, detailsData)
+            ]).then(([taskRes, detailRes]) => {
+
+                if (taskRes.success === true && detailRes.success === true) {
+
+                    let actionMessage = taskId
+                        ? `Task updated with name ${displayName}`
+                        : `Task created with name ${displayName}`;
+
+                    saveTaskHistory(detailsPath, finalTaskId, dayjs().format('YYYY-MM-DD HH:mm:ss'), actionMessage);
+                    resolve(common.setResponse('success', taskId ? 'Task updated successfully.' : 'Task data & details saved successfully.', { taskId: finalTaskId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Issue while saving task or details.', {}));
+                }
+            });
         } catch (error) {
             resolve(common.setResponse('fail', "Error while saving task data.", { error }));
             console.log('Error while saving task data', error);
-        };
+        }
     });
 };
 
@@ -104,7 +104,11 @@ export const getTaskDetails = (taskId) => {
                 let path = `TaskData/TaskDetails/${taskId}`;
                 db.getData(path).then((response) => {
                     if (response !== null) {
-                        resolve(common.setResponse('success', 'Task Details fetched successfully', { details: response }));
+                        const finalData = {
+                            ...response,
+                            taskId: taskId
+                        };
+                        resolve(common.setResponse('success', 'Task Details fetched successfully', { details: finalData }));
                     } else {
                         resolve(common.setResponse('fail', 'Issue in fetching task data.', {}));
                     };

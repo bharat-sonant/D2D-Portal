@@ -6,13 +6,16 @@ import { useEffect, useState } from "react";
 import TaskDetails from "../../Components/Task/TaskDetails";
 import * as firebaseService from '../../../../firebase/firebaseService';
 import * as dbConfig from '../../../../configurations/cityDBConfig';
-import { getTasks } from "../../Action/Task/TaskAction";
+import { getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
     const [taskList, setTaskList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTaskId, setSelectedTaskId] = useState("");
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [taskId, setTaskId] = useState('');
+    const [displayName, setDisplayName] = useState('');
     const city = localStorage.getItem('city') || "DevTest";
 
     useEffect(() => {
@@ -30,6 +33,12 @@ const Task = () => {
         }
     }, [taskList]);
 
+    useEffect(() => {
+        if (selectedTaskId) {
+            getTaskDetail(setSelectedTask, selectedTaskId);
+        }
+    }, [selectedTaskId])
+
     const handleOpenModal = () => {
         setShowCanvas(true);
     }
@@ -37,6 +46,12 @@ const Task = () => {
     const handleTaskSelection = (task) => {
         setSelectedTaskId(task.taskId);
     };
+
+    const handleClickEdit = (item) => {
+        setShowCanvas(true);
+        setTaskId(item.taskId);
+        setDisplayName(item.name);
+    }
 
     return (
         <>
@@ -61,7 +76,11 @@ const Task = () => {
                 <div className={`${TaskStyles.employeeRight}`}>
                     <div className={`row g-0`}>
                         <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
-                            <TaskDetails />
+                            <TaskDetails
+                                selectedTaskId={selectedTaskId}
+                                selectedTask={selectedTask}
+                                onEditClick={handleClickEdit}
+                            />
                         </div>
                     </div>
                 </div>
@@ -71,6 +90,11 @@ const Task = () => {
                     showCanvas={showCanvas}
                     setShowCanvas={setShowCanvas}
                     setTaskList={setTaskList}
+                    displayName={displayName}
+                    setDisplayName={setDisplayName}
+                    taskId={taskId}
+                    setTaskId={setTaskId}
+                    setSelectedTask={setSelectedTask}
                 />
             </div>
         </>
