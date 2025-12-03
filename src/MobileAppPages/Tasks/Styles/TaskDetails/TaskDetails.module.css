@@ -45,7 +45,6 @@
 
 .actions {
     display: flex;
-    /* gap: 16px; */
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -65,6 +64,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    top: 10px;
     font-size: 20px;
 }
 
@@ -159,6 +160,18 @@
     /* left side */
 }
 
+.taskIdBadge {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: #f0f0f0;
+    color: #333;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 0px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
 
 .emptyState {
     text-align: center;

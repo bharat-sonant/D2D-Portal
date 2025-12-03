@@ -60,9 +60,9 @@ export const saveTaskData = (displayName, taskId) => {
                         finalTaskId,
                         dayjs().format('YYYY-MM-DD HH:mm:ss'),
                         displayName,
-                        oldName 
+                        oldName
                     );
-                    resolve(  common.setResponse('success', taskId ? 'Task updated successfully.' : 'Task data & details saved successfully.', { taskId: finalTaskId }));
+                    resolve(common.setResponse('success', taskId ? 'Task updated successfully.' : 'Task data & details saved successfully.', { taskId: finalTaskId }));
                 } else {
                     resolve(common.setResponse('fail', 'Issue while saving task or details.', {}));
                 }
@@ -136,7 +136,9 @@ export const saveTaskHistory = async (
     taskId,
     dateAndTime,
     newName,
-    oldName
+    oldName,
+    newStatus = null,
+    oldStatus = null
 ) => {
     try {
         if (!taskId || !dateAndTime || !taskDetailsPath) {
@@ -149,56 +151,110 @@ export const saveTaskHistory = async (
 
         const historyPath = `${taskDetailsPath}/UpdateHistory`;
 
-        // Always read full history branch
         const resData = (await db.getData(historyPath)) || { lastKey: 0 };
         const lastKey = resData.lastKey || 0;
-
-        let existingName = oldName;
-
-        // If caller didn't pass oldName, fetch latest from DB
-        if (!existingName) {
-            const detailData = await db.getData(taskDetailsPath);
-            existingName = detailData?.name || "";
-        }
 
         let entry = null;
         let newKey = lastKey + 1;
 
-        // FIRST ENTRY
+        // 🔥 CASE 1: FIRST ENTRY
         if (!lastKey) {
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task created with name '${newName}'`
+                event: `Task created with name '${newName}`
             };
         }
-        // EDIT ENTRY – Only log if name actually changed
-        else if (existingName !== newName) {
+
+        // 🔥 CASE 2: NAME CHANGE
+        else if (oldName && newName && oldName !== newName) {
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task name changed from '${existingName}' to '${newName}'`
+                event: `Task name changed from '${oldName}' to '${newName}'`
             };
         }
 
-        // If nothing changed, no history update
+        // 🔥 CASE 3: STATUS CHANGE
+        else if (oldStatus && newStatus && oldStatus !== newStatus) {
+            entry = {
+                _at: dateAndTime,
+                _by: "Admin",
+                event: `Task status changed from '${oldStatus}' to '${newStatus}'`
+            };
+        }
+
+        // ❗ No change = no entry
         if (!entry) {
-            console.log("No change in task name. History not updated.");
+            console.log("No change. History not updated.");
             return;
         }
 
-        // Save new entry + update lastKey
         await Promise.all([
             db.saveData(`${historyPath}/${newKey}`, entry),
-            db.saveData(historyPath, { lastKey: newKey })    // same pattern as expense code
+            db.saveData(historyPath, { lastKey: newKey })
         ]);
 
-        return common.setResponse("success", "Task history saved.", {
-            taskId,
-            entry
-        });
+        return common.setResponse("success", "Task history saved.", { taskId, entry });
 
     } catch (error) {
         console.error("Error while saving task history:", error);
     }
+};
+
+export const activeInactiveTask = (taskId, status) => {
+    return new Promise(async (resolve) => {
+        if (!taskId) {
+            return resolve(common.setResponse("fail", "Invalid taskId", { taskId }));
+        }
+
+        let taskPath = `TaskData/Tasks/${taskId}`;
+        let detailsPath = `TaskData/TaskDetails/${taskId}`;
+
+        const oldData = await db.getData(detailsPath);
+        const oldStatus = oldData?.status || "active";
+
+        Promise.all([
+            db.saveData(taskPath, { status }),
+            db.saveData(detailsPath, { status })
+        ]).then(async ([taskRes, detailsRes]) => {
+
+            if (taskRes.success === true && detailsRes.success === true) {
+                await saveTaskHistory(detailsPath, taskId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, status, oldStatus);
+                resolve(common.setResponse("success", "Task status updated successfully.", { taskId, status }));
+            } else {
+                resolve(common.setResponse("fail", "Error updating task status.", {}));
+            }
+        }).catch((error) => {
+            resolve(common.setResponse("fail", "Exception while updating task.", { error }));
+        });
+    });
+};
+
+export const deleteInactiveTask = (taskId) => {
+    return new Promise((resolve) => {
+        try {
+            if (!taskId) {
+                resolve(common.setResponse('fail', "Invalid Params !!!", { taskId }));
+                return;
+            };
+
+            let taskPath = `TaskData/Tasks/${taskId}`;
+            let detailPath = `TaskData/TaskDetails/${taskId}`;
+
+            Promise.all([
+                db.removeData(taskPath),
+                db.removeData(detailPath)
+            ]).then(async ([taskRes, detailRes]) => {
+                if (taskRes.success === true && detailRes.success === true) {
+                    resolve(common.setResponse('success', "Task and Task detail deleted successfully", { taskId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Error deleting task and task details.', {}));
+                };
+            });
+        } catch (error) {
+            resolve(common.setResponse('fail', 'Error deleting task and task details.', error));
+            console.log('Error while delete the task and task details', error);
+        };
+    });
 };
