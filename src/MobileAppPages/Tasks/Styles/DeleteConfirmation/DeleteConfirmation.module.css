@@ -1,0 +1,186 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+    position: relative;
+    width: 100%;
+    max-width: 28rem;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: scaleIn 0.3s ease-out;
+}
+
+.closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #9ca3af;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+}
+
+.closeButton:hover:not(:disabled) {
+    color: #4b5563;
+}
+
+.closeButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.iconContainer {
+    display: flex;
+    justify-content: center;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+}
+
+.iconCircle {
+    width: 4rem;
+    height: 4rem;
+    background-color: #fee2e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.warningIcon {
+    color: #dc2626;
+    font-size: 2rem;
+}
+
+.content {
+    padding: 0 2rem 2rem 2rem;
+    text-align: center;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 0.75rem;
+}
+
+.description {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.cancelButton {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.cancelButton:hover:not(:disabled) {
+    background-color: #e5e7eb;
+}
+
+.cancelButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.deleteButton {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    background-color: #dc2626;
+    color: white;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.deleteButton:hover:not(:disabled) {
+    background-color: #b91c1c;
+}
+
+.deleteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.itemName {
+    font-weight: 700;
+    color: #dc2626;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

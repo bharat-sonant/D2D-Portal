@@ -82,6 +82,7 @@ const Task = () => {
                                 onEditClick={handleClickEdit}
                                 setSelectedTask={setSelectedTask}
                                 setTaskList={setTaskList}
+                                setSelectedTaskId={setSelectedTaskId}
                             />
                         </div>
                     </div>
