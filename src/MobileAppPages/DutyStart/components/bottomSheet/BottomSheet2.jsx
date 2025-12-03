@@ -7,9 +7,12 @@ import sheetStyles from "../../styles/BottomSheet2.module.css";
 
 const BottomSheet2 = ({isOpen,
   onClose,
-  assignedVehicle,
+  assignedData,
   setSelectedVehicle,
+  setSelectedDriver,
+  setselectedHelper,
   openSheet,
+  closeSheet,
   loading,
   mode,
   setMode}) => {
@@ -29,20 +32,78 @@ const BottomSheet2 = ({isOpen,
               {loading ? (
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>
-                  <p className={sheetStyles.loadingText}>Loading vehicles...</p>
+                  <p className={sheetStyles.loadingText}>Loading {mode}...</p>
                 </div>
               ) : (
                <div className={sheetStyles.sheetContent}>
-                {mode === "driver" ? (
-                <div className={sheetStyles.comingSoonBox}>
-                  <p className={sheetStyles.comingSoonText}>Coming soon...</p>
-                </div>
+                {mode === "comingSoon" ? (<>coming soon...</>):
+                mode === "helper" && assignedData?.helper ? (
+                  <>
+                  <div className={sheetStyles.vehicleCard}>
+                    <h3 className={sheetStyles.vehicleTitle}>Assigned Helper</h3>
+                    <div className={sheetStyles.vehicleBox}>{assignedData.driver}</div>
+                  </div>
 
-              ) : assignedVehicle ? (
+                  <p className={sheetStyles.helperText}>
+                    For this task, do you want to continue with the above helper or change it?
+                  </p>
+
+                  <div className={sheetStyles.btnRow}>
+                    <button
+                      className={sheetStyles.btnYes}
+                      onClick={() => {
+                        setselectedHelper(assignedData.helper);
+                        setMode('comingSoon')
+                      }}
+                    >
+                      Yes, Continue
+                    </button>
+
+                    <button
+                      className={sheetStyles.btnChange}
+                      onClick={openSheet}
+                    >
+                      Change Helper
+                    </button>
+                  </div>
+                </>
+                ) :
+                mode === "driver" && assignedData?.driver ? (
+                <>
+                  <div className={sheetStyles.vehicleCard}>
+                    <h3 className={sheetStyles.vehicleTitle}>Assigned Driver</h3>
+                    <div className={sheetStyles.vehicleBox}>{assignedData.driver}</div>
+                  </div>
+
+                  <p className={sheetStyles.helperText}>
+                    For this task, do you want to continue with the above driver or change it?
+                  </p>
+
+                  <div className={sheetStyles.btnRow}>
+                    <button
+                      className={sheetStyles.btnYes}
+                      onClick={() => {
+                        setSelectedDriver(assignedData.driver);
+                        setMode("helper");   // 👈 switch mode
+                      }}
+                    >
+                      Yes, Continue
+                    </button>
+
+                    <button
+                      className={sheetStyles.btnChange}
+                      onClick={openSheet}
+                    >
+                      Change Driver
+                    </button>
+                  </div>
+                </>
+
+              ) : mode === 'vehicle' && assignedData?.vehicle ? (
                 <>
                   <div className={sheetStyles.vehicleCard}>
                     <h3 className={sheetStyles.vehicleTitle}>Assigned Vehicle</h3>
-                    <div className={sheetStyles.vehicleBox}>{assignedVehicle}</div>
+                    <div className={sheetStyles.vehicleBox}>{assignedData.vehicle}</div>
                   </div>
 
                   <p className={sheetStyles.helperText}>
@@ -53,7 +114,7 @@ const BottomSheet2 = ({isOpen,
                     <button
                       className={sheetStyles.btnYes}
                       onClick={() => {
-                        setSelectedVehicle(assignedVehicle);
+                        setSelectedVehicle(assignedData.vehicle);
                         setMode("driver");   // 👈 switch mode
                       }}
                     >
@@ -71,14 +132,14 @@ const BottomSheet2 = ({isOpen,
                 ) : (
               <div className={sheetStyles.noVehicleBox}>
                 <p className={sheetStyles.noVehicleText}>
-                  No vehicle assigned for this task.
+                  No {mode} assigned for this task.
                 </p>
 
                 <button
                   className={sheetStyles.selectBtn}
                   onClick={openSheet}
                 >
-                  Select Vehicle
+                  Select {mode}
                 </button>
               </div>
             )}

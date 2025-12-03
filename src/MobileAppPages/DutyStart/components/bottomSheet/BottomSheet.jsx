@@ -3,40 +3,90 @@ import { Check } from 'lucide-react';
 import sheetStyles from '../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css'; 
 import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
-import { getAllActiveVehicles } from '../../../services/DutyStartService/DutyStart';
+import { getActiveDrivers, getActiveHelpers, getAllActiveVehicles } from '../../../services/DutyStartService/DutyStart';
 
-const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '', mode, setMode }) => {
+const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelectedDriver, selectedVehicle, setSelectedVehicle, selectedHelper, setSelectedHelper }) => {
   const [loading, setLoading] = useState(false)
   const [vehicles, setVehicles] = useState([])
+  const [drivers, setDrivers] = useState([]);
+  const [helpers, setHelpers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const snapPoints = [0, 0.7, 1];
 
   useEffect(() => {
-    fetchVehicles();
-  },[])
+    if(!isOpen) return;
+
+    if(mode === 'vehicle') fetchVehicles();
+    if(mode === 'driver') fetchDrivers();
+    if(mode === 'helper') fetchHelpers();
+  },[isOpen, mode])
 
   const fetchVehicles = async() => {
     setLoading(true);
     const result = await getAllActiveVehicles();
-    setVehicles(result.data)
+    setVehicles(result.data || [])
     setLoading(false)
   }
+
+  const fetchDrivers = async () => {
+    setLoading(true)
+    const result = await getActiveDrivers();
+    console.log(result)
+    setDrivers(result.data || [])
+    setLoading(false)
+  }
+
+  const fetchHelpers = async() => {
+    setLoading(true)
+    const result = await getActiveHelpers();
+    setHelpers(result.data || [])
+    setLoading(false)
+  }
+
+   const items = mode === "vehicle"
+    ? vehicles
+    : mode === "driver"
+    ? drivers
+    : helpers;
 
   useEffect(() => {
     if (!isOpen) setSearchTerm('');
   }, [isOpen]);
 
+  const getDisplayName = (item) => {
+  if (mode === "vehicle") return item;
+  return item?.name || "";   // for driver/helper
+};
+
+
   const filteredItems = useMemo(() => {
-    if (!searchTerm) return vehicles;
+    if (!searchTerm) return items;
     const q = searchTerm.trim().toLowerCase();
-    return vehicles.filter(i => (i || '').toLowerCase().includes(q));
-  }, [vehicles, searchTerm]);
+    return items.filter((item) =>
+    getDisplayName(item).toLowerCase().includes(q)
+  );
+  }, [items, searchTerm, mode]);
 
   const handleSelect = (item) => {
-    if (onSelect) onSelect(item);
-    setMode('driver')
-  };
+   if (mode === "vehicle") {
+      setSelectedVehicle(item);
+      setMode("driver");
+      onClose();
+    }
 
+    else if (mode === "driver") {
+      setSelectedDriver(item.name);
+      setMode("helper");
+      onClose();
+    }
+
+    else if (mode === "helper") {
+      setSelectedHelper(item.name);
+      setMode('comingSoon')
+      onClose(); // last step
+    }
+
+  };
 
   return (
      <Sheet
@@ -58,14 +108,14 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
               {loading ? (
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>
-                  <p className={sheetStyles.loadingText}>Loading vehicles...</p>
+                  <p className={sheetStyles.loadingText}>Loading {mode}...</p>
                 </div>
               ) : (
                 <div className={sheetStyles.sheetContent}>
                   <div className={sheetStyles.searchBox}>
                     <input
                       type="text"
-                      placeholder="Search vehicle..."
+                      placeholder={`Search ${mode}...`}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={sheetStyles.searchInput}
@@ -76,7 +126,9 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
                     {filteredItems?.length > 0 ? (
                       filteredItems.map((item, index) => {
                         const isSelected =
-                          item === selectedItem;
+                      (mode === "vehicle" && item === selectedVehicle) ||
+                      (mode === "driver" && item.name === selectedDriver) ||
+                      (mode === "helper" && item.name === selectedHelper);
                         return (
                           <li
                             key={index}
@@ -85,7 +137,7 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
                               isSelected ? sheetStyles.activeVehicle : ""
                             }`}
                           >
-                            <span>{item || "N/A"}</span>
+                            <span>{getDisplayName(item) || "N/A"}</span>
 
                             {isSelected && (
                               <Check
@@ -104,7 +156,7 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
                           className={sheetStyles.noResultImg}
                           alt=""
                         />
-                        No vehicle found
+                        No {mode} found
                       </li>
                     )}
                   </ul>

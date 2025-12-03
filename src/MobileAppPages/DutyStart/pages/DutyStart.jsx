@@ -205,8 +205,10 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
   const DutyStart = () => { 
       const [sheetOpen, setSheetOpen] = useState(false);
       const [sheet2Open, setSheet2Open] = useState(false);
-      const [assignedVehicle, setAssignedVehicle] = useState(null);
+      const [assignedData, setAssignedData] = useState({});
       const [selectedVehicle, setSelectedVehicle] = useState("");
+      const [selectedDriver, setSelectedDriver] = useState('');
+      const [selectedHelper, setSelectedHelper] = useState('')
       const [loading, setLoading] = useState(false);
       const [mode, setMode] = useState("vehicle");
       const location = useLocation();
@@ -237,13 +239,13 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
 
       useEffect(()=>{
         openSheet2()
-        fetchvehicle();
+        fetchData();
       },[])
 
-      const fetchvehicle = async()=> {
+      const fetchData = async()=> {
         setLoading(true)
         const result = await fetchTaskVehicle(ward)
-        setAssignedVehicle(result.data.vehicle)
+        setAssignedData(result.data)
         setLoading(false)
       }
 
@@ -264,11 +266,29 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
 
         
         {/* Top White Box */}
+       <div className={styles.boxes}>
+         <div className={styles.topBox}>
+          <p className={styles.topBoxText}>
+            {selectedVehicle ? selectedVehicle : "Vehicle not selected"}
+          </p>
+        </div>
+
+        {selectedVehicle ? 
         <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-  {selectedVehicle ? selectedVehicle : "Vehicle not selected"}
-</p>
-        </div>
+            {selectedDriver ? selectedDriver : "Driver not selected"}
+          </p>
+        </div> 
+        : <></>}
+
+        {selectedVehicle && selectedDriver ? 
+        <div className={styles.topBox}>
+          <p className={styles.topBoxText}>
+            {selectedHelper ? selectedHelper : "Helper not selected"}
+          </p>
+        </div> 
+        : <></>}
+       </div>
 
         {/* Content area for future form items */}
         <div className={styles.contentContainer}>
@@ -278,9 +298,12 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         <BottomSheet2
           isOpen={sheet2Open}
           onClose={closeSheet2}
-          assignedVehicle={assignedVehicle}
+          assignedData={assignedData}
           setSelectedVehicle={setSelectedVehicle}
+          setSelectedDriver={setSelectedDriver}
+          setselectedHelper={setSelectedHelper}
           openSheet={openSheet}
+          closeSheet={closeSheet}
           loading={loading}
           mode={mode}
           setMode={setMode}
@@ -289,12 +312,14 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
           <BottomSheet
           isOpen={sheetOpen}
           onClose={closeSheet}
-          title='Select Vehicle'
-          items={vehicles}
-          selectedItem={selectedVehicle}
-          onSelect={handleSelectVehicle}
           mode={mode}
           setMode={setMode}
+          selectedDriver={selectedDriver}
+          setSelectedDriver={setSelectedDriver}
+          selectedVehicle={selectedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+          selectedHelper={selectedHelper}
+          setSelectedHelper={setSelectedHelper}
         />
 
       </div>
