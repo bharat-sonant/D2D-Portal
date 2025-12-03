@@ -25,7 +25,7 @@ const BottomSheet2 = ({isOpen,
   const snapPoints = [0, 0.4, 1];
 
   useEffect(() => {
-  if (!isOpen || loading) return;
+  if (!isOpen) return;
 
   // NO assigned data at all (fresh task)
   const noVehicle = !assignedData?.vehicle;
@@ -54,7 +54,6 @@ const BottomSheet2 = ({isOpen,
   }
 }, [
   isOpen,
-  loading,
   assignedData,
   selectedVehicle,
   selectedDriver,
@@ -81,12 +80,6 @@ const BottomSheet2 = ({isOpen,
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
-              {loading ? (
-                <div className={sheetStyles.loadingContainer}>
-                  <div className={sheetStyles.loader}></div>
-                  <p className={sheetStyles.loadingText}>Loading {mode}...</p>
-                </div>
-              ) : (
                <div className={sheetStyles.sheetContent}>
 
                 {mode === "helperConfirmation" && (
@@ -227,8 +220,6 @@ const BottomSheet2 = ({isOpen,
                 </>
                 )} 
             </div>
-
-              )}
             </Sheet.Content>
           </Sheet.Container>
           {/* <Sheet.Backdrop onTap={onClose} /> */}
