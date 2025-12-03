@@ -24,6 +24,44 @@ const BottomSheet2 = ({isOpen,
     const[isSaving, setIsSaving] = useState(false);
   const snapPoints = [0, 0.4, 1];
 
+  useEffect(() => {
+  if (!isOpen || loading) return;
+
+  // NO assigned data at all (fresh task)
+  const noVehicle = !assignedData?.vehicle;
+  const noDriver = !assignedData?.driver;
+  const noHelper = !assignedData?.helper;
+
+  // CASE 1 → Completely unassigned: start with vehicle
+  if (noVehicle && !selectedVehicle) {
+    setMode("vehicle");
+    openSheet();
+    return;
+  }
+
+  // CASE 2 → Vehicle selected but driver not selected: open driver list
+  if (selectedVehicle && !selectedDriver?.Id) {
+    setMode("driver");
+    openSheet();
+    return;
+  }
+
+  // CASE 3 → Driver selected but helper not selected: open helper list
+  if (selectedDriver?.Id && !selectedHelper?.Id) {
+    setMode("helper");       // or helperConfirmation if needed
+    openSheet();
+    return;
+  }
+}, [
+  isOpen,
+  loading,
+  assignedData,
+  selectedVehicle,
+  selectedDriver,
+  selectedHelper
+]);
+
+
    const handleSubmit = async() => {
       const result = await startAssignmentAction(setIsSaving, ward, selectedVehicle, selectedDriver, selectedHelper);
       if(result.status === "success"){
@@ -188,21 +226,6 @@ const BottomSheet2 = ({isOpen,
                   </div>
                 </>
                 )} 
-                {!assignedData?.vehicle &&
-                !assignedData?.driver &&
-                !assignedData?.helper &&
-                mode !== "comingSoon" &&
-                mode !== "helperConfirmation" && (
-                  <div className={sheetStyles.noVehicleBox}>
-                    <p className={sheetStyles.noVehicleText}>
-                      No {mode} assigned for this task.
-                    </p>
-                    <button className={sheetStyles.selectBtn} onClick={openSheet}>
-                      Select {mode}
-                    </button>
-                  </div>
-                )}
-
             </div>
 
               )}
