@@ -31,7 +31,6 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
   const fetchDrivers = async () => {
     setLoading(true)
     const result = await getActiveDrivers();
-    console.log(result)
     setDrivers(result.data || [])
     setLoading(false)
   }
@@ -76,7 +75,7 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
 
     else if (mode === "driver") {
       setSelectedDriver(item.name);
-      setMode("helper");
+      setMode("helperConfirmation");
       onClose();
     }
 

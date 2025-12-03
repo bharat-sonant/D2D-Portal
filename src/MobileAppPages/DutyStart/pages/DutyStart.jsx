@@ -269,14 +269,14 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
        <div className={styles.boxes}>
          <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-            {selectedVehicle ?  `Vehicle : ${selectedVehicle}` : "Vehicle not selected"}
+            {selectedVehicle ?  `Vehicle : ${selectedVehicle}` : "No Vehicle Selected"}
           </p>
         </div>
 
         {selectedVehicle ? 
         <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-            {selectedDriver ? `Driver : ${selectedDriver}` : "Driver not selected"}
+            {selectedDriver ? `Driver : ${selectedDriver}` : "No Driver Selected"}
           </p>
         </div> 
         : <></>}
@@ -284,7 +284,7 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         {selectedVehicle && selectedDriver ? 
         <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-            {selectedHelper ? `Helper : ${selectedHelper}` : "Helper not selected"}
+            {selectedHelper ? `Helper : ${selectedHelper}` : "No Helper Selected"}
           </p>
         </div> 
         : <></>}
