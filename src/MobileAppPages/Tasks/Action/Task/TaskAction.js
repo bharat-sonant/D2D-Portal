@@ -112,3 +112,27 @@ export const ActiveInactiveTask = (props, setToggle, toggle) => {
         console.log("Error updating status", err);
     });
 }
+
+export const deleteTask = (taskId, setTaskList, setShowDeleteModal, setSelectedTaskId, setSelectedTask) => {
+
+    setTaskList(prevList => {
+        const index = prevList.findIndex(t => t.taskId === taskId);
+        const updatedList = prevList.filter(t => t.taskId !== taskId);
+        if (updatedList.length > 0) {
+            const nextIndex = index >= updatedList.length ? updatedList.length - 1 : index;
+            setSelectedTaskId(updatedList[nextIndex].taskId);
+        } else {
+            setSelectedTaskId(null);
+            setSelectedTask(null);
+        }
+        return updatedList;
+    });
+    service.deleteInactiveTask(taskId).then((response) => {
+        if (response.status === 'success') {
+            common.setAlertMessage('success', 'Task deleted successfully');
+            setShowDeleteModal(false);
+        } else {
+            common.setAlertMessage('warn', "Something went wrong !!!");
+        };
+    });
+};
