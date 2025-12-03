@@ -73,13 +73,13 @@ const TaskList = (props) => {
               ))
             ) : (
               <div className={`${styles.noUserData}`}>
-                {/* <img
-                  src={images.noUser}
+                <img
+                  src={images.imgComingSoon}
                   className={`img-fluid ${styles.noUserImg}`}
                   title="No User Found"
                   alt="Image"
-                /> */}
-                No employee found
+                />
+                No task data found
               </div>
             )}
           </div>

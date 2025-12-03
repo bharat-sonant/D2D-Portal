@@ -5,7 +5,6 @@ import { useState } from 'react';
 import * as action from '../../Action/Task/TaskAction';
 
 const AddTask = (props) => {
-    const [displayName, setDisplayName] = useState('');
     const [loader, setLoader] = useState(false);
     const [error, setError] = useState('');
 
@@ -13,8 +12,9 @@ const AddTask = (props) => {
         props.setShowCanvas(false);
         action.handleClearFields(
             setError,
-            setDisplayName,
-            setLoader
+            props.setDisplayName,
+            setLoader,
+            props.setTaskId
         );
     };
 
@@ -22,18 +22,22 @@ const AddTask = (props) => {
         action.handleChange(
             type,
             value,
-            setDisplayName,
+            props.setDisplayName,
             setError
         );
     };
 
     const handleSave = () => {
         action.handleSaveTasks(
-            displayName,
+            props.displayName,
             setError,
             setLoader,
-            setDisplayName,
-            props.setTaskList
+            props.setDisplayName,
+            props.setTaskList,
+            props.taskId,
+            props.setTaskId,
+            props.setShowCanvas,
+            props.setSelectedTask
         );
     };
 
@@ -44,7 +48,7 @@ const AddTask = (props) => {
         <div className={`${styles.overlay}`}>
             <div className={`${styles.modal}`}>
                 <div className={`${styles.actionBtn}`}>
-                    <p className={styles.headerText}>Add Task</p>
+                    <p className={styles.headerText}>{props.taskId ? "Update task" : "Add Task"}</p>
                     <button className={`${styles.closeBtn}`} onClick={handleCloseModal}>
                         <img
                             src={images.iconClose}
@@ -67,7 +71,7 @@ const AddTask = (props) => {
                                             id="Name"
                                             className={`form-control ${styles.formTextbox} ${error ? 'is-invalid' : ""}`}
                                             placeholder=" "
-                                            value={displayName}
+                                            value={props.displayName}
                                             onChange={(e) =>
                                                 handleInputChange("name", e.target.value)
                                             }
@@ -95,7 +99,7 @@ const AddTask = (props) => {
                                     <span className={styles.loaderText}>Please wait...</span>
                                 </div>
                             ) : (
-                                "Save"
+                                props.taskId ? "Update" : "Save"
                             )}
                         </button>
                     </div>
