@@ -59,7 +59,6 @@ export const startAssignmentAction = async(setIsSaving, ward, selectedVehicle, s
   try{
     setIsSaving(true);
     const result = await startAssignmentService(ward, selectedVehicle, selectedDriver, selectedHelper)
-    console.log('reusly',result)
     if (result.status === "success") {
       common.setAlertMessage("success", result.message);
     } else {

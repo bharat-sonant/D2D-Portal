@@ -4,10 +4,15 @@ import { Check } from 'lucide-react';
 import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
 import sheetStyles from "../../styles/BottomSheet2.module.css";
+import { startAssignmentAction } from '../../../DutyOn/actions/DutyOnAction';
 
 const BottomSheet2 = ({isOpen,
   onClose,
+  ward,
   assignedData,
+  selectedDriver,
+  selectedVehicle,
+  selectedHelper,
   setSelectedVehicle,
   setSelectedDriver,
   setselectedHelper,
@@ -16,7 +21,16 @@ const BottomSheet2 = ({isOpen,
   loading,
   mode,
   setMode}) => {
+    const[isSaving, setIsSaving] = useState(false);
   const snapPoints = [0, 0.4, 1];
+
+   const handleSubmit = async() => {
+      const result = await startAssignmentAction(setIsSaving, ward, selectedVehicle, selectedDriver, selectedHelper);
+      if(result.status === "success"){
+        //  handleClear();
+        onClose()
+      }
+    }
 
   return (
      <Sheet
@@ -63,7 +77,17 @@ const BottomSheet2 = ({isOpen,
                   </div>
                 </>
               )}
-                {mode === "comingSoon" && (<>coming soon...</>)}
+                {mode === "comingSoon" && (
+                  <>
+                    <p className={sheetStyles.loadingText}>Are you sure, you want to start assignment with this record ?</p>
+                    <button
+                      className={sheetStyles.submitButton}
+                      onClick={handleSubmit}
+                    >
+                      Start Assignment
+                    </button>
+                  </>
+                )}
                 {mode === "helper" && assignedData?.helper && (
                   <>
                   <div className={sheetStyles.vehicleCard}>
@@ -79,7 +103,10 @@ const BottomSheet2 = ({isOpen,
                     <button
                       className={sheetStyles.btnYes}
                       onClick={() => {
-                        setselectedHelper(assignedData.helperName);
+                        setselectedHelper({
+                          Id: assignedData.helper,
+                          name: assignedData.helperName
+                        });
                         setMode('comingSoon')
                       }}
                     >
@@ -110,7 +137,10 @@ const BottomSheet2 = ({isOpen,
                     <button
                       className={sheetStyles.btnYes}
                       onClick={() => {
-                        setSelectedDriver(assignedData.driverName);
+                        setSelectedDriver({
+                          Id: assignedData.driver,
+                          name: assignedData.driverName
+                        });
                         setMode("helperConfirmation");   // 👈 switch mode
                       }}
                     >

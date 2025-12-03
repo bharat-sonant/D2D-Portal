@@ -4,211 +4,17 @@ import { getCityFirebaseConfig } from '../../../configurations/cityDBConfig';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/DutyStart.module.css'
 import { ArrowLeft } from 'lucide-react';
-import ConfirmationModal from '../../../components/confirmationModal/ConfirmationModal';
 import BottomSheet from '../components/bottomSheet/BottomSheet';
 import { fetchTaskVehicle } from '../../services/DutyStartService/DutyStart';
 import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
-
-// const DutyStart = () => {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-
-//   const [showModal, setShowModal] = useState(false);
-//   const [sheetType, setSheetType] = useState(null);
-
-//   const [selectedVehicle, setSelectedVehicle] = useState('');
-//   const [selectedDriver, setSelectedDriver] = useState('');
-//   const [selectedHelper, setSelectedHelper] = useState('');
-
-//   const details = {
-//     vehicle: "EV-2025",
-//     driver: "Nishant-Driver",
-//     helper: "Vikram-Helper"
-//   };
-
-//   const vehicles = ["EV-2025", "EV-2024", "EV-2023"];
-//   const drivers = ["Nishant-Driver", "Rohit-Driver", "Suresh-Driver"];
-//   const helpers = ["Vikram-Helper", "Ashok-Helper", "Ramesh-Helper"];
-
-//   const queryParams = new URLSearchParams(location.search);
-//   const city = queryParams.get("city") || "DevTest";
-//   const ward = queryParams.get("task") || "Govind";
-
-//   useEffect(() => {
-//     if (city) {
-//       localStorage.setItem("city", city);
-//       connectFirebase(getCityFirebaseConfig(city), city);
-//     }
-//   }, [city]);
-
-//   useEffect(() => {
-//     setSelectedVehicle(details.vehicle || "");
-//     setSelectedDriver(details.driver || "");
-//     setSelectedHelper(details.helper || "");
-//   }, []);
-
-  // const handleBack = () => {
-  //   if (/Android/i.test(navigator.userAgent) && window.Android?.closeWebView) {
-  //     window.Android.closeWebView();
-  //   } else navigate(-1);
-  // };
-
-//   const openSheet = (type) => setSheetType(type);
-//   const closeSheet = () => setSheetType(null);
-
-//   const handleSelectFromSheet = (type, value) => {
-//     if (type === "vehicle") setSelectedVehicle(value);
-//     if (type === "driver") setSelectedDriver(value);
-//     if (type === "helper") setSelectedHelper(value);
-//     closeSheet();
-//   };
-
-//   const sheetProps = (() => {
-//     switch (sheetType) {
-//       case "vehicle":
-//         return { title: "Select Vehicle", items: vehicles, selectedItem: selectedVehicle };
-//       case "driver":
-//         return { title: "Select Driver", items: drivers, selectedItem: selectedDriver };
-//       case "helper":
-//         return { title: "Select Helper", items: helpers, selectedItem: selectedHelper };
-//       default:
-//         return { title: "", items: [], selectedItem: "" };
-//     }
-//   })();
-
-//   const handleSubmit = () => setShowModal(true);
-
-//   return (
-//     <div className={styles.pageContainer}>
-//       <div className={styles.header}>
-//         <button className={styles.backButton} onClick={handleBack}>
-//           <ArrowLeft />
-//         </button>
-//         <h1 className={styles.headerTitle}>Duty Start {ward}</h1>
-//       </div>
-
-//       <div className={styles.contentContainer}>
-        
-//         <label className={styles.label}>Vehicle</label>
-//         <div className={styles.row}>
-          
-//           <div
-//             className={styles.selectWrapper}
-//             onClick={() => openSheet("vehicle")}
-//           >
-//             <select
-//               className={styles.dropdown}
-//               value={selectedVehicle}
-//               readOnly
-//             >
-//               <option>{selectedVehicle || "Select Vehicle"}</option>
-//             </select>
-//           </div>
-
-//           {!!details.vehicle && (
-//             <button
-//               className={styles.changeButton}
-//               onClick={() => openSheet("vehicle")}
-//             >
-//               Change
-//             </button>
-//           )}
-
-//         </div>
-
-//         <label className={styles.label}>Driver</label>
-//         <div className={styles.row}>
-
-//           <div
-//             className={styles.selectWrapper}
-//             onClick={() => openSheet("driver")}
-//           >
-//             <select
-//               className={styles.dropdown}
-//               value={selectedDriver}
-//               readOnly
-//             >
-//               <option>{selectedDriver || "Select Driver"}</option>
-//             </select>
-//           </div>
-
-//           {!!details.driver && (
-//             <button
-//               className={styles.changeButton}
-//               onClick={() => openSheet("driver")}
-//             >
-//               Change
-//             </button>
-//           )}
-
-//         </div>
-
-//         <label className={styles.label}>Helper</label>
-//         <div className={styles.row}>
-
-//           <div
-//             className={styles.selectWrapper}
-//             onClick={() => openSheet("helper")}
-//           >
-//             <select
-//               className={styles.dropdown}
-//               value={selectedHelper}
-//               readOnly
-//             >
-//               <option>{selectedHelper || "Select Helper"}</option>
-//             </select>
-//           </div>
-
-//           {!!details.helper && (
-//             <button
-//               className={styles.changeButton}
-//               onClick={() => openSheet("helper")}
-//             >
-//               Change
-//             </button>
-//           )}
-
-//         </div>
-
-//         <button className={styles.submitButton} onClick={handleSubmit}>
-//           Submit
-//         </button>
-//       </div>
-
-//       <ConfirmationModal
-//         visible={showModal}
-//         title="Continue ?"
-//         message="Are you sure you want to continue with this record ?"
-//         confirmText="Confirm"
-//         cancelText="Cancel"
-//         onConfirm={() => setShowModal(false)}
-//         onCancel={() => setShowModal(false)}
-//       />
-
-//       <BottomSheet
-//         isOpen={!!sheetType}
-//         onClose={closeSheet}
-//         title={sheetProps.title}
-//         items={sheetProps.items}
-//         selectedItem={sheetProps.selectedItem}
-//         onSelect={(value) => handleSelectFromSheet(sheetType, value)}
-//       />
-//     </div>
-//   );
-// };
-
-// export default DutyStart;
-
-
- 
 
   const DutyStart = () => { 
       const [sheetOpen, setSheetOpen] = useState(false);
       const [sheet2Open, setSheet2Open] = useState(false);
       const [assignedData, setAssignedData] = useState({});
       const [selectedVehicle, setSelectedVehicle] = useState("");
-      const [selectedDriver, setSelectedDriver] = useState('');
-      const [selectedHelper, setSelectedHelper] = useState('')
+      const [selectedDriver, setSelectedDriver] = useState(null);
+      const [selectedHelper, setSelectedHelper] = useState(null)
       const [loading, setLoading] = useState(false);
       const [mode, setMode] = useState("vehicle");
       const location = useLocation();
@@ -218,24 +24,22 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
       const city = queryParams.get("city") || "DevTest";
       const ward = queryParams.get("task") || "Govind";
 
-      const vehicles = [
-        "Truck 01",
-        "Truck 02",
-        "Truck 03",
-        "Loader Van",
-        "Mini Truck 07",
-      ];
-
       const openSheet = () => setSheetOpen(true);
       const closeSheet = () => setSheetOpen(false);
 
       const openSheet2 = () => setSheet2Open(true)
       const closeSheet2 = () => setSheet2Open(false)
 
-      const handleSelectVehicle = (vehicle) => {
-        setSelectedVehicle(vehicle);
-        closeSheet();
-      };
+      useEffect(() => {
+        if (city) {
+          localStorage.setItem("city", city);
+        
+          let config = getCityFirebaseConfig(city);
+          connectFirebase(config, city);
+        } else {
+            localStorage.setItem("city", "DevTest");
+        }
+      }, [city]);
 
       useEffect(()=>{
         openSheet2()
@@ -276,7 +80,7 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         {selectedVehicle ? 
         <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-            {selectedDriver ? `Driver : ${selectedDriver}` : "No Driver Selected"}
+            {selectedDriver ? `Driver : ${selectedDriver.name}` : "No Driver Selected"}
           </p>
         </div> 
         : <></>}
@@ -284,7 +88,7 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         {selectedVehicle && selectedDriver ? 
         <div className={styles.topBox}>
           <p className={styles.topBoxText}>
-            {selectedHelper ? `Helper : ${selectedHelper}` : "No Helper Selected"}
+            {selectedHelper ? `Helper : ${selectedHelper.name}` : "No Helper Selected"}
           </p>
         </div> 
         : <></>}
@@ -298,7 +102,11 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         <BottomSheet2
           isOpen={sheet2Open}
           onClose={closeSheet2}
+          ward={ward}
           assignedData={assignedData}
+          selectedVehicle={selectedVehicle}
+          selectedDriver={selectedDriver}
+          selectedHelper={selectedHelper}
           setSelectedVehicle={setSelectedVehicle}
           setSelectedDriver={setSelectedDriver}
           setselectedHelper={setSelectedHelper}

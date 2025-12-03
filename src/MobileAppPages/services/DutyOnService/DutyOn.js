@@ -311,45 +311,6 @@ const saveDriverAssignment = async(selectedDriver, ward, selectedVehicle) => {
         : common.setResponse(fail, "driver assignment failed", result);
 }
 
-const SaveDriverTaskStatus = async(selectedDriver) => {
-  const path = `ActiveDrivers/${selectedDriver.Id}`
-      const payload = {
-        taskAssigned : "yes"
-      }
-
-    const result = await db.saveData(path, payload);
-
-    return result?.success
-        ? result
-        : common.setResponse(fail, "driver task assignment status save failed", result);
-}
-
-const saveHelperTaskStatus = async(selectedHelper) => {
-  const path = `ActiveHelpers/${selectedHelper.Id}`
-  const payload = {
-    taskAssigned : "yes"
-  }
-
-  const result = await db.saveData(path, payload);
-
-  return result.success
-      ? result
-      : common.setResponse(fail, "Helper task assignment status save failed", result)
-}
-
-const saveVehicleTaskStatus = async(selectedVehicle) => {
-  const path = `Vehicles/${selectedVehicle}`
-  const payload = {
-    taskAssigned : "yes"
-  }
-
-  const result = await db.saveData(path, payload);
-
-  return result.success
-      ? result
-      : common.setResponse(fail, "Vehicle task assignment status save failed", result)
-}
-
 const saveAssignmentSummaryStatus = async(year, monthName, date, ward) => {
   const path = `AssignmentData/AssignmentSummary/${year}/${monthName}/${date}/Task`;
   const payload ={
@@ -381,7 +342,9 @@ const saveWorkAssignment = async(ward, selectedVehicle, selectedDriver, selected
   const workAssignmentPath = `AssignmentData/WorkAssignment/${ward}`
       const workAssignmentPayload = {
         driver: selectedDriver.Id,
+        driverName: selectedDriver.name,
         helper: selectedHelper.Id,
+        helperName: selectedHelper.name,
         vehicle: selectedVehicle
       }
 

@@ -52,18 +52,16 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
     if (!isOpen) setSearchTerm('');
   }, [isOpen]);
 
-  const getDisplayName = (item) => {
+ const getDisplayName = (item) => {
   if (mode === "vehicle") return item;
-  return item?.name || "";   // for driver/helper
+  return item?.name || "";
 };
+
 
 
   const filteredItems = useMemo(() => {
     if (!searchTerm) return items;
-    const q = searchTerm.trim().toLowerCase();
-    return items.filter((item) =>
-    getDisplayName(item).toLowerCase().includes(q)
-  );
+return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toLowerCase()));
   }, [items, searchTerm, mode]);
 
   const handleSelect = (item) => {
@@ -74,19 +72,18 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
     }
 
     else if (mode === "driver") {
-      setSelectedDriver(item.name);
+      setSelectedDriver(item);
       setMode("helperConfirmation");
       onClose();
     }
 
     else if (mode === "helper") {
-      setSelectedHelper(item.name);
+      setSelectedHelper(item);
       setMode('comingSoon')
       onClose(); // last step
     }
 
   };
-
   return (
      <Sheet
           isOpen={isOpen}
@@ -126,8 +123,8 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
                       filteredItems.map((item, index) => {
                         const isSelected =
                       (mode === "vehicle" && item === selectedVehicle) ||
-                      (mode === "driver" && item.name === selectedDriver) ||
-                      (mode === "helper" && item.name === selectedHelper);
+                      (mode === "driver" && item.Id === selectedDriver?.Id) ||
+                      (mode === "helper" && item.Id === selectedHelper?.Id);
                         return (
                           <li
                             key={index}
