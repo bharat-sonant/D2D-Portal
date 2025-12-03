@@ -1,0 +1,99 @@
+import React, { useMemo, useState, useEffect } from 'react';
+import { Check } from 'lucide-react';
+// import sheetStyles from '../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css'; 
+import { Sheet } from 'react-modal-sheet';
+import {images} from '../../../../assets/css/imagePath'
+import sheetStyles from "../../styles/BottomSheet2.module.css";
+
+const BottomSheet2 = ({isOpen,
+  onClose,
+  assignedVehicle,
+  setSelectedVehicle,
+  openSheet,
+  loading}) => {
+  const snapPoints = [0, 0.4, 1];
+
+  return (
+     <Sheet
+          isOpen={isOpen}
+          onClose={onClose}
+          initialSnap={1}
+          snapPoints={snapPoints}
+          disableDrag={true} 
+        >
+          <Sheet.Container>
+            <Sheet.Header />
+            <Sheet.Content>
+              {loading ? (
+                <div className={sheetStyles.loadingContainer}>
+                  <div className={sheetStyles.loader}></div>
+                  <p className={sheetStyles.loadingText}>Loading vehicles...</p>
+                </div>
+              ) : (
+               <div className={sheetStyles.sheetContent}>
+            {assignedVehicle ? (
+              <>
+                {/* Vehicle Card */}
+                <div className={sheetStyles.vehicleCard}>
+                  <h3 className={sheetStyles.vehicleTitle}>Assigned Vehicle</h3>
+                  <div className={sheetStyles.vehicleBox}>
+                    {assignedVehicle}
+                  </div>
+                </div>
+
+                {/* Helper text */}
+                <p className={sheetStyles.helperText}>
+                  For this task, do you want to continue with the above vehicle or change it?
+                </p>
+
+                {/* Buttons */}
+                <div className={sheetStyles.btnRow}>
+                  <button
+                    className={sheetStyles.btnYes}
+                    onClick={() => {
+                      setSelectedVehicle(assignedVehicle);
+                      onClose();
+                    }}
+                  >
+                    Yes, Continue
+                  </button>
+
+                  <button
+                    className={sheetStyles.btnChange}
+                    onClick={() => {
+                      onClose();
+                      openSheet(); // opens vehicle selection
+                    }}
+                  >
+                    Change Vehicle
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className={sheetStyles.noVehicleBox}>
+                <p className={sheetStyles.noVehicleText}>
+                  No vehicle assigned for this task.
+                </p>
+
+                <button
+                  className={sheetStyles.selectBtn}
+                  onClick={() => {
+                    onClose();
+                    openSheet(); 
+                  }}
+                >
+                  Select Vehicle
+                </button>
+              </div>
+            )}
+          </div>
+
+              )}
+            </Sheet.Content>
+          </Sheet.Container>
+          {/* <Sheet.Backdrop onTap={onClose} /> */}
+        </Sheet>
+  );
+};
+
+export default BottomSheet2;

@@ -3,20 +3,34 @@ import { Check } from 'lucide-react';
 import sheetStyles from '../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css'; 
 import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
+import { getAllActiveVehicles } from '../../../services/DutyStartService/DutyStart';
 
-const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '', loading = false }) => {
+const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '' }) => {
+  const [loading, setLoading] = useState(false)
+  const [vehicles, setVehicles] = useState([])
   const [searchTerm, setSearchTerm] = useState('');
-  const snapPoints = [0, 0.4, 1];
+  const snapPoints = [0, 0.7, 1];
+
+  useEffect(() => {
+    fetchVehicles();
+  },[])
+
+  const fetchVehicles = async() => {
+    setLoading(true);
+    const result = await getAllActiveVehicles();
+    setVehicles(result.data)
+    setLoading(false)
+  }
 
   useEffect(() => {
     if (!isOpen) setSearchTerm('');
   }, [isOpen]);
 
   const filteredItems = useMemo(() => {
-    if (!searchTerm) return items;
+    if (!searchTerm) return vehicles;
     const q = searchTerm.trim().toLowerCase();
-    return items.filter(i => (i || '').toLowerCase().includes(q));
-  }, [items, searchTerm]);
+    return vehicles.filter(i => (i || '').toLowerCase().includes(q));
+  }, [vehicles, searchTerm]);
 
   const handleSelect = (item) => {
     if (onSelect) onSelect(item);

@@ -6,6 +6,8 @@ import styles from '../styles/DutyStart.module.css'
 import { ArrowLeft } from 'lucide-react';
 import ConfirmationModal from '../../../components/confirmationModal/ConfirmationModal';
 import BottomSheet from '../components/bottomSheet/BottomSheet';
+import { fetchTaskVehicle } from '../../services/DutyStartService/DutyStart';
+import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
 
 // const DutyStart = () => {
 //   const location = useLocation();
@@ -202,7 +204,15 @@ import BottomSheet from '../components/bottomSheet/BottomSheet';
 
   const DutyStart = () => { 
       const [sheetOpen, setSheetOpen] = useState(false);
+      const [sheet2Open, setSheet2Open] = useState(false);
+      const [assignedVehicle, setAssignedVehicle] = useState(null);
       const [selectedVehicle, setSelectedVehicle] = useState("");
+      const [loading, setLoading] = useState(false);
+      const location = useLocation();
+
+      const queryParams = new URLSearchParams(location.search);
+      const city = queryParams.get("city") || "DevTest";
+      const ward = queryParams.get("task") || "Govind";
 
       const vehicles = [
         "Truck 01",
@@ -215,14 +225,25 @@ import BottomSheet from '../components/bottomSheet/BottomSheet';
       const openSheet = () => setSheetOpen(true);
       const closeSheet = () => setSheetOpen(false);
 
+      const openSheet2 = () => setSheet2Open(true)
+      const closeSheet2 = () => setSheet2Open(false)
+
       const handleSelectVehicle = (vehicle) => {
         setSelectedVehicle(vehicle);
         closeSheet();
       };
 
       useEffect(()=>{
-        openSheet()
+        openSheet2()
+        fetchvehicle();
       },[])
+
+      const fetchvehicle = async()=> {
+        setLoading(true)
+        const result = await fetchTaskVehicle(ward)
+        setAssignedVehicle(result.data.vehicle)
+        setLoading(false)
+      }
     
     return (
       <div className={styles.pageContainer}>
@@ -238,6 +259,15 @@ import BottomSheet from '../components/bottomSheet/BottomSheet';
         <div className={styles.contentContainer}>
           {/* Your rows or form fields will come here */}
         </div>
+
+        <BottomSheet2
+          isOpen={sheet2Open}
+          onClose={closeSheet2}
+          assignedVehicle={assignedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+          openSheet={openSheet}
+          loading={loading}
+        />
 
           <BottomSheet
           isOpen={sheetOpen}
