@@ -78,7 +78,7 @@ const Task = () => {
                         className={`${GlobalStyles.floatingBtn}`}
                         onClick={openOffCanvasModal}
                     >
-                        <LucideSettings />
+                        <LucideSettings style={{ position: 'relative', bottom: '3px' }} />
                     </button>
                 </div>
             )}
