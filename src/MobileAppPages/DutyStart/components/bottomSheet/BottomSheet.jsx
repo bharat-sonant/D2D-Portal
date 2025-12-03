@@ -6,7 +6,7 @@ import {images} from '../../../../assets/css/imagePath'
 
 const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '', loading = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const snapPoints = [0, 0.7, 1];
+  const snapPoints = [0, 0.4, 1];
 
   useEffect(() => {
     if (!isOpen) setSearchTerm('');
@@ -34,12 +34,12 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
-              <div
+              {/* <div
                 className={sheetStyles.btnClose}
                 onClick={onClose}
               >
                 Close
-              </div>
+              </div> */}
               {loading ? (
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>
@@ -97,7 +97,7 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
               )}
             </Sheet.Content>
           </Sheet.Container>
-          <Sheet.Backdrop onTap={onClose} />
+          {/* <Sheet.Backdrop onTap={onClose} /> */}
         </Sheet>
   );
 };
