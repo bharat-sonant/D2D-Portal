@@ -258,3 +258,34 @@ export const deleteInactiveTask = (taskId) => {
         };
     });
 };
+
+export const getTaskUpdateHistory = async (taskId) => {
+    return new Promise(async (resolve) => {
+        try {
+            if (taskId) {
+                const path = `TaskData/TaskDetails/${taskId}/UpdateHistory`;
+                const resData = await db.getData(path);
+
+                if (!resData) {
+                    return resolve(
+                        common.setResponse('fail', "No history available", {})
+                    );
+                }
+
+                const historyArray = Object.entries(resData).filter(([key]) => key !== "lastKey").map(([key, value]) => ({
+                    index: key,
+                    event: value.event,
+                    at: value._at,
+                    by: value._by,
+                }));
+
+                resolve(common.setResponse('success', "History data available", historyArray));
+            } else {
+                resolve(common.setResponse('fail', "Invalid Params", { taskId }));
+            }
+        } catch (error) {
+            resolve(common.setResponse("Error", `Error while getting expense update history`, { error }));
+            console.log('Error while fetching task update history', error);
+        };
+    });
+};

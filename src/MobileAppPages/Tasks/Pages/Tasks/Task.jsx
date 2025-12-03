@@ -24,24 +24,24 @@ const Task = () => {
     }, []);
 
     useEffect(() => {
-        getTasks(setTaskList, setLoading)
-    }, [])
+        getTasks(setTaskList, setLoading);
+    }, []);
 
     useEffect(() => {
         if (taskList.length > 0 && !selectedTaskId) {
             setSelectedTaskId(taskList[0].taskId);
-        }
+        };
     }, [taskList]);
 
     useEffect(() => {
         if (selectedTaskId) {
             getTaskDetail(setSelectedTask, selectedTaskId);
-        }
-    }, [selectedTaskId])
+        };
+    }, [selectedTaskId]);
 
     const handleOpenModal = () => {
         setShowCanvas(true);
-    }
+    };
 
     const handleTaskSelection = (task) => {
         setSelectedTaskId(task.taskId);
@@ -51,7 +51,7 @@ const Task = () => {
         setShowCanvas(true);
         setTaskId(item.taskId);
         setDisplayName(item.name);
-    }
+    };
 
     return (
         <>
