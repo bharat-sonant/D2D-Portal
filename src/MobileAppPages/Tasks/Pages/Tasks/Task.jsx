@@ -7,7 +7,6 @@ import TaskDetails from "../../Components/Task/TaskDetails";
 import * as firebaseService from '../../../../firebase/firebaseService';
 import * as dbConfig from '../../../../configurations/cityDBConfig';
 import { getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
-import { getTaskUpdateHistory } from "../../Service/Tasks/TaskService";
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
@@ -25,8 +24,8 @@ const Task = () => {
     }, []);
 
     useEffect(() => {
-        getTasks(setTaskList, setLoading)
-    }, [])
+        getTasks(setTaskList, setLoading);
+    }, []);
 
     useEffect(() => {
         if (taskList.length > 0 && !selectedTaskId) {
@@ -38,11 +37,11 @@ const Task = () => {
         if (selectedTaskId) {
             getTaskDetail(setSelectedTask, selectedTaskId);
         };
-    }, [selectedTaskId])
+    }, [selectedTaskId]);
 
     const handleOpenModal = () => {
         setShowCanvas(true);
-    }
+    };
 
     const handleTaskSelection = (task) => {
         setSelectedTaskId(task.taskId);
@@ -52,7 +51,7 @@ const Task = () => {
         setShowCanvas(true);
         setTaskId(item.taskId);
         setDisplayName(item.name);
-    }
+    };
 
     return (
         <>
