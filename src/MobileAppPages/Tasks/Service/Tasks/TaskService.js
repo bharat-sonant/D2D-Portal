@@ -162,7 +162,7 @@ export const saveTaskHistory = async (
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task created with name '${newName}`
+                event: `Task created with name ${newName}`
             };
         }
 
@@ -171,7 +171,7 @@ export const saveTaskHistory = async (
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task name changed from '${oldName}' to '${newName}'`
+                event: `Task name changed from ${oldName} to ${newName}`
             };
         }
 
@@ -180,7 +180,7 @@ export const saveTaskHistory = async (
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task status changed from '${oldStatus}' to '${newStatus}'`
+                event: `Task status changed from ${oldStatus} to ${newStatus}`
             };
         }
 
