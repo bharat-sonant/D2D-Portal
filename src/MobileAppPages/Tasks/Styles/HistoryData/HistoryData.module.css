@@ -77,10 +77,20 @@
 /* HISTORY CARD */
 .historyCard {
     background: #f8f9fb;
-    padding: 16px 20px;
+    padding: 10px 14px;
     border-radius: 10px;
     border-left: 4px solid #4A9EFF;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.historyCard {
+    transition: all 0.25s ease-in-out;
+}
+
+.historyCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .historyTitle {
