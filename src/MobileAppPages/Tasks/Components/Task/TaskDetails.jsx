@@ -35,7 +35,7 @@ const TaskDetails = (props) => {
     return (
         <div className={styles.card}>
             <div className={styles.taskIdBadge}>
-                #{props.selectedTask.taskId}
+                {props.selectedTask.taskId}
             </div>
             <div className={styles.header}>
                 <div className={styles.headerLeft}>
