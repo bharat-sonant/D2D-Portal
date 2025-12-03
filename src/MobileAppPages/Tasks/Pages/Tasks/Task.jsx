@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 import TaskDetails from "../../Components/Task/TaskDetails";
 import * as firebaseService from '../../../../firebase/firebaseService';
 import * as dbConfig from '../../../../configurations/cityDBConfig';
-import { getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
+import { getHistoryData, getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
+import { LucideSettings } from "lucide-react";
+import HistoryData from "../../Components/Task/HistoryData";
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
@@ -16,6 +18,8 @@ const Task = () => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskId, setTaskId] = useState('');
     const [displayName, setDisplayName] = useState('');
+    const [openCanvas, setOpenCanvas] = useState(false);
+    const [taskHistory, setTaskHistory] = useState([]);
     const city = localStorage.getItem('city') || "DevTest";
 
     useEffect(() => {
@@ -36,8 +40,13 @@ const Task = () => {
     useEffect(() => {
         if (selectedTaskId) {
             getTaskDetail(setSelectedTask, selectedTaskId);
+            getHistory();
         };
     }, [selectedTaskId]);
+
+    const getHistory = () => {
+        getHistoryData(selectedTaskId, setTaskHistory);
+    }
 
     const handleOpenModal = () => {
         setShowCanvas(true);
@@ -53,8 +62,27 @@ const Task = () => {
         setDisplayName(item.name);
     };
 
+    const openOffCanvasModal = () => {
+        setOpenCanvas(true);
+    }
+
+    const onHideCanvas = () => {
+        setOpenCanvas(false)
+    }
+
     return (
         <>
+            {selectedTaskId && (
+                <div className={`${GlobalStyles.floatingDiv}`} style={{ bottom: "90px" }}>
+                    <button
+                        className={`${GlobalStyles.floatingBtn}`}
+                        onClick={openOffCanvasModal}
+                    >
+                        <LucideSettings />
+                    </button>
+                </div>
+            )}
+
             <div className={`${GlobalStyles.floatingDiv}`}>
                 <button
                     className={`${GlobalStyles.floatingBtn}`}
@@ -63,6 +91,7 @@ const Task = () => {
                     +
                 </button>
             </div>
+
             <div className={`${TaskStyles.employeePage}`}>
                 <div className={`${TaskStyles.employeeLeft}`}>
                     <TaskList
@@ -83,6 +112,7 @@ const Task = () => {
                                 setSelectedTask={setSelectedTask}
                                 setTaskList={setTaskList}
                                 setSelectedTaskId={setSelectedTaskId}
+                                getHistory={getHistory}
                             />
                         </div>
                     </div>
@@ -98,8 +128,14 @@ const Task = () => {
                     taskId={taskId}
                     setTaskId={setTaskId}
                     setSelectedTask={setSelectedTask}
+                    getHistory={getHistory}
                 />
             </div>
+            <HistoryData
+                openCanvas={openCanvas}
+                onHide={onHideCanvas}
+                taskHistory={taskHistory}
+            />
         </>
     )
 }

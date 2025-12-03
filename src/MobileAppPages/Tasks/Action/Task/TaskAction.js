@@ -13,7 +13,7 @@ export const handleChange = (type, value, setDisplayName, setError) => {
     };
 };
 
-export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName, setTaskList, taskId, setTaskId, setShowCanvas, setSelectedTask) => {
+export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName, setTaskList, taskId, setTaskId, setShowCanvas, setSelectedTask, getHistory) => {
     if (displayName.trim() === "") {
         setError("Please provide display name of task.");
         return;
@@ -21,24 +21,32 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
     setLoader(true);
     service.saveTaskData(displayName, taskId).then((res) => {
         if (res.status === 'success') {
-            console.log(res)
             handleClearFields(setError, setDisplayName, setLoader, setTaskId);
             setLoader(false);
-            const newTask = {
-                taskId: res.data.taskId,
-                name: displayName,
-                status: "active"
-            };
             setTaskList((prev) => {
+                let updatedList;
+
                 if (taskId) {
-                    return prev.map((task) =>
+                    updatedList = prev.map((task) =>
                         task.taskId === taskId
                             ? { ...task, name: displayName }
                             : task
                     );
+                } else {
+                    updatedList = [
+                        {
+                            taskId: res.data.taskId,
+                            name: displayName,
+                            status: "active"
+                        },
+                        ...prev
+                    ];
                 }
-                return [newTask, ...prev];
+                return updatedList.sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                );
             });
+
             if (taskId) {
                 setSelectedTask((prev) => ({
                     ...prev,
@@ -46,6 +54,7 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
                 }));
             }
             setShowCanvas(false);
+            getHistory();
         } else {
             setLoader(false);
         };
@@ -89,29 +98,37 @@ export const getTaskDetail = (setSelectedTask, selectedTaskId) => {
 
 export const ActiveInactiveTask = (props, setToggle, toggle) => {
     const newStatus = toggle ? "inactive" : "active";
+
     setToggle(!toggle);
+
     service.activeInactiveTask(props.selectedTask.taskId, newStatus).then(() => {
+
         props.setSelectedTask(prev => ({
             ...prev,
             status: newStatus
         }));
+
         props.setTaskList(prev => {
             const updatedList = prev.map(task =>
                 task.taskId === props.selectedTask.taskId
                     ? { ...task, status: newStatus }
                     : task
             );
+
             return updatedList.sort((a, b) => {
-                if (a.status === "active" && b.status === "inactive") return -1;
-                if (a.status === "inactive" && b.status === "active") return 1;
-                return 0;
+                if (a.status !== b.status) {
+                    return a.status === "active" ? -1 : 1;
+                }
+                return a.name.localeCompare(b.name);
             });
         });
+
         common.setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
+        props.getHistory();
     }).catch((err) => {
         console.log("Error updating status", err);
     });
-}
+};
 
 export const deleteTask = (taskId, setTaskList, setShowDeleteModal, setSelectedTaskId, setSelectedTask) => {
 
@@ -133,6 +150,16 @@ export const deleteTask = (taskId, setTaskList, setShowDeleteModal, setSelectedT
             setShowDeleteModal(false);
         } else {
             common.setAlertMessage('warn', "Something went wrong !!!");
+        };
+    });
+};
+
+export const getHistoryData = (taskId, setTaskHistory) => {
+    service.getTaskUpdateHistory(taskId).then((response) => {
+        if (response.status === 'success') {
+            setTaskHistory(response.data)
+        } else {
+            setTaskHistory([]);
         };
     });
 };

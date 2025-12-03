@@ -37,7 +37,8 @@ const AddTask = (props) => {
             props.taskId,
             props.setTaskId,
             props.setShowCanvas,
-            props.setSelectedTask
+            props.setSelectedTask,
+            props.getHistory
         );
     };
 
