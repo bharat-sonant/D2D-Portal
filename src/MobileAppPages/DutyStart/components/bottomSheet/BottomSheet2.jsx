@@ -41,7 +41,7 @@ const BottomSheet2 = ({isOpen,
                   <>
                   <div className={sheetStyles.vehicleCard}>
                     <h3 className={sheetStyles.vehicleTitle}>Assigned Helper</h3>
-                    <div className={sheetStyles.vehicleBox}>{assignedData.driver}</div>
+                    <div className={sheetStyles.vehicleBox}>{assignedData.helperName}</div>
                   </div>
 
                   <p className={sheetStyles.helperText}>
@@ -52,7 +52,7 @@ const BottomSheet2 = ({isOpen,
                     <button
                       className={sheetStyles.btnYes}
                       onClick={() => {
-                        setselectedHelper(assignedData.helper);
+                        setselectedHelper(assignedData.helperName);
                         setMode('comingSoon')
                       }}
                     >
@@ -72,7 +72,7 @@ const BottomSheet2 = ({isOpen,
                 <>
                   <div className={sheetStyles.vehicleCard}>
                     <h3 className={sheetStyles.vehicleTitle}>Assigned Driver</h3>
-                    <div className={sheetStyles.vehicleBox}>{assignedData.driver}</div>
+                    <div className={sheetStyles.vehicleBox}>{assignedData.driverName}</div>
                   </div>
 
                   <p className={sheetStyles.helperText}>
@@ -83,7 +83,7 @@ const BottomSheet2 = ({isOpen,
                     <button
                       className={sheetStyles.btnYes}
                       onClick={() => {
-                        setSelectedDriver(assignedData.driver);
+                        setSelectedDriver(assignedData.driverName);
                         setMode("helper");   // 👈 switch mode
                       }}
                     >
