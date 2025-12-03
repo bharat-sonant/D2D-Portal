@@ -5,7 +5,7 @@ import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
 import { getAllActiveVehicles } from '../../../services/DutyStartService/DutyStart';
 
-const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '' }) => {
+const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelect, title = '', mode, setMode }) => {
   const [loading, setLoading] = useState(false)
   const [vehicles, setVehicles] = useState([])
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,6 +34,7 @@ const BottomSheet = ({ isOpen, onClose, items = [], selectedItem = null, onSelec
 
   const handleSelect = (item) => {
     if (onSelect) onSelect(item);
+    setMode('driver')
   };
 
 

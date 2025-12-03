@@ -47,11 +47,11 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
 //     setSelectedHelper(details.helper || "");
 //   }, []);
 
-//   const handleBack = () => {
-//     if (/Android/i.test(navigator.userAgent) && window.Android?.closeWebView) {
-//       window.Android.closeWebView();
-//     } else navigate(-1);
-//   };
+  // const handleBack = () => {
+  //   if (/Android/i.test(navigator.userAgent) && window.Android?.closeWebView) {
+  //     window.Android.closeWebView();
+  //   } else navigate(-1);
+  // };
 
 //   const openSheet = (type) => setSheetType(type);
 //   const closeSheet = () => setSheetType(null);
@@ -208,7 +208,9 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
       const [assignedVehicle, setAssignedVehicle] = useState(null);
       const [selectedVehicle, setSelectedVehicle] = useState("");
       const [loading, setLoading] = useState(false);
+      const [mode, setMode] = useState("vehicle");
       const location = useLocation();
+      const navigate = useNavigate();
 
       const queryParams = new URLSearchParams(location.search);
       const city = queryParams.get("city") || "DevTest";
@@ -244,9 +246,22 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
         setAssignedVehicle(result.data.vehicle)
         setLoading(false)
       }
-    
+
+        const handleBack = () => {
+          if (/Android/i.test(navigator.userAgent) && window.Android?.closeWebView) {
+            window.Android.closeWebView();
+          } else navigate(-1);
+        };
+          
     return (
-      <div className={styles.pageContainer}>
+        <div className={styles.pageContainer}>
+          <div className={styles.header}>
+            <button className={styles.backButton} onClick={handleBack}>
+              <ArrowLeft />
+            </button>
+            <h1 className={styles.headerTitle}>Duty Start {ward}</h1>
+          </div>
+
         
         {/* Top White Box */}
         <div className={styles.topBox}>
@@ -267,6 +282,8 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
           setSelectedVehicle={setSelectedVehicle}
           openSheet={openSheet}
           loading={loading}
+          mode={mode}
+          setMode={setMode}
         />
 
           <BottomSheet
@@ -276,6 +293,8 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
           items={vehicles}
           selectedItem={selectedVehicle}
           onSelect={handleSelectVehicle}
+          mode={mode}
+          setMode={setMode}
         />
 
       </div>

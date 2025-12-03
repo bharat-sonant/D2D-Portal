@@ -10,7 +10,9 @@ const BottomSheet2 = ({isOpen,
   assignedVehicle,
   setSelectedVehicle,
   openSheet,
-  loading}) => {
+  loading,
+  mode,
+  setMode}) => {
   const snapPoints = [0, 0.4, 1];
 
   return (
@@ -31,45 +33,42 @@ const BottomSheet2 = ({isOpen,
                 </div>
               ) : (
                <div className={sheetStyles.sheetContent}>
-            {assignedVehicle ? (
-              <>
-                {/* Vehicle Card */}
-                <div className={sheetStyles.vehicleCard}>
-                  <h3 className={sheetStyles.vehicleTitle}>Assigned Vehicle</h3>
-                  <div className={sheetStyles.vehicleBox}>
-                    {assignedVehicle}
+                {mode === "driver" ? (
+                <div className={sheetStyles.comingSoonBox}>
+                  <p className={sheetStyles.comingSoonText}>Coming soon...</p>
+                </div>
+
+              ) : assignedVehicle ? (
+                <>
+                  <div className={sheetStyles.vehicleCard}>
+                    <h3 className={sheetStyles.vehicleTitle}>Assigned Vehicle</h3>
+                    <div className={sheetStyles.vehicleBox}>{assignedVehicle}</div>
                   </div>
-                </div>
 
-                {/* Helper text */}
-                <p className={sheetStyles.helperText}>
-                  For this task, do you want to continue with the above vehicle or change it?
-                </p>
+                  <p className={sheetStyles.helperText}>
+                    For this task, do you want to continue with the above vehicle or change it?
+                  </p>
 
-                {/* Buttons */}
-                <div className={sheetStyles.btnRow}>
-                  <button
-                    className={sheetStyles.btnYes}
-                    onClick={() => {
-                      setSelectedVehicle(assignedVehicle);
-                      onClose();
-                    }}
-                  >
-                    Yes, Continue
-                  </button>
+                  <div className={sheetStyles.btnRow}>
+                    <button
+                      className={sheetStyles.btnYes}
+                      onClick={() => {
+                        setSelectedVehicle(assignedVehicle);
+                        setMode("driver");   // 👈 switch mode
+                      }}
+                    >
+                      Yes, Continue
+                    </button>
 
-                  <button
-                    className={sheetStyles.btnChange}
-                    onClick={() => {
-                      onClose();
-                      openSheet(); // opens vehicle selection
-                    }}
-                  >
-                    Change Vehicle
-                  </button>
-                </div>
-              </>
-            ) : (
+                    <button
+                      className={sheetStyles.btnChange}
+                      onClick={openSheet}
+                    >
+                      Change Vehicle
+                    </button>
+                  </div>
+                </>
+                ) : (
               <div className={sheetStyles.noVehicleBox}>
                 <p className={sheetStyles.noVehicleText}>
                   No vehicle assigned for this task.
@@ -77,16 +76,14 @@ const BottomSheet2 = ({isOpen,
 
                 <button
                   className={sheetStyles.selectBtn}
-                  onClick={() => {
-                    onClose();
-                    openSheet(); 
-                  }}
+                  onClick={openSheet}
                 >
                   Select Vehicle
                 </button>
               </div>
             )}
-          </div>
+
+            </div>
 
               )}
             </Sheet.Content>
