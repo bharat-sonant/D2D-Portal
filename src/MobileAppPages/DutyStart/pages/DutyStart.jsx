@@ -229,7 +229,9 @@ import BottomSheet from '../components/bottomSheet/BottomSheet';
         
         {/* Top White Box */}
         <div className={styles.topBox}>
-          <p className={styles.topBoxText}>Vehicle not selected</p>
+          <p className={styles.topBoxText}>
+  {selectedVehicle ? selectedVehicle : "Vehicle not selected"}
+</p>
         </div>
 
         {/* Content area for future form items */}
