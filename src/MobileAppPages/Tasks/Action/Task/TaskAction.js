@@ -55,6 +55,7 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
             }
             setShowCanvas(false);
             getHistory();
+            common.setAlertMessage('success', taskId ? 'Task updated successfully' : 'Task saved successfully')
         } else {
             setLoader(false);
         };

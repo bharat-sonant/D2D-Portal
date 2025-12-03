@@ -60,14 +60,15 @@ const TaskDetails = (props) => {
                     </div>
 
                     <div className={styles.actions}>
-                        <button
-                            className={`${styles.iconButton} ${styles.editIcon}`}
-                            onClick={() => handleEdit(props.selectedTask)}
-                            title="Edit"
-                        >
-                            <FaEdit />
-                        </button>
-
+                        {toggle && (
+                            <button
+                                className={`${styles.iconButton} ${styles.editIcon}`}
+                                onClick={() => handleEdit(props.selectedTask)}
+                                title="Edit"
+                            >
+                                <FaEdit />
+                            </button>
+                        )}
                         {!toggle && (
                             <button
                                 className={`${styles.iconButton} ${styles.deleteIcon}`}
