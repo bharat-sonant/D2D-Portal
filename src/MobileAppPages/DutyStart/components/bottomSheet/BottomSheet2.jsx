@@ -23,41 +23,59 @@ const BottomSheet2 = ({isOpen,
   setMode}) => {
     const[isSaving, setIsSaving] = useState(false);
   const snapPoints = [0, 0.4, 1];
+  console.log('assignedData',assignedData, 'mode',mode)
 
-  useEffect(() => {
-  if (!isOpen) return;
+ useEffect(() => {
+  if (!isOpen || loading) return;
 
-  // NO assigned data at all (fresh task)
-  const noVehicle = !assignedData?.vehicle;
-  const noDriver = !assignedData?.driver;
-  const noHelper = !assignedData?.helper;
+  const hasAssigned =
+    assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
 
-  // CASE 1 → Completely unassigned: start with vehicle
-  if (noVehicle && !selectedVehicle) {
+  // -----------------------
+  // CASE 1 — ASSIGNED DATA
+  // -----------------------
+  if (hasAssigned) {
+    // We do NOT auto navigate, we only show confirmation UI
+    return;
+  }
+
+  // -----------------------
+  // CASE 2 — FRESH TASK
+  // -----------------------
+
+  // Step 1: Vehicle selection
+  if (!selectedVehicle) {
     setMode("vehicle");
-    openSheet();
-    return;
+    return openSheet();
   }
 
-  // CASE 2 → Vehicle selected but driver not selected: open driver list
-  if (selectedVehicle && !selectedDriver?.Id) {
+  // Step 2: Driver selection
+  if (!selectedDriver?.Id) {
     setMode("driver");
-    openSheet();
+    return openSheet();
+  }
+
+  // Step 3: Ask with or without helper
+  if (!selectedHelper?.Id && mode !== "helperConfirmation" && mode !== 'comingSoon' && mode !== 'helper') {
+    setMode("helperConfirmation");
     return;
   }
 
-  // CASE 3 → Driver selected but helper not selected: open helper list
-  if (selectedDriver?.Id && !selectedHelper?.Id) {
-    setMode("helper");       // or helperConfirmation if needed
-    openSheet();
-    return;
+  // Step 4: If user chose WITH helper → open helper sheet
+  if (mode === "helper" && !selectedHelper?.Id) {
+    return openSheet();
   }
+
+  // Step 5: If WITHOUT helper → go to confirmation
+  // This is handled by UI setting mode = "comingSoon"
 }, [
   isOpen,
+  loading,
   assignedData,
   selectedVehicle,
   selectedDriver,
-  selectedHelper
+  selectedHelper,
+  mode
 ]);
 
 
@@ -80,6 +98,12 @@ const BottomSheet2 = ({isOpen,
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
+              {loading ? (
+                <div className={sheetStyles.loadingContainer}>
+                  <div className={sheetStyles.loader}></div>
+                  <p className={sheetStyles.loadingText}>Loading {mode}...</p>
+                </div>
+              ) : (
                <div className={sheetStyles.sheetContent}>
 
                 {mode === "helperConfirmation" && (
@@ -119,7 +143,7 @@ const BottomSheet2 = ({isOpen,
                     </button>
                   </>
                 )}
-                {mode === "helper" && assignedData?.helper && (
+                {mode === "helper" && assignedData?.helperId && (
                   <>
                   <div className={sheetStyles.vehicleCard}>
                     <h3 className={sheetStyles.vehicleTitle}>Assigned Helper</h3>
@@ -153,7 +177,7 @@ const BottomSheet2 = ({isOpen,
                   </div>
                 </>
                 )}
-                {mode === "driver" && assignedData?.driver && (
+                {mode === "driver" && assignedData?.driverId && (
                 <>
                   <div className={sheetStyles.vehicleCard}>
                     <h3 className={sheetStyles.vehicleTitle}>Assigned Driver</h3>
@@ -219,7 +243,24 @@ const BottomSheet2 = ({isOpen,
                   </div>
                 </>
                 )} 
+                {/* {!assignedData?.vehicle &&
+                !assignedData?.driver &&
+                !assignedData?.helper &&
+                mode !== "comingSoon" &&
+                mode !== "helperConfirmation" && (
+                  <div className={sheetStyles.noVehicleBox}>
+                    <p className={sheetStyles.noVehicleText}>
+                      No {mode} assigned for this task.
+                    </p>
+                    <button className={sheetStyles.selectBtn} onClick={openSheet}>
+                      Select {mode}
+                    </button>
+                  </div>
+                )} */}
+
             </div>
+
+              )}
             </Sheet.Content>
           </Sheet.Container>
           {/* <Sheet.Backdrop onTap={onClose} /> */}
