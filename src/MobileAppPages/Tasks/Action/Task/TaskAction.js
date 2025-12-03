@@ -1,4 +1,5 @@
-import { getTaskData, getTaskDetails, saveTaskData } from "../../Service/Tasks/TaskService";
+import { AppAlert, setAlertMessage } from "../../../../common/common";
+import { activeInactiveTask, getTaskData, getTaskDetails, saveTaskData } from "../../Service/Tasks/TaskService";
 
 export const handleChange = (type, value, setDisplayName, setError) => {
     if (type === "name") {
@@ -61,14 +62,21 @@ export const handleClearFields = (setError, setDisplayName, setLoader, setTaskId
 export const getTasks = (setTaskList, setLoading) => {
     getTaskData().then((response) => {
         if (response.status === 'success') {
-            setTaskList(response.data);
-            setLoading(false);
+            let taskList = [...response.data];
+            taskList.sort((a, b) => {
+                if (a.status === "active" && b.status === "inactive") return -1;
+                if (a.status === "inactive" && b.status === "active") return 1;
+                return 0;
+            });
+            setTaskList(taskList);
         } else {
-            setTaskList('');
-            setLoading(false);
-        };
+            setTaskList([]);
+        }
+
+        setLoading(false);
     });
 };
+
 
 export const getTaskDetail = (setSelectedTask, selectedTaskId) => {
     getTaskDetails(selectedTaskId).then((response) => {
@@ -79,3 +87,29 @@ export const getTaskDetail = (setSelectedTask, selectedTaskId) => {
         }
     });
 };
+
+export const ActiveInactiveTask = (props, setToggle, toggle) => {
+    const newStatus = toggle ? "inactive" : "active";
+    setToggle(!toggle);
+    activeInactiveTask(props.selectedTask.taskId, newStatus).then(() => {
+        props.setSelectedTask(prev => ({
+            ...prev,
+            status: newStatus
+        }));
+        props.setTaskList(prev => {
+            const updatedList = prev.map(task =>
+                task.taskId === props.selectedTask.taskId
+                    ? { ...task, status: newStatus }
+                    : task
+            );
+            return updatedList.sort((a, b) => {
+                if (a.status === "active" && b.status === "inactive") return -1;
+                if (a.status === "inactive" && b.status === "active") return 1;
+                return 0;
+            });
+        });
+        setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
+    }).catch((err) => {
+        console.log("Error updating status", err);
+    });
+}
