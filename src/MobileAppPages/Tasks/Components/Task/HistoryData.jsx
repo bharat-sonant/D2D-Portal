@@ -4,7 +4,7 @@ import { images } from '../../../../assets/css/imagePath';
 import { Calendar, User, Edit2, Trash2, History, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { ActiveInactiveTask } from '../../Action/Task/TaskAction';
+import { ActiveInactiveTask, formatEvent } from '../../Action/Task/TaskAction';
 
 const HistoryData = (props) => {
     const [toggle, setToggle] = useState(props.selectedTask?.status === "active");
@@ -26,7 +26,7 @@ const HistoryData = (props) => {
 
     return (
         <>
-            <Offcanvas placement="end" show={props.openCanvas} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "35%" }} >
+            <Offcanvas placement="end" show={props.openCanvas} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "45%" }} >
                 <div className={style.canvas_container} style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
                     <div className={style.OffcanvasHeader}>
                         <h4 className={style.header_title}>Task Settings</h4>
@@ -40,26 +40,10 @@ const HistoryData = (props) => {
                                 alt="Close"
                             />
                         </div>
-                        <div className={style.taskNameBox}>
-                            <h3 className={style.taskName}>{props.selectedTask?.name || "N/A"}</h3>
-                        </div>
                         <div className={style.taskControlCard}>
                             <div className={style.controlRow}>
-                                <div className={style.statusSection}>
-                                    <div className={style.toggleContainer}>
-                                        <label className={style.toggleSwitch}>
-                                            <input
-                                                type="checkbox"
-                                                checked={toggle}
-                                                onChange={handleToggle}
-                                            />
-                                            <span className={style.toggleSlider}></span>
-                                        </label>
-                                        <span className={`${style.statusText} ${toggle ? style.active : style.inactive}`}>
-                                            {toggle ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </div>
-                                </div>
+                                <h3 className={style.taskName}>{props.selectedTask?.name || "N/A"}</h3>
+
 
                                 <div className={style.actionButtons}>
                                     <div className={style.sectionTitle}>
@@ -90,29 +74,57 @@ const HistoryData = (props) => {
                                         </button>
                                     )}
                                 </div>
+                                <div className={style.statusSection}>
+                                    <div className={style.toggleContainer}>
+                                        <label className={style.toggleSwitch}>
+                                            <input
+                                                type="checkbox"
+                                                checked={toggle}
+                                                onChange={handleToggle}
+                                            />
+                                            <span className={style.toggleSlider}></span>
+                                        </label>
+                                        <span className={`${style.statusText} ${toggle ? style.active : style.inactive}`}>
+                                            {toggle ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        {/* History Section Title */}
-
 
                         {showHistory ? (
                             <div className={style.historyScroll}>
                                 {props.taskHistory.map((item, index) => (
                                     <div key={index} className={style.historyCard}>
-                                        <div className={style.historyTitle}>
-                                            {item.event}
-                                        </div>
-                                        <div className={style.metaRow}>
-                                            <User size={16} />
-                                            <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>{item.by}</span>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                width: "100%"
+                                            }}
+                                        >
+                                            {/* LEFT SIDE → EVENT TEXT */}
+                                            <div className={style.historyTitle}>
+                                                {formatEvent(item.event)}
+                                            </div>
 
-                                            <Calendar size={16} style={{ marginLeft: "10px" }} />
-                                            <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
-                                                [{item.at ? dayjs(item.at).format('DD-MMM-YYYY hh:mm A') : 'N/A'}]
-                                            </span>
+                                            {/* RIGHT SIDE → META INFO */}
+                                            <div className={style.metaRow}>
+                                                <User size={16} />
+                                                <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
+                                                    {item.by}
+                                                </span>
+
+                                                <Calendar size={16} style={{ marginLeft: "10px" }} />
+                                                <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
+                                                    [{item.at ? dayjs(item.at).format('DD-MMM-YYYY hh:mm A') : 'N/A'}]
+                                                </span>
+                                            </div>
                                         </div>
+
                                     </div>
+
                                 ))}
 
                                 {props.taskHistory.length === 0 && (

@@ -163,7 +163,7 @@ export const saveTaskHistory = async (
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task created ${newName}`
+                event: `Task Created`
             };
         }
 

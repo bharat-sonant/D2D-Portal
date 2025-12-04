@@ -110,8 +110,9 @@
 
 .statusSection {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
 }
 
 .statusLabel {
@@ -197,9 +198,9 @@
     color: #e07f7f;
 }
 
-/* Action Buttons */
 .actionButtons {
     display: flex;
+    align-items: center;
     gap: 20px;
 }
 
@@ -308,9 +309,8 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin: 40px auto 0 auto;
-    width: 361px;
-    position: relative;
+    width: 100%;
+    left: 12px;
 }
 
 .infoIconWrapper {
@@ -335,6 +335,7 @@
 }
 
 .taskName {
+    flex: 1;
     font-size: 16px;
     font-weight: 600;
     color: #374151;

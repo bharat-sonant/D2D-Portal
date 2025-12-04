@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import * as common from "../../../../common/common";
 import * as service from "../../Service/Tasks/TaskService";
 
@@ -163,4 +164,70 @@ export const getHistoryData = (taskId, setTaskHistory) => {
             setTaskHistory([]);
         };
     });
+};
+
+export const formatEvent = (eventText) => {
+    const getStatusColor = (status) => {
+        if (!status) return "#333";
+        return status.toLowerCase() === "active" ? "#10b981" : "#e11d48"; // green / red
+    };
+
+    // --- Task Created Case ---
+    const createdRegex = /Task created(.*)/i;
+    const createdMatch = eventText.match(createdRegex);
+
+    if (createdMatch) {
+        return (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontWeight: "600", textTransform: "capitalize" }}>
+                    Task Created
+                </span>
+            </div>
+        );
+    }
+
+    // --- Task Name Change ---
+    const nameRegex = /Task name changed from (.*?) to (.*)/i;
+    const nameMatch = eventText.match(nameRegex);
+
+    if (nameMatch) {
+        const oldValue = nameMatch[1];
+        const newValue = nameMatch[2];
+
+        return (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", textTransform: "capitalize" }}>
+                <span>Task Update</span>
+                <span style={{ color: '#666363ff' }}>{oldValue}</span>
+                <ArrowRight size={18} />
+                <span style={{ fontWeight: "600" }}>{newValue}</span>
+            </div>
+        );
+    }
+
+    // --- Status Change ---
+    const statusRegex = /Status changed from (.*?) to (.*)/i;
+    const statusMatch = eventText.match(statusRegex);
+
+    if (statusMatch) {
+        const oldStatus = statusMatch[1];
+        const newStatus = statusMatch[2];
+
+        return (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", textTransform: "capitalize" }}>
+                <span>Task status</span>
+
+                <span style={{ fontWeight: "500", color: getStatusColor(oldStatus) }}>
+                    {oldStatus}
+                </span>
+
+                <ArrowRight size={18} />
+
+                <span style={{ fontWeight: "600", color: getStatusColor(newStatus) }}>
+                    {newStatus}
+                </span>
+            </div>
+        );
+    }
+
+    return eventText;
 };
