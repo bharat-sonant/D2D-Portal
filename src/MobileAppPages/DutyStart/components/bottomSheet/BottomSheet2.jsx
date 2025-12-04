@@ -32,7 +32,6 @@ const BottomSheet2 = ({isOpen,
   setMode}) => {
     const[isSaving, setIsSaving] = useState(false);
   const snapPoints = [0, 0.4, 1];
-  console.log('assignedData',assignedData, 'mode',mode)
 
  useEffect(() => {
   if (!isOpen || loading) return;

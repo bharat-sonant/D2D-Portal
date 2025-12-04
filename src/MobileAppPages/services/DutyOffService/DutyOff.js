@@ -14,7 +14,6 @@ export const getTaskDetails = async(ward)=>{
   try{
     const path = `AssignmentData/WorkAssignment/${ward}`
     const result = await db.getData(path);
-    console.log('resultttt',result)
 
     if(result){
       resolve(common.setResponse(success, "task details fetched successfully", result))
@@ -156,14 +155,12 @@ const removeVehicleFromCurrentlyInUse = async(selectedVehicle) => {
 
   const removePath = `${path}/${keyToRemove}`
   const result = await db.removeData(removePath);
-console.log('result',result)
    return result?.success
         ? result
         : common.setResponse(fail, "Vehicle failed to remove from not assigned bucket", result);
 }
 
 const moveDriverToCompleted = async(selectedDriver) => {
-  console.log('selected Driver',selectedDriver)
   const inProgressPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/AvialableforNexTrip`
 
   const existing = await db.getData(inProgressPath);
@@ -175,14 +172,12 @@ const moveDriverToCompleted = async(selectedDriver) => {
   payload[nextIndex] = selectedDriver;
 
   const result = await db.saveData(inProgressPath, payload);
-console.log('result',result)
   return result?.success
         ? result
         : common.setResponse(fail, "Driver failed to move into completed bucket", result);
 }
 
 const removeDriverFromInProgress = async(selectedDriver) => {
-  console.log('selecteddriver',selectedDriver)
   const notAssignedPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Drivers/CurrentlyWorking`
 
   const existing = await db.getData(notAssignedPath);

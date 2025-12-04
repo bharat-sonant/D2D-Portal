@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { FaTasks, FaUser } from "react-icons/fa";
-import { MdKeyboardArrowDown, MdStart } from "react-icons/md";
-import { RiShutDownLine } from "react-icons/ri";
-import { PulseLoader } from "react-spinners";
-import { FaCity } from "react-icons/fa6";
-import { AlignStartVertical, ListStartIcon, LucideUserRoundCheck } from "lucide-react";
+import { FaTasks } from "react-icons/fa";
+import {  LucideUserRoundCheck } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
+import { useCity } from "../context/CityContext";
+import { cityLogos } from "../assets/images/cityLogos";
+import { getCityLogo } from "../services/logoServices";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const navigate = useNavigate();
@@ -24,6 +23,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const logoToShow = customLogo || images.wevoisLogo;
   const titleToShow = customTitle || "D2D PORTAL";
   const profileImage = ""
+  const city = useCity();
+  const logoPath = getCityLogo(city.city);
 
 
   useEffect(() => {
@@ -195,51 +196,20 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
             </Link>
           </ul>
 
-          <form className="d-flex">
-            {/* Dropdown menu */}
-            <div
-              className={`dropdown ${styles.dropdown_profile}`}
-              style={{ backgroundColor: navbarStyle.activeNavBg }}
-            >
+         {city && (
+          <div className={styles.cityBadge}>
+            <img
+              src={logoPath}
+              alt={`${city} logo`}
+              className={styles.cityLogo}
+              onError={(e) => {
+                e.target.src = images.wevoisLogo;  // fallback
+              }}
+            />
+            <span className={styles.cityName}>{city.city}</span>
+          </div>
+        )}
 
-
-              <div className={`dropdown-menu ${styles.custom_drop_profile}`}>
-                <ul className={`${styles.profile_ul}`}>
-                  <div>
-                    <Link to="/profile">
-                      <li
-                        className={`${styles.profile_main_div} ${styles.profile_border_top}`}
-                      >
-                        <div className={`${styles.profile_dropdown_icon}`}>
-                          <FaUser
-                            className={`${styles.profile_icon} ${styles.icon_setting}`}
-                          />
-                        </div>
-                        <div className={`${styles.profile_dropdown_info}`}>
-                          Profile
-                        </div>
-                      </li>
-                    </Link>
-                  </div>
-
-                  <div onClick={handleLogout}>
-                    <li
-                      className={`${styles.profile_main_div} ${styles.profile_border_top}`}
-                    >
-                      <div className={`${styles.profile_dropdown_icon}`}>
-                        <RiShutDownLine
-                          className={`${styles.profile_icon} ${styles.icon_logout}`}
-                        />
-                      </div>
-                      <div className={`${styles.profile_dropdown_info}`}>
-                        Logout
-                      </div>
-                    </li>
-                  </div>
-                </ul>
-              </div>
-            </div>
-          </form>
         </div>
       </div>
     </>

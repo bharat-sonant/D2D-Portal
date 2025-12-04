@@ -1,0 +1,242 @@
+{
+    "ajmer": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "ajmer.png"
+    },
+    "bharatpur": {
+        "latLng": "27.214840,77.5002347",
+        "cityLogo": "bharatpur.png"
+    },
+    "biofics-surat": {
+        "latLng": "21.1544467,72.8075473",
+        "cityLogo": "bioficsSurat.png"
+    },
+    "bundi": {
+        "latLng": "25.435431,75.6430613",
+        "cityLogo": "bundi.png"
+    },
+    "chennai": {
+        "latLng": "13.0841297,80.2680208",
+        "cityLogo": "GreaterChennaiCorporation.png"
+    },
+    "chirawa": {
+        "latLng": "28.2421284,75.6382847",
+        "cityLogo": "chirawa.png"
+    },
+    "dausa": {
+        "latLng": "26.9006581,76.3283162",
+        "cityLogo": "dausa-logo.png"
+    },
+    "dehradun": {
+        "latLng": "30.3164945,78.0321918",
+        "cityLogo": "dehradun-logo-nagar-nigam.png"
+    },
+    "dei-bundi": {
+        "latLng": "25.6761984,75.9133425",
+        "cityLogo": "dei-logo.png"
+    },
+    "devtest": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "jaipur icon.png"
+    },
+    "ecogram": {
+        "latLng": "13.1836585,77.569515",
+        "cityLogo": "EG-Logo.png"
+    },
+    "etmadpur": {
+        "latLng": "27.2547723,78.1590455",
+        "cityLogo": "etmadpur.png"
+    },
+    "hisar": {
+        "latLng": "29.1576773,75.7099179",
+        "cityLogo": "hisar-logo.png"
+    },
+    "iit-kharagpur": {
+        "latLng": "29.86603638,77.89051172",
+        "cityLogo": "IIT-Kharagpur.png"
+    },
+    "iit-roorkee": {
+        "latLng": "29.86603638,77.89051172",
+        "cityLogo": "iitre_logo.png"
+    },
+    "jaipur-office": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "wevois office.png"
+    },
+    "jaipur-greater": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "jaipur greater .png"
+    },
+    "jaipur-bwg": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "jaipur-BWG.png"
+    },
+    "jaipur-civil-line": {
+        "latLng": "26.908028,75.7782204",
+        "cityLogo": "civilline.png"
+    },
+    "jaipur-kishanpole": {
+        "latLng": "26.9204252,75.8110759",
+        "cityLogo": "kishanpole.png"
+    },
+    "jaipur-malviyanagar": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "malviyanagar. logo.png"
+    },
+    "jaipur-murlipura": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "murlipura .logo.png"
+    },
+    "jaipur-test": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "wevois office.png"
+    },
+    "jaipur-textile-recycling-facility": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "textile-facility-jaipur.png"
+    },
+    "jaunpur": {
+        "latLng": "25.7462391,82.6760959",
+        "cityLogo": "jaunpur.png"
+    },
+    "jammu-survey": {
+        "latLng": "32.7346044,74.8570259",
+        "cityLogo": "jummu-logo.png"
+    },
+    "jhunjhunu": {
+        "latLng": "28.1228348,75.3726927",
+        "cityLogo": "jhunjhunu.png"
+    },
+    "jodhpur": {
+        "latLng": "26.2405459,73.0197328",
+        "cityLogo": "jodhpur.png"
+    },
+    "jodhpur-north": {
+        "latLng": "26.2405459,73.0197328",
+        "cityLogo": "jodhpur.png"
+    },
+    "jodhpur-bwg": {
+        "latLng": "26.2405459,73.0197328",
+        "cityLogo": "jodhpur-bwg.png"
+    },
+    "khandela": {
+        "latLng": "27.6041575,75.4998704",
+        "cityLogo": "khandela-logo.png"
+    },
+    "khairabad": {
+        "latLng": "24.6568575,75.9264164",
+        "cityLogo": "khairabad.png"
+    },
+    "kishangarh": {
+        "latLng": "26.5948983,74.8162661",
+        "cityLogo": "kishangarh logo.png"
+    },
+    "kuchaman": {
+        "latLng": "27.150367,74.85469",
+        "cityLogo": "kuchaman-logo.png"
+    },
+    "losal": {
+        "latLng": "27.3966561,74.9193112",
+        "cityLogo": "losal-logo.jpg"
+    },
+    "sambhar-lake": {
+        "latLng": "26.9131953,75.181218",
+        "cityLogo": "mandal-sambhar-lake.png"
+    },
+    "mapusa-goa": {
+        "latLng": "15.5908594,73.8086133",
+        "cityLogo": "mapusa-goa.png"
+    },
+    "mnz-test": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "malviyanagar. logo.png"
+    },
+    "mpz-test": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "murlipura .logo.png"
+    },
+    "nainwa": {
+        "latLng": "25.773878,75.8630841",
+        "cityLogo": "nainwa-city.png"
+    },
+    "nawa": {
+        "latLng": "27.02355529,75.0051479",
+        "cityLogo": "nawa-city.png"
+    },
+    "noida": {
+        "latLng": "28.5433155,77.3640599",
+        "cityLogo": "noida.png"
+    },
+    "nokha": {
+        "latLng": "27.55713,73.4700985",
+        "cityLogo": "nokha-logo.png"
+    },
+    "pali": {
+        "latLng": "25.7794331,73.3779516",
+        "cityLogo": "pali-logo.png"
+    },
+    "rajsamand": {
+        "latLng": "25.070579,73.8750379",
+        "cityLogo": "rajsamand.png"
+    },
+    "ratangarh": {
+        "latLng": "28.074173,74.595064",
+        "cityLogo": "ratangarh logo.png"
+    },
+    "reengus": {
+        "latLng": "27.369301,75.566200",
+        "cityLogo": "reengus logo.png"
+    },
+    "sanchore": {
+        "latLng": "24.749691,71.7724481",
+        "cityLogo": "Sanchore.png"
+    },
+    "salasar": {
+        "latLng": "27.7186438,74.7206506",
+        "cityLogo": "salasar balaji logo.png"
+    },
+    "sikar": {
+        "latLng": "27.616270,75.152443",
+        "cityLogo": "sikar logo_2x2.png"
+    },
+    "sikar-survey": {
+        "latLng": "27.616270,75.152443",
+        "cityLogo": "sikar logo_2x2.png"
+    },
+    "sonipat": {
+        "latLng": "28.99438060,77.0191231",
+        "cityLogo": "sonipat.png"
+    },
+    "sujangarh": {
+        "latLng": "23.3941437,76.7070692",
+        "cityLogo": "sujangarh.logo.png"
+    },
+    "sujalpur": {
+        "latLng": "27.7066465,74.4631898",
+        "cityLogo": "sujalpur.png"
+    },
+    "sultanpur": {
+        "latLng": "25.2872046,76.0210168",
+        "cityLogo": "sultanpur.png"
+    },
+    "test": {
+        "latLng": "26.165516,75.779292",
+        "cityLogo": "wevois office.png"
+    },
+    "tonk": {
+        "latLng": "26.165516,75.779292",
+        "cityLogo": "tonk logo.png"
+    },
+    "tonk-raj": {
+        "latLng": "26.165516,75.779292",
+        "cityLogo": "tnk.png"
+    },
+    "uniara": {
+        "latLng": "25.9190125,76.0210168",
+        "cityLogo": "uniara.png"
+    },
+    "wevois-others": {
+        "latLng": "26.912434,75.787270",
+        "cityLogo": "wevois other logo.png"
+    }
+}
