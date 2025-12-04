@@ -6,6 +6,15 @@ import {images} from '../../../../assets/css/imagePath'
 import sheetStyles from "../../styles/BottomSheet2.module.css";
 import { startAssignmentAction } from '../../../DutyOn/actions/DutyOnAction';
 
+const shouldOpenMainSheet = (mode, assignedData, selectedVehicle, selectedDriver, selectedHelper) => {
+  const hasAssigned =
+    assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
+
+  if (hasAssigned) return true;
+
+  return mode === "helperConfirmation" || mode === "comingSoon";
+};
+
 const BottomSheet2 = ({isOpen,
   onClose,
   ward,
@@ -61,7 +70,6 @@ const BottomSheet2 = ({isOpen,
     return;
   }
 
-  // Step 4: If user chose WITH helper → open helper sheet
   if (mode === "helper" && !selectedHelper?.Id) {
     return openSheet();
   }
@@ -86,6 +94,18 @@ const BottomSheet2 = ({isOpen,
         onClose()
       }
     }
+
+    if (
+    !shouldOpenMainSheet(
+      mode,
+      assignedData,
+      selectedVehicle,
+      selectedDriver,
+      selectedHelper
+    )
+  ) {
+    return null;
+  }
 
   return (
      <Sheet
