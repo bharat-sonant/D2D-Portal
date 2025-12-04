@@ -287,3 +287,56 @@
     color: #555;
     gap: 5px;
 }
+
+.historyIcon {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: #6b7280;
+    /* default grey */
+}
+
+.historyIcon:hover {
+    transform: scale(1.15);
+    color: #2563eb;
+}
+
+.infoBox {
+    background: #FFF4E5;
+    border: 1px solid #FFD8A8;
+    padding: 12px 14px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 40px auto 0 auto;
+    width: 361px;
+    position: relative;
+}
+
+.infoIconWrapper {
+    color: #F97316;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.infoText {
+    margin: 2px 0 0 0;
+    font-size: 13px;
+    color: #B35300;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.taskNameBox {
+    margin-bottom: 12px;
+    margin-top: -10px;
+}
+
+.taskName {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    font-family: sans-serif;
+}

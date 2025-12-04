@@ -43,7 +43,6 @@ const Task = () => {
     useEffect(() => {
         if (selectedTaskId) {
             getTaskDetail(setSelectedTask, selectedTaskId);
-            getHistory();
         };
     }, [selectedTaskId]);
 

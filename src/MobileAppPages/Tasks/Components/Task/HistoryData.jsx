@@ -1,13 +1,14 @@
 import { Offcanvas } from 'react-bootstrap';
 import style from '../../Styles/HistoryData/HistoryData.module.css';
 import { images } from '../../../../assets/css/imagePath';
-import { Calendar, User, Edit2, Trash2, History } from 'lucide-react';
+import { Calendar, User, Edit2, Trash2, History, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { ActiveInactiveTask } from '../../Action/Task/TaskAction';
 
 const HistoryData = (props) => {
     const [toggle, setToggle] = useState(props.selectedTask?.status === "active");
+    const [showHistory, setShowHistory] = useState(false);
 
     useEffect(() => {
         if (props.selectedTask) {
@@ -19,9 +20,14 @@ const HistoryData = (props) => {
         ActiveInactiveTask(props, setToggle, toggle)
     };
 
+    const getHistoryData = () => {
+        setShowHistory(true);
+        props.getHistory();
+    }
+
     return (
         <>
-            <Offcanvas placement="end" show={props.openCanvas} onHide={props.onHide} className={style.responsiveOffcanvas} style={{ width: "30%" }} >
+            <Offcanvas placement="end" show={props.openCanvas} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "30%" }} >
                 <div className={style.canvas_container} style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
                     <div className={style.OffcanvasHeader}>
                         <h4 className={style.header_title}>Task Settings</h4>
@@ -31,11 +37,13 @@ const HistoryData = (props) => {
                             <img
                                 src={images.iconClose}
                                 className={style.close_popup}
-                                onClick={props.onHide}
+                                onClick={() => { props.onHide(); setShowHistory(false) }}
                                 alt="Close"
                             />
                         </div>
-
+                        <div className={style.taskNameBox}>
+                            <h3 className={style.taskName}>{props.selectedTask?.name || "N/A"}</h3>
+                        </div>
                         <div className={style.taskControlCard}>
                             <div className={style.controlRow}>
                                 <div className={style.statusSection}>
@@ -79,34 +87,44 @@ const HistoryData = (props) => {
 
                         {/* History Section Title */}
                         <div className={style.sectionTitle}>
-                            <History size={18} />
+                            <History size={18} onClick={getHistoryData} className={style.historyIcon} />
                             <h5>Task History</h5>
                         </div>
 
-                        {/* History List */}
-                        <div className={style.historyScroll}>
-                            {props.taskHistory.map((item, index) => (
-                                <div key={index} className={style.historyCard}>
-                                    <div className={style.historyTitle}>
-                                        {item.event}
-                                    </div>
-                                    <div className={style.metaRow}>
-                                        <User size={16} />
-                                        <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>{item.by}</span>
+                        {showHistory ? (
+                            <div className={style.historyScroll}>
+                                {props.taskHistory.map((item, index) => (
+                                    <div key={index} className={style.historyCard}>
+                                        <div className={style.historyTitle}>
+                                            {item.event}
+                                        </div>
+                                        <div className={style.metaRow}>
+                                            <User size={16} />
+                                            <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>{item.by}</span>
 
-                                        <Calendar size={16} style={{ marginLeft: "10px" }} />
-                                        <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
-                                            [{item.at ? dayjs(item.at).format('DD-MMM-YYYY hh:mm A') : 'N/A'}]
-                                        </span>
+                                            <Calendar size={16} style={{ marginLeft: "10px" }} />
+                                            <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
+                                                [{item.at ? dayjs(item.at).format('DD-MMM-YYYY hh:mm A') : 'N/A'}]
+                                            </span>
+                                        </div>
                                     </div>
+                                ))}
+
+                                {props.taskHistory.length === 0 && (
+                                    <p style={{ color: "#777", textAlign: "center" }}>No history found.</p>
+                                )}
+                            </div>
+                        ) : (
+                            <div className={style.infoBox}>
+                                <div className={style.infoIconWrapper}>
+                                    <Info size={18} />
                                 </div>
-                            ))}
 
-                            {props.taskHistory.length === 0 && (
-                                <p style={{ color: "#777", textAlign: "center" }}>No history found.</p>
-                            )}
-                        </div>
-
+                                <div>
+                                    <p className={style.infoText}>Click on the history icon above to view task history.</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                 </div>
