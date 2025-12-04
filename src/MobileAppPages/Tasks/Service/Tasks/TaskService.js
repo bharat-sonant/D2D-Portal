@@ -138,7 +138,8 @@ export const saveTaskHistory = async (
     newName,
     oldName,
     newStatus = null,
-    oldStatus = null
+    oldStatus = null,
+    isDeleted
 ) => {
     try {
         if (!taskId || !dateAndTime || !taskDetailsPath) {
@@ -149,7 +150,7 @@ export const saveTaskHistory = async (
             });
         }
 
-        const historyPath = `${taskDetailsPath}/UpdateHistory`;
+        const historyPath = `TaskData/TaskUpdateHistory/${taskId}`;
 
         const resData = (await db.getData(historyPath)) || { lastKey: 0 };
         const lastKey = resData.lastKey || 0;
@@ -162,7 +163,7 @@ export const saveTaskHistory = async (
             entry = {
                 _at: dateAndTime,
                 _by: "Admin",
-                event: `Task created with name ${newName}`
+                event: `Task created ${newName}`
             };
         }
 
@@ -181,6 +182,15 @@ export const saveTaskHistory = async (
                 _at: dateAndTime,
                 _by: "Admin",
                 event: `Task status changed from ${oldStatus} to ${newStatus}`
+            };
+        }
+
+        // 🔥 CASE 4: TASK DELETED
+        else if (isDeleted === "deleted") {
+            entry = {
+                _at: dateAndTime,
+                _by: "Admin",
+                event: "Task has been deleted"
             };
         }
 
@@ -232,7 +242,7 @@ export const activeInactiveTask = (taskId, status) => {
 };
 
 export const deleteInactiveTask = (taskId) => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         try {
             if (!taskId) {
                 resolve(common.setResponse('fail', "Invalid Params !!!", { taskId }));
@@ -241,6 +251,8 @@ export const deleteInactiveTask = (taskId) => {
 
             let taskPath = `TaskData/Tasks/${taskId}`;
             let detailPath = `TaskData/TaskDetails/${taskId}`;
+
+            await saveTaskHistory(detailPath, taskId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, null, null, 'deleted');
 
             Promise.all([
                 db.removeData(taskPath),
@@ -263,7 +275,7 @@ export const getTaskUpdateHistory = async (taskId) => {
     return new Promise(async (resolve) => {
         try {
             if (taskId) {
-                const path = `TaskData/TaskDetails/${taskId}/UpdateHistory`;
+                const path = `TaskData/TaskUpdateHistory/${taskId}`;
                 const resData = await db.getData(path);
 
                 if (!resData) {
