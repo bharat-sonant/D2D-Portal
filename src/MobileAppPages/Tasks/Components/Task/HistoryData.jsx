@@ -22,12 +22,11 @@ const HistoryData = (props) => {
 
     const getHistoryData = () => {
         setShowHistory(true);
-        props.getHistory();
     }
 
     return (
         <>
-            <Offcanvas placement="end" show={props.openCanvas} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "30%" }} >
+            <Offcanvas placement="end" show={props.openCanvas} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "35%" }} >
                 <div className={style.canvas_container} style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
                     <div className={style.OffcanvasHeader}>
                         <h4 className={style.header_title}>Task Settings</h4>
@@ -81,15 +80,21 @@ const HistoryData = (props) => {
                                             <Trash2 size={18} />
                                         </button>
                                     )}
+                                    <div className={style.sectionTitle}>
+                                        <span title="History Icon">
+                                            <History
+                                                size={18}
+                                                onClick={getHistoryData}
+                                                className={style.historyIcon}
+                                            />
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* History Section Title */}
-                        <div className={style.sectionTitle}>
-                            <History size={18} onClick={getHistoryData} className={style.historyIcon} />
-                            <h5>Task History</h5>
-                        </div>
+
 
                         {showHistory ? (
                             <div className={style.historyScroll}>
