@@ -65,6 +65,10 @@ const TaskList = (props) => {
                       <span className={`${styles.employeeName}`}>
                         {task.name}
                       </span>
+                      <span>
+                        {task.status === 'inactive' && <span className={styles.redDot}></span>}
+                      </span>
+
                     </div>
                   </div>
                 </li>

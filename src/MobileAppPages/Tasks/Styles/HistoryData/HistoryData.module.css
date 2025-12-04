@@ -74,6 +74,185 @@
     gap: 15px;
 }
 
+.historyScroll {
+    max-height: calc(100vh - 260px);
+    /* height adjust as needed */
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+/* Optional: smooth scrollbar */
+.historyScroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.historyScroll::-webkit-scrollbar-thumb {
+    background: #e4e2e2;
+    border-radius: 10px;
+}
+
+
+/* Task Control Card */
+.taskControlCard {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.controlRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.statusSection {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.statusLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.toggleContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Toggle Switch */
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.toggleSwitch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggleSwitch input:checked+.toggleSlider {
+    background-color: #10b981;
+}
+
+.toggleSwitch input:checked+.toggleSlider:before {
+    transform: translateX(24px);
+}
+
+/* Toggle OFF → Red */
+.toggleSwitch input:not(:checked)+.toggleSlider {
+    background-color: #e07f7f;
+    /* soft red */
+}
+
+/* Toggle ball also red outline (optional) */
+.toggleSwitch input:not(:checked)+.toggleSlider:before {
+    background-color: white;
+}
+
+
+.statusText {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.statusText.active {
+    color: #10b981;
+}
+
+.statusText.inactive {
+    color: #e07f7f;
+}
+
+/* Action Buttons */
+.actionButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.editButton,
+.deleteButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editButton {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.editButton:hover {
+    background-color: #bfdbfe;
+}
+
+.deleteButton {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.deleteButton:hover {
+    background-color: #fecaca;
+}
+
+/* Section Title */
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.sectionTitle svg {
+    color: #6b7280;
+}
+
+.sectionTitle h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
 /* HISTORY CARD */
 .historyCard {
     background: #f8f9fb;
