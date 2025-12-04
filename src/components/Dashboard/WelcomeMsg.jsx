@@ -21,11 +21,11 @@ const WelcomeMsg = () => {
         setSessionClass(styles.morningTheme);
       } else if (hours >= 12 && hours < 16) {
         setGreeting("Good Afternoon");
-        setSessionImage(images.iconSunshine);
+        setSessionImage(images.iconSunShine);
         setSessionClass(styles.afternoonTheme);
       } else if (hours >= 16 && hours < 20) {
         setGreeting("Good Evening");
-        setSessionImage(images.iconSunset);
+        setSessionImage(images.iconSunSet);
         setSessionClass(styles.eveningTheme);
       } else {
         setGreeting("Good Night");

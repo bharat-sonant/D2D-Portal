@@ -17,11 +17,6 @@ import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 
 const RouterComponent = () => {
-
-
-  const loginStatus = localStorage.getItem("islogin");
-  const loggedInempCode = localStorage.getItem("empCode");
-
   const location = useLocation();
   const navigate = useNavigate();
 

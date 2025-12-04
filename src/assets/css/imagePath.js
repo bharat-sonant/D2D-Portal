@@ -1,6 +1,8 @@
 export const images = {
   iconSunrise: require("../images/icons/iconSunrise.png"),
-
+  iconSunShine: require('../images/icons/iconSunshine.png'),
+  iconSunSet:require('../images/icons/iconSunset.png'),
+  iconNight: require('../images/icons/iconNight.png'),
   defaultLogo: require("../images/wevoisLogo.png"),
   wevoisLogo: require("../images/wevoisLogo.png"),
   imgComingSoon: require("../images/imgComingSoon.png"),
