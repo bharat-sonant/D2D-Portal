@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import TaskDetails from "../../Components/Task/TaskDetails";
 import * as firebaseService from '../../../../firebase/firebaseService';
 import * as dbConfig from '../../../../configurations/cityDBConfig';
-import { getHistoryData, getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
+import { deleteTask, getHistoryData, getTaskDetail, getTasks } from "../../Action/Task/TaskAction";
 import { LucideSettings } from "lucide-react";
 import HistoryData from "../../Components/Task/HistoryData";
+import DeleteConfirmation from "../../Components/DeleteConfirmation/DeleteConfirmation";
 
 const Task = () => {
     const [showCanvas, setShowCanvas] = useState(false);
@@ -20,6 +21,8 @@ const Task = () => {
     const [displayName, setDisplayName] = useState('');
     const [openCanvas, setOpenCanvas] = useState(false);
     const [taskHistory, setTaskHistory] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const city = localStorage.getItem('city') || "DevTest";
 
     useEffect(() => {
@@ -56,10 +59,11 @@ const Task = () => {
         setSelectedTaskId(task.taskId);
     };
 
-    const handleClickEdit = (item) => {
+    const handleClickEdit = () => {
+        setOpenCanvas(false);
         setShowCanvas(true);
-        setTaskId(item.taskId);
-        setDisplayName(item.name);
+        setTaskId(selectedTask.taskId);
+        setDisplayName(selectedTask.name);
     };
 
     const openOffCanvasModal = () => {
@@ -69,6 +73,21 @@ const Task = () => {
     const onHideCanvas = () => {
         setOpenCanvas(false)
     }
+
+    const handleDelete = () => {
+        setOpenCanvas(false);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        deleteTask(
+            selectedTask?.taskId,
+            setTaskList,
+            setShowDeleteModal,
+            setSelectedTaskId,
+            setSelectedTask
+        );
+    };
 
     return (
         <>
@@ -108,7 +127,6 @@ const Task = () => {
                             <TaskDetails
                                 selectedTaskId={selectedTaskId}
                                 selectedTask={selectedTask}
-                                onEditClick={handleClickEdit}
                                 setSelectedTask={setSelectedTask}
                                 setTaskList={setTaskList}
                                 setSelectedTaskId={setSelectedTaskId}
@@ -135,6 +153,21 @@ const Task = () => {
                 openCanvas={openCanvas}
                 onHide={onHideCanvas}
                 taskHistory={taskHistory}
+                onEditClick={handleClickEdit}
+                handleDelete={handleDelete}
+                selectedTask={selectedTask}
+                setSelectedTask={setSelectedTask}
+                setTaskList={setTaskList}
+                setSelectedTaskId={setSelectedTaskId}
+                getHistory={getHistory}
+
+            />
+
+            <DeleteConfirmation
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
+                itemName={selectedTask?.name || "this task"}
             />
         </>
     )
