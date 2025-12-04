@@ -62,6 +62,15 @@ const HistoryData = (props) => {
                                 </div>
 
                                 <div className={style.actionButtons}>
+                                    <div className={style.sectionTitle}>
+                                        <span title="History Icon">
+                                            <History
+                                                size={18}
+                                                onClick={getHistoryData}
+                                                className={style.historyIcon}
+                                            />
+                                        </span>
+                                    </div>
                                     {toggle && (
                                         <button
                                             className={style.editButton}
@@ -80,15 +89,6 @@ const HistoryData = (props) => {
                                             <Trash2 size={18} />
                                         </button>
                                     )}
-                                    <div className={style.sectionTitle}>
-                                        <span title="History Icon">
-                                            <History
-                                                size={18}
-                                                onClick={getHistoryData}
-                                                className={style.historyIcon}
-                                            />
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
