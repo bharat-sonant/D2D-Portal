@@ -6,14 +6,14 @@ import {images} from '../../../../assets/css/imagePath'
 import sheetStyles from "../../styles/BottomSheet2.module.css";
 import { startAssignmentAction } from '../../../DutyOn/actions/DutyOnAction';
 
-const shouldOpenMainSheet = (mode, assignedData, selectedVehicle, selectedDriver, selectedHelper) => {
-  const hasAssigned =
-    assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
+// const shouldOpenMainSheet = (mode, assignedData, selectedVehicle, selectedDriver, selectedHelper) => {
+//   const hasAssigned =
+//     assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
 
-  if (hasAssigned) return true;
+//   if (hasAssigned) return true;
 
-  return mode === "helperConfirmation" || mode === "comingSoon";
-};
+//   return mode === "helperConfirmation" || mode === "comingSoon";
+// };
 
 const BottomSheet2 = ({isOpen,
   onClose,
@@ -40,31 +40,20 @@ const BottomSheet2 = ({isOpen,
   const hasAssigned =
     assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
 
-  // -----------------------
-  // CASE 1 — ASSIGNED DATA
-  // -----------------------
   if (hasAssigned) {
-    // We do NOT auto navigate, we only show confirmation UI
     return;
   }
 
-  // -----------------------
-  // CASE 2 — FRESH TASK
-  // -----------------------
-
-  // Step 1: Vehicle selection
   if (!selectedVehicle) {
     setMode("vehicle");
     return openSheet();
   }
 
-  // Step 2: Driver selection
   if (!selectedDriver?.Id) {
     setMode("driver");
     return openSheet();
   }
 
-  // Step 3: Ask with or without helper
   if (!selectedHelper?.Id && mode !== "helperConfirmation" && mode !== 'comingSoon' && mode !== 'helper') {
     setMode("helperConfirmation");
     return;
@@ -74,8 +63,6 @@ const BottomSheet2 = ({isOpen,
     return openSheet();
   }
 
-  // Step 5: If WITHOUT helper → go to confirmation
-  // This is handled by UI setting mode = "comingSoon"
 }, [
   isOpen,
   loading,
@@ -95,17 +82,17 @@ const BottomSheet2 = ({isOpen,
       }
     }
 
-    if (
-    !shouldOpenMainSheet(
-      mode,
-      assignedData,
-      selectedVehicle,
-      selectedDriver,
-      selectedHelper
-    )
-  ) {
-    return null;
-  }
+  //   if (
+  //   !shouldOpenMainSheet(
+  //     mode,
+  //     assignedData,
+  //     selectedVehicle,
+  //     selectedDriver,
+  //     selectedHelper
+  //   )
+  // ) {
+  //   return null;
+  // }
 
   return (
      <Sheet
