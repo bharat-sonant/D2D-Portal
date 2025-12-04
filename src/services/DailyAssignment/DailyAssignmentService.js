@@ -1,6 +1,5 @@
 import * as db from '../dbServices';
 import * as common from '../../common/common';
-import dayjs from 'dayjs';
 import moment from 'moment';
 
 const failStatus = "Fail";

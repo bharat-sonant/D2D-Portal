@@ -24,7 +24,25 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const titleToShow = customTitle || "D2D PORTAL";
   const profileImage = ""
   const city = useCity();
+  const [cityLogo, setCityLogo] = useState(images.wevoisLogo)
   const logoPath = getCityLogo(city.city);
+
+  useEffect(()=>{
+    if(!city.city) return;
+
+    const logoUrl = getCityLogo(city.city);
+
+    const img = new Image();
+    img.src = logoUrl;
+
+    img.onload = () => {
+      setCityLogo(logoUrl)
+    }
+
+    img.onerror = () => {
+      setCityLogo(images.wevoisLogo)
+    }
+  },[city.city])
 
 
   useEffect(() => {
@@ -198,14 +216,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
 
          {city && (
           <div className={styles.cityBadge}>
-            <img
-              src={logoPath}
-              alt={`${city} logo`}
-              className={styles.cityLogo}
-              onError={(e) => {
-                e.target.src = images.wevoisLogo;  // fallback
-              }}
-            />
+            <img src={cityLogo} className={styles.cityLogo} alt="city logo" />
             <span className={styles.cityName}>{city.city}</span>
           </div>
         )}
