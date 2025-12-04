@@ -21,7 +21,6 @@ const DutyOff = () => {
   const getDetails = async(ward) => {
     await getDutyOffDetails(ward, setDetails);
   }
-console.log('details',details)
 
    const handleBack = () => {
     const isAndroid = /Android/i.test(navigator.userAgent);

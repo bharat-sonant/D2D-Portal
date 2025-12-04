@@ -38,6 +38,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import globleStyles from "./assets/css/globleStyles.module.css";
 import "../src/assets/css/style.css";
+import { CityProvider } from './context/CityContext';
 
 function AppWrapper() {
   const location = useLocation();
@@ -70,6 +71,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <BrowserRouter>
-    <AppWrapper />
+    <CityProvider>
+      <AppWrapper />
+    </CityProvider>
   </BrowserRouter>
 );

@@ -31,7 +31,6 @@ export const startAssignmentAction = async (selectedVehicle, ward, driverId,driv
   try {
     setIsSaving(true)
     const result = await startAssignment(selectedVehicle, ward, driverId,driverDeviceId, helperId, helperDeviceId,city , user);
-    console.log('result',result)
      if (result.status === "success") {
       common.setAlertMessage("success", result.message);
     } else {
