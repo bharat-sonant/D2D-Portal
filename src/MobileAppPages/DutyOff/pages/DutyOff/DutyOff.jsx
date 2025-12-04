@@ -75,17 +75,12 @@ console.log('details',details)
 
           <div className={styles.detailRow}>
             <span className={styles.label}>Driver:</span>
-            <span className={styles.value}>{details.driver || "N/A"}</span>
+            <span className={styles.value}>{details.driverId ? `${details.driverName}-(${details.driverId})` : "N/A"}</span>
           </div>
 
           <div className={styles.detailRow}>
             <span className={styles.label}>Helper:</span>
-            <span className={styles.value}>{details.helper || "N/A"}</span>
-          </div>
-
-          <div className={styles.detailRow}>
-            <span className={styles.label}>Assigned At:</span>
-            <span className={styles.value}>{details.assignedAt || "N/A"} </span>
+            <span className={styles.value}>{details.helperId ? `${details.helperName}-(${details.helperId})` : "N/A"}</span>
           </div>
         </div>
 

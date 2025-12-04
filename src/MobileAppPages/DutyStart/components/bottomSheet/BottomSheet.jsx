@@ -80,10 +80,18 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
     else if (mode === "helper") {
       setSelectedHelper(item);
       setMode('comingSoon')
-      onClose(); // last step
+      onClose();
     }
 
   };
+
+  const isSelected = (item) => {
+    if (mode === "vehicle") return item === selectedVehicle;
+    if (mode === "driver") return item?.Id === selectedDriver?.Id;
+    if (mode === "helper") return item?.Id === selectedHelper?.Id;
+    return false;
+  };
+
   return (
      <Sheet
           isOpen={isOpen}
@@ -121,10 +129,6 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
                   <ul className={sheetStyles.vehicleList}>
                     {filteredItems?.length > 0 ? (
                       filteredItems.map((item, index) => {
-                        const isSelected =
-                      (mode === "vehicle" && item === selectedVehicle) ||
-                      (mode === "driver" && item.Id === selectedDriver?.Id) ||
-                      (mode === "helper" && item.Id === selectedHelper?.Id);
                         return (
                           <li
                             key={index}
@@ -135,7 +139,7 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
                           >
                             <span>{getDisplayName(item) || "N/A"}</span>
 
-                            {isSelected && (
+                            {isSelected(item) && (
                               <Check
                                 size={18}
                                 color="#22c55e"

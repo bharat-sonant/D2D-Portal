@@ -341,9 +341,9 @@ const saveHelperAssignment = async(selectedHelper, ward, selectedVehicle) => {
 const saveWorkAssignment = async(ward, selectedVehicle, selectedDriver, selectedHelper) => {
   const workAssignmentPath = `AssignmentData/WorkAssignment/${ward}`
       const workAssignmentPayload = {
-        driver: selectedDriver.Id,
+        driverId: selectedDriver.Id,
         driverName: selectedDriver.name,
-        helper: selectedHelper.Id,
+        helperId: selectedHelper.Id,
         helperName: selectedHelper.name,
         vehicle: selectedVehicle
       }
