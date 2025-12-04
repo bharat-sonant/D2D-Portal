@@ -21,7 +21,7 @@
 }
 
 .name {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
     color: #1a1a1a;
     font-family: sans-serif;
@@ -162,8 +162,8 @@
 
 .taskIdBadge {
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 18px;
+    right: 16px;
     background: #f0f0f0;
     color: #333;
     font-size: 12px;

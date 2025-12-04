@@ -50,16 +50,16 @@ const TaskDetails = (props) => {
                 <div className={styles.taskIdBadge}>
                     {props.selectedTask.taskId}
                 </div>
-                <div className={styles.header}>
+                {/* <div className={styles.header}> */}
                     <div className={styles.headerLeft}>
                         <h2 className={styles.name}>{name || 'N/A'}</h2>
-                        <p className={styles.createdBy}>Created by: {_by || 'Unknown'}</p>
+                        {/* <p className={styles.createdBy}>Created by: {_by || 'Unknown'}</p>
                         <p className={styles.createdAt}>
                             Created at: {_at ? dayjs(_at).format('DD-MMM-YYYY') : 'N/A'}
-                        </p>
+                        </p> */}
                     </div>
 
-                    <div className={styles.actions}>
+                    {/* <div className={styles.actions}>
                         {toggle && (
                             <button
                                 className={`${styles.iconButton} ${styles.editIcon}`}
@@ -78,10 +78,10 @@ const TaskDetails = (props) => {
                                 <RiDeleteBin6Fill />
                             </button>
                         )}
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
 
-                <div className={styles.statusSection}>
+                {/* <div className={styles.statusSection}>
                     <span
                         className={`${styles.statusLabel} ${toggle ? styles.activeText : styles.inactiveText}`}
                     >
@@ -94,7 +94,7 @@ const TaskDetails = (props) => {
                     >
                         <div className={styles.toggleSlider}></div>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <DeleteConfirmation
