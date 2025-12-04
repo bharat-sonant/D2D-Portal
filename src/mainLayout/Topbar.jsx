@@ -1,31 +1,23 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaTasks } from "react-icons/fa";
 import {  LucideUserRoundCheck } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
-import { cityLogos } from "../assets/images/cityLogos";
 import { getCityLogo } from "../services/logoServices";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
   const storedImage = localStorage.getItem("profileImage");
   const storedName = localStorage.getItem("name");
-  const isOwner = localStorage.getItem("isOwner");
-  const isLoginAsUser = localStorage.getItem("loginAsUser") === "true";
-  const isOwnerUser = isOwner === "Yes";
-  const shouldShowRed = isLoginAsUser && !isOwnerUser;
   const logoToShow = customLogo || images.wevoisLogo;
   const titleToShow = customTitle || "D2D PORTAL";
-  const profileImage = ""
   const city = useCity();
   const [cityLogo, setCityLogo] = useState(images.wevoisLogo)
-  const logoPath = getCityLogo(city.city);
 
   useEffect(()=>{
     if(!city.city) return;
@@ -60,25 +52,6 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
       console.log("Name not found in local storage");
     }
   }, [storedName]);
-
-  const handleLogout = () => {
-    localStorage.setItem("islogin", "Fail");
-    localStorage.removeItem("name");
-    localStorage.removeItem("isOwner");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("loginDate");
-    localStorage.removeItem("lastPath");
-    localStorage.removeItem("empCode");
-    localStorage.removeItem("company");
-    localStorage.removeItem("branchCode");
-    localStorage.removeItem("profileImage");
-    localStorage.removeItem("companyEmail");
-    localStorage.removeItem("loginAsUser");
-    setTimeout(() => {
-      navigate("/");
-    }, 100);
-    console.log("Handle Logout");
-  };
 
   //Navnar Customization js
   const [navbarStyle, setNavbarStyle] = useState({
