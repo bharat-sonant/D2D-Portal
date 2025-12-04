@@ -9,15 +9,19 @@ const TaskDetails = (props) => {
     return (
         <>
             <div className={styles.card}>
-                <div className={styles.taskIdBadge}>
-                    {props.selectedTask.taskId}
-                </div>
-                <div className={styles.headerLeft}>
-                    <h2 className={styles.name}>{name || 'N/A'}</h2>
+                <div className={styles.headerRow}>
+                    <span className={styles.taskIdBadge}>
+                        {props.selectedTask.taskId}
+                    </span>
+
+                    <h2 className={styles.name}>
+                        {name || 'N/A'}
+                    </h2>
                 </div>
             </div>
         </>
     );
+
 };
 
 export default TaskDetails;

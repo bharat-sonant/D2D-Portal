@@ -55,20 +55,24 @@ const HistoryData = (props) => {
                                 </div>
 
                                 <div className={style.actionButtons}>
-                                    <button
-                                        className={style.editButton}
-                                        onClick={props.onEditClick}
-                                        title="Edit Task"
-                                    >
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button
-                                        className={style.deleteButton}
-                                        onClick={props.handleDelete}
-                                        title="Delete Task"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    {toggle && (
+                                        <button
+                                            className={style.editButton}
+                                            onClick={props.onEditClick}
+                                            title="Edit Task"
+                                        >
+                                            <Edit2 size={18} />
+                                        </button>
+                                    )}
+                                    {!toggle && (
+                                        <button
+                                            className={style.deleteButton}
+                                            onClick={props.handleDelete}
+                                            title="Delete Task"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
