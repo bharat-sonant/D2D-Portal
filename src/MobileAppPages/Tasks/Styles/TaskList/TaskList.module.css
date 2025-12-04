@@ -8,6 +8,16 @@
     height: calc(100vh - 60px);
 }
 
+.redDot {
+    width: 5px;
+    height: 5px;
+    background-color: rgb(255, 138, 138);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+
 .ExpenseReviewerList {
     width: 100%;
     display: flex;
