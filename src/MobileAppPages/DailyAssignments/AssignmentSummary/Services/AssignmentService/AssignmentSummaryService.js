@@ -94,66 +94,22 @@ export const checkDailyAssignmentSummaryData = async() => {
 
 const pushDataInDailyAssignmentSummary = () => {
     return new Promise(async(resolve) => {
-        await db.getData(`TaskData/Task`)
-            .then(async (resp) => {
-                if (resp !== null) {
-                    const year = dayjs().format("YYYY");
-                    const month = dayjs().format("MMMM");
-                    const date = dayjs().format("YYYY-MM-DD");
-                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task/NotAssigned`;
-                    const converted = {};
-                    resp.forEach((item, index) => {
-                        converted[index] = item;
-                    });
-
-                    const result = await db.saveData(summaryTaskPath, converted);
-
-                    resolve(common.setResponse("success", "TaskData saved successfully in DailyAssignmentSummary", result));
-                } else {
-                    resolve(common.setResponse("fail", "No TaskData found !!!", {}));
-                }
-            })
-            .catch((err) => {
-                console.log("Error occuring while saving/fetching: ", err);
-                resolve(common.setResponse("fail", "No TaskData found !!!", {}));
-            });
-    });
-};
-
-export const checkDailyAssignmentDetails = async() => {
-    return new Promise(async(resolve)=> {
-        try{
-            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
-            const path = `AssignmentData/DailyAssignmentDetails/${year}/${monthName}/${date}/Task`
-
-            const response = await db.getData(path);
-            if (response !== null && response !== undefined) {
-            resolve ({ success: true, data: response });
-        } else {
-            await pushDataInDailyAssignmentDetails();
-            resolve ({ success: false });
-        };
-    } catch (error) {
-        resolve ({ success: false, error: error.message });
-    };
-    })
-}
-
-const pushDataInDailyAssignmentDetails = () => {
-    return new Promise(async(resolve) => {
         await db.getData(`TaskData/Tasks`)
             .then(async (resp) => {
                 if (resp !== null) {
+                    console.log('fdsf')
                     const year = dayjs().format("YYYY");
                     const month = dayjs().format("MMMM");
                     const date = dayjs().format("YYYY-MM-DD");
-                    const summaryTaskPath = `AssignmentData/DailyAssignmentDetails/${year}/${month}/${date}/Task`;
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task`;
                     const converted = {};
-
                     Object.keys(resp).forEach((key)=>{
-                        converted[key] = resp[key]?.name || null;
+                        if (resp[key]?.status === 'active') {      // only active tasks
+                            converted[key] = resp[key]?.name || null;
+                        }
                     })
                     const result = await db.saveData(summaryTaskPath, {NotAssigned : converted});
+
                     resolve(common.setResponse("success", "TaskData saved successfully in DailyAssignmentSummary", result));
                 } else {
                     resolve(common.setResponse("fail", "No TaskData found !!!", {}));
