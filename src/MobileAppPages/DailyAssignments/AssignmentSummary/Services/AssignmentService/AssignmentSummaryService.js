@@ -9,7 +9,7 @@ export const getAllWards = async () => {
             const year = dayjs().format('YYYY');
             const month = dayjs().format('MMMM');
             const date = dayjs().format('YYYY-MM-DD');
-            let basePath = `AssignmentData/DailyAssignmentDetails/${year}/${month}/${date}/Task`;
+            let basePath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task`;
 
             // all three paths
             const paths = [
@@ -97,7 +97,6 @@ const pushDataInDailyAssignmentSummary = () => {
         await db.getData(`TaskData/Tasks`)
             .then(async (resp) => {
                 if (resp !== null) {
-                    console.log('fdsf')
                     const year = dayjs().format("YYYY");
                     const month = dayjs().format("MMMM");
                     const date = dayjs().format("YYYY-MM-DD");
