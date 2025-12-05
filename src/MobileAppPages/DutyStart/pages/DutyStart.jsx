@@ -120,6 +120,9 @@ import BottomSheet2 from '../components/bottomSheet/BottomSheet2';
           <BottomSheet
           isOpen={sheetOpen}
           onClose={closeSheet}
+          openSheet={openSheet2}
+          closeSheet={closeSheet2}
+          assignedData={assignedData}
           mode={mode}
           setMode={setMode}
           selectedDriver={selectedDriver}

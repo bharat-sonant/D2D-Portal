@@ -5,7 +5,7 @@ import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
 import { getActiveDrivers, getActiveHelpers, getAllActiveVehicles } from '../../../services/DutyStartService/DutyStart';
 
-const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelectedDriver, selectedVehicle, setSelectedVehicle, selectedHelper, setSelectedHelper }) => {
+const BottomSheet = ({ isOpen, onClose,openSheet, closeSheet, assignedData, mode, setMode, selectedDriver, setSelectedDriver, selectedVehicle, setSelectedVehicle, selectedHelper, setSelectedHelper }) => {
   const [loading, setLoading] = useState(false)
   const [vehicles, setVehicles] = useState([])
   const [drivers, setDrivers] = useState([]);
@@ -15,7 +15,7 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
 
   useEffect(() => {
     if(!isOpen) return;
-
+console.log(mode)
     if(mode === 'vehicle') fetchVehicles();
     if(mode === 'driver') fetchDrivers();
     if(mode === 'helper') fetchHelpers();
@@ -64,26 +64,44 @@ const BottomSheet = ({ isOpen, onClose, mode, setMode, selectedDriver, setSelect
 return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toLowerCase()));
   }, [items, searchTerm, mode]);
 
-  const handleSelect = (item) => {
-   if (mode === "vehicle") {
-      setSelectedVehicle(item);
+const handleSelect = (item) => {
+  const hasAssigned = assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
+
+  // VEHICLE
+  if (mode === "vehicle") {
+    setSelectedVehicle(item);
+
+    if (hasAssigned) {
       setMode("driver");
-      onClose();
+      return onClose();     // only close select sheet
     }
 
-    else if (mode === "driver") {
-      setSelectedDriver(item);
-      setMode("helperConfirmation");
-      onClose();
+    setMode("driver");
+    return closeSheet();    // close small sheet & main remains
+  }
+
+  // DRIVER
+  if (mode === "driver") {
+    setSelectedDriver(item);
+openSheet();
+    setMode("helperConfirmation");
+    return onClose();
+  }
+
+  // HELPER
+  if (mode === "helper") {
+    setSelectedHelper(item);
+
+    if (hasAssigned) {
+      setMode("comingSoon");
+      return onClose();
     }
 
-    else if (mode === "helper") {
-      setSelectedHelper(item);
-      setMode('comingSoon')
-      onClose();
-    }
+    setMode("comingSoon");
+    return closeSheet();
+  }
+};
 
-  };
 
   const isSelected = (item) => {
     if (mode === "vehicle") return item === selectedVehicle;
@@ -91,6 +109,30 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
     if (mode === "helper") return item?.Id === selectedHelper?.Id;
     return false;
   };
+
+ const handleBack = () => {
+  const hasAssigned = assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
+
+  // If assigned exists → just close picker, don’t reset
+  if (hasAssigned) return onClose();
+
+  // If no assigned → go back one step + close
+  if (mode === "helper") {
+    setMode("helperConfirmation");
+    return onClose();
+  }
+
+  if (mode === "driver") {
+    setMode("vehicle");
+    return closeSheet();
+  }
+
+  if (mode === "vehicle") {
+    return closeSheet(); // first level → just close
+  }
+};
+
+
 
   return (
      <Sheet
@@ -105,7 +147,7 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
             <Sheet.Content>
               <div
                 className={sheetStyles.btnback}
-                onClick={onClose}
+                onClick={handleBack}
               >
                 <ArrowLeft/>
               </div> 
