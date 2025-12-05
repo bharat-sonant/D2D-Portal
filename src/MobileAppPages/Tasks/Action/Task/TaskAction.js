@@ -43,10 +43,16 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
                         ...prev
                     ];
                 }
-                return updatedList.sort((a, b) =>
-                    a.name.localeCompare(b.name)
-                );
+
+                return updatedList.sort((a, b) => {
+                    const weight = (status) => (status === "inactive" ? 1 : 0);
+                    if (weight(a.status) !== weight(b.status)) {
+                        return weight(a.status) - weight(b.status);
+                    }
+                    return a.name.localeCompare(b.name);
+                });
             });
+
 
             if (taskId) {
                 setSelectedTask((prev) => ({
