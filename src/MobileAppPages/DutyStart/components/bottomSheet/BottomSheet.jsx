@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import sheetStyles from '../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css'; 
 import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
@@ -103,12 +103,12 @@ return items.filter(i => getDisplayName(i).toLowerCase().includes(searchTerm.toL
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
-              {/* <div
-                className={sheetStyles.btnClose}
+              <div
+                className={sheetStyles.btnback}
                 onClick={onClose}
               >
-                Close
-              </div> */}
+                <ArrowLeft/>
+              </div> 
               {loading ? (
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>

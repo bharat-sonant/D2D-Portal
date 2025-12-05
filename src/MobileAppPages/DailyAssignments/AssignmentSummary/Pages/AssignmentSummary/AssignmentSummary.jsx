@@ -24,7 +24,6 @@ const AssignmentSummary = () => {
         setLoading(true);
 
         // Step 1: Ensure all daily assignment base data is created
-        // await checkDailyAssignmentDetails();
         await checkDailyAssignmentSummaryData();
         await checkDailyAssignmentVehicleData();
         await checkDailyAssignmentDriverData();

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 // import sheetStyles from '../../../DailyAssignments/StartAssignment/components/VehiclesDropdown/VehicleSheet.module.css'; 
 import { Sheet } from 'react-modal-sheet';
 import {images} from '../../../../assets/css/imagePath'
@@ -93,6 +93,26 @@ const BottomSheet2 = ({isOpen,
   //   return null;
   // }
 
+  const handleBack = () => {
+    if(mode === 'driver'){
+      setSelectedVehicle('')
+      return setMode('vehicle')
+    }
+    if(mode === 'helperConfirmation'){
+      setSelectedDriver(null)
+      return setMode('driver')
+    }
+    if(mode === 'helper'){
+      return setMode('helperConfirmation')
+    }
+    if(mode === 'comingSoon'){
+      if(selectedHelper?.Id){
+        return setMode('helper')
+      }
+      return setMode('helperConfirmation')
+    }
+  }
+
   return (
      <Sheet
           isOpen={isOpen}
@@ -104,6 +124,12 @@ const BottomSheet2 = ({isOpen,
           <Sheet.Container>
             <Sheet.Header />
             <Sheet.Content>
+              <div
+                className={sheetStyles.btnback}
+                onClick={handleBack}
+              >
+                {mode !== 'vehicle' && <ArrowLeft/>}
+              </div> 
               {loading ? (
                 <div className={sheetStyles.loadingContainer}>
                   <div className={sheetStyles.loader}></div>

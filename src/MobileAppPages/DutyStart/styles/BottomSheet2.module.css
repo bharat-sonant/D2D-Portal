@@ -175,6 +175,30 @@
   background: #00a300;
 }
 
+.btnback {
+  cursor: pointer;
+  position: absolute;
+    margin-top: -34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+    left: 12px;
+    gap: 5px;
+    font-size: 12px;
+    font-family: var(--fontGraphikMedium);
+    text-transform: uppercase;
+    padding: 3px 5px;
+    color: #000000;
+    letter-spacing: 0.5px;
+  &:hover {
+    .iconClose {
+      filter: brightness(0) saturate(100%) invert(22%) sepia(93%)
+        saturate(5314%) hue-rotate(354deg) brightness(91%) contrast(123%);
+    }
+  }
+}
+
 .submitButton {
   width: 100%;
   max-width: 400px;
