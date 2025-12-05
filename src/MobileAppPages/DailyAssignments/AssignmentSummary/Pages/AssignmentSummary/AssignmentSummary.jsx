@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getCityFirebaseConfig } from '../../../../../configurations/cityDBConfig';
 import { connectFirebase } from '../../../../../firebase/firebaseService';
 import * as action from '../../Action/AssignmentSummary/AssignmentSummaryAction';
-import { checkDailyAssignmentDriverData, checkDailyAssignmentHelperData, checkDailyAssignmentSummaryData, checkDailyAssignmentVehicleData } from '../../Services/AssignmentService/AssignmentSummaryService'
+import { checkDailyAssignmentDetails, checkDailyAssignmentDriverData, checkDailyAssignmentHelperData, checkDailyAssignmentSummaryData, checkDailyAssignmentVehicleData } from '../../Services/AssignmentService/AssignmentSummaryService'
 
 const AssignmentSummary = () => {
     const location = useLocation();
@@ -24,6 +24,7 @@ const AssignmentSummary = () => {
         setLoading(true);
 
         // Step 1: Ensure all daily assignment base data is created
+        await checkDailyAssignmentDetails();
         await checkDailyAssignmentSummaryData();
         await checkDailyAssignmentVehicleData();
         await checkDailyAssignmentDriverData();

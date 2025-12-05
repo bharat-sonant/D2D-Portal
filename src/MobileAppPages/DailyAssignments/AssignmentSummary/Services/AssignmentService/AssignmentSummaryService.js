@@ -9,7 +9,7 @@ export const getAllWards = async () => {
             const year = dayjs().format('YYYY');
             const month = dayjs().format('MMMM');
             const date = dayjs().format('YYYY-MM-DD');
-            let basePath = `AssignmentData/DailyAssignmentSummary/${year}/${month}/${date}/Task`;
+            let basePath = `AssignmentData/DailyAssignmentDetails/${year}/${month}/${date}/Task`;
 
             // all three paths
             const paths = [
@@ -23,7 +23,6 @@ export const getAllWards = async () => {
                 db.getData(paths[1]),
                 db.getData(paths[2]),
             ]);
-
 
       const notAssigned = notAssignedData ? Object.values(notAssignedData) : [];
       const inProgress = inProgressData ? Object.values(inProgressData) : [];
@@ -109,6 +108,52 @@ const pushDataInDailyAssignmentSummary = () => {
 
                     const result = await db.saveData(summaryTaskPath, converted);
 
+                    resolve(common.setResponse("success", "TaskData saved successfully in DailyAssignmentSummary", result));
+                } else {
+                    resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+                }
+            })
+            .catch((err) => {
+                console.log("Error occuring while saving/fetching: ", err);
+                resolve(common.setResponse("fail", "No TaskData found !!!", {}));
+            });
+    });
+};
+
+export const checkDailyAssignmentDetails = async() => {
+    return new Promise(async(resolve)=> {
+        try{
+            const { year, monthName, date, time, formattedDate } = getDateTimeDetails();
+            const path = `AssignmentData/DailyAssignmentDetails/${year}/${monthName}/${date}/Task`
+
+            const response = await db.getData(path);
+            if (response !== null && response !== undefined) {
+            resolve ({ success: true, data: response });
+        } else {
+            await pushDataInDailyAssignmentDetails();
+            resolve ({ success: false });
+        };
+    } catch (error) {
+        resolve ({ success: false, error: error.message });
+    };
+    })
+}
+
+const pushDataInDailyAssignmentDetails = () => {
+    return new Promise(async(resolve) => {
+        await db.getData(`TaskData/Tasks`)
+            .then(async (resp) => {
+                if (resp !== null) {
+                    const year = dayjs().format("YYYY");
+                    const month = dayjs().format("MMMM");
+                    const date = dayjs().format("YYYY-MM-DD");
+                    const summaryTaskPath = `AssignmentData/DailyAssignmentDetails/${year}/${month}/${date}/Task`;
+                    const converted = {};
+
+                    Object.keys(resp).forEach((key)=>{
+                        converted[key] = resp[key]?.name || null;
+                    })
+                    const result = await db.saveData(summaryTaskPath, {NotAssigned : converted});
                     resolve(common.setResponse("success", "TaskData saved successfully in DailyAssignmentSummary", result));
                 } else {
                     resolve(common.setResponse("fail", "No TaskData found !!!", {}));
