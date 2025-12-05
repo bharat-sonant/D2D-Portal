@@ -118,7 +118,7 @@ const HistoryData = (props) => {
 
                                                 <Calendar size={16} style={{ marginLeft: "10px" }} />
                                                 <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
-                                                    [{item.at ? dayjs(item.at).format('DD-MMM-YYYY hh:mm A') : 'N/A'}]
+                                                    [{item.at ? dayjs(item.at).format('DD MMM, YYYY hh:mm A') : 'N/A'}]
                                                 </span>
                                             </div>
                                         </div>
