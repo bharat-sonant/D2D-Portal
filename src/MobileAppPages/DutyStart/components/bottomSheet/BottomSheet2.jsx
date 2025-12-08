@@ -42,6 +42,7 @@ const BottomSheet2 = ({isOpen,
   if (hasAssigned) {
     return;
   }
+  console.log(mode, 'small sheet')
 
   if (!selectedVehicle) {
     setMode("vehicle");
@@ -93,25 +94,53 @@ const BottomSheet2 = ({isOpen,
   //   return null;
   // }
 
+  // const handleBack = () => {
+  //   if(mode === 'driver'){
+  //     setSelectedVehicle('')
+  //     return setMode('vehicle')
+  //   }
+  //   if(mode === 'helperConfirmation'){
+  //     setSelectedDriver(null)
+  //     return setMode('driver')
+  //   }
+  //   if(mode === 'helper'){
+  //     setMode('helperConfirmation')
+  //     return openSheet()
+  //   }
+  //   if(mode === 'comingSoon'){
+  //     if(selectedHelper?.Id){
+  //       setMode('helper')
+  //       onClose();
+  //       return openSheet();
+  //     }
+  //     setMode('helperConfirmation')
+  //     return closeSheet();
+  //   }
+  // }
+
   const handleBack = () => {
-    if(mode === 'driver'){
-      setSelectedVehicle('')
-      return setMode('vehicle')
-    }
-    if(mode === 'helperConfirmation'){
-      setSelectedDriver(null)
-      return setMode('driver')
-    }
-    if(mode === 'helper'){
-      return setMode('helperConfirmation')
-    }
-    if(mode === 'comingSoon'){
-      if(selectedHelper?.Id){
-        return setMode('helper')
-      }
-      return setMode('helperConfirmation')
-    }
+  if(mode === 'driver'){
+    setSelectedVehicle('')
+    return setMode('vehicle')
   }
+  if(mode === 'helperConfirmation'){
+    setSelectedDriver(null)
+    setMode('driver')
+    return openSheet()  // Open selection sheet for driver
+  }
+  if(mode === 'helper'){
+    setMode('helperConfirmation')
+    return closeSheet()  // ✅ FIXED: Was openSheet()
+  }
+  if(mode === 'comingSoon'){
+    if(selectedHelper?.Id){
+      setMode('helper')
+      return openSheet();  // Open selection sheet
+    }
+    setMode('helperConfirmation')
+    return; // Just stay on BottomSheet2
+  }
+}
 
   return (
      <Sheet

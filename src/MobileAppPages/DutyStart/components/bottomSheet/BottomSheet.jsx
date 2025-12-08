@@ -15,7 +15,6 @@ const BottomSheet = ({ isOpen, onClose,openSheet, closeSheet, assignedData, mode
 
   useEffect(() => {
     if(!isOpen) return;
-console.log(mode)
     if(mode === 'vehicle') fetchVehicles();
     if(mode === 'driver') fetchDrivers();
     if(mode === 'helper') fetchHelpers();
@@ -98,7 +97,7 @@ openSheet();
     }
 
     setMode("comingSoon");
-    return closeSheet();
+    return onClose();
   }
 };
 
@@ -110,28 +109,33 @@ openSheet();
     return false;
   };
 
- const handleBack = () => {
+const handleBack = () => {
   const hasAssigned = assignedData?.vehicle || assignedData?.driver || assignedData?.helper;
 
-  // If assigned exists → just close picker, don’t reset
-  if (hasAssigned) return onClose();
-
-  // If no assigned → go back one step + close
   if (mode === "helper") {
+    openSheet();  // Reopen BottomSheet2
     setMode("helperConfirmation");
     return onClose();
   }
-
+  
   if (mode === "driver") {
+    if (hasAssigned) {
+      openSheet();  // Reopen BottomSheet2 with vehicle mode
+      setMode("vehicle");
+      return onClose();
+    }
+    setSelectedVehicle("");  // ✅ FIXED: Clear vehicle selection
     setMode("vehicle");
-    return closeSheet();
+    return onClose();  // ✅ FIXED: Close selection sheet, stay on BottomSheet2
   }
-
+  
   if (mode === "vehicle") {
-    return closeSheet(); // first level → just close
+    if (hasAssigned) {
+      return onClose();  // Just close picker
+    }
+    return closeSheet();  // Close BottomSheet2
   }
 };
-
 
 
   return (
