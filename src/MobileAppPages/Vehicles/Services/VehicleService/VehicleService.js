@@ -194,3 +194,93 @@ export const getVehicleDetails = (vehicleId) => {
         };
     });
 };
+
+export const activeInactiveVehicles = (vehicleId, status) => {
+    return new Promise(async (resolve) => {
+        if (!vehicleId) {
+            return resolve(common.setResponse("fail", "Invalid taskId", { vehicleId }));
+        }
+
+        let VehiclePath = `VehiclesData/Vehicles/${vehicleId}`;
+        let detailsPath = `VehiclesData/VehicleDetails/${vehicleId}`;
+
+        const oldData = await db.getData(detailsPath);
+        const oldStatus = oldData?.status || "active";
+
+        Promise.all([
+            db.saveData(VehiclePath, { status }),
+            db.saveData(detailsPath, { status })
+        ]).then(async ([taskRes, detailsRes]) => {
+
+            if (taskRes.success === true && detailsRes.success === true) {
+                await saveVehicleHistory(detailsPath, vehicleId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, status, oldStatus);
+                resolve(common.setResponse("success", "Vehicle status updated successfully.", { vehicleId, status }));
+            } else {
+                resolve(common.setResponse("fail", "Error updating vehicle status.", {}));
+            }
+        }).catch((error) => {
+            resolve(common.setResponse("fail", "Exception while updating vehicle.", { error }));
+        });
+    });
+};
+
+export const deleteInactiveVehicle = (vehicleId) => {
+    return new Promise(async (resolve) => {
+        try {
+            if (!vehicleId) {
+                resolve(common.setResponse('fail', "Invalid Params !!!", { vehicleId }));
+                return;
+            };
+
+            let vehiclePath = `VehiclesData/Vehicles/${vehicleId}`;
+            let detailPath = `VehiclesData/VehicleDetails/${vehicleId}`;
+
+            await saveVehicleHistory(detailPath, vehicleId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, null, null, 'deleted');
+
+            await Promise.all([
+                db.removeData(vehiclePath),
+                db.removeData(detailPath)
+            ]).then(async ([taskRes, detailRes]) => {
+                if (taskRes.success === true && detailRes.success === true) {
+                    resolve(common.setResponse('success', "Vehicle and Vehicle detail deleted successfully", { vehicleId }));
+                } else {
+                    resolve(common.setResponse('fail', 'Error deleting vehicle and vehicle details.', {}));
+                };
+            });
+        } catch (error) {
+            resolve(common.setResponse('fail', 'Error deleting vehicle and vehicle details.', error));
+            console.log('Error while delete the vehicle and vehicle details', error);
+        };
+    });
+};
+
+export const getVehicleUpdateHistory = async (vehicleId) => {
+    return new Promise(async (resolve) => {
+        try {
+            if (vehicleId) {
+                const path = `VehiclesData/VehicleUpdateHistory/${vehicleId}`;
+                const resData = await db.getData(path);
+
+                if (!resData) {
+                    return resolve(
+                        common.setResponse('fail', "No history available", {})
+                    );
+                }
+
+                const historyArray = Object.entries(resData).filter(([key]) => key !== "lastKey").map(([key, value]) => ({
+                    index: key,
+                    event: value.event,
+                    at: value._at,
+                    by: value._by,
+                }));
+
+                resolve(common.setResponse('success', "History data available", historyArray));
+            } else {
+                resolve(common.setResponse('fail', "Invalid Params", { vehicleId }));
+            }
+        } catch (error) {
+            resolve(common.setResponse("Error", `Error while getting vehicle update history`, { error }));
+            console.log('Error while fetching vehicle update history', error);
+        };
+    });
+};

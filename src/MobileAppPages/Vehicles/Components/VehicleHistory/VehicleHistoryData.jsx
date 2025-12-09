@@ -5,6 +5,7 @@ import { images } from '../../../../assets/css/imagePath';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { formatEvent } from '../../Action/VehicleList/VehicleListAction';
+import { ActiveInactiveVehicles } from '../../Action/AddVehicle/AddVehicleAction';
 
 const VehicleHistoryData = (props) => {
     const [toggle, setToggle] = useState(props.vehicleDetails?.status === "active");
@@ -17,7 +18,7 @@ const VehicleHistoryData = (props) => {
     }, [props.vehicleDetails]);
 
     const handleToggle = () => {
-        // ActiveInactiveTask(props, setToggle, toggle)
+        ActiveInactiveVehicles(props, setToggle, toggle)
     };
 
     const getHistoryData = () => {
@@ -59,7 +60,7 @@ const VehicleHistoryData = (props) => {
                                         <button
                                             className={style.editButton}
                                             onClick={props.onEditClick}
-                                            title="Edit Task"
+                                            title="Edit Vehicle"
                                         >
                                             <Edit2 size={18} />
                                         </button>
@@ -68,7 +69,7 @@ const VehicleHistoryData = (props) => {
                                         <button
                                             className={style.deleteButton}
                                             onClick={props.handleDelete}
-                                            title="Delete Task"
+                                            title="Delete Vehicle"
                                         >
                                             <Trash2 size={18} />
                                         </button>
@@ -94,7 +95,7 @@ const VehicleHistoryData = (props) => {
 
                         {showHistory ? (
                             <div className={style.historyScroll}>
-                                {props.taskHistory.map((item, index) => (
+                                {props.vehicleHistory.map((item, index) => (
                                     <div key={index} className={style.historyCard}>
                                         <div
                                             style={{
@@ -127,7 +128,7 @@ const VehicleHistoryData = (props) => {
 
                                 ))}
 
-                                {props.taskHistory.length === 0 && (
+                                {props.vehicleHistory.length === 0 && (
                                     <p style={{ color: "#777", textAlign: "center" }}>No history found.</p>
                                 )}
                             </div>

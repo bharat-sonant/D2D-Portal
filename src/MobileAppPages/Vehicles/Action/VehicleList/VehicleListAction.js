@@ -93,3 +93,13 @@ export const formatEvent = (eventText) => {
 
     return eventText;
 };
+
+export const getHistoryData = (taskId, setVehicleHistory) => {
+    service.getVehicleUpdateHistory(taskId).then((response) => {
+        if (response.status === 'success') {
+            setVehicleHistory(response.data)
+        } else {
+            setVehicleHistory([]);
+        };
+    });
+};

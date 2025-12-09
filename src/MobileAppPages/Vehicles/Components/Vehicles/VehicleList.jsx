@@ -38,15 +38,15 @@ const VehicleList = (props) => {
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
                                         className={`dropdown-item ${GlobalStyles.dropdownItem} 
-                                        ${props.vehicleId === item.vehicleId ? GlobalStyles.selectedUser : ""}
+                                        ${props.selectedVehicleId === item.vehicleId ? GlobalStyles.selectedUser : ""}
                                             `}
                                         style={{
                                             backgroundColor:
-                                                props.vehicleId === item.vehicleId
+                                                props.selectedVehicleId === item.vehicleId
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
-                                                props.vehicleId === item.vehicleId
+                                                props.selectedVehicleId === item.vehicleId
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
@@ -56,7 +56,7 @@ const VehicleList = (props) => {
                                             className={`${GlobalStyles.userInfo}`}
                                             style={{
                                                 color:
-                                                    props.vehicleId === item.vehicleId
+                                                    props.selectedVehicleId === item.vehicleId
                                                         ? "#000000"
                                                         : "#000000",
                                             }}

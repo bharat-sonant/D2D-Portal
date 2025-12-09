@@ -7,38 +7,48 @@ import * as action from '../../Action/VehicleList/VehicleListAction';
 import VehicleDetails from '../../Components/Vehicles/VehicleDetails';
 import { LucideSettings } from 'lucide-react';
 import VehicleHistoryData from '../../Components/VehicleHistory/VehicleHistoryData';
+import DeleteConfirmation from '../../../Tasks/Components/DeleteConfirmation/DeleteConfirmation';
+import { deleteVehicle } from '../../Action/AddVehicle/AddVehicleAction';
 
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
     const [vehicleName, setVehicleName] = useState('');
     const [vehicleList, setVehicleList] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [vehicleId, setVehicleId] = useState(null);
+    const [selectedVehicleId, setSelectedVehicleId] = useState(null);
     const [vehicleDetails, setVehicleDetails] = useState(null);
     const [canvasModal, setCanvasModal] = useState(false);
+    const [vehicleId, setVehicleId] = useState(null);
+    const [confirmModal, setConfirmModal] = useState(false);
+    const [vehicleHistory, setVehicleHistory] = useState([]);
 
     useEffect(() => {
         action.getVehicles(setVehicleList, setLoading);
     }, [])
 
     useEffect(() => {
-        if (vehicleList.length > 0 && !vehicleId) {
-            setVehicleId(vehicleList[0].vehicleId);
+        if (vehicleList.length > 0 && !selectedVehicleId) {
+            setSelectedVehicleId(vehicleList[0].vehicleId);
         };
     }, [vehicleList]);
 
     useEffect(() => {
-        if (vehicleId) {
-            action.vehicleDetails(vehicleId, setVehicleDetails);
+        if (selectedVehicleId) {
+            action.vehicleDetails(selectedVehicleId, setVehicleDetails);
+            historyData();
         };
-    }, [vehicleId])
+    }, [selectedVehicleId]);
+
+    const historyData = () => {
+        action.getHistoryData(selectedVehicleId, setVehicleHistory)
+    }
 
     const handleOpen = () => {
         setShowModal(true);
     }
 
     const handleVehicleSelection = (item) => {
-        setVehicleId(item.vehicleId);
+        setSelectedVehicleId(item.vehicleId);
     };
 
     const handleOpenCanvas = () => {
@@ -49,9 +59,31 @@ const Vehicle = () => {
         setCanvasModal(false);
     }
 
+    const handleEditClick = () => {
+        setCanvasModal(false);
+        setShowModal(true);
+        setVehicleName(vehicleDetails?.name);
+        setVehicleId(vehicleDetails?.vehicleId);
+    };
+
+    const handleDeleteVehicle = () => {
+        setCanvasModal(false);
+        setConfirmModal(true);
+    }
+
+    const confirmDelete = () => {
+        deleteVehicle(
+            vehicleDetails?.vehicleId,
+            setVehicleList,
+            setConfirmModal,
+            setSelectedVehicleId,
+            setVehicleDetails
+        );
+    }
+
     return (
         <>
-            {vehicleId && (
+            {selectedVehicleId && (
                 <div className={`${GlobalStyles.floatingDiv}`} style={{ bottom: "90px" }}>
                     <button
                         className={`${GlobalStyles.floatingBtn}`}
@@ -77,7 +109,7 @@ const Vehicle = () => {
                         vehicleList={vehicleList}
                         loading={loading}
                         onSelectVehicle={handleVehicleSelection}
-                        vehicleId={vehicleId}
+                        selectedVehicleId={selectedVehicleId}
                     />
                 </div>
 
@@ -98,33 +130,30 @@ const Vehicle = () => {
                     vehicleName={vehicleName}
                     setVehicleName={setVehicleName}
                     setVehicleList={setVehicleList}
+                    vehicleId={vehicleId}
+                    setVehicleDetails={setVehicleDetails}
+                    setVehicleId={setVehicleId}
+                    historyData={historyData}
                 />
             </div>
             <VehicleHistoryData
                 canvasModal={canvasModal}
                 vehicleDetails={vehicleDetails}
                 onHide={handleCanvasOff}
+                onEditClick={handleEditClick}
+                setVehicleDetails={setVehicleDetails}
+                setVehicleList={setVehicleList}
+                setSelectedVehicleId={setSelectedVehicleId}
+                handleDelete={handleDeleteVehicle}
+                vehicleHistory={vehicleHistory}
+                historyData={historyData}
             />
-            {/* <HistoryData
-                openCanvas={openCanvas}
-                onHide={onHideCanvas}
-                taskHistory={taskHistory}
-                onEditClick={handleClickEdit}
-                handleDelete={handleDelete}
-                selectedTask={selectedTask}
-                setSelectedTask={setSelectedTask}
-                setTaskList={setTaskList}
-                setSelectedTaskId={setSelectedTaskId}
-                getHistory={getHistory}
-
-            /> */}
-
-            {/* <DeleteConfirmation
-                isOpen={showDeleteModal}
-                onClose={() => setShowDeleteModal(false)}
+            <DeleteConfirmation
+                isOpen={confirmModal}
+                onClose={() => setConfirmModal(false)}
                 onConfirm={confirmDelete}
-                itemName={selectedTask?.name || "this task"}
-            /> */}
+                itemName={vehicleDetails?.name || "this vehicle"}
+            />
         </>
     )
 }

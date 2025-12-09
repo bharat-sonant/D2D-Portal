@@ -24,7 +24,11 @@ const AddVehicles = (props) => {
             setLoader,
             props.setVehicleName,
             props.setShowModal,
-            props.setVehicleList
+            props.setVehicleList,
+            props.vehicleId,
+            props.setVehicleDetails,
+            props.setVehicleId,
+            props.historyData
         );
     };
 
@@ -32,7 +36,8 @@ const AddVehicles = (props) => {
         props.setShowModal(false);
         action.handleClearAll(
             props.setVehicleName,
-            setError
+            setError,
+            props.setVehicleId
         );
     };
 
@@ -44,7 +49,7 @@ const AddVehicles = (props) => {
         <div className={`${styles.overlay}`}>
             <div className={`${styles.modal}`}>
                 <div className={`${styles.actionBtn}`}>
-                    <p className={styles.headerText}>{"Add Vehicle"}</p>
+                    <p className={styles.headerText}>{props.vehicleId ? "Update Vehicle" : "Add Vehicle"}</p>
                     <button className={`${styles.closeBtn}`} onClick={handleCloseModal} >
                         <img
                             src={images.iconClose}
@@ -95,7 +100,7 @@ const AddVehicles = (props) => {
                                     <span className={styles.loaderText}>Please wait...</span>
                                 </div>
                             ) : (
-                                "Save"
+                                props.vehicleId ? "Update" : "Save"
                             )}
                         </button>
                     </div>
