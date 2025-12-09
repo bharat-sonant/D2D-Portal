@@ -20,7 +20,7 @@ const DailyFuelReport = () => {
 
     const rows = [
         {
-            sr: 17,
+            sr: 1,
             vehicle: "LEY-AT-4618",
             fuelType: "Diesel",
             qty: 9,
@@ -31,7 +31,7 @@ const DailyFuelReport = () => {
             driver: "Suniya MP (1218)",
         },
         {
-            sr: 18,
+            sr: 2,
             vehicle: "LEY-AT-4620",
             fuelType: "Diesel",
             qty: 5,
@@ -42,7 +42,7 @@ const DailyFuelReport = () => {
             driver: "Pawan MP (1479)",
         },
         {
-            sr: 19,
+            sr: 3,
             vehicle: "LEY-AT-7152",
             fuelType: "Diesel",
             qty: 10,
@@ -53,7 +53,7 @@ const DailyFuelReport = () => {
             driver: "Manish Kumar (511)",
         },
         {
-            sr: 20,
+            sr: 4,
             vehicle: "LEY-AT-7153",
             fuelType: "Diesel",
             qty: 5,
