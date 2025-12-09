@@ -1,0 +1,236 @@
+@import '../../../../assets/css/variable.css';
+@import '../../../../assets/css/fonts.css';
+@import '../../../../assets/css/normalize.css';
+
+.employeePage {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+.redDot {
+    width: 5px;
+    height: 5px;
+    background-color: rgb(255, 138, 138);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+
+.ExpenseReviewerList {
+    width: 100%;
+    display: flex;
+}
+
+.employeeLeft {
+    width: 250px;
+    margin-top: 60px;
+}
+
+.ExpenseReviewerLeft {
+    width: 250px;
+    margin-top: 60px;
+}
+
+.employeeRight {
+    width: calc(100% - 250px);
+    padding: 10px 10px;
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+    overflow: auto;
+}
+
+.hideDesktop {
+    display: none;
+}
+
+.userScroll {
+    height: calc(100vh - 162px);
+    overflow: auto;
+}
+
+.userListTitle {
+    font-size: 15px;
+    color: var(--darkBlack);
+    font-family: var(--fontGraphikMedium);
+    padding: 12px 16px;
+    display: none;
+}
+
+.pageDropdown {
+    height: calc(100vh - 60px);
+}
+
+.employeeName {
+    font-size: 13px;
+    color: var(--black);
+    font-family: var(--fontGraphik);
+    margin: 0px;
+}
+
+.employeeCode {
+    font-size: 10px;
+    color: var(--lightBlack);
+    font-family: var(--fontGraphik);
+    margin: 0px;
+}
+
+.checkMark {
+    margin: 0px;
+}
+
+.noUserData {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    height: calc(100vh - 340px);
+    font-size: 14px;
+    font-family: var(--fontGraphik);
+    color: var(--lightBlack);
+}
+
+.noUserImg {
+    height: 88px;
+    margin-bottom: 15px;
+}
+
+.loaderContainer {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loader {
+    border-radius: 50%;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--themeColor);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+.loaderText {
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--gray);
+    margin-top: 10px;
+}
+
+.loaderContainer {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.cityLoaderWrapper {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    margin: 0 auto 10px auto;
+}
+
+.cityLoader {
+    width: 100%;
+    height: 100%;
+    border: 3px solid #b7e7c2;
+    border-top-color: #41c26f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.centerIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Keyframe for spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hideDesktop {
+        display: flex;
+
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .employeeLeft {
+        width: 100%;
+        position: fixed;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        background: var(--white);
+        padding: 10px 16px;
+        height: 60px;
+        border-bottom: 1px solid var(--borderColor);
+        z-index: 2;
+        display: flex;
+    }
+
+    .employeeRight {
+        margin-top: 120px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .userLeft {
+        width: 100%;
+        margin-top: 80px;
+        margin-left: 0px;
+    }
+
+    .userRight {
+        width: 100%;
+        position: fixed;
+        right: 0px;
+        top: 70px;
+        background: white;
+        padding: 10px 16px;
+        height: auto;
+        border-bottom: 1px solid var(--borderColor);
+        z-index: 3;
+    }
+
+    .orderFirst {
+        order: 1;
+    }
+
+    .orderSecond {
+        order: 2;
+    }
+
+}
