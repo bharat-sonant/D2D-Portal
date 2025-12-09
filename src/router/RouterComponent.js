@@ -15,6 +15,7 @@ import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
+import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -146,6 +147,10 @@ const RouterComponent = () => {
               <DutyStart />
             </>
           }
+        />
+        <Route
+          path="/realtime-monitoring"
+          element={<><MainLayout /><RealtimeMonitoring /></>}
         />
       </Routes>
 

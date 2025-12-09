@@ -7,6 +7,7 @@ import {  LucideUserRoundCheck } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
+import { GrMapLocation } from "react-icons/gr";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -112,6 +113,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
         </div>
         <div className={`${styles.headerRight}`}>
           <ul className={styles.navbarNav}>
+            <Link
+              aria-current="page"
+              to="/realtime-monitoring"
+              title="Realtime Monitoring"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/realtime-monitoring" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/realtime-monitoring"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <GrMapLocation
+                className={`${styles.iconNav} ${location.pathname === "/realtime-monitoring"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Realtime Monitoring
+              </span>
+            </Link>
+
 
             <Link
               aria-current="page"
