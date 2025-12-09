@@ -5,6 +5,8 @@ import VehicleList from '../../Components/Vehicles/VehicleList';
 import AddVehicles from '../../Components/Vehicles/AddVehicles';
 import * as action from '../../Action/VehicleList/VehicleListAction';
 import VehicleDetails from '../../Components/Vehicles/VehicleDetails';
+import { LucideSettings } from 'lucide-react';
+import VehicleHistoryData from '../../Components/VehicleHistory/VehicleHistoryData';
 
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
@@ -13,6 +15,7 @@ const Vehicle = () => {
     const [loading, setLoading] = useState(true);
     const [vehicleId, setVehicleId] = useState(null);
     const [vehicleDetails, setVehicleDetails] = useState(null);
+    const [canvasModal, setCanvasModal] = useState(false);
 
     useEffect(() => {
         action.getVehicles(setVehicleList, setLoading);
@@ -38,18 +41,26 @@ const Vehicle = () => {
         setVehicleId(item.vehicleId);
     };
 
+    const handleOpenCanvas = () => {
+        setCanvasModal(true);
+    };
+
+    const handleCanvasOff = () => {
+        setCanvasModal(false);
+    }
+
     return (
         <>
-            {/* {selectedTaskId && (
+            {vehicleId && (
                 <div className={`${GlobalStyles.floatingDiv}`} style={{ bottom: "90px" }}>
                     <button
                         className={`${GlobalStyles.floatingBtn}`}
-                        onClick={openOffCanvasModal}
+                        onClick={handleOpenCanvas}
                     >
                         <LucideSettings style={{ position: 'relative', bottom: '3px' }} />
                     </button>
                 </div>
-            )} */}
+            )}
 
             <div className={`${GlobalStyles.floatingDiv}`}>
                 <button
@@ -89,6 +100,11 @@ const Vehicle = () => {
                     setVehicleList={setVehicleList}
                 />
             </div>
+            <VehicleHistoryData
+                canvasModal={canvasModal}
+                vehicleDetails={vehicleDetails}
+                onHide={handleCanvasOff}
+            />
             {/* <HistoryData
                 openCanvas={openCanvas}
                 onHide={onHideCanvas}
