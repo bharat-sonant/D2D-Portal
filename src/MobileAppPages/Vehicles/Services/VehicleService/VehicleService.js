@@ -47,12 +47,12 @@ export const saveVehicleData = (vehicleName, vehicleId) => {
                     );
                     resolve(common.setResponse('success', vehicleId ? 'Vehicle updated successfully.' : 'Vehicle data & details saved successfully.', { vehicleId: finalvehicleId }));
                 } else {
-                    resolve(common.setResponse('fail', 'Issue while saving task or details.', {}));
+                    resolve(common.setResponse('fail', 'Issue while saving vehicle or details.', {}));
                 }
             });
         } catch (error) {
-            resolve(common.setResponse('fail', "Error while saving task data.", { error }));
-            console.log('Error while saving task data', error);
+            resolve(common.setResponse('fail', "Error while saving vehicle data.", { error }));
+            console.log('Error while saving vehicle data', error);
         }
     });
 };
@@ -134,7 +134,7 @@ export const saveVehicleHistory = async (
         return common.setResponse("success", "Vehicle history saved.", { vehicleId, entry });
 
     } catch (error) {
-        console.error("Error while saving task history:", error);
+        console.error("Error while saving vehicle history:", error);
     }
 };
 
@@ -159,12 +159,38 @@ export const getAllVehicleData = () => {
                 }
                 vehicleList.sort((a, b) => a.name.localeCompare(b.name));
 
-                resolve(common.setResponse("success", "Task data fetched.", vehicleList));
+                resolve(common.setResponse("success", "Vehicle data fetched.", vehicleList));
             } else {
-                resolve(common.setResponse("fail", "No tasks found.", []));
+                resolve(common.setResponse("fail", "No vehicle found.", []));
             }
         }).catch((error) => {
-            resolve(common.setResponse("fail", "Error while fetching task data.", { error }));
+            resolve(common.setResponse("fail", "Error while fetching vehicle data.", { error }));
         });
+    });
+};
+
+export const getVehicleDetails = (vehicleId) => {
+    return new Promise((resolve) => {
+        try {
+            if (vehicleId) {
+                let path = `VehiclesData/VehicleDetails/${vehicleId}`;
+                db.getData(path).then((response) => {
+                    if (response !== null) {
+                        const finalData = {
+                            ...response,
+                            vehicleId: vehicleId
+                        };
+                        resolve(common.setResponse('success', 'Vehicle Details fetched successfully', { details: finalData }));
+                    } else {
+                        resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', {}));
+                    };
+                });
+            } else {
+                resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', {}));
+            };
+        } catch (error) {
+            resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', error));
+            console.log('Error while fetching vehicle details', error);
+        };
     });
 };

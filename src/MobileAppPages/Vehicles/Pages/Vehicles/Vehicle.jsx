@@ -4,6 +4,7 @@ import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import VehicleList from '../../Components/Vehicles/VehicleList';
 import AddVehicles from '../../Components/Vehicles/AddVehicles';
 import * as action from '../../Action/VehicleList/VehicleListAction';
+import VehicleDetails from '../../Components/Vehicles/VehicleDetails';
 
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
@@ -11,6 +12,7 @@ const Vehicle = () => {
     const [vehicleList, setVehicleList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [vehicleId, setVehicleId] = useState(null);
+    const [vehicleDetails, setVehicleDetails] = useState(null);
 
     useEffect(() => {
         action.getVehicles(setVehicleList, setLoading);
@@ -21,6 +23,12 @@ const Vehicle = () => {
             setVehicleId(vehicleList[0].vehicleId);
         };
     }, [vehicleList]);
+
+    useEffect(() => {
+        if (vehicleId) {
+            action.vehicleDetails(vehicleId, setVehicleDetails);
+        };
+    }, [vehicleId])
 
     const handleOpen = () => {
         setShowModal(true);
@@ -65,14 +73,9 @@ const Vehicle = () => {
                 <div className={`${styles.employeeRight}`}>
                     <div className={`row g-0`}>
                         <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
-                            {/* <TaskDetails
-                                selectedTaskId={selectedTaskId}
-                                selectedTask={selectedTask}
-                                setSelectedTask={setSelectedTask}
-                                setTaskList={setTaskList}
-                                setSelectedTaskId={setSelectedTaskId}
-                                getHistory={getHistory}
-                            /> */}
+                            <VehicleDetails
+                                vehicleDetails={vehicleDetails}
+                            />
                         </div>
                     </div>
                 </div>

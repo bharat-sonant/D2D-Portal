@@ -1,0 +1,52 @@
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-family: sans-serif;
+}
+
+.taskIdBadge {
+    background: #f0f0f0;
+    color: #333;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 0px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.emptyState {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 16px;
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}

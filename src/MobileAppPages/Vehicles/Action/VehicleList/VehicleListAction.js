@@ -16,3 +16,13 @@ export const getVehicles = (setVehicleList, setLoading) => {
         setLoading(false);
     });
 }
+
+export const vehicleDetails = (vehicleId, setVehicleDetails) => {
+    service.getVehicleDetails(vehicleId).then((resp) => {
+        if (resp.status === 'success') {
+            setVehicleDetails(resp.data.details);
+        } else {
+            setVehicleDetails(null);
+        };
+    });
+};
