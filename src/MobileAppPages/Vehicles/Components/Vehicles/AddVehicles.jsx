@@ -23,7 +23,8 @@ const AddVehicles = (props) => {
             setError,
             setLoader,
             props.setVehicleName,
-            props.setShowModal
+            props.setShowModal,
+            props.setVehicleList
         );
     };
 

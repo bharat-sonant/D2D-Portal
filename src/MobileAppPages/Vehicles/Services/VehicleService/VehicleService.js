@@ -137,3 +137,34 @@ export const saveVehicleHistory = async (
         console.error("Error while saving task history:", error);
     }
 };
+
+export const getAllVehicleData = () => {
+    return new Promise((resolve) => {
+        let path = `VehiclesData/Vehicles`;
+
+        db.getData(path).then((response) => {
+            if (response !== null) {
+                let vehicleList = [];
+
+                for (let key in response) {
+                    const vehicleId = key;
+                    const name = response[key].name || "";
+                    const status = response[key].status || "";
+
+                    vehicleList.push({
+                        vehicleId,
+                        name,
+                        status
+                    });
+                }
+                vehicleList.sort((a, b) => a.name.localeCompare(b.name));
+
+                resolve(common.setResponse("success", "Task data fetched.", vehicleList));
+            } else {
+                resolve(common.setResponse("fail", "No tasks found.", []));
+            }
+        }).catch((error) => {
+            resolve(common.setResponse("fail", "Error while fetching task data.", { error }));
+        });
+    });
+};

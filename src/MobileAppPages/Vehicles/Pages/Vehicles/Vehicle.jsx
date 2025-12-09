@@ -1,16 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import VehicleList from '../../Components/Vehicles/VehicleList';
 import AddVehicles from '../../Components/Vehicles/AddVehicles';
+import * as action from '../../Action/VehicleList/VehicleListAction';
 
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
     const [vehicleName, setVehicleName] = useState('');
+    const [vehicleList, setVehicleList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [vehicleId, setVehicleId] = useState(null);
+
+    useEffect(() => {
+        action.getVehicles(setVehicleList, setLoading);
+    }, [])
+
+    useEffect(() => {
+        if (vehicleList.length > 0 && !vehicleId) {
+            setVehicleId(vehicleList[0].vehicleId);
+        };
+    }, [vehicleList]);
 
     const handleOpen = () => {
         setShowModal(true);
     }
+
+    const handleVehicleSelection = (item) => {
+        setVehicleId(item.vehicleId);
+    };
+
     return (
         <>
             {/* {selectedTaskId && (
@@ -35,7 +54,12 @@ const Vehicle = () => {
 
             <div className={`${styles.employeePage}`}>
                 <div className={`${styles.employeeLeft}`}>
-                    <VehicleList />
+                    <VehicleList
+                        vehicleList={vehicleList}
+                        loading={loading}
+                        onSelectVehicle={handleVehicleSelection}
+                        vehicleId={vehicleId}
+                    />
                 </div>
 
                 <div className={`${styles.employeeRight}`}>
@@ -59,6 +83,7 @@ const Vehicle = () => {
                     setShowModal={setShowModal}
                     vehicleName={vehicleName}
                     setVehicleName={setVehicleName}
+                    setVehicleList={setVehicleList}
                 />
             </div>
             {/* <HistoryData

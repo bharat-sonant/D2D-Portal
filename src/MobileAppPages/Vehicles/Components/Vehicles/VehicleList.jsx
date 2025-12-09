@@ -1,7 +1,13 @@
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
+import { images } from '../../../../assets/css/imagePath';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
 
-const VehicleList = () => {
+const VehicleList = (props) => {
+
+    const handleVehicleSelect = (item) => {
+        props.onSelectVehicle(item);
+    };
+
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
             <div
@@ -16,7 +22,7 @@ const VehicleList = () => {
                     aria-labelledby="drop downMenuButton"
                 >
                     <div className={`${styles.userListTitle}`}>Select Vehicles</div>
-                    {/* <div className={`${styles.userScroll}`}>
+                    <div className={`${styles.userScroll}`}>
                         {props.loading ? (
                             <div className={styles.loaderContainer}>
                                 <div className={styles.cityLoaderWrapper}>
@@ -27,39 +33,39 @@ const VehicleList = () => {
                                 <div className={styles.loaderText}>Please wait... Loading vehicle data.</div>
                             </div>
 
-                        ) : props.taskList.length > 0 ? (
-                            props.taskList.map((task, i) => (
+                        ) : props.vehicleList.length > 0 ? (
+                            props.vehicleList.map((item, i) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
                                         className={`dropdown-item ${GlobalStyles.dropdownItem} 
-                                        ${props.selectedTaskId === task.taskId? GlobalStyles.selectedUser: ""}
+                                        ${props.vehicleId === item.vehicleId ? GlobalStyles.selectedUser : ""}
                                             `}
                                         style={{
                                             backgroundColor:
-                                                props.selectedTaskId === task.taskId
+                                                props.vehicleId === item.vehicleId
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
-                                                props.selectedTaskId === task.taskId
+                                                props.vehicleId === item.vehicleId
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
-                                        onClick={() => handleTaskSelect(task)}
+                                        onClick={() => handleVehicleSelect(item)}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}
-                                            // style={{
-                                            //     color:
-                                            //         props.selectedTaskId === task.taskId
-                                            //             ? "#000000"
-                                            //             : "#000000",
-                                            // }}
+                                            style={{
+                                                color:
+                                                    props.vehicleId === item.vehicleId
+                                                        ? "#000000"
+                                                        : "#000000",
+                                            }}
                                         >
                                             <span className={`${styles.employeeName}`}>
-                                                {task.name}
+                                                {item.name}
                                             </span>
                                             <span>
-                                                {task.status === 'inactive' && <span className={styles.redDot}></span>}
+                                                {item.status === 'inactive' && <span className={styles.redDot}></span>}
                                             </span>
 
                                         </div>
@@ -74,10 +80,10 @@ const VehicleList = () => {
                                     title="No User Found"
                                     alt="Image"
                                 />
-                                No task data found
+                                No vehicle data found
                             </div>
                         )}
-                    </div> */}
+                    </div>
                 </ul>
             </div>
         </div>
