@@ -16,6 +16,7 @@ import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
+import Reports from "../pages/Reports/Reports";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -151,6 +152,10 @@ const RouterComponent = () => {
         <Route
           path="/realtime-monitoring"
           element={<><MainLayout /><RealtimeMonitoring /></>}
+        />
+        <Route
+          path="/reports"
+          element={<><MainLayout /><Reports /></>}
         />
       </Routes>
 

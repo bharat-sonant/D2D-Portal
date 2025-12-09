@@ -8,7 +8,7 @@ import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
-
+import { TbReportAnalytics } from "react-icons/tb";
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
   const [firstchar, setFirsthar] = useState("");
@@ -136,6 +136,31 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 style={{ color: navbarStyle.textColor }}
               >
                 Realtime Monitoring
+              </span>
+            </Link>
+            <Link
+              aria-current="page"
+              to="/reports"
+              title="Reports"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/reports" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/reports"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <TbReportAnalytics
+                className={`${styles.iconNav} ${location.pathname === "/reports"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+               Reports
               </span>
             </Link>
 
