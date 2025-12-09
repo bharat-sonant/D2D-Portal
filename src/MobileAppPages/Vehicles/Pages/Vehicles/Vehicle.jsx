@@ -1,8 +1,16 @@
+import { useState } from 'react';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import VehicleList from '../../Components/Vehicles/VehicleList';
+import AddVehicles from '../../Components/Vehicles/AddVehicles';
 
 const Vehicle = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [vehicleName, setVehicleName] = useState('');
+
+    const handleOpen = () => {
+        setShowModal(true);
+    }
     return (
         <>
             {/* {selectedTaskId && (
@@ -19,7 +27,7 @@ const Vehicle = () => {
             <div className={`${GlobalStyles.floatingDiv}`}>
                 <button
                     className={`${GlobalStyles.floatingBtn}`}
-                // onClick={handleOpenModal}
+                    onClick={handleOpen}
                 >
                     +
                 </button>
@@ -46,17 +54,12 @@ const Vehicle = () => {
                 </div>
             </div>
             <div className={GlobalStyles.mainSections}>
-                {/* <AddTask
-                    showCanvas={showCanvas}
-                    setShowCanvas={setShowCanvas}
-                    setTaskList={setTaskList}
-                    displayName={displayName}
-                    setDisplayName={setDisplayName}
-                    taskId={taskId}
-                    setTaskId={setTaskId}
-                    setSelectedTask={setSelectedTask}
-                    getHistory={getHistory}
-                /> */}
+                <AddVehicles
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    vehicleName={vehicleName}
+                    setVehicleName={setVehicleName}
+                />
             </div>
             {/* <HistoryData
                 openCanvas={openCanvas}
