@@ -1,0 +1,25 @@
+.container {
+    background-color: #fff;
+    height: calc(100vh - 15px);
+    padding-top: 65px;
+    padding-left: 8px;
+
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sidebar width fixed */
+    gap: 5px;
+
+    overflow: hidden;  /* Prevent layout overflow */
+}
+
+.leftSection {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.rightSection {
+    width: 100%;
+    height: calc(100vh - 75px);
+    overflow-y: auto;     /* ⭐ SCROLLABLE RIGHT PANEL */
+    overflow-x: hidden;   /* Horizontal scroll avoid */
+    padding-right: 8px;   /* Scroll spacing */
+}
