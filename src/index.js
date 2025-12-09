@@ -44,7 +44,7 @@ function AppWrapper() {
   const location = useLocation();
 
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ['/settings', '/daily-assignment', '/tasks','/realtime-monitoring','/reports']; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/daily-assignment', '/tasks', '/realtime-monitoring', '/reports', '/vehicle']; // <-- yaha route add karo
 
   const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
 

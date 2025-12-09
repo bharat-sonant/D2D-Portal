@@ -17,6 +17,7 @@ import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
+import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -141,7 +142,7 @@ const RouterComponent = () => {
           }
         />
 
-         <Route
+        <Route
           path="/duty-start"
           element={
             <>
@@ -157,9 +158,19 @@ const RouterComponent = () => {
           path="/reports"
           element={<><MainLayout /><Reports /></>}
         />
+
+        <Route
+          path="/vehicle"
+          element={
+            <>
+              <MainLayout />
+              <Vehicle />
+            </>
+          }
+        />
       </Routes>
 
-        
+
 
     </>
   );

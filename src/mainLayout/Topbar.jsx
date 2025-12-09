@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaTasks } from "react-icons/fa";
-import {  LucideUserRoundCheck } from "lucide-react";
+import { Car, LucideUserRoundCheck } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
@@ -20,8 +20,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const city = useCity();
   const [cityLogo, setCityLogo] = useState(images.wevoisLogo)
 
-  useEffect(()=>{
-    if(!city.city) return;
+  useEffect(() => {
+    if (!city.city) return;
 
     const logoUrl = getCityLogo(city.city);
 
@@ -35,7 +35,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
     img.onerror = () => {
       setCityLogo(images.wevoisLogo)
     }
-  },[city.city])
+  }, [city.city])
 
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 className={styles.iconText}
                 style={{ color: navbarStyle.textColor }}
               >
-               Reports
+                Reports
               </span>
             </Link>
 
@@ -218,6 +218,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
             </Link>
 
             <Link
+              aria-current="page"
+              to="/vehicle"
+              title="Vehicles"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/vehicle" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/vehicle"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <Car
+                className={`${styles.iconNav} ${location.pathname === "/vehicle"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Vehicles
+              </span>
+            </Link>
+
+            <Link
               to="/settings"
               className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
                 } ${location.pathname === "/settings" ? styles.activeNav : ""}`}
@@ -239,12 +265,12 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
             </Link>
           </ul>
 
-         {city && (
-          <div className={styles.cityBadge}>
-            <img src={cityLogo} className={styles.cityLogo} alt="city logo" />
-            <span className={styles.cityName}>{city.city}</span>
-          </div>
-        )}
+          {city && (
+            <div className={styles.cityBadge}>
+              <img src={cityLogo} className={styles.cityLogo} alt="city logo" />
+              <span className={styles.cityName}>{city.city}</span>
+            </div>
+          )}
 
         </div>
       </div>
