@@ -1,16 +1,16 @@
 import { useState } from "react";
 import style from "../../MobileAppPages/Settings/Style/Settings.module.css";
 
-const ZoneList = ({selectedWard,setSelectedWard}) => {
-  const [wardList,setWardList] = useState(['1','2','3','4','5','6','7','8']);
+const ZoneList = ({selectedZone,setSelectedZone}) => {
+  const [wardList,setWardList] = useState(['Zone 1','Zone 2','Zone 3','Zone 4','Zone 5','Zone 6','Zone 7','Zone 8']);
   return (
     <div className={`${style.verticalTabs} `}>
       {/* <h6 className="p-2 ps-3 " style={{borderRadius:'10px 10px 0px 0px',backgroundColor:'lightgrey'}}>Zone List</h6> */}
       {wardList?.map((ward) => (
-        <div key={ward} className={`${style.tabItem} ${selectedWard === ward ? style.activeTab : ""}`}
-          onClick={() => setSelectedWard(ward)}
+        <div key={ward} className={`${style.tabItem} ${selectedZone === ward ? style.activeTab : ""}`}
+          onClick={() => setSelectedZone(ward)}
         >
-          Ward {ward}
+        {ward}
         </div>
       ))}
     </div>
