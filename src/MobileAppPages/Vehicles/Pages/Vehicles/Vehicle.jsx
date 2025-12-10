@@ -21,6 +21,7 @@ const Vehicle = () => {
     const [vehicleId, setVehicleId] = useState(null);
     const [confirmModal, setConfirmModal] = useState(false);
     const [vehicleHistory, setVehicleHistory] = useState([]);
+    const [showHistory, setShowHistory] = useState(false);
 
     useEffect(() => {
         action.getVehicles(setVehicleList, setLoading);
@@ -62,6 +63,7 @@ const Vehicle = () => {
     const handleEditClick = () => {
         setCanvasModal(false);
         setShowModal(true);
+        setShowHistory(false);
         setVehicleName(vehicleDetails?.name);
         setVehicleId(vehicleDetails?.vehicleId);
     };
@@ -69,6 +71,7 @@ const Vehicle = () => {
     const handleDeleteVehicle = () => {
         setCanvasModal(false);
         setConfirmModal(true);
+        setShowHistory(false);
     }
 
     const confirmDelete = () => {
@@ -147,6 +150,8 @@ const Vehicle = () => {
                 handleDelete={handleDeleteVehicle}
                 vehicleHistory={vehicleHistory}
                 historyData={historyData}
+                showHistory={showHistory}
+                setShowHistory={setShowHistory}
             />
             <DeleteConfirmation
                 isOpen={confirmModal}

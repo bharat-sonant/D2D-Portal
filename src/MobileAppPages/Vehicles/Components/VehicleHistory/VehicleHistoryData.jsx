@@ -9,7 +9,6 @@ import { ActiveInactiveVehicles } from '../../Action/AddVehicle/AddVehicleAction
 
 const VehicleHistoryData = (props) => {
     const [toggle, setToggle] = useState(props.vehicleDetails?.status === "active");
-    const [showHistory, setShowHistory] = useState(false);
 
     useEffect(() => {
         if (props.vehicleDetails) {
@@ -22,12 +21,12 @@ const VehicleHistoryData = (props) => {
     };
 
     const getHistoryData = () => {
-        setShowHistory(true);
+        props.setShowHistory(true);
     }
 
     return (
         <>
-            <Offcanvas placement="end" show={props.canvasModal} onHide={() => { props.onHide(); setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "45%" }} >
+            <Offcanvas placement="end" show={props.canvasModal} onHide={() => { props.onHide(); props.setShowHistory(false) }} className={style.responsiveOffcanvas} style={{ width: "45%" }} >
                 <div className={style.canvas_container} style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
                     <div className={style.OffcanvasHeader}>
                         <h4 className={style.header_title}>Vehicle Settings</h4>
@@ -37,7 +36,7 @@ const VehicleHistoryData = (props) => {
                             <img
                                 src={images.iconClose}
                                 className={style.close_popup}
-                                onClick={() => { props.onHide(); setShowHistory(false) }}
+                                onClick={() => { props.onHide(); props.setShowHistory(false) }}
                                 alt="Close"
                             />
                         </div>
@@ -93,7 +92,7 @@ const VehicleHistoryData = (props) => {
                             </div>
                         </div>
 
-                        {showHistory ? (
+                        {props.showHistory ? (
                             <div className={style.historyScroll}>
                                 {props.vehicleHistory.map((item, index) => (
                                     <div key={index} className={style.historyCard}>
