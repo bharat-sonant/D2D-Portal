@@ -76,6 +76,11 @@ const AddTask = (props) => {
                                             onChange={(e) =>
                                                 handleInputChange("name", e.target.value)
                                             }
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" && !loader) {
+                                                    handleSave();
+                                                }
+                                            }}
                                         />
                                     </div>
                                 </div>

@@ -2,21 +2,57 @@ import * as db from '../../../../services/dbServices';
 import * as common from '../../../../common/common';
 import dayjs from 'dayjs';
 
-const generateTaskId = () => {
+const checkTaskNameExists = async (displayName, currentTaskId = null) => {
+    const path = `TaskData/Tasks`;
+    const allTasks = await db.getData(path);
+
+    if (!allTasks) return false;
+
+    const nameLower = displayName.trim().toLowerCase();
+
+    for (let key in allTasks) {
+        const existingName = allTasks[key]?.name || "";
+
+        // Skip checking current task (during edit)
+        if (currentTaskId && key === currentTaskId) continue;
+
+        if (existingName.trim().toLowerCase() === nameLower) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+const checkTaskId = async (taskId) => {
+    try {
+        let path = `TaskData/Tasks/${taskId}`;
+        const response = await db.getData(path);
+
+        return !!response;
+    } catch (error) {
+        console.error("Error checking Task ID:", error);
+        return false;
+    }
+};
+
+const generateTaskId = async (checkTaskId) => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const numbers = "0123456789";
 
-    let id = "";
+    const generateId = () => {
+        let id = "";
+        for (let i = 0; i < 3; i++) id += letters[Math.floor(Math.random() * letters.length)];
+        for (let i = 0; i < 3; i++) id += numbers[Math.floor(Math.random() * numbers.length)];
+        return id;
+    };
 
-    for (let i = 0; i < 3; i++) {
-        id += letters.charAt(Math.floor(Math.random() * letters.length));
+    while (true) {
+        const newId = generateId();
+        const exists = await checkTaskId(newId);
+
+        if (!exists) return newId;
     }
-
-    for (let i = 0; i < 3; i++) {
-        id += numbers.charAt(Math.floor(Math.random() * numbers.length));
-    }
-
-    return id;
 };
 
 export const saveTaskData = (displayName, taskId) => {
@@ -26,9 +62,17 @@ export const saveTaskData = (displayName, taskId) => {
                 return resolve(common.setResponse('fail', 'Invalid params !!!', { displayName }));
             }
 
-            let finalTaskId = taskId || generateTaskId();
+            const nameExists = await checkTaskNameExists(displayName, taskId);
+
+            if (nameExists) {
+                return resolve(common.setResponse('fail', 'Task name already exists!', { displayName }));
+            }
+
+
+            let finalTaskId = taskId || await generateTaskId(checkTaskId);
             let taskPath = `TaskData/Tasks/${finalTaskId}`;
             let detailsPath = `TaskData/TaskDetails/${finalTaskId}`;
+
             let oldName = null;
 
             if (taskId) {

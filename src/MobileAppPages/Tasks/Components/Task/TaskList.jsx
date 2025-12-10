@@ -1,8 +1,31 @@
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import styles from '../../Styles/TaskList/TaskList.module.css';
 import { images } from '../../../../assets/css/imagePath';
+import { useEffect, useState } from 'react';
 
 const TaskList = (props) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredTasks = props.taskList.filter((task) =>
+    task.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  useEffect(() => {
+    if (!props.loading && filteredTasks.length > 0) {
+
+      const alreadySelected = filteredTasks.find(
+        (t) => t.taskId === props.selectedTaskId
+      );
+
+      if (!alreadySelected) {
+        props.onSelectTask(filteredTasks[0]);
+      }
+    }
+  }, [filteredTasks, props.loading]);
 
   const handleTaskSelect = (task) => {
     props.onSelectTask(task);
@@ -21,6 +44,15 @@ const TaskList = (props) => {
           }}
           aria-labelledby="drop downMenuButton"
         >
+          <div className={`${GlobalStyles.searchGroup}`}>
+            <input
+              className={`${GlobalStyles.inputSearch}`}
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </div>
           <div className={`${styles.userListTitle}`}>Select Employee</div>
           <div className={`${styles.userScroll}`}>
             {props.loading ? (
@@ -33,8 +65,8 @@ const TaskList = (props) => {
                 <div className={styles.loaderText}>Please wait... Loading task data.</div>
               </div>
 
-            ) : props.taskList.length > 0 ? (
-              props.taskList.map((task, i) => (
+            ) : filteredTasks.length > 0 ? (
+              filteredTasks.map((task, i) => (
                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                   <div
                     className={`dropdown-item ${GlobalStyles.dropdownItem} ${props.selectedTaskId === task.taskId

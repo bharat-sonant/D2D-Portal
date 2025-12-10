@@ -4,15 +4,20 @@ import * as service from "../../Service/Tasks/TaskService";
 
 export const handleChange = (type, value, setDisplayName, setError) => {
     if (type === "name") {
-        setDisplayName(value);
+        let cleanedValue = value.replace(/\s+/g, " ");
 
-        if (value.trim() === "") {
+        cleanedValue = cleanedValue.replace(/^\s/, "");
+
+        setDisplayName(cleanedValue);
+
+        if (cleanedValue.trim() === "") {
             setError("Please provide display name of task.");
         } else {
             setError("");
-        };
-    };
+        }
+    }
 };
+
 
 export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName, setTaskList, taskId, setTaskId, setShowCanvas, setSelectedTask, getHistory) => {
     if (displayName.trim() === "") {
@@ -64,6 +69,8 @@ export const handleSaveTasks = (displayName, setError, setLoader, setDisplayName
             getHistory();
             common.setAlertMessage('success', taskId ? 'Task updated successfully' : 'Task saved successfully')
         } else {
+            console.log(res)
+            setError(res.message)
             setLoader(false);
         };
     });
@@ -108,34 +115,29 @@ export const ActiveInactiveTask = (props, setToggle, toggle) => {
     const newStatus = toggle ? "inactive" : "active";
 
     setToggle(!toggle);
+    common.setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
+    props.setSelectedTask(prev => ({
+        ...prev,
+        status: newStatus
+    }));
 
-    service.activeInactiveTask(props.selectedTask.taskId, newStatus).then(() => {
+    props.setTaskList(prev => {
+        const updatedList = prev.map(task =>
+            task.taskId === props.selectedTask.taskId
+                ? { ...task, status: newStatus }
+                : task
+        );
 
-        props.setSelectedTask(prev => ({
-            ...prev,
-            status: newStatus
-        }));
-
-        props.setTaskList(prev => {
-            const updatedList = prev.map(task =>
-                task.taskId === props.selectedTask.taskId
-                    ? { ...task, status: newStatus }
-                    : task
-            );
-
-            return updatedList.sort((a, b) => {
-                if (a.status !== b.status) {
-                    return a.status === "active" ? -1 : 1;
-                }
-                return a.name.localeCompare(b.name);
-            });
+        return updatedList.sort((a, b) => {
+            if (a.status !== b.status) {
+                return a.status === "active" ? -1 : 1;
+            }
+            return a.name.localeCompare(b.name);
         });
-
-        common.setAlertMessage('success', toggle ? 'Task inactive successfully' : 'Task active successfully');
-        props.getHistory();
-    }).catch((err) => {
-        console.log("Error updating status", err);
     });
+
+    service.activeInactiveTask(props.selectedTask.taskId, newStatus);
+    props.getHistory();
 };
 
 export const deleteTask = (taskId, setTaskList, setShowDeleteModal, setSelectedTaskId, setSelectedTask) => {
@@ -152,14 +154,12 @@ export const deleteTask = (taskId, setTaskList, setShowDeleteModal, setSelectedT
         }
         return updatedList;
     });
-    service.deleteInactiveTask(taskId).then((response) => {
-        if (response.status === 'success') {
-            common.setAlertMessage('success', 'Task deleted successfully');
-            setShowDeleteModal(false);
-        } else {
-            common.setAlertMessage('warn', "Something went wrong !!!");
-        };
-    });
+    setTimeout(() => {
+        setShowDeleteModal(false);
+        common.setAlertMessage('success', 'Task deleted successfully');
+    }, 200);
+
+    service.deleteInactiveTask(taskId);
 };
 
 export const getHistoryData = (taskId, setTaskHistory) => {
