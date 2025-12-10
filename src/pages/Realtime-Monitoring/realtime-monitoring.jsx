@@ -35,7 +35,9 @@ const RealtimeMonitoring = () => {
           <div className="col-md-2">
             <ZoneName name={selectedZone} />
           </div>
-        
+          <div className="col-md-1">
+            <CurrentLine/>
+          </div>
           <div className="col-md-2">
             <VehicleCurrentStatus />
           </div>
@@ -45,43 +47,8 @@ const RealtimeMonitoring = () => {
            <div className="col-md-1">
             <AppStatus/>
           </div>
-           <div className="col-md-2">
-            <DutyOnTime/>
-          </div>
-          <div className="col-md-2">
-            <WardReachTime/>
-          </div>
-          <div className="col-md-2">
-            <DutyOffTime/>
-          </div>
-            <div className="col-md-3">
-            <ZoneSummaryCard />
-          </div>
-           <div className="col-md-2">
-            <LineSummary/>
-          </div>        
-          <div className="col-md-2">
-            <HaltInfo/>
-          </div>
-          <div className="col-md-3">
-            <TotalWorkSummary/>
-          </div>
-          <div className="col-md-3">
-            <ZoneWorkSummary/>
-          </div>
-          <div className="col-md-2">
-            <CurrentLine/>
-          </div>
           <div className="col-md-2">
             <VehicleNumber/>
-          </div>
-        </div>
-        <div className="row g-3 mt-1">
-          <div className="col-md-3">
-            <DriverInfo/>
-          </div>
-           <div className="col-md-3">
-            <HelperInfo/>
           </div>
           <div className="col-md-1">
             <HerosOnWork/>
@@ -89,19 +56,54 @@ const RealtimeMonitoring = () => {
            <div className="col-md-1">
             <OtherDuty/>
           </div>
+           <div className="col-md-1">
+            <WorkPercentage/>
+          </div>
+          
+          <div className="col-md-3">
+            <ZoneSummaryCard />
+          </div>
+           <div className="col-md-2">
+            <LineSummary/>
+          </div>   
            <div className="col-md-3">
             <CardSummary/>
-          </div>
-        </div>
-        <div className="row g-3 mt-1">
-          <div className="col-md-6">
-            <MapView/>
           </div>
           <div className="col-md-2">
             <CardType/>
           </div>
            <div className="col-md-2">
-            <WorkPercentage/>
+            <HaltInfo/>
+          </div>
+        </div>
+        <div className="row g-3 mt-1">
+          <div className="row g-2 col-md-6">
+            <div className="col-md-6">
+            <DriverInfo/>
+          </div>
+           <div className="col-md-6">
+            <HelperInfo/>
+          </div>
+          <div className="col-md-6">
+            <ZoneWorkSummary/>
+          </div>
+          <div className="col-md-6">
+            <TotalWorkSummary/>
+          </div>
+          <div className="col-md-4">
+            <DutyOnTime/>
+          </div>
+          <div className="col-md-4">
+            <WardReachTime/>
+          </div>
+          <div className="col-md-4">
+            <DutyOffTime/>
+          </div>
+          
+
+          </div>
+          <div className="col-md-6">
+            <MapView/>
           </div>
         </div>
       </div>
