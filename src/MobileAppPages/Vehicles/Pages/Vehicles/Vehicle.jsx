@@ -139,6 +139,7 @@ const Vehicle = () => {
                     historyData={historyData}
                 />
             </div>
+
             <VehicleHistoryData
                 canvasModal={canvasModal}
                 vehicleDetails={vehicleDetails}
@@ -153,6 +154,7 @@ const Vehicle = () => {
                 showHistory={showHistory}
                 setShowHistory={setShowHistory}
             />
+            
             <DeleteConfirmation
                 isOpen={confirmModal}
                 onClose={() => setConfirmModal(false)}
