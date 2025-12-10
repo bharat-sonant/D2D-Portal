@@ -25,7 +25,7 @@ const Vehicle = () => {
 
     useEffect(() => {
         action.getVehicles(setVehicleList, setLoading);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (vehicleList.length > 0 && !selectedVehicleId) {
@@ -42,11 +42,11 @@ const Vehicle = () => {
 
     const historyData = () => {
         action.getHistoryData(selectedVehicleId, setVehicleHistory)
-    }
+    };
 
     const handleOpen = () => {
         setShowModal(true);
-    }
+    };
 
     const handleVehicleSelection = (item) => {
         setSelectedVehicleId(item.vehicleId);
@@ -58,7 +58,7 @@ const Vehicle = () => {
 
     const handleCanvasOff = () => {
         setCanvasModal(false);
-    }
+    };
 
     const handleEditClick = () => {
         setCanvasModal(false);
@@ -72,7 +72,7 @@ const Vehicle = () => {
         setCanvasModal(false);
         setConfirmModal(true);
         setShowHistory(false);
-    }
+    };
 
     const confirmDelete = () => {
         deleteVehicle(
@@ -82,7 +82,7 @@ const Vehicle = () => {
             setSelectedVehicleId,
             setVehicleDetails
         );
-    }
+    };
 
     return (
         <>
