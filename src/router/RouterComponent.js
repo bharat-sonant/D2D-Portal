@@ -18,6 +18,8 @@ import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
+import { IoMagnet } from "react-icons/io5";
+import TaskData from "../pages/Task-Data/TaskData";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -168,7 +170,19 @@ const RouterComponent = () => {
             </>
           }
         />
+        <Route
+          path="/TaskData"
+          element={
+            <>
+              <MainLayout/>
+              <TaskData/>
+            </>
+          }
+        />
       </Routes>
+
+         
+
 
 
 

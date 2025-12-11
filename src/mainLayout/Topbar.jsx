@@ -9,6 +9,7 @@ import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
+import { SiTask } from "react-icons/si";
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
   const [firstchar, setFirsthar] = useState("");
@@ -113,6 +114,34 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
         </div>
         <div className={`${styles.headerRight}`}>
           <ul className={styles.navbarNav}>
+
+           <Link
+              aria-current="page"
+              to="/TaskData"
+              title="TaskData"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/TaskData" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/TaskData"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+              <SiTask
+                className={`${styles.iconNav} ${location.pathname === "/TaskData"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+                Task Data
+              </span>
+            </Link>           
+
+
             <Link
               aria-current="page"
               to="/realtime-monitoring"
