@@ -275,10 +275,12 @@
 
 .historyTitle {
     font-size: 13px;
-    font-weight: 500;
     color: #333;
     margin-bottom: 8px;
     font-family: sans-serif;
+    display: flex;
+    position: relative;
+    top: 5px
 }
 
 .metaRow {

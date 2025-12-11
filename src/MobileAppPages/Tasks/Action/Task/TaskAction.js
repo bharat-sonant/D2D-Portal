@@ -203,9 +203,9 @@ export const formatEvent = (eventText) => {
         return (
             <div style={{ display: "flex", alignItems: "center", gap: "8px", textTransform: "capitalize" }}>
                 <span>Task Update</span>
-                <span style={{ color: '#666363ff' }}>{oldValue}</span>
+                <span style={{ color: '#666363ff', fontWeight: 'bold', fontFamily: 'sans-serif' }}>{oldValue}</span>
                 <ArrowRight size={18} />
-                <span style={{ fontWeight: "600" }}>{newValue}</span>
+                <span style={{ fontWeight: "600", fontFamily: 'sans-serif' }}>{newValue}</span>
             </div>
         );
     }
@@ -222,13 +222,13 @@ export const formatEvent = (eventText) => {
             <div style={{ display: "flex", alignItems: "center", gap: "8px", textTransform: "capitalize" }}>
                 <span>Task status</span>
 
-                <span style={{ fontWeight: "500", color: getStatusColor(oldStatus) }}>
+                <span style={{ fontWeight: "500", color: getStatusColor(oldStatus), fontFamily: 'sans-serif' }}>
                     {oldStatus}
                 </span>
 
                 <ArrowRight size={18} />
 
-                <span style={{ fontWeight: "600", color: getStatusColor(newStatus) }}>
+                <span style={{ fontWeight: "600", color: getStatusColor(newStatus), fontFamily: 'sans-serif' }}>
                     {newStatus}
                 </span>
             </div>
