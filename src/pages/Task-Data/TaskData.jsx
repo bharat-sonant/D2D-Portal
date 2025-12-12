@@ -33,6 +33,8 @@ const TaskData = () => {
             } else {
                 // console.log(data)
                 setTaskData(data || []);
+                setSelectedId(data[0].id);
+                setSelected(data[0]);
             }
         } catch (err) {
             console.error('Unexpected error:', err);
@@ -67,7 +69,7 @@ const TaskData = () => {
                             <div className={styles.card}>
                                 <div className={styles.headerRow}>
                                     <span className={styles.taskIdBadge}>
-                                        {selectedId}
+                                        {selected?.uniqueId || 'N/A'}
                                     </span>
 
                                     <h2 className={styles.name}>

@@ -9,6 +9,46 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
 
   if (!showCanvas) return null;
 
+  // ✅ Function to check if ID exists in Supabase
+  const checkTaskId = async (id) => {
+    const { data, error } = await supabase
+      .from("TaskData")
+      .select("uniqueId")
+      .eq("uniqueId", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error checking ID:", error);
+      return true; // block insertion if error
+    }
+
+    return data !== null; // true = exists
+  };
+
+  // ✅ Your logic to generate unique ID
+  const generateTaskId = async () => {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+
+    const generateId = () => {
+      let id = "";
+      for (let i = 0; i < 3; i++)
+        id += letters[Math.floor(Math.random() * letters.length)];
+      for (let i = 0; i < 3; i++)
+        id += numbers[Math.floor(Math.random() * numbers.length)];
+      return id;
+    };
+
+    while (true) {
+      const newId = generateId();
+      const exists = await checkTaskId(newId);
+      if (!exists) return newId;
+    }
+  };
+
+  // ================================
+  // SAVE TASK
+  // ================================
   const handleSave = async () => {
     if (!taskTitle.trim()) {
       alert("Please enter task name");
@@ -16,12 +56,16 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
     }
 
     try {
+      // ✅ Generate unique 6-digit ID
+      const uniqueId = await generateTaskId();
+
       // Insert into Supabase
       const { data, error } = await supabase
         .from("TaskData")
         .insert([
           {
             taskName: taskTitle,
+            uniqueId: uniqueId,   // ⬅️ Added unique ID here
             created_by: "Ansh",
             created_at: new Date().toISOString()
           }
@@ -29,20 +73,16 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
 
       if (error) throw error;
 
-    //   alert("Task saved successfully!");
       setTaskTitle("");
       setShowCanvas(false);
     } catch (err) {
       console.error("Supabase Error:", err.message);
-    //   alert("Failed to save task. Please try again.");
     }
   };
 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
-
-        {/* Header */}
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Task Data</p>
           <button
@@ -59,7 +99,6 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
           </button>
         </div>
 
-        {/* Body */}
         <div className={styles.modalBody}>
           <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
@@ -76,7 +115,6 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
             </div>
           </div>
 
-          {/* Save Button */}
           <button
             type="button"
             className={`mt-3 ${styles.btnSave}`}
