@@ -31,10 +31,13 @@ const TaskData = () => {
             if (error) {
                 console.error('Error fetching task data:', error);
             } else {
+                const sortedTaskData = [...data].sort((a, b) =>
+                    a.taskName.localeCompare(b.taskName, undefined, { sensitivity: "base" })
+                );
                 // console.log(data)
-                setTaskData(data || []);
-                setSelectedId(data[0].id);
-                setSelected(data[0]);
+                setTaskData(sortedTaskData || []);
+                setSelectedId(sortedTaskData[0].id);
+                setSelected(sortedTaskData[0]);
             }
         } catch (err) {
             console.error('Unexpected error:', err);
@@ -85,6 +88,7 @@ const TaskData = () => {
                 <AddTaskData
                     showCanvas={showCanvas}
                     setShowCanvas={setShowCanvas}
+                    fetchTaskData={fetchTaskData}
                 />
             </div>
         </>

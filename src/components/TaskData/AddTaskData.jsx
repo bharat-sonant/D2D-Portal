@@ -4,7 +4,7 @@ import styles from '../../assets/css/modal.module.css';
 import { useState } from "react";
 import { supabase } from '../../createClient';
 
-const AddTaskData = ({ showCanvas, setShowCanvas }) => {
+const AddTaskData = ({ showCanvas, setShowCanvas, fetchTaskData }) => {
   const [taskTitle, setTaskTitle] = useState("");
 
   if (!showCanvas) return null;
@@ -69,7 +69,9 @@ const AddTaskData = ({ showCanvas, setShowCanvas }) => {
             created_by: "Ansh",
             created_at: new Date().toISOString()
           }
+
         ]);
+      fetchTaskData()
 
       if (error) throw error;
 

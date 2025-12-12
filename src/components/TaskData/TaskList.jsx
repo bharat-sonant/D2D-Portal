@@ -8,8 +8,6 @@ const TaskList = (props) => {
         props.onSelectTask(item)
     }
 
-
-
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
             <div
