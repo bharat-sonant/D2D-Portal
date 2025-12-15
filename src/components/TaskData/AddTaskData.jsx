@@ -1,7 +1,9 @@
+import React, { useState } from 'react';
+import { supabase } from '../../createClient';
 import { images } from '../../assets/css/imagePath';
 import styles from '../../assets/css/modal.module.css';
-import { useState } from "react";
-import { supabase } from '../../createClient';
+import { FaSpinner } from 'react-icons/fa';
+import { setAlertMessage } from '../../common/common';
 
 const AddTaskData = ({
   showCanvas,
@@ -10,189 +12,143 @@ const AddTaskData = ({
   taskTitle,
   setTaskTitle,
   selectedTask,
-  setTask,
-  task,
-  setSelected
+  setSelectedTask,
+  isEditing,
+  setIsEditing
 }) => {
-
   const [error, setError] = useState('');
-  const [loader, setLoader] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!showCanvas) return null;
 
-  // ===============================
-  // DUPLICATE TASK NAME CHECK
-  // ===============================
-  const checkDuplicateTask = async (name) => {
-    let query = supabase
-      .from("TaskData")
-      .select("id")
-      .ilike("taskName", name.trim());
-
-    // ✏️ Edit case → ignore current task
-    if (selectedTask) {
-      query = query.neq("id", selectedTask.id);
-    }
-
-    const { data } = await query;
-    return data && data.length > 0;
-  };
-
-  // ===============================
-  // UNIQUE ID CHECK
-  // ===============================
-  const checkTaskId = async (id) => {
-    const { data } = await supabase
-      .from("TaskData")
-      .select("uniqueId")
-      .eq("uniqueId", id)
-      .maybeSingle();
-
-    return data !== null;
-  };
-
-  // ===============================
-  // UNIQUE ID GENERATOR
-  // ===============================
-  const generateTaskId = async () => {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const numbers = "0123456789";
-
+  // Generate unique 6-character ID
+  const generateUniqueId = async () => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
     const generateId = () => {
-      let id = "";
-      for (let i = 0; i < 3; i++) {
-        id += letters[Math.floor(Math.random() * letters.length)];
-      }
-      for (let i = 0; i < 3; i++) {
-        id += numbers[Math.floor(Math.random() * numbers.length)];
-      }
+      let id = '';
+      for (let i = 0; i < 3; i++) id += letters[Math.floor(Math.random() * letters.length)];
+      for (let i = 0; i < 3; i++) id += numbers[Math.floor(Math.random() * numbers.length)];
       return id;
     };
 
     while (true) {
-      const id = generateId();
-      const exists = await checkTaskId(id);
-      if (!exists) return id;
+      const newId = generateId();
+      const { data } = await supabase.from('TaskData').select('uniqueId').eq('uniqueId', newId).maybeSingle();
+      if (!data) return newId;
     }
   };
 
-  // ===============================
-  // SAVE / UPDATE TASK
-  // ===============================
+  // Save history function
+  const saveHistory = async ({ oldValue = null, newValue, uniqueId, action }) => {
+    try {
+      const { error } = await supabase.from('TaskHistory').insert([
+        {
+          created_by: 'Ansh',
+          created_at: new Date().toISOString(),
+          oldvalue: oldValue ? JSON.stringify(oldValue) : null,
+          newValue: newValue ? JSON.stringify(newValue) : null,
+          uniqueId,
+          action
+        }
+      ]);
+      if (error) console.error('Error saving history:', error);
+    } catch (err) {
+      console.error('Unexpected error saving history:', err);
+    }
+  };
+
   const handleSave = async () => {
-    if (!taskTitle.trim()) {
-      setError("Task name is required");
+    const trimmedTitle = taskTitle.trim();
+    if (!trimmedTitle) {
+      setError('Task name is required.');
       return;
     }
 
-    try {
-      setLoader(true);
-      setError('');
+    setLoading(true);
+    setError('');
 
-      // ❌ DUPLICATE NAME CHECK
-      const isDuplicate = await checkDuplicateTask(taskTitle);
-      if (isDuplicate) {
-        setError("Task with this name already exists");
-        setLoader(false);
+    try {
+      // Check for duplicate task name
+      const { data: existingTask } = await supabase
+        .from('TaskData')
+        .select('id, uniqueId')
+        .eq('taskName', trimmedTitle)
+        .maybeSingle();
+
+      if (existingTask && (!isEditing || existingTask.uniqueId !== selectedTask?.uniqueId)) {
+        setError('Task name already exists.');
+        setLoading(false);
         return;
       }
 
-      // ================= EDIT TASK =================
-      if (selectedTask) {
+      let uniqueId = selectedTask?.uniqueId || await generateUniqueId();
+      let taskData = null;
 
-        if (taskTitle.trim() === selectedTask.taskName.trim()) {
-          setError("No changes detected");
-          setLoader(false);
-          return;
-        }
+      if (isEditing) {
+        // Update task
+        const { data: updatedData, error: updateError } = await supabase
+          .from('TaskData')
+          .update({ taskName: trimmedTitle })
+          .eq('uniqueId', selectedTask.uniqueId)
+          .select()
+          .single();
 
-        const { error } = await supabase
-          .from("TaskData")
-          .update({
-            taskName: taskTitle,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", selectedTask.id);
+        if (updateError) throw updateError;
+        taskData = updatedData;
 
-        if (error) throw error;
-
-        await supabase.from("TaskHistory").insert([{
-          created_by: "Ansh",
-          created_at: new Date().toISOString(),
-          oldvalue: JSON.stringify({ taskName: selectedTask.taskName }),
-          newValue: JSON.stringify({ taskName: taskTitle }),
+        await saveHistory({
+          oldValue: { taskName: selectedTask.taskName },
+          newValue: { taskName: trimmedTitle },
           uniqueId: selectedTask.uniqueId,
-          action: "Task Edited"
-        }]);
+          action: 'edit'
+        });
+
+        setAlertMessage('success', 'Task updated successfully!');
+      } else {
+        // Insert new task
+        const { data: insertedData, error: insertError } = await supabase
+          .from('TaskData')
+          .insert([{ taskName: trimmedTitle, uniqueId, created_by: 'Ansh', created_at: new Date().toISOString() }])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        taskData = insertedData;
+
+        await saveHistory({
+          oldValue: null,
+          newValue: { taskName: trimmedTitle },
+          uniqueId,
+          action: 'add'
+        });
+
+        setAlertMessage('success', 'Task added successfully!');
       }
 
-      // ================= ADD TASK =================
-      else {
-        const uniqueId = await generateTaskId();
-
-        const { error } = await supabase.from("TaskData").insert([{
-          taskName: taskTitle,
-          uniqueId,
-          created_by: "Ansh",
-          created_at: new Date().toISOString()
-        }]);
-
-        if (error) throw error;
-
-        await supabase.from("TaskHistory").insert([{
-          created_by: "Ansh",
-          created_at: new Date().toISOString(),
-          oldvalue: null,
-          newValue: JSON.stringify({ taskName: taskTitle }),
-          uniqueId,
-          action: "Task Created"
-        }]);
-      }
-
-      // ================= COMMON =================
       fetchTaskData();
-      setTaskTitle("");
-      setShowCanvas(false);
+      if (taskData) setSelectedTask(taskData);
 
+      setTaskTitle('');
+      setIsEditing(false);
+      setTimeout(() => setShowCanvas(false), 500);
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
+      console.error('Error saving task:', err);
+      setError('Failed to save task. Please try again.');
     } finally {
-      setLoader(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
-
         <div className={styles.actionBtn}>
-          <p className={styles.headerText}>
-            {task ? "Edit Task" : "Add Task"}
-          </p>
-
-          <button
-            className={styles.closeBtn}
-            onClick={() => {
-              setError('');
-              setShowCanvas(false);
-              setTask(false);
-            }}
-          >
-            <img
-              src={images.iconClose}
-              className={styles.iconClose}
-              alt="close"
-            />
+          <p className={styles.headerText}>Task Data</p>
+          <button className={styles.closeBtn} onClick={() => setShowCanvas(false)}>
+            <img src={images.iconClose} className={styles.iconClose} alt="close" />
           </button>
         </div>
-
-        {/* 🔴 ERROR MESSAGE */}
-        {error && (
-          <div style={{ color: "red", fontSize: 13, margin: "8px 16px" }}>
-            {error}
-          </div>
-        )}
 
         <div className={styles.modalBody}>
           <div className={styles.textboxGroup}>
@@ -201,32 +157,32 @@ const AddTaskData = ({
               <div className={styles.textboxRight}>
                 <input
                   type="text"
-                  className={`form-control ${styles.formTextbox} ${error ? "is-invalid" : ""}`}
+                  className={`form-control ${styles.formTextbox} ${error ? styles.errorInput : ''}`}
                   placeholder="Enter task name"
                   value={taskTitle}
                   onChange={(e) => {
                     setTaskTitle(e.target.value);
-                    setError('');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !loader) handleSave();
+                    if (error) setError('');
                   }}
                 />
               </div>
             </div>
           </div>
 
+          {error && <div className={styles.errorMessage}>{error}</div>}
+
           <button
             type="button"
             className={`mt-3 ${styles.btnSave}`}
             onClick={handleSave}
-            disabled={loader}
+            disabled={loading}
           >
-            {loader
-              ? "Please wait..."
-              : task
-                ? "Update Task"
-                : "Add Task"}
+            {loading ? (
+              <div className={styles.Loginloadercontainer}>
+                <FaSpinner className={styles.spinnerLogin} />
+                <span className={styles.loaderText}>Please wait...</span>
+              </div>
+            ) : isEditing ? 'Update' : 'Save'}
           </button>
         </div>
       </div>
