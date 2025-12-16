@@ -10,6 +10,8 @@ import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
+import {LuUsers } from "react-icons/lu";
+
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
   const [firstchar, setFirsthar] = useState("");
@@ -114,6 +116,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
         </div>
         <div className={`${styles.headerRight}`}>
           <ul className={styles.navbarNav}>
+
+             <Link
+              aria-current="page"
+              to="/users"
+              title="users"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/users" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/users"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+               <LuUsers
+                className={`${styles.iconNav} ${location.pathname === "/users"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor }}
+              >
+               User
+              </span>
+            </Link> 
 
            <Link
               aria-current="page"

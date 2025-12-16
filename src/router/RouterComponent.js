@@ -20,6 +20,8 @@ import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
 import { IoMagnet } from "react-icons/io5";
 import TaskData from "../pages/Task-Data/TaskData";
+import User from "../pages/Users/Users";
+import Login from "../pages/Login/login";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -41,7 +43,7 @@ const RouterComponent = () => {
   return (
     <>
       <Routes>
-        {/* <Route path="/" element={<Login />} /> */}
+        <Route path="/" element={<Login />} />
 
         <Route
           path="/"
@@ -154,7 +156,7 @@ const RouterComponent = () => {
         />
         <Route
           path="/realtime-monitoring"
-          element={<><MainLayout /><RealtimeMonitoring /></>}
+          element={<><MainLayout /><RealtimeMonitoring/></>}
         />
         <Route
           path="/reports"
@@ -179,6 +181,19 @@ const RouterComponent = () => {
             </>
           }
         />
+        <Route
+          path="/users"
+          element={<><MainLayout /><User /></>}
+        />
+        {/* <Route
+          path="/users"
+          element={
+            <>
+              <MainLayout/> 
+              <User/>
+            </>
+          }
+        /> */}
       </Routes>
 
          
