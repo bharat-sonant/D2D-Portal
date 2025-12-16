@@ -21,43 +21,6 @@ const AddTaskData = ({
 
   if (!showCanvas) return null;
 
-  // Generate unique 6-character ID
-  const generateUniqueId = async () => {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-    const generateId = () => {
-      let id = '';
-      for (let i = 0; i < 3; i++) id += letters[Math.floor(Math.random() * letters.length)];
-      for (let i = 0; i < 3; i++) id += numbers[Math.floor(Math.random() * numbers.length)];
-      return id;
-    };
-
-    while (true) {
-      const newId = generateId();
-      const { data } = await supabase.from('TaskData').select('uniqueId').eq('uniqueId', newId).maybeSingle();
-      if (!data) return newId;
-    }
-  };
-
-  // Save history function
-  const saveHistory = async ({ oldValue = null, newValue, uniqueId, action }) => {
-    try {
-      const { error } = await supabase.from('TaskHistory').insert([
-        {
-          created_by: 'Ansh',
-          created_at: new Date().toISOString(),
-          oldvalue: oldValue ? JSON.stringify(oldValue) : null,
-          newValue: newValue ? JSON.stringify(newValue) : null,
-          uniqueId,
-          action
-        }
-      ]);
-      if (error) console.error('Error saving history:', error);
-    } catch (err) {
-      console.error('Unexpected error saving history:', err);
-    }
-  };
-
   const handleSave = async () => {
     const trimmedTitle = taskTitle.trim();
     if (!trimmedTitle) {
@@ -72,17 +35,16 @@ const AddTaskData = ({
       // Check for duplicate task name
       const { data: existingTask } = await supabase
         .from('TaskData')
-        .select('id, uniqueId')
+        .select('id')
         .eq('taskName', trimmedTitle)
         .maybeSingle();
 
-      if (existingTask && (!isEditing || existingTask.uniqueId !== selectedTask?.uniqueId)) {
+      if (existingTask && (!isEditing || existingTask.id !== selectedTask?.id)) {
         setError('Task name already exists.');
         setLoading(false);
         return;
       }
 
-      let uniqueId = selectedTask?.uniqueId || await generateUniqueId();
       let taskData = null;
 
       if (isEditing) {
@@ -90,40 +52,50 @@ const AddTaskData = ({
         const { data: updatedData, error: updateError } = await supabase
           .from('TaskData')
           .update({ taskName: trimmedTitle })
-          .eq('uniqueId', selectedTask.uniqueId)
+          .eq('id', selectedTask.id)
           .select()
           .single();
 
         if (updateError) throw updateError;
         taskData = updatedData;
 
-        await saveHistory({
-          oldValue: { taskName: selectedTask.taskName },
-          newValue: { taskName: trimmedTitle },
-          uniqueId: selectedTask.uniqueId,
-          action: 'edit'
-        });
-
         setAlertMessage('success', 'Task updated successfully!');
+
+        // Save history for update
+        await supabase.from('TaskHistory').insert([{
+          taskId: taskData.id,
+          action: 'Updated',
+          oldvalue: selectedTask.taskName,
+          newValue: taskData.taskName,
+          created_by: 'Ansh',
+          created_at: new Date().toISOString()
+        }]);
       } else {
         // Insert new task
         const { data: insertedData, error: insertError } = await supabase
           .from('TaskData')
-          .insert([{ taskName: trimmedTitle, uniqueId, created_by: 'Ansh', created_at: new Date().toISOString() }])
+          .insert([{
+            taskName: trimmedTitle,
+            created_by: 'Ansh',
+            created_at: new Date().toISOString()
+          }])
           .select()
           .single();
 
         if (insertError) throw insertError;
         taskData = insertedData;
 
-        await saveHistory({
-          oldValue: null,
-          newValue: { taskName: trimmedTitle },
-          uniqueId,
-          action: 'add'
-        });
-
         setAlertMessage('success', 'Task added successfully!');
+
+        // Save history for new task
+        await supabase.from('TaskHistory').insert([{
+          taskId: taskData.id,
+          action: 'Created',
+          oldvalue: null,
+          newValue: taskData.taskName,
+          created_by: 'Ansh',
+          created_at: new Date().toISOString()
+        }]);
       }
 
       fetchTaskData();
@@ -139,6 +111,7 @@ const AddTaskData = ({
       setLoading(false);
     }
   };
+
 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">

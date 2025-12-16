@@ -7,6 +7,7 @@ import { LucideSettings } from 'lucide-react';
 import TaskList from '../../components/TaskData/TaskList';
 import AddTaskData from '../../components/TaskData/AddTaskData';
 import TaskDataSettings from './TaskDataSettings';
+import { setAlertMessage } from '../../common/common';
 
 const TaskData = () => {
   const [taskData, setTaskData] = useState([]);
@@ -34,6 +35,9 @@ const TaskData = () => {
       // Ensure selected task exists
       if (!selectedTask || !sorted.find(t => t.id === selectedTask.id)) {
         setSelectedTask(sorted[0] || null);
+      } else {
+        // Update selectedTask reference to latest object
+        setSelectedTask(sorted.find(t => t.id === selectedTask.id));
       }
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -49,7 +53,6 @@ const TaskData = () => {
   };
 
   const openSettingsHandler = () => {
-    if (!selectedTask) return alert('Please select a task first.');
     setShowSettingsCanvas(true);
   };
 
@@ -61,26 +64,34 @@ const TaskData = () => {
     if (!task?.id) return;
 
     try {
+      await supabase.from('TaskHistory').insert([{
+        taskId: task.id,
+        action: 'Deleted',
+        oldvalue: task.taskName,
+        newValue: null,
+        created_by: 'Ansh',
+        created_at: new Date().toISOString()
+      }]);
       const { error } = await supabase.from('TaskData').delete().eq('id', task.id);
       if (error) throw error;
-
       await fetchTaskData();
-
       if (selectedTask?.id === task.id) setSelectedTask(null);
+      setAlertMessage('success', 'Task deleted successfully!');
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Failed to delete task. Check console.');
     }
   };
 
+
   return (
     <>
-      {/* Floating Buttons */}
-      <div className={`${GlobalStyles.floatingDiv}`} style={{ bottom: '90px' }}>
-        <button className={`${GlobalStyles.floatingBtn}`} onClick={openSettingsHandler}>
-          <LucideSettings style={{ position: 'relative', bottom: '3px' }} />
-        </button>
-      </div>
+      {taskData.length > 0 && (
+        <div className={`${GlobalStyles.floatingDiv}`} style={{ bottom: '90px' }}>
+          <button className={`${GlobalStyles.floatingBtn}`} onClick={openSettingsHandler}>
+            <LucideSettings style={{ position: 'relative', bottom: '3px' }} />
+          </button>
+        </div>
+      )}
 
       <div className={`${GlobalStyles.floatingDiv}`}>
         <button className={`${GlobalStyles.floatingBtn}`} onClick={openAddModalHandler}>
@@ -94,21 +105,23 @@ const TaskData = () => {
           <TaskList
             taskData={taskData}
             onSelectTask={handleSelectTask}
-            selectedId={selectedTask?.id}
+            selectedId={selectedTask?.id} // id based selection
           />
         </div>
 
         <div className={`${TaskStyles.employeeRight}`}>
-          <div className="row g-0">
-            <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
-              <div className={styles.card}>
-                <div className={styles.headerRow}>
-                  <span className={styles.taskIdBadge}>{selectedTask?.uniqueId ?? 'N/A'}</span>
-                  <h2 className={styles.name}>{selectedTask?.taskName ?? 'N/A'}</h2>
+          {taskData.length > 0 && (
+            <div className="row g-0">
+              <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
+                <div className={styles.card}>
+                  <div className={styles.headerRow}>
+                    <span className={styles.taskIdBadge}>{selectedTask?.id ?? 'N/A'}</span> {/* display id */}
+                    <h2 className={styles.name}>{selectedTask?.taskName ?? 'N/A'}</h2>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -125,7 +138,6 @@ const TaskData = () => {
         setIsEditing={setIsEditing}
       />
 
-      {/* Task Settings Canvas */}
       <TaskDataSettings
         openCanvas={showSettingsCanvas}
         onHide={() => setShowSettingsCanvas(false)}
