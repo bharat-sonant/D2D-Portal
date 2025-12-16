@@ -208,7 +208,7 @@ export default function Login() {
                     className="form-control"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    placeholder="Enter employee code"
+                    placeholder="Enter user name "
                     style={{
                       padding: '12px 45px 12px 15px',
                       border: '2px solid #e0e0e0',
