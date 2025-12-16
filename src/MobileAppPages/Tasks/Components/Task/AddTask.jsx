@@ -8,7 +8,7 @@ const AddTask = (props) => {
     const [loader, setLoader] = useState(false);
     const [error, setError] = useState('');
 
-    const handleCloseModal = () => {
+    const handleCloseModal = () => {    
         props.setShowCanvas(false);
         action.handleClearFields(
             setError,

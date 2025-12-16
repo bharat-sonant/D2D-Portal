@@ -3,7 +3,7 @@ import styles from '../../Styles/TaskList/TaskList.module.css';
 import { images } from '../../../../assets/css/imagePath';
 import { useEffect, useState } from 'react';
 
-const TaskList = (props) => {
+const   TaskList = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
