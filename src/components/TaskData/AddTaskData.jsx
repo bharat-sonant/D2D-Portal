@@ -5,6 +5,40 @@ import styles from '../../assets/css/modal.module.css';
 import { FaSpinner } from 'react-icons/fa';
 import { setAlertMessage } from '../../common/common';
 
+/* ================= UNIQUE ID GENERATOR ================= */
+
+const generateTaskId = async (checkTaskId) => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+
+  const generateId = () => {
+    let id = "";
+    for (let i = 0; i < 3; i++)
+      id += letters[Math.floor(Math.random() * letters.length)];
+    for (let i = 0; i < 3; i++)
+      id += numbers[Math.floor(Math.random() * numbers.length)];
+    return id;
+  };
+
+  while (true) {
+    const newId = generateId();
+    const exists = await checkTaskId(newId);
+    if (!exists) return newId;
+  }
+};
+
+const checkTaskIdExists = async (uniqueId) => {
+  const { data } = await supabase
+    .from('TaskData')
+    .select('id')
+    .eq('uniqueId', uniqueId)
+    .maybeSingle();
+
+  return !!data;
+};
+
+/* ================= COMPONENT ================= */
+
 const AddTaskData = ({
   showCanvas,
   setShowCanvas,
@@ -32,7 +66,8 @@ const AddTaskData = ({
     setError('');
 
     try {
-      // Check for duplicate task name
+      /* ===== Duplicate Task Name Check ===== */
+
       const { data: existingTask } = await supabase
         .from('TaskData')
         .select('id')
@@ -48,7 +83,8 @@ const AddTaskData = ({
       let taskData = null;
 
       if (isEditing) {
-        // Update task
+        /* ================= UPDATE TASK ================= */
+
         const { data: updatedData, error: updateError } = await supabase
           .from('TaskData')
           .update({ taskName: trimmedTitle })
@@ -61,21 +97,28 @@ const AddTaskData = ({
 
         setAlertMessage('success', 'Task updated successfully!');
 
-        // Save history for update
+        /* ===== Save Update History (with uniqueId) ===== */
+
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
+          uniqueId: taskData.uniqueId,
           action: 'Updated',
           oldvalue: selectedTask.taskName,
           newValue: taskData.taskName,
           created_by: 'Ansh',
           created_at: new Date().toISOString()
         }]);
+
       } else {
-        // Insert new task
+        /* ================= CREATE NEW TASK ================= */
+
+        const uniqueId = await generateTaskId(checkTaskIdExists);
+
         const { data: insertedData, error: insertError } = await supabase
           .from('TaskData')
           .insert([{
             taskName: trimmedTitle,
+            uniqueId: uniqueId,
             created_by: 'Ansh',
             created_at: new Date().toISOString()
           }])
@@ -87,9 +130,11 @@ const AddTaskData = ({
 
         setAlertMessage('success', 'Task added successfully!');
 
-        // Save history for new task
+        /* ===== Save Create History (with uniqueId) ===== */
+
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
+          uniqueId: taskData.uniqueId,
           action: 'Created',
           oldvalue: null,
           newValue: taskData.taskName,
@@ -104,6 +149,7 @@ const AddTaskData = ({
       setTaskTitle('');
       setIsEditing(false);
       setTimeout(() => setShowCanvas(false), 500);
+
     } catch (err) {
       console.error('Error saving task:', err);
       setError('Failed to save task. Please try again.');
@@ -112,14 +158,22 @@ const AddTaskData = ({
     }
   };
 
+  /* ================= UI (UNCHANGED) ================= */
 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Task Data</p>
-          <button className={styles.closeBtn} onClick={() => setShowCanvas(false)}>
-            <img src={images.iconClose} className={styles.iconClose} alt="close" />
+          <button
+            className={styles.closeBtn}
+            onClick={() => setShowCanvas(false)}
+          >
+            <img
+              src={images.iconClose}
+              className={styles.iconClose}
+              alt="close"
+            />
           </button>
         </div>
 
@@ -130,7 +184,9 @@ const AddTaskData = ({
               <div className={styles.textboxRight}>
                 <input
                   type="text"
-                  className={`form-control ${styles.formTextbox} ${error ? styles.errorInput : ''}`}
+                  className={`form-control ${styles.formTextbox} ${
+                    error ? styles.errorInput : ''
+                  }`}
                   placeholder="Enter task name"
                   value={taskTitle}
                   onChange={(e) => {
@@ -142,7 +198,9 @@ const AddTaskData = ({
             </div>
           </div>
 
-          {error && <div className={styles.errorMessage}>{error}</div>}
+          {error && (
+            <div className={styles.errorMessage}>{error}</div>
+          )}
 
           <button
             type="button"

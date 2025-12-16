@@ -28,7 +28,7 @@ const TaskList = ({ taskData = [], selectedId, onSelectTask }) => {
           <div className={styles.userScroll}>
             {taskData.length > 0 ? (
               taskData.map((task, idx) => {
-                const isSelected = selectedId === task.id;
+                const isSelected = selectedId === task.uniqueId;
 
                 return (
                   <li className={GlobalStyles.dropdownLi} key={idx}>

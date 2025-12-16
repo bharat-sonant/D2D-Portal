@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Offcanvas } from 'react-bootstrap';
 import style from '../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.module.css';
-import { Edit2, History, Trash2, Info, User, Calendar } from 'lucide-react';
+import { Edit2, History, Trash2, Info, User } from 'lucide-react';
 import { images } from '../../assets/css/imagePath';
 import DeleteConfirmation from '../../MobileAppPages/Tasks/Components/DeleteConfirmation/DeleteConfirmation';
 import { setAlertMessage } from '../../common/common';
@@ -21,7 +21,7 @@ const TaskDataSettings = ({
   isEditing,
   setIsEditing
 }) => {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(selectedTask.status === 'active' || false);
   const [handleOpenDelete, setHandleOpenDelete] = useState(false);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [taskHistory, setTaskHistory] = useState([]);
@@ -55,15 +55,42 @@ const TaskDataSettings = ({
     }
   };
 
+  // ✅ Updated handleToggle to save status in history
   const handleToggle = async () => {
     if (!selectedTask) return;
-    const newState = toggle ? 'inactive' : 'active';
+
+    const newStatus = toggle ? 'inactive' : 'active';
+    const oldStatus = toggle ? 'active' : 'inactive';
+
     try {
-      await supabase.from('TaskData').update({ status: newState }).eq('id', selectedTask.id);
+      // 1️⃣ Save in TaskHistory
+      const { error: historyError } = await supabase
+        .from('TaskHistory')
+        .insert([{
+          taskId: selectedTask.id,
+          uniqueId: selectedTask.uniqueId,
+          action: 'Status Changed',
+          oldvalue: oldStatus,
+          newValue: newStatus,
+          status: newStatus,
+          created_by: 'Ansh',
+          created_at: new Date().toISOString()
+        }]);
+      if (historyError) throw historyError;
+
+      // 2️⃣ Update main TaskData table
+      const { error: updateError } = await supabase
+        .from('TaskData')
+        .update({ status: newStatus })
+        .eq('id', selectedTask.id);
+      if (updateError) throw updateError;
+
       setToggle(!toggle);
       refreshTasks();
+      setAlertMessage('success', `Task marked as ${newStatus}`);
     } catch (err) {
       console.error('Error toggling status:', err);
+      setAlertMessage('error', 'Failed to update task status');
     }
   };
 
@@ -78,7 +105,7 @@ const TaskDataSettings = ({
         const { data, error } = await supabase
           .from('TaskHistory')
           .select('*')
-          .eq('taskId', selectedTask.id)
+          .eq('uniqueId', selectedTask.uniqueId)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -93,7 +120,13 @@ const TaskDataSettings = ({
 
   return (
     <>
-      <Offcanvas placement="end" show={openCanvas} onHide={onHide} className={style.responsiveOffcanvas} style={{ width: '45%' }}>
+      <Offcanvas
+        placement="end"
+        show={openCanvas}
+        onHide={onHide}
+        className={style.responsiveOffcanvas}
+        style={{ width: '45%' }}
+      >
         <div className={style.canvas_container}>
           <div className={style.OffcanvasHeader}>
             <h4 className={style.header_title}>Task Data Settings</h4>
@@ -101,23 +134,41 @@ const TaskDataSettings = ({
 
           <div className={style.scroll_section}>
             <div className={style.canvas_header_end}>
-              <img src={images.iconClose} className={style.close_popup} onClick={onHide} alt="Close" />
+              <img
+                src={images.iconClose}
+                className={style.close_popup}
+                onClick={onHide}
+                alt="Close"
+              />
             </div>
 
             <div className={style.taskControlCard}>
               <div className={style.controlRow}>
                 <h3 className={style.taskName}>{selectedTask?.taskName || 'N/A'}</h3>
                 <div className={style.actionButtons}>
-                  <History size={18} onClick={handleHistoryClick} className={style.historyIcon} />
-                  <button className={style.editButton} onClick={handleEditClick}><Edit2 size={18} /></button>
-                  <button className={style.deleteButton} onClick={handleDeleteClick}><Trash2 size={18} /></button>
+                  <History
+                    size={18}
+                    onClick={handleHistoryClick}
+                    className={style.historyIcon}
+                  />
+                  <button className={style.editButton} onClick={handleEditClick}>
+                    <Edit2 size={18} />
+                  </button>
+                  <button className={style.deleteButton} onClick={handleDeleteClick}>
+                    <Trash2 size={18} />
+                  </button>
                 </div>
+
                 <div className={style.statusSection}>
                   <label className={style.toggleSwitch}>
                     <input type="checkbox" checked={toggle} onChange={handleToggle} />
                     <span className={style.toggleSlider}></span>
                   </label>
-                  <span className={`${style.statusText} ${toggle ? style.active : style.inactive}`}>{toggle ? 'Active' : 'Inactive'}</span>
+                  <span
+                    className={`${style.statusText} ${toggle ? style.active : style.inactive}`}
+                  >
+                    {toggle ? 'Active' : 'Inactive'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -131,12 +182,9 @@ const TaskDataSettings = ({
                     <p style={{ textAlign: 'center', color: '#777' }}>No history found.</p>
                   ) : (
                     <div className={style.timeline}>
-                      {taskHistory.map((item, index) => (
+                      {taskHistory.map((item) => (
                         <div key={item.id} className={style.timelineItem}>
-                          {/* Dot & Line */}
                           <div className={style.timelineMarker}></div>
-
-                          {/* Content */}
                           <div className={style.timelineContent}>
                             <div className={style.timelineHeader}>
                               <span className={style.timelineAction}>{item.action}</span>
@@ -146,22 +194,28 @@ const TaskDataSettings = ({
                             </div>
                             <div className={style.timelineBody}>
                               {item.oldvalue && (
-                                <p><strong>Old Task:</strong> {item.oldvalue}</p>
+                                <p><strong>Old Value:</strong> {item.oldvalue}</p>
                               )}
-                              <p><strong>New Task:</strong> {item.newValue}</p>
-                              <p className={style.timelineBy}><User size={14} /> {item.created_by}</p>
+                              <p><strong>New Value:</strong> {item.newValue}</p>
+                              {item.status && (
+                                <p><strong>Status:</strong> {item.status}</p>
+                              )}
+                              <p className={style.timelineBy}>
+                                <User size={14} /> {item.created_by}
+                              </p>
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
-
                   )}
                 </div>
               ) : (
                 <div className={style.infoBox}>
                   <Info size={18} />
-                  <p className={style.infoText}>Click on the history icon above to view task data history.</p>
+                  <p className={style.infoText}>
+                    Click on the history icon above to view task data history.
+                  </p>
                 </div>
               )}
             </div>

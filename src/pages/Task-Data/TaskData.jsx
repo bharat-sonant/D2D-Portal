@@ -33,11 +33,11 @@ const TaskData = () => {
       setTaskData(sorted);
 
       // Ensure selected task exists
-      if (!selectedTask || !sorted.find(t => t.id === selectedTask.id)) {
+      if (!selectedTask || !sorted.find(t => t.uniqueId === selectedTask.uniqueId)) {
         setSelectedTask(sorted[0] || null);
       } else {
         // Update selectedTask reference to latest object
-        setSelectedTask(sorted.find(t => t.id === selectedTask.id));
+        setSelectedTask(sorted.find(t => t.uniqueId === selectedTask.uniqueId));
       }
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -66,6 +66,7 @@ const TaskData = () => {
     try {
       await supabase.from('TaskHistory').insert([{
         taskId: task.id,
+        uniqueId: task.uniqueId,
         action: 'Deleted',
         oldvalue: task.taskName,
         newValue: null,
@@ -105,7 +106,7 @@ const TaskData = () => {
           <TaskList
             taskData={taskData}
             onSelectTask={handleSelectTask}
-            selectedId={selectedTask?.id} // id based selection
+            selectedId={selectedTask?.uniqueId} // id based selection
           />
         </div>
 
@@ -115,7 +116,7 @@ const TaskData = () => {
               <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
                 <div className={styles.card}>
                   <div className={styles.headerRow}>
-                    <span className={styles.taskIdBadge}>{selectedTask?.id ?? 'N/A'}</span> {/* display id */}
+                    <span className={styles.taskIdBadge}>{selectedTask?.uniqueId ?? 'N/A'}</span> {/* display id */}
                     <h2 className={styles.name}>{selectedTask?.taskName ?? 'N/A'}</h2>
                   </div>
                 </div>
@@ -137,20 +138,21 @@ const TaskData = () => {
         isEditing={isEditing}
         setIsEditing={setIsEditing}
       />
-
-      <TaskDataSettings
-        openCanvas={showSettingsCanvas}
-        onHide={() => setShowSettingsCanvas(false)}
-        selectedTask={selectedTask}
-        refreshTasks={fetchTaskData}
-        handleDelete={handleDeleteTask}
-        setShowCanvas={setShowAddModal}
-        setOpenCanvas={setShowSettingsCanvas}
-        taskTitle={taskTitle}
-        setTaskTitle={setTaskTitle}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-      />
+      {taskData.length > 0 && (
+        <TaskDataSettings
+          openCanvas={showSettingsCanvas}
+          onHide={() => setShowSettingsCanvas(false)}
+          selectedTask={selectedTask}
+          refreshTasks={fetchTaskData}
+          handleDelete={handleDeleteTask}
+          setShowCanvas={setShowAddModal}
+          setOpenCanvas={setShowSettingsCanvas}
+          taskTitle={taskTitle}
+          setTaskTitle={setTaskTitle}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+        />
+      )}
     </>
   );
 };
