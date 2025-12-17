@@ -1,12 +1,39 @@
+import { useEffect, useMemo, useState } from 'react';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import { images } from '../../../../assets/css/imagePath';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
 
 const VehicleList = (props) => {
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleVehicleSelect = (item) => {
         props.onSelectVehicle(item);
     };
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const filteredVehicleList = useMemo(() => {
+        if (!searchTerm.trim()) return props.vehicleList;
+
+        return props.vehicleList.filter((item) =>
+            item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [searchTerm, props.vehicleList]);
+
+    useEffect(() => {
+        if (!props.loading && filteredVehicleList.length > 0) {
+
+            const alreadySelected = filteredVehicleList.find(
+                (t) => t.vehicleId === props.selectedVehicleId
+            );
+
+            if (!alreadySelected) {
+                props.onSelectVehicle(filteredVehicleList[0]);
+            }
+        }
+    }, [filteredVehicleList, props.loading]);
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
@@ -14,6 +41,7 @@ const VehicleList = (props) => {
                 className={`${GlobalStyles.overlay}`}
                 style={{ display: "block" }}
             >
+
                 <ul
                     className={`dropdown-menu ${GlobalStyles.dropdownMenu} ${GlobalStyles.dropdownDesktop} ${styles.pageDropdown}`}
                     style={{
@@ -21,6 +49,15 @@ const VehicleList = (props) => {
                     }}
                     aria-labelledby="drop downMenuButton"
                 >
+                    <div className={`${GlobalStyles.searchGroup}`}>
+                        <input
+                            className={`${GlobalStyles.inputSearch}`}
+                            type="text"
+                            placeholder="Search Vehicles"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        />
+                    </div>
                     <div className={`${styles.userListTitle}`}>Select Vehicles</div>
                     <div className={`${styles.userScroll}`}>
                         {props.loading ? (
@@ -33,8 +70,8 @@ const VehicleList = (props) => {
                                 <div className={styles.loaderText}>Please wait... Loading vehicle data.</div>
                             </div>
 
-                        ) : props.vehicleList.length > 0 ? (
-                            props.vehicleList.map((item, i) => (
+                        ) : filteredVehicleList.length > 0 ? (
+                            filteredVehicleList.map((item, i) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
                                         className={`dropdown-item ${GlobalStyles.dropdownItem} 
