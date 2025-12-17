@@ -1,28 +1,64 @@
 import * as common from "../../../../common/common";
 import * as service from "../../Services/VehicleService/VehicleService";
 
-export const handleChange = (type, value, setVehicleName, setError) => {
-    if (type === "name") {
-        setVehicleName(value);
+export const handleChange = (type, value, setVehicleName, setError, setChassisNumber) => {
+    const normalizeSpace = (value) => value.replace(/\s+/g, " ").trimStart();
+    const normalizeChassis = (val) => val.replace(/\s/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 17);
 
-        if (value.trim() === "") {
-            setError("Please provide vehicle name.");
-        } else {
-            setError("");
-        };
+    if (type === "name") {
+        const formattedValue = normalizeSpace(value);
+        setVehicleName(formattedValue);
+        setError((prev) => ({ ...prev, vehicleName: formattedValue ? "" : "Please provide vehicle name." }));
+    };
+
+    if (type === "chassisNumber") {
+        const formattedChassis = normalizeChassis(value);
+        setChassisNumber(formattedChassis);
+        let errorMsg = "";
+
+        if (!formattedChassis) {
+            errorMsg = "Please provide chassis number.";
+        } else if (/[IOQ]/.test(formattedChassis)) {
+            errorMsg = "Chassis number cannot contain I, O or Q.";
+        } else if (formattedChassis.length < 17) {
+            errorMsg = "Chassis number must be 17 characters long.";
+        }
+        setError((prev) => ({
+            ...prev,
+            chassisNumber: errorMsg,
+        }));
     };
 };
 
-export const handleSave = (vehicleName, setError, setLoader, setVehicleName, setShowModal, setVehicleList, vehicleId, setVehicleDetails, setVehicleId, historyData) => {
-    if (vehicleName.trim() === "") {
-        setError("Please provide vehicle name.");
-        return;
+export const handleSave = (vehicleName, setError, setLoader, setVehicleName, setShowModal, setVehicleList, vehicleId, setVehicleDetails, setVehicleId, historyData, chassisNumber, setChassisNumber) => {
+
+    const trimmedVehicleName = vehicleName?.trim();
+    const trimmedChassisNumber = chassisNumber?.trim();
+
+    let errors = {
+        vehicleName: "",
+        chassisNumber: ""
     };
+
+    if (!trimmedVehicleName) {
+        errors.vehicleName = "Please provide vehicle name.";
+    }
+
+    if (!trimmedChassisNumber) {
+        errors.chassisNumber = "Please provide chassis number.";
+    }
+
+    setError(errors);
+
+    if (errors.vehicleName || errors.chassisNumber) {
+        return;
+    }
+
     setLoader(true);
-    service.saveVehicleData(vehicleName, vehicleId).then((response) => {
+    service.saveVehicleData(vehicleName, chassisNumber, vehicleId).then((response) => {
         if (response.status === 'success') {
             setLoader(false);
-            handleClearAll(setVehicleName, setError, setVehicleId);
+            handleClearAll(setVehicleName, setError, setVehicleId, setChassisNumber);
             setVehicleList((prev) => {
                 let updatedList;
                 if (vehicleId) {

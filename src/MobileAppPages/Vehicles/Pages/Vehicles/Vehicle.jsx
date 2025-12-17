@@ -13,6 +13,7 @@ import { deleteVehicle } from '../../Action/AddVehicle/AddVehicleAction';
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
     const [vehicleName, setVehicleName] = useState('');
+    const [chassisNumber, setChassisNumber] = useState('');
     const [vehicleList, setVehicleList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedVehicleId, setSelectedVehicleId] = useState(null);
@@ -137,6 +138,8 @@ const Vehicle = () => {
                     setVehicleDetails={setVehicleDetails}
                     setVehicleId={setVehicleId}
                     historyData={historyData}
+                    chassisNumber={chassisNumber}
+                    setChassisNumber={setChassisNumber}
                 />
             </div>
 
@@ -154,7 +157,7 @@ const Vehicle = () => {
                 showHistory={showHistory}
                 setShowHistory={setShowHistory}
             />
-            
+
             <DeleteConfirmation
                 isOpen={confirmModal}
                 onClose={() => setConfirmModal(false)}

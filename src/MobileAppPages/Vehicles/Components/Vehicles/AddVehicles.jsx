@@ -5,7 +5,10 @@ import * as action from '../../Action/AddVehicle/AddVehicleAction';
 import { FaSpinner } from 'react-icons/fa';
 
 const AddVehicles = (props) => {
-    const [error, setError] = useState('');
+    const [error, setError] = useState({
+        vehicleName: "",
+        chassisNumber: ""
+    });
     const [loader, setLoader] = useState(false);
 
     const handleInputChange = (type, value) => {
@@ -13,7 +16,8 @@ const AddVehicles = (props) => {
             type,
             value,
             props.setVehicleName,
-            setError
+            setError,
+            props.setChassisNumber
         );
     }
 
@@ -28,7 +32,9 @@ const AddVehicles = (props) => {
             props.vehicleId,
             props.setVehicleDetails,
             props.setVehicleId,
-            props.historyData
+            props.historyData,
+            props.chassisNumber,
+            props.setChassisNumber
         );
     };
 
@@ -65,12 +71,12 @@ const AddVehicles = (props) => {
                         <div className={`col-md-12`}>
                             <div className={`${styles.textboxGroup}`}>
                                 <div className={`${styles.textboxMain}`}>
-                                    <div className={`${styles.textboxLeft}`}>Vehicle Name</div>
+                                    <div className={`${styles.textboxLeft}`} style={{ width: '129px' }}>Vehicle Name</div>
                                     <div className={`${styles.textboxRight}`}>
                                         <input
                                             type="text"
                                             id="Name"
-                                            className={`form-control ${styles.formTextbox} ${error ? 'is-invalid' : ""}`}
+                                            className={`form-control ${styles.formTextbox} ${error.vehicleName ? 'is-invalid' : ""}`}
                                             placeholder=" "
                                             value={props.vehicleName}
                                             onChange={(e) =>
@@ -79,9 +85,33 @@ const AddVehicles = (props) => {
                                         />
                                     </div>
                                 </div>
-                                {error && (
+                                {error.vehicleName && (
                                     <div className={`${styles.invalidfeedback}`}>
-                                        {error}
+                                        {error.vehicleName}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className={`col-md-12`}>
+                            <div className={`${styles.textboxGroup}`}>
+                                <div className={`${styles.textboxMain}`}>
+                                    <div className={`${styles.textboxLeft}`} style={{ width: '129px' }}>Chassis Number</div>
+                                    <div className={`${styles.textboxRight}`}>
+                                        <input
+                                            type="text"
+                                            id="chassisNumber"
+                                            className={`form-control ${styles.formTextbox} ${error.chassisNumber ? 'is-invalid' : ""}`}
+                                            placeholder=" "
+                                            value={props.chassisNumber}
+                                            onChange={(e) =>
+                                                handleInputChange("chassisNumber", e.target.value)
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                                {error.chassisNumber && (
+                                    <div className={`${styles.invalidfeedback}`}>
+                                        {error.chassisNumber}
                                     </div>
                                 )}
                             </div>

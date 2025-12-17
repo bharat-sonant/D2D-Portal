@@ -2,11 +2,11 @@ import * as common from "../../../../common/common";
 import *  as db from '../../../../services/dbServices';
 import dayjs from "dayjs";
 
-export const saveVehicleData = (vehicleName, vehicleId) => {
+export const saveVehicleData = (vehicleName, chassisNumber, vehicleId) => {
     return new Promise(async (resolve) => {
         try {
-            if (!vehicleName) {
-                return resolve(common.setResponse('fail', 'Invalid params !!!', { vehicleName }));
+            if (!vehicleName && !chassisNumber) {
+                return resolve(common.setResponse('fail', 'Invalid params !!!', { vehicleName, chassisNumber }));
             }
 
             let finalvehicleId = vehicleId || common.generateRandomCode();
@@ -26,6 +26,7 @@ export const saveVehicleData = (vehicleName, vehicleId) => {
 
             let detailsData = {
                 name: vehicleName,
+                chassisNumber: chassisNumber,
                 _at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                 _by: "Admin",
                 status: 'active'
