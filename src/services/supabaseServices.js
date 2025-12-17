@@ -2,9 +2,9 @@ import { decryptValue } from "../common/common";
 import { supabase } from "../createClient";
 
 
-export const fetchUsers = async () => {
+export const fetchUsers = async (table) => {
 const { data, error } = await supabase
-.from('users')
+.from(table)
 .select('*')
 .order('created_at', { ascending: false });
 if (error) throw error;
@@ -12,8 +12,8 @@ return data;
 };
 
 
-export const createUser = async (payload) => {
-const { error } = await supabase.from('users').insert([payload]);
+export const createUser = async (table,payload) => {
+const { error } = await supabase.from(table).insert([payload]);
 if (error) throw error;
 };
 
@@ -28,6 +28,9 @@ export const deleteUser = async (id) => {
 const { error } = await supabase.from('users').delete().eq('id', id);
 if (error) throw error;
 };
+
+
+
 
 export const updateUserStatus = async (userId, currentStatus) => {
       const newStatus = currentStatus === 'active' ? 'inactive' :'active';
@@ -67,4 +70,58 @@ export const login = async (username, password) => {
   }
 
   return data;
+};
+
+
+export const saveCityWithLogo = async (cityData, logoFile) => {
+  let logo = null;
+
+  if (logoFile) {
+    logo = await uploadAttachment(
+     logoFile,
+      'CityLogo',
+    );
+  }
+
+  //2️⃣ Insert city data with logo URL
+    cityData.logo_image=logo?.url || null
+  const { data, error } = await supabase
+    .from('Cities')
+    .insert([
+      cityData
+    ])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
+
+
+export const uploadAttachment = async (file,bucket) => {
+ 
+  if (!file) return null;
+
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${ext}`;
+  const filePath = fileName;
+
+  // Upload file to Supabase Storage
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file, { upsert: false });
+
+  if (error) throw error;
+
+  // Get public URL
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(filePath);
+
+  return {
+    url: data.publicUrl,
+    path: filePath,
+  };
 };

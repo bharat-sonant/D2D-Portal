@@ -10,7 +10,8 @@ import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
-import {LuUsers } from "react-icons/lu";
+import { LuUsers } from "react-icons/lu";
+import { FaCity } from "react-icons/fa";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -140,6 +141,32 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
                 style={{ color: navbarStyle.textColor }}
               >
                User
+              </span>
+            </Link> 
+
+             <Link
+              aria-current="page"
+              to="/cities"
+              title="cities"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/cities" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/cities"
+                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  : {}
+              }
+            >
+               <FaCity
+                className={`${styles.iconNav} ${location.pathname === "/cities"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{ color: navbarStyle.textColor}}
+              >
+               City
               </span>
             </Link> 
 

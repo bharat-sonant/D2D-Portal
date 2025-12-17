@@ -97,7 +97,7 @@ const AddUser = (props) => {
         common.setAlertMessage("success", "Data updated successfully");
       } else {
         try {
-          await createUser(userDetail);
+          await createUser('users',userDetail);
           await sendLoginCredentialsToEmployee(
             form.email,
             form.username,
@@ -145,7 +145,9 @@ const AddUser = (props) => {
         subject,
         html: htmlBody,
       });
+     
       return response.status === 200 ? "success" : "failure";
+      
     } catch (error) {
       console.log(error);
       throw error;

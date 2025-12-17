@@ -23,6 +23,7 @@ import TaskData from "../pages/Task-Data/TaskData";
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
+import City from "../pages/City/City";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -187,23 +188,22 @@ const RouterComponent = () => {
        <Route
   path="/users"
   element={
-  <ProtectedRouter>
+   <>
     <MainLayout/>
         <User/>
-     </ProtectedRouter>
-    
+   </>
   }
 />
 
-        {/* <Route
-          path="/users"
-          element={
-            <>
-              <MainLayout/> 
-              <User/>
-            </>
-          }
-        /> */}
+        <Route
+  path="/cities"
+  element={
+   <>
+    <MainLayout/>
+        <City/>
+   </>
+  }
+/> 
       </Routes>
 
          

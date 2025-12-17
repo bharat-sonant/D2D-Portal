@@ -15,7 +15,7 @@ const User = () => {
    const [confirmUser, setConfirmUser] = useState(null);
 
  const loadUsers = async () => {
-  const data = await fetchUsers();
+  const data = await fetchUsers('users');
   const sortedData = [...data].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
