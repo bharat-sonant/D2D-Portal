@@ -13,7 +13,7 @@ import { deleteVehicle } from '../../Action/AddVehicle/AddVehicleAction';
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
     const [vehicleName, setVehicleName] = useState('');
-    const [chassisNumber, setChassisNumber] = useState('');
+    const [chassisNo, setChassisNo] = useState('');
     const [vehicleList, setVehicleList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedVehicleId, setSelectedVehicleId] = useState(null);
@@ -24,49 +24,50 @@ const Vehicle = () => {
     const [vehicleHistory, setVehicleHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
 
-    useEffect(() => {
+    /* =========================
+       Fetch Vehicles
+    ========================= */
+    const fetchVehicles = () => {
         action.getVehicles(setVehicleList, setLoading);
+    };
+
+    useEffect(() => {
+        fetchVehicles();
     }, []);
 
     useEffect(() => {
         if (vehicleList.length > 0 && !selectedVehicleId) {
-            setSelectedVehicleId(vehicleList[0].vehicleId);
-        };
+            setSelectedVehicleId(vehicleList[0].id);
+        }
     }, [vehicleList]);
 
     useEffect(() => {
         if (selectedVehicleId) {
             action.vehicleDetails(selectedVehicleId, setVehicleDetails);
             historyData();
-        };
+        }
     }, [selectedVehicleId]);
 
     const historyData = () => {
-        action.getHistoryData(selectedVehicleId, setVehicleHistory)
+        action.getHistoryData(selectedVehicleId, setVehicleHistory);
     };
 
-    const handleOpen = () => {
-        setShowModal(true);
-    };
+    const handleOpen = () => setShowModal(true);
 
     const handleVehicleSelection = (item) => {
-        setSelectedVehicleId(item.vehicleId);
+        setSelectedVehicleId(item.id);
     };
 
-    const handleOpenCanvas = () => {
-        setCanvasModal(true);
-    };
-
-    const handleCanvasOff = () => {
-        setCanvasModal(false);
-    };
+    const handleOpenCanvas = () => setCanvasModal(true);
+    const handleCanvasOff = () => setCanvasModal(false);
 
     const handleEditClick = () => {
         setCanvasModal(false);
         setShowModal(true);
         setShowHistory(false);
-        setVehicleName(vehicleDetails?.name);
-        setVehicleId(vehicleDetails?.vehicleId);
+        setVehicleName(vehicleDetails?.vehicles_No || '');
+        setChassisNo(vehicleDetails?.chassis_no || '');
+        setVehicleId(vehicleDetails?.id);
     };
 
     const handleDeleteVehicle = () => {
@@ -77,7 +78,7 @@ const Vehicle = () => {
 
     const confirmDelete = () => {
         deleteVehicle(
-            vehicleDetails?.vehicleId,
+            vehicleDetails?.id,
             setVehicleList,
             setConfirmModal,
             setSelectedVehicleId,
@@ -120,26 +121,26 @@ const Vehicle = () => {
                 <div className={`${styles.employeeRight}`}>
                     <div className={`row g-0`}>
                         <div className={`col-md-5 ${GlobalStyles.pStart} ${GlobalStyles.pMobile}`}>
-                            <VehicleDetails
-                                vehicleDetails={vehicleDetails}
-                            />
+                            <VehicleDetails vehicleDetails={vehicleDetails} />
                         </div>
                     </div>
                 </div>
             </div>
+
             <div className={GlobalStyles.mainSections}>
                 <AddVehicles
                     showModal={showModal}
                     setShowModal={setShowModal}
                     vehicleName={vehicleName}
                     setVehicleName={setVehicleName}
+                    chassisNo={chassisNo}
+                    setChassisNo={setChassisNo}
                     setVehicleList={setVehicleList}
                     vehicleId={vehicleId}
                     setVehicleDetails={setVehicleDetails}
                     setVehicleId={setVehicleId}
+                    fetchVehicles={fetchVehicles}
                     historyData={historyData}
-                    chassisNumber={chassisNumber}
-                    setChassisNumber={setChassisNumber}
                 />
             </div>
 
@@ -162,10 +163,10 @@ const Vehicle = () => {
                 isOpen={confirmModal}
                 onClose={() => setConfirmModal(false)}
                 onConfirm={confirmDelete}
-                itemName={vehicleDetails?.name || "this vehicle"}
+                itemName={vehicleDetails?.vehicles_No || "this vehicle"}
             />
         </>
-    )
-}
+    );
+};
 
-export default Vehicle
+export default Vehicle; 

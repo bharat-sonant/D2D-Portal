@@ -1,143 +1,194 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { images } from '../../../../assets/css/imagePath';
 import styles from '../../../../assets/css/modal.module.css';
-import * as action from '../../Action/AddVehicle/AddVehicleAction';
 import { FaSpinner } from 'react-icons/fa';
+import * as service from '../../Services/VehicleService/VehicleService';
+import * as common from '../../../../common/common';
 
-const AddVehicles = (props) => {
-    const [error, setError] = useState({
-        vehicleName: "",
-        chassisNumber: ""
-    });
-    const [loader, setLoader] = useState(false);
+const AddVehicles = ({
+  showModal,
+  setShowModal,
+  vehicleName,
+  setVehicleName,
+  chassisNo,
+  setChassisNo,
+  vehicleId,
+  setVehicleId,
+  setVehicleDetails,
+  fetchVehicles
+}) => {
+  const [vehicleError, setVehicleError] = useState('');
+  const [chassisError, setChassisError] = useState('');
+  const [loader, setLoader] = useState(false);
+  const [visible, setVisible] = useState(false); // fade animation control
 
-    const handleInputChange = (type, value) => {
-        action.handleChange(
-            type,
-            value,
-            props.setVehicleName,
-            setError,
-            props.setChassisNumber
-        );
+  // Fade-in when modal opens
+  useEffect(() => {
+    if (showModal) setVisible(true);
+  }, [showModal]);
+
+  /* =========================
+     Handle Input Change
+  ========================= */
+  const handleVehicleNameChange = (value) => {
+    setVehicleName(value);
+    setVehicleError(value.trim() ? '' : 'Please provide vehicle name.');
+  };
+
+  const handleChassisChange = (value) => {
+    setChassisNo(value);
+    setChassisError(value.trim() ? '' : 'Please provide chassis number.');
+  };
+
+  /* =========================
+     Save or Update Vehicle
+  ========================= */
+  const handleSaveVehicles = async () => {
+    let hasError = false;
+
+    if (!vehicleName.trim()) {
+      setVehicleError('Please provide vehicle name.');
+      hasError = true;
     }
-
-    const handleSaveVehicles = () => {
-        action.handleSave(
-            props.vehicleName,
-            setError,
-            setLoader,
-            props.setVehicleName,
-            props.setShowModal,
-            props.setVehicleList,
-            props.vehicleId,
-            props.setVehicleDetails,
-            props.setVehicleId,
-            props.historyData,
-            props.chassisNumber,
-            props.setChassisNumber
-        );
-    };
-
-    const handleCloseModal = () => {
-        props.setShowModal(false);
-        action.handleClearAll(
-            props.setVehicleName,
-            setError,
-            props.setVehicleId
-        );
-    };
-
-    if (!props.showModal) {
-        return null;
+    if (!chassisNo.trim()) {
+      setChassisError('Please provide chassis number.');
+      hasError = true;
     }
+    if (hasError) return;
 
-    return (
-        <div className={`${styles.overlay}`}>
-            <div className={`${styles.modal}`}>
-                <div className={`${styles.actionBtn}`}>
-                    <p className={styles.headerText}>{props.vehicleId ? "Update Vehicle" : "Add Vehicle"}</p>
-                    <button className={`${styles.closeBtn}`} onClick={handleCloseModal} >
-                        <img
-                            src={images.iconClose}
-                            className={`${styles.iconClose}`}
-                            title="Close"
-                            alt="icon"
-                        />
-                    </button>
-                </div>
+    setLoader(true);
 
-                <div className={`${styles.modalBody}`}>
-                    <div className={`row`}>
-                        <div className={`col-md-12`}>
-                            <div className={`${styles.textboxGroup}`}>
-                                <div className={`${styles.textboxMain}`}>
-                                    <div className={`${styles.textboxLeft}`} style={{ width: '129px' }}>Vehicle Name</div>
-                                    <div className={`${styles.textboxRight}`}>
-                                        <input
-                                            type="text"
-                                            id="Name"
-                                            className={`form-control ${styles.formTextbox} ${error.vehicleName ? 'is-invalid' : ""}`}
-                                            placeholder=" "
-                                            value={props.vehicleName}
-                                            onChange={(e) =>
-                                                handleInputChange("name", e.target.value)
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                                {error.vehicleName && (
-                                    <div className={`${styles.invalidfeedback}`}>
-                                        {error.vehicleName}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className={`col-md-12`}>
-                            <div className={`${styles.textboxGroup}`}>
-                                <div className={`${styles.textboxMain}`}>
-                                    <div className={`${styles.textboxLeft}`} style={{ width: '129px' }}>Chassis Number</div>
-                                    <div className={`${styles.textboxRight}`}>
-                                        <input
-                                            type="text"
-                                            id="chassisNumber"
-                                            className={`form-control ${styles.formTextbox} ${error.chassisNumber ? 'is-invalid' : ""}`}
-                                            placeholder=" "
-                                            value={props.chassisNumber}
-                                            onChange={(e) =>
-                                                handleInputChange("chassisNumber", e.target.value)
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                                {error.chassisNumber && (
-                                    <div className={`${styles.invalidfeedback}`}>
-                                        {error.chassisNumber}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <div className={`col-md-12 p-0`}>
-                        <button
-                            type="submit"
-                            className={`mt-3 ${styles.btnSave}`}
-                            onClick={handleSaveVehicles}
-                            disabled={loader}
-                        >
-                            {loader ? (
-                                <div className={styles.Loginloadercontainer}>
-                                    <FaSpinner className={styles.spinnerLogin} />
-                                    <span className={styles.loaderText}>Please wait...</span>
-                                </div>
-                            ) : (
-                                props.vehicleId ? "Update" : "Save"
-                            )}
-                        </button>
-                    </div>
-                </div>
-            </div>
+    try {
+      const payload = {
+        vehicles_No: vehicleName,
+        chassis_no: chassisNo,
+        city_id: 1
+      };
+
+      let res;
+      if (vehicleId) {
+        res = await service.updateVehicle(vehicleId, payload);
+      } else {
+        res = await service.addVehicle(payload);
+      }
+
+      setLoader(false);
+
+      if (res.status === 'success') {
+        if (fetchVehicles) await fetchVehicles();
+
+        handleCloseModal(); // reset inputs & close modal
+
+        common.setAlertMessage(
+          'success',
+          vehicleId ? 'Vehicle updated successfully' : 'Vehicle added successfully'
+        );
+      } else {
+        common.setAlertMessage('warn', res.message || 'Something went wrong');
+      }
+    } catch (err) {
+      console.error('Error saving vehicle:', err);
+      setLoader(false);
+      common.setAlertMessage('warn', 'Error while saving vehicle');
+    }
+  };
+
+  /* =========================
+     Close Modal & Reset Inputs
+  ========================= */
+  const handleCloseModal = () => {
+    setVisible(false); // start fade-out
+    setTimeout(() => {
+      setShowModal(false);
+      setVehicleName('');
+      setChassisNo('');
+      setVehicleId(null);
+      setVehicleDetails(null);
+      setVehicleError('');
+      setChassisError('');
+    }, 300); // match fade-out duration
+  };
+
+  if (!showModal && !visible) return null;
+
+  return (
+    <div className={`${styles.overlay} ${visible ? styles.fadeIn : styles.fadeOut}`}>
+      <div className={`${styles.modal}`}>
+        <div className={`${styles.actionBtn}`}>
+          <p className={styles.headerText}>{vehicleId ? 'Update Vehicle' : 'Add Vehicle'}</p>
+          <button className={`${styles.closeBtn}`} onClick={handleCloseModal}>
+            <img
+              src={images.iconClose}
+              className={`${styles.iconClose}`}
+              title="Close"
+              alt="icon"
+            />
+          </button>
         </div>
-    )
-}
 
-export default AddVehicles
+        <div className={`${styles.modalBody}`}>
+          <div className="row">
+            {/* Vehicle Name Input */}
+            <div className="col-md-12">
+              <div className={`${styles.textboxGroup}`}>
+                <div className={`${styles.textboxMain}`}>
+                  <div className={`${styles.textboxLeft}`}>Vehicle Name</div>
+                  <div className={`${styles.textboxRight}`}>
+                    <input
+                      type="text"
+                      className={`form-control ${styles.formTextbox} ${vehicleError ? 'is-invalid' : ''}`}
+                      placeholder=" "
+                      value={vehicleName}
+                      onChange={(e) => handleVehicleNameChange(e.target.value)}
+                    />
+                  </div>
+                </div>
+                {vehicleError && <div className={`${styles.invalidfeedback}`}>{vehicleError}</div>}
+              </div>
+            </div>
+
+            {/* Chassis No Input */}
+            <div className="col-md-12 mt-2">
+              <div className={`${styles.textboxGroup}`}>
+                <div className={`${styles.textboxMain}`}>
+                  <div className={`${styles.textboxLeft}`}>Chassis No</div>
+                  <div className={`${styles.textboxRight}`}>
+                    <input
+                      type="text"
+                      className={`form-control ${styles.formTextbox} ${chassisError ? 'is-invalid' : ''}`}
+                      placeholder=" "
+                      value={chassisNo}
+                      onChange={(e) => handleChassisChange(e.target.value)}
+                    />
+                  </div>
+                </div>
+                {chassisError && <div className={`${styles.invalidfeedback}`}>{chassisError}</div>}
+              </div>
+            </div>
+
+            {/* Save/Update Button */}
+            <div className="col-md-12 p-0 mt-3">
+              <button
+                type="submit"
+                className={`${styles.btnSave}`}
+                onClick={handleSaveVehicles}
+                disabled={loader}
+              >
+                {loader ? (
+                  <div className={styles.Loginloadercontainer}>
+                    <FaSpinner className={styles.spinnerLogin} />
+                    <span className={styles.loaderText}>Please wait...</span>
+                  </div>
+                ) : (
+                  vehicleId ? 'Update' : 'Save'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddVehicles;

@@ -1,287 +1,143 @@
-import * as common from "../../../../common/common";
-import *  as db from '../../../../services/dbServices';
-import dayjs from "dayjs";
+import { supabase } from "../../../../createClient";
+import * as common from "../../../../../src/common/common";
 
-export const saveVehicleData = (vehicleName, chassisNumber, vehicleId) => {
-    return new Promise(async (resolve) => {
-        try {
-            if (!vehicleName && !chassisNumber) {
-                return resolve(common.setResponse('fail', 'Invalid params !!!', { vehicleName, chassisNumber }));
-            }
+/* =========================================================
+   VEHICLE SERVICE - SUPABASE BASED
+========================================================= */
 
-            let finalvehicleId = vehicleId || common.generateRandomCode();
-            let vehiclePath = `VehiclesData/Vehicles/${finalvehicleId}`;
-            let detailsPath = `VehiclesData/VehicleDetails/${finalvehicleId}`;
-            let oldName = null;
-
-            if (vehicleId) {
-                const previousDetails = await db.getData(detailsPath);
-                oldName = previousDetails?.name || null;
-            }
-
-            let vehicleData = {
-                name: vehicleName,
-                status: 'active'
-            };
-
-            let detailsData = {
-                name: vehicleName,
-                chassisNumber: chassisNumber,
-                _at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                _by: "Admin",
-                status: 'active'
-            };
-
-            Promise.all([
-                db.saveData(vehiclePath, vehicleData),
-                db.saveData(detailsPath, detailsData)
-            ]).then(async ([vehicleRes, detailRes]) => {
-
-                if (vehicleRes.success === true && detailRes.success === true) {
-
-                    await saveVehicleHistory(
-                        detailsPath,
-                        finalvehicleId,
-                        dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                        vehicleName,
-                        oldName
-                    );
-                    resolve(common.setResponse('success', vehicleId ? 'Vehicle updated successfully.' : 'Vehicle data & details saved successfully.', { vehicleId: finalvehicleId }));
-                } else {
-                    resolve(common.setResponse('fail', 'Issue while saving vehicle or details.', {}));
-                }
-            });
-        } catch (error) {
-            resolve(common.setResponse('fail', "Error while saving vehicle data.", { error }));
-            console.log('Error while saving vehicle data', error);
-        }
-    });
-};
-
-export const saveVehicleHistory = async (
-    VehicleDetailsPath,
-    vehicleId,
-    dateAndTime,
-    newName,
-    oldName,
-    newStatus = null,
-    oldStatus = null,
-    isDeleted
-) => {
-    try {
-        if (!vehicleId || !dateAndTime || !VehicleDetailsPath) {
-            return common.setResponse("fail", "Invalid Params !!", {
-                vehicleId,
-                dateAndTime,
-                VehicleDetailsPath
-            });
-        }
-
-        const historyPath = `VehiclesData/VehicleUpdateHistory/${vehicleId}`;
-
-        const resData = (await db.getData(historyPath)) || { lastKey: 0 };
-        const lastKey = resData.lastKey || 0;
-
-        let entry = null;
-        let newKey = lastKey + 1;
-
-        // 🔥 CASE 1: FIRST ENTRY
-        if (!lastKey) {
-            entry = {
-                _at: dateAndTime,
-                _by: "Admin",
-                event: `Vehicle Created`
-            };
-        }
-
-        // 🔥 CASE 2: NAME CHANGE
-        else if (oldName && newName && oldName !== newName) {
-            entry = {
-                _at: dateAndTime,
-                _by: "Admin",
-                event: `Vehicle name changed from ${oldName} to ${newName}`
-            };
-        }
-
-        // 🔥 CASE 3: STATUS CHANGE
-        else if (oldStatus && newStatus && oldStatus !== newStatus) {
-            entry = {
-                _at: dateAndTime,
-                _by: "Admin",
-                event: `Vehicle status changed from ${oldStatus} to ${newStatus}`
-            };
-        }
-
-        // 🔥 CASE 4: TASK DELETED
-        else if (isDeleted === "deleted") {
-            entry = {
-                _at: dateAndTime,
-                _by: "Admin",
-                event: "Vehicle has been deleted"
-            };
-        }
-
-        // ❗ No change = no entry
-        if (!entry) {
-            console.log("No change. History not updated.");
-            return;
-        }
-
-        await Promise.all([
-            db.saveData(`${historyPath}/${newKey}`, entry),
-            db.saveData(historyPath, { lastKey: newKey })
-        ]);
-
-        return common.setResponse("success", "Vehicle history saved.", { vehicleId, entry });
-
-    } catch (error) {
-        console.error("Error while saving vehicle history:", error);
+/**
+ * Add a new vehicle
+ */
+export const addVehicle = async ({ vehicles_No, chassis_no , city_id, created_by = "Admin" }) => {
+  try {
+    if (!vehicles_No || !city_id) {
+      return common.setResponse("fail", "Invalid params", { vehicles_No, city_id });
     }
+
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .insert([{ vehicles_No, chassis_no, city_id, created_by, status: "active" }])
+      .select()
+      .single();
+
+    if (error) {
+      return common.setResponse("fail", "Error while adding vehicle", error);
+    }
+
+    return common.setResponse("success", "Vehicle added successfully", data);
+
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while adding vehicle", error);
+  }
 };
 
-export const getAllVehicleData = () => {
-    return new Promise((resolve) => {
-        let path = `VehiclesData/Vehicles`;
+/**
+ * Get all vehicles
+ */
+export const getAllVehicles = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .select("*")
+      .order("vehicles_No", { ascending: true });
 
-        db.getData(path).then((response) => {
-            if (response !== null) {
-                let vehicleList = [];
+    if (error) return common.setResponse("fail", "Error fetching vehicles", error);
+    if (!data || data.length === 0) return common.setResponse("fail", "No vehicles found", []);
 
-                for (let key in response) {
-                    const vehicleId = key;
-                    const name = response[key].name || "";
-                    const status = response[key].status || "";
+    return common.setResponse("success", "Vehicles fetched successfully", data);
 
-                    vehicleList.push({
-                        vehicleId,
-                        name,
-                        status
-                    });
-                }
-                vehicleList.sort((a, b) => a.name.localeCompare(b.name));
-
-                resolve(common.setResponse("success", "Vehicle data fetched.", vehicleList));
-            } else {
-                resolve(common.setResponse("fail", "No vehicle found.", []));
-            }
-        }).catch((error) => {
-            resolve(common.setResponse("fail", "Error while fetching vehicle data.", { error }));
-        });
-    });
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while fetching vehicles", error);
+  }
 };
 
-export const getVehicleDetails = (vehicleId) => {
-    return new Promise((resolve) => {
-        try {
-            if (vehicleId) {
-                let path = `VehiclesData/VehicleDetails/${vehicleId}`;
-                db.getData(path).then((response) => {
-                    if (response !== null) {
-                        const finalData = {
-                            ...response,
-                            vehicleId: vehicleId
-                        };
-                        resolve(common.setResponse('success', 'Vehicle Details fetched successfully', { details: finalData }));
-                    } else {
-                        resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', {}));
-                    };
-                });
-            } else {
-                resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', {}));
-            };
-        } catch (error) {
-            resolve(common.setResponse('fail', 'Issue in fetching vehicle data.', error));
-            console.log('Error while fetching vehicle details', error);
-        };
-    });
+/**
+ * Get single vehicle details by ID
+ */
+export const getVehicleById = async (vehicleId) => {
+  try {
+    if (!vehicleId) return common.setResponse("fail", "Invalid vehicleId");
+
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .select("*")
+      .eq("id", vehicleId)
+      .single();
+
+    if (error) return common.setResponse("fail", "Error fetching vehicle details", error);
+
+    return common.setResponse("success", "Vehicle details fetched", data);
+
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while fetching vehicle details", error);
+  }
 };
 
-export const activeInactiveVehicles = (vehicleId, status) => {
-    return new Promise(async (resolve) => {
-        if (!vehicleId) {
-            return resolve(common.setResponse("fail", "Invalid taskId", { vehicleId }));
-        }
+/**
+ * Update vehicle data
+ */
+export const updateVehicle = async (vehicleId, updateData) => {
+  try {
+    if (!vehicleId || !updateData) return common.setResponse("fail", "Invalid params");
 
-        let VehiclePath = `VehiclesData/Vehicles/${vehicleId}`;
-        let detailsPath = `VehiclesData/VehicleDetails/${vehicleId}`;
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .update(updateData)
+      .eq("id", vehicleId)
+      .select()
+      .single();
 
-        const oldData = await db.getData(detailsPath);
-        const oldStatus = oldData?.status || "active";
+    if (error) return common.setResponse("fail", "Error updating vehicle", error);
 
-        Promise.all([
-            db.saveData(VehiclePath, { status }),
-            db.saveData(detailsPath, { status })
-        ]).then(async ([taskRes, detailsRes]) => {
+    return common.setResponse("success", "Vehicle updated successfully", data);
 
-            if (taskRes.success === true && detailsRes.success === true) {
-                await saveVehicleHistory(detailsPath, vehicleId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, status, oldStatus);
-                resolve(common.setResponse("success", "Vehicle status updated successfully.", { vehicleId, status }));
-            } else {
-                resolve(common.setResponse("fail", "Error updating vehicle status.", {}));
-            }
-        }).catch((error) => {
-            resolve(common.setResponse("fail", "Exception while updating vehicle.", { error }));
-        });
-    });
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while updating vehicle", error);
+  }
 };
 
-export const deleteInactiveVehicle = (vehicleId) => {
-    return new Promise(async (resolve) => {
-        try {
-            if (!vehicleId) {
-                resolve(common.setResponse('fail', "Invalid Params !!!", { vehicleId }));
-                return;
-            };
+/**
+ * Soft delete vehicle (mark inactive)
+ */
+export const deleteVehicle = async (vehicleId) => {
+  try {
+    if (!vehicleId) return common.setResponse("fail", "Invalid vehicleId");
 
-            let vehiclePath = `VehiclesData/Vehicles/${vehicleId}`;
-            let detailPath = `VehiclesData/VehicleDetails/${vehicleId}`;
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .update({ status: "deleted" })
+      .eq("id", vehicleId)
+      .select()
+      .single();
 
-            await saveVehicleHistory(detailPath, vehicleId, dayjs().format("YYYY-MM-DD HH:mm:ss"), null, null, null, null, 'deleted');
+    if (error) return common.setResponse("fail", "Error deleting vehicle", error);
 
-            await Promise.all([
-                db.removeData(vehiclePath),
-                db.removeData(detailPath)
-            ]).then(async ([taskRes, detailRes]) => {
-                if (taskRes.success === true && detailRes.success === true) {
-                    resolve(common.setResponse('success', "Vehicle and Vehicle detail deleted successfully", { vehicleId }));
-                } else {
-                    resolve(common.setResponse('fail', 'Error deleting vehicle and vehicle details.', {}));
-                };
-            });
-        } catch (error) {
-            resolve(common.setResponse('fail', 'Error deleting vehicle and vehicle details.', error));
-            console.log('Error while delete the vehicle and vehicle details', error);
-        };
-    });
+    return common.setResponse("success", "Vehicle deleted successfully", data);
+
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while deleting vehicle", error);
+  }
 };
 
-export const getVehicleUpdateHistory = async (vehicleId) => {
-    return new Promise(async (resolve) => {
-        try {
-            if (vehicleId) {
-                const path = `VehiclesData/VehicleUpdateHistory/${vehicleId}`;
-                const resData = await db.getData(path);
+/**
+ * Change vehicle status (active/inactive)
+ */
+export const changeVehicleStatus = async (vehicleId, status) => {
+  try {
+    if (!vehicleId || !status) return common.setResponse("fail", "Invalid params");
 
-                if (!resData) {
-                    return resolve(
-                        common.setResponse('fail', "No history available", {})
-                    );
-                }
+    const { data, error } = await supabase
+      .from("Vehicle")
+      .update({ status })
+      .eq("id", vehicleId)
+      .select()
+      .single();
 
-                const historyArray = Object.entries(resData).filter(([key]) => key !== "lastKey").map(([key, value]) => ({
-                    index: key,
-                    event: value.event,
-                    at: value._at,
-                    by: value._by,
-                }));
+    if (error) return common.setResponse("fail", "Error updating vehicle status", error);
 
-                resolve(common.setResponse('success', "History data available", historyArray));
-            } else {
-                resolve(common.setResponse('fail', "Invalid Params", { vehicleId }));
-            }
-        } catch (error) {
-            resolve(common.setResponse("Error", `Error while getting vehicle update history`, { error }));
-            console.log('Error while fetching vehicle update history', error);
-        };
-    });
+    return common.setResponse("success", "Vehicle status updated", data);
+
+  } catch (error) {
+    return common.setResponse("fail", "Unexpected error while updating vehicle status", error);
+  }
 };

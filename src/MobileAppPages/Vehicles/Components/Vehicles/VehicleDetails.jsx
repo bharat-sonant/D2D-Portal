@@ -10,11 +10,11 @@ const VehicleDetails = (props) => {
             <div className={styles.card}>
                 <div className={styles.headerRow}>
                     <span className={styles.taskIdBadge}>
-                        {props.vehicleDetails.vehicleId}
+                        {props.vehicleDetails.id}
                     </span>
 
                     <h2 className={styles.name}>
-                        {props.vehicleDetails.name || 'N/A'}
+                        {props.vehicleDetails.vehicles_No || 'N/A'}
                     </h2>
                 </div>
             </div>
