@@ -42,7 +42,7 @@ const VehicleHistoryData = (props) => {
                         </div>
                         <div className={style.taskControlCard}>
                             <div className={style.controlRow}>
-                                <h3 className={style.taskName}>{props.vehicleDetails?.name || "N/A"}</h3>
+                                <h3 className={style.taskName}>{props.vehicleDetails?.vehicles_No || "N/A"}</h3>
 
 
                                 <div className={style.actionButtons}>
