@@ -27,6 +27,9 @@ const generateTaskId = async (checkTaskId) => {
   }
 };
 
+const city = localStorage.getItem('city');
+
+
 const checkTaskIdExists = async (uniqueId) => {
   const { data } = await supabase
     .from('TaskData')
@@ -102,6 +105,7 @@ const AddTaskData = ({
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
           uniqueId: taskData.uniqueId,
+            cityId: city,
           action: 'Updated',
           oldvalue: selectedTask.taskName,
           newValue: taskData.taskName,
@@ -119,6 +123,7 @@ const AddTaskData = ({
           .insert([{
             taskName: trimmedTitle,
             uniqueId: uniqueId,
+              cityId: city,
             created_by: 'Ansh',
             created_at: new Date().toISOString()
           }])
@@ -135,6 +140,7 @@ const AddTaskData = ({
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
           uniqueId: taskData.uniqueId,
+            cityId: city,
           action: 'Created',
           oldvalue: null,
           newValue: taskData.taskName,
