@@ -21,7 +21,7 @@ const TaskDataSettings = ({
   isEditing,
   setIsEditing
 }) => {
-  const [toggle, setToggle] = useState(selectedTask.status === 'active' || false);
+  const [toggle, setToggle] = useState(selectedTask?.status === 'active' || false);
   const [handleOpenDelete, setHandleOpenDelete] = useState(false);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [taskHistory, setTaskHistory] = useState([]);

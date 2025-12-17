@@ -105,7 +105,7 @@ const AddTaskData = ({
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
           uniqueId: taskData.uniqueId,
-            cityId: city,
+            city_id: city,
           action: 'Updated',
           oldvalue: selectedTask.taskName,
           newValue: taskData.taskName,
@@ -123,7 +123,7 @@ const AddTaskData = ({
           .insert([{
             taskName: trimmedTitle,
             uniqueId: uniqueId,
-              cityId: city,
+              city_id: city,
             created_by: 'Ansh',
             created_at: new Date().toISOString()
           }])
@@ -140,7 +140,7 @@ const AddTaskData = ({
         await supabase.from('TaskHistory').insert([{
           taskId: taskData.id,
           uniqueId: taskData.uniqueId,
-            cityId: city,
+            city_id: city,
           action: 'Created',
           oldvalue: null,
           newValue: taskData.taskName,
