@@ -12,7 +12,7 @@ const VehicleHistoryData = (props) => {
 
     useEffect(() => {
         if (props.vehicleDetails) {
-            setToggle(props.vehicleDetails.status === "active");
+            setToggle(props.vehicleDetails?.status === "active");
         }
     }, [props.vehicleDetails]);
 
