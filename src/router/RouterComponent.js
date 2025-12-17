@@ -22,6 +22,7 @@ import { IoMagnet } from "react-icons/io5";
 import TaskData from "../pages/Task-Data/TaskData";
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
+import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
 
 const RouterComponent = () => {
   const location = useLocation();
@@ -32,8 +33,8 @@ const RouterComponent = () => {
     const today = dayjs().format("DD/MM/YYYY");
     if (savedDate && savedDate !== today) {
       localStorage.removeItem("loginDate");
-      localStorage.removeItem("islogin");
-      localStorage.removeItem("loginAsUser");
+      localStorage.removeItem("isLogin");
+      localStorage.removeItem("userName");
       navigate("/");
     }
   }, [location.pathname]);
@@ -58,133 +59,142 @@ const RouterComponent = () => {
         <Route
           path="/daily-assignment"
           element={
-            <>
+           <ProtectedRouter>
               <MainLayout />
               <DailyAssignment />
-            </>
+           </ProtectedRouter>
           }
         />
 
         <Route
           path="/start-assignment"
           element={
-            <>
+           <ProtectedRouter>
               <StartAssignment />
-            </>
+          </ProtectedRouter>
           }
         />
 
         <Route
           path="/penalties"
           element={
-            <>
+            <ProtectedRouter>
               <Penalty />
-            </>
+           </ProtectedRouter>
           }
         />
 
         <Route
           path="/duty-on"
           element={
-            <>
+          <ProtectedRouter>
               <DutyOn />
-            </>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/duty-off"
           element={
-            <>
+          <ProtectedRouter>
               <DutyOff />
-            </>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/work-monitoring"
           element={
-            <>
+            <ProtectedRouter>
               <WorkMonitoring />
-            </>
+          </ProtectedRouter>
           }
         />
         <Route
           path="/locationTracker"
           element={
-            <>
+           <ProtectedRouter>
               <LocationTracker />
-            </>
+            </ProtectedRouter>
           }
         />
         <Route
           path="/Settings"
           element={
-            <>
+          <ProtectedRouter>
               <MainLayout />
               <Settings />
-            </>
+           </ProtectedRouter>
           }
         />
 
         <Route
           path="/AssignmentSummary"
           element={
-            <>
+          <ProtectedRouter>
               <AssignmentSummary />
-            </>
+           </ProtectedRouter>
           }
         />
 
         <Route
           path="/tasks"
           element={
-            <>
+           <ProtectedRouter>
               <MainLayout />
               <Task />
-            </>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/duty-start"
           element={
-            <>
-              <DutyStart />
-            </>
+               <ProtectedRouter>
+                <DutyStart/>
+               </ProtectedRouter>
+              
+            
           }
         />
         <Route
           path="/realtime-monitoring"
-          element={<><MainLayout /><RealtimeMonitoring/></>}
+          element={<ProtectedRouter><MainLayout /><RealtimeMonitoring/></ProtectedRouter>}
         />
         <Route
           path="/reports"
-          element={<><MainLayout /><Reports /></>}
+          element={   <ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
         />
 
         <Route
           path="/vehicle"
           element={
-            <>
+           <ProtectedRouter>
               <MainLayout />
               <Vehicle />
-            </>
+           </ProtectedRouter>
           }
         />
         <Route
           path="/TaskData"
           element={
-            <>
+            <ProtectedRouter>
               <MainLayout/>
               <TaskData/>
-            </>
+            </ProtectedRouter>
           }
         />
-        <Route
-          path="/users"
-          element={<><MainLayout /><User /></>}
-        />
+       <Route
+  path="/users"
+  element={
+  <ProtectedRouter>
+    <MainLayout/>
+        <User/>
+     </ProtectedRouter>
+    
+  }
+/>
+
         {/* <Route
           path="/users"
           element={

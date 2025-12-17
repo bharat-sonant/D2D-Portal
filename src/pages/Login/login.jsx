@@ -3,6 +3,7 @@ import { Eye, EyeOff, User, Lock } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { login } from '../../services/supabaseServices';
 import { setAlertMessage } from '../../common/common';
+import dayjs from 'dayjs';
 
 export default function Login() {
      const navigate = useNavigate();
@@ -22,13 +23,14 @@ export default function Login() {
     e.preventDefault();
       try {
     const user = await login(userName, password);
-    navigate('/users');
     localStorage.setItem('isLogin','success')
     localStorage.setItem('userName',userName)
+    localStorage.setItem('loginDate',dayjs().format("DD/MM/YYYY"))
+    navigate('/users');
     setAlertMessage('success', 'Login successfully');
     
     
-  } catch (err) {
+  } catch (err) {   
     setAlertMessage('error', err.message);
   }
    
