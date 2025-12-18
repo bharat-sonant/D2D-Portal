@@ -89,15 +89,18 @@ const City = () => {
                   overflow: "hidden",
                 }}
               >
-                <img
+                {selectedCity?.logo_image&&(
+                      <img
                   src={selectedCity?.logo_image || "/city-placeholder.png"}
                   alt="City Logo"
-                  style={{
+                  style={{  
                     width: "100%",
                     height: "100%",
                     objectFit: "contain",
                   }}
                 />
+                )}
+                
               </div>
             </div>
           </div>
