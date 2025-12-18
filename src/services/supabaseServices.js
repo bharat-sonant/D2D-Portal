@@ -1,7 +1,7 @@
 import { decryptValue } from "../common/common";
 import { supabase } from "../createClient";
 
-export const fetchUsers = async (tableName) => {
+export const getData = async (tableName) => {
   try {
     const { data, error } = await supabase.from(tableName).select("*");
     if (error) throw error;
@@ -11,7 +11,7 @@ export const fetchUsers = async (tableName) => {
   }
 };
 
-export const createUser = async (tableName, tableData) => {
+export const saveData = async (tableName, tableData) => {
   try {
     const { data, error } = await supabase.from(tableName).insert([tableData]);
     if (error) throw error;
@@ -22,7 +22,7 @@ export const createUser = async (tableName, tableData) => {
   }
 };
 
-export const updateUser = async (tableName, id,columnData) => {
+export const updateData = async (tableName, id,columnData) => {
   try {
     const { data, error } = await supabase
       .from(tableName)
@@ -38,7 +38,7 @@ export const updateUser = async (tableName, id,columnData) => {
   }
 };
 
-export const deleteUser = async (tableName, id) => {
+export const deleteData = async (tableName, id) => {
   try {
     const { data, error } = await supabase
       .from(tableName)
