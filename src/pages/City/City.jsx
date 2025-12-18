@@ -12,8 +12,8 @@ const City = () => {
   const [onEdit, setOnEdit] = useState(false);
 
   const loadCities = async () => {
-    const data = await fetchUsers("Cities");
-    const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+    const response = await fetchUsers("Cities");
+    const sortedData = [...response.data].sort((a, b) => a.name.localeCompare(b.name));
     setSelectedCity(sortedData[0]);
     setCityList(sortedData);
   };
