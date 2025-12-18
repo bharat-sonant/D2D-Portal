@@ -5,6 +5,7 @@ import styles from "../../MobileAppPages/Tasks/Styles/TaskDetails/TaskDetails.mo
 import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
 import { fetchUsers, updateUserStatus } from "../../services/supabaseServices";
+import * as userAction from '../../Actions/UserAction/UserAction'
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -15,12 +16,7 @@ const User = () => {
    const [confirmUser, setConfirmUser] = useState(null);
 
  const loadUsers = async () => {
-  const response = await fetchUsers('users');
-  const sortedData = [...response.data].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-  setSelectedUser(sortedData[0])
-  setUsers(sortedData);
+ await userAction.fetchUserData(setSelectedUser,setUsers);
 };
 
 
@@ -32,30 +28,16 @@ const User = () => {
     setShowCanvas(true);
   };
 
-//   const handleToggleStatus = () => {
-//   setSelectedUser((prev) => ({
-//     ...prev,
-//     isActive: !prev.isActive,
-//   }));
-// };
+
 const openConfirm = () => {
-  
   setConfirmUser(true);
 };
-const handleStatusToggle = async (user) => {
-  const updatedStatus = await updateUserStatus(user.id, user.status);
-  setUsers((prev) =>
-    prev.map((u) =>
-      u.id === user.id ? { ...u, status: updatedStatus } : u
-    )
-  );
-   setSelectedUser({
-    ...user,
-    status: updatedStatus
-  });
-  setConfirmUser(false);
-};
 
+
+const handleStatusToggle = async (user) => {
+  console.log(user)
+  userAction.updateStatus(user,setUsers,setSelectedUser,setConfirmUser)
+};
 
 const handleEditUser = () => {
  setOnEdit(true)

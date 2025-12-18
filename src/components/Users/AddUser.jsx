@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { sendEmployeeLoginCredentialsTemplate } from "../../common/emailHTMLTemplates/MailTemplates";
 import * as common from "../../common/common";
 import { FaSpinner } from "react-icons/fa";
+import * as userAction from '../../Actions/UserAction/UserAction'
 
 const AddUser = (props) => {
   const initialForm = {
@@ -39,120 +40,10 @@ const AddUser = (props) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    let isValid = true;
-    setUserNameError("");
-    setNameError("");
-    setEmailError("");
-    if (!form.username) {
-      setUserNameError("User name is required");
-      isValid = false;
-    }
-
-    if (!form.name) {
-      setNameError("Name is required");
-      isValid = false;
-    }
-
-    if (!form.email) {
-      setEmailError("Email is required");
-      isValid = false;
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) ||
-      !form.email.endsWith(".com")
-    ) {
-      setEmailError("Please enter a valid email ending with .com");
-      isValid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (isValid) {
-      setLoading(true);
-      let loginURL = "https://d2d-portal-qa.web.app";
-      let randomPasword = common.generateRandomCode();
-      let encrptpassword = common.encryptValue(randomPasword);
-      let encrptMail = common.encryptValue(form.email);
-      let userDetail = {
-        username: form.username,
-        name: form.name,
-        email: encrptMail,
-        status:"active",
-        created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        password: encrptpassword, 
-      };
-
-      if (props.onEdit) {
-        let updatedDetail = {
-          username: form.username,
-          name: form.name,
-          email: encrptMail,
-          status: form.status,
-          created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-          password: form.password,
-        };
-        await updateUser(props.editData.id, updatedDetail);
-        resetStateValues();
-        props.loadUsers();
-        common.setAlertMessage("success", "Data updated successfully");
-      } else {
-        try {
-          await createUser('users',userDetail);
-          await sendLoginCredentialsToEmployee(
-            form.email,
-            form.username,
-            randomPasword,
-            loginURL
-          );
-          resetStateValues();
-          props.loadUsers();
-          common.setAlertMessage("success", "User created successfully");
-        } catch (err) {
-          setLoading(false);
-          if (err.code === "23505") {
-            if (err.details?.includes("username")) {
-              setUserNameError("Username already exists!");
-            } else if (err.details?.includes("email")) {
-              setEmailError("Email already exists!");
-            } else {
-              common.setAlertMessage("error", "Duplicate value exists!");
-            }
-          } else {
-            common.setAlertMessage("error", "Something went wrong!");
-          }
-        }
-      }
-    }
+  const handleSave = async () => {  
+         userAction.validateUserDetail(form,props.onEdit,props.editData,setUserNameError,setNameError,setEmailError,setLoading,props.loadUsers,resetStateValues)
   };
 
-  const sendLoginCredentialsToEmployee = async (
-    email,
-    username,
-    password,
-    loginURL
-  ) => {
-    try {
-      const url = common.MAILAPI;
-      const subject = "D2D Portal Login Credentials";
-      const htmlBody = sendEmployeeLoginCredentialsTemplate(
-        username,
-        password,
-        loginURL
-      );
-
-      const response = await axios.post(url, {
-        to: email,
-        subject,
-        html: htmlBody,
-      });
-     
-      return response.status === 200 ? "success" : "failure";
-      
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
   function resetStateValues() {
     setForm(initialForm);

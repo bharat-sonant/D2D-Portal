@@ -17,17 +17,18 @@ export const createUser = async (tableName, tableData) => {
     if (error) throw error;
     return { success: true, data };
   } catch (err) {
-    return { success: false, error: err.message || err };
+
+    return { success: false, error: err};
   }
 };
 
-export const updateUser = async (tableName, id, payload) => {
+export const updateUser = async (tableName, id,columnData) => {
   try {
     const { data, error } = await supabase
       .from(tableName)
-      .update(payload)
+      .update(columnData)
       .eq("id", id)
-      .select(); // updated row data wapas laane ke liye
+      
 
     if (error) throw error;
 
@@ -37,14 +38,13 @@ export const updateUser = async (tableName, id, payload) => {
   }
 };
 
-// Delete record
 export const deleteUser = async (tableName, id) => {
   try {
     const { data, error } = await supabase
       .from(tableName)
       .delete()
       .eq("id", id)
-      .select(); // deleted row data wapas laane ke liye (optional)
+      .select();
 
     if (error) throw error;
 
@@ -188,20 +188,7 @@ export const getDataByColumnName = async (table, column, columnValue) => {
 
 
 
-export const updateUserStatus = async (userId, currentStatus) => {
-  const newStatus = currentStatus === "active" ? "inactive" : "active";
-  const { error } = await supabase
-    .from("users")
-    .update({ status: newStatus })
-    .eq("id", userId);
 
-  if (error) {
-    console.error("Status update error:", error.message);
-    throw error;
-  }
-
-  return newStatus;
-};
 
 export const login = async (username, password) => {
   // DB se user fetch karo
