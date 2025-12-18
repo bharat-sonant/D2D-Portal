@@ -1,10 +1,8 @@
 import { images } from "../../assets/css/imagePath";
 import styles from "../../assets/css/modal.module.css";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { createUser, saveCityWithLogo, updateUser } from "../../services/supabaseServices";
+import {useState } from "react";
+import {saveCityWithLogo} from "../../services/supabaseServices";
 import dayjs from "dayjs";
-import { sendEmployeeLoginCredentialsTemplate } from "../../common/emailHTMLTemplates/MailTemplates";
 import * as common from "../../common/common";
 import { FaSpinner } from "react-icons/fa";
 
@@ -15,24 +13,13 @@ const AddCity = (props) => {
     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
   
-  const [loading, setLoading] = useState(false);
-
-
-  const [logo, setLogo] = useState(null);
+const [loading, setLoading] = useState(false);
+const [logo, setLogo] = useState(null);
 const [logoPreview, setLogoPreview] = useState("");
 const [logoError, setLogoError] = useState("");
 const [cityError,setCityError]=useState("")
 const [form,setForm]=useState(initialForm)
 
-  useEffect(() => {
-    if (props.onEdit && props.editData) {
-      const decryptedEmail = common.decryptValue(props.editData.email);
-      setForm({
-        ...props.editData,
-        email: decryptedEmail,
-      });
-    }
-  }, [props.onEdit, props.editData]);
 
   if (!props.showCanvas) return null;
 
@@ -65,20 +52,6 @@ const [form,setForm]=useState(initialForm)
         created_by:loggedUserName
       };
 
-      // if (props.onEdit) {
-      //   let updatedDetail = {
-      //     username: form.username,
-      //     name: form.name,
-      //     email: encrptMail,
-      //     status: form.status,
-      //     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      //     password: form.password,
-      //   };
-      //   await updateUser(props.editData.id, updatedDetail);
-      //   resetStateValues();
-      //   props.loadUsers();
-      //   common.setAlertMessage("success", "Data updated successfully");
-      // } else {
         try {
           await saveCityWithLogo(cityDetail,logo);
           resetStateValues();
@@ -98,7 +71,6 @@ const [form,setForm]=useState(initialForm)
             common.setAlertMessage("error", "Something went wrong!");
           }
         }
-      // }
     }
   };
 
@@ -124,7 +96,6 @@ const [form,setForm]=useState(initialForm)
     setCityError('')
     setLogoError('')
     props.setShowCanvas(false);
-    props.setOnEdit(false);
     setLoading(false);
     setLogo(null)
     setLogoPreview("")

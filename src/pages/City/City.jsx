@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
-import { fetchUsers, updateUserStatus } from "../../services/supabaseServices";
+import { fetchUsers } from "../../services/supabaseServices";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
 
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const [users, setUsers] = useState([]);
-   const [selectedUser, setSelectedUser] = useState(null);
-   const [onEdit,setOnEdit]=useState(false)
-   const [confirmUser, setConfirmUser] = useState(null);
+  const [cityList, setCityList] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [onEdit, setOnEdit] = useState(false);
 
- const loadCities = async () => {
-  const data = await fetchUsers('Cities');
-  const sortedData = [...data].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-  setSelectedUser(sortedData[0])
-  setUsers(sortedData);
-};
-
+  const loadCities = async () => {
+    const data = await fetchUsers("Cities");
+    const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+    setSelectedCity(sortedData[0]);
+    setCityList(sortedData);
+  };
 
   useEffect(() => {
     loadCities();
@@ -30,36 +25,6 @@ const City = () => {
   const handleOpenModal = () => {
     setShowCanvas(true);
   };
-
-//   const handleToggleStatus = () => {
-//   setSelectedUser((prev) => ({
-//     ...prev,
-//     isActive: !prev.isActive,
-//   }));
-// };
-const openConfirm = () => {
-  
-  setConfirmUser(true);
-};
-const handleStatusToggle = async (user) => {
-  const updatedStatus = await updateUserStatus(user.id, user.status);
-  setUsers((prev) =>
-    prev.map((u) =>
-      u.id === user.id ? { ...u, status: updatedStatus } : u
-    )
-  );
-   setSelectedUser({
-    ...user,
-    status: updatedStatus
-  });
-  setConfirmUser(false);
-};
-
-
-const handleEditUser = () => {
- setOnEdit(true)
-setShowCanvas(true);
-};
 
   return (
     <>
@@ -74,12 +39,78 @@ setShowCanvas(true);
 
       <div className={`${TaskStyles.employeePage}`}>
         <div className={`${TaskStyles.employeeLeft}`}>
-          <CityList users={users} selectedUser={selectedUser}  setSelectedUser={setSelectedUser}/>
+          <CityList
+            cityList={cityList}
+            selectedCity={selectedCity}
+            setSelectedCity={setSelectedCity}
+          />
         </div>
-
+        <div className={TaskStyles.employeeRight}>
+          <div
+            style={{
+              width: "25%",
+              background: "#fff",
+              borderRadius: "12px",
+              padding: "14px 18px",
+              display: "flex",
+              alignItems: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  background: "#f2f2f2",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {selectedCity?.name || "N/A"}
+              </span>
+              <div style={{ width: "250px" }} />
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "10px",
+                  border: "1px solid #e5e7eb",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#fff",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={selectedCity?.logo_image || "/city-placeholder.png"}
+                  alt="City Logo"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div className={GlobalStyles.mainSections}>
-        <AddCity showCanvas={showCanvas} setShowCanvas={setShowCanvas} loadCities={loadCities} editData ={selectedUser} onEdit={onEdit} setOnEdit={setOnEdit}/>
+        <AddCity
+          showCanvas={showCanvas}
+          setShowCanvas={setShowCanvas}
+          loadCities={loadCities}
+          onEdit={onEdit}
+          setOnEdit={setOnEdit}
+        />
       </div>
     </>
   );

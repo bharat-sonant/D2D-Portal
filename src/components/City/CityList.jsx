@@ -4,9 +4,7 @@ import styles from '../../Style/Task-Data/TaskDataList.module.css';
 
 const CityList = (props) => {
 
-    // const handleTaskSelect = (item) => {
-    //     props.onSelectTask(item)
-    // }
+
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
@@ -32,40 +30,40 @@ const CityList = (props) => {
                     </div>
                     <div className={`${styles.userListTitle}`}>Select Employee</div>
                     <div className={`${styles.userScroll}`}>
-                        {props.users.length > 0 ? (
-                            props.users.map((user, i) => (
+                        {props.cityList.length > 0 ? (
+                            props.cityList.map((city, i) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
-                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props.selectedUser.id === user.id
+                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props.selectedCity.id === city.id
                                             ? GlobalStyles.selectedUser
                                             : ""
                                             } `}
                                         style={{
                                             backgroundColor:
-                                               props.selectedUser.id === user.id
+                                               props.selectedCity.id === city.id
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
-                                                props.selectedUser.id === user.id
+                                                props.selectedCity.id === city.id
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
-                                     onClick={() => props.setSelectedUser(user)}
+                                     onClick={() => props.setSelectedCity(city)}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}
                                             style={{
                                                 color:
-                                                   props.selectedUser.id === user.id
+                                                   props.selectedCity.id === city.id
                                                         ? "#000000"
                                                         : "#000000",
                                             }}
                                         >
                                             <span className={`${styles.employeeName}`}>
-                                                {user.name}
+                                                {city.name}
                                             </span>
                                             <span>
-                                                {user.status === 'inactive' && <span className={styles.redDot}></span>}
+                                                {city.status === 'inactive' && <span className={styles.redDot}></span>}
                                             </span>
 
                                         </div>
