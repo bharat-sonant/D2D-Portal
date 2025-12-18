@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
-import { fetchUsers } from "../../services/supabaseServices";
+import {getData } from "../../services/supabaseServices";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
 
@@ -12,7 +12,7 @@ const City = () => {
   const [onEdit, setOnEdit] = useState(false);
 
   const loadCities = async () => {
-    const response = await fetchUsers("Cities");
+    const response = await getData("Cities");
     const sortedData = [...response.data].sort((a, b) => a.name.localeCompare(b.name));
     setSelectedCity(sortedData[0]);
     setCityList(sortedData);
