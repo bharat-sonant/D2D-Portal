@@ -5,7 +5,6 @@ import * as emailTemplate from '../../common/emailHTMLTemplates/MailTemplates'
 import dayjs from 'dayjs';
 
 export const validateUserDetail = (form,onEdit,editData,setUserNameError,setNameError,setEmailError,setLoading,loadUsers,resetStateValues)=>{
-
      let isValid = true;
     setUserNameError("");
     setNameError("");
@@ -44,7 +43,7 @@ export const validateUserDetail = (form,onEdit,editData,setUserNameError,setName
               created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
               password: encrptpassword, 
             };
-                  if (onEdit) {
+            if (onEdit) {
                     let updatedDetail = {
                       username: form.username,
                       name: form.name,
