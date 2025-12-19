@@ -1,4 +1,4 @@
-import * as TaskService from "../../services/TaskDataServise/TaskDataServise";
+import * as TaskService from "../../services/TaskDataServices/TaskDataServices";
 import { setAlertMessage } from "../../common/common";
 
 const city = localStorage.getItem("city");
