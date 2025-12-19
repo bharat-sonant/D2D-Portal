@@ -54,3 +54,14 @@ export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadC
         common.setAlertMessage("error",error);
     }
 }
+export const filterCityAction=(cityList,searchTerm,setSelectedCity)=>{
+    const term = searchTerm?.trim().toLowerCase();
+    if (!term) {
+        setSelectedCity(cityList?.length > 0 ? cityList[0] : null);
+        return cityList;
+    }
+    let list = cityList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
+    setSelectedCity(list?.length > 0 ? list[0] : null);
+
+    return list;
+}

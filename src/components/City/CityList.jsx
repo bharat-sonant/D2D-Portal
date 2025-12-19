@@ -1,8 +1,19 @@
+import React, { useEffect } from "react";
+import { useState } from 'react';
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import { images } from '../../assets/css/imagePath';
 import styles from '../../Style/Task-Data/TaskDataList.module.css';
+import { debounce } from "lodash";
+import { filterCityAction } from "../../Actions/City/cityAction";
 
 const CityList = (props) => {
+    const [searchTerm,setSearchTerm] = useState('');
+    const [filteredCityList,setFilteredCityList] = useState(props?.cityList||[]);
+    
+    useEffect(()=>{
+        setFilteredCityList(filterCityAction(props?.cityList,searchTerm,props?.setSelectedCity))
+    },[props?.cityList,searchTerm]);
+    const handleSearch = debounce((e) => {setSearchTerm(e.target.value)}, 300);
 
 
 
@@ -24,37 +35,36 @@ const CityList = (props) => {
                             className={`${GlobalStyles.inputSearch}`}
                             type="text"
                             placeholder="Search"
-                        //   value={searchTerm}
-                        //   onChange={handleSearch}
+                          onChange={handleSearch}
                         />
                     </div>
                     <div className={`${styles.userListTitle}`}>Select Employee</div>
                     <div className={`${styles.userScroll}`}>
-                        {props.cityList.length > 0 ? (
-                            props.cityList.map((city, i) => (
+                        {filteredCityList?.length > 0 ? (
+                            filteredCityList?.map((city, i) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
-                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props.selectedCity.id === city.id
+                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props?.selectedCity?.id === city?.id
                                             ? GlobalStyles.selectedUser
                                             : ""
                                             } `}
                                         style={{
                                             backgroundColor:
-                                               props.selectedCity.id === city.id
+                                               props?.selectedCity?.id === city.id
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
-                                                props.selectedCity.id === city.id
+                                                props?.selectedCity?.id === city.id
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
-                                     onClick={() => props.setSelectedCity(city)}
+                                     onClick={() => props?.setSelectedCity(city)}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}
                                             style={{
                                                 color:
-                                                   props.selectedCity.id === city.id
+                                                   props?.selectedCity?.id === city.id
                                                         ? "#000000"
                                                         : "#000000",
                                             }}
@@ -78,7 +88,7 @@ const CityList = (props) => {
                                     title="No User Found"
                                     alt="Image"
                                 />
-                                No task data found
+                                City not found
                             </div>
                         )}
                     </div>
@@ -88,4 +98,4 @@ const CityList = (props) => {
     )
 }
 
-export default CityList
+export default React.memo(CityList);
