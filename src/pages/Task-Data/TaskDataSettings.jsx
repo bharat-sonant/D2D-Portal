@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Offcanvas } from 'react-bootstrap';
-import style from '../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.module.css';
-import { Edit2, History, Trash2, Info, User } from 'lucide-react';
-import { images } from '../../assets/css/imagePath';
-import DeleteConfirmation from '../../MobileAppPages/Tasks/Components/DeleteConfirmation/DeleteConfirmation';
-import { setAlertMessage } from '../../common/common';
-import { supabase } from '../../createClient';
-import dayjs from 'dayjs';
+import React, { useState, useEffect } from "react";
+import { Offcanvas } from "react-bootstrap";
+import style from "../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.module.css";
+import { Edit2, History, Trash2, Info, User } from "lucide-react";
+import { images } from "../../assets/css/imagePath";
+import DeleteConfirmation from "../../MobileAppPages/Tasks/Components/DeleteConfirmation/DeleteConfirmation";
+import { setAlertMessage } from "../../common/common";
+import * as TaskAction from "../../Actions/TaskAction/TaskAction";
+import dayjs from "dayjs";
 
 const TaskDataSettings = ({
   openCanvas,
@@ -21,17 +21,19 @@ const TaskDataSettings = ({
   isEditing,
   setIsEditing
 }) => {
-  const [toggle, setToggle] = useState(selectedTask?.status === 'active' || false);
+  const [toggle, setToggle] = useState(selectedTask?.status === "active" || false);
   const [handleOpenDelete, setHandleOpenDelete] = useState(false);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [taskHistory, setTaskHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   useEffect(() => {
-    setToggle(selectedTask?.status === 'active');
+    setToggle(selectedTask?.status === "active");
     setHistoryVisible(false);
     setTaskHistory([]);
   }, [selectedTask]);
+
+  /* ================= EDIT ================= */
 
   const handleEditClick = () => {
     if (!selectedTask) return;
@@ -41,82 +43,52 @@ const TaskDataSettings = ({
     setIsEditing(true);
   };
 
+  /* ================= DELETE ================= */
+
   const handleDeleteClick = () => setHandleOpenDelete(true);
 
   const ConfirmDelete = async () => {
     try {
       if (handleDelete) await handleDelete(selectedTask);
       setHandleOpenDelete(false);
-      setAlertMessage('success', "Task data deleted successfully");
+      setAlertMessage("success", "Task data deleted successfully");
       refreshTasks();
       onHide();
     } catch (err) {
-      console.error('Error deleting task:', err);
+      console.error("Error deleting task:", err);
     }
   };
 
-  // ✅ Updated handleToggle to save status in history
-  const handleToggle = async () => {
+  /* ================= STATUS TOGGLE ================= */
+
+  const handleToggle = () => {
     if (!selectedTask) return;
 
-    const newStatus = toggle ? 'inactive' : 'active';
-    const oldStatus = toggle ? 'active' : 'inactive';
-
-    try {
-      // 1️⃣ Save in TaskHistory
-      const { error: historyError } = await supabase
-        .from('TaskHistory')
-        .insert([{
-          taskId: selectedTask.id,
-          uniqueId: selectedTask.uniqueId,
-          action: 'Status Changed',
-          oldvalue: oldStatus,
-          newValue: newStatus,
-          status: newStatus,
-          created_by: 'Ansh',
-          created_at: new Date().toISOString()
-        }]);
-      if (historyError) throw historyError;
-
-      // 2️⃣ Update main TaskData table
-      const { error: updateError } = await supabase
-        .from('TaskData')
-        .update({ status: newStatus })
-        .eq('id', selectedTask.id);
-      if (updateError) throw updateError;
-
-      setToggle(!toggle);
-      refreshTasks();
-      setAlertMessage('success', `Task marked as ${newStatus}`);
-    } catch (err) {
-      console.error('Error toggling status:', err);
-      setAlertMessage('error', 'Failed to update task status');
-    }
+    TaskAction.toggleTaskStatus(
+      selectedTask,
+      toggle,
+      refreshTasks,
+      setToggle
+    );
   };
 
-  // Fetch history on toggle
-  const handleHistoryClick = async () => {
+  /* ================= HISTORY ================= */
+
+  const handleHistoryClick = () => {
     if (!selectedTask) return;
+
     setHistoryVisible(!historyVisible);
 
-    if (!historyVisible) { // Fetch only when opening
-      setLoadingHistory(true);
-      try {
-        const { data, error } = await supabase
-          .from('TaskHistory')
-          .select('*')
-          .eq('uniqueId', selectedTask.uniqueId)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        setTaskHistory(data || []);
-      } catch (err) {
-        console.error('Error fetching history:', err);
-      } finally {
-        setLoadingHistory(false);
-      }
+    if (!historyVisible) {
+      TaskAction.fetchTaskHistory(
+        selectedTask.uniqueId,
+        setTaskHistory,
+        setLoadingHistory
+      );
     }
   };
+
+  /* ================= UI (UNCHANGED) ================= */
 
   return (
     <>
@@ -125,7 +97,7 @@ const TaskDataSettings = ({
         show={openCanvas}
         onHide={onHide}
         className={style.responsiveOffcanvas}
-        style={{ width: '45%' }}
+        style={{ width: "45%" }}
       >
         <div className={style.canvas_container}>
           <div className={style.OffcanvasHeader}>
@@ -144,30 +116,45 @@ const TaskDataSettings = ({
 
             <div className={style.taskControlCard}>
               <div className={style.controlRow}>
-                <h3 className={style.taskName}>{selectedTask?.taskName || 'N/A'}</h3>
+                <h3 className={style.taskName}>
+                  {selectedTask?.taskName || "N/A"}
+                </h3>
+
                 <div className={style.actionButtons}>
                   <History
                     size={18}
                     onClick={handleHistoryClick}
                     className={style.historyIcon}
                   />
-                  <button className={style.editButton} onClick={handleEditClick}>
+                  <button
+                    className={style.editButton}
+                    onClick={handleEditClick}
+                  >
                     <Edit2 size={18} />
                   </button>
-                  <button className={style.deleteButton} onClick={handleDeleteClick}>
+                  <button
+                    className={style.deleteButton}
+                    onClick={handleDeleteClick}
+                  >
                     <Trash2 size={18} />
                   </button>
                 </div>
 
                 <div className={style.statusSection}>
                   <label className={style.toggleSwitch}>
-                    <input type="checkbox" checked={toggle} onChange={handleToggle} />
+                    <input
+                      type="checkbox"
+                      checked={toggle}
+                      onChange={handleToggle}
+                    />
                     <span className={style.toggleSlider}></span>
                   </label>
                   <span
-                    className={`${style.statusText} ${toggle ? style.active : style.inactive}`}
+                    className={`${style.statusText} ${
+                      toggle ? style.active : style.inactive
+                    }`}
                   >
-                    {toggle ? 'Active' : 'Inactive'}
+                    {toggle ? "Active" : "Inactive"}
                   </span>
                 </div>
               </div>
@@ -177,9 +164,11 @@ const TaskDataSettings = ({
               {historyVisible ? (
                 <div className={style.historyScroll}>
                   {loadingHistory ? (
-                    <p style={{ textAlign: 'center' }}>Loading history...</p>
+                    <p style={{ textAlign: "center" }}>Loading history...</p>
                   ) : taskHistory.length === 0 ? (
-                    <p style={{ textAlign: 'center', color: '#777' }}>No history found.</p>
+                    <p style={{ textAlign: "center", color: "#777" }}>
+                      No history found.
+                    </p>
                   ) : (
                     <div className={style.timeline}>
                       {taskHistory.map((item) => (
@@ -187,18 +176,28 @@ const TaskDataSettings = ({
                           <div className={style.timelineMarker}></div>
                           <div className={style.timelineContent}>
                             <div className={style.timelineHeader}>
-                              <span className={style.timelineAction}>{item.action}</span>
+                              <span className={style.timelineAction}>
+                                {item.action}
+                              </span>
                               <span className={style.timelineTime}>
-                                {dayjs(item.created_at).format('DD MMM, YYYY hh:mm A')}
+                                {dayjs(item.created_at).format(
+                                  "DD MMM, YYYY hh:mm A"
+                                )}
                               </span>
                             </div>
                             <div className={style.timelineBody}>
                               {item.oldvalue && (
-                                <p><strong>Old Value:</strong> {item.oldvalue}</p>
+                                <p>
+                                  <strong>Old Value:</strong> {item.oldvalue}
+                                </p>
                               )}
-                              <p><strong>New Value:</strong> {item.newValue}</p>
+                              <p>
+                                <strong>New Value:</strong> {item.newValue}
+                              </p>
                               {item.status && (
-                                <p><strong>Status:</strong> {item.status}</p>
+                                <p>
+                                  <strong>Status:</strong> {item.status}
+                                </p>
                               )}
                               <p className={style.timelineBy}>
                                 <User size={14} /> {item.created_by}
@@ -227,7 +226,7 @@ const TaskDataSettings = ({
         isOpen={handleOpenDelete}
         onClose={() => setHandleOpenDelete(false)}
         onConfirm={ConfirmDelete}
-        itemName={selectedTask?.taskName || 'this task'}
+        itemName={selectedTask?.taskName || "this task"}
       />
     </>
   );
