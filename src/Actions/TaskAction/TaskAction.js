@@ -1,7 +1,7 @@
 import * as TaskService from "../../services/TaskDataServices/TaskDataServices";
 import { setAlertMessage } from "../../common/common";
 
-const city = localStorage.getItem("city");
+// const city = localStorage.getItem("city");
 
 /* ================= SAVE / UPDATE ================= */
 
@@ -61,7 +61,7 @@ export const saveOrUpdateTask = async ({
 
     taskRes = await TaskService.saveTaskData({
       taskName: trimmedTitle,
-      city_id: city,
+      city_id: 1,
       created_by: "Ansh",
       created_at: new Date().toISOString(),
       uniqueId,
