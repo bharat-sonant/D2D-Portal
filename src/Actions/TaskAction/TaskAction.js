@@ -1,4 +1,4 @@
-import * as TaskDataServise from "../../services/TaskDataServise/TaskDataServise";
+import * as TaskService from "../../services/TaskDataServise/TaskDataServise";
 import { setAlertMessage } from "../../common/common";
 
 const city = localStorage.getItem("city");
@@ -26,70 +26,75 @@ export const saveOrUpdateTask = async ({
   setLoading(true);
   setError("");
 
-  try {
-    const duplicate = await TaskDataServise.checkDuplicateTaskName(trimmedTitle);
-    if (duplicate && (!isEditing || duplicate.id !== selectedTask?.id)) {
-      setError("Task name already exists.");
+  let taskRes;
+
+  /* ---------- UPDATE ---------- */
+  if (isEditing) {
+    taskRes = await TaskService.updateTaskData(selectedTask.id, {
+      taskName: trimmedTitle
+    });
+
+    if (taskRes.status === "error") {
+      setError(taskRes.message);
       setLoading(false);
       return;
     }
 
-    let taskData;
+    // ---------- HISTORY COMMENTED ----------
+    // await TaskService.saveTaskHistory({
+    //   taskId: taskRes.data.id,
+    //   uniqueId: taskRes.data.uniqueId,
+    //   city_id: city,
+    //   action: "Updated",
+    //   oldvalue: selectedTask.taskName,
+    //   newValue: taskRes.data.taskName,
+    //   created_by: "Ansh",
+    //   created_at: new Date().toISOString()
+    // });
 
-    if (isEditing) {
-      taskData = await TaskDataServise.updateTask(selectedTask.id, {
-        taskName: trimmedTitle
-      });
+    setAlertMessage("success", "Task updated successfully!");
+  }
 
-      await TaskDataServise.saveTaskHistory({
-        taskId: taskData.id,
-        uniqueId: taskData.uniqueId,
-        city_id: city,
-        action: "Updated",
-        oldvalue: selectedTask.taskName,
-        newValue: taskData.taskName,
-        created_by: "Ansh",
-        created_at: new Date().toISOString()
-      });
+  /* ---------- CREATE ---------- */
+  else {
+    const uniqueId = await TaskService.generateUniqueTaskId();
 
-      setAlertMessage("success", "Task updated successfully!");
-    } else {
-      const uniqueId = await TaskDataServise.generateUniqueTaskId();
+    taskRes = await TaskService.saveTaskData({
+      taskName: trimmedTitle,
+      city_id: city,
+      created_by: "Ansh",
+      created_at: new Date().toISOString(),
+      uniqueId,
+    });
 
-      taskData = await TaskDataServise.createTask({
-        taskName: trimmedTitle,
-        uniqueId,
-        city_id: city,
-        created_by: "Ansh",
-        created_at: new Date().toISOString()
-      });
-
-      await TaskDataServise.saveTaskHistory({
-        taskId: taskData.id,
-        uniqueId,
-        city_id: city,
-        action: "Created",
-        oldvalue: null,
-        newValue: taskData.taskName,
-        created_by: "Ansh",
-        created_at: new Date().toISOString()
-      });
-
-      setAlertMessage("success", "Task added successfully!");
+    if (taskRes.status === "error") {
+      setError(taskRes.message);
+      setLoading(false);
+      return;
     }
 
-    fetchTaskData();
-    setSelectedTask(taskData);
-    setTaskTitle("");
-    setIsEditing(false);
-    setTimeout(() => setShowCanvas(false), 500);
+    // ---------- HISTORY COMMENTED ----------
+    // await TaskService.saveTaskHistory({
+    //   taskId: taskRes.data.id,
+    //   uniqueId: taskRes.data.uniqueId,
+    //   city_id: city,
+    //   action: "Created",
+    //   oldvalue: null,
+    //   newValue: taskRes.data.taskName,
+    //   created_by: "Ansh",
+    //   created_at: new Date().toISOString()
+    // });
 
-  } catch (err) {
-    console.error(err);
-    setError("Failed to save task. Please try again.");
-  } finally {
-    setLoading(false);
+    setAlertMessage("success", "Task added successfully!");
   }
+
+  /* ---------- FINAL UI UPDATE ---------- */
+  fetchTaskData();
+  setSelectedTask(taskRes.data);
+  setTaskTitle("");
+  setIsEditing(false);
+  setTimeout(() => setShowCanvas(false), 500);
+  setLoading(false);
 };
 
 /* ================= STATUS TOGGLE ================= */
@@ -101,45 +106,58 @@ export const toggleTaskStatus = async (
   setToggle
 ) => {
   const newStatus = toggle ? "inactive" : "active";
-  const oldStatus = toggle ? "active" : "inactive";
 
-  try {
-    await TaskDataServise.saveTaskHistory({
-      taskId: task.id,
-      uniqueId: task.uniqueId,
-      action: "Status Changed",
-      oldvalue: oldStatus,
-      newValue: newStatus,
-      status: newStatus,
-      created_by: "Ansh",
-      created_at: new Date().toISOString()
-    });
+  // ---------- HISTORY COMMENTED ----------
+  // const oldStatus = toggle ? "active" : "inactive";
+  // await TaskService.saveTaskHistory({
+  //   taskId: task.id,
+  //   uniqueId: task.uniqueId,
+  //   action: "Status Changed",
+  //   oldvalue: oldStatus,
+  //   newValue: newStatus,
+  //   status: newStatus,
+  //   created_by: "Ansh",
+  //   created_at: new Date().toISOString()
+  // });
 
-    await TaskDataServise.updateTaskStatus(task.id, newStatus);
+  const statusRes = await TaskService.updateTaskStatus(task.id, newStatus);
 
-    setToggle(!toggle);
-    refreshTasks();
-    setAlertMessage("success", `Task marked as ${newStatus}`);
-  } catch (err) {
-    console.error(err);
-    setAlertMessage("error", "Failed to update task status");
+  if (statusRes.status === "error") {
+    setAlertMessage("error", statusRes.message);
+    return;
   }
+
+  setToggle(!toggle);
+  refreshTasks();
+  setAlertMessage("success", `Task marked as ${newStatus}`);
 };
 
-/* ================= HISTORY ================= */
+/* ================= FETCH TASKS ================= */
 
-export const fetchTaskHistory = async (
-  uniqueId,
-  setTaskHistory,
-  setLoadingHistory
-) => {
-  setLoadingHistory(true);
-  try {
-    const history = await TaskDataServise.getTaskHistory(uniqueId);
-    setTaskHistory(history || []);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoadingHistory(false);
+export const fetchTaskData = async (setTaskList, setLoading) => {
+  setLoading(true);
+
+  const res = await TaskService.getTaskData();
+
+  if (res.status === "success") {
+    setTaskList(res.data || []);
+  } else {
+    setTaskList([]);
+    setAlertMessage("error", res.message);
+  }
+
+  setLoading(false);
+};
+
+/* ================= DELETE TASK ================= */
+
+export const deleteTask = async (taskId, refreshTasks) => {
+  const res = await TaskService.deleteTaskData(taskId);
+
+  if (res.status === "success") {
+    setAlertMessage("success", "Task deleted successfully!");
+    refreshTasks();
+  } else {
+    setAlertMessage("error", res.message);
   }
 };
