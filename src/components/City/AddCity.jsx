@@ -1,10 +1,9 @@
+import {useMemo, useState } from "react";
+import dayjs from "dayjs";
+import { FaSpinner } from "react-icons/fa";
 import { images } from "../../assets/css/imagePath";
 import styles from "../../assets/css/modal.module.css";
-import {useState } from "react";
-import {saveCityWithLogo} from "../../services/supabaseServices";
-import dayjs from "dayjs";
-import * as common from "../../common/common";
-import { FaSpinner } from "react-icons/fa";
+import { saveCityAction } from "../../Actions/City/cityAction";
 
 const AddCity = (props) => {
   const initialForm = {
@@ -12,100 +11,63 @@ const AddCity = (props) => {
     status: "active",
     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
-  
-const [loading, setLoading] = useState(false);
-const [logo, setLogo] = useState(null);
-const [logoPreview, setLogoPreview] = useState("");
-const [logoError, setLogoError] = useState("");
-const [cityError,setCityError]=useState("")
-const [form,setForm]=useState(initialForm)
 
-
-  if (!props.showCanvas) return null;
+  const [loading, setLoading] = useState(false);
+  const [logo, setLogo] = useState(null);
+  const [logoPreview, setLogoPreview] = useState("");
+  const [logoError, setLogoError] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [form, setForm] = useState(initialForm);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if(e?.target?.value?.trim()){
+      setCityError("");
+    }
   };
-
   const handleSave = async () => {
-    let loggedUserName = localStorage.getItem('userName')
-    let isValid = true;
-    setCityError("");
- 
-  
-    if (!form.name) {
-      setCityError("Name is required");
-      isValid = false;
-    }
-    if(logo===null){
-       setLogoError("Logo is required");
-      isValid = false;
-    }
-  
-
-    if (isValid) {
-      setLoading(true);
-      let cityDetail = {
-        name: form.name,
-        status:"active",
-        created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        created_by:loggedUserName
-      };
-
-        try {
-          await saveCityWithLogo(cityDetail,logo);
-          resetStateValues();
-           props.loadCities();
-          common.setAlertMessage("success", "City added successfully");
-        } catch (err) {
-          console.log(err)
-          setLoading(false);
-          if (err.code === "23505") {
-            if (err.details?.includes("name")) {
-              setCityError("City name already exists!");
-            } 
-             else {
-              common.setAlertMessage("error", "Duplicate value exists!");
-            }
-          } else {
-            common.setAlertMessage("error", "Something went wrong!");
-          }
-        }
-    }
+    saveCityAction(form,logo,props,setLoading,setCityError,resetStateValues,setLogoError);
   };
-
-  
-
   const handleLogoChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    setLogoError("Please upload a valid image file");
-    return;
-  }
+    if (!file.type.startsWith("image/")) {
+      setLogoError("Please upload a valid image file");
+      return;
+    }
 
-  setLogoError("");
-  setLogo(file);
-  setLogoPreview(URL.createObjectURL(file));
-};
-
-
-  function resetStateValues() {
+    setLogoError("");
+    setLogo(file);
+    setLogoPreview(URL.createObjectURL(file));
+  };
+  const resetStateValues=()=>{
     setForm(initialForm);
-    setCityError('')
-    setLogoError('')
+    setCityError("");
+    setLogoError("");
     props.setShowCanvas(false);
     setLoading(false);
-    setLogo(null)
-    setLogoPreview("")
+    setLogo(null);
+    setLogoPreview("");
+    props?.setOnEdit(false);
   }
-
+  useMemo(() => {
+    setForm((pre) => ({
+      name: props?.onEdit?.name || "",
+      status: props?.onEdit?.status || "active",
+      created_at: dayjs(props?.onEdit?.created_at).isValid()
+        ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
+        : dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    }));
+    setLogoPreview(props?.onEdit?.logo_image || '');
+  }, [props?.onEdit]);
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
-          <p className={styles.headerText}>Add City</p>
+          <p className={styles.headerText}>
+            {props?.onEdit ? "Update" : "Add"} City
+          </p>
           <button
             className={styles.closeBtn}
             onClick={() => {
@@ -123,8 +85,6 @@ const [form,setForm]=useState(initialForm)
         </div>
 
         <div className={styles.modalBody}>
-        
-
           <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>City Name</div>
@@ -144,89 +104,84 @@ const [form,setForm]=useState(initialForm)
             )}
           </div>
           {/* City Logo */}
-<div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "14px" }}
+          >
+            {/* Upload + Preview Row */}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+              }}
+            >
+              {/* hidden input */}
+              <input
+                type="file"
+                accept="image/*"
+                id="cityLogoInput"
+                style={{ display: "none" }}
+                onChange={handleLogoChange}
+              />
 
+              {/* upload box */}
+              <label
+                htmlFor="cityLogoInput"
+                style={{
+                  flex: 1,
+                  height: "90px", // 👈 reduced height
+                  border: "2px dashed #cbd5e1",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "4px",
+                  backgroundColor: "#f8fafc",
+                }}
+              >
+                <div style={{ fontSize: "18px" }}>📎</div>
+                <div style={{ fontSize: "14px", fontWeight: 600 }}>
+                  Upload City Logo
+                </div>
+                <div style={{ fontSize: "11px", color: "#64748b" }}>
+                  PNG / JPG • Max 2MB
+                </div>
+              </label>
 
-  {/* Upload + Preview Row */}
-  <div
-    style={{
-      display: "flex",
-      gap: "12px",
-      alignItems: "center",
-    }}
-  >
-    {/* hidden input */}
-    <input
-      type="file"
-      accept="image/*"
-      id="cityLogoInput"
-      style={{ display: "none" }}
-      onChange={handleLogoChange}
-    />
+              {/* preview left aligned */}
+              {logoPreview && (
+                <div
+                  style={{
+                    width: "90px",
+                    height: "90px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <img
+                    src={logoPreview}
+                    alt="City Logo"
+                    style={{
+                      width: "70px",
+                      height: "70px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
 
-    {/* upload box */}
-    <label
-      htmlFor="cityLogoInput"
-      style={{
-        flex: 1,
-        height: "90px", // 👈 reduced height
-        border: "2px dashed #cbd5e1",
-        borderRadius: "8px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "4px",
-        backgroundColor: "#f8fafc",
-      }}
-    >
-      <div style={{ fontSize: "18px" }}>📎</div>
-      <div style={{ fontSize: "14px", fontWeight: 600 }}>
-          Upload City Logo
-      </div>
-      <div style={{ fontSize: "11px", color: "#64748b" }}>
-        PNG / JPG • Max 2MB
-      </div>
-    </label>
-
-    {/* preview left aligned */}
-    {logoPreview && (
-      <div
-        style={{
-          width: "90px",
-          height: "90px",
-          border: "1px solid #e5e7eb",
-          borderRadius: "8px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fff",
-        }}
-      >
-        <img
-          src={logoPreview}
-          alt="City Logo"
-          style={{
-            width: "70px",
-            height: "70px",
-            objectFit: "contain",
-          }}
-        />
-      </div>
-    )}
-  </div>
-
-  {/* error */}
-  {logoError && (
-    <div style={{ color: "red", fontSize: "13px" }}>
-      {logoError}
-    </div>
-  )}
-</div>
-
-
-
+            {/* error */}
+            {logoError && (
+              <div style={{ color: "red", fontSize: "13px" }}>{logoError}</div>
+            )}
+          </div>
 
           <button
             type="button"

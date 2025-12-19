@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./confirmationModal.module.css";
 
 const ConfirmationModal = ({
@@ -9,6 +8,7 @@ const ConfirmationModal = ({
   cancelText = "Cancel",
   onConfirm = () => {},
   onCancel = () => {},
+  btnColor
 }) => {
   if (!visible) return null;
 
@@ -24,7 +24,7 @@ const ConfirmationModal = ({
             {cancelText}
           </button>
           
-          <button className={styles.confirmBtn} onClick={onConfirm}>
+          <button className={styles.confirmBtn} style={{backgroundColor:btnColor || ''}} st onClick={onConfirm}>
             {confirmText}
           </button>
         </div>

@@ -4,17 +4,28 @@ import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.modu
 import {getData } from "../../services/supabaseServices";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
+import SettingsBtn from "../../components/Common/SettingsBtn";
+import CitySettings from "../../components/City/CitySettings";
+import ConfirmationModal from "../../components/confirmationModal/ConfirmationModal";
+import { changeCityStatusAction } from "../../Actions/City/cityAction";
 
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [cityList, setCityList] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
-
+  const [openSettings,setOpenSettings] = useState(false);
+  const [statusConfirmation,setStatusConfirmation] = useState({status:false,data:null,setToggle:()=>{}});
   const loadCities = async () => {
     const response = await getData("Cities");
-    const sortedData = [...response.data].sort((a, b) => a.name.localeCompare(b.name));
-    setSelectedCity(sortedData[0]);
+   const sortedData = [...response.data].sort((a, b) => {
+     if (a.status !== b.status) {
+       return a.status === "active" ? -1 : 1;
+     }
+     return a.name.localeCompare(b.name);
+   });
+    let currentSelected = sortedData?.find(item=>item?.id===selectedCity?.id);
+    setSelectedCity(currentSelected || sortedData[0]);
     setCityList(sortedData);
   };
 
@@ -25,10 +36,27 @@ const City = () => {
   const handleOpenModal = () => {
     setShowCanvas(true);
   };
+  const handleOpenSettings=()=>setOpenSettings(true);
+  const handleCloseSettings=()=>setOpenSettings(false);
+  const handleOpenEditWindow=()=>{
+    setOpenSettings(false);
+    setShowCanvas(true);
+    setOnEdit(selectedCity);
+  }
+  const handleStatusConfirmation = () => {
+    changeCityStatusAction(
+      statusConfirmation?.data,
+      selectedCity,
+      statusConfirmation?.setToggle,
+      loadCities,
+      setStatusConfirmation,
+    );
+  };
 
   return (
     <>
       <div className={`${GlobalStyles.floatingDiv}`}>
+        {selectedCity && <SettingsBtn click={handleOpenSettings} />}
         <button
           className={`${GlobalStyles.floatingBtn}`}
           onClick={handleOpenModal}
@@ -89,32 +117,52 @@ const City = () => {
                   overflow: "hidden",
                 }}
               >
-                {selectedCity?.logo_image&&(
-                      <img
-                  src={selectedCity?.logo_image || "/city-placeholder.png"}
-                  alt="City Logo"
-                  style={{  
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
+                {selectedCity?.logo_image && (
+                  <img
+                    src={selectedCity?.logo_image || "/city-placeholder.png"}
+                    alt="City Logo"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
                 )}
-                
               </div>
             </div>
           </div>
         </div>
       </div>
       <div className={GlobalStyles.mainSections}>
-        <AddCity
-          showCanvas={showCanvas}
-          setShowCanvas={setShowCanvas}
-          loadCities={loadCities}
-          onEdit={onEdit}
-          setOnEdit={setOnEdit}
-        />
+        {showCanvas && (
+          <AddCity
+            showCanvas={showCanvas}
+            setShowCanvas={setShowCanvas}
+            loadCities={loadCities}
+            onEdit={onEdit}
+            setOnEdit={setOnEdit}
+          />
+        )}
       </div>
+      {openSettings && (
+        <CitySettings
+          openCanvas={openSettings}
+          onHide={handleCloseSettings}
+          selectedCity={selectedCity}
+          onClickEdit={handleOpenEditWindow}
+          setStatusConfirmation={setStatusConfirmation}
+        />
+      )}
+      {statusConfirmation?.status && (
+        <ConfirmationModal
+          visible={statusConfirmation?.status}
+          title={`City ${statusConfirmation?.data?'Active':'Deactive'}`}
+          message={`Are you sure you want to ${statusConfirmation?.data?'activate':'deactivate'} ${selectedCity?.name} city?`}
+          onCancel={()=>setStatusConfirmation({status:false,data:null,setToggle:()=>{}})}
+          onConfirm={handleStatusConfirmation}
+          btnColor={!statusConfirmation?.data && 'red'}
+        />
+      )}
     </>
   );
 };

@@ -24,17 +24,12 @@ export const saveData = async (tableName, tableData) => {
 
 export const updateData = async (tableName, id,columnData) => {
   try {
-    const { data, error } = await supabase
-      .from(tableName)
-      .update(columnData)
-      .eq("id", id)
-      
-
+    const { data, error } = await supabase.from(tableName).update(columnData).eq("id", id)
     if (error) throw error;
 
     return { success: true, data };
   } catch (err) {
-    return { success: false, error: err.message || err };
+    return { success: false, error: err.message || err,err };
   }
 };
 
@@ -71,132 +66,9 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const login = async (username, password) => {
   // DB se user fetch karo
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("username", username)
-    .single();
+  const { data, error } = await supabase.from("users").select("*").eq("username", username).single();
 
   if (error || !data) throw new Error("User not found");
 
@@ -215,33 +87,15 @@ export const login = async (username, password) => {
   return data;
 };
 
-export const saveCityWithLogo = async (cityData, logoFile) => {
-  let logo = null;
-
-  if (logoFile) {
-    logo = await uploadAttachment(logoFile, "CityLogo");
-  }
-
-  //2️⃣ Insert city data with logo URL
-  cityData.logo_image = logo?.url || null;
-  const { error } = await supabase.from("Cities").insert([cityData]);
-  if (error) throw error;
-
-  // data return nahi kar rahe
-};
-
 export const uploadAttachment = async (file, bucket) => {
   if (!file) return null;
 
-  const ext = file.name.split(".").pop();
+  const ext = file?.name?.split(".").pop();
   const fileName = `${Date.now()}.${ext}`;
   const filePath = fileName;
 
   // Upload file to Supabase Storage
-  const { error } = await supabase.storage
-    .from(bucket)
-    .upload(filePath, file, { upsert: false });
-
+  const { error } = await supabase.storage.from(bucket) .upload(filePath, file, { upsert: false });
   if (error) throw error;
 
   // Get public URL
