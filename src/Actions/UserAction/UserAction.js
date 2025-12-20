@@ -71,7 +71,7 @@ export const handleSaveUser = async (email,username,password,loginURL,setUserNam
   } else {
     setLoading(false);
     const errMsg = response.message.details || "";
-    if (response.message?.code === "23505") {
+    if (response.message?.code === "23505"){
       if (errMsg.toLowerCase().includes("username")) {
         setUserNameError("Username already exists!");
       } else if (errMsg.toLowerCase().includes("email")) {
@@ -114,8 +114,14 @@ export const handleSaveUser = async (email,username,password,loginURL,setUserNam
  export const fetchUserData = async (setSelectedUser,setUsers)=>{
      let response = await userServices.getUserData()
      if(response.status==='success'){
-       setSelectedUser(response.data[0])
-       setUsers(response.data);
+       
+       const sortedList = response.data.sort((a, b) => {
+  if (a.status === "inactive" && b.status !== "inactive") return 1;
+  if (a.status !== "inactive" && b.status === "inactive") return -1;
+  return 0;
+});
+     setSelectedUser(sortedList[0])
+       setUsers(sortedList);
      }else{
        setSelectedUser(null)
        setUsers([]);
@@ -123,23 +129,42 @@ export const handleSaveUser = async (email,username,password,loginURL,setUserNam
   }
 
 
-  export const updateStatus =async (user,setUsers,setSelectedUser,setConfirmUser)=>{
-   const newStatus = user.status === "active" ? "inactive" : "active";
-    let response = await userServices.updateUserStatus(user.id,{status:newStatus})
-      if (response.status==='success') {
-  setUsers((prev) =>
-    prev.map((u) =>
-      u.id === user.id ? { ...u, status: newStatus } : u
-    )
-  );
-   setSelectedUser({
-    ...user,
-    status: newStatus
+  export const updateStatus = async (user,setUsers,setSelectedUser,setConfirmUser) => {
+
+  const newStatus = user.status === "active" ? "inactive" : "active";
+  let response = await userServices.updateUserStatus(user.id, {
+    status: newStatus,
   });
-  setConfirmUser(false);
-    common.setAlertMessage("success", "User status successfully");
-  }else{
-     common.setAlertMessage("error", "Something went wrong!");
+
+  if (response.status === "success") {
+    setUsers((prev) => {
+      const updatedList = prev.map((u) =>
+        u.id === user.id ? { ...u, status: newStatus } : u
+      );
+
+      // 👇 inactive users ko bottom me bhejo
+      return updatedList.sort((a, b) => {
+  // 1️⃣ pehle status ke basis par (inactive last)
+  if (a.status !== b.status) {
+    return a.status === "inactive" ? 1 : -1;
+  }
+
+  // 2️⃣ same status wale users name ke basis par A–Z
+  return a.name.localeCompare(b.name);
+});
+
+    });
+
+    setSelectedUser({
+      ...user,
+      status: newStatus,
+    });
+
+    setConfirmUser(false);
+    common.setAlertMessage("success", "User status updated successfully");
+  } else {
+    common.setAlertMessage("error", "Something went wrong!");
   }
 };
+
   

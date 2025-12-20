@@ -6,6 +6,7 @@ import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
 import { fetchUsers, updateUserStatus } from "../../services/supabaseServices";
 import * as userAction from '../../Actions/UserAction/UserAction'
+import UserStatusDialog from "../../components/Users/AlertPopUp";
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -35,7 +36,6 @@ const openConfirm = () => {
 
 
 const handleStatusToggle = async (user) => {
-  console.log(user)
   userAction.updateStatus(user,setUsers,setSelectedUser,setConfirmUser)
 };
 
@@ -134,80 +134,8 @@ setShowCanvas(true);
         <AddUser showCanvas={showCanvas} setShowCanvas={setShowCanvas} loadUsers={loadUsers} editData ={selectedUser} onEdit={onEdit} setOnEdit={setOnEdit}/>
       </div>
 
- {confirmUser && (
-  <div
-    style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0,0,0,0.45)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999
-    }}
-  >
-    <div
-      style={{
-        background: '#fff',
-        width: '520px',
-        minHeight: '240px',
-        borderRadius: '8px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: '24px',
-        textAlign: 'center'
-      }}
-    >
-      
-      {/* TEXT AREA */}
-      <p style={{ fontSize: '16px', lineHeight: '20px', marginTop: '60px' }}>
-        Are you sure you want to{' '}
-        <b>
-          {selectedUser.status === 'active' ? 'deactivate' : 'activate'}
-        </b>{' '}
-        <b>{selectedUser.name}</b>?
-      </p>
+   {confirmUser && (   <UserStatusDialog name={selectedUser.name} setConfirmUser={setConfirmUser} handleStatusToggle={handleStatusToggle} selectedUser={selectedUser}/> )}
 
-      {/* BUTTONS */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '15px'
-        }}
-      >
-        <button
-          onClick={() => setConfirmUser(null)}
-          style={{
-            padding: '10px 18px',
-            background: '#e0e0e0',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={() => handleStatusToggle(selectedUser)}
-          style={{
-            padding: '10px 18px',
-            background:
-              selectedUser.status === 'active' ? '#d32f2f' : '#2e7d32',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          Confirm
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
 
 
