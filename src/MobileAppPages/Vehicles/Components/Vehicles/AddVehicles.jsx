@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { images } from '../../../../assets/css/imagePath';
 import styles from '../../../../assets/css/modal.module.css';
 import { FaSpinner } from 'react-icons/fa';
-import * as service from '../../Services/VehicleService/VehicleService';
+import * as service from '../../../../services/VehicleServices/VehicleServices';
 import * as common from '../../../../common/common';
 
 const AddVehicles = ({
@@ -68,12 +68,13 @@ const AddVehicles = ({
       const payload = {
         vehicles_No: vehicleName,
         chassis_no: chassisNo,
-        city_id: 1
+        city_id: 1,
+        created_by: 'Ansh'
       };
 
       const res = vehicleId
-        ? await service.updateVehicle(vehicleId, payload)
-        : await service.addVehicle(payload);
+        ? await service.updateVehicleData(vehicleId, payload)
+        : await service.saveVehicleData(payload);
 
       setLoader(false);
 
@@ -152,9 +153,8 @@ const AddVehicles = ({
                   <div className={styles.textboxRight}>
                     <input
                       type="text"
-                      className={`form-control ${styles.formTextbox} ${
-                        vehicleError ? 'is-invalid' : ''
-                      }`}
+                      className={`form-control ${styles.formTextbox} ${vehicleError ? 'is-invalid' : ''
+                        }`}
                       value={vehicleName}
                       onChange={(e) => handleVehicleNameChange(e.target.value)}
                     />
@@ -174,9 +174,8 @@ const AddVehicles = ({
                   <div className={styles.textboxRight}>
                     <input
                       type="text"
-                      className={`form-control ${styles.formTextbox} ${
-                        chassisError ? 'is-invalid' : ''
-                      }`}
+                      className={`form-control ${styles.formTextbox} ${chassisError ? 'is-invalid' : ''
+                        }`}
                       value={chassisNo}
                       onChange={(e) => handleChassisChange(e.target.value)}
                     />

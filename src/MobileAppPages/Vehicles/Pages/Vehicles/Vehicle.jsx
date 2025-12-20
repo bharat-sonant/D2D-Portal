@@ -3,12 +3,11 @@ import styles from '../../Styles/Vehicle/Vehicle.module.css';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import VehicleList from '../../Components/Vehicles/VehicleList';
 import AddVehicles from '../../Components/Vehicles/AddVehicles';
-import * as action from '../../Action/VehicleList/VehicleListAction';
+import * as action from '../../../../Actions/VehiclesAction/VehiclesAction';
 import VehicleDetails from '../../Components/Vehicles/VehicleDetails';
 import { LucideSettings } from 'lucide-react';
 import VehicleHistoryData from '../../Components/VehicleHistory/VehicleHistoryData';
 import DeleteConfirmation from '../../../Tasks/Components/DeleteConfirmation/DeleteConfirmation';
-import { deleteVehicle } from '../../Action/AddVehicle/AddVehicleAction';
 
 const Vehicle = () => {
     const [showModal, setShowModal] = useState(false);
@@ -77,7 +76,7 @@ const Vehicle = () => {
     };
 
     const confirmDelete = () => {
-        deleteVehicle(
+        action.deleteVehicle(
             vehicleDetails?.id,
             setVehicleList,
             setConfirmModal,
