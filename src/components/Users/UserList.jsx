@@ -4,9 +4,7 @@ import styles from '../../Style/Task-Data/TaskDataList.module.css';
 
 const UserList = (props) => {
 
-    // const handleTaskSelect = (item) => {
-    //     props.onSelectTask(item)
-    // }
+
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>

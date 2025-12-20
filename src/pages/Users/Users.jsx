@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
-import styles from "../../MobileAppPages/Tasks/Styles/TaskDetails/TaskDetails.module.css";
 import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
-import { fetchUsers, updateUserStatus } from "../../services/supabaseServices";
 import * as userAction from '../../Actions/UserAction/UserAction'
 import UserStatusDialog from "../../components/Users/AlertPopUp";
 

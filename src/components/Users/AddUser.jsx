@@ -1,10 +1,7 @@
 import { images } from "../../assets/css/imagePath";
 import styles from "../../assets/css/modal.module.css";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { createUser, updateUser } from "../../services/supabaseServices";
 import dayjs from "dayjs";
-import { sendEmployeeLoginCredentialsTemplate } from "../../common/emailHTMLTemplates/MailTemplates";
 import * as common from "../../common/common";
 import { FaSpinner } from "react-icons/fa";
 import * as userAction from '../../Actions/UserAction/UserAction'
