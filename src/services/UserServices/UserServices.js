@@ -23,11 +23,10 @@ export const getUserData=async()=>{
     const result = await sbs.getData('users');
     if(result.success){
        const sortedData = [...result.data].sort((a, b) =>a.name.localeCompare(b.name));
-      return { status: 'success', message: 'User data updated successfully', data: sortedData };
+      return { status: 'success', message: 'User data fetched successfully', data: sortedData };
     }else{
        return { status: 'error', message: result.error };
-    }
-   
+    } 
 }
 
 export const updateUserStatus = async(userId,userDetail)=>{
