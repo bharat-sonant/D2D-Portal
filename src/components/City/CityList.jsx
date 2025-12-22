@@ -11,11 +11,9 @@ const CityList = (props) => {
     const [filteredCityList,setFilteredCityList] = useState(props?.cityList||[]);
     
     useEffect(()=>{
-        setFilteredCityList(filterCityAction(props?.cityList,searchTerm,props?.setSelectedCity))
+        setFilteredCityList(filterCityAction(props?.cityList,searchTerm,props?.setSelectedCity,props?.selectedCity))
     },[props?.cityList,searchTerm]);
     const handleSearch = debounce((e) => {setSearchTerm(e.target.value)}, 300);
-
-
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>

@@ -7,7 +7,7 @@ import LogoImage from '../Common/Image/LogoImage';
 
 const CitySettings = ({openCanvas,onHide,selectedCity,onClickEdit,setStatusConfirmation}) => {
   const [toggle, setToggle] = useState(selectedCity?.status === 'active' || false);
-  const handleToggle=(e)=>setStatusConfirmation({status:true,data:e.target.checked,setToggle:setToggle})
+  const handleToggle=(e)=>setStatusConfirmation({status:true,data:e.target.checked,setToggle})
   return (
     <>
       <Offcanvas

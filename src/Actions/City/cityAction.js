@@ -28,8 +28,8 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,rese
             common.setAlertMessage("success", "City added successfully");
         } catch (err) {
             setLoading(false);
-            if (err.code === "23505") {
-                if (err.details?.includes("name")) {
+            if (err?.code === "23505") {
+                if (err?.details?.includes("name")) {
                     setCityError("City name already exists!");
                 } else {
                     common.setAlertMessage("error", "Duplicate value exists!");
@@ -54,14 +54,17 @@ export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadC
         common.setAlertMessage("error",error);
     }
 }
-export const filterCityAction=(cityList,searchTerm,setSelectedCity)=>{
+export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)=>{
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
-        setSelectedCity(cityList?.length > 0 ? cityList[0] : null);
+        let currentSelected = cityList?.find(item=>item?.id===selectedCity?.id);
+        setSelectedCity(currentSelected || cityList[0] || null);
         return cityList;
     }
     let list = cityList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
-    setSelectedCity(list?.length > 0 ? list[0] : null);
+    let currentSelected = list?.find(item=>item?.id===selectedCity?.id);
+
+    setSelectedCity(currentSelected || list[0] || null);
 
     return list;
 }

@@ -89,6 +89,8 @@ const City = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
               }}
             >
               <span
@@ -103,7 +105,7 @@ const City = () => {
               >
                 {selectedCity?.name || "N/A"}
               </span>
-              <div style={{ width: "250px" }} />
+              {/* <div style={{ width: "250px" }} /> */}
               <div
                 style={{
                   width: "48px",
