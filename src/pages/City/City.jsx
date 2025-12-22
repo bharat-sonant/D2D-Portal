@@ -7,7 +7,7 @@ import AddCity from "../../components/City/AddCity";
 import SettingsBtn from "../../components/Common/SettingsBtn";
 import CitySettings from "../../components/City/CitySettings";
 import ConfirmationModal from "../../components/confirmationModal/ConfirmationModal";
-import { changeCityStatusAction } from "../../Actions/City/cityAction";
+import { changeCityStatusAction, getCityList } from "../../Actions/City/cityAction";
 
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -17,16 +17,7 @@ const City = () => {
   const [openSettings,setOpenSettings] = useState(false);
   const [statusConfirmation,setStatusConfirmation] = useState({status:false,data:null,setToggle:()=>{}});
   const loadCities = async () => {
-    const response = await getData("Cities");
-   const sortedData = [...response.data].sort((a, b) => {
-     if (a.status !== b.status) {
-       return a.status === "active" ? -1 : 1;
-     }
-     return a.name.localeCompare(b.name);
-   });
-    let currentSelected = sortedData?.find(item=>item?.id===selectedCity?.id);
-    setSelectedCity(currentSelected || sortedData[0]);
-    setCityList(sortedData);
+    getCityList(setSelectedCity,setCityList,selectedCity)
   };
 
   useEffect(() => {

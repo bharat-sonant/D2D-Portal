@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { saveCityWithLogo, updateCityStatus } from "../../services/cityServices";
+import { getCityData, saveCityWithLogo, updateCityStatus } from "../../services/CityService/cityServices";
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,resetStateValues,setLogoError) => {
     let isValid = true;
@@ -40,6 +40,19 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,rese
         }
     }
 }
+
+export const getCityList=async (setSelectedCity,setCityList,selectedCity)=>{
+      const response = await getCityData();
+       if(response.status==='success'){
+        let currentSelected = response.data?.find(item=>item?.id===selectedCity?.id);
+           setSelectedCity(currentSelected || response.data[0]);
+        setCityList(response.data);
+       }else{
+              setSelectedCity(null)
+       setCityList([]);
+}
+       }
+      
 export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadCities,setStatusConfirmation)=>{
     if (!selectedCity) return;
     try{
