@@ -5,9 +5,11 @@ import { images } from '../../../../assets/css/imagePath';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { formatEvent, ActiveInactiveVehicles } from '../../../../Actions/VehiclesAction/VehiclesAction';
+import StatusConfirmation from '../../../Tasks/Components/StatusConfirmation/StatusConfirmation';
 
 const VehicleHistoryData = (props) => {
     const [toggle, setToggle] = useState(props.vehicleDetails?.status === "active");
+    const [showStatusConfirm, setShowStatusConfirm] = useState(false);
 
     useEffect(() => {
         if (props.vehicleDetails) {
@@ -15,8 +17,16 @@ const VehicleHistoryData = (props) => {
         }
     }, [props.vehicleDetails]);
 
-    const handleToggle = () => {
+    const handleToggleClick = (e) => {
+        e.preventDefault();
+        setShowStatusConfirm(true);
+    };
+
+    const confirmStatusChange = () => {
+        // ActiveInactiveVehicles expects (props, setToggle, toggle)
+        // It toggles internally based on the current 'toggle' value passing in.
         ActiveInactiveVehicles(props, setToggle, toggle);
+        setShowStatusConfirm(false);
     };
 
     return (
@@ -90,7 +100,8 @@ const VehicleHistoryData = (props) => {
                                             <input
                                                 type="checkbox"
                                                 checked={toggle}
-                                                onChange={handleToggle}
+                                                onClick={handleToggleClick}
+                                                readOnly
                                             />
                                             <span className={style.toggleSlider}></span>
                                         </label>
@@ -103,63 +114,17 @@ const VehicleHistoryData = (props) => {
                             </div>
                         </div>
 
-                        {/* ========================= */}
-                        {/* VEHICLE HISTORY SECTION */}
-                        {/*
-                        {props.showHistory ? (
-                            <div className={style.historyScroll}>
-                                {props.vehicleHistory.map((item, index) => (
-                                    <div key={index} className={style.historyCard}>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                width: "100%"
-                                            }}
-                                        >
-                                            <div className={style.historyTitle}>
-                                                {formatEvent(item.event)}
-                                            </div>
-
-                                            <div className={style.metaRow}>
-                                                <User size={16} />
-                                                <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
-                                                    {item.by}
-                                                </span>
-
-                                                <Calendar size={16} style={{ marginLeft: "10px" }} />
-                                                <span style={{ fontFamily: 'sans-serif', fontWeight: '500', fontSize: '12px' }}>
-                                                    [{item.at ? dayjs(item.at).format('DD MMM, YYYY hh:mm A') : 'N/A'}]
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {props.vehicleHistory.length === 0 && (
-                                    <p style={{ color: "#777", textAlign: "center" }}>
-                                        No history found.
-                                    </p>
-                                )}
-                            </div>
-                        ) : (
-                            <div className={style.infoBox}>
-                                <div className={style.infoIconWrapper}>
-                                    <Info size={18} />
-                                </div>
-                                <div>
-                                    <p className={style.infoText}>
-                                        Click on the history icon above to view vehicle update history.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                        */}
-
                     </div>
                 </div>
             </Offcanvas>
+
+            <StatusConfirmation
+                isOpen={showStatusConfirm}
+                onClose={() => setShowStatusConfirm(false)}
+                onConfirm={confirmStatusChange}
+                itemName={props.vehicleDetails?.vehicles_No || "this vehicle"}
+                status={!toggle ? "active" : "inactive"}
+            />
         </>
     );
 };

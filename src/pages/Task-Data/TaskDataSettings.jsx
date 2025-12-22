@@ -4,6 +4,7 @@ import style from "../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.mod
 import { Edit2, History, Trash2, Info, User } from "lucide-react";
 import { images } from "../../assets/css/imagePath";
 import DeleteConfirmation from "../../MobileAppPages/Tasks/Components/DeleteConfirmation/DeleteConfirmation";
+import StatusConfirmation from "../../MobileAppPages/Tasks/Components/StatusConfirmation/StatusConfirmation";
 import { setAlertMessage } from "../../common/common";
 import * as TaskAction from "../../Actions/TaskAction/TaskAction";
 import dayjs from "dayjs";
@@ -23,6 +24,9 @@ const TaskDataSettings = ({
 }) => {
   const [toggle, setToggle] = useState(selectedTask?.status === "active" || false);
   const [handleOpenDelete, setHandleOpenDelete] = useState(false);
+  const [showStatusConfirm, setShowStatusConfirm] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState(false); // Status we want to switch TO
+
   const [historyVisible, setHistoryVisible] = useState(false);
   const [taskHistory, setTaskHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -61,24 +65,38 @@ const TaskDataSettings = ({
 
   /* ================= STATUS TOGGLE ================= */
 
-  const handleToggle = () => {
+  const handleToggleClick = (e) => {
+    // Prevent immediate toggle
+    e.preventDefault();
     if (!selectedTask) return;
 
-    TaskAction.toggleTaskStatus(
-      selectedTask,
-      toggle,
-      refreshTasks,
-      setToggle
-    );
+    // pendingStatus = the state we WANT to go to (opposite of current toggle)
+    setPendingStatus(!toggle);
+    setShowStatusConfirm(true);
+  };
+
+  const confirmStatusChange = async () => {
+    try {
+      // We pass the CURRENT 'toggle' state to the action, 
+      // and the action flips it internally (logic is: if toggle=true, make it inactive, etc.)
+      // So we pass 'toggle' (current state) exactly as before.
+      await TaskAction.toggleTaskStatus(
+        selectedTask,
+        toggle,
+        refreshTasks,
+        setToggle
+      );
+      setShowStatusConfirm(false);
+    } catch (error) {
+      console.error("Status update failed", error);
+    }
   };
 
   /* ================= HISTORY ================= */
 
   // const handleHistoryClick = () => {
   //   if (!selectedTask) return;
-
   //   setHistoryVisible(!historyVisible);
-
   //   if (!historyVisible) {
   //     TaskAction.fetchTaskHistory(
   //       selectedTask.uniqueId,
@@ -145,14 +163,14 @@ const TaskDataSettings = ({
                     <input
                       type="checkbox"
                       checked={toggle}
-                      onChange={handleToggle}
+                      onClick={handleToggleClick} // Changed from onChange to onClick to intercept
+                      readOnly // Controlled by click handler
                     />
                     <span className={style.toggleSlider}></span>
                   </label>
                   <span
-                    className={`${style.statusText} ${
-                      toggle ? style.active : style.inactive
-                    }`}
+                    className={`${style.statusText} ${toggle ? style.active : style.inactive
+                      }`}
                   >
                     {toggle ? "Active" : "Inactive"}
                   </span>
@@ -227,6 +245,14 @@ const TaskDataSettings = ({
         onClose={() => setHandleOpenDelete(false)}
         onConfirm={ConfirmDelete}
         itemName={selectedTask?.taskName || "this task"}
+      />
+
+      <StatusConfirmation
+        isOpen={showStatusConfirm}
+        onClose={() => setShowStatusConfirm(false)}
+        onConfirm={confirmStatusChange}
+        itemName={selectedTask?.taskName || "this task"}
+        status={pendingStatus ? "active" : "inactive"}
       />
     </>
   );
