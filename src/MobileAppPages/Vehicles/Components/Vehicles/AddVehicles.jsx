@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { images } from '../../../../assets/css/imagePath';
 import styles from '../../../../assets/css/modal.module.css';
 import { FaSpinner } from 'react-icons/fa';
-import * as service from '../../../../services/VehicleServices/VehicleServices';
+import * as commonAction from '../../../../Actions/VehiclesAction/VehiclesAction';
 import * as common from '../../../../common/common';
 
 const AddVehicles = ({
@@ -15,7 +15,10 @@ const AddVehicles = ({
   vehicleId,
   setVehicleId,
   setVehicleDetails,
-  fetchVehicles
+  fetchVehicles,
+  setVehicleList,
+  vehicleList,
+  historyData
 }) => {
   const [vehicleError, setVehicleError] = useState('');
   const [chassisError, setChassisError] = useState('');
@@ -48,57 +51,48 @@ const AddVehicles = ({
      Save or Update Vehicle
   ========================= */
   const handleSaveVehicles = async () => {
-    let hasError = false;
+    // Reset previous errors before action
+    setVehicleError('');
+    setChassisError('');
 
-    if (!vehicleName.trim()) {
-      setVehicleError('Please provide vehicle name.');
-      hasError = true;
-    }
+    const errorHandler = (msg) => {
+      if (msg.toLowerCase().includes("name")) setVehicleError(msg);
+      else if (msg.toLowerCase().includes("chassis")) setChassisError(msg);
+      else { setVehicleError(msg); setChassisError(msg); }
+    };
 
-    if (!chassisNo.trim()) {
-      setChassisError('Please provide chassis number.');
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    setLoader(true);
-
-    try {
-      const payload = {
-        vehicles_No: vehicleName,
-        chassis_no: chassisNo,
-        city_id: 1,
-        created_by: 'Ansh'
-      };
-
-      const res = vehicleId
-        ? await service.updateVehicleData(vehicleId, payload)
-        : await service.saveVehicleData(payload);
-
-      setLoader(false);
-
-      if (res?.status === 'success') {
-        if (fetchVehicles) await fetchVehicles();
-
-        // ✅ EDIT MODE → show updated details immediately
-        if (vehicleId && setVehicleDetails) {
-          setVehicleDetails(res.data);
-        }
-
-        handleCloseModal();
-
-        common.setAlertMessage(
-          'success',
-          vehicleId ? 'Vehicle updated successfully' : 'Vehicle added successfully'
-        );
-      } else {
-        common.setAlertMessage('warn', res?.message || 'Something went wrong');
-      }
-    } catch (err) {
-      console.error('Error saving vehicle:', err);
-      setLoader(false);
-      common.setAlertMessage('warn', 'Error while saving vehicle');
+    if (vehicleId) {
+      // UPDATE
+      await commonAction.handleUpdate(
+        vehicleName,
+        chassisNo,
+        errorHandler,
+        setLoader,
+        setVehicleName,
+        setChassisNo,
+        setShowModal,
+        setVehicleList,
+        vehicleId,
+        setVehicleDetails,
+        setVehicleId,
+        historyData,
+        vehicleList
+      );
+    } else {
+      // SAVE
+      await commonAction.handleSave(
+        vehicleName,
+        chassisNo,
+        errorHandler,
+        setLoader,
+        setVehicleName,
+        setChassisNo,
+        setShowModal,
+        setVehicleList,
+        setVehicleId, // Pass setVehicleId
+        historyData,
+        vehicleList
+      );
     }
   };
 

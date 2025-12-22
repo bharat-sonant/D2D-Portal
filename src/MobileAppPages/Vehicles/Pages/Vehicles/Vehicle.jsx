@@ -140,6 +140,7 @@ const Vehicle = () => {
                     setVehicleId={setVehicleId}
                     fetchVehicles={fetchVehicles}
                     historyData={historyData}
+                    vehicleList={vehicleList}
                 />
             </div>
 

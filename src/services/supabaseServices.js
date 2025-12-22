@@ -13,23 +13,23 @@ export const getData = async (tableName) => {
 
 export const saveData = async (tableName, tableData) => {
   try {
-    const { data, error } = await supabase.from(tableName).insert([tableData]);
+    const { data, error } = await supabase.from(tableName).insert([tableData]).select().single();
     if (error) throw error;
     return { success: true, data };
   } catch (err) {
 
-    return { success: false, error: err};
+    return { success: false, error: err };
   }
 };
 
-export const updateData = async (tableName, id,columnData) => {
+export const updateData = async (tableName, id, columnData) => {
   try {
-    const { data, error } = await supabase.from(tableName).update(columnData).eq("id", id)
+    const { data, error } = await supabase.from(tableName).update(columnData).eq("id", id).select().single();
     if (error) throw error;
 
     return { success: true, data };
   } catch (err) {
-    return { success: false, error: err.message || err,err };
+    return { success: false, error: err.message || err, err };
   }
 };
 
@@ -95,7 +95,7 @@ export const uploadAttachment = async (file, bucket) => {
   const filePath = fileName;
 
   // Upload file to Supabase Storage
-  const { error } = await supabase.storage.from(bucket) .upload(filePath, file, { upsert: false });
+  const { error } = await supabase.storage.from(bucket).upload(filePath, file, { upsert: false });
   if (error) throw error;
 
   // Get public URL

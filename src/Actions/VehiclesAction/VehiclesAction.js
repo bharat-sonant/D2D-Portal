@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import * as common from "../../common/common";
 import * as service from "../../services/VehicleServices/VehicleServices";
 
+
 /* =========================================================
    HANDLE INPUT CHANGE
 ========================================================= */
@@ -37,10 +38,9 @@ export const handleSave = async (
   setChassisNo,
   setShowModal,
   setVehicleList,
-  vehicleId,
-  setVehicleDetails,
-  setVehicleId,
-  historyData // optional callback to refresh list/history
+  setVehicleId, 
+  historyData,
+  vehicleList 
 ) => {
   if (vehicleName.trim() === "") {
     setError("Please provide vehicle name.");
@@ -51,79 +51,56 @@ export const handleSave = async (
     return;
   }
 
+  // --- DUPLICATE CHECKS (ADD MODE) ---
+  if (vehicleList && Array.isArray(vehicleList)) {
+    const normalize = (str) => str ? str.trim().toLowerCase() : "";
+    const newName = normalize(vehicleName);
+    const newChassis = normalize(chassisNo);
+
+    // Check for duplicates
+    const isDuplicateName = vehicleList.some(v => normalize(v.vehicles_No) === newName);
+    const isDuplicateChassis = vehicleList.some(v => normalize(v.chassis_no) === newChassis);
+
+    if (isDuplicateName) {
+      setError("Vehicle name already exists.");
+      return;
+    }
+    if (isDuplicateChassis) {
+      setError("Chassis number already exists.");
+      return;
+    }
+  }
+
   setLoader(true);
 
   try {
-    let response;
-
-    if (vehicleId) {
-      // UPDATE VEHICLE
-      response = await service.updateVehicleData(vehicleId, {
-        vehicles_No: vehicleName,
-        chassis_no: chassisNo
-      });
-    } else {
-      // ADD VEHICLE
-      response = await service.saveVehicleData({
-        vehicles_No: vehicleName,
-        chassis_no: chassisNo,
-        city_id: 1,
-        created_by: 'Ansh'
-      });
-    }
+    const response = await service.saveVehicleData({
+      vehicles_No: vehicleName,
+      chassis_no: chassisNo,
+      city_id: 1,
+      created_by: 'Ansh'
+    });
 
     if (response.status === "success") {
       setLoader(false);
       handleClearAll(setVehicleName, setChassisNo, setError, setVehicleId);
 
       setVehicleList((prev) => {
-        let updatedList;
-
-        if (vehicleId) {
-          updatedList = prev.map((item) =>
-            item.id === vehicleId
-              ? { ...item, name: vehicleName, chassis_no: chassisNo }
-              : item
-          );
-        } else {
-          updatedList = [
-            {
-              // Adjusting to match standard structure if needed, or rely on fetch
-              id: response.data.id,
-              vehicles_No: vehicleName,
-              chassis_no: chassisNo,
-              status: "active",
-            },
-            ...prev,
-          ];
-        }
-
-        return updatedList.sort((a, b) => {
-          const weight = (status) => (status === "inactive" ? 1 : 0);
-          if (weight(a.status) !== weight(b.status)) {
-            return weight(a.status) - weight(b.status);
-          }
-          return (a.vehicles_No || a.name).localeCompare(b.vehicles_No || b.name);
-        });
-      });
-
-      if (vehicleId) {
-        setVehicleDetails((prev) => ({
+        const updatedList = [
+          {
+            id: response.data.id,
+            vehicles_No: vehicleName,
+            chassis_no: chassisNo,
+            status: "active",
+          },
           ...prev,
-          vehicles_No: vehicleName,
-          chassis_no: chassisNo,
-        }));
-      }
+        ];
+        return sortVehicles(updatedList);
+      });
 
       setShowModal(false);
       if (historyData) historyData();
-
-      common.setAlertMessage(
-        "success",
-        vehicleId
-          ? "Vehicle data updated successfully."
-          : "Vehicle data saved successfully."
-      );
+      common.setAlertMessage("success", "Vehicle data saved successfully.");
     } else {
       setLoader(false);
       common.setAlertMessage("warn", response.message || "Something went wrong!");
@@ -134,6 +111,121 @@ export const handleSave = async (
     common.setAlertMessage("warn", "Exception occurred while saving vehicle!");
   }
 };
+
+export const handleUpdate = async (
+  vehicleName,
+  chassisNo,
+  setError,
+  setLoader,
+  setVehicleName,
+  setChassisNo,
+  setShowModal,
+  setVehicleList,
+  vehicleId,
+  setVehicleDetails,
+  setVehicleId,
+  historyData,
+  vehicleList 
+) => {
+  if (vehicleName.trim() === "") {
+    setError("Please provide vehicle name.");
+    return;
+  }
+  if (chassisNo.trim() === "") {
+    setError("Please provide chassis number.");
+    return;
+  }
+
+  // --- DUPLICATE & UNCHANGED CHECKS (UPDATE MODE) ---
+  if (vehicleList && Array.isArray(vehicleList)) {
+    const normalize = (str) => str ? str.trim().toLowerCase() : "";
+    const newName = normalize(vehicleName);
+    const newChassis = normalize(chassisNo);
+
+    // Check if unchanged
+    const currentVehicle = vehicleList.find(v => v.id === vehicleId);
+    if (currentVehicle) {
+      const currentName = normalize(currentVehicle.vehicles_No);
+      const currentChassis = normalize(currentVehicle.chassis_no);
+
+      if (newName === currentName && newChassis === currentChassis) {
+        setShowModal(false);
+        handleClearAll(setVehicleName, setChassisNo, setError, setVehicleId);
+        common.setAlertMessage("info", "No changes made.");
+        return;
+      }
+    }
+
+    // Check for duplicates (excluding current ID)
+    const isDuplicateName = vehicleList.some(v => normalize(v.vehicles_No) === newName && v.id !== vehicleId);
+    const isDuplicateChassis = vehicleList.some(v => normalize(v.chassis_no) === newChassis && v.id !== vehicleId);
+
+    if (isDuplicateName) {
+      setError("Vehicle name already exists.");
+      return;
+    }
+    if (isDuplicateChassis) {
+      setError("Chassis number already exists.");
+      return;
+    }
+  }
+
+  setLoader(true);
+
+  try {
+    const response = await service.updateVehicleData(vehicleId, {
+      vehicles_No: vehicleName,
+      chassis_no: chassisNo
+    });
+
+    if (response.status === "success") {
+      setLoader(false);
+      handleClearAll(setVehicleName, setChassisNo, setError, setVehicleId);
+
+      setVehicleList((prev) => {
+        const updatedList = prev.map((item) =>
+          item.id === vehicleId
+            ? { ...item, vehicles_No: vehicleName, chassis_no: chassisNo }
+            : item
+        );
+        return sortVehicles(updatedList);
+      });
+
+      if (setVehicleDetails) {
+        setVehicleDetails((prev) => ({
+          ...prev,
+          vehicles_No: vehicleName,
+          chassis_no: chassisNo,
+        }));
+      }
+
+      setShowModal(false);
+      if (historyData) historyData();
+      common.setAlertMessage("success", "Vehicle data updated successfully.");
+    } else {
+      setLoader(false);
+      common.setAlertMessage("warn", response.message || "Something went wrong!");
+    }
+  } catch (err) {
+    setLoader(false);
+    console.error("Error updating vehicle:", err);
+    common.setAlertMessage("warn", "Exception occurred while updating vehicle!");
+  }
+};
+
+// Helper for sorting
+const sortVehicles = (list) => {
+  return list.sort((a, b) => {
+    const weight = (status) => (status === "inactive" ? 1 : 0);
+    if (weight(a.status) !== weight(b.status)) {
+      return weight(a.status) - weight(b.status);
+    }
+    return (a.vehicles_No || a.name).localeCompare(b.vehicles_No || b.name);
+  });
+};
+
+
+
 
 /* =========================================================
    CLEAR INPUTS
@@ -248,7 +340,7 @@ export const getVehicles = async (setVehicleList, setLoading) => {
         .map((v) => ({
           id: v.id,
           vehicles_No: v.vehicles_No,
-          chassis_no: v.chassis_no || "",  
+          chassis_no: v.chassis_no || "",
           status: v.status,
         }))
         .sort((a, b) => {
