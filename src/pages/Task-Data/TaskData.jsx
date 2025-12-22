@@ -137,6 +137,7 @@ const TaskData = () => {
         setSelectedTask={setSelectedTask}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
+        taskData={taskData}
       />
       {taskData.length > 0 && (
         <TaskDataSettings

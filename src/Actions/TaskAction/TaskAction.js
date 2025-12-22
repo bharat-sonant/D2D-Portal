@@ -15,12 +15,36 @@ export const saveOrUpdateTask = async ({
   setIsEditing,
   setTaskTitle,
   setError,
-  setLoading
+  setLoading,
+  taskData
 }) => {
   const trimmedTitle = taskTitle.trim();
   if (!trimmedTitle) {
     setError("Task name is required.");
     return;
+  }
+
+  // --- DUPLICATE CHECK ---
+  if (taskData && Array.isArray(taskData)) {
+    const normalize = (str) => str ? str.trim().toLowerCase() : "";
+    const newName = normalize(trimmedTitle);
+
+    let isDuplicate = false;
+
+    if (isEditing && selectedTask) {
+      // Update mode: check duplicates excluding current task
+      isDuplicate = taskData.some(t =>
+        normalize(t.taskName) === newName && t.id !== selectedTask.id
+      );
+    } else {
+      // Add mode: check duplicates in entire list
+      isDuplicate = taskData.some(t => normalize(t.taskName) === newName);
+    }
+
+    if (isDuplicate) {
+      setError("Task name already exists.");
+      return;
+    }
   }
 
   setLoading(true);

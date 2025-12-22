@@ -15,7 +15,8 @@ const AddTaskData = ({
   selectedTask,
   setSelectedTask,
   isEditing,
-  setIsEditing
+  setIsEditing,
+  taskData // Added prop
 }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,8 @@ const AddTaskData = ({
       setIsEditing,
       setTaskTitle,
       setError,
-      setLoading
+      setLoading,
+      taskData // Pass to action
     });
   };
 
@@ -63,9 +65,8 @@ const AddTaskData = ({
               <div className={styles.textboxRight}>
                 <input
                   type="text"
-                  className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
-                  }`}
+                  className={`form-control ${styles.formTextbox} ${error ? styles.errorInput : ""
+                    }`}
                   placeholder="Enter task name"
                   value={taskTitle}
                   onChange={(e) => {
