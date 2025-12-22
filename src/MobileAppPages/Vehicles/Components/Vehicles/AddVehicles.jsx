@@ -38,13 +38,15 @@ const AddVehicles = ({
      Handle Input Change
   ========================= */
   const handleVehicleNameChange = (value) => {
-    setVehicleName(value);
-    setVehicleError(value.trim() ? '' : 'Please provide vehicle name.');
+    const upperValue = value.toUpperCase();
+    setVehicleName(upperValue);
+    setVehicleError(upperValue.trim() ? '' : 'Please provide vehicle name.');
   };
 
   const handleChassisChange = (value) => {
-    setChassisNo(value);
-    setChassisError(value.trim() ? '' : 'Please provide chassis number.');
+    const upperValue = value.toUpperCase();
+    setChassisNo(upperValue);
+    setChassisError(upperValue.trim() ? '' : 'Please provide chassis number.');
   };
 
   /* =========================
