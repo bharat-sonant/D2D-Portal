@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
-import {getData } from "../../services/supabaseServices";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
 import SettingsBtn from "../../components/Common/SettingsBtn";
