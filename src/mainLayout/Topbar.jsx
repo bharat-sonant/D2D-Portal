@@ -19,8 +19,9 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const [secondchar, setSecondhar] = useState("");
   const storedImage = localStorage.getItem("profileImage");
   const storedName = localStorage.getItem("name");
+   const storedCity = localStorage.getItem("city");
   const logoToShow = customLogo || images.wevoisLogo;
-  const titleToShow = customTitle || "D2D PORTAL";
+ const titleToShow = customTitle || storedCity || "D2D PORTAL";
   const city = useCity();
   const [cityLogo, setCityLogo] = useState(images.wevoisLogo);
 
