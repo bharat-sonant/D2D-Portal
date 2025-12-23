@@ -20,7 +20,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const storedImage = localStorage.getItem("profileImage");
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
-  const logoToShow = customLogo || images.wevoisLogo;
+  // const logoToShow = customLogo || images.wevoisLogo;
   const titleToShow = customTitle || storedCity || "D2D PORTAL";
   const city = useCity();
   const [cityLogo, setCityLogo] = useState(images.wevoisLogo);
@@ -412,10 +412,27 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
           </ul>
 
           {city && (
-            <div className={styles.cityBadge}>
-              <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
-              <span className={styles.cityName}>{storedName}</span>
-            </div>
+            // <div className={styles.cityBadge}>
+            //   <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
+            //   <span className={styles.cityName}>{storedName}</span>
+            // </div>
+            <div className={`dropdown ${styles.cityBadge}`}>
+  <button
+    className={`btn dropdown-toggle ${styles.cityBadgeBtn}`}
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
+    <span className={styles.cityName}>{storedName}</span>
+  </button>
+  <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
+    <li>
+      <Link className="dropdown-item" >Log Out</Link>
+    </li>
+  </ul>
+</div>
+
           )}
         </div>
       </div>
