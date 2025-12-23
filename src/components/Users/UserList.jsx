@@ -5,6 +5,7 @@ import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import { images } from '../../assets/css/imagePath';
 import styles from '../../Style/Task-Data/TaskDataList.module.css';
 import { filterUserListAction } from '../../Actions/UserAction/UserAction';
+import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const UserList = (props) => {
   const [searchTerm,setSearchTerm] = useState('');
@@ -36,7 +37,8 @@ const UserList = (props) => {
           </div>
           <div className={`${styles.userListTitle}`}>Select Employee</div>
           <div className={`${styles.userScroll}`}>
-            {filteredUsersList?.length > 0 ? (
+            {props?.loading ? (<WevoisLoader title={'Loading user data...'}/>) 
+            : filteredUsersList?.length > 0 ? (
               filteredUsersList?.map((user, i) => (
                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                   <div

@@ -12,9 +12,10 @@ const User = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
   const [confirmUser, setConfirmUser] = useState(null);
+  const [loading,setLoading] = useState(false);
 
   const loadUsers = async () => {
-    await userAction.fetchUserData(setSelectedUser, setUsers);
+    await userAction.fetchUserData(setSelectedUser, setUsers,setLoading);
   };
   useEffect(() => {
     loadUsers();
@@ -50,6 +51,7 @@ const User = () => {
             users={users}
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
+            loading={loading}
           />
         </div>
         <div className={TaskStyles.employeeRight}>

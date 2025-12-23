@@ -134,10 +134,11 @@ const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, reset
     }
   }
 }
-export const fetchUserData = async (setSelectedUser, setUsers) => {
+export const fetchUserData = async (setSelectedUser, setUsers,setLoading) => {
+  setLoading(true);
   let response = await userServices.getUserData()
+  setLoading(false);
   if (response.status === 'success') {
-
     const sortedList = response.data.sort((a, b) => {
       if (a.status === "inactive" && b.status !== "inactive") return 1;
       if (a.status !== "inactive" && b.status === "inactive") return -1;
