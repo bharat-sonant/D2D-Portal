@@ -24,7 +24,7 @@
   justify-content: flex-end;
   width: calc(100% - 200px);
 }
-.headerApps{
+.headerApps {
   margin-right: auto;
 }
 .navbarNav {
@@ -98,12 +98,12 @@
   gap: 16px;
   flex-wrap: wrap;
 }
-.appLi{
-    width: calc(100% / 3 - 11px);
-    transition: 0.2s;
-    &:hover{
-      transform: translateY(-3px);
-    }
+.appLi {
+  width: calc(100% / 3 - 11px);
+  transition: 0.2s;
+  &:hover {
+    transform: translateY(-3px);
+  }
 }
 .appLink {
   text-decoration: none;
@@ -120,8 +120,8 @@
     background-color: var(--whitef5);
   }
 }
-.activeAppLink{
-      background-color: #3fb2f114;
+.activeAppLink {
+  background-color: #3fb2f114;
 }
 .appLogo {
   width: 60px;
@@ -146,23 +146,24 @@
 .navLink {
   background-color: transparent;
   color: #555b6d;
-  min-width: 105px;
+  min-width: 100px;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 5px;
+  padding: 5px 0px;
   font-size: 28px;
   display: flex;
   flex-direction: column;
   border: 2px solid transparent;
   &:hover {
     .iconNav {
-   filter: brightness(0) saturate(100%) invert(68%) sepia(71%) saturate(3596%) hue-rotate(177deg) brightness(106%) contrast(89%);
+      filter: brightness(0) saturate(100%) invert(68%) sepia(71%)
+        saturate(3596%) hue-rotate(177deg) brightness(106%) contrast(89%);
     }
   }
 }
-.hide{
+.hide {
   display: none;
 }
 
@@ -173,8 +174,8 @@
   width: 20px;
   height: 20px;
   margin-bottom: 5px;
-  filter: brightness(0) saturate(100%) invert(0%) sepia(84%) saturate(7500%) hue-rotate(328deg) brightness(114%) contrast(114%);
-  
+  filter: brightness(0) saturate(100%) invert(0%) sepia(84%) saturate(7500%)
+    hue-rotate(328deg) brightness(114%) contrast(114%);
 }
 .navLink.activeNav .iconNav {
   filter: brightness(0) saturate(100%) invert(58%) sepia(80%) saturate(759%)
@@ -424,7 +425,31 @@
   outline: none;
   width: calc(100%);
 }
-
+@media (max-width: 1199.98px) {
+  .navbarNav {
+    gap: 5px;
+    margin-right: 0px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    justify-content: flex-start;
+  }
+   .headerRight {
+    margin-left: auto;
+    align-items: center;
+    width: 100%;
+  }
+  .navLink {
+    display: flex;
+    height: 48px;
+    flex: 0 0 100px !important;
+  }
+}
 @media (max-width: 991.98px) {
   .navbar {
     padding: 12px 10px;
@@ -438,21 +463,11 @@
   .navItem:nth-child(-n + 3) {
     display: block; /* Show the first 3 items */
   }
-  .navbarNav {
-    gap: 5px;
-    margin-right: 0px;
-  }
+  
   .headerLeft {
     display: none;
   }
-  .headerRight {
-    margin-left: auto;
-    align-items: center;
-  }
-  .navLink {
-    display: flex;
-    height: 48px;
-  }
+ 
   .iconNav {
     margin-bottom: 3px;
   }
@@ -517,20 +532,19 @@
 
 @media (max-width: 480px) {
   .cityBadge {
-    padding: 4px;       
+    padding: 4px;
     justify-content: center;
-    height: 45px;           /* MATCH LOGO HEIGHT */
-    min-width: 45px; 
+    height: 45px; /* MATCH LOGO HEIGHT */
+    min-width: 45px;
   }
 
   .cityLogo {
-    width: 45px !important; 
-    height: 45px !important;  
-    flex-shrink: 0;           
+    width: 45px !important;
+    height: 45px !important;
+    flex-shrink: 0;
   }
 
   .cityName {
-    display: none;          
+    display: none;
   }
 }
-
