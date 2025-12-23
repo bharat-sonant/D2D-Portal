@@ -171,7 +171,7 @@ export const updateTaskData = async (taskId, taskDetail) => {
   const oldRes = await sbs.getDataByColumnName("TaskData", "id", taskId);
   if (oldRes.success) oldData = oldRes.data;
 
-  const result = await sbs.updateData("TaskData", taskId, taskDetail);
+  const result = await sbs.updateData("TaskData",'id', taskId, taskDetail);
 
   if (result.success) {
     await saveTaskHistory({
@@ -218,7 +218,7 @@ export const updateTaskStatus = async (taskId, status) => {
   const oldRes = await sbs.getDataByColumnName("TaskData", "id", taskId);
   if (oldRes.success) oldData = oldRes.data;
 
-  const result = await sbs.updateData("TaskData", taskId, { status });
+  const result = await sbs.updateData("TaskData",'id',taskId, { status });
 
   if (result.success) {
     await saveTaskHistory({

@@ -18,7 +18,7 @@ export const saveVehicleData = async (vehicleDetail) => {
 export const updateVehicleData = async (vehicleId, vehicleDetail) => {
     if (!vehicleId) return { status: "error", message: "Vehicle id is required" };
 
-    const result = await sbs.updateData("Vehicle", vehicleId, vehicleDetail);
+    const result = await sbs.updateData("Vehicle",'id', vehicleId, vehicleDetail);
     if (result.success) {
         return { status: "success", message: "Vehicle updated successfully", data: result.data };
     } else {
@@ -47,7 +47,7 @@ export const getVehicleData = async () => {
 export const updateVehicleStatus = async (vehicleId, newStatus) => {
     if (!vehicleId) return { status: "error", message: "Vehicle id is required" };
 
-    const result = await sbs.updateData("Vehicle", vehicleId, { status: newStatus });
+    const result = await sbs.updateData("Vehicle",'id', vehicleId, { status: newStatus });
     if (result.success) {
         return { status: "success", message: "Vehicle status updated successfully", data: result.data };
     } else {

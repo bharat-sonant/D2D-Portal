@@ -10,7 +10,7 @@ export const saveUserData = async (userDetail) => {
 };    
 
 export const updateUserData=async(userId,userDetail)=>{
-   const result = await sbs.updateData('Users',userId,userDetail);
+   const result = await sbs.updateData('Users','id',userId,userDetail);
   if (result.success) {
     return { status: 'success', message: 'User data updated successfully', data: result.data };
   } else {
@@ -30,7 +30,7 @@ export const getUserData=async()=>{
 }
 
 export const updateUserStatus = async(userId,userDetail)=>{
-     const result = await sbs.updateData('Users',userId,userDetail);
+     const result = await sbs.updateData('Users','id',userId,userDetail);
   if (result.success) {
     return { status: 'success', message: 'User status updated successfully', data: result.data };
   } else {
