@@ -94,17 +94,17 @@ const TaskDataSettings = ({
 
   /* ================= HISTORY ================= */
 
-  // const handleHistoryClick = () => {
-  //   if (!selectedTask) return;
-  //   setHistoryVisible(!historyVisible);
-  //   if (!historyVisible) {
-  //     TaskAction.fetchTaskHistory(
-  //       selectedTask.uniqueId,
-  //       setTaskHistory,
-  //       setLoadingHistory
-  //     );
-  //   }
-  // };
+  const handleHistoryClick = () => {
+    if (!selectedTask) return;
+    setHistoryVisible(!historyVisible);
+    if (!historyVisible) {
+      TaskAction.fetchTaskHistory(
+        selectedTask.uniqueId,
+        setTaskHistory,
+        setLoadingHistory
+      );
+    }
+  };
 
   /* ================= UI (UNCHANGED) ================= */
 
@@ -139,11 +139,11 @@ const TaskDataSettings = ({
                 </h3>
 
                 <div className={style.actionButtons}>
-                  {/* <History
+                  <History
                     size={18}
                     onClick={handleHistoryClick}
                     className={style.historyIcon}
-                  /> */}
+                  />
                   <button
                     className={style.editButton}
                     onClick={handleEditClick}

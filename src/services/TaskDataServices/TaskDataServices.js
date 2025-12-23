@@ -141,6 +141,15 @@ export const saveTaskData = async (taskDetail) => {
   const result = await sbs.saveData("TaskData", taskDetail);
 
   if (result.success) {
+    await saveTaskHistory({
+      taskId: result.data.id,
+      uniqueId: result.data.uniqueId,
+      action: "Created",
+      newValue: result.data.taskName,
+      created_by: taskDetail.created_by || "Ansh", // Fallback to "Ansh"
+      created_at: new Date().toISOString(),
+      status: result.data.status || "active"
+    });
     return {
       status: "success",
       message: "Task saved successfully",
@@ -157,9 +166,24 @@ export const saveTaskData = async (taskDetail) => {
 export const updateTaskData = async (taskId, taskDetail) => {
   if (!taskId) return { status: "error", message: "Task id is required" };
 
+  // Fetch old data for history
+  let oldData = null;
+  const oldRes = await sbs.getDataByColumnName("TaskData", "id", taskId);
+  if (oldRes.success) oldData = oldRes.data;
+
   const result = await sbs.updateData("TaskData", taskId, taskDetail);
 
   if (result.success) {
+    await saveTaskHistory({
+      taskId: result.data.id,
+      uniqueId: result.data.uniqueId,
+      action: "Updated",
+      newValue: result.data.taskName,
+      oldvalue: oldData ? oldData.taskName : null,
+      created_by: "Ansh",
+      created_at: new Date().toISOString(),
+      status: result.data.status // Preserve current status
+    });
     return { status: "success", message: "Task updated successfully", data: result.data };
   } else {
     return { status: "error", message: result.error };
@@ -189,10 +213,28 @@ export const getTaskById = async (taskId) => {
 export const updateTaskStatus = async (taskId, status) => {
   if (!taskId) return { status: "error", message: "Task id is required" };
 
+  // Fetch old data for history
+  let oldData = null;
+  const oldRes = await sbs.getDataByColumnName("TaskData", "id", taskId);
+  if (oldRes.success) oldData = oldRes.data;
+
   const result = await sbs.updateData("TaskData", taskId, { status });
 
-  if (result.success) return { status: "success", message: "Task status updated successfully", data: result.data };
-  else return { status: "error", message: result.error };
+  if (result.success) {
+    await saveTaskHistory({
+      taskId: result.data.id,
+      uniqueId: result.data.uniqueId,
+      action: "Status Changed",
+      newValue: result.data.status,
+      oldvalue: oldData ? oldData.status : null,
+      created_by: "Ansh",
+      created_at: new Date().toISOString(),
+      status: result.data.status
+    });
+    return { status: "success", message: "Task status updated successfully", data: result.data };
+  } else {
+    return { status: "error", message: result.error };
+  }
 };
 
 export const deleteTaskData = async (taskId) => {
@@ -202,4 +244,30 @@ export const deleteTaskData = async (taskId) => {
 
   if (result.success) return { status: "success", message: "Task deleted successfully", data: result.data };
   else return { status: "error", message: result.error };
+};
+
+export const saveTaskHistory = async (historyPayload) => {
+  const result = await sbs.saveData("TaskHistory", historyPayload);
+
+  if (result.success) {
+    return { status: "success", message: "History saved successfully", data: result.data };
+  } else {
+    return { status: "error", message: result.error };
+  }
+};
+
+export const getTaskHistory = async (uniqueId) => {
+  if (!uniqueId) return { status: "error", message: "UniqueId is required" };
+
+  const { data, error } = await supabase
+    .from("TaskHistory")
+    .select("*")
+    .eq("uniqueId", uniqueId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return { status: "error", message: error.message };
+  } else {
+    return { status: "success", data };
+  }
 };

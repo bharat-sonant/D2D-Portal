@@ -64,17 +64,6 @@ export const saveOrUpdateTask = async ({
       return;
     }
 
-    // ---------- HISTORY COMMENTED ----------
-    // await TaskService.saveTaskHistory({
-    //   taskId: taskRes.data.id,
-    //   uniqueId: taskRes.data.uniqueId,
-    //   city_id: city,
-    //   action: "Updated",
-    //   oldvalue: selectedTask.taskName,
-    //   newValue: taskRes.data.taskName,
-    //   created_by: "Ansh",
-    //   created_at: new Date().toISOString()
-    // });
 
     setAlertMessage("success", "Task updated successfully!");
   }
@@ -97,17 +86,6 @@ export const saveOrUpdateTask = async ({
       return;
     }
 
-    // ---------- HISTORY COMMENTED ----------
-    // await TaskService.saveTaskHistory({
-    //   taskId: taskRes.data.id,
-    //   uniqueId: taskRes.data.uniqueId,
-    //   city_id: city,
-    //   action: "Created",
-    //   oldvalue: null,
-    //   newValue: taskRes.data.taskName,
-    //   created_by: "Ansh",
-    //   created_at: new Date().toISOString()
-    // });
 
     setAlertMessage("success", "Task added successfully!");
   }
@@ -131,18 +109,6 @@ export const toggleTaskStatus = async (
 ) => {
   const newStatus = toggle ? "inactive" : "active";
 
-  // ---------- HISTORY COMMENTED ----------
-  // const oldStatus = toggle ? "active" : "inactive";
-  // await TaskService.saveTaskHistory({
-  //   taskId: task.id,
-  //   uniqueId: task.uniqueId,
-  //   action: "Status Changed",
-  //   oldvalue: oldStatus,
-  //   newValue: newStatus,
-  //   status: newStatus,
-  //   created_by: "Ansh",
-  //   created_at: new Date().toISOString()
-  // });
 
   const statusRes = await TaskService.updateTaskStatus(task.id, newStatus);
 
@@ -184,4 +150,17 @@ export const deleteTask = async (taskId, refreshTasks) => {
   } else {
     setAlertMessage("error", res.message);
   }
+};
+
+/* ================= HISTORY ================= */
+
+export const fetchTaskHistory = async (uniqueId, setTaskHistory, setLoadingHistory) => {
+  setLoadingHistory(true);
+  const res = await TaskService.getTaskHistory(uniqueId);
+  if (res.status === "success") {
+    setTaskHistory(res.data);
+  } else {
+    setTaskHistory([]);
+  }
+  setLoadingHistory(false);
 };
