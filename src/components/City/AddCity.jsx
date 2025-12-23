@@ -80,6 +80,7 @@ const AddCity = (props) => {
     }));
     setLogoPreview(props?.onEdit?.logoUrl || '');
   }, [props?.onEdit]);
+
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
@@ -116,6 +117,7 @@ const AddCity = (props) => {
                   name="CityCode"
                   value={form.CityCode}
                   onChange={handleChange}
+                  disabled={Boolean(props?.onEdit && Object.keys(props?.onEdit).length)}
                 />
               </div>
             </div>

@@ -32,7 +32,7 @@ export const getCityData=async()=>{
 
          const sortedData = [...updatedCityList].sort((a, b) => {
      if (a.Status !== b.Status) {
-       return a.status === "active" ? -1 : 1;
+       return a.Status === "active" ? -1 : 1;
      }
      return a.CityName.localeCompare(b.CityName);
    });

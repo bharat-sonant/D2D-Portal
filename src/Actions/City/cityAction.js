@@ -58,7 +58,7 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
 export const getCityList=async (setSelectedCity,setCityList,selectedCity)=>{
       const response = await getCityData();
        if(response.status==='success'){
-        let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.id);
+        let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.CityId);
            setSelectedCity(currentSelected || response.data[0]);
         setCityList(response.data);
        }else{
@@ -67,30 +67,15 @@ export const getCityList=async (setSelectedCity,setCityList,selectedCity)=>{
 }
        }
       
-export const changeCityStatusAction=async(newStatus,selectedCity, setSelectedCity,setCityList,setToggle,setStatusConfirmation)=>{
+export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadCities,setStatusConfirmation)=>{
     
     if (!selectedCity) return;
-    try{  
+    try{
+        
         await updateCityStatus(selectedCity?.CityId,newStatus);
-          setCityList((prev) => {
-      const updatedList = prev.map((u) =>
-        u.CityId === selectedCity?.CityId ? { ...u, Status: newStatus } : u
-      );
-      return updatedList.sort((a, b) => {
-  if (a.Status !== b.Status) {
-    return a.Status === "inactive" ? 1 : -1;
-  }
-  return a.CityName.localeCompare(b.CityName);
-});
-
-    });
-
-    setSelectedCity({
-      ...selectedCity,
-      Status: newStatus,
-    });
         setToggle(newStatus);
         setStatusConfirmation({status:false,data:null,setToggle:()=>{}})
+        loadCities()
         common.setAlertMessage("success", `City status ${newStatus?'active':'inactive'} successfully.`);
     }
     catch(error){
@@ -101,12 +86,12 @@ export const changeCityStatusAction=async(newStatus,selectedCity, setSelectedCit
 export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)=>{
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
-        let currentSelected = cityList?.find(item=>item?.id===selectedCity?.id);
+        let currentSelected = cityList?.find(item=>item?.CityId===selectedCity?.CityId);
         setSelectedCity(currentSelected || cityList[0] || null);
         return cityList;
     }
-    let list = cityList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
-    let currentSelected = list?.find(item=>item?.id===selectedCity?.id);
+    let list = cityList?.filter((item) => item?.CityName?.trim().toLowerCase().includes(term));
+    let currentSelected = list?.find(item=>item?.CityId===selectedCity?.CityId);
 
     setSelectedCity(currentSelected || list[0] || null);
 

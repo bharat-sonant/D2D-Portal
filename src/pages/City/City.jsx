@@ -36,10 +36,9 @@ const City = () => {
   const handleStatusConfirmation = () => {
     changeCityStatusAction(
       statusConfirmation?.data,
-      selectedCity,
-      setSelectedCity,
-      setCityList,
+      selectedCity, 
       statusConfirmation?.setToggle,
+      loadCities,
       setStatusConfirmation,
     );
   };
