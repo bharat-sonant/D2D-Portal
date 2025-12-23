@@ -536,9 +536,9 @@ body {
   overflow-x: hidden;
 }
  
-.icon-filter-black {
+/* .icon-filter-black {
   filter: brightness(0%) saturate(100%)!important;
-}
+} */
 
 .icon-filter-white {
   filter: brightness(0%) saturate(100%) invert(100%)!important;

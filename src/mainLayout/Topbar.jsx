@@ -22,7 +22,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const logoToShow = customLogo || images.wevoisLogo;
   const titleToShow = customTitle || "D2D PORTAL";
   const city = useCity();
-  const [cityLogo, setCityLogo] = useState(images.wevoisLogo)
+  const [cityLogo, setCityLogo] = useState(images.wevoisLogo);
 
   useEffect(() => {
     if (!city.city) return;
@@ -33,14 +33,13 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
     img.src = logoUrl;
 
     img.onload = () => {
-      setCityLogo(logoUrl)
-    }
+      setCityLogo(logoUrl);
+    };
 
     img.onerror = () => {
-      setCityLogo(images.wevoisLogo)
-    }
-  }, [city.city])
-
+      setCityLogo(images.wevoisLogo);
+    };
+  }, [city.city]);
 
   useEffect(() => {
     if (storedName) {
@@ -88,8 +87,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
         <div className={`${styles.headerLeft}`}>
           <a className={`${styles.companyLogo}`} href="/dashboard">
             {storedImage !== undefined &&
-              storedImage !== null &&
-              storedImage !== "undefined" ? (
+            storedImage !== null &&
+            storedImage !== "undefined" ? (
               <img
                 className={`img-fluid ${styles.logoImg}`}
                 src={storedImage}
@@ -117,107 +116,142 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
         </div>
         <div className={`${styles.headerRight}`}>
           <ul className={styles.navbarNav}>
-
-             <Link
+            <Link
               aria-current="page"
               to="/users"
               title="users"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/users" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/users" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/users"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
-               <LuUsers
-                className={`${styles.iconNav} ${location.pathname === "/users"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
+              <LuUsers
+                className={`${styles.iconNav} ${
+                  location.pathname === "/users"
+                    ? navbarStyle.iconFilter
+                    : "SiTask"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color: location.pathname === "/users" ? "#000000" : "#707070",
+                }}
               >
-               User
+                User
               </span>
-            </Link> 
+            </Link>
 
-             <Link
+            <Link
               aria-current="page"
               to="/cities"
               title="cities"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/cities" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/cities" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/cities"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
-               <FaCity
-                className={`${styles.iconNav} ${location.pathname === "/cities"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
+              <FaCity
+                className={`${styles.iconNav} ${
+                  location.pathname === "/cities"
+                    ? navbarStyle.iconFilter
+                    : "SiTask"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor}}
+                style={{
+                  color:
+                    location.pathname === "/cities" ? "#000000" : "#707070",
+                }}
               >
-               City
+                City
               </span>
-            </Link> 
+            </Link>
 
-           <Link
+            <Link
               aria-current="page"
               to="/TaskData"
               title="TaskData"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/TaskData" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/TaskData" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/TaskData"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <SiTask
-                className={`${styles.iconNav} ${location.pathname === "/TaskData"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/TaskData"
+                    ? navbarStyle.iconFilter
+                    : "SiTask"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color:
+                    location.pathname === "/TaskData" ? "#000000" : "#707070",
+                }}
               >
                 Task Data
               </span>
-            </Link>           
-
+            </Link>
 
             <Link
               aria-current="page"
               to="/realtime-monitoring"
               title="Realtime Monitoring"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/realtime-monitoring" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${
+                location.pathname === "/realtime-monitoring"
+                  ? styles.activeNav
+                  : ""
+              }`}
               style={
                 location.pathname === "/realtime-monitoring"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <GrMapLocation
-                className={`${styles.iconNav} ${location.pathname === "/realtime-monitoring"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/realtime-monitoring"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color:
+                    location.pathname === "/realtime-monitoring"
+                      ? "#000000"
+                      : "#707070",
+                }}
               >
                 Realtime Monitoring
               </span>
@@ -226,50 +260,71 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               aria-current="page"
               to="/reports"
               title="Reports"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/reports" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/reports" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/reports"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <TbReportAnalytics
-                className={`${styles.iconNav} ${location.pathname === "/reports"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/reports"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color:
+                    location.pathname === "/reports" ? "#000000" : "#707070",
+                }}
               >
                 Reports
               </span>
             </Link>
 
-
             <Link
               aria-current="page"
               to="/daily-assignment"
               title="Daily Assignment"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/daily-assignment" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${
+                location.pathname === "/daily-assignment"
+                  ? styles.activeNav
+                  : ""
+              }`}
               style={
                 location.pathname === "/daily-assignment"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <LucideUserRoundCheck
-                className={`${styles.iconNav} ${location.pathname === "/daily-assignment"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/daily-assignment"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color:
+                    location.pathname === "/daily-assignment"
+                      ? "#000000"
+                      : "#707070",
+                }}
               >
                 Daily Assignment
               </span>
@@ -279,23 +334,30 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               aria-current="page"
               to="/tasks"
               title="Tasks"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/tasks" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/tasks" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/tasks"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <FaTasks
-                className={`${styles.iconNav} ${location.pathname === "/tasks"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/tasks"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color: location.pathname === "/tasks" ? "#000000" : "#707070",
+                }}
               >
                 Tasks
               </span>
@@ -305,23 +367,31 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               aria-current="page"
               to="/vehicle"
               title="Vehicles"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/vehicle" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/vehicle" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/vehicle"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <Car
-                className={`${styles.iconNav} ${location.pathname === "/vehicle"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/vehicle"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
               <span
                 className={styles.iconText}
-                style={{ color: navbarStyle.textColor }}
+                style={{
+                  color:
+                    location.pathname === "/vehicle" ? "#000000" : "#707070",
+                }}
               >
                 Vehicles
               </span>
@@ -329,22 +399,33 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
 
             <Link
               to="/settings"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/settings" ? styles.activeNav : ""}`}
+              className={`nav-link ${styles.navLink} ${
+                hideNavLinks ? styles.hide : ""
+              } ${location.pathname === "/settings" ? styles.activeNav : ""}`}
               style={
                 location.pathname === "/settings"
-                  ? { backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114" }
+                  ? {
+                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                      borderBottom: "2px solid #3fb2f1",
+                    }
                   : {}
               }
             >
               <CiSettings
-                className={`${styles.iconNav} ${location.pathname === "/settings"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
+                className={`${styles.iconNav} ${
+                  location.pathname === "/settings"
+                    ? navbarStyle.iconFilter
+                    : "icon-filter-black"
+                }`}
               />
-              <span className={styles.iconText} style={{ color: navbarStyle.textColor }}>
-                Settings                                  {/* 👉 ADDED SETTINGS LABEL */}
+              <span
+                className={styles.iconText}
+                style={{
+                  color:
+                    location.pathname === "/settings" ? "#000000" : "#707070",
+                }}
+              >
+                Settings {/* 👉 ADDED SETTINGS LABEL */}
               </span>
             </Link>
           </ul>
@@ -355,7 +436,6 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
               <span className={styles.cityName}>{city.city}</span>
             </div>
           )}
-
         </div>
       </div>
     </>
