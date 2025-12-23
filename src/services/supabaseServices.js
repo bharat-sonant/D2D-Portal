@@ -22,9 +22,9 @@ export const saveData = async (tableName, tableData) => {
   }
 };
 
-export const updateData = async (tableName, id, columnData) => {
+export const updateData = async (tableName, key, id, columnData) => {
   try {
-    const { data, error } = await supabase.from(tableName).update(columnData).eq("id", id).select().single();
+    const { data, error } = await supabase.from(tableName).update(columnData).eq(key, id).select().single();
     if (error) throw error;
 
     return { success: true, data };
@@ -85,22 +85,16 @@ export const login = async (email, password) => {
   return data;
 };
 
-export const uploadAttachment = async (file, bucket) => {
+export const uploadAttachment = async (file, bucket,filePath) => {
   if (!file) return null;
-
-  const ext = file?.name?.split(".").pop();
-  const fileName = `${Date.now()}.${ext}`;
-  const filePath = fileName;
-
-  // Upload file to Supabase Storage
-  const { error } = await supabase.storage.from(bucket).upload(filePath, file, { upsert: false });
+  const { error } = await supabase.storage.from(bucket).upload(filePath, file, { upsert: true });
   if (error) throw error;
-
-  // Get public URL
   const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
   return {
     url: data.publicUrl,
     path: filePath,
   };
 };
+
+
+export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`

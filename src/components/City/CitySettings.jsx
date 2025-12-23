@@ -6,7 +6,7 @@ import { images } from '../../assets/css/imagePath';
 import LogoImage from '../Common/Image/LogoImage';
 
 const CitySettings = ({openCanvas,onHide,selectedCity,onClickEdit,setStatusConfirmation}) => {
-  const [toggle, setToggle] = useState(selectedCity?.status === 'active' || false);
+  const [toggle, setToggle] = useState(selectedCity?.Status === 'active' || false);
   const handleToggle=(e)=>setStatusConfirmation({status:true,data:e.target.checked,setToggle})
   return (
     <>
@@ -33,8 +33,8 @@ const CitySettings = ({openCanvas,onHide,selectedCity,onClickEdit,setStatusConfi
 
             <div className={style.taskControlCard}>
               <div className={style.controlRow}>
-                <LogoImage image={selectedCity?.logo_image}/>
-                <h3 className={style.taskName}>{selectedCity?.name || 'N/A'}</h3>
+                <LogoImage image={selectedCity?.logoUrl}/>
+                <h3 className={style.taskName}>{selectedCity?.CityName || 'N/A'}</h3>
                 <div className={style.actionButtons}>
                   <button className={style.editButton} onClick={onClickEdit}>
                     <Edit2 size={18} />

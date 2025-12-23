@@ -37,8 +37,9 @@ const City = () => {
     changeCityStatusAction(
       statusConfirmation?.data,
       selectedCity,
+      setSelectedCity,
+      setCityList,
       statusConfirmation?.setToggle,
-      loadCities,
       setStatusConfirmation,
     );
   };
@@ -63,7 +64,8 @@ const City = () => {
             setSelectedCity={setSelectedCity}
           />
         </div>
-        <div className={TaskStyles.employeeRight}>
+        {selectedCity!==null&&(
+              <div className={TaskStyles.employeeRight}>
           <div
             style={{
               width: "25%",
@@ -93,12 +95,12 @@ const City = () => {
                   whiteSpace: "nowrap",
                 }}
               >
-                {selectedCity?.name || "N/A"}
+                {selectedCity?.CityCode || "N/A"}
               </span>
               {/* <div style={{ width: "250px" }} /> */}
               <div
                 style={{
-                  width: "48px",
+                  width: "48px",  
                   height: "48px",
                   borderRadius: "10px",
                   border: "1px solid #e5e7eb",
@@ -109,9 +111,9 @@ const City = () => {
                   overflow: "hidden",
                 }}
               >
-                {selectedCity?.logo_image && (
+                {selectedCity?.logoUrl && (
                   <img
-                    src={selectedCity?.logo_image || "/city-placeholder.png"}
+                    src={selectedCity?.logoUrl || "/city-placeholder.png"}
                     alt="City Logo"
                     style={{
                       width: "100%",
@@ -124,6 +126,8 @@ const City = () => {
             </div>
           </div>
         </div>
+        )}
+      
       </div>
       <div className={GlobalStyles.mainSections}>
         {showCanvas && (
@@ -149,7 +153,7 @@ const City = () => {
         <ConfirmationModal
           visible={statusConfirmation?.status}
           title={`City ${statusConfirmation?.data?'Active':'Deactive'}`}
-          message={`Are you sure you want to ${statusConfirmation?.data?'activate':'deactivate'} ${selectedCity?.name} city?`}
+          message={`Are you sure you want to ${statusConfirmation?.data?'activate':'deactivate'} ${selectedCity?.CityName} city?`}
           onCancel={()=>setStatusConfirmation({status:false,data:null,setToggle:()=>{}})}
           onConfirm={handleStatusConfirmation}
           btnColor={!statusConfirmation?.data && 'red'}

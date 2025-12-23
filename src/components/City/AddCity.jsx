@@ -7,9 +7,10 @@ import { saveCityAction } from "../../Actions/City/cityAction";
 
 const AddCity = (props) => {
   const initialForm = {
-    name: "",
-    status: "active",
-    created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    CityCode:"",
+    CityName: "",
+    Status: "active",
+    Created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
 
   const [loading, setLoading] = useState(false);
@@ -17,32 +18,49 @@ const AddCity = (props) => {
   const [logoPreview, setLogoPreview] = useState("");
   const [logoError, setLogoError] = useState("");
   const [cityError, setCityError] = useState("");
+  const [cityCodeError,setCityCodeError]=useState("");
   const [form, setForm] = useState(initialForm);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    if(e?.target?.value?.trim()){
-      setCityError("");
+    if(e.target.name==='CityCode'){
+       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
+    }else{
+      setForm({ ...form, [e.target.name]: e.target.value });
     }
+    
   };
   const handleSave = async () => {
-    saveCityAction(form,logo,props,setLoading,setCityError,resetStateValues,setLogoError);
+   
+    saveCityAction(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError);
   };
-  const handleLogoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+ const handleLogoChange = (e) => {
+  const file = e.target.files[0];
+  if (!file || !file.type.startsWith("image/")) return;
 
-    if (!file.type.startsWith("image/")) {
-      setLogoError("Please upload a valid image file");
-      return;
-    }
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
 
-    setLogoError("");
-    setLogo(file);
-    setLogoPreview(URL.createObjectURL(file));
+  img.onload = () => {
+    const max = 70;
+    const scale = Math.min(max / img.width, max / img.height, 1);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      const resized = new File([blob], file.name, { type: file.type });
+      setLogo(resized);
+      setLogoPreview(URL.createObjectURL(resized));
+    }, file.type);
   };
+};
+
   const resetStateValues=()=>{
     setForm(initialForm);
+    setCityCodeError("")
     setCityError("");
     setLogoError("");
     props.setShowCanvas(false);
@@ -53,13 +71,14 @@ const AddCity = (props) => {
   }
   useMemo(() => {
     setForm((pre) => ({
-      name: props?.onEdit?.name || "",
-      status: props?.onEdit?.status || "active",
-      created_at: dayjs(props?.onEdit?.created_at).isValid()
-        ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
+        CityCode: props?.onEdit?.CityCode || "",
+        CityName: props?.onEdit?.CityName || "",
+        Status: props?.onEdit?.Status || "active",
+        Created_at: dayjs(props?.onEdit?.CreatedAt).isValid()
+        ? dayjs(props?.onEdit?.CreatedAt).format("YYYY-MM-DD HH:mm:ss")
         : dayjs().format("YYYY-MM-DD HH:mm:ss"),
     }));
-    setLogoPreview(props?.onEdit?.logo_image || '');
+    setLogoPreview(props?.onEdit?.logoUrl || '');
   }, [props?.onEdit]);
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
@@ -85,6 +104,25 @@ const AddCity = (props) => {
         </div>
 
         <div className={styles.modalBody}>
+
+             <div className={styles.textboxGroup}>
+            <div className={styles.textboxMain}>
+              <div className={styles.textboxLeft}>City Code</div>
+              <div className={styles.textboxRight}>
+                <input
+                  type="text"
+                  className={`form-control ${styles.formTextbox}`}
+                  placeholder="Enter city code"
+                  name="CityCode"
+                  value={form.CityCode}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            {cityCodeError && (
+              <div className={`${styles.invalidfeedback}`}>{cityCodeError}</div>
+            )}
+          </div>
           <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>City Name</div>
@@ -93,8 +131,8 @@ const AddCity = (props) => {
                   type="text"
                   className={`form-control ${styles.formTextbox}`}
                   placeholder="Enter city name"
-                  name="name"
-                  value={form.name}
+                  name="CityName"
+                  value={form.CityName}
                   onChange={handleChange}
                 />
               </div>
@@ -103,6 +141,7 @@ const AddCity = (props) => {
               <div className={`${styles.invalidfeedback}`}>{cityError}</div>
             )}
           </div>
+       
           {/* City Logo */}
           <div
             style={{ display: "flex", flexDirection: "column", gap: "14px" }}

@@ -2,11 +2,16 @@ import dayjs from "dayjs";
 import * as common from "../../common/common";
 import { getCityData, saveCityWithLogo, updateCityStatus } from "../../services/CityService/cityServices";
 
-export const saveCityAction = async(form,logo,props,setLoading,setCityError,resetStateValues,setLogoError) => {
+export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
     setCityError("");
-    if (!form?.name?.trim()) {
-        setCityError("Name is required");
+    setCityCodeError("");
+    if(!form?.CityCode?.trim()){
+        setCityCodeError("City code is required");
+        isValid = false;
+    }
+    if (!form?.CityName?.trim()) {
+        setCityError("City name is required");
         isValid = false;
     }
     if (!logo && !props?.onEdit && !props?.onEdit?.logo_image) {
@@ -17,21 +22,30 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,rese
         setLoading(true);
         let loggedUserName = localStorage.getItem("userName");
         let cityDetail = {
-            name: form?.name?.trim(),
-            ...(!props?.onEdit ? { status: "active", created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"), created_by: loggedUserName } : { logo_image: props?.onEdit?.logo_image})
-        };
-
+              CityCode:form?.CityCode?.trim(),
+              CityName: form?.CityName?.trim(),
+              Status: form?.Status, 
+              CreatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"), 
+              CreatedBy: loggedUserName 
+        }
+       
         try {
-            await saveCityWithLogo(cityDetail,logo,props?.onEdit?.id);
+            await saveCityWithLogo(cityDetail,logo,props?.onEdit?.CityId);
             resetStateValues();
             props.loadCities();
-            common.setAlertMessage("success", "City added successfully");
+            common.setAlertMessage("success", !props?.onEdit?"City added successfully": "City updated successfully");
         } catch (err) {
             setLoading(false);
-            if (err?.code === "23505") {
-                if (err?.details?.includes("name")) {
+                  if (err?.code === "23505") {
+                if (err?.details?.includes("CityCode")) {
+                    setCityCodeError("City code already exists!");
+                    return;
+                }
+                if (err?.details?.includes("CityName")) {
                     setCityError("City name already exists!");
-                } else {
+                    return;
+                } 
+                 else {
                     common.setAlertMessage("error", "Duplicate value exists!");
                 }
             } else {
@@ -44,22 +58,39 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,rese
 export const getCityList=async (setSelectedCity,setCityList,selectedCity)=>{
       const response = await getCityData();
        if(response.status==='success'){
-        let currentSelected = response.data?.find(item=>item?.id===selectedCity?.id);
+        let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.id);
            setSelectedCity(currentSelected || response.data[0]);
         setCityList(response.data);
        }else{
-              setSelectedCity(null)
+        setSelectedCity(null)
        setCityList([]);
 }
        }
       
-export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadCities,setStatusConfirmation)=>{
+export const changeCityStatusAction=async(newStatus,selectedCity, setSelectedCity,setCityList,setToggle,setStatusConfirmation)=>{
+    
     if (!selectedCity) return;
-    try{
-        await updateCityStatus(selectedCity?.id,newStatus);
+    try{  
+        await updateCityStatus(selectedCity?.CityId,newStatus);
+          setCityList((prev) => {
+      const updatedList = prev.map((u) =>
+        u.CityId === selectedCity?.CityId ? { ...u, Status: newStatus } : u
+      );
+      return updatedList.sort((a, b) => {
+  if (a.Status !== b.Status) {
+    return a.Status === "inactive" ? 1 : -1;
+  }
+  return a.CityName.localeCompare(b.CityName);
+});
+
+    });
+
+    setSelectedCity({
+      ...selectedCity,
+      Status: newStatus,
+    });
         setToggle(newStatus);
         setStatusConfirmation({status:false,data:null,setToggle:()=>{}})
-        loadCities()
         common.setAlertMessage("success", `City status ${newStatus?'active':'inactive'} successfully.`);
     }
     catch(error){

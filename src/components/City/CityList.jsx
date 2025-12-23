@@ -42,17 +42,18 @@ const CityList = (props) => {
                             filteredCityList?.map((city, i) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                                     <div
-                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props?.selectedCity?.id === city?.id
+                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props?.selectedCity?.CityId === city?.CityId
                                             ? GlobalStyles.selectedUser
                                             : ""
                                             } `}
                                         style={{
                                             backgroundColor:
-                                               props?.selectedCity?.id === city.id
+                                               props?.selectedCity?.CityId === city.CityId
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
-                                                props?.selectedCity?.id === city.id
+                                                props?.selectedCity?.CityId === city.CityId
+
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
@@ -62,16 +63,16 @@ const CityList = (props) => {
                                             className={`${GlobalStyles.userInfo}`}
                                             style={{
                                                 color:
-                                                   props?.selectedCity?.id === city.id
+                                                   props?.selectedCity?.CityId === city.id
                                                         ? "#000000"
                                                         : "#000000",
                                             }}
                                         >
                                             <span className={`${styles.employeeName}`}>
-                                                {city.name}
+                                                {city.CityName}
                                             </span>
                                             <span>
-                                                {city.status === 'inactive' && <span className={styles.redDot}></span>}
+                                                {city.Status === 'inactive' && <span className={styles.redDot}></span>}
                                             </span>
 
                                         </div>
