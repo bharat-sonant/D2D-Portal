@@ -50,8 +50,6 @@ const AddUser = (props) => {
       resetStateValues
     );
   };
-
-
   function resetStateValues() {
     setForm(initialForm);
     // setUserNameError("");
@@ -63,12 +61,18 @@ const AddUser = (props) => {
     props.setOnEdit(false);
     setLoading(false);
   }
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !loading) {
+      e.preventDefault();
+      handleSave();
+    }
+  };
 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
-          <p className={styles.headerText}>Add User</p>
+          <p className={styles.headerText}>{props.onEdit ? 'Edit' : 'Add'} User</p>
           <button
             className={styles.closeBtn}
             onClick={() => {
@@ -99,6 +103,7 @@ const AddUser = (props) => {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             </div>
@@ -117,6 +122,7 @@ const AddUser = (props) => {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             </div>
@@ -128,7 +134,7 @@ const AddUser = (props) => {
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>User Type</div>
               <div className={styles.textboxRight}>
-                <select  className={`form-control ${styles.formTextbox}`} name="userType" value={form?.userType} onChange={handleChange}>
+                <select  className={`form-control ${styles.formTextbox}`} name="userType" value={form?.userType} onChange={handleChange}  onKeyDown={handleKeyDown}>
                   <option value="" hidden>Please select user type</option>
                   <option value="internal">Internal</option>
                   <option value="external">External</option>
@@ -150,6 +156,7 @@ const AddUser = (props) => {
                   placeholder="Enter emp Code"
                   value={form?.empCode || ''}
                   onChange={handleChange}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             </div>

@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { login } from '../../services/supabaseServices';
 import { setAlertMessage } from '../../common/common';
 import dayjs from 'dayjs';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     let loginStatus = localStorage.getItem("isLogin");
@@ -21,6 +23,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const user = await login(emailId, password);
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
@@ -30,8 +33,16 @@ export default function Login() {
     } catch (err) {
       setAlertMessage("error", err.message);
     }
+    finally{
+      setLoading(false);
+    }
   };
-
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !loading) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
   return (
     <div
       className="min-vh-100 d-flex align-items-center justify-content-center"
@@ -243,7 +254,9 @@ export default function Login() {
                     className="form-control"
                     value={emailId}
                     onChange={(e) => setEmailId(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Enter email id"
+                    autoFocus
                     style={{
                       padding: "12px 45px 12px 15px",
                       border: "2px solid #e0e0e0",
@@ -279,6 +292,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     className="form-control"
                     value={password}
+                    onKeyDown={handleKeyDown}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
                     style={{
@@ -308,29 +322,7 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Options */}
-              {/* <div className="d-flex justify-content-between align-items-center mb-4">
-                <div className="d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    className="form-check-input me-2"
-                    id="rememberMe"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                  <label className="text-muted" 
-                         style={{ fontSize: '14px', cursor: 'pointer' }} 
-                         htmlFor="rememberMe">
-                    Remember Me
-                  </label>
-                </div>
-                <a href="#" 
-                   className="text-decoration-none fw-semibold"
-                   style={{ color: '#667eea', fontSize: '14px' }}>
-                  Forgot password?
-                </a>
-              </div> */}
+              
 
               {/* Login Button */}
               <button
@@ -355,7 +347,11 @@ export default function Login() {
                   e.target.style.boxShadow = "none";
                 }}
               >
-                Login
+                {loading ? (
+                  <div className="spinner-border" style={{height:'20px',width:'20px',borderWidth:'2px'}}></div>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </div>
@@ -364,3 +360,28 @@ export default function Login() {
     </div>
   );
 }
+
+
+{/* Options */}
+              {/* <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="d-flex align-items-center">
+                  <input
+                    type="checkbox"
+                    className="form-check-input me-2"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <label className="text-muted" 
+                         style={{ fontSize: '14px', cursor: 'pointer' }} 
+                         htmlFor="rememberMe">
+                    Remember Me
+                  </label>
+                </div>
+                <a href="#" 
+                   className="text-decoration-none fw-semibold"
+                   style={{ color: '#667eea', fontSize: '14px' }}>
+                  Forgot password?
+                </a>
+              </div> */}

@@ -68,7 +68,7 @@ export const getDataByColumnName = async (table, column, columnValue) => {
 export const login = async (email, password) => {
   // DB se user fetch karo
   const hashCode = generateHash(email?.toLowerCase().trim());
-  const { data, error } = await supabase.from("Users").select("*").eq("hashCode", hashCode).single();
+  const { data, error } = await supabase.from("Users").select("*").eq("hashCode", hashCode).maybeSingle();
   if (error || !data) throw new Error("User not found");
   // status check
   if (data.status !== "active") {

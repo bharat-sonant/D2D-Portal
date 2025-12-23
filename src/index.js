@@ -18,7 +18,7 @@ const AppWrapper=() =>{
 
   return (
     <div className={shouldRemoveFrame ? '' : globleStyles.mobileFrame}>
-      <LoginProvider><RouterComponent /></LoginProvider>
+      <RouterComponent />
       <ToastContainer
         position="bottom-center"
         autoClose={1500}
@@ -40,7 +40,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <CityProvider>
-      <AppWrapper />
+      <LoginProvider>
+        <AppWrapper />
+      </LoginProvider>
     </CityProvider>
   </BrowserRouter>
 );
