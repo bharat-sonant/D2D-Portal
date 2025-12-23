@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes} from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
@@ -18,7 +17,6 @@ import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
-import { IoMagnet } from "react-icons/io5";
 import TaskData from "../pages/Task-Data/TaskData";
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
@@ -26,21 +24,6 @@ import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
 import City from "../pages/City/City";
 
 const RouterComponent = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const savedDate = localStorage.getItem("loginDate");
-    const today = dayjs().format("DD/MM/YYYY");
-    if (savedDate && savedDate !== today) {
-      localStorage.removeItem("loginDate");
-      localStorage.removeItem("isLogin");
-      localStorage.removeItem("userName");
-      navigate("/");
-    }
-  }, [location.pathname]);
-
-
 
   return (
     <>
