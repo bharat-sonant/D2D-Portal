@@ -1,4 +1,4 @@
-import {useMemo, useState } from "react";
+import {useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { FaSpinner } from "react-icons/fa";
 import { images } from "../../assets/css/imagePath";
@@ -21,6 +21,20 @@ const AddCity = (props) => {
   const [cityCodeError,setCityCodeError]=useState("");
   const [form, setForm] = useState(initialForm);
 
+   useEffect(() => {
+      const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !loading) {
+          e.preventDefault();
+          handleSave();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    
+  }, [form,logo,  loading]);
+
   const handleChange = (e) => {
     if(e.target.name==='CityCode'){
        setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
@@ -30,9 +44,9 @@ const AddCity = (props) => {
     
   };
   const handleSave = async () => {
-   
     saveCityAction(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError);
   };
+
  const handleLogoChange = (e) => {
   const file = e.target.files[0];
   if (!file || !file.type.startsWith("image/")) return;

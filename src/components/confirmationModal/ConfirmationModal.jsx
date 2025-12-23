@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import styles from "./confirmationModal.module.css";
 
 const ConfirmationModal = ({
@@ -10,6 +11,20 @@ const ConfirmationModal = ({
   onCancel = () => {},
   btnColor
 }) => {
+
+   useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onConfirm();
+          }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+          window.removeEventListener("keydown", handleKeyDown);
+        };
+      
+    }, []);
   if (!visible) return null;
 
   return (
