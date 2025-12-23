@@ -1,4 +1,4 @@
-import { decryptValue } from "../common/common";
+import { decryptValue, generateHash } from "../common/common";
 import { supabase } from "../createClient";
 
 export const getData = async (tableName) => {
@@ -49,7 +49,6 @@ export const deleteData = async (tableName, id) => {
   }
 };
 
-
 export const getDataByColumnName = async (table, column, columnValue) => {
   try {
     const { data, error } = await supabase
@@ -66,12 +65,11 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
-export const login = async (username, password) => {
+export const login = async (email, password) => {
   // DB se user fetch karo
-  const { data, error } = await supabase.from("users").select("*").eq("username", username).single();
-
+  const hashCode = generateHash(email?.toLowerCase().trim());
+  const { data, error } = await supabase.from("Users").select("*").eq("hashCode", hashCode).single();
   if (error || !data) throw new Error("User not found");
-
   // status check
   if (data.status !== "active") {
     throw new Error(
@@ -80,7 +78,7 @@ export const login = async (username, password) => {
   }
 
   // password decrypt + verify
-  const decryptedPassword = decryptValue(data.password);
+  const decryptedPassword = decryptValue(data?.password);
   if (decryptedPassword !== password) {
     throw new Error("Incorrect password");
   }

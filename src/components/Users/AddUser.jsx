@@ -4,49 +4,61 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import * as common from "../../common/common";
 import { FaSpinner } from "react-icons/fa";
-import * as userAction from '../../Actions/UserAction/UserAction'
+import * as userAction from '../../Actions/UserAction/UserAction';
 
 const AddUser = (props) => {
   const initialForm = {
-    username: "",
+    // username: "",
     name: "",
     email: "",
     status: "active",
     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     password: "",
+    userType: "",
+    empCode: "",
   };
   const [form, setForm] = useState(initialForm);
-  const [userNameError, setUserNameError] = useState("");
+  // const [userNameError, setUserNameError] = useState("");
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [userTypeError, setUserTypeError] = useState("");
+  const [empCodeError, setEmpCodeError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (props.onEdit && props.editData) {
       const decryptedEmail = common.decryptValue(props.editData.email);
-      setForm({
-        ...props.editData,
-        email: decryptedEmail,
-      });
+      setForm({...props?.editData,email: decryptedEmail});
     }
-  }, [props.onEdit, props.editData]);
+  }, [props?.onEdit, props?.editData]);
 
   if (!props.showCanvas) return null;
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => userAction.formValueChangeAction(e,setForm)
 
-  const handleSave = async () => {  
-         userAction.validateUserDetail(form,props.onEdit,props.editData,setUserNameError,setNameError,setEmailError,setLoading,props.loadUsers,resetStateValues)
+  const handleSave = async () => {
+    userAction.validateUserDetail(
+      form,
+      props.onEdit,
+      props.editData,
+      setNameError,
+      setEmailError,
+      setUserTypeError,
+      setEmpCodeError,
+      setLoading,
+      props.loadUsers,
+      resetStateValues
+    );
   };
 
 
   function resetStateValues() {
     setForm(initialForm);
-    setUserNameError("");
+    // setUserNameError("");
     setNameError("");
     setEmailError("");
+    setUserTypeError("");
+    setEmpCodeError("");
     props.setShowCanvas(false);
     props.setOnEdit(false);
     setLoading(false);
@@ -74,25 +86,7 @@ const AddUser = (props) => {
         </div>
 
         <div className={styles.modalBody}>
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>User Name</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  name="username"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter user name"
-                  value={form.username}
-                  onChange={handleChange}
-                  disabled={props.onEdit === true}
-                />
-              </div>
-            </div>
-            {userNameError && (
-              <div className={`${styles.invalidfeedback}`}>{userNameError}</div>
-            )}
-          </div>
+         
 
           <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
@@ -130,6 +124,39 @@ const AddUser = (props) => {
               <div className={`${styles.invalidfeedback}`}>{emailError}</div>
             )}
           </div>
+          <div className={styles.textboxGroup}>
+            <div className={styles.textboxMain}>
+              <div className={styles.textboxLeft}>User Type</div>
+              <div className={styles.textboxRight}>
+                <select  className={`form-control ${styles.formTextbox}`} name="userType" value={form?.userType} onChange={handleChange}>
+                  <option value="" hidden>Please select user type</option>
+                  <option value="internal">Internal</option>
+                  <option value="external">External</option>
+                </select>
+              </div>
+            </div>
+            {userTypeError && (
+              <div className={`${styles.invalidfeedback}`}>{userTypeError}</div>
+            )}
+          </div>
+          {form?.userType ==='internal' && (<div className={styles.textboxGroup}>
+            <div className={styles.textboxMain}>
+              <div className={styles.textboxLeft}>Emp Code</div>
+              <div className={styles.textboxRight}>
+                <input
+                  type="text"
+                  name="empCode"
+                  className={`form-control ${styles.formTextbox}`}
+                  placeholder="Enter emp Code"
+                  value={form?.empCode || ''}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            {empCodeError && (
+              <div className={`${styles.invalidfeedback}`}>{empCodeError}</div>
+            )}
+          </div>)}
           <button
             type="button"
             className={`mt-3 ${styles.btnSave}`}

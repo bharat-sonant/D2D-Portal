@@ -8,39 +8,30 @@ import UserStatusDialog from "../../components/Users/AlertPopUp";
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
-  const [selected, setSelected] = useState(null);
   const [users, setUsers] = useState([]);
-   const [selectedUser, setSelectedUser] = useState(null);
-   const [onEdit,setOnEdit]=useState(false)
-   const [confirmUser, setConfirmUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [onEdit, setOnEdit] = useState(false);
+  const [confirmUser, setConfirmUser] = useState(null);
 
- const loadUsers = async () => {
- await userAction.fetchUserData(setSelectedUser,setUsers);
-};
-
-
+  const loadUsers = async () => {
+    await userAction.fetchUserData(setSelectedUser, setUsers);
+  };
   useEffect(() => {
     loadUsers();
   }, []);
-
   const handleOpenModal = () => {
     setShowCanvas(true);
   };
-
-
-const openConfirm = () => {
-  setConfirmUser(true);
-};
-
-
-const handleStatusToggle = async (user) => {
-  userAction.updateStatus(user,setUsers,setSelectedUser,setConfirmUser)
-};
-
-const handleEditUser = () => {
- setOnEdit(true)
-setShowCanvas(true);
-};
+  const openConfirm = () => {
+    setConfirmUser(true);
+  };
+  const handleStatusToggle = async (user) => {
+    userAction.updateStatus(user, setUsers, setSelectedUser, setConfirmUser);
+  };
+  const handleEditUser = () => {
+    setOnEdit(true);
+    setShowCanvas(true);
+  };
 
   return (
     <>
@@ -55,89 +46,101 @@ setShowCanvas(true);
 
       <div className={`${TaskStyles.employeePage}`}>
         <div className={`${TaskStyles.employeeLeft}`}>
-          <UserList users={users} selectedUser={selectedUser}  setSelectedUser={setSelectedUser}/>
+          <UserList
+            users={users}
+            selectedUser={selectedUser}
+            setSelectedUser={setSelectedUser}
+          />
         </div>
-<div className={TaskStyles.employeeRight}>
-  <div
-  style={{
-    width: '25%',
-    background: "#fff",
-    borderRadius: "12px",
-    padding: "14px 16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  }}
->
-  {/* LEFT */}
-  <span
-    style={{
-      background: "#f2f2f2",
-      padding: "6px 12px",
-      borderRadius: "6px",
-      fontSize: "14px",
-      fontWeight: 500,
-    }}
-  >
-    {selectedUser?.username || "N/A"}
-  </span>
+        <div className={TaskStyles.employeeRight}>
+          <div
+            style={{
+              width: "25%",
+              background: "#fff",
+              borderRadius: "12px",
+              padding: "14px 16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            }}
+          >
+            {/* LEFT */}
+            <span
+              style={{
+                background: "#f2f2f2",
+                padding: "6px 12px",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+            >
+              {selectedUser?.name || "N/A"}
+            </span>
 
-  <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-    <div
-      onClick={() => openConfirm()}
-      style={{
-        width: "42px",
-        height: "22px",
-        borderRadius: "22px",
-        background: selectedUser?.status === 'active' ? '#4caf50' : '#f8d7da',
-        position: "relative",
-        cursor: "pointer",
-        transition: "0.3s",
-      }}
-    >
-      <div
-        style={{
-          width: "18px",
-          height: "18px",
-          background: "#fff",
-          borderRadius: "50%",
-          position: "absolute",
-          top: "2px",
-          left: selectedUser?.status === 'active' ? '22px' : '2px',
-          transition: "0.3s",
-        }}
-      />
-    </div>
-    <span
-     onClick={handleEditUser}
-      title="Edit"
-      style={{
-        cursor: "pointer",
-        fontSize: "14px",
-        padding: "6px",
-        borderRadius: "50%",
-        border: "1px solid #ddd",
-      }}
-    >
-      ✏️
-    </span>
-  </div>
-</div>
-
-</div>
-
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div
+                onClick={() => openConfirm()}
+                style={{
+                  width: "42px",
+                  height: "22px",
+                  borderRadius: "22px",
+                  background:
+                    selectedUser?.status === "active" ? "#4caf50" : "#f8d7da",
+                  position: "relative",
+                  cursor: "pointer",
+                  transition: "0.3s",
+                }}
+              >
+                <div
+                  style={{
+                    width: "18px",
+                    height: "18px",
+                    background: "#fff",
+                    borderRadius: "50%",
+                    position: "absolute",
+                    top: "2px",
+                    left: selectedUser?.status === "active" ? "22px" : "2px",
+                    transition: "0.3s",
+                  }}
+                />
+              </div>
+              <span
+                onClick={handleEditUser}
+                title="Edit"
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  padding: "6px",
+                  borderRadius: "50%",
+                  border: "1px solid #ddd",
+                }}
+              >
+                ✏️
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
       <div className={GlobalStyles.mainSections}>
-        <AddUser showCanvas={showCanvas} setShowCanvas={setShowCanvas} loadUsers={loadUsers} editData ={selectedUser} onEdit={onEdit} setOnEdit={setOnEdit}/>
+        <AddUser
+          showCanvas={showCanvas}
+          setShowCanvas={setShowCanvas}
+          loadUsers={loadUsers}
+          editData={selectedUser}
+          onEdit={onEdit}
+          setOnEdit={setOnEdit}
+        />
       </div>
 
-   {confirmUser && (   <UserStatusDialog name={selectedUser.name} setConfirmUser={setConfirmUser} handleStatusToggle={handleStatusToggle} selectedUser={selectedUser}/> )}
-
-
-
-
-
+      {confirmUser && (
+        <UserStatusDialog
+          name={selectedUser.name}
+          setConfirmUser={setConfirmUser}
+          handleStatusToggle={handleStatusToggle}
+          selectedUser={selectedUser}
+        />
+      )}
     </>
   );
 };

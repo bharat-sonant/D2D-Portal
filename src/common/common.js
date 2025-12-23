@@ -310,6 +310,9 @@ export function generateRandomCode() {
 export function encryptValue(value) {
   return CryptoJS.AES.encrypt(value, secretKey).toString();
 }
+export const generateHash=(input)=> {
+  return CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+}
 
 export function decryptValue(value) {
   const bytes = CryptoJS.AES.decrypt(value, secretKey);
