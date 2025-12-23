@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaTasks } from "react-icons/fa";
@@ -12,6 +12,7 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
 import { LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
+import { Navigate } from "react-router-dom";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -71,6 +72,17 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
       setNavbarStyle(JSON.parse(savedStyle));
     }
   }, []);
+
+
+  const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem("isLogin");
+  localStorage.removeItem("loginDate");
+  localStorage.removeItem("name");
+  navigate("/");
+};
+
   
 
   return (
@@ -428,7 +440,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
     <span className={styles.cityName}>{storedName}</span>
   </button>
   <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
-    <li>
+    <li onClick={handleLogout}>
       <Link className="dropdown-item" >Log Out</Link>
     </li>
   </ul>
