@@ -12,6 +12,7 @@
   border-bottom: 1px solid var(--borderColor);
   z-index: 3;
 }
+
 .headerLeft {
   margin-right: auto;
   display: flex;
@@ -19,31 +20,38 @@
   align-items: center;
   padding: 10px 20px;
 }
+
 .headerRight {
   display: flex;
   justify-content: flex-end;
   width: calc(100% - 200px);
 }
+
 .headerApps {
   margin-right: auto;
 }
+
 .navbarNav {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 0px;
 }
+
 .companyLogo {
   padding: 0px 40px 0px 5px;
 }
+
 .logoImg {
   width: 35px;
   height: auto;
 }
+
 .logoText {
   font-size: 10px;
   color: var(--darkBlack);
   font-family: var(--fontGraphikMedium);
 }
+
 .body-no-scroll {
   overflow: hidden;
 }
@@ -54,6 +62,7 @@
   padding: 10px 8px;
   align-items: center;
 }
+
 .appOverlay {
   background-color: var(--transparentBlack);
   position: fixed !important;
@@ -65,6 +74,7 @@
   height: 100vh;
   transform: translate(-50%, -50%) !important;
 }
+
 .appModal {
   width: 100%;
   height: 100%;
@@ -72,11 +82,13 @@
   justify-content: center;
   align-items: center;
 }
+
 .appContent {
   width: 600px;
   background-color: var(--white);
   border-radius: 6px;
 }
+
 .appHeader {
   align-items: center;
   box-shadow: 0 8px 20px 0 #0000000a;
@@ -88,6 +100,7 @@
   font-size: 18px;
   word-break: break-word;
 }
+
 .appBody {
   list-style-type: none;
   margin: 0px;
@@ -97,13 +110,16 @@
   gap: 16px;
   flex-wrap: wrap;
 }
+
 .appLi {
   width: calc(100% / 3 - 11px);
   transition: 0.2s;
+
   &:hover {
     transform: translateY(-3px);
   }
 }
+
 .appLink {
   text-decoration: none;
   padding: 16px;
@@ -115,16 +131,20 @@
   justify-content: center;
   align-items: center;
   transition: 0.2s;
+
   &:hover {
     background-color: var(--whitef5);
   }
 }
+
 .activeAppLink {
   background-color: #3fb2f114;
 }
+
 .appLogo {
   width: 60px;
 }
+
 .appText {
   font-size: 13px;
   color: var(--black70);
@@ -139,7 +159,8 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 3; /* Ensure the overlay is above other content */
+  z-index: 3;
+  /* Ensure the overlay is above other content */
 }
 
 .navLink {
@@ -155,13 +176,14 @@
   display: flex;
   flex-direction: column;
   border: 2px solid transparent;
+
   &:hover {
     .iconNav {
-      filter: brightness(0) saturate(100%) invert(68%) sepia(71%)
-        saturate(3596%) hue-rotate(177deg) brightness(106%) contrast(89%);
+      filter: brightness(0) saturate(100%) invert(68%) sepia(71%) saturate(3596%) hue-rotate(177deg) brightness(106%) contrast(89%);
     }
   }
 }
+
 .hide {
   display: none;
 }
@@ -169,26 +191,29 @@
 .navLink.activeNav {
   background-color: #3fb2f114;
 }
+
 .iconNav {
   width: 20px;
   height: 20px;
   margin-bottom: 5px;
-  filter: brightness(0) saturate(100%) invert(0%) sepia(84%) saturate(7500%)
-    hue-rotate(328deg) brightness(114%) contrast(114%);
+  filter: brightness(0) saturate(100%) invert(0%) sepia(84%) saturate(7500%) hue-rotate(328deg) brightness(114%) contrast(114%);
 }
+
 .navLink.activeNav .iconNav {
-  filter: brightness(0) saturate(100%) invert(58%) sepia(80%) saturate(759%)
-    hue-rotate(172deg) brightness(97%) contrast(94%);
+  filter: brightness(0) saturate(100%) invert(58%) sepia(80%) saturate(759%) hue-rotate(172deg) brightness(97%) contrast(94%);
 }
+
 .iconText {
   font-size: 9px;
   font-family: var(--fontGraphik);
   color: var(--gray);
   text-align: center;
 }
+
 .navLink.activeNav .iconText {
   color: var(--black);
 }
+
 .navbarToggler {
   border: none;
 }
@@ -198,57 +223,69 @@
   border: none;
   padding: 2px 0px;
   margin-right: 8px;
+
   &:hover {
     background-color: transparent;
     border: none;
   }
 }
+
 .btn_custom_dropdown.active {
   background-color: #eaf8ff;
   color: white;
 }
+
 .dropdown_profile {
   background-color: #f5f5f5;
   padding: 8px 15px;
 }
+
 .dropdown_profile .profile_main_div {
   display: flex;
   align-items: center;
   padding: 12px 16px;
   cursor: pointer;
+
   &:hover {
     background-color: #f5f5f5;
   }
 }
+
 .dropdown_profile .profile_dropdown_icon {
   margin-right: 8px;
   display: flex;
   align-items: center;
 }
+
 .dropdown_profile .profile_dropdown_info {
   font-size: 12px;
   font-family: "poppins", sans-serif;
   color: #333333;
   font-weight: normal;
 }
+
 .btn_custom_dropdown {
   background-color: transparent;
   border: none;
   padding: 2px 0px;
   margin-right: 8px;
+
   &:hover {
     background-color: transparent;
     border: none;
   }
 }
+
 .btn_custom_dropdown.active {
   background-color: #eaf8ff;
   color: white;
 }
+
 .btn_custom_dropdown.show .drop_down {
   transform: rotate(180deg);
   transition: 0.5;
 }
+
 .show .btn_custom_dropdown.dropdown-toggle {
   color: #fff;
   background-color: #0a58ca00 !important;
@@ -259,6 +296,7 @@
   display: flex;
   align-items: center;
 }
+
 .user_img {
   height: 40px;
   width: 40px;
@@ -274,10 +312,12 @@
   border-radius: 10%;
   overflow: hidden;
 }
+
 .user_img img {
   width: 80%;
   height: auto;
 }
+
 .user_name {
   margin-left: 8px;
   font-family: "poppins", sans-serif;
@@ -288,6 +328,7 @@
 .dropdownIcon {
   margin-left: 8px;
 }
+
 .dropdownIcon .drop_down {
   color: #555b6d;
   transition: 0.5;
@@ -301,10 +342,12 @@
   border: none;
   box-shadow: 0 5px 10px #1e20251f;
   border-radius: 5px;
+
   &::before {
     display: none;
   }
 }
+
 .profile_ul {
   display: flex;
   flex-flow: column;
@@ -314,42 +357,53 @@
   max-height: 90vh;
   overflow: auto;
 }
+
 .profile_main_div:hover .profile_icon {
   color: #009aee;
 }
+
 .profile_border_top {
   border-top: 1px solid #eeeeee;
 }
+
 .profile_icon {
   font-size: 18px;
   color: #555b6d;
 }
+
 .profile-main_div:hover .profile_icon {
   color: #009aee;
 }
+
 .profile_icon.icon_logout {
   font-size: 16px;
 }
+
 .profile_icon.icon_setting {
   font-size: 16px;
 }
+
 .dropdownTop {
   display: flex;
   align-items: center;
 }
+
 .navbarCustmizationBG {
   padding: 10px 10px 10px 41px;
 }
+
 .navbarThemesContainer {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
+
 .themeCard {
   width: 30px;
   height: 30px;
   border-radius: 4px;
 }
+
 .navbarCustmizationBGRow {
   display: flex;
   gap: 10px;
@@ -358,6 +412,7 @@
   width: 100%;
   border-bottom: 1px solid #eeeeee;
 }
+
 .navCustmizationText {
   font-size: 13px;
   color: var(--regularColor);
@@ -366,10 +421,12 @@
   flex-flow: column;
   gap: 3px;
 }
+
 .colorPicker {
   border: none;
   padding: 0px;
 }
+
 .iconColorContainer {
   display: flex;
   gap: 9px;
@@ -390,6 +447,7 @@
 .colorBoxSelected {
   border: 2px solid #444;
 }
+
 .navFooterRow {
   display: flex;
   align-items: center;
@@ -398,6 +456,7 @@
   margin-top: 10px;
   padding: 5px 0px 5px 0px;
 }
+
 .btnNavSave {
   background-color: var(--themeColor);
   font-size: 13px;
@@ -409,10 +468,12 @@
   outline: none;
   transition: 0.2s;
   width: calc(100% / 2 - 10px);
+
   &:hover {
     background-color: var(--themeColorDark);
   }
 }
+
 .btnNavReset {
   background-color: #e9e9e9;
   font-size: 13px;
@@ -424,6 +485,7 @@
   outline: none;
   width: calc(100%);
 }
+
 @media (max-width: 1199.98px) {
   .navbarNav {
     gap: 5px;
@@ -438,17 +500,20 @@
     scrollbar-width: thin;
     justify-content: flex-start;
   }
-   .headerRight {
+
+  .headerRight {
     margin-left: auto;
     align-items: center;
     width: 100%;
   }
+
   .navLink {
     display: flex;
     height: 48px;
     flex: 0 0 100px !important;
   }
 }
+
 @media (max-width: 991.98px) {
   .navbar {
     padding: 12px 10px;
@@ -456,17 +521,19 @@
   }
 
   .navItem {
-    display: none; /* Hide all items by default */
+    display: none;
+    /* Hide all items by default */
   }
 
   .navItem:nth-child(-n + 3) {
-    display: block; /* Show the first 3 items */
+    display: block;
+    /* Show the first 3 items */
   }
-  
+
   .headerLeft {
     display: none;
   }
- 
+
   .iconNav {
     margin-bottom: 3px;
   }
@@ -474,13 +541,16 @@
   .navLink.activeNav {
     background-color: var(--white);
   }
+
   .navLink.activeNav .iconText {
     color: var(--themeColor);
   }
+
   .dropdown_profile {
     width: 100%;
     background-color: transparent;
   }
+
   .user_name,
   .dropdownIcon {
     display: none;
@@ -508,6 +578,18 @@
   flex-shrink: 0;
 }
 
+.userBG {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--white);
+  border-radius: 4px;
+
+}
+
 .cityName {
   font-size: 14px;
   font-weight: 600;
@@ -533,7 +615,8 @@
   .cityBadge {
     padding: 4px;
     justify-content: center;
-    height: 45px; /* MATCH LOGO HEIGHT */
+    height: 45px;
+    /* MATCH LOGO HEIGHT */
     min-width: 45px;
   }
 
