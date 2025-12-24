@@ -54,7 +54,7 @@ export default function Login() {
       <div className="container">
         <div
           className="row bg-white rounded-4 shadow-lg overflow-hidden"
-          style={{ maxWidth: "1100px", margin: "0 auto" }}
+          style={{ maxWidth: "1000px", margin: "0 auto" }}
         >
           {/* Left Section */}
           <div
@@ -120,7 +120,7 @@ export default function Login() {
                 style={{
                   width: "100%",
                   maxWidth: "280px",
-                  height: "320px",
+                  height: "250px",
                   background: "#ecf0f1",
                   borderRadius: "15px",
                   border: "4px solid #34495e",
@@ -202,32 +202,38 @@ export default function Login() {
           </div>
 
           {/* Right Section */}
-          <div className="col-lg-6 p-5 d-flex flex-column justify-content-center">
+          <div className="col-lg-6 px-4 py-4 d-flex flex-column justify-content-center">
             {/* Logo */}
             <div className="text-center mb-4">
               <div
-                className="d-flex align-items-center justify-content-center mb-3"
+                className="d-flex align-items-center justify-content-center mb-2"
                 style={{
                   width: "60px",
                   height: "60px",
-                  background:
-                    "linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)",
                   borderRadius: "15px",
                   margin: "0 auto",
                   fontSize: "30px",
                 }}
               >
-                👥
+                <img
+                  src='/wevoisLogo.png'
+                  alt='WeVOIS logo'
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    objectFit:'contain'
+                  }}
+                />
               </div>
               <h3
-                className="text-uppercase fw-semibold"
+                className="fw-semibold"
                 style={{
                   color: "#2c3e50",
                   fontSize: "16px",
                   letterSpacing: "1px",
                 }}
               >
-                D2D Portal
+                WeVOIS Portal
               </h3>
             </div>
 
