@@ -13,7 +13,7 @@ export const changeUserPassword = async (
     currentPassword,
     newPassword
 ) => {
-    console.log(currentPassword,"asd")
+    // console.log(currentPassword,"asd")
     try {
         const resp = await getDataByColumnName("Users", "id", userId);
         if (!resp.success || !resp.data) {
