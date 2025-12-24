@@ -96,7 +96,6 @@ const City = () => {
               >
                 {selectedCity?.CityCode || "N/A"}
               </span>
-              {/* <div style={{ width: "250px" }} /> */}
               <div
                 style={{
                   width: "48px",  

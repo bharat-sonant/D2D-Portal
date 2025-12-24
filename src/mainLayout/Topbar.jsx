@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { FaTasks } from "react-icons/fa";
-import { Car, LucideUserRoundCheck } from "lucide-react";
+import { Car } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
@@ -12,7 +12,6 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
 import { LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
-import { Navigate } from "react-router-dom";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -85,7 +84,6 @@ const handleLogout = () => {
   navigate("/");
 };
 
-  
 
   return (
     <>
@@ -149,8 +147,8 @@ const handleLogout = () => {
             >
               <LuUsers
                 className={`${styles.iconNav} ${location.pathname === "/users"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -180,8 +178,8 @@ const handleLogout = () => {
             >
               <FaCity
                 className={`${styles.iconNav} ${location.pathname === "/cities"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -212,8 +210,8 @@ const handleLogout = () => {
             >
               <SiTask
                 className={`${styles.iconNav} ${location.pathname === "/TaskData"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -247,8 +245,8 @@ const handleLogout = () => {
             >
               <GrMapLocation
                 className={`${styles.iconNav} ${location.pathname === "/realtime-monitoring"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -280,8 +278,8 @@ const handleLogout = () => {
             >
               <TbReportAnalytics
                 className={`${styles.iconNav} ${location.pathname === "/reports"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -292,43 +290,6 @@ const handleLogout = () => {
                 }}
               >
                 Reports
-              </span>
-            </Link>
-
-            <Link
-              aria-current="page"
-              to="/daily-assignment"
-              title="Daily Assignment"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/daily-assignment"
-                  ? styles.activeNav
-                  : ""
-                }`}
-              style={
-                location.pathname === "/daily-assignment"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <LucideUserRoundCheck
-                className={`${styles.iconNav} ${location.pathname === "/daily-assignment"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/daily-assignment"
-                      ? "#000000"
-                      : "#707070",
-                }}
-              >
-                Daily Assignment
               </span>
             </Link>
 
@@ -349,8 +310,8 @@ const handleLogout = () => {
             >
               <FaTasks
                 className={`${styles.iconNav} ${location.pathname === "/tasks"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -380,8 +341,8 @@ const handleLogout = () => {
             >
               <Car
                 className={`${styles.iconNav} ${location.pathname === "/vehicle"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -410,8 +371,8 @@ const handleLogout = () => {
             >
               <CiSettings
                 className={`${styles.iconNav} ${location.pathname === "/settings"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -432,21 +393,21 @@ const handleLogout = () => {
             //   <span className={styles.cityName}>{storedName}</span>
             // </div>
             <div className={`dropdown ${styles.cityBadge}`}>
-  <button
-    className={`btn dropdown-toggle ${styles.cityBadgeBtn}`}
-    type="button"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-  >
-    <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
-    <span className={styles.cityName}>{storedName}</span>
-  </button>
-  <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
-    <li onClick={handleLogout}>
-      <Link className="dropdown-item" >Log Out</Link>
-    </li>
-  </ul>
-</div>
+              <button
+                className={`btn dropdown-toggle ${styles.cityBadgeBtn}`}
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
+                <span className={styles.cityName}>{storedName}</span>
+              </button>
+              <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
+                <li onClick={handleLogout}>
+                  <Link className="dropdown-item" >Log Out</Link>
+                </li>
+              </ul>
+            </div>
 
           )}
         </div>

@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
 import { useNavigate } from "react-router-dom";
-import DailyAssignment from "../pages/Daily-Assignment/DailyAssignment";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
 import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoring";
@@ -41,21 +40,11 @@ const RouterComponent = () => {
         />
 
         <Route
-          path="/daily-assignment"
-          element={
-           <ProtectedRouter>
-              <MainLayout />
-              <DailyAssignment />
-           </ProtectedRouter>
-          }
-        />
-
-        <Route
           path="/start-assignment"
           element={
-           <ProtectedRouter>
+            <ProtectedRouter>
               <StartAssignment />
-          </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
 
@@ -64,14 +53,14 @@ const RouterComponent = () => {
           element={
             <ProtectedRouter>
               <Penalty />
-           </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/duty-on"
           element={
-          <ProtectedRouter>
+            <ProtectedRouter>
               <DutyOn />
             </ProtectedRouter>
           }
@@ -80,7 +69,7 @@ const RouterComponent = () => {
         <Route
           path="/duty-off"
           element={
-          <ProtectedRouter>
+            <ProtectedRouter>
               <DutyOff />
             </ProtectedRouter>
           }
@@ -91,13 +80,13 @@ const RouterComponent = () => {
           element={
             <ProtectedRouter>
               <WorkMonitoring />
-          </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
         <Route
           path="/locationTracker"
           element={
-           <ProtectedRouter>
+            <ProtectedRouter>
               <LocationTracker />
             </ProtectedRouter>
           }
@@ -105,26 +94,26 @@ const RouterComponent = () => {
         <Route
           path="/Settings"
           element={
-          <ProtectedRouter>
+            <ProtectedRouter>
               <MainLayout />
               <Settings />
-           </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/AssignmentSummary"
           element={
-          <ProtectedRouter>
+            <ProtectedRouter>
               <AssignmentSummary />
-           </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
 
         <Route
           path="/tasks"
           element={
-           <ProtectedRouter>
+            <ProtectedRouter>
               <MainLayout />
               <Task />
             </ProtectedRouter>
@@ -134,62 +123,62 @@ const RouterComponent = () => {
         <Route
           path="/duty-start"
           element={
-               <ProtectedRouter>
-                <DutyStart/>
-               </ProtectedRouter>
-              
-            
+            <ProtectedRouter>
+              <DutyStart />
+            </ProtectedRouter>
+
+
           }
         />
         <Route
           path="/realtime-monitoring"
-          element={<ProtectedRouter><MainLayout /><RealtimeMonitoring/></ProtectedRouter>}
+          element={<ProtectedRouter><MainLayout /><RealtimeMonitoring /></ProtectedRouter>}
         />
         <Route
           path="/reports"
-          element={   <ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
+          element={<ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
         />
 
         <Route
           path="/vehicle"
           element={
-           <ProtectedRouter>
+            <ProtectedRouter>
               <MainLayout />
               <Vehicle />
-           </ProtectedRouter>
+            </ProtectedRouter>
           }
         />
         <Route
           path="/TaskData"
           element={
             <ProtectedRouter>
-              <MainLayout/>
-              <TaskData/>
+              <MainLayout />
+              <TaskData />
             </ProtectedRouter>
           }
         />
-       <Route
-  path="/users"
-  element={
-   <>
-    <MainLayout/>
-        <User/>
-   </>
-  }
-/>
+        <Route
+          path="/users"
+          element={
+            <>
+              <MainLayout />
+              <User />
+            </>
+          }
+        />
 
         <Route
-  path="/cities"
-  element={
-   <>
-    <MainLayout/>
-        <City/>
-   </>
-  }
-/> 
+          path="/cities"
+          element={
+            <>
+              <MainLayout />
+              <City />
+            </>
+          }
+        />
       </Routes>
 
-         
+
 
 
 
