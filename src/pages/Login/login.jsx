@@ -5,6 +5,7 @@ import { login } from '../../services/supabaseServices';
 import { setAlertMessage } from '../../common/common';
 import dayjs from 'dayjs';
 import { FaSpinner } from 'react-icons/fa';
+import ForgotPassword from '../../components/ForgotPassword/ForgotPassword';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,13 +13,27 @@ export default function Login() {
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [loading,setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [forgotPassword, setforgetPassword] = useState(false);
 
   useEffect(() => {
     let loginStatus = localStorage.getItem("isLogin");
     if (loginStatus === "success") {
       navigate("/Dashboard");
     }
+    rememberMefunction();
   }, []);
+
+  const rememberMefunction = () => {
+    const savedEmail = localStorage.getItem('savedEmail')
+    const savedPassword = localStorage.getItem('savedPassword')
+
+    if(savedEmail && savedPassword){
+      setEmailId(savedEmail)
+      setPassword(savedPassword)
+      setRememberMe(true)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +43,13 @@ export default function Login() {
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
+      if (rememberMe) {
+        localStorage.setItem("savedEmail", emailId);
+        localStorage.setItem("savedPassword", password);
+      } else {
+        localStorage.removeItem("savedEmail");
+        localStorage.removeItem("savedPassword");
+      }
       navigate("/Dashboard");
       setAlertMessage("success", "Login successfully");
     } catch (err) {
@@ -43,6 +65,11 @@ export default function Login() {
       handleSubmit(e);
     }
   };
+
+  const handleRememberMe = () => {
+    setRememberMe(!rememberMe);
+  };
+
   return (
     <div
       className="min-vh-100 d-flex align-items-center justify-content-center"
@@ -203,6 +230,12 @@ export default function Login() {
 
           {/* Right Section */}
           <div className="col-lg-6 px-4 py-4 d-flex flex-column justify-content-center">
+          {forgotPassword ? (
+            <ForgotPassword
+              onBack={() => setforgetPassword(false)} 
+            /> )
+            : (
+                <>
             {/* Logo */}
             <div className="text-center mb-4">
               <div
@@ -328,7 +361,56 @@ export default function Login() {
                 </div>
               </div>
 
-              
+            <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
+              <div className="d-flex align-items-center">
+                 <input 
+                    type="checkbox"
+                    id='rememberMe'
+                    className='form-check-input'
+                    checked={rememberMe}
+                    onChange={handleRememberMe}
+                    style={{
+                      width:'16px',
+                      height:'16px',
+                      marginRight:'6px',
+                      cursor: 'pointer'
+                    }}  
+                  />
+                  <label
+                    htmlFor="rememberMe"
+                    className="form-check-label mb-0"
+                    style={{
+                      fontSize: "12px",
+                      color: "#2c3e50",
+                      cursor: "pointer",
+                      lineHeight:'1'
+                    }}
+                  >
+                    Remember me
+                  </label>
+                </div>
+                <a
+                  href="#"
+                  style={{
+                    fontSize: "12px",
+                    color: "#667eea",
+                    textDecoration: "none",
+                    fontWeight: "500",
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setforgetPassword(true);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.textDecoration = "underline";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.textDecoration = "none";
+                  }}
+                >
+                  Forgot password?
+                </a>
+              </div>
 
               {/* Login Button */}
               <button
@@ -336,6 +418,7 @@ export default function Login() {
                 className="btn w-100 text-white fw-semibold"
                 style={{
                   padding: "15px",
+                  marginTop:'10px',
                   background:
                     "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   border: "none",
@@ -360,6 +443,8 @@ export default function Login() {
                 )}
               </button>
             </div>
+            </> 
+          )}
           </div>
         </div>
       </div>
