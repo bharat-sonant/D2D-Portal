@@ -47,7 +47,7 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     let encrptMail = common.encryptValue(email);
     let hashCode = common.generateHash(email);
 
-    const createdBy = localStorage.getItem("Name");
+    const createdBy = localStorage.getItem("name");
     let userDetail = {
       // username: form.username,
       hashCode: hashCode,
