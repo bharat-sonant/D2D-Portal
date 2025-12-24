@@ -1,6 +1,6 @@
 import * as sbs from "../supabaseServices"
 
-export const saveCityWithLogo = async (cityData,logoFile,cityId) => {
+export const saveCityData = async (cityData,logoFile,cityId) => {
     return new Promise(async(resolve,reject)=>{
         if(!cityData && cityData?.CityName){
            return reject('Invalid parameters');

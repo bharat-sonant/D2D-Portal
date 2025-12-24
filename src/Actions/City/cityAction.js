@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { getCityData, saveCityWithLogo, updateCityStatus } from "../../services/CityService/cityServices";
+import { getCityData, saveCityData, updateCityStatus } from "../../services/CityService/cityServices";
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
@@ -30,7 +30,7 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
         }
        
         try {
-            await saveCityWithLogo(cityDetail,logo,props?.onEdit?.CityId);
+            await saveCityData(cityDetail,logo,props?.onEdit?.CityId);
             resetStateValues();
             props.loadCities();
             common.setAlertMessage("success", !props?.onEdit?"City added successfully": "City updated successfully");

@@ -27,7 +27,7 @@ const User = () => {
     setConfirmUser(true);
   };
   const handleStatusToggle = async (user) => {
-    userAction.updateStatus(user, setUsers, setSelectedUser, setConfirmUser);
+    userAction.updateStatus(user, setUsers,setActiveInactiveUserList, setSelectedUser, setConfirmUser);
   };
   const handleEditUser = () => {
     setOnEdit(true);
@@ -53,6 +53,7 @@ const User = () => {
             setSelectedUser={setSelectedUser}
             loading={loading}
             activeInactiveUserList={activeInactiveUserList}
+           
           />
         </div>
         <div className={TaskStyles.employeeRight} style={{marginLeft:'110px'}}>

@@ -25,7 +25,7 @@ const UserList = (props) => {
 
 
  useEffect(() => {
- handleApplyFilter(props.activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter)
+ handleApplyFilter(props.activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter,props.setSelectedUser)
 }, [statusFilter, userTypeFilter, props.activeInactiveUserList]);
 
 
