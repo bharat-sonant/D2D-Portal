@@ -22,7 +22,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       return;
     }
 
-    const userId = localStorage.getItem("userid");
+    const userId = localStorage.getItem("userId");
 
     await changePasswordAction(
       userId,
