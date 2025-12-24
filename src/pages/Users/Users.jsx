@@ -13,9 +13,9 @@ const User = () => {
   const [onEdit, setOnEdit] = useState(false);
   const [confirmUser, setConfirmUser] = useState(null);
   const [loading,setLoading] = useState(false);
-
+  const [activeInactiveUserList,setActiveInactiveUserList]=useState([])
   const loadUsers = async () => {
-    await userAction.fetchUserData(setSelectedUser, setUsers,setLoading);
+    await userAction.fetchUserData(setSelectedUser, setUsers,setLoading,setActiveInactiveUserList);
   };
   useEffect(() => {
     loadUsers();
@@ -52,9 +52,10 @@ const User = () => {
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
             loading={loading}
+            activeInactiveUserList={activeInactiveUserList}
           />
         </div>
-        <div className={TaskStyles.employeeRight}>
+        <div className={TaskStyles.employeeRight} style={{marginLeft:'110px'}}>
           <div
             style={{
               width: "25%",

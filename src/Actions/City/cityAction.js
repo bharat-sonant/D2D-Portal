@@ -20,7 +20,7 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
     }
     if (isValid) {
         setLoading(true);
-        let loggedUserName = localStorage.getItem("userName");
+        let loggedUserName = localStorage.getItem("name");
         let cityDetail = {
               CityCode:form?.CityCode?.trim(),
               CityName: form?.CityName?.trim(),

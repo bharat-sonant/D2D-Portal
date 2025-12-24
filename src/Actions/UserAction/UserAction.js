@@ -134,20 +134,18 @@ const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, reset
     }
   }
 }
-export const fetchUserData = async (setSelectedUser, setUsers,setLoading) => {
+export const fetchUserData = async (setSelectedUser, setUsers,setLoading,setActiveInactiveUserList) => {
   setLoading(true);
   let response = await userServices.getUserData()
   setLoading(false);
   if (response.status === 'success') {
-    const sortedList = response.data.sort((a, b) => {
-      if (a.status === "inactive" && b.status !== "inactive") return 1;
-      if (a.status !== "inactive" && b.status === "inactive") return -1;
-      return 0;
-    });
+    const sortedList = response.data.filter((item)=>(item.status==='active'))
+  
     setSelectedUser(pre=>{
       return sortedList.length>0 ? (sortedList?.find(item=>item?.id===pre?.id) || sortedList[0] ): null
     })
     setUsers(sortedList);
+    setActiveInactiveUserList(response.data)
   } else {
     setSelectedUser(null);
     setUsers([]);
@@ -203,3 +201,22 @@ export const filterUserListAction=(usersList,searchTerm,setSelectedUser)=>{
     setSelectedUser(pre=>list?.find(item=>item?.id===pre?.id) || list[0] || null);
     return list;
 }
+
+export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter) => {
+  if (!activeInactiveUserList?.length) {
+    setFilteredUsersList([]);
+    return;
+  }
+
+  const filteredList = activeInactiveUserList.filter((user) => {
+    const statusMatch =
+      statusFilter === "all" || user.status === statusFilter;
+
+    const typeMatch =
+      userTypeFilter === "all" || user.userType === userTypeFilter;
+
+    return statusMatch && typeMatch;
+  });
+
+  setFilteredUsersList(filteredList);
+};
