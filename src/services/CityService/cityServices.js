@@ -5,19 +5,14 @@ export const saveCityData = async (cityData,logoFile,cityId) => {
         if(!cityData && cityData?.CityName){
            return reject('Invalid parameters');
         }
-
           const fileName = `${cityData.CityCode}.png`;
           const filePath = fileName;
         let logo = null;
         if (logoFile) {
             logo = await sbs.uploadAttachment(logoFile,`CityLogo`,filePath);
         }
-        //2️⃣ Insert city data with logo URL
-        // cityData.logo_image = logo?.url || cityData?.logo_image;
         const response = !cityId ? await sbs.saveData('Cities', cityData) : await sbs.updateData('Cities','CityId',cityId,cityData);
-    
         return !response?.success? reject(response?.err || response?.error):resolve(response);
-        // data return nahi kar rahe
     });
 };
 
