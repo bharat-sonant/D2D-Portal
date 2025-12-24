@@ -42,6 +42,7 @@ export default function Login() {
       const user = await login(emailId, password);
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
+      localStorage.setItem("userId", user.id);  
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       if (rememberMe) {
         localStorage.setItem("savedEmail", emailId);

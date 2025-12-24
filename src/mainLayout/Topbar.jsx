@@ -12,6 +12,7 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
 import { LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
+import ChangePassword from "../components/ChangePassword/changePassword";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -24,6 +25,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const titleToShow = customTitle || storedCity || "D2D PORTAL";
   const city = useCity();
   const [cityLogo, setCityLogo] = useState(images.wevoisLogo);
+const [showChangePassword, setShowChangePassword] = useState(false);
+
 
   useEffect(() => {
     if (!city.city) return;
@@ -83,6 +86,11 @@ const handleLogout = () => {
   localStorage.removeItem("savedPassword");
   navigate("/");
 };
+
+  const changePass = () => {
+    setShowChangePassword(true);
+  }
+
 
 
   return (
@@ -403,6 +411,11 @@ const handleLogout = () => {
                 <span className={styles.cityName}>{storedName}</span>
               </button>
               <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
+                <li onClick={changePass}>
+                  <Link className="dropdown-item">
+                    Change Password
+                  </Link>
+                </li>
                 <li onClick={handleLogout}>
                   <Link className="dropdown-item" >Log Out</Link>
                 </li>
@@ -412,6 +425,11 @@ const handleLogout = () => {
           )}
         </div>
       </div>
+
+       <ChangePassword
+        showChangePassword={showChangePassword}
+        setShowChangePassword={setShowChangePassword}
+      />
     </>
   );
 };
