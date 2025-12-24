@@ -31,7 +31,7 @@ const RouterComponent = () => {
         <Route path="/" element={<Login />} />
 
         <Route
-          path="/"
+          path="/Dashboard"
           element={
             <>
               <MainLayout />

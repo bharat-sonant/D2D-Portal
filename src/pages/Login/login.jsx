@@ -16,7 +16,7 @@ export default function Login() {
   useEffect(() => {
     let loginStatus = localStorage.getItem("isLogin");
     if (loginStatus === "success") {
-      navigate("/users");
+      navigate("/Dashboard");
     }
   }, []);
 
@@ -28,7 +28,7 @@ export default function Login() {
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
-      navigate("/users");
+      navigate("/Dashboard");
       setAlertMessage("success", "Login successfully");
     } catch (err) {
       setAlertMessage("error", err.message);

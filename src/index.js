@@ -12,7 +12,7 @@ import { LoginProvider } from './context/LoginContext';
 const AppWrapper=() =>{
   const location = useLocation();
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ['/settings', '/daily-assignment', '/tasks', '/realtime-monitoring', '/reports', '/vehicle','/TaskData','/users','/','/cities']; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/daily-assignment', '/tasks', '/realtime-monitoring', '/reports', '/vehicle','/TaskData','/users','/','/cities',"/Dashboard"]; // <-- yaha route add karo
 
   const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
 
