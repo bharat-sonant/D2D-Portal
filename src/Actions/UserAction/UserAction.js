@@ -105,7 +105,7 @@ const sendLoginCredentialsToEmploye = async (email, password, loginURL) => {
   try {
     const url = common.MAILAPI;
     const subject = "D2D Portal Login Credentials";
-    const htmlBody = emailTemplate.sendEmployeeLoginCredentialsTemplate(password, loginURL);
+    const htmlBody = emailTemplate.sendEmployeeLoginCredentialsTemplate(email, password, loginURL);
     const response = await axios.post(url, { to: email, subject, html: htmlBody, });
     return response.status === 200 ? "success" : "failure";
   } catch (error) {

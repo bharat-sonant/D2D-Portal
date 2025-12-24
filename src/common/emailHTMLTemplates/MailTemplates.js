@@ -1,4 +1,4 @@
-export const sendEmployeeLoginCredentialsTemplate = (password, loginUrl) => {
+export const sendEmployeeLoginCredentialsTemplate = (email,password, loginUrl) => {
     return `
     <html>
         <body style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
@@ -14,6 +14,10 @@ export const sendEmployeeLoginCredentialsTemplate = (password, loginUrl) => {
                         Congratulations! Your registration has been successfully completed on D2D Portal . Below are your Login credentials:
                     </p>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="font-size: 16px; font-weight: bold; padding: 10px 0; border-bottom: 1px solid #e0e0e0; color: #0073e6;">Email Id:</td>
+                            <td style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">${email}</td>
+                        </tr>
                         <tr>
                             <td style="font-size: 16px; font-weight: bold; padding: 10px 0; border-bottom: 1px solid #e0e0e0; color: #0073e6;">Password:</td>
                             <td style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">${password}</td>
