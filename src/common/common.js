@@ -250,47 +250,80 @@ export const getMonthNumber = (monthName) => {
   return months[monthName] || '';
 };
 
+// export const setAlertMessage = (type, message) => {
+//   const isMobile = window.matchMedia("(max-width: 600px)").matches;
+//   if (isMobile) {
+//     // Mobile = Compact black toast
+//     toast[type](message, {
+//       className: "compact-toast",
+//       bodyClassName: "compact-toast-body",
+//       position: "bottom-center",
+//       style: {
+//         fontSize: "14px",
+//         fontFamily: "Graphik-regular",
+//         fontWeight: "normal",
+//         color: "#FFFFFF",
+//         marginBottom: "20px",
+//         marginLeft: "auto",
+//         marginRight: "auto",
+//         // width: 'auto',
+//         // minWidth: '70px',
+//         width: isMobile ? "85%" : "450px",
+//       },
+//     });
+//   } else {
+//     // Desktop = Default Toastify style
+//     toast[type](message, {
+//       position: "bottom-left",
+//       theme: "light",
+//       autoClose: 3000,
+//       style: {
+//         fontSize: "14px",
+//         fontFamily: "Graphik-regular",
+//         fontWeight: "normal",
+//         color: "#000000ff",
+//         marginBottom: "0px",
+//         marginLeft: "0px",
+//         marginRight: "0",
+//         width: "450px",
+//       },
+//     });
+//   }
+// };
+
 export const setAlertMessage = (type, message) => {
-  const isMobile = window.matchMedia("(max-width: 600px)").matches;
-  if (isMobile) {
-    // Mobile = Compact black toast
-    toast[type](message, {
-      className: "compact-toast",
-      bodyClassName: "compact-toast-body",
-      position: "bottom-center",
-      style: {
-        fontSize: "14px",
-        fontFamily: "Graphik-regular",
-        fontWeight: "normal",
-        color: "#FFFFFF",
-        marginBottom: "20px",
-        marginLeft: "auto",
-        marginRight: "auto",
-        // width: 'auto',
-        // minWidth: '70px',
-        width: isMobile ? "85%" : "450px",
-      },
-    });
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const commonOptions = {
+    position: isMobile ? "bottom-center" : "bottom-left",
+    style: {
+      fontSize: "14px",
+      fontFamily: "Graphik-regular",
+      fontWeight: "normal",
+      color: "#333333",
+      marginBottom: isMobile ? "20px" : "0px",
+      marginLeft: isMobile ? "auto" : "0px",
+      marginRight: isMobile ? "auto" : "0",
+      // width: 'auto',
+      // minWidth: '70px',
+      width: isMobile ? "85%" : "350px",
+      background: "#FFFFFF",
+      color:
+        type === "error"
+          ? "#d32f2f"   // red
+          : type === "warn"
+          ? "#ed6c02"   // orange
+          : "#2e7d32",  // green
+    },
+  };
+
+  if (type === "error") {
+    toast.error(message, commonOptions);
+  } else if (type === "warn") {
+    toast.warn(message, commonOptions);
   } else {
-    // Desktop = Default Toastify style
-    toast[type](message, {
-      position: "bottom-left",
-      theme: "light",
-      autoClose: 3000,
-      style: {
-        fontSize: "14px",
-        fontFamily: "Graphik-regular",
-        fontWeight: "normal",
-        color: "#000000ff",
-        marginBottom: "0px",
-        marginLeft: "0px",
-        marginRight: "0",
-        width: "450px",
-      },
-    });
+    toast.success(message, commonOptions);
   }
 };
-
 
 export function generateRandomCode() {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

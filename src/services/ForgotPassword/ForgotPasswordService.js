@@ -26,6 +26,7 @@ export const forgotPasswordService = async(email) => {
   const normalisedEmail = email?.toLowerCase().trim();
   if(!normalisedEmail){
     common.setAlertMessage('Email is required');
+    return;
   }
   const hashCode = common.generateHash(normalisedEmail);
   const {data, error} = await supabase.from("Users").select('*').eq("hashCode", hashCode).maybeSingle();
@@ -43,12 +44,18 @@ export const forgotPasswordService = async(email) => {
   const decryptedEmail = common.decryptValue(data.email);
   const decryptedPassword = common.decryptValue(data.password);
 
-  await sendPasswordToMail(
+  const mailResult = await sendPasswordToMail(
     decryptedEmail,
     data.companyCode,
     data.empCode,
     decryptedPassword,
     data.companyName);
 
-  return 'success';
+     if (mailResult !== "success") {
+      common.setAlertMessage("error", "Failed to send email. Try again later.");
+      return;
+    }
+
+    common.setAlertMessage("success", "Password sent to your email");
+    return "success";
 }
