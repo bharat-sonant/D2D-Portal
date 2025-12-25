@@ -1,26 +1,50 @@
 import React, { useState } from "react";
-import styles from "../../assets/css/modal.module.css"
+import styles from "../../assets/css/modal.module.css";
 import { images } from "../../assets/css/imagePath";
 import { FaSpinner } from "react-icons/fa";
-import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction"
+import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
 
 const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+
+  // 🔹 Individual errors (instead of one common error)
+  const [oldPasswordError, setOldPasswordError] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const handleChangePassword = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      setError("All fields are required");
-      return;
+    // clear previous errors
+    setOldPasswordError("");
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+
+    let hasError = false;
+
+    if (!oldPassword) {
+      setOldPasswordError("Old password is required");
+      hasError = true;
     }
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match");
-      return;
+    if (!newPassword) {
+      setNewPasswordError("New password is required");
+      hasError = true;
     }
+
+    if (!confirmPassword) {
+      setConfirmPasswordError("Confirm password is required");
+      hasError = true;
+    }
+
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+      setConfirmPasswordError("New password and confirm password do not match");
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     const userId = localStorage.getItem("userId");
 
@@ -29,8 +53,21 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       oldPassword,
       newPassword,
       setLoading,
-      setError,
+      (errorMsg) => {
+        // 🔹 Map backend error to correct field
+        if (errorMsg?.toLowerCase().includes("current") || errorMsg?.toLowerCase().includes("old")) {
+          setOldPasswordError(errorMsg);
+        } else if (errorMsg?.toLowerCase().includes("same")) {
+          setNewPasswordError(errorMsg);
+        } else {
+          setNewPasswordError(errorMsg);
+        }
+      },
       () => {
+        // ✅ success (same behaviour)
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
         setShowChangePassword(false);
       }
     );
@@ -66,17 +103,20 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    oldPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Enter old password"
                   value={oldPassword}
                   onChange={(e) => {
                     setOldPassword(e.target.value);
-                    if (error) setError("");
+                    if (oldPasswordError) setOldPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {oldPasswordError && (
+              <div className={styles.errorMessage}>{oldPasswordError}</div>
+            )}
           </div>
 
           {/* New Password */}
@@ -89,17 +129,20 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    newPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => {
                     setNewPassword(e.target.value);
-                    if (error) setError("");
+                    if (newPasswordError) setNewPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {newPasswordError && (
+              <div className={styles.errorMessage}>{newPasswordError}</div>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -112,22 +155,21 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    confirmPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);
-                    if (error) setError("");
+                    if (confirmPasswordError) setConfirmPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {confirmPasswordError && (
+              <div className={styles.errorMessage}>{confirmPasswordError}</div>
+            )}
           </div>
-
-          {error && (
-            <div className={styles.errorMessage}>{error}</div>
-          )}
 
           <button
             type="button"
@@ -151,4 +193,3 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
 };
 
 export default ChangePassword;
-
