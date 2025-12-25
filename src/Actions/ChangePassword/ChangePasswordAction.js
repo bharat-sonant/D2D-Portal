@@ -31,17 +31,7 @@ export const changePasswordAction = async (
       throw new Error(resp.error);
     }
 
-    // Fetch user data to get email and other details for sending email
-    try {
-      const userResp = await getDataByColumnName("Users", "id", userId);
 
-      if (userResp.success && userResp.data) {
-        const userEmail = decryptValue(userResp.data.email);
-      }
-    } catch (mailError) {
-      console.error("Failed to send password change email:", mailError);
-      // Do not block the main password change flow
-    }
 
     // Success callback (close modal, show toast, etc.)
     if (onSuccess) onSuccess(resp.message);
