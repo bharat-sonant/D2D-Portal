@@ -1,26 +1,68 @@
 import React, { useState } from "react";
-import styles from "../../assets/css/modal.module.css"
+import styles from "../../assets/css/modal.module.css";
 import { images } from "../../assets/css/imagePath";
 import { FaSpinner } from "react-icons/fa";
-import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction"
+import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
 
 const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+
+  const [oldPasswordError, setOldPasswordError] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔹 Reset everything
+  const resetFields = () => {
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+    setOldPasswordError("");
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+    setSuccessMessage("");
+  };
+
+  // 🔹 Close modal
+  const handleClose = () => {
+    resetFields();
+    setShowChangePassword(false);
+  };
+
   const handleChangePassword = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      setError("All fields are required");
-      return;
+    setOldPasswordError("");
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+    setSuccessMessage("");
+
+    let hasError = false;
+
+    if (!oldPassword) {
+      setOldPasswordError("Old password is required");
+      hasError = true;
     }
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match");
-      return;
+    if (!newPassword) {
+      setNewPasswordError("New password is required");
+      hasError = true;
     }
+
+    if (!confirmPassword) {
+      setConfirmPasswordError("Confirm password is required");
+      hasError = true;
+    }
+
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+      setConfirmPasswordError("New password and confirm password do not match");
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     const userId = localStorage.getItem("userId");
 
@@ -29,9 +71,25 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       oldPassword,
       newPassword,
       setLoading,
-      setError,
+      (errorMsg) => {
+        const msg = errorMsg?.toLowerCase() || "";
+
+        if (msg.includes("same as current")) {
+          setNewPasswordError(errorMsg);
+        } else if (msg.includes("current") || msg.includes("old")) {
+          setOldPasswordError(errorMsg);
+        } else {
+          setNewPasswordError(errorMsg);
+        }
+      },
       () => {
-        setShowChangePassword(false);
+        // ✅ SUCCESS
+        setSuccessMessage("Password updated successfully");
+
+        // close modal after short delay
+        setTimeout(() => {
+          handleClose();
+        }, 1500);
       }
     );
   };
@@ -43,10 +101,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Change Password</p>
-          <button
-            className={styles.closeBtn}
-            onClick={() => setShowChangePassword(false)}
-          >
+          <button className={styles.closeBtn} onClick={handleClose}>
             <img
               src={images.iconClose}
               className={styles.iconClose}
@@ -66,17 +121,20 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    oldPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Enter old password"
                   value={oldPassword}
                   onChange={(e) => {
                     setOldPassword(e.target.value);
-                    if (error) setError("");
+                    if (oldPasswordError) setOldPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {oldPasswordError && (
+              <div className={styles.errorMessage}>{oldPasswordError}</div>
+            )}
           </div>
 
           {/* New Password */}
@@ -89,17 +147,20 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    newPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => {
                     setNewPassword(e.target.value);
-                    if (error) setError("");
+                    if (newPasswordError) setNewPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {newPasswordError && (
+              <div className={styles.errorMessage}>{newPasswordError}</div>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -112,21 +173,33 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <input
                   type="password"
                   className={`form-control ${styles.formTextbox} ${
-                    error ? styles.errorInput : ""
+                    confirmPasswordError ? styles.errorInput : ""
                   }`}
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);
-                    if (error) setError("");
+                    if (confirmPasswordError)
+                      setConfirmPasswordError("");
                   }}
                 />
               </div>
             </div>
+            {confirmPasswordError && (
+              <div className={styles.errorMessage}>
+                {confirmPasswordError}
+              </div>
+            )}
           </div>
 
-          {error && (
-            <div className={styles.errorMessage}>{error}</div>
+          {/* ✅ SUCCESS MESSAGE */}
+          {successMessage && (
+            <div
+              className={styles.errorMessage}
+              style={{ color: "green" }}
+            >
+              {successMessage}
+            </div>
           )}
 
           <button
@@ -151,4 +224,3 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
 };
 
 export default ChangePassword;
-
