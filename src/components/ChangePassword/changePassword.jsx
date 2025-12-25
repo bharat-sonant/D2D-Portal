@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styles from "../../assets/css/modal.module.css";
 import { images } from "../../assets/css/imagePath";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
 import { setAlertMessage } from "../../common/common";
 import changePassStyle from "../../components/ChangePassword/ChangePassword.module.css";
-import {getPasswordChecks,getPasswordStrength} from "../../common/common";
+import { getPasswordChecks, getPasswordStrength } from "../../common/common";
 
 const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
@@ -18,12 +18,15 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // 🔹 Strong password regex
   const strongPasswordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,20}$/;
 
-      // #* ADDED: live password checks (UI only, validation unchanged)
+  // #* ADDED: live password checks (UI only, validation unchanged)
   const passwordChecks = getPasswordChecks(newPassword); // #*
   const passwordStrength = getPasswordStrength(passwordChecks); // #*
 
@@ -60,7 +63,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       hasError = true;
     } else if (!strongPasswordRegex.test(newPassword)) {
       setNewPasswordError(
-        "Password must be 8–20 characters and include uppercase, lowercase, number and special character"
+        "Password must be 8–20 characters and include uppercase, lowercase, number and special character (@ $ ! % * ? & #)"
       );
       hasError = true;
     }
@@ -120,12 +123,11 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               <div className={styles.textboxLeft} style={{ width: "146px" }}>
                 Old Password
               </div>
-              <div className={styles.textboxRight}>
+              <div className={styles.textboxRight} style={{ position: "relative" }}>
                 <input
-                  type="password"
-                  className={`form-control ${styles.formTextbox} ${
-                    oldPasswordError ? styles.errorInput : ""
-                  }`}
+                  type={showOldPassword ? "text" : "password"}
+                  className={`form-control ${styles.formTextbox} ${oldPasswordError ? styles.errorInput : ""
+                    }`}
                   placeholder="Enter old password"
                   value={oldPassword}
                   onChange={(e) => {
@@ -133,6 +135,19 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                     if (oldPasswordError) setOldPasswordError("");
                   }}
                 />
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    color: "#6c757d",
+                  }}
+                  onClick={() => setShowOldPassword(!showOldPassword)}
+                >
+                  {showOldPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
               </div>
             </div>
             {oldPasswordError && (
@@ -146,12 +161,11 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               <div className={styles.textboxLeft} style={{ width: "146px" }}>
                 New Password
               </div>
-              <div className={styles.textboxRight}>
+              <div className={styles.textboxRight} style={{ position: "relative" }}>
                 <input
-                  type="password"
-                  className={`form-control ${styles.formTextbox} ${
-                    newPasswordError ? styles.errorInput : ""
-                  }`}
+                  type={showNewPassword ? "text" : "password"}
+                  className={`form-control ${styles.formTextbox} ${newPasswordError ? styles.errorInput : ""
+                    }`}
                   placeholder="Enter new password"
                   value={newPassword}
                   onFocus={() => setShowPasswordHint(true)}
@@ -161,12 +175,23 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                     if (newPasswordError) setNewPasswordError("");
                   }}
                 />
-
-               
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    color: "#6c757d",
+                  }}
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
               </div>
             </div>
-             {/* 🔔 Password suggestion alert */}
-               {showPasswordHint && (
+            {/* 🔔 Password suggestion alert */}
+            {showPasswordHint && (
               <div className={changePassStyle.passwordHintBox}>
                 <ul>
                   <li className={passwordChecks.length ? changePassStyle.valid : changePassStyle.invalid}>
@@ -206,12 +231,11 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               <div className={styles.textboxLeft} style={{ width: "146px" }}>
                 Confirm Password
               </div>
-              <div className={styles.textboxRight}>
+              <div className={styles.textboxRight} style={{ position: "relative" }}>
                 <input
-                  type="password"
-                  className={`form-control ${styles.formTextbox} ${
-                    confirmPasswordError ? styles.errorInput : ""
-                  }`}
+                  type={showConfirmPassword ? "text" : "password"}
+                  className={`form-control ${styles.formTextbox} ${confirmPasswordError ? styles.errorInput : ""
+                    }`}
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => {
@@ -220,6 +244,19 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                       setConfirmPasswordError("");
                   }}
                 />
+                <span
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    color: "#6c757d",
+                  }}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
               </div>
             </div>
             {confirmPasswordError && (

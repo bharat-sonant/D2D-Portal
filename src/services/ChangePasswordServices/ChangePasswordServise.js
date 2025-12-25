@@ -17,9 +17,11 @@ export const changeUserPassword = async (userId, currentPassword, newPassword) =
             throw new Error("User not found");
         }
 
-        const userData = resp.data;
+        const userData = resp.data[0];
         const decryptedPassword = decryptValue(userData.password);
-// console.log(userData)
+        const email = decryptValue(userData.email);
+        const name = userData.name;
+        // console.log(userData)
         // Validate current password
         if (decryptedPassword !== currentPassword) {
             throw new Error("Invalid current password");
@@ -44,10 +46,10 @@ export const changeUserPassword = async (userId, currentPassword, newPassword) =
         if (!updateResp.success) {
             throw new Error("Failed to update password");
         }
-// console.log(decryptValue(userData.email))
+        // console.log(decryptValue(userData.email))
         // Send password change success email
         try {
-            await sendChangePasswordToMail(decryptValue(userData.email), userData.name, newPassword);
+            await sendChangePasswordToMail(email, name, newPassword);
         } catch (mailError) {
             console.error("Failed to send password change email:", mailError);
             // Do not block success response if email fails
