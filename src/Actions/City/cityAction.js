@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { getCityData, saveCityData, saveCityWiseWardData, updateCityStatus } from "../../services/CityService/cityServices";
+import { getCityData, getCityWisewardList, saveCityData, saveCityWiseWardData, updateCityStatus } from "../../services/CityService/cityServices";
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
@@ -55,12 +55,13 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
     }
 }
 
-export const getCityList=async (setSelectedCity,setCityList,selectedCity)=>{
+export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWardList)=>{
       const response = await getCityData();
        if(response.status==='success'){
         let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.CityId);
            setSelectedCity(currentSelected || response.data[0]);
-        setCityList(response.data);
+           getwardList(response.data[0]?.CityId,setWardList)
+           setCityList(response.data);
        }else{
         setSelectedCity(null)
        setCityList([]);
@@ -100,7 +101,7 @@ export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)
 
 
 
-export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,resetStateValues) => {
+export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,resetStateValues,setWardList) => {
     let isValid = true;
     setWardNumberError("");
     if(!form?.Ward?.trim()){
@@ -123,6 +124,7 @@ export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,re
              setLoading(false);
             return;
             }
+              getwardList(cityId,setWardList)
             resetStateValues();
              common.setAlertMessage("success", "Ward added successfully");
         } catch (err) {
@@ -141,4 +143,14 @@ export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,re
             }
         }
     }
+}
+
+
+export const getwardList=async (city_Id,setWardList)=>{
+   let response= await getCityWisewardList(city_Id)
+   if(response.status==='success'){
+    setWardList(response.data)
+   }else{
+    setWardList([])
+   }
 }

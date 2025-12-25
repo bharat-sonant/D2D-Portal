@@ -3,8 +3,7 @@ import style from "../../assets/css/City/wardList.module.css"
 
 const WardList = (props) => {
  
-    const wardList = [];
-
+   
 
   return (
     <div className={style.Detailscard}>
@@ -23,9 +22,9 @@ const WardList = (props) => {
       </div>
 
       <div className={style.Scroll_List}>
-        {wardList&& wardList.length > 0 ? (
+        {props.wardList&& props.wardList.length > 0 ? (
           <ul className={style.listLine}>
-            {wardList.map((ward, index) => (
+            {props.wardList.map((ward, index) => (
               <li key={index} className={style.list_item}>
                 <span className={style.designationName}>
                   {" "}
@@ -39,8 +38,6 @@ const WardList = (props) => {
                      
                     />
            
-                 
-                  
                       <img
                         src={images.iconDeleted}
                         className={style.edit_icon}

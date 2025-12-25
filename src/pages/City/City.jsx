@@ -18,8 +18,9 @@ const City = () => {
   const [onEdit, setOnEdit] = useState(false);
   const [openSettings,setOpenSettings] = useState(false);
   const [statusConfirmation,setStatusConfirmation] = useState({status:false,data:null,setToggle:()=>{}});
+  const [wardList,setWardList]=useState([])
   const loadCities = async () => {
-    getCityList(setSelectedCity,setCityList,selectedCity)
+    getCityList(setSelectedCity,setCityList,selectedCity,setWardList)
   };
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const City = () => {
             cityList={cityList}
             selectedCity={selectedCity}
             setSelectedCity={setSelectedCity}
+            setWardList={setWardList}
           />
         </div>
          
@@ -127,7 +129,7 @@ const City = () => {
               </div>
             </div>
           </div>
-           <WardList setOpenAddWardPopUp={setOpenAddWardPopUp}/>
+           <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}/>
         </div>
         )}
       </div>
@@ -161,6 +163,7 @@ const City = () => {
             onEdit={onEdit}
             setOnEdit={setOnEdit}
             selectedCity={selectedCity}
+             setWardList={setWardList}
           />
         )}
       </div>

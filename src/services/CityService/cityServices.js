@@ -52,7 +52,6 @@ export const updateCityStatus=async(cityId,Status)=>{
 
 
 export const saveCityWiseWardData=(wardData,wardId)=>{
- 
        return new Promise(async(resolve,reject)=>{
         if(!wardData && wardData?.Ward){
            return reject('Invalid parameters');
@@ -64,4 +63,13 @@ export const saveCityWiseWardData=(wardData,wardId)=>{
          const response = !wardId ? await sbs.saveData('Wards', wardData) : await sbs.updateData('Wards','id',wardId,wardData);
         return !response?.success? reject(response?.err || response?.error):resolve(response);
     });
+}
+
+export const getCityWisewardList=async (city_Id)=>{
+    const result = await sbs.getDataByColumnName('Wards','city_Id',city_Id)
+    if(result.success){
+  return { status: 'success', message: 'Ward data fetched successfully', data: result.data };
+    }else{
+       return { status: 'error', message: result.error };
+    } 
 }
