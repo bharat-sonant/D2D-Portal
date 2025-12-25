@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { FaTasks } from "react-icons/fa";
 import { Car } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
@@ -365,37 +364,6 @@ const handleLogout = () => {
 
             <Link
               aria-current="page"
-              to="/tasks"
-              title="Tasks"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/tasks" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/tasks"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <FaTasks
-                className={`${styles.iconNav} ${location.pathname === "/tasks"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color: location.pathname === "/tasks" ? "#000000" : "#707070",
-                }}
-              >
-                Tasks
-              </span>
-            </Link>
-
-            <Link
-              aria-current="page"
               to="/vehicle"
               title="Vehicles"
               className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
@@ -458,10 +426,6 @@ const handleLogout = () => {
           </ul>
 
           {city && (
-            // <div className={styles.cityBadge}>
-            //   <span className={`avatar ${styles.userBG}`}>{firstchar}{secondchar}</span>
-            //   <span className={styles.cityName}>{storedName}</span>
-            // </div>
             <div className={`dropdown ${styles.cityBadge}`}>
               <button
                 className={`btn dropdown-toggle ${styles.cityBadgeBtn}`}

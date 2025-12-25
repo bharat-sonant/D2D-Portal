@@ -11,7 +11,6 @@ import Settings from "../MobileAppPages/Settings/Pages/Settings";
 import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
 import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
-import Task from "../MobileAppPages/Tasks/Pages/Tasks/Task";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
@@ -111,15 +110,6 @@ const RouterComponent = () => {
           }
         />
 
-        <Route
-          path="/tasks"
-          element={
-            <ProtectedRouter>
-              <MainLayout />
-              <Task />
-            </ProtectedRouter>
-          }
-        />
 
         <Route
           path="/duty-start"
