@@ -51,6 +51,5 @@ export const forgotPasswordService = async(email) => {
       return;
     }
 
-    common.setAlertMessage("success", "Password sent to your email");
     return "success";
 }
