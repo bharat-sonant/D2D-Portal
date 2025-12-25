@@ -103,3 +103,52 @@ export const sendPasswordTemplate = (password) => {
     </html>
   `;
 };
+
+export const sendChangePasswordTemplate = (empCode, newPassword) => {
+    return `
+    <html>
+        <body style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                <div style="background-color: #0073e6; padding: 20px; text-align: center;">
+                    <h1 style="color: #ffffff; font-size: 24px; margin: 0;">Password Changed Successfully</h1>
+                </div>
+                <div style="padding: 30px; color: #333; text-align: left;">
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                        Dear Employee,
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                        Your password has been successfully updated for your WeVOIS Labs Pvt. Ltd. account. Below are your updated login details:
+                    </p>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        
+                        <tr>
+                            <td style="font-size: 16px; font-weight: bold; padding: 10px 0; border-bottom: 1px solid #e0e0e0; color: #0073e6;">User Name:</td>
+                            <td style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">${empCode}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 16px; font-weight: bold; padding: 10px 0; border-bottom: 1px solid #e0e0e0; color: #0073e6;">New Password:</td>
+                            <td style="font-size: 16px; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">${newPassword}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                        Please use this new password to log in. For security reasons, we recommend changing your password periodically and not sharing it with anyone.
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 0;">
+                        If you did not request this password change, please contact our support team immediately.
+                    </p>
+                    <br>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 0;">
+                        Best regards, <br>
+                        <strong>WeVOIS Labs Pvt. Ltd. Team</strong>
+                    </p>
+                </div>
+                <div style="background-color: #f0f0f0; padding: 20px; text-align: center;">
+                    <p style="font-size: 12px; color: #888; margin: 0;">
+                        If you have any questions, feel free to contact us at <a href="mailto:support@wevois.com" style="color: #0073e6; text-decoration: none;">support@wevois.com</a>.
+                    </p>
+                </div>
+            </div>
+        </body>
+    </html>
+    `;
+};

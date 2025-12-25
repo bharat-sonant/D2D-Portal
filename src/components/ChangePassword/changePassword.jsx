@@ -3,6 +3,7 @@ import styles from "../../assets/css/modal.module.css";
 import { images } from "../../assets/css/imagePath";
 import { FaSpinner } from "react-icons/fa";
 import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
+import { setAlertMessage } from "../../common/common";
 
 const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
@@ -12,7 +13,6 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -83,10 +83,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
         }
       },
       () => {
-        // ✅ SUCCESS
-        setSuccessMessage("Password updated successfully");
-
-        // close modal after short delay
+        setAlertMessage('success',"Password updated successfully");
         setTimeout(() => {
           handleClose();
         }, 1500);
@@ -191,17 +188,6 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               </div>
             )}
           </div>
-
-          {/* ✅ SUCCESS MESSAGE */}
-          {successMessage && (
-            <div
-              className={styles.errorMessage}
-              style={{ color: "green" }}
-            >
-              {successMessage}
-            </div>
-          )}
-
           <button
             type="button"
             className={`mt-3 ${styles.btnSave}`}
