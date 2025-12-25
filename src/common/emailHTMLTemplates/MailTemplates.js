@@ -92,11 +92,11 @@ export const sendPasswordTemplate = (password) => {
             </p>
           </div>
 
-          <div style="padding: 15px; background: #f0f0f0; text-align: center;">
-            <p style="font-size: 12px; color: #777777; margin: 0;">
-              This is an automated message. Please do not reply.
-            </p>
-          </div>
+          <div style="background-color: #f0f0f0; padding: 20px; text-align: center;">
+                    <p style="font-size: 12px; color: #888; margin: 0;">
+                        If you have any questions, feel free to contact us at <a href="mailto:bharat.sonant@gmail.com" style="color: #0073e6; text-decoration: none;">bharat.sonant@gmail.com</a>.
+                    </p>
+                </div>
 
         </div>
       </body>
