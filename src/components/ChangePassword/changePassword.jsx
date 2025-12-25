@@ -9,18 +9,36 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 🔹 Individual errors (instead of one common error)
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = async () => {
-    // clear previous errors
+  // 🔹 Reset everything
+  const resetFields = () => {
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
     setOldPasswordError("");
     setNewPasswordError("");
     setConfirmPasswordError("");
+    setSuccessMessage("");
+  };
+
+  // 🔹 Close modal
+  const handleClose = () => {
+    resetFields();
+    setShowChangePassword(false);
+  };
+
+  const handleChangePassword = async () => {
+    setOldPasswordError("");
+    setNewPasswordError("");
+    setConfirmPasswordError("");
+    setSuccessMessage("");
 
     let hasError = false;
 
@@ -54,21 +72,24 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       newPassword,
       setLoading,
       (errorMsg) => {
-        // 🔹 Map backend error to correct field
-        if (errorMsg?.toLowerCase().includes("current") || errorMsg?.toLowerCase().includes("old")) {
-          setOldPasswordError(errorMsg);
-        } else if (errorMsg?.toLowerCase().includes("same")) {
+        const msg = errorMsg?.toLowerCase() || "";
+
+        if (msg.includes("same as current")) {
           setNewPasswordError(errorMsg);
+        } else if (msg.includes("current") || msg.includes("old")) {
+          setOldPasswordError(errorMsg);
         } else {
           setNewPasswordError(errorMsg);
         }
       },
       () => {
-        // ✅ success (same behaviour)
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setShowChangePassword(false);
+        // ✅ SUCCESS
+        setSuccessMessage("Password updated successfully");
+
+        // close modal after short delay
+        setTimeout(() => {
+          handleClose();
+        }, 1500);
       }
     );
   };
@@ -80,10 +101,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Change Password</p>
-          <button
-            className={styles.closeBtn}
-            onClick={() => setShowChangePassword(false)}
-          >
+          <button className={styles.closeBtn} onClick={handleClose}>
             <img
               src={images.iconClose}
               className={styles.iconClose}
@@ -161,15 +179,28 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);
-                    if (confirmPasswordError) setConfirmPasswordError("");
+                    if (confirmPasswordError)
+                      setConfirmPasswordError("");
                   }}
                 />
               </div>
             </div>
             {confirmPasswordError && (
-              <div className={styles.errorMessage}>{confirmPasswordError}</div>
+              <div className={styles.errorMessage}>
+                {confirmPasswordError}
+              </div>
             )}
           </div>
+
+          {/* ✅ SUCCESS MESSAGE */}
+          {successMessage && (
+            <div
+              className={styles.errorMessage}
+              style={{ color: "green" }}
+            >
+              {successMessage}
+            </div>
+          )}
 
           <button
             type="button"
