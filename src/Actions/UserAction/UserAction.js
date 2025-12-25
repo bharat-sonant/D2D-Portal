@@ -208,7 +208,7 @@ export const filterUserListAction=(usersList,searchTerm,setSelectedUser)=>{
     return list;
 }
 
-export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter,setSelectedUser) => {
+export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter,setSelectedUser,setUsers) => {
   if (!activeInactiveUserList?.length) {
     setFilteredUsersList([]);
     return;
@@ -221,5 +221,6 @@ export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,st
     return statusMatch && typeMatch;
   });
     setSelectedUser(filteredList[0]);
-  setFilteredUsersList(filteredList);
+    setFilteredUsersList(filteredList);
+    setUsers(filteredList)
 };

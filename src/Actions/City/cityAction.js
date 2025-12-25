@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { getCityData, saveCityData, updateCityStatus } from "../../services/CityService/cityServices";
+import { getCityData, saveCityData, saveCityWiseWardData, updateCityStatus } from "../../services/CityService/cityServices";
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
@@ -96,4 +96,49 @@ export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)
     setSelectedCity(currentSelected || list[0] || null);
 
     return list;
+}
+
+
+
+export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,resetStateValues) => {
+    let isValid = true;
+    setWardNumberError("");
+    if(!form?.Ward?.trim()){
+        setWardNumberError("Ward name is required");
+        isValid = false;
+    }
+    if (isValid) {
+        setLoading(true);
+        let wardDetail = {
+              name:form?.Ward?.trim(),
+              city_Id:cityId,
+              created_At: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+              created_By: localStorage.getItem('name')
+        }
+       
+        try {
+           let response =  await saveCityWiseWardData(wardDetail,'')
+            if(response.duplicatefound){
+            setWardNumberError(response.msg);
+             setLoading(false);
+            return;
+            }
+            resetStateValues();
+             common.setAlertMessage("success", "Ward added successfully");
+        } catch (err) {
+            setLoading(false);
+                  if (err?.code === "23505") {
+                if (err?.details?.includes("CityCode")) {
+                    setWardNumberError("City code already exists!");
+                    return;
+                }
+                
+                 else {
+                    common.setAlertMessage("error", "Duplicate value exists!");
+                }
+            } else {
+                common.setAlertMessage("error", "Something went wrong!");
+            }
+        }
+    }
 }

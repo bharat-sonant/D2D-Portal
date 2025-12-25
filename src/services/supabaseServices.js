@@ -64,6 +64,18 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
+export const checkDuplicayInDb = async (cityId,wardName) => {
+  let query = supabase.from('Wards').select('id').eq('city_Id', cityId).ilike('name', wardName);
+  // if (excludeId) {
+  //   query = query.neq('id', excludeId);
+  // }
+  const { data, error } = await query;
+  if (error) {
+    console.error('Duplicate check failed:', error);
+    throw error;
+  }
+  return data.length > 0;
+};
 export const login = async (email, password) => {
   // DB se user fetch karo
   const hashCode = generateHash(email?.toLowerCase().trim());

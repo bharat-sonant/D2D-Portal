@@ -7,9 +7,12 @@ import SettingsBtn from "../../components/Common/SettingsBtn";
 import CitySettings from "../../components/City/CitySettings";
 import ConfirmationModal from "../../components/confirmationModal/ConfirmationModal";
 import { changeCityStatusAction, getCityList } from "../../Actions/City/cityAction";
+import WardList from "../../components/City/WardList";
+import AddWard from "../../components/City/AddWard";
 
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
+  const [openAddWardPopUp,setOpenAddWardPopUp]=useState(false)
   const [cityList, setCityList] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
@@ -63,8 +66,9 @@ const City = () => {
             setSelectedCity={setSelectedCity}
           />
         </div>
-        {selectedCity!==null&&(
-              <div className={TaskStyles.employeeRight}>
+         
+         {selectedCity!==null&&(
+          <div className={TaskStyles.employeeRight}>
           <div
             style={{
               width: "25%",
@@ -123,10 +127,11 @@ const City = () => {
               </div>
             </div>
           </div>
+           <WardList setOpenAddWardPopUp={setOpenAddWardPopUp}/>
         </div>
         )}
-      
       </div>
+     
       <div className={GlobalStyles.mainSections}>
         {showCanvas && (
           <AddCity
@@ -135,6 +140,7 @@ const City = () => {
             loadCities={loadCities}
             onEdit={onEdit}
             setOnEdit={setOnEdit}
+            
           />
         )}
       </div>
@@ -147,6 +153,17 @@ const City = () => {
           setStatusConfirmation={setStatusConfirmation}
         />
       )}
+        <div className={GlobalStyles.mainSections}>
+        {openAddWardPopUp && (
+          <AddWard
+            openAddWardPopUp={openAddWardPopUp}
+            setOpenAddWardPopUp={setOpenAddWardPopUp}
+            onEdit={onEdit}
+            setOnEdit={setOnEdit}
+            selectedCity={selectedCity}
+          />
+        )}
+      </div>
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}

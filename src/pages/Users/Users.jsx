@@ -53,7 +53,7 @@ const User = () => {
             setSelectedUser={setSelectedUser}
             loading={loading}
             activeInactiveUserList={activeInactiveUserList}
-           
+            setUsers={setUsers}
           />
         </div>
         <div className={TaskStyles.employeeRight} style={{marginLeft:'110px'}}>

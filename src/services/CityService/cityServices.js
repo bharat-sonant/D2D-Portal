@@ -50,3 +50,18 @@ export const updateCityStatus=async(cityId,Status)=>{
     })
 }
 
+
+export const saveCityWiseWardData=(wardData,wardId)=>{
+ 
+       return new Promise(async(resolve,reject)=>{
+        if(!wardData && wardData?.Ward){
+           return reject('Invalid parameters');
+        }
+        let isDuplicateWardAvailable = await sbs.checkDuplicayInDb(wardData?.city_Id,wardData?.name)
+          if(isDuplicateWardAvailable){
+            return resolve({duplicatefound:true,msg:'Ward already available in this city '})
+          }
+         const response = !wardId ? await sbs.saveData('Wards', wardData) : await sbs.updateData('Wards','id',wardId,wardData);
+        return !response?.success? reject(response?.err || response?.error):resolve(response);
+    });
+}
