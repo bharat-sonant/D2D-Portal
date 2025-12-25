@@ -55,8 +55,7 @@ export const getDataByColumnName = async (table, column, columnValue) => {
       .from(table)
       .select("*")
       .eq(column, columnValue)
-      .single();
-
+      
     if (error || !data) throw error;
 
     return { success: true, data };

@@ -10,7 +10,7 @@ import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
 import { SiTask } from "react-icons/si";
-import { LuUsers } from "react-icons/lu";
+import { LuMonitorDot, LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
 import ChangePassword from "../components/ChangePassword/changePassword";
 
@@ -298,6 +298,38 @@ const handleLogout = () => {
                 }}
               >
                 Reports
+              </span>
+            </Link>
+
+              <Link
+              aria-current="page"
+              to="/monitoring"
+              title="Monitoring"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/monitoring" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/monitoring"
+                  ? {
+                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                    borderBottom: "2px solid #3fb2f1",
+                  }
+                  : {}
+              }
+            >
+              <LuMonitorDot
+                className={`${styles.iconNav} ${location.pathname === "/monitoring"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
+                  }`}
+              />
+              <span
+                className={styles.iconText}
+                style={{
+                  color:
+                    location.pathname === "/monitoring" ? "#000000" : "#707070",
+                }}
+              >
+                Monitoring
               </span>
             </Link>
 

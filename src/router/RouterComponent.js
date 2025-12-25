@@ -21,6 +21,7 @@ import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
 import City from "../pages/City/City";
+import Monitoring from "../pages/Monitoring/Monitoring";
 
 const RouterComponent = () => {
 
@@ -154,6 +155,16 @@ const RouterComponent = () => {
             <ProtectedRouter>
               <MainLayout />
               <TaskData />
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/monitoring"
+          element={
+            <ProtectedRouter>
+              <MainLayout />
+              <Monitoring/>
             </ProtectedRouter>
           }
         />
