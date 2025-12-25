@@ -36,7 +36,7 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
         setSelectedWard(currentSelected || wardList[0] || null);
         return wardList;
     }
-    let list = wardList?.filter((item) => item?.Ward?.trim().toLowerCase().includes(term));
+    let list = wardList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
     let currentSelected = list?.find(item=>item?.id===selectedWard?.id);
 
     setSelectedWard(currentSelected || list[0] || null);

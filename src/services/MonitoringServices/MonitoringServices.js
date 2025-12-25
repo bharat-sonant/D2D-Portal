@@ -1,8 +1,7 @@
 import * as sbs from '../supabaseServices';
 
 export const getWardData = async() => {
-  const result = await sbs.getDataByColumnName('CityWiseWard', 'CityId', '74')
-
+  const result = await sbs.getDataByColumnName('Wards', 'city_Id', '74')
   if(!result.success){
     return {status : 'error', message : result?.error}
   }

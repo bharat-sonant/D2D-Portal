@@ -44,7 +44,6 @@ const WardList = (props) => {
                         ): filteredWardList?.length > 0 ? (
                             filteredWardList?.map((ward) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={ward.id}>
-                                  {console.log(filteredWardList)}
                                     <div
                                         className={`dropdown-item ${GlobalStyles.dropdownItem}`}
                                         style={{
@@ -70,7 +69,7 @@ const WardList = (props) => {
                                             }}
                                         >
                                             <span className={`${styles.employeeName}`}>
-                                                {ward.Ward}
+                                                {ward.name}
                                             </span>
                                         </div>
                                     </div>
