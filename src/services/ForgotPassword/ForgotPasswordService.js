@@ -3,21 +3,19 @@ import axios from "axios";
 import { sendPasswordTemplate } from "../../common/emailHTMLTemplates/MailTemplates";
 import { supabase } from '../../createClient';
 
-export const sendPasswordToMail = async (to, companyCode, empCode, password, companyName) => {
+export const sendPasswordToMail = async (to, password) => {
     try {
         const url = common.MAILAPI;
-        const subject = `Your Login Credentials for ${companyName} Application`;
-        const htmlBody = sendPasswordTemplate(companyCode, empCode, password, companyName);
+        const subject = `Your Login Credentials for D2D Portal`;
+        const htmlBody = sendPasswordTemplate( password);
         const response = await axios.post(url, {
             to,
             subject,
             html: htmlBody,
         });
-        console.log('response', response)
 
         return response.status === 200 ? "success" : "failure";
     } catch (error) {
-      console.log('error in mail', error)
         throw error;
     }
 }
@@ -30,7 +28,6 @@ export const forgotPasswordService = async(email) => {
   }
   const hashCode = common.generateHash(normalisedEmail);
   const {data, error} = await supabase.from("Users").select('*').eq("hashCode", hashCode).maybeSingle();
-  console.log('data', data)
   if (error || !data) {
     common.setAlertMessage('error',"User not found");
     return;
@@ -41,15 +38,13 @@ export const forgotPasswordService = async(email) => {
     return;
   }
 
+
   const decryptedEmail = common.decryptValue(data.email);
   const decryptedPassword = common.decryptValue(data.password);
 
   const mailResult = await sendPasswordToMail(
     decryptedEmail,
-    data.companyCode,
-    data.empCode,
-    decryptedPassword,
-    data.companyName);
+    decryptedPassword,);
 
      if (mailResult !== "success") {
       common.setAlertMessage("error", "Failed to send email. Try again later.");
