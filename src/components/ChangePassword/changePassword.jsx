@@ -34,6 +34,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
     setShowChangePassword(false);
   };
 
+  // 🔹 Handle password change
   const handleChangePassword = async () => {
     setOldPasswordError("");
     setNewPasswordError("");
@@ -49,6 +50,12 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
 
     if (!newPassword) {
       setNewPasswordError("New password is required");
+      hasError = true;
+    } else if (newPassword.length < 8) {
+      setNewPasswordError("New password must be at least 8 characters long");
+      hasError = true;
+    } else if (newPassword.length > 20) {
+      setNewPasswordError("New password cannot exceed 20 characters");
       hasError = true;
     }
 
@@ -83,7 +90,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
         }
       },
       () => {
-        setAlertMessage('success',"Password updated successfully");
+        setAlertMessage('success', "Password updated successfully");
         setTimeout(() => {
           handleClose();
         }, 1500);
@@ -188,6 +195,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               </div>
             )}
           </div>
+
           <button
             type="button"
             className={`mt-3 ${styles.btnSave}`}

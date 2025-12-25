@@ -76,7 +76,7 @@ export const sendChangePasswordToMail = async (to, empCode, password) => {
             subject,
             html: htmlBody,
         });
-        console.log('response', response)
+        // console.log('response', response)
 
         return response.status === 200 ? "success" : "failure";
     } catch (error) {
