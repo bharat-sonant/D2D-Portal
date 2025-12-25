@@ -13,6 +13,7 @@ import { SiTask } from "react-icons/si";
 import { LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
 import ChangePassword from "../components/ChangePassword/changePassword";
+import { LuLayoutDashboard } from "react-icons/lu";
 
 const Topbar = ({ hideNavLinks, customLogo, customTitle }) => {
   const location = useLocation();
@@ -107,7 +108,7 @@ const handleLogout = () => {
         }}
       >
         <div className={`${styles.headerLeft}`}>
-          <a className={`${styles.companyLogo}`} href="/dashboard">
+          <a className={`${styles.companyLogo}`} href="/Dashboard">
             {storedImage !== undefined &&
               storedImage !== null &&
               storedImage !== "undefined" ? (
@@ -138,7 +139,36 @@ const handleLogout = () => {
         </div>
         <div className={`${styles.headerRight}`}>
           <ul className={styles.navbarNav}>
-            <Link
+   <Link
+              aria-current="page"
+              to="/Dashboard"
+              title="Dashboard"
+              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
+                } ${location.pathname === "/Dashboard" ? styles.activeNav : ""}`}
+              style={
+                location.pathname === "/Dashboard"
+                  ? {
+                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
+                    borderBottom: "2px solid #3fb2f1",
+                  }
+                  : {}
+              }
+            >
+              <LuLayoutDashboard
+                className={`${styles.iconNav} ${location.pathname === "/Dashboard"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
+                  }`}
+             />
+              <span
+                className={styles.iconText}
+                style={{
+                  color: location.pathname === "/Dashboard" ? "#000000" : "#707070",
+                }}
+              >
+                Dashboard
+              </span>
+            </Link>            <Link
               aria-current="page"
               to="/users"
               title="users"
