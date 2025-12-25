@@ -599,3 +599,22 @@ export const getCityDetailsJSON = () => {
     });
   });
 }
+
+
+
+// change passwodd input
+
+export const getPasswordChecks = (password = "") => ({
+  length: password.length >= 8 && password.length <= 20,
+  uppercase: /[A-Z]/.test(password),
+  lowercase: /[a-z]/.test(password),
+  number: /\d/.test(password),
+  special: /[@$!%*?&#]/.test(password),
+});
+
+export const getPasswordStrength = (checks) => {
+  const passed = Object.values(checks).filter(Boolean).length;
+  if (passed <= 2) return { label: "Weak", percent: 30 };
+  if (passed <= 4) return { label: "Medium", percent: 60 };
+  return { label: "Strong", percent: 100 };
+};

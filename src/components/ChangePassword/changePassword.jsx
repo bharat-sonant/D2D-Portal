@@ -4,11 +4,14 @@ import { images } from "../../assets/css/imagePath";
 import { FaSpinner } from "react-icons/fa";
 import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
 import { setAlertMessage } from "../../common/common";
+import changePassStyle from "../../components/ChangePassword/ChangePassword.module.css";
+import {getPasswordChecks,getPasswordStrength} from "../../common/common";
 
 const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswordHint, setShowPasswordHint] = useState(false);
 
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
@@ -16,25 +19,29 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Reset everything
+  // 🔹 Strong password regex
+  const strongPasswordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,20}$/;
+
+      // #* ADDED: live password checks (UI only, validation unchanged)
+  const passwordChecks = getPasswordChecks(newPassword); // #*
+  const passwordStrength = getPasswordStrength(passwordChecks); // #*
+
   const resetFields = () => {
     setOldPassword("");
     setNewPassword("");
     setConfirmPassword("");
-
     setOldPasswordError("");
     setNewPasswordError("");
     setConfirmPasswordError("");
     setSuccessMessage("");
   };
 
-  // 🔹 Close modal
   const handleClose = () => {
     resetFields();
     setShowChangePassword(false);
   };
 
-  // 🔹 Handle password change
   const handleChangePassword = async () => {
     setOldPasswordError("");
     setNewPasswordError("");
@@ -51,11 +58,10 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
     if (!newPassword) {
       setNewPasswordError("New password is required");
       hasError = true;
-    } else if (newPassword.length < 8) {
-      setNewPasswordError("New password must be at least 8 characters long");
-      hasError = true;
-    } else if (newPassword.length > 20) {
-      setNewPasswordError("New password cannot exceed 20 characters");
+    } else if (!strongPasswordRegex.test(newPassword)) {
+      setNewPasswordError(
+        "Password must be 8–20 characters and include uppercase, lowercase, number and special character"
+      );
       hasError = true;
     }
 
@@ -80,7 +86,6 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       setLoading,
       (errorMsg) => {
         const msg = errorMsg?.toLowerCase() || "";
-
         if (msg.includes("same as current")) {
           setNewPasswordError(errorMsg);
         } else if (msg.includes("current") || msg.includes("old")) {
@@ -90,10 +95,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
         }
       },
       () => {
-        setAlertMessage('success', "Password updated successfully");
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
+        setAlertMessage("success", "Password updated successfully");
+        setTimeout(handleClose, 1500);
       }
     );
   };
@@ -106,11 +109,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Change Password</p>
           <button className={styles.closeBtn} onClick={handleClose}>
-            <img
-              src={images.iconClose}
-              className={styles.iconClose}
-              alt="close"
-            />
+            <img src={images.iconClose} className={styles.iconClose} alt="close" />
           </button>
         </div>
 
@@ -155,13 +154,47 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   }`}
                   placeholder="Enter new password"
                   value={newPassword}
+                  onFocus={() => setShowPasswordHint(true)}
+                  onBlur={() => setShowPasswordHint(false)}
                   onChange={(e) => {
                     setNewPassword(e.target.value);
                     if (newPasswordError) setNewPasswordError("");
                   }}
                 />
+
+               
               </div>
             </div>
+             {/* 🔔 Password suggestion alert */}
+               {showPasswordHint && (
+              <div className={changePassStyle.passwordHintBox}>
+                <ul>
+                  <li className={passwordChecks.length ? changePassStyle.valid : changePassStyle.invalid}>
+                    {passwordChecks.length ? "✔️" : "❌"} 8–20 characters
+                  </li>
+                  <li className={passwordChecks.uppercase ? changePassStyle.valid : changePassStyle.invalid}>
+                    {passwordChecks.uppercase ? "✔️" : "❌"} Uppercase letter
+                  </li>
+                  <li className={passwordChecks.lowercase ? changePassStyle.valid : changePassStyle.invalid}>
+                    {passwordChecks.lowercase ? "✔️" : "❌"} Lowercase letter
+                  </li>
+                  <li className={passwordChecks.number ? changePassStyle.valid : changePassStyle.invalid}>
+                    {passwordChecks.number ? "✔️" : "❌"} Number
+                  </li>
+                  <li className={passwordChecks.special ? changePassStyle.valid : changePassStyle.invalid}>
+                    {passwordChecks.special ? "✔️" : "❌"} Special character
+                  </li>
+                </ul>
+
+                <div className={changePassStyle.strengthBar}>
+                  <div
+                    className={changePassStyle.strengthFill}
+                    style={{ width: `${passwordStrength.percent}%` }}
+                  />
+                </div>
+                <small>{passwordStrength.label}</small>
+              </div>
+            )}
             {newPasswordError && (
               <div className={styles.errorMessage}>{newPasswordError}</div>
             )}
