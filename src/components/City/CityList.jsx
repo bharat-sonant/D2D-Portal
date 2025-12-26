@@ -4,7 +4,7 @@ import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import { images } from '../../assets/css/imagePath';
 import styles from '../../Style/Task-Data/TaskDataList.module.css';
 import { debounce } from "lodash";
-import { filterCityAction } from "../../Actions/City/cityAction";
+import { filterCityAction, getwardList } from "../../Actions/City/cityAction";
 
 const CityList = (props) => {
     const [searchTerm,setSearchTerm] = useState('');
@@ -57,7 +57,7 @@ const CityList = (props) => {
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
-                                     onClick={() => props?.setSelectedCity(city)}
+                                     onClick={() => {props?.setSelectedCity(city); getwardList(city.CityId,props.setWardList)}}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}

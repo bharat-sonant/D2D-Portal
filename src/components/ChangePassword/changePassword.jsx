@@ -38,6 +38,9 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
     setNewPasswordError("");
     setConfirmPasswordError("");
     setSuccessMessage("");
+    setShowOldPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
   };
 
   const handleClose = () => {
