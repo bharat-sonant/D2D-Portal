@@ -9,18 +9,20 @@ import ConfirmationModal from "../../components/confirmationModal/ConfirmationMo
 import { changeCityStatusAction, getCityList } from "../../Actions/City/cityAction";
 import WardList from "../../components/City/WardList";
 import AddWard from "../../components/City/AddWard";
+import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
-  const [openAddWardPopUp,setOpenAddWardPopUp]=useState(false)
+  const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false)
   const [cityList, setCityList] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
-  const [openSettings,setOpenSettings] = useState(false);
-  const [statusConfirmation,setStatusConfirmation] = useState({status:false,data:null,setToggle:()=>{}});
-  const [wardList,setWardList]=useState([])
+  const [openSettings, setOpenSettings] = useState(false);
+  const [statusConfirmation, setStatusConfirmation] = useState({ status: false, data: null, setToggle: () => { } });
+  const [wardList, setWardList] = useState([])
+
   const loadCities = async () => {
-    getCityList(setSelectedCity,setCityList,selectedCity,setWardList)
+    getCityList(setSelectedCity, setCityList, selectedCity, setWardList)
   };
 
   useEffect(() => {
@@ -30,9 +32,9 @@ const City = () => {
   const handleOpenModal = () => {
     setShowCanvas(true);
   };
-  const handleOpenSettings=()=>setOpenSettings(true);
-  const handleCloseSettings=()=>setOpenSettings(false);
-  const handleOpenEditWindow=()=>{
+  const handleOpenSettings = () => setOpenSettings(true);
+  const handleCloseSettings = () => setOpenSettings(false);
+  const handleOpenEditWindow = () => {
     setOpenSettings(false);
     setShowCanvas(true);
     setOnEdit(selectedCity);
@@ -40,7 +42,7 @@ const City = () => {
   const handleStatusConfirmation = () => {
     changeCityStatusAction(
       statusConfirmation?.data,
-      selectedCity, 
+      selectedCity,
       statusConfirmation?.setToggle,
       loadCities,
       setStatusConfirmation,
@@ -68,72 +70,75 @@ const City = () => {
             setWardList={setWardList}
           />
         </div>
-         
-         {selectedCity!==null&&(
+
+        {selectedCity !== null && (
           <div className={TaskStyles.employeeRight}>
-          <div
-            style={{
-              width: "25%",
-              background: "#fff",
-              borderRadius: "12px",
-              padding: "14px 18px",
-              display: "flex",
-              alignItems: "center",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            }}
-          >
             <div
               style={{
+                width: "25%",
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "14px 18px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
               }}
             >
-              <span
-                style={{
-                  background: "#f2f2f2",
-                  padding: "8px 16px",
-                  borderRadius: "8px",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {selectedCity?.CityCode || "N/A"}
-              </span>
               <div
                 style={{
-                  width: "48px",  
-                  height: "48px",
-                  borderRadius: "10px",
-                  border: "1px solid #e5e7eb",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  background: "#fff",
-                  overflow: "hidden",
+                  justifyContent: "space-between",
+                  width: "100%",
                 }}
               >
-                {selectedCity?.logoUrl && (
-                  <img
-                    src={selectedCity?.logoUrl || "/city-placeholder.png"}
-                    alt="City Logo"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-                )}
+                <span
+                  style={{
+                    background: "#f2f2f2",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {selectedCity?.CityCode || "N/A"}
+                </span>
+                <div
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "10px",
+                    border: "1px solid #e5e7eb",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#fff",
+                    overflow: "hidden",
+                  }}
+                >
+                  {selectedCity?.logoUrl && (
+                    <img
+                      src={selectedCity?.logoUrl || "/city-placeholder.png"}
+                      alt="City Logo"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </div>
+            <div style={{ display: "flex", gap: "20px" }}>
+              <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} />
+              <AddVehiclesCard />
+            </div>
           </div>
-           <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}/>
-        </div>
         )}
       </div>
-     
+
       <div className={GlobalStyles.mainSections}>
         {showCanvas && (
           <AddCity
@@ -142,7 +147,7 @@ const City = () => {
             loadCities={loadCities}
             onEdit={onEdit}
             setOnEdit={setOnEdit}
-            
+
           />
         )}
       </div>
@@ -155,7 +160,7 @@ const City = () => {
           setStatusConfirmation={setStatusConfirmation}
         />
       )}
-        <div className={GlobalStyles.mainSections}>
+      <div className={GlobalStyles.mainSections}>
         {openAddWardPopUp && (
           <AddWard
             openAddWardPopUp={openAddWardPopUp}
@@ -163,16 +168,16 @@ const City = () => {
             onEdit={onEdit}
             setOnEdit={setOnEdit}
             selectedCity={selectedCity}
-             setWardList={setWardList}
+            setWardList={setWardList}
           />
         )}
       </div>
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}
-          title={`City ${statusConfirmation?.data?'Active':'Deactive'}`}
-          message={`Are you sure you want to ${statusConfirmation?.data?'activate':'deactivate'} ${selectedCity?.CityName} city?`}
-          onCancel={()=>setStatusConfirmation({status:false,data:null,setToggle:()=>{}})}
+          title={`City ${statusConfirmation?.data ? 'Active' : 'Deactive'}`}
+          message={`Are you sure you want to ${statusConfirmation?.data ? 'activate' : 'deactivate'} ${selectedCity?.CityName} city?`}
+          onCancel={() => setStatusConfirmation({ status: false, data: null, setToggle: () => { } })}
           onConfirm={handleStatusConfirmation}
           btnColor={!statusConfirmation?.data && 'red'}
         />
