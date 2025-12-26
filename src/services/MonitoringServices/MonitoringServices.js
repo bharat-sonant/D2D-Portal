@@ -1,33 +1,35 @@
 import * as sbs from '../supabaseServices';
 
+const normalize = (value = '') =>
+  value.toString().replace(/_/g, ' ').trim();
+
+const isPureNumber = (val) => /^\d+$/.test(val);
+const isAlphaNumeric = (val) => /^\d+[A-Za-z-]+$/.test(val);
+
 const sortWards = (list = []) => {
   return [...list].sort((a, b) => {
-    const nameA = a.name?.trim();
-    const nameB = b.name?.trim();
+    const A = normalize(a?.name);
+    const B = normalize(b?.name);
 
-    const isPureNumberA = /^\d+$/.test(nameA);
-    const isPureNumberB = /^\d+$/.test(nameB);
+    // 1️⃣ Pure numbers
+    if (isPureNumber(A) && isPureNumber(B)) return Number(A) - Number(B);
+    if (isPureNumber(A)) return -1;
+    if (isPureNumber(B)) return 1;
 
-    const startsWithAlphaA = /^[A-Za-z]/.test(nameA);
-    const startsWithAlphaB = /^[A-Za-z]/.test(nameB);
+    // 2️⃣ Alphanumeric (54-A)
+    if (isAlphaNumeric(A) && isAlphaNumeric(B))
+      return A.localeCompare(B, undefined, { numeric: true });
 
-    // 1️⃣ Alphabet wards first (Ward 2)
-    if (startsWithAlphaA && !startsWithAlphaB) return -1;
-    if (!startsWithAlphaA && startsWithAlphaB) return 1;
+    if (isAlphaNumeric(A)) return -1;
+    if (isAlphaNumeric(B)) return 1;
 
-    // 2️⃣ Both are pure numbers → numeric sort
-    if (isPureNumberA && isPureNumberB) {
-      return Number(nameA) - Number(nameB);
-    }
-
-    // 3️⃣ Fallback natural sort
-    return nameA.localeCompare(nameB, undefined, {
+    // 3️⃣ Text
+    return A.localeCompare(B, undefined, {
       numeric: true,
       sensitivity: 'base',
     });
   });
 };
-
 
 export const getWardData = async() => {
   const result = await sbs.getDataByColumnName('Wards', 'city_Id', '74')
@@ -35,6 +37,9 @@ export const getWardData = async() => {
     return {status : 'error', message : result?.error}
   }
 
+  console.log(result.data)
+
+  console.log('sortwards', sortWards(result.data))
   return{
     status : 'success',
     message : 'Ward list fetched successfully',
