@@ -17,11 +17,11 @@ export default function Login() {
   const [forgotPassword, setforgetPassword] = useState(false);
 
   useEffect(() => {
+    rememberMefunction();
     let loginStatus = localStorage.getItem("isLogin");
     if (loginStatus === "success") {
       navigate("/Dashboard");
     }
-    rememberMefunction();
   }, []);
 
   const rememberMefunction = () => {
@@ -295,6 +295,7 @@ export default function Login() {
                     value={emailId}
                     onChange={(e) => setEmailId(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    autoComplete='new-password'
                     placeholder="Enter email id"
                     autoFocus
                     style={{
@@ -335,6 +336,7 @@ export default function Login() {
                     onKeyDown={handleKeyDown}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
+                    autoComplete='new-password'
                     style={{
                       padding: "12px 45px 12px 15px",
                       border: "2px solid #e0e0e0",

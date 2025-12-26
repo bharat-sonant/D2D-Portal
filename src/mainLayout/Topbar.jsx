@@ -82,8 +82,6 @@ const handleLogout = () => {
   localStorage.removeItem("isLogin");
   localStorage.removeItem("loginDate");
   localStorage.removeItem("name");
-  localStorage.removeItem("savedEmail");
-  localStorage.removeItem("savedPassword");
   navigate("/");
 };
 
