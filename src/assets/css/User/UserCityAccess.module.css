@@ -178,6 +178,12 @@
     transition: opacity 0.3s ease-in-out;
 }
 
+.checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+};
+
 .edit_icon:hover {
     filter: brightness(0) saturate(100%) invert(47%) sepia(77%) saturate(1520%) hue-rotate(162deg) brightness(99%) contrast(101%);
 }

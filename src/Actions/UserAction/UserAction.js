@@ -4,7 +4,7 @@ import axios from 'axios';
 import * as emailTemplate from '../../common/emailHTMLTemplates/MailTemplates'
 import dayjs from 'dayjs';
 
-export const validateUserDetail = (form, onEdit, editData, setNameError, setEmailError,setUserTypeError,setEmpCodeError, setLoading, loadUsers, resetStateValues) => {
+export const validateUserDetail = (form, onEdit, editData, setNameError, setEmailError, setUserTypeError, setEmpCodeError, setLoading, loadUsers, resetStateValues) => {
   let isValid = true;
   setNameError("");
   setEmailError("");
@@ -58,7 +58,7 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
       created_by: createdBy,
       password: encrptpassword,
       userType: form?.userType,
-      ...(form?.userType === 'internal' && { empCode: form?.empCode}),
+      ...(form?.userType === 'internal' && { empCode: form?.empCode }),
     };
     if (onEdit) {
       let updatedDetail = {
@@ -69,16 +69,17 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
         status: form?.status,
         password: form?.password,
         userType: form?.userType,
-        empCode: form?.userType === 'internal'?form?.empCode:null,
+        empCode: form?.userType === 'internal' ? form?.empCode : null,
       };
-      handleUpdateUser(editData?.id, updatedDetail, setLoading, loadUsers, resetStateValues,setEmailError,setEmpCodeError)
+      handleUpdateUser(editData?.id, updatedDetail, setLoading, loadUsers, resetStateValues, setEmailError, setEmpCodeError)
     } else {
       handleSaveUser(userDetail, email, randomPasword, loginURL, setEmailError, setEmpCodeError, resetStateValues, loadUsers, setLoading);
     }
 
   }
-}
-export const handleSaveUser = async (userDetail,email, password, loginURL, setEmailError,setEmpCodeError, resetStateValues, loadUsers, setLoading) => {
+};
+
+export const handleSaveUser = async (userDetail, email, password, loginURL, setEmailError, setEmpCodeError, resetStateValues, loadUsers, setLoading) => {
   const response = await userServices.saveUserData(userDetail);
   if (response?.status === 'success') {
     await sendLoginCredentialsToEmploye(email, password, loginURL)
@@ -101,6 +102,7 @@ export const handleSaveUser = async (userDetail,email, password, loginURL, setEm
     }
   }
 };
+
 const sendLoginCredentialsToEmploye = async (email, password, loginURL) => {
   try {
     const url = common.MAILAPI;
@@ -112,7 +114,8 @@ const sendLoginCredentialsToEmploye = async (email, password, loginURL) => {
     throw error;
   }
 };
-const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, resetStateValues,setEmailError,setEmpCodeError) => {
+
+const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, resetStateValues, setEmailError, setEmpCodeError) => {
   const response = await userServices.updateUserData(userId, userDetail);
   if (response.status === 'success') {
     resetStateValues();
@@ -133,16 +136,17 @@ const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, reset
       common.setAlertMessage("error", "Something went wrong!");
     }
   }
-}
-export const fetchUserData = async (setSelectedUser, setUsers,setLoading,setActiveInactiveUserList) => {
+};
+
+export const fetchUserData = async (setSelectedUser, setUsers, setLoading, setActiveInactiveUserList) => {
   setLoading(true);
   let response = await userServices.getUserData()
   setLoading(false);
   if (response.status === 'success') {
-    const sortedList = response.data.filter((item)=>(item.status==='active'))
-  
-    setSelectedUser(pre=>{
-      return sortedList.length>0 ? (sortedList?.find(item=>item?.id===pre?.id) || sortedList[0] ): null
+    const sortedList = response.data.filter((item) => (item.status === 'active'))
+
+    setSelectedUser(pre => {
+      return sortedList.length > 0 ? (sortedList?.find(item => item?.id === pre?.id) || sortedList[0]) : null
     })
     setUsers(sortedList);
     setActiveInactiveUserList(response.data)
@@ -150,8 +154,9 @@ export const fetchUserData = async (setSelectedUser, setUsers,setLoading,setActi
     setSelectedUser(null);
     setUsers([]);
   }
-}
-export const updateStatus = async (user, setUsers,setActiveInactiveUserList, setSelectedUser, setConfirmUser) => {
+};
+
+export const updateStatus = async (user, setUsers, setActiveInactiveUserList, setSelectedUser, setConfirmUser) => {
 
   const newStatus = user.status === "active" ? "inactive" : "active";
   let response = await userServices.updateUserStatus(user.id, {
@@ -162,9 +167,9 @@ export const updateStatus = async (user, setUsers,setActiveInactiveUserList, set
 
   if (response.status === "success") {
     setUsers((prev) => {
-  const updatedList = prev.filter((u) => u.id !== user.id);
-  return updatedList;
-});
+      const updatedList = prev.filter((u) => u.id !== user.id);
+      return updatedList;
+    });
 
     setActiveInactiveUserList((prev) => {
       const updatedList = prev.map((u) =>
@@ -194,21 +199,23 @@ export const updateStatus = async (user, setUsers,setActiveInactiveUserList, set
     common.setAlertMessage("error", "Something went wrong!");
   }
 };
-export const formValueChangeAction=(e,setForm)=>{
-  setForm(pre=>({ ...pre, [e.target.name]: e.target.value }));
-}
-export const filterUserListAction=(usersList,searchTerm,setSelectedUser)=>{
-    const term = searchTerm?.trim().toLowerCase();
-    if (!term) {
-        setSelectedUser(pre=>usersList?.find(item=>item?.id===pre?.id) || usersList[0] || null);
-        return usersList;
-    }
-    let list = usersList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
-    setSelectedUser(pre=>list?.find(item=>item?.id===pre?.id) || list[0] || null);
-    return list;
-}
 
-export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,statusFilter,userTypeFilter,setSelectedUser,setUsers) => {
+export const formValueChangeAction = (e, setForm) => {
+  setForm(pre => ({ ...pre, [e.target.name]: e.target.value }));
+};
+
+export const filterUserListAction = (usersList, searchTerm, setSelectedUser) => {
+  const term = searchTerm?.trim().toLowerCase();
+  if (!term) {
+    setSelectedUser(pre => usersList?.find(item => item?.id === pre?.id) || usersList[0] || null);
+    return usersList;
+  }
+  let list = usersList?.filter((item) => item?.name?.trim().toLowerCase().includes(term));
+  setSelectedUser(pre => list?.find(item => item?.id === pre?.id) || list[0] || null);
+  return list;
+};
+
+export const handleApplyFilter = (activeInactiveUserList, setFilteredUsersList, statusFilter, userTypeFilter, setSelectedUser, setUsers) => {
   if (!activeInactiveUserList?.length) {
     setFilteredUsersList([]);
     return;
@@ -220,7 +227,16 @@ export const handleApplyFilter = (activeInactiveUserList,setFilteredUsersList,st
       userTypeFilter === "all" || user.userType === userTypeFilter;
     return statusMatch && typeMatch;
   });
-    setSelectedUser(filteredList[0]);
-    setFilteredUsersList(filteredList);
-    setUsers(filteredList)
+  setSelectedUser(filteredList[0]);
+  setFilteredUsersList(filteredList);
+  setUsers(filteredList)
 };
+
+export const loadCityData = async (setCityList) => {
+  const response = await userServices.getCities();
+  if (response.status === 'success') {
+    setCityList(response.data);
+  } else {
+    setCityList([]);
+  }
+}

@@ -14,14 +14,20 @@ const User = () => {
   const [onEdit, setOnEdit] = useState(false);
   const [confirmUser, setConfirmUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [cityList, setCityList] = useState([]);
   const [activeInactiveUserList, setActiveInactiveUserList] = useState([]);
 
   const loadUsers = async () => {
     await userAction.fetchUserData(setSelectedUser, setUsers, setLoading, setActiveInactiveUserList);
   };
 
+  const loadCities = async () => {
+    await userAction.loadCityData(setCityList);
+  }
+
   useEffect(() => {
     loadUsers();
+    loadCities();
   }, []);
 
   const handleOpenModal = () => {
@@ -132,7 +138,9 @@ const User = () => {
               </span>
             </div>
           </div>
-          <UserCityAccess />
+          <UserCityAccess
+            cityList={cityList}
+          />
         </div>
       </div>
 
