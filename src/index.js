@@ -7,6 +7,7 @@ import globleStyles from "./assets/css/globleStyles.module.css";
 import "../src/assets/css/style.css";
 import { CityProvider } from './context/CityContext';
 import { LoginProvider } from './context/LoginContext';
+import { ToastContainer } from 'react-toastify';
 
 const AppWrapper = () => {
   const location = useLocation();
@@ -18,6 +19,7 @@ const AppWrapper = () => {
   return (
     <div className={shouldRemoveFrame ? '' : globleStyles.mobileFrame}>
       <RouterComponent />
+        <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 }

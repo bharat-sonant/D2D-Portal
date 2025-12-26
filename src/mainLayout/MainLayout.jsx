@@ -8,7 +8,6 @@ const MainLayout = () => {
     return (
         <>
             <Topbar />
-            <ToastContainer position="bottom-right" autoClose={3000} />
         </>
     );
 };
