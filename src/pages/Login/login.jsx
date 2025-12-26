@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Eye, EyeOff, User} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { login } from '../../services/supabaseServices';
-import { setAlertMessage } from '../../common/common';
+import { decryptValue, encryptValue, setAlertMessage } from '../../common/common';
 import dayjs from 'dayjs';
 import { FaSpinner } from 'react-icons/fa';
 import ForgotPassword from '../../components/ForgotPassword/ForgotPassword';
@@ -29,8 +29,8 @@ export default function Login() {
     const savedPassword = localStorage.getItem('savedPassword')
 
     if(savedEmail && savedPassword){
-      setEmailId(savedEmail)
-      setPassword(savedPassword)
+      setEmailId(decryptValue(savedEmail))
+      setPassword(decryptValue(savedPassword))
       setRememberMe(true)
     }
   }
@@ -45,8 +45,8 @@ export default function Login() {
       localStorage.setItem("userId", user.id);  
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       if (rememberMe) {
-        localStorage.setItem("savedEmail", emailId);
-        localStorage.setItem("savedPassword", password);
+        localStorage.setItem("savedEmail", encryptValue(emailId));
+        localStorage.setItem("savedPassword", encryptValue(password));
       } else {
         localStorage.removeItem("savedEmail");
         localStorage.removeItem("savedPassword");
