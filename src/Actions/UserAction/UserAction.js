@@ -244,15 +244,18 @@ export const loadCityData = async (setCityList) => {
 export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected, setSelectedCities) => {
   try {
     if (isCurrentlySelected) {
+
       setSelectedCities(prev => {
         const record = prev.find(c => c.cityId === cityId);
         if (!record) return prev;
         userServices.removeCityAccess(record.id);
         return prev.filter(c => c.cityId !== cityId);
       });
+
       common.setAlertMessage('success', 'User city access removed successfully.');
 
     } else {
+
       const payload = {
         user_id: userId,
         city_id: cityId,
@@ -261,18 +264,20 @@ export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected
 
       const resp = await userServices.saveUserCityAccess(payload);
       if (resp.status === 'success') {
+
         if (resp?.data?.id) {
           setSelectedCities(prev => [
             ...prev,
             { id: resp.data.id, cityId }
           ]);
-        }
+        };
+
         common.setAlertMessage('success', 'User city access saved successfully.');
-      }
-    }
+      };
+    };
   } catch (err) {
     console.error('City toggle failed:', err);
-  }
+  };
 };
 
 export const handleGetCity = async (userId, setSelectedCities) => {
