@@ -49,9 +49,32 @@ export const getCities = async () => {
       a.CityName.localeCompare(b.CityName)
     );
 
-    console.log(sortedData)
     return { status: 'success', message: 'City data fetched successfully', data: sortedData };
   } else {
     return { status: 'error', message: result.error };
-  }
+  };
+};
+
+export const saveUserCityAccess = async (payload) => {
+  const result = await sbs.saveData('UserCityAccess', payload);
+  if (result?.success) {
+    return { status: 'success', message: 'User saved successfully', data: result?.data };
+  } else {
+    return { status: 'error', message: result?.error };
+  };
+};
+
+export const fetchUserCityAccess = async (userId) => {
+  const result = await sbs.getDataByColumnName('UserCityAccess', 'user_id', userId);
+  if (result?.success) {
+    return { status: 'success', message: 'User saved successfully', data: result?.data };
+  } else {
+    return { status: 'error', message: result?.error };
+  };
+};
+
+export const removeCityAccess = async (userId) => {
+  console.log(userId,"asd")
+  const result = await sbs.deleteData("UserCityAccess", userId);
+  console.log(result)
 }
