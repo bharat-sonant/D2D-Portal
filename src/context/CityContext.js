@@ -5,10 +5,7 @@ import { connectFirebase } from "../firebase/firebaseService";
 const CityContext = createContext();
 
 export const CityProvider = ({ children }) => {
-  const [city, setCity] = useState(
-    localStorage.getItem("city") || "DevTest"
-  );
-
+  const [city, setCity] = useState(localStorage.getItem("city") || "DevTest");
   useEffect(() => {
     // Save city globally
     if (!city) {

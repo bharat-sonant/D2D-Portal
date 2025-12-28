@@ -14,9 +14,13 @@ export const LoginProvider = ({ children }) => {
     const isLogin = localStorage.getItem("isLogin");
     const today = dayjs().format("DD/MM/YYYY");
     if (!savedDate || isLogin !== "success" || savedDate !== today) {
-      localStorage.removeItem("loginDate");
       localStorage.removeItem("isLogin");
+      localStorage.removeItem("loginDate");
       localStorage.removeItem("name");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("city");
+      localStorage.removeItem("defaultCity");
+      
       navigate("/", { replace: true });
       return;
     }

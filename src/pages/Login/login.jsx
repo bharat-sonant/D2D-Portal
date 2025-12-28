@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Eye, EyeOff, User} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { login } from '../../services/supabaseServices';
+import { getDataByColumnName, login } from '../../services/supabaseServices';
 import { decryptValue, encryptValue, setAlertMessage } from '../../common/common';
 import dayjs from 'dayjs';
-import { FaSpinner } from 'react-icons/fa';
 import ForgotPassword from '../../components/ForgotPassword/ForgotPassword';
+import { useCity } from '../../context/CityContext';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ export default function Login() {
   const [loading,setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
+  const {setCity} = useCity();
 
   useEffect(() => {
     rememberMefunction();
@@ -42,8 +43,10 @@ export default function Login() {
       const user = await login(emailId, password);
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
-      localStorage.setItem("userId", user.id);  
+      localStorage.setItem("userId", user?.id);  
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
+      localStorage.setItem("defaultCity", user?.defaultCity);
+      await fetchCityName(user?.defaultCity);      
       if (rememberMe) {
         localStorage.setItem("savedEmail", encryptValue(emailId));
         localStorage.setItem("savedPassword", encryptValue(password));
@@ -69,6 +72,14 @@ export default function Login() {
 
   const handleRememberMe = () => {
     setRememberMe(!rememberMe);
+  };
+  const fetchCityName = async (defaultCityId) => {
+    const resp = await getDataByColumnName("Cities","CityId",defaultCityId);
+    if (resp?.success) {
+      const cityName = resp?.data?.[0]?.CityName || '';
+      setCity(cityName);
+      localStorage.setItem('city',cityName);
+    }
   };
 
   return (

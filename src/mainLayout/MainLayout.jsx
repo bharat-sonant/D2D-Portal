@@ -1,14 +1,20 @@
-import React from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Topbar from "./Topbar";
+import DefaultCitySelection from "../components/DefaultCitySelection/DefaultCitySelection";
 
 const MainLayout = () => {
+    const [showDefaultCity,setShowDefaultCity] = useState(localStorage.getItem('defaultCity')?false:true);
     return (
-        <>
-            <Topbar />
-        </>
+      <>
+        <Topbar setShowDefaultCity={setShowDefaultCity}/>
+        {showDefaultCity && (
+          <DefaultCitySelection
+            onClose={() => setShowDefaultCity(false)}
+          />
+        )}
+      </>
     );
 };
 
