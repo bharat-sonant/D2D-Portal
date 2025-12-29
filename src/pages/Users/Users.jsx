@@ -140,6 +140,7 @@ const User = () => {
           </div>
           <UserCityAccess
             cityList={cityList}
+            selectedUser={selectedUser}
           />
         </div>
       </div>

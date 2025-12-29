@@ -64,11 +64,11 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
-export const checkDuplicayInDb = async (cityId,wardName) => {
+export const checkDuplicayInDb = async (cityId,wardName,wardId) => {
   let query = supabase.from('Wards').select('id').eq('city_Id', cityId).ilike('name', wardName);
-  // if (excludeId) {
-  //   query = query.neq('id', excludeId);
-  // }
+  if (wardId) {
+    query = query.neq('id', wardId);
+  }
   const { data, error } = await query;
   if (error) {
     console.error('Duplicate check failed:', error);
