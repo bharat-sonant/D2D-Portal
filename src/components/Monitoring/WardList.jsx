@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
-import styles from '../../Style/Task-Data/TaskDataList.module.css';
+import styles from '../../Style/Common/CommonListLayout.module.css';
 import { images } from '../../assets/css/imagePath';
 import { debounce } from 'lodash';
 import { filterWardAction } from '../../Actions/Monitoring/WardAction';
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const WardList = (props) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredWardList,setFilteredWardList] = useState(props?.wardList||[]);
+    const [searchTerm, setSearchTerm] = useState('')
+    const [filteredWardList, setFilteredWardList] = useState(props?.wardList || []);
 
-  useEffect(()=>{
-    setFilteredWardList(filterWardAction(props?.wardList,searchTerm,props?.setSelectedWard,props?.selectedWard))
-  },[props?.wardList,searchTerm]);
+    useEffect(() => {
+        setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard))
+    }, [props?.wardList, searchTerm]);
 
-  const handleSearch = debounce((e) => {setSearchTerm(e.target.value)}, 300);
+    const handleSearch = debounce((e) => { setSearchTerm(e.target.value) }, 300);
 
-  return (
-    <div className={`dropdown ${GlobalStyles.dropDown}`}>
+    return (
+        <div className={`dropdown ${GlobalStyles.dropDown}`}>
             <div
                 className={`${GlobalStyles.overlay}`}
                 style={{ display: "block" }}
@@ -34,21 +34,21 @@ const WardList = (props) => {
                             className={`${GlobalStyles.inputSearch}`}
                             type="text"
                             placeholder="Search"
-                          onChange={handleSearch}
+                            onChange={handleSearch}
                         />
                     </div>
                     <div className={`${styles.userListTitle}`}>Select Ward</div>
                     <div className={`${styles.userScroll}`}>
                         {props.loading ? (
-                          <WevoisLoader title="Loading ward data..." />
-                        ): filteredWardList?.length > 0 ? (
+                            <WevoisLoader title="Loading ward data..." />
+                        ) : filteredWardList?.length > 0 ? (
                             filteredWardList?.map((ward) => (
                                 <li className={`${GlobalStyles.dropdownLi}`} key={ward.id}>
                                     <div
                                         className={`dropdown-item ${GlobalStyles.dropdownItem}`}
                                         style={{
                                             backgroundColor:
-                                               props?.selectedWard?.id === ward.id
+                                                props?.selectedWard?.id === ward.id
                                                     ? "#9acaf1"
                                                     : "transparent",
                                             backgroundColor:
@@ -57,13 +57,13 @@ const WardList = (props) => {
                                                     ? "#3fb2f114"
                                                     : "transparent",
                                         }}
-                                     onClick={() => props?.setSelectedWard(ward)}
+                                        onClick={() => props?.setSelectedWard(ward)}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}
                                             style={{
                                                 color:
-                                                   props?.selectedWard?.id === ward.id
+                                                    props?.selectedWard?.id === ward.id
                                                         ? "#000000"
                                                         : "#000000",
                                             }}
@@ -90,7 +90,7 @@ const WardList = (props) => {
                 </ul>
             </div>
         </div>
-  )
+    )
 }
 
 export default WardList

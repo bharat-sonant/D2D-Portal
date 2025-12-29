@@ -15,7 +15,7 @@ import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
-import TaskData from "../pages/Task-Data/TaskData";
+
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
@@ -141,15 +141,7 @@ const RouterComponent = () => {
           }
         />
         */
-        <Route
-          path="/TaskData"
-          element={
-            <ProtectedRouter>
-              <MainLayout />
-              <TaskData />
-            </ProtectedRouter>
-          }
-        />
+
 
         <Route
           path="/monitoring"
