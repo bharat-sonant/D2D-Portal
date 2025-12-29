@@ -12,14 +12,14 @@ import { ToastContainer } from 'react-toastify';
 const AppWrapper = () => {
   const location = useLocation();
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ['/settings', '/tasks', '/realtime-monitoring', '/reports', '/vehicle', '/TaskData', '/users', '/', '/cities', "/Dashboard", "/monitoring"]; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/realtime-monitoring', '/reports', '/vehicle', '/users', '/', '/cities', "/Dashboard", "/monitoring"]; // <-- yaha route add karo
 
   const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
 
   return (
     <div className={shouldRemoveFrame ? '' : globleStyles.mobileFrame}>
       <RouterComponent />
-        <ToastContainer position="bottom-right" autoClose={3000} />
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 }
