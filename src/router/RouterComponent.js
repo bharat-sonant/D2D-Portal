@@ -15,7 +15,6 @@ import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
-
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
@@ -140,8 +139,6 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
-        */
-
 
         <Route
           path="/monitoring"

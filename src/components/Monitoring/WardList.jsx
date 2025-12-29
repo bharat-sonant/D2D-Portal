@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
-import styles from '../../Style/Common/CommonListLayout.module.css';
+import styles from '../../Style/Task-Data/TaskDataList.module.css';
 import { images } from '../../assets/css/imagePath';
 import { debounce } from 'lodash';
 import { filterWardAction } from '../../Actions/Monitoring/WardAction';

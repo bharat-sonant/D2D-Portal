@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { debounce } from "lodash";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import { images } from "../../assets/css/imagePath";
-import styles from "../../Style/Common/CommonListLayout.module.css";
+import styles from "../../Style/Task-Data/TaskDataList.module.css";
 import { filterUserListAction, handleApplyFilter } from "../../Actions/UserAction/UserAction";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 import { FaUserCheck } from "react-icons/fa6";
@@ -159,8 +159,8 @@ const UserList = (props) => {
                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
                   <div
                     className={`dropdown-item ${GlobalStyles.dropdownItem}${props?.selectedUser?.id === user?.id
-                        ? GlobalStyles.selectedUser
-                        : ""
+                      ? GlobalStyles.selectedUser
+                      : ""
                       }`}
                     style={{
                       backgroundColor:
