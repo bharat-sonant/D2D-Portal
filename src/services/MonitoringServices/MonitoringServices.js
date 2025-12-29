@@ -37,9 +37,6 @@ export const getWardData = async() => {
     return {status : 'error', message : result?.error}
   }
 
-  console.log(result.data)
-
-  console.log('sortwards', sortWards(result.data))
   return{
     status : 'success',
     message : 'Ward list fetched successfully',
