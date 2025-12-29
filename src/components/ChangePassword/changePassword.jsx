@@ -48,6 +48,11 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
     setShowChangePassword(false);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleChangePassword();
+  };
+
   const handleChangePassword = async () => {
     setOldPasswordError("");
     setNewPasswordError("");
@@ -101,7 +106,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
         }
       },
       () => {
-        setAlertMessage("success", "Password updated successfully");
+        setAlertMessage("success", "Password changed successfully");
         setTimeout(handleClose, 1500);
       }
     );
@@ -114,12 +119,16 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
       <div className={styles.modal}>
         <div className={styles.actionBtn}>
           <p className={styles.headerText}>Change Password</p>
-          <button className={styles.closeBtn} onClick={handleClose}>
+          <button className={styles.closeBtn} onClick={handleClose} type="button">
             <img src={images.iconClose} className={styles.iconClose} alt="close" />
           </button>
         </div>
 
-        <div className={styles.modalBody}>
+        <form onSubmit={handleSubmit} className={styles.modalBody} autoComplete="off">
+          {/* Dummy inputs for browser autofill suppression */}
+          <input type="text" name="fake_un_field" style={{ display: "none" }} tabIndex="-1" autoComplete="off" />
+          <input type="password" name="fake_pw_field" style={{ display: "none" }} tabIndex="-1" autoComplete="off" />
+
           {/* Old Password */}
           <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
@@ -131,6 +140,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   type={showOldPassword ? "text" : "password"}
                   className={`form-control ${styles.formTextbox} ${oldPasswordError ? styles.errorInput : ""
                     }`}
+                  name="old_pass_field_obscured"
+                  autoComplete="off"
                   placeholder="Enter old password"
                   value={oldPassword}
                   onChange={(e) => {
@@ -169,6 +180,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   type={showNewPassword ? "text" : "password"}
                   className={`form-control ${styles.formTextbox} ${newPasswordError ? styles.errorInput : ""
                     }`}
+                  name="new_pass_field_obscured"
+                  autoComplete="off"
                   placeholder="Enter new password"
                   value={newPassword}
                   onFocus={() => setShowPasswordHint(true)}
@@ -239,6 +252,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   type={showConfirmPassword ? "text" : "password"}
                   className={`form-control ${styles.formTextbox} ${confirmPasswordError ? styles.errorInput : ""
                     }`}
+                  name="confirm_pass_field_obscured"
+                  autoComplete="off"
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => {
@@ -247,6 +262,7 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                       setConfirmPasswordError("");
                   }}
                 />
+                {/* 
                 <span
                   style={{
                     position: "absolute",
@@ -259,7 +275,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
+                </span> 
+                */}
               </div>
             </div>
             {confirmPasswordError && (
@@ -270,9 +287,8 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
           </div>
 
           <button
-            type="button"
+            type="submit"
             className={`mt-3 ${styles.btnSave}`}
-            onClick={handleChangePassword}
             disabled={loading}
           >
             {loading ? (
@@ -281,10 +297,10 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                 <span className={styles.loaderText}>Please wait...</span>
               </div>
             ) : (
-              "Update Password"
+              "Change Password"
             )}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
