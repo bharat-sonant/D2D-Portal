@@ -11,6 +11,12 @@ import WardList from "../../components/City/WardList";
 import AddWard from "../../components/City/AddWard";
 import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 
+const TABS = [
+  { key: "city", label: "City Details" },
+  { key: "wards", label: "Wards" },
+  { key: "vehicle", label: "Vehicles" },
+];
+
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false)
@@ -22,6 +28,7 @@ const City = () => {
   const [statusConfirmation, setStatusConfirmation] = useState({ status: false, data: null, setToggle: () => { } });
   const [wardList, setWardList] = useState([])
   const [editWard,setEditWard]=useState({ward:'',wardId:''})
+  const [activeTab, setActiveTab] = useState('city');
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList,setLoading)
   };
@@ -76,7 +83,22 @@ const City = () => {
 
         {selectedCity !== null && (
           <div className={TaskStyles.employeeRight}>
-            <div
+            <div className={TaskStyles.tabContainer}>
+              {TABS.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`${TaskStyles.tabButton} ${
+                                activeTab === tab.key ? TaskStyles.active : ''
+                              }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+           
+           {activeTab === 'city' && (
+             <div
               style={{
                 width: "25%",
                 background: "#fff",
@@ -134,9 +156,14 @@ const City = () => {
                 </div>
               </div>
             </div>
+           )}
             <div style={{ display: "flex", gap: "20px" }}>
-              <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
-              <AddVehiclesCard selectedCity={selectedCity}/>
+              {activeTab === 'wards' && (
+                <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
+              )}
+              {activeTab === 'vehicle' && (
+                <AddVehiclesCard selectedCity={selectedCity}/>
+              )}
             </div>
           </div>
         )}
