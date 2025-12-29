@@ -259,7 +259,8 @@ export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected
       const payload = {
         user_id: userId,
         city_id: cityId,
-        created_by: localStorage.getItem('name')
+        created_by: localStorage.getItem('name'),
+        created_at:dayjs().format('YYYY-MM-DD HH:mm:ss')
       };
 
       const resp = await userServices.saveUserCityAccess(payload);
