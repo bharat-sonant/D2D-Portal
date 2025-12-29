@@ -2,15 +2,27 @@ import React, { useState, useMemo } from 'react';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
 import { images } from '../../../../assets/css/imagePath';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
+import { MoreVertical } from 'lucide-react';
 
 const VehicleList = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Row click → select vehicle only
   const handleVehicleSelect = (item) => {
-    props.onSelectVehicle(item);
+    if (props.onSelectVehicle) {
+      props.onSelectVehicle(item);
+    }
   };
 
-  // 🔍 Filter + sort vehicles (active first, inactive last)
+  // 3-dot click → open Add/Edit Vehicle Settings sidebar
+  const handleThreeDotClick = (e, item) => {
+    e.stopPropagation(); // prevent row click
+    if (props.onEditVehicle) {
+      props.onEditVehicle(item);
+    }
+  };
+
+  // Filter + sort vehicles (active first, inactive last)
   const filteredVehicles = useMemo(() => {
     return [...props.vehicleList]
       .filter(vehicle =>
@@ -27,13 +39,20 @@ const VehicleList = (props) => {
 
   return (
     <div className={`dropdown ${GlobalStyles.dropDown}`}>
-      <div className={`${GlobalStyles.overlay}`} style={{ display: "block" }}>
+      <div className={GlobalStyles.overlay} style={{ display: "block" }}>
         <ul
-          className={`dropdown-menu ${GlobalStyles.dropdownMenu} ${GlobalStyles.dropdownDesktop} ${styles.pageDropdown}`}
-          style={{ display: "block" }}
-          aria-labelledby="drop downMenuButton"
+          className={`dropdown-menu ${GlobalStyles.dropdownMenu} 
+          ${props.isEmbedded ? '' : GlobalStyles.dropdownDesktop} 
+          ${styles.pageDropdown}`}
+          style={{
+            display: "block",
+            position: props.isEmbedded ? 'static' : 'absolute',
+            width: '100%',
+            border: props.isEmbedded ? 'none' : '',
+            boxShadow: props.isEmbedded ? 'none' : ''
+          }}
         >
-          {/* 🔍 Search box */}
+          {/* Search */}
           <div className={GlobalStyles.searchGroup}>
             <input
               className={GlobalStyles.inputSearch}
@@ -44,15 +63,18 @@ const VehicleList = (props) => {
             />
           </div>
 
-          <div className={`${styles.userListTitle}`}>Select Vehicles</div>
-          <div className={`${styles.userScroll}`}>
+          {!props.isEmbedded && (
+            <div className={styles.userListTitle}>Select Vehicles</div>
+          )}
+
+          <div className={props.isEmbedded ? styles.embeddedUserScroll : styles.userScroll}>
             {props.loading ? (
               <div className={styles.loaderContainer}>
                 <div className={styles.cityLoaderWrapper}>
                   <div className={styles.cityLoader}></div>
                   <img
                     src={images.wevoisLogo}
-                    alt="loader icon"
+                    alt="loader"
                     className={styles.centerIcon}
                   />
                 </div>
@@ -62,10 +84,10 @@ const VehicleList = (props) => {
               </div>
             ) : filteredVehicles.length > 0 ? (
               filteredVehicles.map((item, i) => (
-                <li className={`${GlobalStyles.dropdownLi}`} key={i}>
+                <li className={GlobalStyles.dropdownLi} key={i}>
                   <div
-                    className={`dropdown-item ${GlobalStyles.dropdownItem} 
-                      ${props.selectedVehicleId === item.id ? GlobalStyles.selectedUser : ""}`}
+                    className={`dropdown-item ${GlobalStyles.dropdownItem}
+                    ${props.selectedVehicleId === item.id ? GlobalStyles.selectedUser : ""}`}
                     style={{
                       backgroundColor:
                         props.selectedVehicleId === item.id
@@ -74,23 +96,44 @@ const VehicleList = (props) => {
                     }}
                     onClick={() => handleVehicleSelect(item)}
                   >
-                    <div className={`${GlobalStyles.userInfo}`} style={{ color: '#000000' }}>
-                      <span className={`${styles.employeeName}`}>
+                    <div
+                      className={`${GlobalStyles.userInfo} d-flex justify-content-between align-items-center w-100`}
+                      style={{ color: '#000000' }}
+                    >
+                      {/* Left side: Vehicle number */}
+                      <span className={styles.employeeName}>
                         {item.vehicles_No}
                       </span>
-                      {item.status === 'inactive' && (
-                        <span className={styles.redDot}></span>
-                      )}
+
+                      {/* Right side: Red dot + 3-dot icon */}
+                      <div className="d-flex align-items-center">
+                        {item.status === 'inactive' && (
+                          <span
+                            className={styles.redDot}
+                            style={{ marginRight: '8px' }}
+                          ></span>
+                        )}
+                        <div
+                          className={styles.editIconWrapper}
+                          onClick={(e) => handleThreeDotClick(e, item)}
+                          style={{ cursor: 'pointer', opacity: 1, pointerEvents: 'auto' }} // ✅ fully visible
+                        >
+                          <MoreVertical
+                            size={16}
+                            className={styles.editIcon}
+                            style={{ color: '#000', opacity: 1 }} // ✅ fully visible
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </li>
               ))
             ) : (
-              <div className={`${styles.noUserData}`}>
+              <div className={styles.noUserData}>
                 <img
                   src={images.imgComingSoon}
                   className={`img-fluid ${styles.noUserImg}`}
-                  title="No Vehicle Found"
                   alt="No Vehicle Found"
                 />
                 No vehicle data found

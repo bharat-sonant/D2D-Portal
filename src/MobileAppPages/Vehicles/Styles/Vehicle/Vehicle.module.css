@@ -69,6 +69,25 @@
     margin: 0px;
 }
 
+.editIconWrapper {
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.dropdownItem:hover .editIconWrapper {
+    opacity: 1;
+}
+
+.editIcon {
+    color: #666;
+}
+
+.editIcon:hover {
+    color: var(--themeColor);
+}
+
 .employeeCode {
     font-size: 10px;
     color: var(--lightBlack);

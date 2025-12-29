@@ -373,7 +373,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle ,setShowDefaultCity}) =>
                 Monitoring
               </span>
             </Link>
-            <Link
+            {/* <Link
               aria-current="page"
               to="/vehicle"
               title="Vehicles"
@@ -405,7 +405,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle ,setShowDefaultCity}) =>
               >
                 Vehicles
               </span>
-            </Link>
+            </Link> */}
             <Link
               to="/settings"
               className={`nav-link ${styles.navLink} ${

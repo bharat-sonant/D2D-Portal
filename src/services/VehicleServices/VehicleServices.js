@@ -18,7 +18,7 @@ export const saveVehicleData = async (vehicleDetail) => {
 export const updateVehicleData = async (vehicleId, vehicleDetail) => {
     if (!vehicleId) return { status: "error", message: "Vehicle id is required" };
 
-    const result = await sbs.updateData("Vehicle",'id', vehicleId, vehicleDetail);
+    const result = await sbs.updateData("Vehicle", 'id', vehicleId, vehicleDetail);
     if (result.success) {
         return { status: "success", message: "Vehicle updated successfully", data: result.data };
     } else {
@@ -29,8 +29,12 @@ export const updateVehicleData = async (vehicleId, vehicleDetail) => {
 /**
  * Get all vehicles
  */
-export const getVehicleData = async () => {
-    const result = await sbs.getData("Vehicle");
+export const getVehicleData = async (cityId) => {
+    // const result = await sbs.getData("Vehicle"); // Old code commented as per requirement
+    const result = cityId
+        ? await sbs.getDataByColumnName("Vehicle", "city_id", cityId)
+        : await sbs.getData("Vehicle");
+
     if (result.success) {
         const sortedData = [...result.data].sort((a, b) =>
             (a.vehicles_No || "").localeCompare(b.vehicles_No || "")
@@ -47,7 +51,7 @@ export const getVehicleData = async () => {
 export const updateVehicleStatus = async (vehicleId, newStatus) => {
     if (!vehicleId) return { status: "error", message: "Vehicle id is required" };
 
-    const result = await sbs.updateData("Vehicle",'id', vehicleId, { status: newStatus });
+    const result = await sbs.updateData("Vehicle", 'id', vehicleId, { status: newStatus });
     if (result.success) {
         return { status: "success", message: "Vehicle status updated successfully", data: result.data };
     } else {

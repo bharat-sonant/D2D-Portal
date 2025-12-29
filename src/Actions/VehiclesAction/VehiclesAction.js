@@ -38,37 +38,47 @@ export const handleSave = async (
   setChassisNo,
   setShowModal,
   setVehicleList,
-  setVehicleId, 
+  setVehicleId,
   historyData,
-  vehicleList 
+  vehicleList,
+  cityId
 ) => {
+  let hasError = false;
   if (vehicleName.trim() === "") {
     setError("Please provide vehicle name.");
-    return;
+    hasError = true;
   }
   if (chassisNo.trim() === "") {
     setError("Please provide chassis number.");
-    return;
+    hasError = true;
   }
+
+  if (hasError) return;
 
   // --- DUPLICATE CHECKS (ADD MODE) ---
   if (vehicleList && Array.isArray(vehicleList)) {
-    const normalize = (str) => str ? str.trim().toLowerCase() : "";
+    const normalize = (str) => (str ? str.trim().toLowerCase() : "");
     const newName = normalize(vehicleName);
     const newChassis = normalize(chassisNo);
 
     // Check for duplicates
-    const isDuplicateName = vehicleList.some(v => normalize(v.vehicles_No) === newName);
-    const isDuplicateChassis = vehicleList.some(v => normalize(v.chassis_no) === newChassis);
+    const isDuplicateName = vehicleList.some(
+      (v) => normalize(v.vehicles_No) === newName
+    );
+    const isDuplicateChassis = vehicleList.some(
+      (v) => normalize(v.chassis_no) === newChassis
+    );
 
     if (isDuplicateName) {
       setError("Vehicle name already exists.");
-      return;
+      hasError = true;
     }
     if (isDuplicateChassis) {
       setError("Chassis number already exists.");
-      return;
+      hasError = true;
     }
+
+    if (hasError) return;
   }
 
   setLoader(true);
@@ -77,7 +87,8 @@ export const handleSave = async (
     const response = await service.saveVehicleData({
       vehicles_No: vehicleName,
       chassis_no: chassisNo,
-      city_id: 1,
+      // city_id: 1, // Old hardcoded city_id
+      city_id: cityId,
       created_by: 'Ansh'
     });
 
@@ -125,25 +136,29 @@ export const handleUpdate = async (
   setVehicleDetails,
   setVehicleId,
   historyData,
-  vehicleList 
+  vehicleList,
+  cityId
 ) => {
+  let hasError = false;
   if (vehicleName.trim() === "") {
     setError("Please provide vehicle name.");
-    return;
+    hasError = true;
   }
   if (chassisNo.trim() === "") {
     setError("Please provide chassis number.");
-    return;
+    hasError = true;
   }
+
+  if (hasError) return;
 
   // --- DUPLICATE & UNCHANGED CHECKS (UPDATE MODE) ---
   if (vehicleList && Array.isArray(vehicleList)) {
-    const normalize = (str) => str ? str.trim().toLowerCase() : "";
+    const normalize = (str) => (str ? str.trim().toLowerCase() : "");
     const newName = normalize(vehicleName);
     const newChassis = normalize(chassisNo);
 
     // Check if unchanged
-    const currentVehicle = vehicleList.find(v => v.id === vehicleId);
+    const currentVehicle = vehicleList.find((v) => v.id === vehicleId);
     if (currentVehicle) {
       const currentName = normalize(currentVehicle.vehicles_No);
       const currentChassis = normalize(currentVehicle.chassis_no);
@@ -157,17 +172,23 @@ export const handleUpdate = async (
     }
 
     // Check for duplicates (excluding current ID)
-    const isDuplicateName = vehicleList.some(v => normalize(v.vehicles_No) === newName && v.id !== vehicleId);
-    const isDuplicateChassis = vehicleList.some(v => normalize(v.chassis_no) === newChassis && v.id !== vehicleId);
+    const isDuplicateName = vehicleList.some(
+      (v) => normalize(v.vehicles_No) === newName && v.id !== vehicleId
+    );
+    const isDuplicateChassis = vehicleList.some(
+      (v) => normalize(v.chassis_no) === newChassis && v.id !== vehicleId
+    );
 
     if (isDuplicateName) {
       setError("Vehicle name already exists.");
-      return;
+      hasError = true;
     }
     if (isDuplicateChassis) {
       setError("Chassis number already exists.");
-      return;
+      hasError = true;
     }
+
+    if (hasError) return;
   }
 
   setLoader(true);
@@ -175,7 +196,8 @@ export const handleUpdate = async (
   try {
     const response = await service.updateVehicleData(vehicleId, {
       vehicles_No: vehicleName,
-      chassis_no: chassisNo
+      chassis_no: chassisNo,
+      city_id: cityId
     });
 
     if (response.status === "success") {
@@ -185,7 +207,7 @@ export const handleUpdate = async (
       setVehicleList((prev) => {
         const updatedList = prev.map((item) =>
           item.id === vehicleId
-            ? { ...item, vehicles_No: vehicleName, chassis_no: chassisNo }
+            ? { ...item, vehicles_No: vehicleName, chassis_no: chassisNo, city_id: cityId }
             : item
         );
         return sortVehicles(updatedList);
@@ -196,6 +218,7 @@ export const handleUpdate = async (
           ...prev,
           vehicles_No: vehicleName,
           chassis_no: chassisNo,
+          city_id: cityId,
         }));
       }
 
@@ -328,11 +351,11 @@ export const deleteVehicle = async (
 /* =========================================================
    FETCH ALL VEHICLES
 ========================================================= */
-export const getVehicles = async (setVehicleList, setLoading) => {
+export const getVehicles = async (setVehicleList, setLoading, cityId) => {
   if (setLoading) setLoading(true);
 
   try {
-    const resp = await service.getVehicleData();
+    const resp = await service.getVehicleData(cityId);
 
     if (resp.status === "success") {
       // Map Supabase data to standard fields
@@ -372,7 +395,7 @@ export const vehicleDetails = async (vehicleId, setVehicleDetails) => {
 
     if (resp.status === "success") {
       // Return full vehicle details including chassis_no
-      setVehicleDetails(resp.data);
+      setVehicleDetails(Array.isArray(resp.data) ? resp.data[0] : resp.data);
     } else {
       setVehicleDetails(null);
     }

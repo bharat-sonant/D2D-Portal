@@ -1,3 +1,4 @@
+/*
 import { useEffect, useState } from 'react';
 import styles from '../../Styles/Vehicle/Vehicle.module.css';
 import GlobalStyles from '../../../../assets/css/globleStyles.module.css';
@@ -23,9 +24,6 @@ const Vehicle = () => {
     const [vehicleHistory, setVehicleHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
 
-    /* =========================
-       Fetch Vehicles
-    ========================= */
     const fetchVehicles = () => {
         action.getVehicles(setVehicleList, setLoading);
     };
@@ -169,4 +167,7 @@ const Vehicle = () => {
     );
 };
 
-export default Vehicle; 
+export default Vehicle;
+*/
+// const Vehicle = () => null;
+// export default Vehicle;

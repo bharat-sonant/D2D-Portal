@@ -130,6 +130,7 @@ const RouterComponent = () => {
           element={<ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
         />
 
+/*
         <Route
           path="/vehicle"
           element={
@@ -139,6 +140,7 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
+        */
         <Route
           path="/TaskData"
           element={
@@ -154,7 +156,7 @@ const RouterComponent = () => {
           element={
             <ProtectedRouter>
               <MainLayout />
-              <Monitoring/>
+              <Monitoring />
             </ProtectedRouter>
           }
         />

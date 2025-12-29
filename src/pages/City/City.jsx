@@ -136,7 +136,7 @@ const City = () => {
             </div>
             <div style={{ display: "flex", gap: "20px" }}>
               <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
-              <AddVehiclesCard />
+              <AddVehiclesCard selectedCity={selectedCity}/>
             </div>
           </div>
         )}

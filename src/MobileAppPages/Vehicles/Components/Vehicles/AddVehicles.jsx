@@ -18,7 +18,8 @@ const AddVehicles = ({
   fetchVehicles,
   setVehicleList,
   vehicleList,
-  historyData
+  historyData,
+  selectedCity
 }) => {
   const [vehicleError, setVehicleError] = useState('');
   const [chassisError, setChassisError] = useState('');
@@ -78,7 +79,8 @@ const AddVehicles = ({
         setVehicleDetails,
         setVehicleId,
         historyData,
-        vehicleList
+        vehicleList,
+        selectedCity?.CityId
       );
     } else {
       // SAVE
@@ -93,7 +95,8 @@ const AddVehicles = ({
         setVehicleList,
         setVehicleId, // Pass setVehicleId
         historyData,
-        vehicleList
+        vehicleList,
+        selectedCity?.CityId
       );
     }
   };
