@@ -4,7 +4,7 @@ const normalize = (value = '') =>
   value.toString().replace(/_/g, ' ').trim();
 
 const isPureNumber = (val) => /^\d+$/.test(val);
-const isAlphaNumeric = (val) => /^\d+[A-Za-z-]+$/.test(val);
+const isAlphaNumeric = (val) => /^\d+[A-Za-z0-9-]+$/.test(val);
 
 const sortWards = (list = []) => {
   return [...list].sort((a, b) => {
