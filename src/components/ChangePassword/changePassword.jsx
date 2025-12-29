@@ -184,11 +184,16 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
                   autoComplete="off"
                   placeholder="Enter new password"
                   value={newPassword}
-                  onFocus={() => setShowPasswordHint(true)}
                   onBlur={() => setShowPasswordHint(false)}
                   onChange={(e) => {
-                    setNewPassword(e.target.value);
+                    const val = e.target.value;
+                    setNewPassword(val);
                     if (newPasswordError) setNewPasswordError("");
+                    if (val.length > 0) {
+                      setShowPasswordHint(true);
+                    } else {
+                      setShowPasswordHint(false);
+                    }
                   }}
                 />
                 <span
