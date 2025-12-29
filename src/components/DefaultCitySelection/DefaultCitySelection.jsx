@@ -7,7 +7,7 @@ import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defa
 
 const DefaultCitySelection = ({ onClose }) => {
   const [selectedCity, setSelectedCity] = useState(null);
-  const [setDefault, setSetDefault] = useState(localStorage.getItem('defaultCity')?false:true);
+  const [setDefault, setSetDefault] = useState(JSON.parse(localStorage.getItem('defaultCity'))?false:true);
   const [cityList,setCityList] = useState([]);
   const {city,setCity} = useCity();
 

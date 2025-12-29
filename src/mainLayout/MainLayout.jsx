@@ -5,7 +5,7 @@ import Topbar from "./Topbar";
 import DefaultCitySelection from "../components/DefaultCitySelection/DefaultCitySelection";
 
 const MainLayout = () => {
-    const [showDefaultCity,setShowDefaultCity] = useState(localStorage.getItem('defaultCity')?false:true);
+    const [showDefaultCity,setShowDefaultCity] = useState(JSON.parse(localStorage.getItem('defaultCity'))?false:true);
     return (
       <>
         <Topbar setShowDefaultCity={setShowDefaultCity}/>
