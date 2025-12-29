@@ -15,14 +15,15 @@ const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false)
   const [cityList, setCityList] = useState([]);
+   const [loading,setLoading]=useState(false)
   const [selectedCity, setSelectedCity] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [statusConfirmation, setStatusConfirmation] = useState({ status: false, data: null, setToggle: () => { } });
   const [wardList, setWardList] = useState([])
-
+  const [editWard,setEditWard]=useState({ward:'',wardId:''})
   const loadCities = async () => {
-    getCityList(setSelectedCity, setCityList, selectedCity, setWardList)
+    getCityList(setSelectedCity, setCityList, selectedCity, setWardList,setLoading)
   };
 
   useEffect(() => {
@@ -68,6 +69,8 @@ const City = () => {
             selectedCity={selectedCity}
             setSelectedCity={setSelectedCity}
             setWardList={setWardList}
+            setLoading={setLoading}
+             loading={loading}
           />
         </div>
 
@@ -132,7 +135,7 @@ const City = () => {
               </div>
             </div>
             <div style={{ display: "flex", gap: "20px" }}>
-              <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} />
+              <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
               <AddVehiclesCard />
             </div>
           </div>
@@ -165,6 +168,8 @@ const City = () => {
           <AddWard
             openAddWardPopUp={openAddWardPopUp}
             setOpenAddWardPopUp={setOpenAddWardPopUp}
+             setEditWard={setEditWard}
+              editWard={editWard}
             onEdit={onEdit}
             setOnEdit={setOnEdit}
             selectedCity={selectedCity}

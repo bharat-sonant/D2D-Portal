@@ -5,6 +5,7 @@ import { images } from '../../assets/css/imagePath';
 import styles from '../../Style/Task-Data/TaskDataList.module.css';
 import { debounce } from "lodash";
 import { filterCityAction, getwardList } from "../../Actions/City/cityAction";
+import WevoisLoader from "../Common/Loader/WevoisLoader";
 
 const CityList = (props) => {
     const [searchTerm,setSearchTerm] = useState('');
@@ -37,60 +38,53 @@ const CityList = (props) => {
                         />
                     </div>
                     <div className={`${styles.userListTitle}`}>Select Employee</div>
-                    <div className={`${styles.userScroll}`}>
-                        {filteredCityList?.length > 0 ? (
-                            filteredCityList?.map((city, i) => (
-                                <li className={`${GlobalStyles.dropdownLi}`} key={i}>
-                                    <div
-                                        className={`dropdown-item ${GlobalStyles.dropdownItem}${props?.selectedCity?.CityId === city?.CityId
-                                            ? GlobalStyles.selectedUser
-                                            : ""
-                                            } `}
-                                        style={{
-                                            backgroundColor:
-                                               props?.selectedCity?.CityId === city.CityId
-                                                    ? "#9acaf1"
-                                                    : "transparent",
-                                            backgroundColor:
-                                                props?.selectedCity?.CityId === city.CityId
+                   <div className={styles.userScroll}>
+  {props.loading ? (
+    <WevoisLoader title="Loading user data..." />
+  ) : filteredCityList?.length > 0 ? (
+    filteredCityList.map((city, i) => (
+      <li className={GlobalStyles.dropdownLi} key={city.CityId || i}>
+        <div
+          className={`dropdown-item ${GlobalStyles.dropdownItem} ${
+            props?.selectedCity?.CityId === city.CityId
+              ? GlobalStyles.selectedUser
+              : ""
+          }`}
+          style={{
+            backgroundColor:
+              props?.selectedCity?.CityId === city.CityId
+                ? "#3fb2f114"
+                : "transparent",
+          }}
+          onClick={() => {
+            props?.setSelectedCity(city);
+            getwardList(city.CityId, props.setWardList);
+          }}
+        >
+          <div className={GlobalStyles.userInfo}>
+            <span className={styles.employeeName}>
+              {city.CityName}
+            </span>
 
-                                                    ? "#3fb2f114"
-                                                    : "transparent",
-                                        }}
-                                     onClick={() => {props?.setSelectedCity(city); getwardList(city.CityId,props.setWardList)}}
-                                    >
-                                        <div
-                                            className={`${GlobalStyles.userInfo}`}
-                                            style={{
-                                                color:
-                                                   props?.selectedCity?.CityId === city.id
-                                                        ? "#000000"
-                                                        : "#000000",
-                                            }}
-                                        >
-                                            <span className={`${styles.employeeName}`}>
-                                                {city.CityName}
-                                            </span>
-                                            <span>
-                                                {city.Status === 'inactive' && <span className={styles.redDot}></span>}
-                                            </span>
+            {city.Status === "inactive" && (
+              <span className={styles.redDot}></span>
+            )}
+          </div>
+        </div>
+      </li>
+    ))
+  ) : (
+    <div className={styles.noUserData}>
+      <img
+        src={images.imgComingSoon}
+        className={`img-fluid ${styles.noUserImg}`}
+        alt="No City Found"
+      />
+      City not found
+    </div>
+  )}
+</div>
 
-                                        </div>
-                                    </div>
-                                </li>
-                            ))
-                        ) : (
-                            <div className={`${styles.noUserData}`}>
-                                <img
-                                    src={images.imgComingSoon}
-                                    className={`img-fluid ${styles.noUserImg}`}
-                                    title="No User Found"
-                                    alt="Image"
-                                />
-                                City not found
-                            </div>
-                        )}
-                    </div>
                 </ul>
             </div>
         </div>

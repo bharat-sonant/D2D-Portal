@@ -56,7 +56,8 @@ export const saveCityWiseWardData=(wardData,wardId)=>{
         if(!wardData && wardData?.Ward){
            return reject('Invalid parameters');
         }
-        let isDuplicateWardAvailable = await sbs.checkDuplicayInDb(wardData?.city_Id,wardData?.name)
+        let isDuplicateWardAvailable = await sbs.checkDuplicayInDb(wardData?.city_Id,wardData?.name,wardId)
+    
           if(isDuplicateWardAvailable){
             return resolve({duplicatefound:true,msg:'Ward already available in this city '})
           }
@@ -65,11 +66,17 @@ export const saveCityWiseWardData=(wardData,wardId)=>{
     });
 }
 
-export const getCityWisewardList=async (city_Id)=>{
-    const result = await sbs.getDataByColumnName('Wards','city_Id',city_Id)
-    if(result.success){
-  return { status: 'success', message: 'Ward data fetched successfully', data: result.data };
-    }else{
-       return { status: 'error', message: result.error };
-    } 
-}
+export const getCityWisewardList = async (city_Id) => {
+  const result = await sbs.getDataByColumnName('Wards', 'city_Id', city_Id);
+  if (!result.success) {
+    return { status: 'error', message: result.error };
+  }
+  const sortedData = [...result.data].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+  return {
+    status: 'success',
+    message: 'Ward data fetched successfully',
+    data: sortedData
+  };
+};

@@ -1,11 +1,12 @@
-import {useEffect, useMemo, useState } from "react";
-import dayjs from "dayjs";
+import {useEffect, useState } from "react";
+
 import { FaSpinner } from "react-icons/fa";
 import { images } from "../../assets/css/imagePath";
 import styles from "../../assets/css/modal.module.css";
 import {saveWardAction } from "../../Actions/City/cityAction";
 
 const AddWard = (props) => {
+  console.log( props.editWard)
   const initialForm = {
     CityId:0,
     Ward: "",
@@ -29,11 +30,20 @@ const AddWard = (props) => {
     
   }, [form,loading]);
 
+  useEffect(()=>{
+   if(props.editWard?.ward){
+     setForm((pre) => ({
+            Ward: props.editWard?.ward || "",
+        }));
+   }
+  },[])
+
   const handleChange = (e) => {
       setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSave = async () => {
-    saveWardAction(form,props.selectedCity?.CityId,setLoading,setWardNumberError,resetStateValues,props.setWardList);
+   
+    saveWardAction(form,props.selectedCity?.CityId,props.editWard?.wardId,setLoading,setWardNumberError,resetStateValues,props.setWardList);
   };
 
 
@@ -43,7 +53,7 @@ const AddWard = (props) => {
     setWardNumberError("")
     props.setOpenAddWardPopUp(false);
     setLoading(false);
-    props?.setOnEdit(false);
+    props.setEditWard({ward:'',wardId:""})
   }
 
 
