@@ -1,15 +1,16 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from '../../assets/css/DefaultCitySelection/defaultCitySelection.module.css'
 import { getCityList } from '../../Actions/commonActions';
 import { useCity } from '../../context/CityContext';
 import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defaultCitySelectionAction';
 
 const DefaultCitySelection = ({ onClose }) => {
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [setDefault, setSetDefault] = useState(JSON.parse(localStorage.getItem('defaultCity'))?false:true);
-  const [cityList,setCityList] = useState([]);
+  let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity'))?true:false;
   const {city,setCity} = useCity();
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [setDefault, setSetDefault] = useState(!defaultCityExist);
+  const [cityList,setCityList] = useState([]);
 
   useEffect(()=>{
     getCityList(setCityList,'active');
@@ -18,6 +19,13 @@ const DefaultCitySelection = ({ onClose }) => {
   const handleSubmit = (city) => {
     changeDefaultCityAction(city,setDefault,setCity,onClose)
   };
+  useMemo(()=>{
+    if(cityList?.length>0 && city){
+      let detail = cityList.find(item=>item?.CityName===city);
+      setSelectedCity(detail)
+    }
+
+  },[cityList,city])
 
   return (
     <>
@@ -32,7 +40,7 @@ const DefaultCitySelection = ({ onClose }) => {
             {/* Header */}
             <div className="modal-header">
               <h5 className={styles.headerTitle}>{city}</h5>
-              <button className="btn-close" onClick={onClose} />
+              {defaultCityExist && <button className="btn-close" onClick={onClose} />}
             </div>
 
             {/* Body */}

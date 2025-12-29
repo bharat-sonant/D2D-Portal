@@ -74,12 +74,15 @@ export default function Login() {
     setRememberMe(!rememberMe);
   };
   const fetchCityName = async (defaultCityId) => {
-    const resp = await getDataByColumnName("Cities","CityId",defaultCityId);
-    if (resp?.success) {
-      const cityName = resp?.data?.[0]?.CityName || '';
-      setCity(cityName);
-      localStorage.setItem('city',cityName);
+    if (defaultCityId) {
+      const resp = await getDataByColumnName("Cities", "CityId", defaultCityId);
+      if (resp?.success) {
+        const cityName = resp?.data?.[0]?.CityName || "";
+        setCity(cityName);
+        localStorage.setItem("city", cityName);
+      }
     }
+    return;
   };
 
   return (
