@@ -78,3 +78,16 @@ export const removeCityAccess = async (userId) => {
   const result = await sbs.deleteData("UserCityAccess", userId);
   console.log(result)
 }
+export const setUserDefaultCity=(userId,cityId)=>{
+  return new Promise(async(resolve,reject)=>{
+    if (!userId && cityId) {
+      return reject('Invalid parameters');
+    }
+    const result = await sbs.updateData('Users', 'id', userId, {defaultCity:cityId});
+    if (result.success) {
+      return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
+    } else {
+      return reject({status: 'error', message: result.error, error: result?.err});
+    }
+  });
+}

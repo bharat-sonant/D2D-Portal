@@ -1,15 +1,16 @@
 import { images } from "../../assets/css/imagePath";
 import style from "../../assets/css/City/wardList.module.css"
+import { FiEdit } from "react-icons/fi";
 
 const WardList = (props) => {
  
-   
+  
 
   return (
     <div className={style.Detailscard}>
       <div className={style.card_header}>
-        <h5 className={style.heading}> </h5>
-        
+        <h5 className={style.heading}>Add Wards </h5>
+         
           <div className="d-flex justify-content-center align-items-center">
             <button
               className={`btn ${style.custom_AddDesignation_btn} p-0`}
@@ -30,22 +31,16 @@ const WardList = (props) => {
                   {" "}
                   {ward.name}
                 </span>
-                <div className={style.countEdit}>
-                
-                    <img
-                      src={images.iconEdit}
-                      className={`${style.edit_icon}`}
-                     
-                    />
-           
-                      <img
-                        src={images.iconDeleted}
-                        className={style.edit_icon}
-                        width="13px"
-                        
-                      />
-                    
-                  
+                <div className={style.countEdit}   onClick={() => {
+  props.setEditWard({
+    ward: ward.name,
+    wardId: ward.id
+  });
+  props.setOpenAddWardPopUp(true);
+}}
+>
+                    <FiEdit   className={style.edit_icon}/>
+
                 </div>
               </li>
             ))}

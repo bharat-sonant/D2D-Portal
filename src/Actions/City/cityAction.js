@@ -55,16 +55,19 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
     }
 }
 
-export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWardList)=>{
+export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWardList,setLoading)=>{
+    setLoading(true)
       const response = await getCityData();
        if(response.status==='success'){
         let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.CityId);
            setSelectedCity(currentSelected || response.data[0]);
            getwardList(response.data[0]?.CityId,setWardList)
            setCityList(response.data);
+           setLoading(false)
        }else{
         setSelectedCity(null)
        setCityList([]);
+       setLoading(false)
 }
        }
       
@@ -101,7 +104,7 @@ export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)
 
 
 
-export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,resetStateValues,setWardList) => {
+export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberError,resetStateValues,setWardList) => {
     let isValid = true;
     setWardNumberError("");
     if(!form?.Ward?.trim()){
@@ -118,7 +121,7 @@ export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,re
         }
        
         try {
-           let response =  await saveCityWiseWardData(wardDetail,'')
+           let response =  await saveCityWiseWardData(wardDetail,wardId)
             if(response.duplicatefound){
             setWardNumberError(response.msg);
              setLoading(false);
@@ -126,7 +129,9 @@ export const saveWardAction = async(form,cityId,setLoading,setWardNumberError,re
             }
               getwardList(cityId,setWardList)
             resetStateValues();
-             common.setAlertMessage("success", "Ward added successfully");
+            const message = wardId? "Ward updated successfully": "Ward added successfully";
+            common.setAlertMessage("success", message);
+          
         } catch (err) {
             setLoading(false);
                   if (err?.code === "23505") {
