@@ -241,7 +241,7 @@
   gap: 8px;
   margin-bottom: 20px;
   padding: 4px;
-  background: #f8f9fa;
+  background: #ffffff;
   border-radius: 12px;
   width: fit-content;
 }
@@ -254,8 +254,8 @@
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
-  background: transparent;
-  color: #6b7280;
+  background: #ffffff;
+  color: var(--black);
   position: relative;
 }
 
