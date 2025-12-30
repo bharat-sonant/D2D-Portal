@@ -20,21 +20,18 @@ export const sendPasswordToMail = async (to, password) => {
     }
 }
 
-export const forgotPasswordService = async(email) => {
+export const forgotPasswordService = async(email, setEmailError) => {
   const normalisedEmail = email?.toLowerCase().trim();
-  if(!normalisedEmail){
-    common.setAlertMessage('Email is required');
-    return;
-  }
+
   const hashCode = common.generateHash(normalisedEmail);
   const {data, error} = await supabase.from("Users").select('*').eq("hashCode", hashCode).maybeSingle();
   if (error || !data) {
-    common.setAlertMessage('error',"User not found");
+    setEmailError("Email not registered !")
     return;
   }
 
   if(data.status !== 'active'){
-    common.setAlertMessage('error',"Your account is currently inactive");
+    setEmailError("Your account is currently inactive.");
     return;
   }
 

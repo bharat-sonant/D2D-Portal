@@ -11,14 +11,29 @@ const ForgotPassword = ({ onBack }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [emailError, setEmailError] = useState('')
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
   const handleSubmit = async () => {
     if (loading) return;
 
+    if (!email.trim()) {
+      setEmailError("Please enter email address");
+      return;
+    }
+
+    if (!emailRegex.test(email.trim())) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailError("");
+
     try {
       setLoading(true);
 
-      const result = await forgotPasswordService(email);
+      const result = await forgotPasswordService(email, setEmailError);
       if (result) {
         setIsSuccess(true);
         setEmail("");
@@ -134,12 +149,20 @@ const ForgotPassword = ({ onBack }) => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    if(emailError) setEmailError("")
+                  }}
                   onKeyDown={handleKeyDown}
                   placeholder="Enter your email"
                   autoFocus
                 />
               </div>
+              {emailError && (
+                <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                  {emailError}
+                </p>
+              )}
             </div>
 
             {/* Send Button */}
