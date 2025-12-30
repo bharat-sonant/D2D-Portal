@@ -230,43 +230,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
                 City
               </span>
             </Link>
-
-            <Link
-              aria-current="page"
-              to="/realtime-monitoring"
-              title="Realtime Monitoring"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/realtime-monitoring"
-                  ? styles.activeNav
-                  : ""
-                }`}
-              style={
-                location.pathname === "/realtime-monitoring"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <GrMapLocation
-                className={`${styles.iconNav} ${location.pathname === "/realtime-monitoring"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/realtime-monitoring"
-                      ? "#000000"
-                      : "#707070",
-                }}
-              >
-                Realtime Monitoring
-              </span>
-            </Link>
+ 
             <Link
               aria-current="page"
               to="/reports"
