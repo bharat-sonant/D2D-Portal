@@ -7,7 +7,7 @@ import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defa
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity'))?true:false;
-  const {city,setCity} = useCity();
+  const {city,setCity, setCityId} = useCity();
   const [selectedCity, setSelectedCity] = useState(null);
   const [setDefault, setSetDefault] = useState(!defaultCityExist);
   const [cityList,setCityList] = useState([]);
@@ -17,7 +17,7 @@ const DefaultCitySelection = ({ onClose }) => {
   },[]);
 
   const handleSubmit = (city) => {
-    changeDefaultCityAction(city,setDefault,setCity,onClose)
+    changeDefaultCityAction(city,setDefault,setCity,onClose, setCityId)
   };
   useMemo(()=>{
     if(cityList?.length>0 && city){

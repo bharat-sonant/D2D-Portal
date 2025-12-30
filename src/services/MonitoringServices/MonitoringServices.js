@@ -31,8 +31,9 @@ const sortWards = (list = []) => {
   });
 };
 
-export const getWardData = async() => {
-  const result = await sbs.getDataByColumnName('Wards', 'city_Id', '74')
+export const getWardData = async(cityId) => {
+  console.log('cityid',cityId)
+  const result = await sbs.getDataByColumnName('Wards', 'city_Id', cityId)
   if(!result.success){
     return {status : 'error', message : result?.error}
   }

@@ -142,7 +142,7 @@ const City = () => {
                     overflow: "hidden",
                   }}
                 >
-                  {selectedCity?.logoUrl && (
+c                  {selectedCity?.logoUrl && (
                     <img
                       src={selectedCity?.logoUrl || "/city-placeholder.png"}
                       alt="City Logo"

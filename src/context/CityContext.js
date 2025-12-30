@@ -6,14 +6,15 @@ const CityContext = createContext();
 
 export const CityProvider = ({ children }) => {
   const [city, setCity] = useState(localStorage.getItem("city") || "DevTest");
+  const [cityId, setCityId] = useState(localStorage.getItem("cityId") || '74');
   useEffect(() => {
     // Save city globally
     if (!city) {
       setCity("DevTest");
       return;
     }
-
     localStorage.setItem("city", city);
+    localStorage.setItem("cityId", cityId);
 
     // Initialize Firebase ONCE per city
     const firebaseConfig = getCityFirebaseConfig(city);
@@ -25,7 +26,7 @@ export const CityProvider = ({ children }) => {
   }, [city]);
 
   return (
-    <CityContext.Provider value={{ city, setCity }}>
+    <CityContext.Provider value={{ city, cityId, setCity , setCityId}}>
       {children}
     </CityContext.Provider>
   );

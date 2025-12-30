@@ -4,11 +4,12 @@ export const getWardList = async (
   setSelectedWard,
   setWardList,
   selectedWard,
-  setLoading
+  setLoading,
+  cityId
 ) => {
   try{
     setLoading(true);
-    const response = await getWardData();
+    const response = await getWardData(cityId);
 
     if (response.status === 'success') {
       let currentSelected = response.data?.find(

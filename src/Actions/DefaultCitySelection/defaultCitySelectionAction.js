@@ -1,7 +1,7 @@
 import {setUserDefaultCity} from '../../services/UserServices/UserServices';
 import * as common from "../../common/common";
 
-export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCity,onClose)=>{
+export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCity,onClose, setCityId)=>{
         
         try{
             if (setAsDefault && selectedCity?.CityId) {
@@ -23,7 +23,9 @@ export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCity,onC
             common.setAlertMessage("error", "Error in saving default city");
         }
         finally {
+            console.log('sele',selectedCity)
             setCity(selectedCity?.CityName);
+            setCityId(selectedCity?.CityId)
             onClose();
         }
 }

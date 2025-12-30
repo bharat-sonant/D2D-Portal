@@ -46,6 +46,7 @@ export default function Login() {
       localStorage.setItem("userId", user?.id);  
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       localStorage.setItem("defaultCity", user?.defaultCity);
+      localStorage.setItem("cityId", user?.defaultCity);
       await fetchCityName(user?.defaultCity);      
       if (rememberMe) {
         localStorage.setItem("savedEmail", encryptValue(emailId));
