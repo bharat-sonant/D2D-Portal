@@ -15,7 +15,7 @@ export default function Login() {
   const [loading,setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
-  const {setCity} = useCity();
+  const {setCity, setCityId} = useCity();
 
   useEffect(() => {
     rememberMefunction();
@@ -47,6 +47,7 @@ export default function Login() {
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       localStorage.setItem("defaultCity", user?.defaultCity);
       localStorage.setItem("cityId", user?.defaultCity);
+      setCityId(user?.defaultCity);
       await fetchCityName(user?.defaultCity);      
       if (rememberMe) {
         localStorage.setItem("savedEmail", encryptValue(emailId));

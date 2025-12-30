@@ -12,7 +12,6 @@ const Monitoring = () => {
   const [wardList, setWardList] = useState([]);
   const [loading, setLoading] = useState(false);
   const {cityId} = useCity();
-
   
     const loadWards = async () => {
       getWardList(setSelectedWard,setWardList,selectedWard, setLoading, cityId)
@@ -54,12 +53,6 @@ const Monitoring = () => {
   // };
   // input.click();
 };
-
-const handleViewMap = (ward) => {
-  // open map file
-  console.log("View map for:", ward);
-};
-
 
      return (
     <>

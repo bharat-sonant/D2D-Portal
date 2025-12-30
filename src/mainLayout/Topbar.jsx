@@ -81,6 +81,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
     localStorage.removeItem("name");
     localStorage.removeItem("userId");
     localStorage.removeItem("city");
+    localStorage.removeItem("cityId");
     localStorage.removeItem("defaultCity");
 
     navigate("/");
