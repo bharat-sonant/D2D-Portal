@@ -6,6 +6,7 @@ import {
 } from "../../services/ForgotPassword/ForgotPasswordService";
 import { setAlertMessage } from "../../common/common";
 import styles from "../../pages/Login/login.module.css";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const ForgotPassword = ({ onBack }) => {
   const [email, setEmail] = useState("");
@@ -162,8 +163,8 @@ const ForgotPassword = ({ onBack }) => {
                 />
               </div>
               {emailError && (
-                <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-                  {emailError}
+                <p >
+                  <ErrorMessage message={emailError} />
                 </p>
               )}
             </div>

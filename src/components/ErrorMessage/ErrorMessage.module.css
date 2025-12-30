@@ -1,0 +1,50 @@
+.errorWrapper {
+ display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 16px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #ff50501f, #ff787814);
+    border: 1px solid #ff505059;
+    animation: ErrorMessage_errorSlideFade__OsrV- 0.35s ease;
+  box-shadow: 0 8px 24px rgba(255, 80, 80, 0.15);
+}
+
+.errorIcon {
+  color: #ff4d4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: iconPulse 1.6s ease-in-out infinite;
+  width: 14px;
+}
+
+.errorText {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: #b42318;
+  line-height: 1.4;
+}
+
+/* Entry animation */
+@keyframes errorSlideFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle pulse on icon */
+@keyframes iconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
