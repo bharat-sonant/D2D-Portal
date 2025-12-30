@@ -64,6 +64,7 @@ const ForgotPassword = ({ onBack }) => {
       >
         {isSuccess ? (
           /* ✅ SUCCESS VIEW */
+          <>
           <div className={`${styles.formHeader}`}>
             <div
               className="d-flex align-items-center justify-content-center mx-auto mb-3"
@@ -86,7 +87,9 @@ const ForgotPassword = ({ onBack }) => {
               address.
             </p>
 
-             <div className="text-center mt-3">
+            
+          </div>
+           <div className="text-center mt-3">
           <p className={styles.forgotText}>
             <a
               href="#"
@@ -110,7 +113,7 @@ const ForgotPassword = ({ onBack }) => {
             </a>
           </p>
         </div>
-          </div>
+        </>
         ) : (
           <>
             <div className="text-center mb-3">
