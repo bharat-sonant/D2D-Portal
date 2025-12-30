@@ -14,7 +14,6 @@ const WardList = (props) => {
         setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard))
     }, [props?.wardList, searchTerm]);
 
-    const handleSearch = debounce((e) => { setSearchTerm(e.target.value) }, 300);
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
@@ -29,16 +28,9 @@ const WardList = (props) => {
                     }}
                     aria-labelledby="drop downMenuButton"
                 >
-                    <div className={`${GlobalStyles.searchGroup}`}>
-                        <input
-                            className={`${GlobalStyles.inputSearch}`}
-                            type="text"
-                            placeholder="Search"
-                            onChange={handleSearch}
-                        />
-                    </div>
+                    
                     <div className={`${styles.userListTitle}`}>Select Ward</div>
-                    <div className={`${styles.userScroll}`}>
+                    <div className={`${styles.userScroll}`} style={{marginTop:'10px'}}>
                         {props.loading ? (
                             <WevoisLoader title="Loading ward data..." />
                         ) : filteredWardList?.length > 0 ? (
