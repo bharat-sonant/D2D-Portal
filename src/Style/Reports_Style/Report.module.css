@@ -4,8 +4,7 @@
     padding-top: 65px;
     padding-left: 8px;
 
-    display: grid;
-    grid-template-columns: 260px 1fr; /* Sidebar width fixed */
+    display: flex;
     gap: 5px;
 
     overflow: hidden;  /* Prevent layout overflow */
@@ -17,7 +16,7 @@
 }
 
 .rightSection {
-    width: 100%;
+    flex: 1;
     height: calc(100vh - 75px);
     overflow-y: auto;     /* ⭐ SCROLLABLE RIGHT PANEL */
     overflow-x: hidden;   /* Horizontal scroll avoid */

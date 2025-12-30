@@ -15,9 +15,8 @@ const Reports = () => {
   };
     return (
         <div className={style.container}>
-            <div className={style.leftSection} >
                 <SidePannel selectedReport={selectedReport} setSelectedReport={setSelectedReport}/>
-            </div>
+            
             <div className={style.rightSection}>
                 {renderRightComponent()}
             </div>
