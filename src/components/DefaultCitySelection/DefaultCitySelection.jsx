@@ -87,7 +87,7 @@ const DefaultCitySelection = ({ onClose }) => {
               {saving ? (
                 <span className="spinner-border spinner-border-sm" />
               ) : (
-                `Set ${selectedCity.CityName} as your default city`
+                `Set`
               )}
             </button>
             </div>
