@@ -509,6 +509,7 @@ import {
   Shield,
   Zap,
   User,
+  Car
 } from "lucide-react";
 import styles from "../Login/login.module.css";
 
@@ -655,7 +656,7 @@ const Login = () => {
 
               <div className={styles.featureslist}>
                 <div className={styles.featureItem}>
-                  <Shield className={styles.featureIcon} />
+                  <Car className={styles.featureIcon} />
                   <div>
                     <h4>100% Waste Collection</h4>
                     <p>
