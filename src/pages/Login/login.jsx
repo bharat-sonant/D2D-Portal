@@ -591,7 +591,6 @@ const Login = () => {
         localStorage.removeItem("savedPassword");
       }
       navigate("/Dashboard");
-      setAlertMessage("success", "Login successfully");
     } catch (err) {
       setAlertMessage("error", err.message);
     } finally {
@@ -774,7 +773,6 @@ const Login = () => {
                         )}
                       </button>
                     </div>
-                    {console.log('emailError', emailError, 'passs', passwordError)}
                     {passwordError && (
                       <p >
                       <ErrorMessage message={passwordError} />

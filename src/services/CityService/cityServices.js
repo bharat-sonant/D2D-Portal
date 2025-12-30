@@ -1,3 +1,4 @@
+import { supabase } from "../../createClient";
 import * as sbs from "../supabaseServices"
 
 export const saveCityData = async (cityData,logoFile,cityId) => {
@@ -36,6 +37,40 @@ export const getCityData=async()=>{
     }else{
        return { status: 'error', message: result.error };
     } 
+}
+
+export const getAvailableCityData = async(userId) => {
+  const accessResp = await sbs.getDataByColumnName('UserCityAccess', 'user_id', userId)
+
+  if (!accessResp?.success || !accessResp?.data?.length) {
+    return { status: 'success', data: [] };
+  }
+
+  const cityIds = accessResp?.data?.map(item => item.city_id)
+
+  const {data, error} = await supabase.from("Cities").select("CityId , CityName, Status, CityCode").in("CityId", cityIds);
+
+  if (error) {
+    return { status: 'error', message: error.message };
+  }
+
+  const updatedCityList = data.map(city => ({
+    ...city,
+    logoUrl : `${sbs.storageUrl}/CityLogo/${city.CityCode}.png?v=${Date.now()}`
+  }));
+
+  const sortedData = [...updatedCityList].sort((a,b)=> {
+    if(a.Status !== b.Status){
+      return a.Status === "active" ? -1 : 1;
+    }
+    return a.CityName.localeCompare(b.CityName);
+  })
+
+  return {
+    status: 'success',
+    message: 'Available city data fetched successfully',
+    data: sortedData
+  };
 }
 
 export const updateCityStatus=async(cityId,Status)=>{
