@@ -43,12 +43,12 @@
 //       const user = await login(emailId, password);
 //       localStorage.setItem("isLogin", "success");
 //       localStorage.setItem("name", user?.name);
-//       localStorage.setItem("userId", user?.id);  
+//       localStorage.setItem("userId", user?.id);
 //       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
 //       localStorage.setItem("defaultCity", user?.defaultCity);
 //       localStorage.setItem("cityId", user?.defaultCity);
 //       setCityId(user?.defaultCity);
-//       await fetchCityName(user?.defaultCity);      
+//       await fetchCityName(user?.defaultCity);
 //       if (rememberMe) {
 //         localStorage.setItem("savedEmail", encryptValue(emailId));
 //         localStorage.setItem("savedPassword", encryptValue(password));
@@ -249,7 +249,7 @@
 //           <div className="col-lg-6 px-4 py-4 d-flex flex-column justify-content-center">
 //           {forgotPassword ? (
 //             <ForgotPassword
-//               onBack={() => setforgetPassword(false)} 
+//               onBack={() => setforgetPassword(false)}
 //             /> )
 //             : (
 //                 <>
@@ -382,7 +382,7 @@
 
 //             <div className="d-flex justify-content-between align-items-center mb-2 mt-1">
 //               <div className="d-flex align-items-center">
-//                  <input 
+//                  <input
 //                     type="checkbox"
 //                     id='rememberMe'
 //                     className='form-check-input'
@@ -393,7 +393,7 @@
 //                       height:'16px',
 //                       marginRight:'6px',
 //                       cursor: 'pointer'
-//                     }}  
+//                     }}
 //                   />
 //                   <label
 //                     htmlFor="rememberMe"
@@ -462,7 +462,7 @@
 //                 )}
 //               </button>
 //             </div>
-//             </> 
+//             </>
 //           )}
 //           </div>
 //         </div>
@@ -470,7 +470,6 @@
 //     </div>
 //   );
 // }
-
 
 // {/* Options */}
 //               {/* <div className="d-flex justify-content-between align-items-center mb-4">
@@ -483,20 +482,18 @@
 //                     onChange={(e) => setRememberMe(e.target.checked)}
 //                     style={{ cursor: 'pointer' }}
 //                   />
-//                   <label className="text-muted" 
-//                          style={{ fontSize: '14px', cursor: 'pointer' }} 
+//                   <label className="text-muted"
+//                          style={{ fontSize: '14px', cursor: 'pointer' }}
 //                          htmlFor="rememberMe">
 //                     Remember Me
 //                   </label>
 //                 </div>
-//                 <a href="#" 
+//                 <a href="#"
 //                    className="text-decoration-none fw-semibold"
 //                    style={{ color: '#667eea', fontSize: '14px' }}>
 //                   Forgot password?
 //                 </a>
 //               </div> */}
-
-
 
 import React, { useEffect, useState } from "react";
 import {
@@ -509,7 +506,7 @@ import {
   Shield,
   Zap,
   User,
-  Car
+  Car,
 } from "lucide-react";
 import styles from "../Login/login.module.css";
 
@@ -532,8 +529,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
-  const {setCity, setCityId} = useCity();
-  
+  const { setCity, setCityId } = useCity();
 
   useEffect(() => {
     rememberMefunction();
@@ -628,15 +624,14 @@ const Login = () => {
         ))}
       </div>
 
-      {/* Main Content */}  
-{forgotPassword ? (
-  <ForgotPassword onBack={() => setforgetPassword(false)} />
-) : (
-  <>
-      <div className={styles.contentWrapper}>
-        {/* Left Side - Branding */}
-     
-       
+      {/* Main Content */}
+      {forgotPassword ? (
+        <ForgotPassword onBack={() => setforgetPassword(false)} />
+      ) : (
+        <>
+          <div className={styles.contentWrapper}>
+            {/* Left Side - Branding */}
+
             <div className={styles.brandingSection}>
               <div className={styles.logoContainer}>
                 <div className={styles.logoIcon}>
@@ -750,7 +745,6 @@ const Login = () => {
                   </div>
 
                   <div className={styles.formFooter}>
-
                     <div className="">
                       <input
                         type="checkbox"
@@ -796,17 +790,33 @@ const Login = () => {
                     </a>
                   </div>
 
-                  <button onClick={handleSubmit} className={styles.loginButton}>
-                    <span>Login</span>
-                    <ArrowRight className={styles.arrowIcon} size={20} />
+                  <button
+                    onClick={handleSubmit}
+                    className={styles.loginButton}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div
+                        className="spinner-border"
+                        style={{
+                          height: "18px",
+                          width: "18px",
+                          borderWidth: "2px",
+                        }}
+                      ></div>
+                    ) : (
+                      <>
+                        <span>Login</span>
+                        <ArrowRight className={styles.arrowIcon} size={20} />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
             </div>
-        
-      </div> 
-      </>
-        )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
