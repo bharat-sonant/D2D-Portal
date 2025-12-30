@@ -520,6 +520,7 @@ import {
 import dayjs from "dayjs";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import { useCity } from "../../context/CityContext";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -530,6 +531,9 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
   const { setCity, setCityId } = useCity();
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
     rememberMefunction();
@@ -552,9 +556,26 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!emailId.trim()) {
+      setEmailError("Please enter email address");
+      return;
+    }
+
+    if (!emailRegex.test(emailId.trim())) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailError("");
+    setPasswordError("");
     try {
       setLoading(true);
-      const user = await login(emailId, password);
+      const user = await login(emailId, password, setEmailError, setPasswordError);
+
+      if(!user){
+        setLoading(false)
+        return;
+      }
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
       localStorage.setItem("userId", user?.id);
@@ -710,12 +731,20 @@ const Login = () => {
                         id="email"
                         placeholder="Enter your email"
                         value={emailId}
-                        onChange={(e) => setEmailId(e.target.value)}
+                        onChange={(e) => {
+                          setEmailId(e.target.value)
+                          if(emailError) setEmailError("")
+                        }}
                         onKeyDown={handleKeyDown}
                         autoComplete="new-password"
                         autoFocus
                       />
                     </div>
+                    {emailError && (
+                      <p >
+                        <ErrorMessage message={emailError} />
+                      </p>
+                    )}
                   </div>
 
                   <div className={styles.inputGroup}>
@@ -727,7 +756,10 @@ const Login = () => {
                         id="password"
                         value={password}
                         onKeyDown={handleKeyDown}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                          setPassword(e.target.value)
+                          if(passwordError) setPasswordError("")
+                        }}
                         placeholder="Enter your password"
                         autoComplete="new-password"
                       />
@@ -742,6 +774,12 @@ const Login = () => {
                         )}
                       </button>
                     </div>
+                    {console.log('emailError', emailError, 'passs', passwordError)}
+                    {passwordError && (
+                      <p >
+                      <ErrorMessage message={passwordError} />
+                      </p>
+                    )}
                   </div>
 
                   <div className={styles.formFooter}>

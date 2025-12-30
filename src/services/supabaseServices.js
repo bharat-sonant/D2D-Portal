@@ -76,22 +76,27 @@ export const checkDuplicayInDb = async (cityId,wardName,wardId) => {
   }
   return data.length > 0;
 };
-export const login = async (email, password) => {
+export const login = async (email, password, setEmailError, setPasswordError) => {
   // DB se user fetch karo
   const hashCode = generateHash(email?.toLowerCase().trim());
   const { data, error } = await supabase.from("Users").select("*").eq("hashCode", hashCode).maybeSingle();
-  if (error || !data) throw new Error("User not found");
+  if (error || !data) {
+    setEmailError("Email not registered !")
+    return null;
+  };
   // status check
   if (data.status !== "active") {
-    throw new Error(
+    setEmailError(
       "Your account is currently inactive. Please contact the administrator."
     );
+    return null;
   }
 
   // password decrypt + verify
   const decryptedPassword = decryptValue(data?.password);
   if (decryptedPassword !== password) {
-    throw new Error("Incorrect password");
+    setPasswordError("Incorrect password");
+    return null;
   }
   return data;
 };
