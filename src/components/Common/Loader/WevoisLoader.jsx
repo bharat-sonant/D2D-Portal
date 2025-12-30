@@ -1,9 +1,9 @@
 import { ReactComponent as IconLogo } from "../../../assets/images/icons/logoGreen.svg";
 import loaderStyle from './loaderStyle.module.css';
 
-const WevoisLoader = ({title}) => {
+const WevoisLoader = ({title,height}) => {
   return (
-    <div className={loaderStyle.loadercontainer}>
+    <div className={loaderStyle.loadercontainer} style={{height:height||''}}>
       <div className={loaderStyle.loader}>
         <div className={loaderStyle.rotatingBorder}></div>
         <div className={loaderStyle.fixedContent}>

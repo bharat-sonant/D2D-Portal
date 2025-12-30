@@ -4,6 +4,7 @@ import styles from '../../assets/css/DefaultCitySelection/defaultCitySelection.m
 import { getCityList } from '../../Actions/commonActions';
 import { useCity } from '../../context/CityContext';
 import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defaultCitySelectionAction';
+import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity'))?true:false;
@@ -11,9 +12,10 @@ const DefaultCitySelection = ({ onClose }) => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [setDefault, setSetDefault] = useState(!defaultCityExist);
   const [cityList,setCityList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
-    getCityList(setCityList,'active');
+    getCityList(setCityList,'active', setLoading);
   },[]);
 
   const handleSubmit = (city) => {
@@ -45,7 +47,10 @@ const DefaultCitySelection = ({ onClose }) => {
 
             {/* Body */}
             <div className={`modal-body ${styles.body}`}>
-              <div className="row g-3">
+             {loading ? (
+              <WevoisLoader title={'loading cities'} height={'100%'}/>
+             ) : (
+               <div className="row g-3">
                 {cityList?.map((city) => (
                   <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6" key={city?.CityId}>
                     <div className={`${styles.cityCard} ${selectedCity?.CityId === city?.CityId ? styles.selected : "" }`}
@@ -63,6 +68,7 @@ const DefaultCitySelection = ({ onClose }) => {
                   </div>
                 ))}
               </div>
+             )}
             </div>
 
             {/* Footer */}
