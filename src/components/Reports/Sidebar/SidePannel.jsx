@@ -3,13 +3,7 @@ import style from '../../../Style/Reports_Style/SidePannel/SidePannel.module.css
 const SidePannel = ({ selectedReport, setSelectedReport }) => {
 
   const menuItems = [
-    "Daily Work Report",
-    "Daily Fuel Report",
-    "Zone Work Progress",
-    "Ward Swipe Report",
-    "Daily Waste Collection",
-    "7 Days Work Report",
-    "Vehicle Assigned Report"
+    "Daily Work Report"
   ];
 
   return (
