@@ -47,7 +47,8 @@ const DefaultCitySelection = ({ onClose }) => {
           <div className="modal-content">
             {/* Header */}
             <div className="modal-header">
-              <h5 className={styles.headerTitle}>Set your default city</h5>
+              {console.log('city',city)}
+              <h5 className={styles.headerTitle}>{defaultCityExist ?  'Select City' : 'Set your default city'}</h5>
               {defaultCityExist && <button className="btn-close" onClick={onClose} />}
             </div>
 
@@ -76,10 +77,27 @@ const DefaultCitySelection = ({ onClose }) => {
               </div>
              )}
             </div>
-
+            
             {/* Footer */}
             <div className="modal-footer d-flex justify-content-end">
-              <button 
+              {defaultCityExist ? (
+                <button 
+              className="btn btn-primary"
+              disabled={!selectedCity || saving}
+              onClick={() => {
+                setCity(selectedCity?.CityName);
+                setCityId(selectedCity?.CityId);
+                onClose();
+              }}
+            >
+              {saving ? (
+                <span className="spinner-border spinner-border-sm" />
+              ) : (
+                `Change City`
+              )}
+            </button>
+              ):(
+                <button 
               className="btn btn-primary"
               disabled={!selectedCity || saving}
               onClick={() => handleSubmit(selectedCity)}
@@ -90,6 +108,7 @@ const DefaultCitySelection = ({ onClose }) => {
                 `Set`
               )}
             </button>
+              )}
             </div>
           </div>
         </div>
