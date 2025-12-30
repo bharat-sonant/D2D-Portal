@@ -561,6 +561,11 @@ const Login = () => {
       return;
     }
 
+    if (!password.trim()) {
+      setPasswordError("Please enter password");
+      return;
+    }
+
     if (!emailRegex.test(emailId.trim())) {
       setEmailError("Please enter a valid email address");
       return;
