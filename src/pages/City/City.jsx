@@ -10,12 +10,15 @@ import { changeCityStatusAction, getCityList } from "../../Actions/City/cityActi
 import WardList from "../../components/City/WardList";
 import AddWard from "../../components/City/AddWard";
 import AddVehiclesCard from "../../components/City/AddVehiclesCard";
+import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessList";
+import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 
 
 const TABS = [
   { key: "city", label: "City Details" },
   { key: "wards", label: "Wards" },
   { key: "vehicle", label: "Vehicles" },
+  { key: "users", label: "Users In City" }
 ];
 
 const City = () => {
@@ -30,6 +33,9 @@ const City = () => {
   const [wardList, setWardList] = useState([])
   const [editWard, setEditWard] = useState({ ward: '', wardId: '' })
   const [activeTab, setActiveTab] = useState('city');
+  const [usersInCity, setUsersInCity] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
   };
@@ -37,6 +43,12 @@ const City = () => {
   useEffect(() => {
     loadCities();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'users' && selectedCity?.CityId) {
+      getUsersByCity(selectedCity.CityId, setUsersInCity, setLoadingUsers);
+    }
+  }, [activeTab, selectedCity]);
 
   const handleOpenModal = () => {
     setShowCanvas(true);
@@ -165,6 +177,10 @@ const City = () => {
             <div>
               {activeTab === 'vehicle' && (
                 <AddVehiclesCard selectedCity={selectedCity} />
+              )}
+
+              {activeTab === 'users' && (
+                <UserCityAccessList selectedCity={selectedCity} userList={usersInCity} loading={loadingUsers} />
               )}
             </div>
           </div>
