@@ -1,39 +1,23 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../assets/css/Dashboard/WelcomeMsg.module.css";
 import { images } from "../../assets/css/imagePath";
+import { Sun, Moon, Bell } from "lucide-react";
 
 const WelcomeMsg = () => {
   const [greeting, setGreeting] = useState("");
   const [currentDate, setCurrentDate] = useState("");
-  const [sessionImage, setSessionImage] = useState(images.iconSunrise); // Default image
-  const [sessionClass, setSessionClass] = useState(styles.morningTheme); // Default class
-  const [userName, setUserName] = useState("User"); // Default user name
+  const [userName, setUserName] = useState("User");
 
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
       const hours = now.getHours();
 
-      // Greeting, Image & Class logic
-      if (hours >= 0 && hours < 12) {
-        setGreeting("Good Morning");
-        setSessionImage(images.iconSunrise);
-        setSessionClass(styles.morningTheme);
-      } else if (hours >= 12 && hours < 16) {
-        setGreeting("Good Afternoon");
-        setSessionImage(images.iconSunShine);
-        setSessionClass(styles.afternoonTheme);
-      } else if (hours >= 16 && hours < 20) {
-        setGreeting("Good Evening");
-        setSessionImage(images.iconSunSet);
-        setSessionClass(styles.eveningTheme);
-      } else {
-        setGreeting("Good Night");
-        setSessionImage(images.iconNight);
-        setSessionClass(styles.nightTheme);
-      }
+      if (hours < 12) setGreeting("Good Morning");
+      else if (hours < 16) setGreeting("Good Afternoon");
+      else if (hours < 20) setGreeting("Good Evening");
+      else setGreeting("Good Night");
 
-      // Date formatting
       const options = {
         weekday: "long",
         day: "2-digit",
@@ -43,36 +27,66 @@ const WelcomeMsg = () => {
       setCurrentDate(`Today is ${now.toLocaleDateString("en-US", options)}`);
     };
 
-    // Fetch logged-in user name from local storage
     const storedUserName = localStorage.getItem("name");
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
+    if (storedUserName) setUserName(storedUserName);
 
-    updateDateTime(); // Run initially
-    const timer = setInterval(updateDateTime, 1000); // ✅ Now updating every second
-
-    return () => clearInterval(timer); // Cleanup interval
+    updateDateTime();
+    const timer = setInterval(updateDateTime, 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  return (
-    <div className={`${styles.welcomeBox} `}>
-      <div className={`${styles.welcomeView}`}>
-        <div className={`${styles.welcomeLeft}`}>
-          <div className={`${styles.welcomeName}`}>
-            Hello,<div className={`${styles.textDark}`}>&nbsp; {userName}</div>
-          </div>
-          <div className={`${styles.sessionFormat}`}>{greeting}</div>
-          <div className={`${styles.date}`}>{currentDate}</div>
-        </div>
 
-        <div className={`${styles.welcomeRight}`}>
-          <img
-            src={sessionImage}
-            className={`${styles.imgDayView} ${sessionClass}`}
-            alt={greeting}
-            title={greeting}
+  const getSessionClass = () => {
+  if (greeting.includes("Morning")) return styles.morning;
+  if (greeting.includes("Afternoon")) return styles.afternoon;
+  if (greeting.includes("Evening")) return styles.evening;
+  return styles.night;
+};
+
+const getSessionIcon = () => {
+  if (greeting.includes("Night")) return <Moon size={40} />;
+  return <Sun size={40} />;
+};
+
+  return (
+    <div className={styles.container}>
+      {/* Background */}
+      <div className={styles.background}>
+        <div className={`${styles.gradientOrb} ${styles.orb1}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb2}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb3}`} />
+        <div className={styles.gridOverlay} />
+      </div>
+
+      {/* Particles */}
+      <div className={styles.particles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={styles.particle}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
           />
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className={styles.content}>
+        <div className={styles.greetingSection}>
+          <div className={styles.greetingLeft}>
+        <div className={`${styles.sunIcon} ${getSessionClass()}`}>
+       {getSessionIcon()}
+            </div>
+
+            <div>
+              <p className={styles.hello}>Hello, <strong className={styles.bold}> {userName}</strong></p>
+              <h1 className={styles.greeting}>{greeting}</h1>
+              <p className={styles.date}>{currentDate}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,20 +1,12 @@
-
 import style from "../../assets/css/Dashboard/Dashboard.module.css";
 import WelcomeMsg from "../../components/Dashboard/WelcomeMsg";
 
-
-
 const Dashboard = () => {
-
- 
-
- 
-
   return (
     <>
       <div className={`${style.dashboardPage}`}>
         <div className={`${style.dashboardLeft}`}>
-          <WelcomeMsg/>
+          <WelcomeMsg />
         </div>
       </div>
       <div className="row">
