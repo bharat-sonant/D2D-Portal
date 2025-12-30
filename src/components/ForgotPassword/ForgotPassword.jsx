@@ -70,6 +70,31 @@ const ForgotPassword = ({ onBack }) => {
               Your login credentials have been sent to your registered email
               address.
             </p>
+
+             <div className="text-center mt-3">
+          <p className={styles.forgotText}>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                onBack();
+              }}
+              style={{
+                color: "#667eea",
+                textDecoration: "none",
+                fontWeight: "600",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.textDecoration = "underline";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.textDecoration = "none";
+              }}
+            >
+              Back to Login
+            </a>
+          </p>
+        </div>
           </div>
         ) : (
           <>
@@ -141,10 +166,8 @@ const ForgotPassword = ({ onBack }) => {
                 "Send"
               )}
             </button>
-          </>
-        )}
 
-        {/* Back to Login */}
+             {/* Back to Login */}
         <div className="text-center mt-3">
           <p className={styles.forgotText}>
             Wait, I remembered my password!{" "}
@@ -170,6 +193,10 @@ const ForgotPassword = ({ onBack }) => {
             </a>
           </p>
         </div>
+          </>
+        )}
+
+       
       </div>
     </div>
   );
