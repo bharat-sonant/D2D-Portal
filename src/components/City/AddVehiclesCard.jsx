@@ -20,8 +20,6 @@ const AddVehiclesCard = (props) => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [vehicleHistory, setVehicleHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [error, setError] = useState("");
-  console.log(props.selectedCity)
   // 🔄 Fetch vehicle list
   const fetchVehicles = () => {
     if (props.selectedCity) {
@@ -87,7 +85,7 @@ const AddVehiclesCard = (props) => {
   };
 
   return (
-    <div className={style.Detailscard}>
+    <div className={style.Detailscard} style={{ marginTop: '0px' }}>
       <div className={style.card_header}>
         <h5 className={style.heading}>Add Vehicles</h5>
         <div className="d-flex justify-content-center align-items-center">

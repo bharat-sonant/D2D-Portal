@@ -45,10 +45,6 @@
     display: none;
 }
 
-.userScroll {
-    height: calc(100vh - 162px);
-    overflow: auto;
-}
 
 .userListTitle {
     font-size: 15px;
@@ -59,8 +55,12 @@
 }
 
 .pageDropdown {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 270px);
+    overflow: hidden; /* ⛔ page level scroll remove */
+    display: flex;
+    flex-direction: column;
 }
+
 
 .employeeName {
     font-size: 13px;
@@ -172,6 +172,9 @@
     height: 40px;
     z-index: 10;
 }
+
+
+
 
 @keyframes spin {
     0% {

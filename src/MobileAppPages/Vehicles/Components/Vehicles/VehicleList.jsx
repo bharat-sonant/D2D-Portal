@@ -67,7 +67,7 @@ const VehicleList = (props) => {
             <div className={styles.userListTitle}>Select Vehicles</div>
           )}
 
-          <div className={props.isEmbedded ? styles.embeddedUserScroll : styles.userScroll}>
+          <div style={{ height: 'calc(100vh - 270px)', overflow: 'auto' }}>
             {props.loading ? (
               <div className={styles.loaderContainer}>
                 <div className={styles.cityLoaderWrapper}>

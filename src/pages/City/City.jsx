@@ -89,81 +89,82 @@ const City = () => {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`${TaskStyles.tabButton} ${
-                                activeTab === tab.key ? TaskStyles.active : ''
-                              }`}
+                  className={`${TaskStyles.tabButton} ${activeTab === tab.key ? TaskStyles.active : ''
+                    }`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-           
-           {activeTab === 'city' && (
-            <div
-              style={{
-                width: "25%",
-                background: "#fff",
-                borderRadius: "12px",
-                padding: "14px 18px",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-              }}
-            >
+
+            {activeTab === 'city' && (
               <div
                 style={{
+                  width: "25%",
+                  background: "#fff",
+                  borderRadius: "12px",
+                  padding: "14px 18px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 }}
               >
-                <span
-                  style={{
-                    background: "#f2f2f2",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    fontSize: "15px",
-                    fontWeight: 600,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {selectedCity?.CityCode || "N/A"}
-                </span>
                 <div
                   style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "10px",
-                    border: "1px solid #e5e7eb",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    background: "#fff",
-                    overflow: "hidden",
+                    justifyContent: "space-between",
+                    width: "100%",
                   }}
                 >
-c                  {selectedCity?.logoUrl && (
-                    <img
-                      src={selectedCity?.logoUrl || "/city-placeholder.png"}
-                      alt="City Logo"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  )}
+                  <span
+                    style={{
+                      background: "#f2f2f2",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {selectedCity?.CityCode || "N/A"}
+                  </span>
+                  <div
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "10px",
+                      border: "1px solid #e5e7eb",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#fff",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {selectedCity?.logoUrl && (
+                      <img
+                        src={selectedCity?.logoUrl || "/city-placeholder.png"}
+                        alt="City Logo"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-           )}
+            )}
             <div style={{ display: "flex", gap: "20px" }}>
-               {activeTab === 'wards' && (
-                <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
+              {activeTab === 'wards' && (
+                <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setEditWard={setEditWard} />
               )}
+            </div>
+            <div>
               {activeTab === 'vehicle' && (
-                <AddVehiclesCard selectedCity={selectedCity}/>
+                <AddVehiclesCard selectedCity={selectedCity} />
               )}
             </div>
           </div>
