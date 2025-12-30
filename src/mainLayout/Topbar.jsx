@@ -8,6 +8,7 @@ import { useCity } from "../context/CityContext";
 import { getCityLogo } from "../services/logoServices";
 import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
+import { SiTask } from "react-icons/si";
 import { LuMonitorDot, LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
 import ChangePassword from "../components/ChangePassword/changePassword";
@@ -153,8 +154,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <LuLayoutDashboard
                 className={`${styles.iconNav} ${location.pathname === "/Dashboard"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -184,8 +185,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <LuUsers
                 className={`${styles.iconNav} ${location.pathname === "/users"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -214,8 +215,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <FaCity
                 className={`${styles.iconNav} ${location.pathname === "/cities"
-                    ? navbarStyle.iconFilter
-                    : "SiTask"
+                  ? navbarStyle.iconFilter
+                  : "SiTask"
                   }`}
               />
               <span
@@ -249,8 +250,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <GrMapLocation
                 className={`${styles.iconNav} ${location.pathname === "/realtime-monitoring"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -282,8 +283,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <TbReportAnalytics
                 className={`${styles.iconNav} ${location.pathname === "/reports"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -313,8 +314,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <LuMonitorDot
                 className={`${styles.iconNav} ${location.pathname === "/monitoring"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span
@@ -375,8 +376,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
             >
               <CiSettings
                 className={`${styles.iconNav} ${location.pathname === "/settings"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
+                  ? navbarStyle.iconFilter
+                  : "icon-filter-black"
                   }`}
               />
               <span

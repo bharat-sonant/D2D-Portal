@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from 'react';
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import { images } from '../../assets/css/imagePath';
-import styles from '../../Style/Common/CommonListLayout.module.css';
+import styles from '../../Style/Task-Data/TaskDataList.module.css';
 import { debounce } from "lodash";
 import { filterCityAction, getwardList } from "../../Actions/City/cityAction";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
@@ -46,8 +46,8 @@ const CityList = (props) => {
                 <li className={GlobalStyles.dropdownLi} key={city.CityId || i}>
                   <div
                     className={`dropdown-item ${GlobalStyles.dropdownItem} ${props?.selectedCity?.CityId === city.CityId
-                        ? GlobalStyles.selectedUser
-                        : ""
+                      ? GlobalStyles.selectedUser
+                      : ""
                       }`}
                     style={{
                       backgroundColor:

@@ -3,7 +3,6 @@ import { images } from '../../../../assets/css/imagePath';
 import styles from '../../../../assets/css/modal.module.css';
 import { FaSpinner } from 'react-icons/fa';
 import * as commonAction from '../../../../Actions/VehiclesAction/VehiclesAction';
-import * as common from '../../../../common/common';
 
 const AddVehicles = ({
   showModal,

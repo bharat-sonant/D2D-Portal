@@ -11,26 +11,20 @@ import WardList from "../../components/City/WardList";
 import AddWard from "../../components/City/AddWard";
 import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 
-const TABS = [
-  { key: "city", label: "City Details" },
-  { key: "wards", label: "Wards" },
-  { key: "vehicle", label: "Vehicles" },
-];
-
 const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false)
   const [cityList, setCityList] = useState([]);
-   const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   const [selectedCity, setSelectedCity] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [statusConfirmation, setStatusConfirmation] = useState({ status: false, data: null, setToggle: () => { } });
   const [wardList, setWardList] = useState([])
-  const [editWard,setEditWard]=useState({ward:'',wardId:''})
+  const [editWard, setEditWard] = useState({ ward: '', wardId: '' })
   const [activeTab, setActiveTab] = useState('city');
   const loadCities = async () => {
-    getCityList(setSelectedCity, setCityList, selectedCity, setWardList,setLoading)
+    getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
   };
 
   useEffect(() => {
@@ -77,28 +71,13 @@ const City = () => {
             setSelectedCity={setSelectedCity}
             setWardList={setWardList}
             setLoading={setLoading}
-             loading={loading}
+            loading={loading}
           />
         </div>
 
         {selectedCity !== null && (
           <div className={TaskStyles.employeeRight}>
-            <div className={TaskStyles.tabContainer}>
-              {TABS.map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`${TaskStyles.tabButton} ${
-                                activeTab === tab.key ? TaskStyles.active : ''
-                              }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-           
-           {activeTab === 'city' && (
-             <div
+            <div
               style={{
                 width: "25%",
                 background: "#fff",
@@ -156,14 +135,9 @@ c                  {selectedCity?.logoUrl && (
                 </div>
               </div>
             </div>
-           )}
             <div style={{ display: "flex", gap: "20px" }}>
-              {activeTab === 'wards' && (
-                <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList}  setEditWard={setEditWard}/>
-              )}
-              {activeTab === 'vehicle' && (
-                <AddVehiclesCard selectedCity={selectedCity}/>
-              )}
+              <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setEditWard={setEditWard} />
+              <AddVehiclesCard selectedCity={selectedCity} />
             </div>
           </div>
         )}
@@ -195,8 +169,8 @@ c                  {selectedCity?.logoUrl && (
           <AddWard
             openAddWardPopUp={openAddWardPopUp}
             setOpenAddWardPopUp={setOpenAddWardPopUp}
-             setEditWard={setEditWard}
-              editWard={editWard}
+            setEditWard={setEditWard}
+            editWard={editWard}
             onEdit={onEdit}
             setOnEdit={setOnEdit}
             selectedCity={selectedCity}
