@@ -12,7 +12,6 @@ import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSumm
 import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
-import RealtimeMonitoring from "../pages/Realtime-Monitoring/realtime-monitoring";
 import Reports from "../pages/Reports/Reports";
 import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
 import User from "../pages/Users/Users";
@@ -119,10 +118,6 @@ const RouterComponent = () => {
 
 
           }
-        />
-        <Route
-          path="/realtime-monitoring"
-          element={<ProtectedRouter><MainLayout /><RealtimeMonitoring /></ProtectedRouter>}
         />
         <Route
           path="/reports"
