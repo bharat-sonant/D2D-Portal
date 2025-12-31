@@ -148,21 +148,8 @@
     .employeeRight {
         margin-top: 120px;
         width: 100%;
-        padding: 10px;
+        /* removed padding to be consistent with desktop (20px) */
     }
 
-    .tabContainer {
-        border-radius: 8px;
-        /* Slightly reduced radius on mobile */
-        padding: 10px 10px 0 10px;
-        /* On mobile, let them scroll rather than squash */
-    }
-
-    .tabButton {
-        padding: 12px 16px;
-        font-size: 14px;
-        flex: 0 0 auto;
-        /* Don't flex on mobile, let scroll */
-        max-width: none;
-    }
+    /* Removed tabContainer and tabButton responsive overrides to match desktop styles */
 }

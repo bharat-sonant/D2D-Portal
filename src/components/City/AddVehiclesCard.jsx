@@ -86,7 +86,7 @@ const AddVehiclesCard = (props) => {
 
   return (
     <div className={style.Detailscard} style={{ marginTop: '0px' }}>
-      <div className={style.card_header}>
+      <div className={style.card_header} style={{ alignItems: "flex-start" }}>
         <h5 className={style.heading}>Add Vehicles</h5>
         <div className="d-flex justify-content-center align-items-center">
           <button
@@ -99,7 +99,7 @@ const AddVehiclesCard = (props) => {
       </div>
 
       {/* 🚗 Vehicle List */}
-      <div className={style.Scroll_List}>
+      <div className={style.Scroll_List} style={{ overflow: vehicleList.length > 0 ? 'auto' : 'hidden' }}>
         <VehicleList
           vehicleList={vehicleList}
           loading={loading}

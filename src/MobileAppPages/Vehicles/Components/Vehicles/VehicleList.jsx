@@ -38,12 +38,15 @@ const VehicleList = (props) => {
   }, [props.vehicleList, searchTerm]);
 
   return (
-    <div className={`dropdown ${GlobalStyles.dropDown}`}>
-      <div className={GlobalStyles.overlay} style={{ display: "block" }}>
+    <div className={props.isEmbedded ? '' : `dropdown ${GlobalStyles.dropDown}`}>
+      <div
+        className={props.isEmbedded ? '' : GlobalStyles.overlay}
+        style={props.isEmbedded ? {} : { display: "block" }}
+      >
         <ul
           className={`dropdown-menu ${GlobalStyles.dropdownMenu} 
           ${props.isEmbedded ? '' : GlobalStyles.dropdownDesktop} 
-          ${styles.pageDropdown}`}
+          ${props.isEmbedded ? '' : styles.pageDropdown}`}
           style={{
             display: "block",
             position: props.isEmbedded ? 'static' : 'absolute',
@@ -67,7 +70,7 @@ const VehicleList = (props) => {
             <div className={styles.userListTitle}>Select Vehicles</div>
           )}
 
-          <div style={{ height: 'calc(100vh - 270px)', overflow: 'auto' }}>
+          <div style={props.isEmbedded ? { height: 'auto', maxHeight: '100%' } : { height: 'calc(100vh - 270px)', overflow: 'auto' }}>
             {props.loading ? (
               <div className={styles.loaderContainer}>
                 <div className={styles.cityLoaderWrapper}>
@@ -84,7 +87,11 @@ const VehicleList = (props) => {
               </div>
             ) : filteredVehicles.length > 0 ? (
               filteredVehicles.map((item, i) => (
-                <li className={GlobalStyles.dropdownLi} key={i}>
+                <li
+                  className={GlobalStyles.dropdownLi}
+                  key={i}
+                  style={{ marginBottom: props.isEmbedded ? '0px' : '' }}
+                >
                   <div
                     className={`dropdown-item ${GlobalStyles.dropdownItem}
                     ${props.selectedVehicleId === item.id ? GlobalStyles.selectedUser : ""}`}
@@ -97,7 +104,7 @@ const VehicleList = (props) => {
                     onClick={() => handleVehicleSelect(item)}
                   >
                     <div
-                      className={`${GlobalStyles.userInfo} d-flex justify-content-between align-items-center w-100`}
+                      className={`${GlobalStyles.userInfo} d-flex justify-content-between align-items-start w-100`}
                       style={{ color: '#000000' }}
                     >
                       {/* Left side: Vehicle number */}
@@ -130,7 +137,10 @@ const VehicleList = (props) => {
                 </li>
               ))
             ) : (
-              <div className={styles.noUserData}>
+              <div
+                className={styles.noUserData}
+                style={props.isEmbedded ? { height: "auto", padding: "20px 0" } : {}}
+              >
                 <img
                   src={images.imgComingSoon}
                   className={`img-fluid ${styles.noUserImg}`}
