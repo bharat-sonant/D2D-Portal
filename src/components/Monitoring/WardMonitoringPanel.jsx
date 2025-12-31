@@ -21,7 +21,7 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
 
    if (!dutySummary) {
     return (
-      <div className={`${styles.noUserData}  ${styles.monitoringPanel}`}>
+      <div className={`${styles.noUserData}`}>
          <img
         src={images.noDAtaAvailable}
         className={styles.noUserImg}
@@ -38,12 +38,20 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
         Ward: {selectedWard.name}
       </h4>
 
-      <div className={styles.detailCard}>
-        <span className={styles.label}>Duty In Time - </span>
+      <div className={styles.maincard}>
+        <div className={styles.detailCard}>
+        <span className={styles.label}>Duty In Time </span>
         <span className={styles.value}>{dutySummary?.dutyInTime || "N/A"}</span>
       </div>
+
       <div className={styles.detailCard}>
-        <span className={styles.label}>Ward Reach on Time - </span>
+        <span className={styles.label}>Duty Off Time </span>
+        <span className={styles.value}>{dutySummary?.dutyOutTime || "N/A"}</span>
+      </div>
+      </div>
+
+      <div className={`${styles.detailCard} ${styles.fullWidth}`}>
+        <span className={styles.label}>Ward Reach on Time </span>
         {wardReachTimes?.length > 0 ? (
           <div className={styles.timeChips}>
             {wardReachTimes?.map((time, index)=> (
@@ -57,20 +65,19 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
         )}
       </div>
 
-      <div className={styles.detailCard}>
-        <span className={styles.label}>Driver Name - </span>
+     <div className={styles.maincard}>
+       <div className={styles.detailCard}>
+        <span className={styles.label}>Driver Name </span>
         <span className={styles.value}>{dutySummary?.driverName || "N/A"}</span>
       </div>
 
       <div className={styles.detailCard}>
-        <span className={styles.label}>Helper Name - </span>
+        <span className={styles.label}>Helper Name </span>
         <span className={styles.value}>{dutySummary?.helperName || "N/A"}</span>
       </div>
+     </div>
 
-      <div className={styles.detailCard}>
-        <span className={styles.label}>Duty Off Time - </span>
-        <span className={styles.value}>{dutySummary?.dutyOutTime || "N/A"}</span>
-      </div>
+      
     </div>
   )
 }
