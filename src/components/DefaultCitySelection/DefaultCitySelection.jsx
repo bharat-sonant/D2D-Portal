@@ -47,7 +47,6 @@ const DefaultCitySelection = ({ onClose }) => {
           <div className="modal-content">
             {/* Header */}
             <div className="modal-header">
-              {console.log('city',city)}
               <h5 className={styles.headerTitle}>{defaultCityExist ?  'Select City' : 'Set your default city'}</h5>
               {defaultCityExist && <button className="btn-close" onClick={onClose} />}
             </div>
