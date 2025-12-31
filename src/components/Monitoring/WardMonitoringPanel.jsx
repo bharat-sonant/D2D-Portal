@@ -1,6 +1,7 @@
 import React from 'react'
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 import styles from '../../Style/Task-Data/TaskDataList.module.css'
+import {images} from '../../assets/css/imagePath'
 
 const WardMonitoringPanel = ({selectedWard, dutyInTime, dutyLoading}) => {
     if (!selectedWard) {
@@ -18,6 +19,11 @@ const WardMonitoringPanel = ({selectedWard, dutyInTime, dutyLoading}) => {
    if (!dutyInTime) {
     return (
       <div className={`${styles.noUserData}  ${styles.monitoringPanel}`}>
+         <img
+        src={images.noDAtaAvailable}
+        className={styles.noUserImg}
+        alt="No duty time"
+      />
         No duty time data available for this ward.
       </div>
     );

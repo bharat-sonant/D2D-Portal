@@ -9,4 +9,5 @@ export const images = {
   iconClose: require("../images/icons/iconClose.png"),
   iconSearch: require("../images/icons/iconSearch.png"),
   iconCloseWhite: require("../images/icons/iconCloseWhite.png"),
+  noDAtaAvailable: require("../images/userNotFound.png")
 };
