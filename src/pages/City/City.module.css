@@ -43,11 +43,7 @@
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.cardWrapper:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    /* Hover effect */
-    transform: translateY(-2px);
-}
+
 
 /* Folder Tab Styles */
 /* Folder Tab Styles */

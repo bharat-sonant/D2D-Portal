@@ -133,8 +133,8 @@ const UserCityAccessList = ({
                   <li className={GlobalStyles.dropdownLi} key={i}>
                     <div
                       className={`dropdown-item ${GlobalStyles.dropdownItem} ${selectedUserId === user.id
-                          ? GlobalStyles.selectedUser
-                          : ""
+                        ? GlobalStyles.selectedUser
+                        : ""
                         }`}
                       style={{
                         backgroundColor:

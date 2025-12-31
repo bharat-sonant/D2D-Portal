@@ -17,20 +17,24 @@
     margin-bottom: 16px;
 
 }
-.heading{
+
+.heading {
     font-size: 15px;
     color: var(--black);
     font-family: var(--fontGraphikMedium);
 }
-.listLine{
+
+.listLine {
     padding: 0px;
     margin: 0px;
 }
-.Icon{
+
+.Icon {
     width: 13px;
     cursor: pointer;
 }
-.Icon:hover{
+
+.Icon:hover {
     filter: brightness(0) saturate(100%) invert(47%) sepia(77%) saturate(1520%) hue-rotate(162deg) brightness(99%) contrast(101%);
 }
 
@@ -55,7 +59,7 @@
 }
 
 .custom_AddDesignation_btn {
-    color: var(--themeColor); 
+    color: var(--themeColor);
     border: none;
     width: 26px;
     height: 22px;
@@ -90,7 +94,7 @@
     list-style-type: none;
     cursor: pointer;
 } */
-.icon{
+.icon {
     width: 15px;
 }
 
@@ -98,14 +102,16 @@
     margin-bottom: 0;
     /* Remove bottom margin for the last item */
 }
-.countEdit{
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 14px;
+
+.countEdit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
 
 }
-.totalcount{
+
+.totalcount {
     /* background-color: var(--themeColor); */
     color: var(--lightBlack);
     font-size: 13px;
@@ -129,20 +135,24 @@ gap: 14px;
     border-bottom: none;
     width: 100%;
 }
-.list_item:hover{
+
+.list_item:hover {
     background-color: var(--whitef5);
 }
-.list_item:nth-last-child(1){
+
+.list_item:nth-last-child(1) {
     border-bottom: none !important;
 }
-.designationName{
+
+.designationName {
     font-size: 13px;
     font-family: var(--fontGraphik);
     color: var(--lightBlack);
     cursor: pointer;
-  
+
 }
-.dropdownItemNot{
+
+.dropdownItemNot {
     height: 204px;
     font-size: 12px;
     color: var(--gray);
@@ -153,31 +163,35 @@ gap: 14px;
     flex-direction: column;
     gap: 8px;
 
-  }
-  .foundNot{
+}
+
+.foundNot {
     height: 80px;
-  }
+}
 
 .edit_icon {
-   width: 13px;
+    width: 13px;
     color: #555;
     cursor: pointer;
     opacity: 0;
     /* Initially hidden */
     transition: opacity 0.3s ease-in-out;
 }
+
 .edit_icon:hover {
     filter: brightness(0) saturate(100%) invert(47%) sepia(77%) saturate(1520%) hue-rotate(162deg) brightness(99%) contrast(101%);
- }
+}
 
 .list_item:hover .edit_icon {
     opacity: 1;
 }
+
 .add_icon {
     width: 10px;
     /* margin-right: 4px; */
     filter: brightness(0) saturate(100%) invert(69%) sepia(75%) saturate(2919%) hue-rotate(172deg) brightness(99%) contrast(91%);
- }
- .custom_AddDesignation_btn:hover .add_icon {
+}
+
+.custom_AddDesignation_btn:hover .add_icon {
     filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(318deg) brightness(103%) contrast(102%);
 }

@@ -13,9 +13,9 @@ const VehicleHistoryData = (props) => {
 
     useEffect(() => {
         if (props.vehicleDetails) {
-            setToggle(props.vehicleDetails?.status === "active");
+            setToggle(props.vehicleDetails?.status?.toLowerCase() === "active");
         }
-    }, [props.vehicleDetails]);
+    }, [props.vehicleDetails?.status]);
 
     const handleToggleClick = (e) => {
         e.preventDefault();
