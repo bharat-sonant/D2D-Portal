@@ -9,7 +9,7 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
 
     if (!selectedWard) {
     return (
-      <div className={`${styles.noUserData} ${styles.monitoringPanel}`}>
+      <div className={`${styles.noUserData}`}>
         Please select a ward
       </div>
     );
