@@ -521,6 +521,7 @@ import dayjs from "dayjs";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import { useCity } from "../../context/CityContext";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import { createCityLogoUrl } from "../../Actions/commonActions";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -530,7 +531,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
-  const { setCity, setCityId } = useCity();
+  const { setCity, setCityId,setCityLogo } = useCity();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -618,6 +619,7 @@ const Login = () => {
       if (resp?.success) {
         const cityName = resp?.data?.[0]?.CityName || "";
         setCity(cityName);
+        setCityLogo(createCityLogoUrl(resp?.data?.[0]?.CityCode ))
         localStorage.setItem("city", cityName);
       }
     }

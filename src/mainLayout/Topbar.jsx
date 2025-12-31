@@ -2,46 +2,42 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { Car } from "lucide-react";
 import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
-import { getCityLogo } from "../services/logoServices";
-import { GrMapLocation } from "react-icons/gr";
 import { TbReportAnalytics } from "react-icons/tb";
-import { SiTask } from "react-icons/si";
 import { LuMonitorDot, LuUsers } from "react-icons/lu";
 import { FaCity } from "react-icons/fa";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import { LuLayoutDashboard } from "react-icons/lu";
+import logoStyle from '../assets/css/DefaultCitySelection/defaultCitySelection.module.css'
 
-const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) => {
+const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
   const location = useLocation();
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
-  const storedImage = localStorage.getItem("profileImage");
+  // const storedImage = localStorage.getItem("profileImage");
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
-  // const logoToShow = customLogo || images.wevoisLogo;
   const city = useCity();
-  const [cityLogo, setCityLogo] = useState(images.wevoisLogo);
+  const cityLogo = city?.cityLogo || images?.wevoisLogo;
   const [showChangePassword, setShowChangePassword] = useState(false);
   const titleToShow = city?.city || customTitle || storedCity || "D2D PORTAL";
 
-  useEffect(() => {
-    if (!city.city) return;
-    const logoUrl = getCityLogo(city.city);
+  // useEffect(() => {
+  //   if (!city.city) return;
+  //   const logoUrl = getCityLogo(city.city);
 
-    const img = new Image();
-    img.src = logoUrl;
+  //   const img = new Image();
+  //   img.src = logoUrl;
 
-    img.onload = () => {
-      setCityLogo(logoUrl);
-    };
+  //   img.onload = () => {
+  //     setCityLogo(logoUrl);
+  //   };
 
-    img.onerror = () => {
-      setCityLogo(images.wevoisLogo);
-    };
-  }, [city.city]);
+  //   img.onerror = () => {
+  //     setCityLogo(images.wevoisLogo);
+  //   };
+  // }, [city.city]);
 
   useEffect(() => {
     if (storedName) {
@@ -83,6 +79,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
     localStorage.removeItem("city");
     localStorage.removeItem("cityId");
     localStorage.removeItem("defaultCity");
+    localStorage.removeItem("logoUrl");
 
     navigate("/");
   };
@@ -106,7 +103,7 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
       >
         <div className={`${styles.headerLeft}`}>
           <a className={`${styles.companyLogo}`} >
-            {storedImage !== undefined &&
+            {/* {storedImage !== undefined &&
               storedImage !== null &&
               storedImage !== "undefined" ? (
               <img
@@ -115,14 +112,22 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
                 alt="Company Logo"
               />
             ) : (
-              <>
+              <> */}
                 <div className="text-center">
-                  <img
+                  <div className={logoStyle.logoWrapper} style={{height:'45px',width:'45px'}}>
+                        <img
+                          src={cityLogo}
+                          alt={'Logo'}
+                          onError={(e) => (e.target.src=  images?.wevoisLogo)}
+                          className="h-auto w-100"
+                        />
+                      </div>
+                  {/* <img
                     className={`img-fluid ${styles.logoImg}`}
                     src={cityLogo}
                     title="Attendance portal"
                     alt="Logo"
-                  />
+                  /> */}
                   <div
                     className={`${styles.logoText}`}
                     style={{ color: navbarStyle.textColor, cursor: 'pointer' }}
@@ -132,8 +137,8 @@ const Topbar = ({ hideNavLinks, customLogo, customTitle, setShowDefaultCity }) =
                     {titleToShow}
                   </div>
                 </div>
-              </>
-            )}
+              {/* </>
+            )} */}
           </a>
         </div>
         <div className={`${styles.headerRight}`}>
