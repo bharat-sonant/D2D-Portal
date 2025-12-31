@@ -52,11 +52,15 @@ const VehicleList = (props) => {
             position: props.isEmbedded ? 'static' : 'absolute',
             width: '100%',
             border: props.isEmbedded ? 'none' : '',
-            boxShadow: props.isEmbedded ? 'none' : ''
+            boxShadow: props.isEmbedded ? 'none' : '',
+            overflow: props.isEmbedded ? 'visible' : ''
           }}
         >
           {/* Search */}
-          <div className={GlobalStyles.searchGroup}>
+          <div
+            className={GlobalStyles.searchGroup}
+            style={props.isEmbedded ? { position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#fff' } : {}}
+          >
             <input
               className={GlobalStyles.inputSearch}
               type="text"
