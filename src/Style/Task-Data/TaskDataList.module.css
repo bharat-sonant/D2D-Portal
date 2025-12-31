@@ -232,5 +232,31 @@
     .orderSecond {
         order: 2;
     }
+}
 
+.monitoringPanel {
+  height: 100%;
+  background: var(--white);
+  border-radius: 8px;
+}
+
+.detailContainer {
+  padding: 16px;
+}
+
+.detailCard {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f5f7fa;
+}
+
+.label {
+  font-size: 16px;
+  color: #000000;
+}
+
+.value {
+  font-size: 16px;
+  font-weight: 600;
 }

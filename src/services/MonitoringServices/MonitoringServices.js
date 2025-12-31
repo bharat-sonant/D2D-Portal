@@ -1,4 +1,10 @@
+import dayjs from 'dayjs';
 import * as sbs from '../supabaseServices';
+import * as db from '../dbServices'
+
+const year = dayjs().format('YYYY');
+const month = dayjs().format('MMMM');
+const date = dayjs().format('YYYY-MM-DD');
 
 const normalize = (value = '') =>
   value.toString().replace(/_/g, ' ').trim();
@@ -43,3 +49,20 @@ export const getWardData = async(cityId) => {
     data : sortWards(result?.data)
   }
 }
+
+export const getDutyInTime = async (ward) => {
+  try{
+     if (!ward?.name) {
+      throw new Error("Ward name is missing");
+    }
+    const path = `WasteCollectionInfo/${ward?.name}/${year}/${month}/${date}/Summary/dutyInTime`
+    const response = await db.getData(path);
+    
+    return {
+      success: true,
+      data: response ?? null,
+    };
+  }catch (error) {
+    return { success: false, error: error.message || "Failed to fetch duty in time" };
+  };
+};

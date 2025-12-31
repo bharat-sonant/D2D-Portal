@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react'
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
 import WardList from '../../components/Monitoring/WardList';
-import { getWardList } from '../../Actions/Monitoring/WardAction';
+import { getDutyInTimeAction, getWardList } from '../../Actions/Monitoring/WardAction';
 import * as common from '../../common/common'
 import { supabase } from '../../createClient';
 import { useCity } from '../../context/CityContext';
+import { getDutyInTime } from '../../services/MonitoringServices/MonitoringServices';
+import WardMonitoringPanel from '../../components/Monitoring/WardMonitoringPanel';
 
 const Monitoring = () => {
   const [selectedWard, setSelectedWard] = useState('');
   const [wardList, setWardList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const {cityId} = useCity();
-  
+  const {cityId, city} = useCity();
+  const [dutyInTime, setDutyInTime] = useState(null);
+  const [dutyLoading, setDutyLoading] = useState(false);
     const loadWards = async () => {
       getWardList(setSelectedWard,setWardList,selectedWard, setLoading, cityId)
     };
@@ -20,6 +23,31 @@ const Monitoring = () => {
     useEffect(() => {
       loadWards();
     }, [cityId]);
+
+    useEffect(()=>{
+      if(city === 'Reengus'){
+        fetchDutyIntime();
+      }
+    },[selectedWard, city])
+
+    useEffect(() => {
+      if (city !== 'Reengus') {
+        setDutyInTime(null);
+        setDutyLoading(false);
+      }
+    }, [city]);
+
+    const fetchDutyIntime = async() => {
+      if(!selectedWard) return;
+      setDutyLoading(true);
+      const result = await getDutyInTimeAction(selectedWard);
+      if (result) {
+        setDutyInTime(result);
+      } else {
+        setDutyInTime(null);
+      }
+      setDutyLoading(false);
+    }
 
     const handleAttachMap = async(ward) => {
   // open file picker / modal
@@ -77,8 +105,14 @@ const Monitoring = () => {
             loading={loading}
           />
         </div>
-       
-      
+
+        {city === 'Reengus' ? (<div className={`${TaskStyles.employeeRight}`}>
+          <WardMonitoringPanel
+          selectedWard={selectedWard}
+          dutyInTime={dutyInTime}
+          dutyLoading={dutyLoading}
+          />
+        </div>): null}
       </div>
     </>
   );

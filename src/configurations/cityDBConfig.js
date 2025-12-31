@@ -18,6 +18,18 @@ export const getCityFirebaseConfig = (city) => {
       databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL_DEVTEST,
     };
   }
+  if (city === "Reengus"){
+    return {
+      apiKey: process.env.REACT_APP_FIREBASE_API_KEY_REENGUS,
+      authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN_REENGUS,
+      projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID_REENGUS,
+      storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET_REENGUS,
+      messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID_REENGUS,
+      appId: process.env.REACT_APP_FIREBASE_APP_ID_REENGUS,
+      // measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID_DEVTEST,
+      databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL_REENGUS,
+    };
+  }
   
   const baseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

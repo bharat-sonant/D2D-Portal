@@ -1,4 +1,5 @@
-import { getWardData } from "../../services/MonitoringServices/MonitoringServices";
+import { getDutyInTime, getWardData } from "../../services/MonitoringServices/MonitoringServices";
+import * as common from '../../common/common'
 
 export const getWardList = async (
   setSelectedWard,
@@ -43,4 +44,20 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
     // setSelectedWard(currentSelected || list[0] || null);
 
     // return list;
+}
+
+export const getDutyInTimeAction = async(ward) => {
+  try{
+    const result = await getDutyInTime(ward);
+
+    if(!result.success){
+      common.setAlertMessage("error", result.error);
+      return null;
+    }
+    return result.data;
+  }catch(error){
+    const message = error.message || 'error while fetching duty time"'
+    common.setAlertMessage("error", message);
+    return null;
+  }
 }
