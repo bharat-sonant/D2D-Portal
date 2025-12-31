@@ -13,7 +13,7 @@ import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import Reports from "../pages/Reports/Reports";
-import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
+// import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
@@ -124,8 +124,8 @@ const RouterComponent = () => {
           element={<ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
         />
 
-/*
-        <Route
+
+        {/* <Route
           path="/vehicle"
           element={
             <ProtectedRouter>
@@ -133,7 +133,7 @@ const RouterComponent = () => {
               <Vehicle />
             </ProtectedRouter>
           }
-        />
+        /> */}
 
         <Route
           path="/monitoring"

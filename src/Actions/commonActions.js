@@ -1,4 +1,7 @@
 import { getAvailableCityData, getCityData } from "../services/CityService/cityServices";
+import { images } from '../assets/css/imagePath'; 
+import { getDataByColumnName } from "../services/supabaseServices";
+import * as sbs from "../services/supabaseServices"
 
 export const getCityList = async (setList,type='all', setLoading) => {
     try{
@@ -32,4 +35,18 @@ export const getAvailableCityList = async (setList,type='all', setLoading, userI
     }finally{
         setLoading(false)
     }
+}
+export const getCityLogoUrl=async(cityId,setLogoUrl)=>{
+    if(!cityId){
+        return images?.wevoisLogo;
+    }
+    let logoUrl = images?.wevoisLogo
+    const resp = await getDataByColumnName("Cities", "CityId",cityId );
+    if(resp?.success){
+        logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.CityCode}.png?v=${Date.now()}`;
+    }
+    setLogoUrl(logoUrl);
+}
+export const createCityLogoUrl=(cityCode)=>{
+    return `${sbs.storageUrl}/CityLogo/${cityCode}.png?v=${Date.now()}`;
 }

@@ -1,14 +1,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import styles from '../../assets/css/DefaultCitySelection/defaultCitySelection.module.css'
-import { getAvailableCityList, getCityList } from '../../Actions/commonActions';
+import { getAvailableCityList } from '../../Actions/commonActions';
 import { useCity } from '../../context/CityContext';
 import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defaultCitySelectionAction';
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity'))?true:false;
-  const {city,setCity, setCityId} = useCity();
+  const {city,setCity, setCityId,setCityLogo} = useCity();
   const [selectedCity, setSelectedCity] = useState(null);
   const [setDefault, setSetDefault] = useState(!defaultCityExist);
   const [cityList,setCityList] = useState([]);
@@ -24,7 +24,7 @@ const DefaultCitySelection = ({ onClose }) => {
     if(saving) return;
 
     try{
-      await changeDefaultCityAction(city,setDefault,setCity,onClose, setCityId)
+      await changeDefaultCityAction(city,setDefault,setCity,onClose, setCityId,setCityLogo);
     }finally{
       setSaving(false)
     }
@@ -86,6 +86,7 @@ const DefaultCitySelection = ({ onClose }) => {
               onClick={() => {
                 setCity(selectedCity?.CityName);
                 setCityId(selectedCity?.CityId);
+                setCityLogo(selectedCity?.logoUrl)
                 onClose();
               }}
             >
