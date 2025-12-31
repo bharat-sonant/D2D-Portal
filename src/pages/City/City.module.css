@@ -1,0 +1,168 @@
+@import '../../assets/css/variable.css';
+@import '../../assets/css/fonts.css';
+@import '../../assets/css/normalize.css';
+
+.employeePage {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+.employeeLeft {
+    width: 250px;
+    margin-top: 60px;
+}
+
+.employeeRight {
+    width: calc(100% - 250px);
+    padding: 20px;
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure content fills width */
+.contentContainer {
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* Unified Card Wrapper for all tab content */
+.cardWrapper {
+    width: 100%;
+    margin-top: 0px;
+    /* Requested by user */
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cardWrapper:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    /* Hover effect */
+    transform: translateY(-2px);
+}
+
+/* Folder Tab Styles */
+/* Folder Tab Styles */
+/* Folder Tab Styles */
+.tabContainer {
+    display: flex;
+    background-color: var(--themeColor);
+    background: linear-gradient(135deg, var(--themeColor) 0%, var(--themeColorDark) 100%);
+    padding: 15px 15px 0 15px;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+    overflow-x: auto;
+    gap: 8px;
+    width: 100%;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tabContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.tabButton {
+    padding: 14px 28px;
+    /* Larger touch targets */
+    border: none;
+    cursor: pointer;
+    font-family: var(--fontGraphikMedium);
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    /* Glass-like effect for inactive */
+    color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px 12px 0 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    flex: 1;
+    /* Tabs try to fill space equally */
+    min-width: 100px;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+}
+
+.tabButton:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.tabButton.active {
+    background-color: #fff;
+    color: var(--themeColorDark);
+    font-weight: 600;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(0);
+    z-index: 1;
+}
+
+/* Ensure the content area blends with tabs */
+/* Note: The content container in .jsx needs to match background: #fff */
+
+.tabButton:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -2px;
+}
+
+/* Red Dot */
+.redDot {
+    width: 6px;
+    height: 6px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .employeeLeft {
+        width: 100%;
+        position: fixed;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        background: var(--white);
+        padding: 10px 16px;
+        height: 60px;
+        border-bottom: 1px solid var(--borderColor);
+        z-index: 2;
+        display: flex;
+    }
+
+    .employeeRight {
+        margin-top: 120px;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .tabContainer {
+        border-radius: 8px;
+        /* Slightly reduced radius on mobile */
+        padding: 10px 10px 0 10px;
+        /* On mobile, let them scroll rather than squash */
+    }
+
+    .tabButton {
+        padding: 12px 16px;
+        font-size: 14px;
+        flex: 0 0 auto;
+        /* Don't flex on mobile, let scroll */
+        max-width: none;
+    }
+}

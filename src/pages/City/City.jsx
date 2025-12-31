@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
-import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
+import TaskStyles from "./City.module.css";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
 import SettingsBtn from "../../components/Common/SettingsBtn";
@@ -73,13 +73,17 @@ const City = () => {
   return (
     <>
       <div className={`${GlobalStyles.floatingDiv}`}>
-        {selectedCity && <SettingsBtn click={handleOpenSettings} />}
-        <button
-          className={`${GlobalStyles.floatingBtn}`}
-          onClick={handleOpenModal}
-        >
-          +
-        </button>
+        {activeTab === 'city' && (
+          <>
+            {selectedCity && <SettingsBtn click={handleOpenSettings} />}
+            <button
+              className={`${GlobalStyles.floatingBtn}`}
+              onClick={handleOpenModal}
+            >
+              +
+            </button>
+          </>
+        )}
       </div>
 
       <div className={`${TaskStyles.employeePage}`}>
@@ -110,17 +114,7 @@ const City = () => {
             </div>
 
             {activeTab === 'city' && (
-              <div
-                style={{
-                  width: "25%",
-                  background: "#fff",
-                  borderRadius: "12px",
-                  padding: "14px 18px",
-                  display: "flex",
-                  alignItems: "center",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                }}
-              >
+              <div className={TaskStyles.cardWrapper}>
                 <div
                   style={{
                     display: "flex",
@@ -171,16 +165,22 @@ const City = () => {
             )}
             <div style={{ display: "flex", gap: "20px" }}>
               {activeTab === 'wards' && (
-                <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setEditWard={setEditWard} />
+                <div className={TaskStyles.cardWrapper}>
+                  <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setEditWard={setEditWard} />
+                </div>
               )}
             </div>
             <div>
               {activeTab === 'vehicle' && (
-                <AddVehiclesCard selectedCity={selectedCity} />
+                <div className={TaskStyles.cardWrapper}>
+                  <AddVehiclesCard selectedCity={selectedCity} />
+                </div>
               )}
 
               {activeTab === 'users' && (
-                <UserCityAccessList selectedCity={selectedCity} userList={usersInCity} loading={loadingUsers} />
+                <div className={TaskStyles.cardWrapper}>
+                  <UserCityAccessList selectedCity={selectedCity} userList={usersInCity} loading={loadingUsers} isEmbedded={true} />
+                </div>
               )}
             </div>
           </div>
