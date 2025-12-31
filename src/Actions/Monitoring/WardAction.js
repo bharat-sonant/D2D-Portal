@@ -1,4 +1,4 @@
-import { getDutyInTime, getWardData } from "../../services/MonitoringServices/MonitoringServices";
+import { getDutySummary, getWardData } from "../../services/MonitoringServices/MonitoringServices";
 import * as common from '../../common/common'
 
 export const getWardList = async (
@@ -46,10 +46,9 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
     // return list;
 }
 
-export const getDutyInTimeAction = async(ward) => {
+export const getDutySummaryAction = async(ward) => {
   try{
-    const result = await getDutyInTime(ward);
-
+    const result = await getDutySummary(ward);
     if(!result.success){
       common.setAlertMessage("error", result.error);
       return null;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
 import WardList from '../../components/Monitoring/WardList';
-import { getDutyInTimeAction, getWardList } from '../../Actions/Monitoring/WardAction';
+import {  getDutySummaryAction, getWardList } from '../../Actions/Monitoring/WardAction';
 import * as common from '../../common/common'
 import { supabase } from '../../createClient';
 import { useCity } from '../../context/CityContext';
@@ -14,7 +14,7 @@ const Monitoring = () => {
   const [wardList, setWardList] = useState([]);
   const [loading, setLoading] = useState(false);
   const {cityId, city} = useCity();
-  const [dutyInTime, setDutyInTime] = useState(null);
+  const [dutySummary, setDutySummary] = useState(null);
   const [dutyLoading, setDutyLoading] = useState(false);
     const loadWards = async () => {
       getWardList(setSelectedWard,setWardList,selectedWard, setLoading, cityId)
@@ -32,7 +32,7 @@ const Monitoring = () => {
 
     useEffect(() => {
       if (city !== 'Reengus') {
-        setDutyInTime(null);
+        setDutySummary(null);
         setDutyLoading(false);
       }
     }, [city]);
@@ -40,11 +40,11 @@ const Monitoring = () => {
     const fetchDutyIntime = async() => {
       if(!selectedWard) return;
       setDutyLoading(true);
-      const result = await getDutyInTimeAction(selectedWard);
+      const result = await getDutySummaryAction(selectedWard);
       if (result) {
-        setDutyInTime(result);
+        setDutySummary(result);
       } else {
-        setDutyInTime(null);
+        setDutySummary(null);
       }
       setDutyLoading(false);
     }
@@ -109,7 +109,7 @@ const Monitoring = () => {
         {city === 'Reengus' ? (<div className={`${TaskStyles.employeeRight}`}>
           <WardMonitoringPanel
           selectedWard={selectedWard}
-          dutyInTime={dutyInTime}
+          dutySummary={dutySummary}
           dutyLoading={dutyLoading}
           />
         </div>): null}

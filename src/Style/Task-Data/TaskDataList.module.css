@@ -233,30 +233,118 @@
         order: 2;
     }
 }
-
 .monitoringPanel {
   height: 100%;
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .detailContainer {
-  padding: 16px;
+  padding: 20px;
+}
+
+.detailTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .detailCard {
-  margin-top: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  background: #f5f7fa;
+  margin-bottom: 16px;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.detailCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.detailCard:last-child {
+  margin-bottom: 0;
 }
 
 .label {
-  font-size: 16px;
-  color: #000000;
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
 .value {
-  font-size: 16px;
+  display: block;
+  font-size: 17px;
   font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.timeChipsContainer {
+  margin-top: 10px;
+}
+
+.timeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timeChip {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: 1px solid #93c5fd;
+  font-family: var(--fontGraphikMedium);
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.timeChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+}
+
+.timeChip::before {
+  content: "🕐";
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+
+/* Status indicators */
+.valueWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusDot.active {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.statusDot.inactive {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
