@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import styles from "../../assets/css/modal.module.css";
-import { images } from "../../assets/css/imagePath";
-import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
+import styles from "../../assets/css/popup.module.css";
+import { Lock, Eye, EyeOff, Shield, X, Check } from "lucide-react";
+import { FaSpinner } from "react-icons/fa";
 import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswordAction";
 import { setAlertMessage } from "../../common/common";
-import changePassStyle from "../../components/ChangePassword/ChangePassword.module.css";
 import { getPasswordChecks, getPasswordStrength } from "../../common/common";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
-const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) => {
+const ChangePassword = ({
+  onClose,
+  showChangePassword,
+  setShowChangePassword,
+}) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -117,124 +121,170 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
   return (
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
-        <div className={styles.actionBtn}>
-          <p className={styles.headerText}>Change Password</p>
-          <button className={styles.closeBtn} onClick={handleClose} type="button">
-            <img src={images.iconClose} className={styles.iconClose} alt="close" />
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.iconWrapper}>
+              <Shield className="shield-icon" />
+            </div>
+            <div>
+              <h2 className={styles.modalTitle}>Change Password</h2>
+              <p className={styles.modalSubtitle}>
+                Update your password to keep your account secure
+              </p>
+            </div>
+          </div>
+          <button className={styles.closeBtn} onClick={handleClose}>
+            <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.modalBody} autoComplete="off">
-          {/* Dummy inputs for browser autofill suppression */}
-          <input type="text" name="fake_un_field" style={{ display: "none" }} tabIndex="-1" autoComplete="off" />
-          <input type="password" name="fake_pw_field" style={{ display: "none" }} tabIndex="-1" autoComplete="off" />
-
+        {/* Body */}
+        <div className={styles.modalBody}>
           {/* Old Password */}
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft} style={{ width: "146px" }}>
-                Old Password
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>
+              {/* <Lock size={16} /> */}
+              Old Password
+            </label>
+            <div className={styles.inputWrapper}>
+              <div className={styles.inputIcon}>
+                <Lock size={18} />
               </div>
-              <div className={styles.textboxRight} style={{ position: "relative" }}>
-                <input
-                  type={showOldPassword ? "text" : "password"}
-                  className={`form-control ${styles.formTextbox} ${oldPasswordError ? styles.errorInput : ""
-                    }`}
-                  name="old_pass_field_obscured"
-                  autoComplete="off"
-                  placeholder="Enter old password"
-                  value={oldPassword}
-                  onChange={(e) => {
-                    setOldPassword(e.target.value);
-                    if (oldPasswordError) setOldPasswordError("");
-                  }}
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    color: "#6c757d",
-                  }}
-                  onClick={() => setShowOldPassword(!showOldPassword)}
-                >
-                  {showOldPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              </div>
+              <input
+                className={styles.input}
+                type={showOldPassword ? "text" : "password"}
+                name="old_pass_field_obscured"
+                autoComplete="off"
+                placeholder="Enter old password"
+                value={oldPassword}
+                onChange={(e) => {
+                  setOldPassword(e.target.value);
+                  if (oldPasswordError) setOldPasswordError("");
+                }}
+              />
+              <button
+                className={styles.eyeBtn}
+                onClick={() => setShowOldPassword(!showOldPassword)}
+              >
+                {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             {oldPasswordError && (
-              <div className={styles.errorMessage}>{oldPasswordError}</div>
+              <div className={styles.errorMessage}>
+                <ErrorMessage message={oldPasswordError} />
+              </div>
             )}
           </div>
 
           {/* New Password */}
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft} style={{ width: "146px" }}>
-                New Password
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>
+              {/* <Lock size={16} /> */}
+              New Password
+            </label>
+            <div className={styles.inputWrapper}>
+              <div className={styles.inputIcon}>
+                <Lock size={18} />
               </div>
-              <div className={styles.textboxRight} style={{ position: "relative" }}>
-                <input
-                  type={showNewPassword ? "text" : "password"}
-                  className={`form-control ${styles.formTextbox} ${newPasswordError ? styles.errorInput : ""
-                    }`}
-                  name="new_pass_field_obscured"
-                  autoComplete="off"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onBlur={() => setShowPasswordHint(false)}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setNewPassword(val);
-                    if (newPasswordError) setNewPasswordError("");
-                    if (val.length > 0) {
-                      setShowPasswordHint(true);
-                    } else {
-                      setShowPasswordHint(false);
-                    }
-                  }}
-                />
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    color: "#6c757d",
-                  }}
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              </div>
+              <input
+                className={styles.input}
+                type={showNewPassword ? "text" : "password"}
+                name="new_pass_field_obscured"
+                autoComplete="off"
+                placeholder="Enter new password"
+                value={newPassword}
+                onBlur={() => setShowPasswordHint(false)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNewPassword(val);
+                  if (newPasswordError) setNewPasswordError("");
+                  if (val.length > 0) {
+                    setShowPasswordHint(true);
+                  } else {
+                    setShowPasswordHint(false);
+                  }
+                }}
+              />
+              <button
+                className={styles.eyeBtn}
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             {/* 🔔 Password suggestion alert */}
             {showPasswordHint && (
-              <div className={changePassStyle.passwordHintBox}>
+              <div className={styles.requirementsBox}>
+                <div className={styles.requirementsBoxTitle}>
+                  Password Requirements:
+                </div>
                 <ul>
-                  <li className={passwordChecks.length ? changePassStyle.valid : changePassStyle.invalid}>
-                    {passwordChecks.length ? "✔️" : "❌"} 8–20 characters
+                  <li
+                    className={
+                      passwordChecks.length ? styles.valid : styles.invalid
+                    }
+                  >
+                    {passwordChecks.length ? (
+                      <Check size={14} />
+                    ) : (
+                      <X size={14} />
+                    )}{" "}
+                    8–20 characters
                   </li>
-                  <li className={passwordChecks.uppercase ? changePassStyle.valid : changePassStyle.invalid}>
-                    {passwordChecks.uppercase ? "✔️" : "❌"} Uppercase letter
+                  <li
+                    className={
+                      passwordChecks.uppercase ? styles.valid : styles.invalid
+                    }
+                  >
+                    {passwordChecks.uppercase ? (
+                      <Check size={14} />
+                    ) : (
+                      <X size={14} />
+                    )}{" "}
+                    Uppercase letter
                   </li>
-                  <li className={passwordChecks.lowercase ? changePassStyle.valid : changePassStyle.invalid}>
-                    {passwordChecks.lowercase ? "✔️" : "❌"} Lowercase letter
+                  <li
+                    className={
+                      passwordChecks.lowercase ? styles.valid : styles.invalid
+                    }
+                  >
+                    {passwordChecks.lowercase ? (
+                      <Check size={14} />
+                    ) : (
+                      <X size={14} />
+                    )}{" "}
+                    Lowercase letter
                   </li>
-                  <li className={passwordChecks.number ? changePassStyle.valid : changePassStyle.invalid}>
-                    {passwordChecks.number ? "✔️" : "❌"} Number
+                  <li
+                    className={
+                      passwordChecks.number ? styles.valid : styles.invalid
+                    }
+                  >
+                    {passwordChecks.number ? (
+                      <Check size={14} />
+                    ) : (
+                      <X size={14} />
+                    )}{" "}
+                    Number
                   </li>
-                  <li className={passwordChecks.special ? changePassStyle.valid : changePassStyle.invalid}>
-                    {passwordChecks.special ? "✔️" : "❌"} Special character
+                  <li
+                    className={
+                      passwordChecks.special ? styles.valid : styles.invalid
+                    }
+                  >
+                    {passwordChecks.special ? (
+                      <Check size={14} />
+                    ) : (
+                      <X size={14} />
+                    )}{" "}
+                    Special character
                   </li>
                 </ul>
 
-                <div className={changePassStyle.strengthBar}>
+                <div className={styles.strengthBar}>
                   <div
-                    className={changePassStyle.strengthFill}
+                    className={styles.strengthFill}
                     style={{ width: `${passwordStrength.percent}%` }}
                   />
                 </div>
@@ -242,70 +292,71 @@ const ChangePassword = ({ onClose, showChangePassword, setShowChangePassword }) 
               </div>
             )}
             {newPasswordError && (
-              <div className={styles.errorMessage}>{newPasswordError}</div>
+              <div className={styles.errorMessage}>
+                <ErrorMessage message={newPasswordError} />
+              </div>
             )}
           </div>
 
           {/* Confirm Password */}
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft} style={{ width: "146px" }}>
-                Confirm Password
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>
+              {/* <Check size={16} /> */}
+              Confirm Password
+            </label>
+            <div className={styles.inputWrapper}>
+              <div className={styles.inputIcon}>
+                <Lock size={18} />
               </div>
-              <div className={styles.textboxRight} style={{ position: "relative" }}>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  className={`form-control ${styles.formTextbox} ${confirmPasswordError ? styles.errorInput : ""
-                    }`}
-                  name="confirm_pass_field_obscured"
-                  autoComplete="off"
-                  placeholder="Confirm new password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (confirmPasswordError)
-                      setConfirmPasswordError("");
-                  }}
-                />
-                {/* 
-                <span
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    color: "#6c757d",
-                  }}
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </span> 
-                */}
-              </div>
+              <input
+                className={styles.input}
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirm_pass_field_obscured"
+                autoComplete="off"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (confirmPasswordError) setConfirmPasswordError("");
+                }}
+              />
             </div>
             {confirmPasswordError && (
               <div className={styles.errorMessage}>
-                {confirmPasswordError}
+                <ErrorMessage message={confirmPasswordError} />
               </div>
             )}
           </div>
+        </div>
 
-          <button
-            type="submit"
-            className={`mt-3 ${styles.btnSave}`}
-            disabled={loading}
-          >
-            {loading ? (
-              <div className={styles.Loginloadercontainer}>
-                <FaSpinner className={styles.spinnerLogin} />
-                <span className={styles.loaderText}>Please wait...</span>
-              </div>
-            ) : (
-              "Change Password"
-            )}
+        {/* Footer */}
+        <div className={styles.modalFooter}>
+          <button className={styles.cancelBtn} onClick={handleClose}>
+            Cancel
           </button>
-        </form>
+
+ <button
+  className={styles.submitBtn}
+  type="submit"
+  disabled={loading}
+  onClick={handleSubmit}
+>
+  {loading ? (
+    <span className={styles.loaderWrap}>
+          <div
+                  className="spinner-border"
+                  style={{ height: "18px", width: "18px", borderWidth: "2px" }}
+                ></div>
+      {/* <span className={styles.loaderText}>Please wait...</span> */}
+    </span>
+  ) : (
+    <span className={`d-flex align-items-center gap-2 ${styles.btnContent}`} >
+      <Shield size={18} />
+      <span>Change Password</span>
+    </span>
+  )}
+</button>
+        </div>
       </div>
     </div>
   );

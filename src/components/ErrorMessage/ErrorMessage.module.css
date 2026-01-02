@@ -8,6 +8,7 @@
   border: 1px solid #ff505059;
   animation: ErrorMessage_errorSlideFade__OsrV- 0.35s ease;
   box-shadow: 0 8px 24px #ff62621a;
+  margin-top: 8px;
 }
 
 .errorIcon {
