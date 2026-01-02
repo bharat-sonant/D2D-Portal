@@ -101,6 +101,17 @@ export const login = async (email, password, setEmailError, setPasswordError) =>
   return data;
 };
 
+export const saveuserLoginHistory=async (tableName,loginDetail)=>{
+  
+  await supabase
+  .from(tableName)
+  .upsert(
+      loginDetail,
+    { onConflict: "user_id,login_date" }
+  );
+
+}
+
 export const uploadAttachment = async (file, bucket,filePath) => {
   if (!file) return null;
   const { error } = await supabase.storage.from(bucket).upload(filePath, file, { upsert: true });
@@ -110,6 +121,26 @@ export const uploadAttachment = async (file, bucket,filePath) => {
     url: data.publicUrl,
     path: filePath,
   };
+};
+
+
+export const fetchCalenderData = async (userId, year, month) => {
+  try {
+    const mm = String(month + 1).padStart(2, "0");
+    const startDate = `${year}-${mm}-01`;
+    const endDate = `${year}-${mm}-31`; 
+    const { data, error } = await supabase
+      .from("UserLoginHistory")
+      .select("login_date")
+      .eq("user_id", userId)
+      .gte("login_date", startDate)
+      .lte("login_date", endDate);
+    if (error) {throw error;}
+    return {success: true,data: data || []};
+  } catch (err) {
+    console.error("fetchCalenderData error:", err);
+    return {success: false,message: err.message || "Failed to fetch calendar data"};
+  }
 };
 
 

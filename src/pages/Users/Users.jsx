@@ -6,6 +6,7 @@ import AddUser from "../../components/Users/AddUser";
 import * as userAction from '../../Actions/UserAction/UserAction';
 import UserStatusDialog from "../../components/Users/AlertPopUp";
 import UserCityAccess from "../../components/Users/UserCityAccess";
+import Calendar from "../../components/Users/calendar";
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -142,6 +143,15 @@ const User = () => {
             cityList={cityList}
             selectedUser={selectedUser}
           />
+          <div style={{width:'400px'}}>
+     {selectedUser!==null&&(
+  <Calendar selectedUser={selectedUser}/>
+         )
+
+         }
+          </div>
+    
+        
         </div>
       </div>
 
