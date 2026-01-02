@@ -1,44 +1,87 @@
+
+
+
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  FileText,
+  Eye,
+  Settings,
+  LockKeyhole,
+  Frown,
+  Ellipsis,
+  X,
+} from "lucide-react";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { CiSettings } from "react-icons/ci";
 import { useCity } from "../context/CityContext";
-import { TbReportAnalytics } from "react-icons/tb";
-import { LuMonitorDot, LuUsers } from "react-icons/lu";
-import { FaCity } from "react-icons/fa";
 import ChangePassword from "../components/ChangePassword/changePassword";
-import { LuLayoutDashboard } from "react-icons/lu";
-import logoStyle from '../assets/css/DefaultCitySelection/defaultCitySelection.module.css'
+import logoStyle from "../assets/css/DefaultCitySelection/defaultCitySelection.module.css";
 
-const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
+const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
-  // const storedImage = localStorage.getItem("profileImage");
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
   const {city, setCity, setCityId, cityLogo, setCityLogo} = useCity();
-  const Logo =  cityLogo|| images?.wevoisLogo;
-  const [showChangePassword, setShowChangePassword] = useState(false);
+  const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
-  // useEffect(() => {
-  //   if (!city.city) return;
-  //   const logoUrl = getCityLogo(city.city);
 
-  //   const img = new Image();
-  //   img.src = logoUrl;
+  const menuItems = [
+    {
+      id: "Dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      color: "#354db9",
+      path: "/Dashboard",
+    },
+    {
+      id: "User",
+      label: "User",
+      icon: Users,
+      color: "#b84dc5",
+      path: "/users",
+    },
+    {
+      id: "City",
+      label: "City",
+      icon: Building2,
+      color: "#3481c6",
+      path: "/cities",
+    },
+    {
+      id: "Reports",
+      label: "Reports",
+      icon: FileText,
+      color: "#17a748",
+      path: "/reports",
+    },
+    {
+      id: "Monitoring",
+      label: "Monitoring",
+      icon: Eye,
+      color: "#d84672",
+      path: "/monitoring",
+    },
+    {
+      id: "Settings",
+      label: "Settings",
+      icon: Settings,
+      color: "#6e35a5",
+      path: "/settings",
+    },
+  ];
 
-  //   img.onload = () => {
-  //     setCityLogo(logoUrl);
-  //   };
-
-  //   img.onerror = () => {
-  //     setCityLogo(images.wevoisLogo);
-  //   };
-  // }, [city.city]);
-
-  useEffect(() => {
+ useEffect(() => {
     if (storedName) {
       let nameParts = storedName.split(" ");
       let nameFirstLetter = nameParts[0].charAt(0).toUpperCase();
@@ -54,23 +97,7 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
     }
   }, [storedName]);
 
-  //Navnar Customization js
-  const [navbarStyle, setNavbarStyle] = useState({
-    backgroundColor: "#ffffff",
-    textColor: "#000000",
-    iconFilter: "icon-filter-black",
-  });
-
-  useEffect(() => {
-    const savedStyle = localStorage.getItem("navbarStyle");
-    if (savedStyle) {
-      setNavbarStyle(JSON.parse(savedStyle));
-    }
-  }, []);
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
+const handleLogout = () => {
     setCity("");
     setCityId("");
     setCityLogo("");
@@ -82,308 +109,116 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
     localStorage.removeItem("cityId");
     localStorage.removeItem("defaultCity");
     localStorage.removeItem("logoUrl");
-    
+   
     navigate("/");
   };
-
-  const changePass = () => {
+ const changePass = () => {
     setShowChangePassword(true);
   }
-
   return (
     <>
-      <div
-        className={`${styles.header}`}
-        style={{
-          backgroundColor: navbarStyle.backgroundColor,
-          color: navbarStyle.textColor,
-          padding: "10px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div className={`${styles.headerLeft}`}>
-          <a className={`${styles.companyLogo}`} >
-            {/* {storedImage !== undefined &&
-              storedImage !== null &&
-              storedImage !== "undefined" ? (
+      <div className={styles.header}>
+        {/* LEFT */}
+        <div className={styles.headerLeft}>
+          <div className={styles.companyLogo}>
+            <div className={styles.logoImg}>
               <img
-                className={`img-fluid ${styles.logoImg}`}
-                src={storedImage}
-                alt="Company Logo"
+                src={Logo}
+                alt="Logo"
+                onError={(e) => (e.target.src = images?.wevoisLogo)}
               />
-            ) : (
-              <> */}
-                <div className="text-center">
-                  <div className={logoStyle.logoWrapper} style={{height:'45px',width:'45px'}}>
-                        <img
-                          src={Logo}
-                          alt={'Logo'}
-                          onError={(e) => (e.target.src=  images?.wevoisLogo)}
-                          className="h-auto w-100"
-                        />
-                      </div>
-                  {/* <img
-                    className={`img-fluid ${styles.logoImg}`}
-                    src={cityLogo}
-                    title="Attendance portal"
-                    alt="Logo"
-                  /> */}
-                  <div
-                    className={`${styles.logoText}`}
-                    style={{ color: navbarStyle.textColor, cursor: 'pointer' }}
-                    onClick={() => setShowDefaultCity(true)}
-                    title="Change City"
-                  >
-                    {titleToShow}
-                  </div>
-                </div>
-              {/* </>
-            )} */}
-          </a>
+            </div>
+            <div
+              className={styles.logoText}
+              onClick={() => setShowDefaultCity(true)}
+            >
+              {titleToShow}
+            </div>
+          </div>
         </div>
-        <div className={`${styles.headerRight}`}>
-          <ul className={styles.navbarNav}>
-            <Link
-              aria-current="page"
-              to="/Dashboard"
-              title="Dashboard"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/Dashboard" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/Dashboard"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <LuLayoutDashboard
-                className={`${styles.iconNav} ${location.pathname === "/Dashboard"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/Dashboard" ? "#000000" : "#707070",
-                }}
-              >
-                Dashboard
-              </span>
-            </Link>{" "}
-            <Link
-              aria-current="page"
-              to="/users"
-              title="users"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/users" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/users"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <LuUsers
-                className={`${styles.iconNav} ${location.pathname === "/users"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color: location.pathname === "/users" ? "#000000" : "#707070",
-                }}
-              >
-                User
-              </span>
-            </Link>
-            <Link
-              aria-current="page"
-              to="/cities"
-              title="cities"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/cities" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/cities"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <FaCity
-                className={`${styles.iconNav} ${location.pathname === "/cities"
-                  ? navbarStyle.iconFilter
-                  : "SiTask"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/cities" ? "#000000" : "#707070",
-                }}
-              >
-                City
-              </span>
-            </Link>
- 
-            <Link
-              aria-current="page"
-              to="/reports"
-              title="Reports"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/reports" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/reports"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <TbReportAnalytics
-                className={`${styles.iconNav} ${location.pathname === "/reports"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/reports" ? "#000000" : "#707070",
-                }}
-              >
-                Reports
-              </span>
-            </Link>
-            <Link
-              aria-current="page"
-              to="/monitoring"
-              title="Monitoring"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/monitoring" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/monitoring"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <LuMonitorDot
-                className={`${styles.iconNav} ${location.pathname === "/monitoring"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/monitoring" ? "#000000" : "#707070",
-                }}
-              >
-                Monitoring
-              </span>
-            </Link>
-            {/* <Link
-              aria-current="page"
-              to="/vehicle"
-              title="Vehicles"
-              className={`nav-link ${styles.navLink} ${
-                hideNavLinks ? styles.hide : ""
-              } ${location.pathname === "/vehicle" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/vehicle"
-                  ? {
-                      backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                      borderBottom: "2px solid #3fb2f1",
-                    }
-                  : {}
-              }
-            >
-              <Car
-                className={`${styles.iconNav} ${
-                  location.pathname === "/vehicle"
-                    ? navbarStyle.iconFilter
-                    : "icon-filter-black"
-                }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/vehicle" ? "#000000" : "#707070",
-                }}
-              >
-                Vehicles
-              </span>
-            </Link> */}
-            <Link
-              to="/settings"
-              className={`nav-link ${styles.navLink} ${hideNavLinks ? styles.hide : ""
-                } ${location.pathname === "/settings" ? styles.activeNav : ""}`}
-              style={
-                location.pathname === "/settings"
-                  ? {
-                    backgroundColor: navbarStyle?.activeNavBg || "#3fb2f114",
-                    borderBottom: "2px solid #3fb2f1",
-                  }
-                  : {}
-              }
-            >
-              <CiSettings
-                className={`${styles.iconNav} ${location.pathname === "/settings"
-                  ? navbarStyle.iconFilter
-                  : "icon-filter-black"
-                  }`}
-              />
-              <span
-                className={styles.iconText}
-                style={{
-                  color:
-                    location.pathname === "/settings" ? "#000000" : "#707070",
-                }}
-              >
-                Settings {/* 👉 ADDED SETTINGS LABEL */}
-              </span>
-            </Link>
-          </ul>
 
-          {city && (
-            <div className={`dropdown ${styles.cityBadge}`}>
-              <button
-                className={`btn dropdown-toggle ${styles.cityBadgeBtn}`}
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+        {/* DESKTOP + MOBILE MENU */}
+        <div
+          className={`${styles.desktopMenu} ${
+            showMobileMenu ? styles.mobileMenuOpen : ""
+          }`}
+        >
+          {menuItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                className={`${styles.menuItem} ${
+                  isActive ? styles.menuItemActive : ""
+                }`}
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  "--menu-color": item.color,
+                }}
+                onClick={() => setShowMobileMenu(false)}
               >
-                <span className={`avatar ${styles.userBG}`}>
+                <div
+                  className={`${styles.menuIcon} ${
+                    isActive ? styles.menuIconActive : ""
+                  }`}
+                >
+                  <Icon className={styles.navIcon} size={20} />
+                </div>
+
+                <span
+                  className={`${styles.menuLabel} ${
+                    isActive ? styles.menuLabelActive : ""
+                  }`}
+                >
+                  {item.label}
+                </span>
+
+                {isActive && <div className={styles.activeIndicator} />}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* RIGHT */}
+        <div className={styles.headerRight}>
+          {/* Hamburger */}
+          <button
+            className={styles.hamburger}
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+          >
+            {showMobileMenu ? <X size={20} /> : <Ellipsis size={20} />}
+          </button>
+
+          {/* User */}
+          {city && (
+            <div className={`dropdown ${styles.userBadge}`}>
+              <button
+                className={`btn ${styles.userDropdownBtn}`}
+                data-bs-toggle="dropdown"
+              >
+                <span className={styles.userBG}>
                   {firstchar}
                   {secondchar}
                 </span>
-                <span className={styles.cityName}>{storedName}</span>
+                <span className={styles.userName}>{storedName}</span>
               </button>
+
               <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
-                <li onClick={changePass}>
-                  <Link className="dropdown-item">Change Password</Link>
+                <li
+                  onClick={changePass}
+                  className={styles.dropdownLI}
+                >
+                  <span className={styles.dropdownItem}>
+                    <LockKeyhole size={16} /> Change Password
+                  </span>
                 </li>
-                <li onClick={handleLogout}>
-                  <Link className="dropdown-item">Log Out</Link>
+                <li onClick={handleLogout} className={styles.dropdownLI}>
+                  <span className={styles.dropdownItem}>
+                    <Frown size={16} /> Log Out
+                  </span>
                 </li>
               </ul>
             </div>
