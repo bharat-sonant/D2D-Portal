@@ -18,11 +18,10 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
   // const storedImage = localStorage.getItem("profileImage");
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
-  const city = useCity();
-  const cityLogo = city?.cityLogo || images?.wevoisLogo;
+  const {city, setCity, setCityId, cityLogo, setCityLogo} = useCity();
+  const Logo =  cityLogo|| images?.wevoisLogo;
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const titleToShow = city?.city || customTitle || storedCity || "D2D PORTAL";
-
+  const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   // useEffect(() => {
   //   if (!city.city) return;
   //   const logoUrl = getCityLogo(city.city);
@@ -72,6 +71,9 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    setCity("");
+    setCityId("");
+    setCityLogo("");
     localStorage.removeItem("isLogin");
     localStorage.removeItem("loginDate");
     localStorage.removeItem("name");
@@ -80,7 +82,7 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
     localStorage.removeItem("cityId");
     localStorage.removeItem("defaultCity");
     localStorage.removeItem("logoUrl");
-
+    
     navigate("/");
   };
 
@@ -116,7 +118,7 @@ const Topbar = ({ hideNavLinks, customTitle, setShowDefaultCity }) => {
                 <div className="text-center">
                   <div className={logoStyle.logoWrapper} style={{height:'45px',width:'45px'}}>
                         <img
-                          src={cityLogo}
+                          src={Logo}
                           alt={'Logo'}
                           onError={(e) => (e.target.src=  images?.wevoisLogo)}
                           className="h-auto w-100"

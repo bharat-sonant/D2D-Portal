@@ -620,7 +620,6 @@ const Login = () => {
         const cityName = resp?.data?.[0]?.CityName || "";
         setCity(cityName);
         setCityLogo(createCityLogoUrl(resp?.data?.[0]?.CityCode ))
-        localStorage.setItem("city", cityName);
       }
     }
     return;
