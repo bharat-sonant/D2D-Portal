@@ -32,7 +32,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
-  const {city, setCity, setCityId, cityLogo, setCityLogo} = useCity();
+  const {setCityContext, city, cityId, cityLogo} = useCity();
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
 
@@ -98,9 +98,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   }, [storedName]);
 
 const handleLogout = () => {
-    setCity("");
-    setCityId("");
-    setCityLogo("");
     localStorage.removeItem("isLogin");
     localStorage.removeItem("loginDate");
     localStorage.removeItem("name");
@@ -110,6 +107,11 @@ const handleLogout = () => {
     localStorage.removeItem("defaultCity");
     localStorage.removeItem("logoUrl");
    
+    setCityContext({
+      city: "",
+      cityId: "",
+      cityLogo: ""
+    })
     navigate("/");
   };
  const changePass = () => {

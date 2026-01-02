@@ -8,7 +8,7 @@ import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity'))?true:false;
-  const {city,setCity, setCityId,setCityLogo} = useCity();
+  const {city,setCityContext} = useCity();
   const [selectedCity, setSelectedCity] = useState(null);
   const [setDefault, setSetDefault] = useState(!defaultCityExist);
   const [cityList,setCityList] = useState([]);
@@ -24,7 +24,7 @@ const DefaultCitySelection = ({ onClose }) => {
     if(saving) return;
 
     try{
-      await changeDefaultCityAction(city,setDefault,setCity,onClose, setCityId,setCityLogo);
+      await changeDefaultCityAction(city,setDefault,setCityContext,onClose);
     }finally{
       setSaving(false)
     }
@@ -84,9 +84,11 @@ const DefaultCitySelection = ({ onClose }) => {
               className="btn btn-primary"
               disabled={!selectedCity || saving}
               onClick={() => {
-                setCity(selectedCity?.CityName);
-                setCityId(selectedCity?.CityId);
-                setCityLogo(selectedCity?.logoUrl)
+                setCityContext({
+                city: selectedCity?.CityName,
+                cityId: selectedCity?.CityId, 
+                cityLogo: selectedCity?.logoUrl
+                })
                 onClose();
               }}
             >

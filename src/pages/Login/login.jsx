@@ -531,7 +531,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
-  const { setCity, setCityId,setCityLogo } = useCity();
+  const {setCityContext} = useCity();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -587,9 +587,9 @@ const Login = () => {
       localStorage.setItem("userId", user?.id);
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       localStorage.setItem("defaultCity", user?.defaultCity);
-      setCityId(user?.defaultCity);
-      await fetchCityName(user?.defaultCity);
-      if (rememberMe) {
+      localStorage.setItem("cityId", user?.defaultCity)
+      await fetchCityName(user?.defaultCity).then(()=> {
+        if (rememberMe) {
         localStorage.setItem("savedEmail", encryptValue(emailId));
         localStorage.setItem("savedPassword", encryptValue(password));
       } else {
@@ -597,6 +597,10 @@ const Login = () => {
         localStorage.removeItem("savedPassword");
       }
       navigate("/Dashboard");
+      })
+
+
+      
     } catch (err) {
       setAlertMessage("error", err.message);
     } finally {
@@ -618,8 +622,11 @@ const Login = () => {
       const resp = await getDataByColumnName("Cities", "CityId", defaultCityId);
       if (resp?.success) {
         const cityName = resp?.data?.[0]?.CityName || "";
-        setCity(cityName);
-        setCityLogo(createCityLogoUrl(resp?.data?.[0]?.CityCode ))
+        setCityContext({
+          city: cityName,
+          cityId: defaultCityId,
+          cityLogo: createCityLogoUrl(resp?.data?.[0]?.CityCode)
+        })
       }
     }
     return;
