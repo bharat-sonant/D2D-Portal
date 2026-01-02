@@ -46,7 +46,7 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
     // return list;
 }
 
-export const getDutySummaryAction = async(ward) => {
+export const getDutySummaryAction = async(ward, setDutyLoading) => {
   try{
     const result = await getDutySummary(ward);
     if(!result.success){
@@ -58,5 +58,7 @@ export const getDutySummaryAction = async(ward) => {
     const message = error.message || 'error while fetching duty time"'
     common.setAlertMessage("error", message);
     return null;
+  }finally{
+    setDutyLoading(false);
   }
 }

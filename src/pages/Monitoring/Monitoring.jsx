@@ -40,13 +40,12 @@ const Monitoring = () => {
     const fetchDutyIntime = async() => {
       if(!selectedWard) return;
       setDutyLoading(true);
-      const result = await getDutySummaryAction(selectedWard);
+      const result = await getDutySummaryAction(selectedWard, setDutyLoading);
       if (result) {
         setDutySummary(result);
       } else {
         setDutySummary(null);
       }
-      setDutyLoading(false);
     }
 
     const handleAttachMap = async(ward) => {
