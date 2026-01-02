@@ -21,6 +21,7 @@ const Monitoring = () => {
     };
   
     useEffect(() => {
+      console.log("MONITORING LOAD", { city, cityId });
       loadWards();
     }, [cityId]);
 
