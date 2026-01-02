@@ -14,20 +14,18 @@ export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCityCont
                 else {
                     console.error(resp);
                     common.setAlertMessage("error", "Error in saving default city");
+                    return;
                 }
             }
-            
+            setCityContext({
+                city: selectedCity?.CityName,
+                cityId: selectedCity?.CityId,
+                cityLogo: selectedCity?.logoUrl
+            })
+            onClose();
         }
         catch (error) {
             console.error(error);
             common.setAlertMessage("error", "Error in saving default city");
-        }
-        finally {
-            setCityContext({
-                city: selectedCity?.CityName,
-            cityId: selectedCity?.CityId,
-            cityLogo: selectedCity?.logoUrl
-            })
-            onClose();
         }
 }
