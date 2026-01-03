@@ -664,12 +664,21 @@
 }
 
 @media (max-width: 768px) {
+  .formSection{
+    order: 1;
+    margin-top: 80px;
+  }
+  .brandingSection{
+    order: 2;
+  }
   .contentWrapper {
     padding: 20px;
   }
 
   .formCard {
-    padding: 30px 25px;
+    padding: 30px 16px;
+    min-width: auto;
+    width: 95%;
   }
 
   .tagline h2 {
@@ -685,7 +694,7 @@
   }
 
   .formFooter {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 15px;
     align-items: flex-start;
   }
