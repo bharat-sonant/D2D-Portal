@@ -50,8 +50,6 @@
   width: 41px;
 }
 
-
-
 .container {
   position: relative;
   overflow: hidden;
@@ -76,7 +74,7 @@
 .orb1 {
   width: 600px;
   height: 600px;
-background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
+  background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
   top: -200px;
   left: -200px;
 }
@@ -84,7 +82,7 @@ background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
 .orb2 {
   width: 500px;
   height: 500px;
-background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
+  background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
   bottom: -150px;
   right: -150px;
   animation-delay: 8s;
@@ -93,7 +91,7 @@ background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
 .orb3 {
   width: 450px;
   height: 450px;
-background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
+  background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
   top: 50%;
   right: 20%;
   animation-delay: 16s;
@@ -218,7 +216,7 @@ background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
   color: #6b7280;
   margin: 0;
 }
-.bold{
+.bold {
   font-family: var(--fontGraphik);
   color: var(--lightBlack);
 }
@@ -304,5 +302,3 @@ background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
     transform: scale(1.08);
   }
 }
-
-

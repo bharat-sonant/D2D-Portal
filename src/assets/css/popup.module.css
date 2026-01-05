@@ -97,12 +97,12 @@
 .modalBody {
   padding: 30px;
   max-height: calc(100vh - 250px);
-    overflow: auto;
+  overflow: auto;
 }
 
 .inputGroup {
   margin-bottom: 16px;
-  &:nth-last-child(1){
+  &:nth-last-child(1) {
     margin-bottom: 0px;
   }
 }
@@ -264,7 +264,7 @@
   transition: all 0.3s ease;
   height: 44px;
   position: relative;
-  overflow:hidden;
+  overflow: hidden;
   justify-content: center;
   flex: 1;
 }
@@ -339,5 +339,26 @@
   }
   to {
     transform: translateY(-100vh);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .modalHeader {
+    padding: 20px 16px;
+  }
+  .modalBody {
+    padding: 20px 16px;
+  }
+  .modalFooter {
+    padding: 20px 16px;
+  }
+  .headerLeft {
+    width: calc(100% - 36px);
+  }
+  .iconWrapper {
+    display: none;
+  }
+  .cancelBtn{
+    display: none;
   }
 }

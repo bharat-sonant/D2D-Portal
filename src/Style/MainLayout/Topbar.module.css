@@ -181,6 +181,17 @@
   padding: 12px;
   background-color: var(--white);
   transform: translate(16px, 66px) !important;
+ animation: dropdownSlideUp 0.4s ease;
+}
+@keyframes dropdownSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(65px);
+  }
 }
 .dropdownLI {
   padding: 12px 10px;
@@ -188,7 +199,7 @@
   cursor: pointer;
 }
 .dropdownLI:hover {
-  background-color: #667eea10;
+  background-color: var(--whitef5);
   .dropdownItem {
     color: var(--black);
   }
