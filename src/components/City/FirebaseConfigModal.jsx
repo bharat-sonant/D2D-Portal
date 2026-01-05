@@ -50,6 +50,7 @@ const FirebaseConfigModal = ({ show, onHide, selectedCity, onSave }) => {
         if (!form.projectId?.trim()) newErrors.projectId = "Project ID is required";
         if (!form.storageBucket?.trim()) newErrors.storageBucket = "Storage Bucket is required";
         if (!form.messagingSenderId?.trim()) newErrors.messagingSenderId = "Messaging Sender ID is required";
+        if (!form.measurementId?.trim()) newErrors.measurementId = "Measurement ID is required";
         if (!form.appId?.trim()) newErrors.appId = "App ID is required";
 
         setErrors(newErrors);
