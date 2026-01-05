@@ -153,15 +153,21 @@
   gap: 12px;
   padding: 14px 18px;
   border: none;
-  background: var(--gradientTheme);
-  color: var(--white);
-  border-radius: 6px;
+  /* background: var(--gradientTheme); */
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+
+  color: var(--black);
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
-  font-family: var(--fontGraphik);
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
   transition: 0.3s;
   text-align: left;
-  box-shadow: #667eea4d 0px 4px 12px;
+  /* box-shadow: #667eea4d 0px 4px 12px; */
+  width: 48px;
+  height: 44px;
+  justify-content: center;
+  border: 1px solid var(--borderColor);
 }
 
 .userName {
@@ -181,7 +187,7 @@
   padding: 12px;
   background-color: var(--white);
   transform: translate(16px, 66px) !important;
- animation: dropdownSlideUp 0.4s ease;
+  animation: dropdownSlideUp 0.4s ease;
 }
 @keyframes dropdownSlideUp {
   from {

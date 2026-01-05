@@ -142,8 +142,8 @@
 }
 .vehicleNumber {
   padding: 6px 12px;
-  background: #667eea1a;
-  color: #667eea;
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+  color: var(--black);
   border-radius: 4px;
 }
 .tripBG {
@@ -153,10 +153,11 @@
   width: 28px;
   height: 28px;
   background: var(--gradientTheme);
-  color: var(--white);
+  color: var(--black);
   border-radius: 4px;
   font-size: 13px;
   font-family: var(--fontGraphik);
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
 }
 .progressCell {
   display: flex;
@@ -361,7 +362,7 @@
 }
 
 .sortUpIcon {
-  color:var(--textDanger);
+  color: var(--textDanger);
 }
 
 .sortDownIcon {
@@ -373,10 +374,10 @@
     gap: 10px;
     flex-wrap: wrap;
   }
-  .sortBtn div{
+  .sortBtn div {
     display: none;
   }
-  .exportBtn div{
+  .exportBtn div {
     display: none;
   }
 }
