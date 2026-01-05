@@ -194,8 +194,8 @@ const UserList = (props) => {
                         }}
                       >
                         {user?.name}
-                        {user?.empCode && (
-                          <> [<strong>{user.empCode}</strong>]</>
+                        {user?.emp_code && (
+                          <> [<strong>{user.emp_code}</strong>]</>
                         )}
                       </span>
 
@@ -209,7 +209,7 @@ const UserList = (props) => {
                           justifyContent: "flex-end"
                         }}
                       >
-                        {user?.userType === "external" && <FaUserCheck color="#212121" />}
+                        {user?.user_type === "external" && <FaUserCheck color="#212121" />}
 
                         {user?.status === "inactive" && (
                           <span className={styles.redDot}></span>

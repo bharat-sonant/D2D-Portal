@@ -25,9 +25,9 @@ export const getUsersByCity = async (
         id: u.id,
         name: u.name,
         email: u.email,
-        empCode: u.empCode,
+        emp_code: u.emp_code,
         status: u.status,
-        userType: u.userType,
+        user_type: u.user_type,
       }));
 
       setUserList(users);

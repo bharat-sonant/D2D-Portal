@@ -79,7 +79,7 @@ export const checkDuplicayInDb = async (cityId,wardName,wardId) => {
 export const login = async (email, password, setEmailError, setPasswordError) => {
   // DB se user fetch karo
   const hashCode = generateHash(email?.toLowerCase().trim());
-  const { data, error } = await supabase.from("Users").select("*").eq("hashCode", hashCode).maybeSingle();
+  const { data, error } = await supabase.from("Users").select("*").eq("hash_code", hashCode).maybeSingle();
   if (error || !data) {
     setEmailError("Email not registered !")
     return null;

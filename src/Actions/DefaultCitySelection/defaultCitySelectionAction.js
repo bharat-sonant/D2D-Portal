@@ -8,7 +8,7 @@ export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCityCont
                 const userId = localStorage.getItem('userId');
                 let resp = await setUserDefaultCity(userId, selectedCity?.CityId);
                 if (resp?.status === 'success') {
-                    localStorage.setItem('defaultCity', resp?.data?.defaultCity);
+                    localStorage.setItem('defaultCity', resp?.data?.default_city);
                     common.setAlertMessage("success", "Default city updated successfully!");
                 }
                 else {

@@ -90,8 +90,8 @@ const Login = () => {
       localStorage.setItem("name", user?.name);
       localStorage.setItem("userId", user?.id);
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
-      localStorage.setItem("defaultCity", user?.defaultCity);
-      await fetchCityName(user?.defaultCity).then(()=> {
+      localStorage.setItem("defaultCity", user?.default_city);
+      await fetchCityName(user?.default_city).then(()=> {
         if (rememberMe) {
         localStorage.setItem("savedEmail", encryptValue(emailId));
         localStorage.setItem("savedPassword", encryptValue(password));

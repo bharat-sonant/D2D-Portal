@@ -30,11 +30,11 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
   } else {
     setEmailError("");
   }
-  if (!form.userType) {
+  if (!form.user_type) {
     setUserTypeError("User Type is required");
     isValid = false;
   }
-  if (form?.userType === 'internal' && !form?.empCode) {
+  if (form?.user_type === 'internal' && !form?.emp_code) {
     setEmpCodeError("Employee Code is required for internal users");
     isValid = false;
   }
@@ -50,26 +50,26 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     const createdBy = localStorage.getItem("name");
     let userDetail = {
       // username: form.username,
-      hashCode: hashCode,
+      hash_code: hashCode,
       name: form?.name,
       email: encrptMail,
       status: "active",
       created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       created_by: createdBy,
       password: encrptpassword,
-      userType: form?.userType,
-      ...(form?.userType === 'internal' && { empCode: form?.empCode }),
+      user_type: form?.user_type,
+      ...(form?.user_type === 'internal' && { emp_code: form?.emp_code }),
     };
     if (onEdit) {
       let updatedDetail = {
         // username: form?.username,
-        hashCode: hashCode,
+        hash_code: hashCode,
         name: form?.name,
         email: encrptMail,
         status: form?.status,
         password: form?.password,
-        userType: form?.userType,
-        empCode: form?.userType === 'internal' ? form?.empCode : null,
+        user_type: form?.user_type,
+        emp_code: form?.user_type === 'internal' ? form?.emp_code : null,
       };
       handleUpdateUser(editData?.id, updatedDetail, setLoading, loadUsers, resetStateValues, setEmailError, setEmpCodeError)
     } else {
@@ -90,9 +90,9 @@ export const handleSaveUser = async (userDetail, email, password, loginURL, setE
     setLoading(false);
     const errMsg = response?.message?.details || "";
     if (response.message?.code === "23505") {
-      if (errMsg?.includes("email") || errMsg?.includes("hashCode")) {
+      if (errMsg?.includes("email") || errMsg?.includes("hash_code")) {
         setEmailError("Email already exists!");
-      } else if (errMsg?.includes("empCode")) {
+      } else if (errMsg?.includes("emp_code")) {
         setEmpCodeError("Employee Code already exists!");
       } else {
         common.setAlertMessage("error", "Duplicate value exists!");
@@ -125,9 +125,9 @@ const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, reset
     setLoading(false);
     const errMsg = response?.error?.details || "";
     if (response?.error?.code === "23505") {
-      if (errMsg?.includes("email") || errMsg?.includes("hashCode")) {
+      if (errMsg?.includes("email") || errMsg?.includes("hash_code")) {
         setEmailError("Email already exists!");
-      } else if (errMsg?.includes("empCode")) {
+      } else if (errMsg?.includes("emp_code")) {
         setEmpCodeError("Employee Code already exists!");
       } else {
         common.setAlertMessage("error", "Duplicate value exists!");
@@ -224,7 +224,7 @@ export const handleApplyFilter = (activeInactiveUserList, setFilteredUsersList, 
     const statusMatch =
       statusFilter === "all" || user.status === statusFilter;
     const typeMatch =
-      userTypeFilter === "all" || user.userType === userTypeFilter;
+      userTypeFilter === "all" || user.user_type === userTypeFilter;
     return statusMatch && typeMatch;
   });
   setSelectedUser(filteredList[0]);

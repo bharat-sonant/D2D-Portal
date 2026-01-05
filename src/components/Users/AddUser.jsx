@@ -14,8 +14,8 @@ const AddUser = (props) => {
     status: "active",
     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     password: "",
-    userType: "",
-    empCode: "",
+    user_type: "",
+    emp_code: "",
   };
   const [form, setForm] = useState(initialForm);
   // const [userNameError, setUserNameError] = useState("");
@@ -134,7 +134,7 @@ const AddUser = (props) => {
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>User Type</div>
               <div className={styles.textboxRight}>
-                <select  className={`form-control ${styles.formTextbox}`} name="userType" value={form?.userType} onChange={handleChange}  onKeyDown={handleKeyDown}>
+                <select  className={`form-control ${styles.formTextbox}`} name="user_type" value={form?.user_type} onChange={handleChange}  onKeyDown={handleKeyDown}>
                   <option value="" hidden>Please select user type</option>
                   <option value="internal">Internal</option>
                   <option value="external">External</option>
@@ -145,16 +145,16 @@ const AddUser = (props) => {
               <div className={`${styles.invalidfeedback}`}>{userTypeError}</div>
             )}
           </div>
-          {form?.userType ==='internal' && (<div className={styles.textboxGroup}>
+          {form?.user_type ==='internal' && (<div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>Emp Code</div>
               <div className={styles.textboxRight}>
                 <input
                   type="text"
-                  name="empCode"
+                  name="emp_code"
                   className={`form-control ${styles.formTextbox}`}
                   placeholder="Enter emp Code"
-                  value={form?.empCode || ''}
+                  value={form?.emp_code || ''}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
                 />

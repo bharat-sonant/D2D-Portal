@@ -83,7 +83,7 @@ export const setUserDefaultCity=(userId,cityId)=>{
     if (!userId && cityId) {
       return reject('Invalid parameters');
     }
-    const result = await sbs.updateData('Users', 'id', userId, {defaultCity:cityId});
+    const result = await sbs.updateData('Users', 'id', userId, {default_city:cityId});
     if (result.success) {
       return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
     } else {

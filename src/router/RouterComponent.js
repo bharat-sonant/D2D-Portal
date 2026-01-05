@@ -175,7 +175,7 @@ const RouterComponent = () => {
 };
 const AutoLogoutComponent = ({
   loggedInempCode,
-  empCode,
+  emp_code,
   loginStatus,
   isUserActive,
   ref,
@@ -185,7 +185,7 @@ const AutoLogoutComponent = ({
   useEffect(() => {
     if (
       Number(isUserActive) === 2 &&
-      empCode === loggedInempCode &&
+      emp_code === loggedInempCode &&
       loginStatus === "success"
     ) {
       localStorage.setItem("islogin", "Fail");
