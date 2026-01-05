@@ -511,7 +511,7 @@ import {
 import styles from "../Login/login.module.css";
 
 import { useNavigate } from "react-router-dom";
-import { getDataByColumnName, login } from "../../services/supabaseServices";
+import { getDataByColumnName, login, saveuserLoginHistory } from "../../services/supabaseServices";
 import {
   decryptValue,
   encryptValue,
@@ -597,7 +597,11 @@ const Login = () => {
       }
       navigate("/Dashboard");
       })
-
+      const loginDetail = {
+        user_id:user?.id,
+        login_date:dayjs().format("YYYY-MM-DD")
+      }
+      saveuserLoginHistory('UserLoginHistory',loginDetail)
 
       
     } catch (err) {
