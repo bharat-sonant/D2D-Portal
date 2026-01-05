@@ -12,6 +12,7 @@ import AddWard from "../../components/City/AddWard";
 import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessList";
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
+import FirebaseConfigModal from "../../components/City/FirebaseConfigModal";
 
 
 const TABS = [
@@ -35,6 +36,7 @@ const City = () => {
   const [activeTab, setActiveTab] = useState('city');
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [openFirebaseConfig, setOpenFirebaseConfig] = useState(false);
 
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
@@ -68,6 +70,20 @@ const City = () => {
       loadCities,
       setStatusConfirmation,
     );
+  };
+
+  const handleOpenFirebaseConfig = (city) => {
+    setSelectedCity(city);
+    setOpenFirebaseConfig(true);
+    setOpenSettings(false);
+  };
+
+  const handleSaveFirebaseConfig = async (config) => {
+    // This will be implemented in cityAction.js
+    console.log("Saving Firebase Config for", selectedCity.CityName, config);
+    // For now, just a placeholder to show it works
+    // await saveFirebaseConfigAction(selectedCity.CityId, config);
+    return Promise.resolve();
   };
 
   return (
@@ -206,6 +222,15 @@ const City = () => {
           selectedCity={selectedCity}
           onClickEdit={handleOpenEditWindow}
           setStatusConfirmation={setStatusConfirmation}
+          onClickFirebaseConfig={handleOpenFirebaseConfig}
+        />
+      )}
+      {openFirebaseConfig && (
+        <FirebaseConfigModal
+          show={openFirebaseConfig}
+          onHide={() => setOpenFirebaseConfig(false)}
+          selectedCity={selectedCity}
+          onSave={handleSaveFirebaseConfig}
         />
       )}
       <div className={GlobalStyles.mainSections}>
