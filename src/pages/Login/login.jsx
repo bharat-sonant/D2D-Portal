@@ -101,13 +101,11 @@ const Login = () => {
       }
       navigate("/Dashboard");
       })
-  const loginDetail = {
+       const loginDetail = {
         user_id:user?.id,
         login_date:dayjs().format("YYYY-MM-DD")
       }
       saveuserLoginHistory('UserLoginHistory',loginDetail)
-
-
       
     } catch (err) {
       setAlertMessage("error", err.message);
