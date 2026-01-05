@@ -55,7 +55,15 @@ const DefaultCitySelection = ({ onClose }) => {
             <div className={`modal-body ${styles.body}`}>
              {loading ? (
               <WevoisLoader title={'loading cities'} height={'100%'}/>
-             ) : (
+             ) : cityList?.length === 0 ? (
+              <div className={styles.emptyState}>
+                <h5>No City Access</h5>
+                <p>
+                  You don’t have access to any city yet. <br />
+                  Please contact the administrator.
+                </p>
+              </div>
+             ): (
                <div className="row g-3">
                 {cityList?.map((city) => (
                   <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6" key={city?.CityId}>
