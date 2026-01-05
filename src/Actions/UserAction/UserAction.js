@@ -51,6 +51,7 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     let userDetail = {
       // username: form.username,
       hash_code: hashCode,
+      is_superadmin: false,
       name: form?.name,
       email: encrptMail,
       status: "active",
