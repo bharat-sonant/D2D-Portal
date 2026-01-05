@@ -58,14 +58,10 @@ const FirebaseConfigModal = ({ show, onHide, selectedCity, onSave }) => {
 
     const handleSave = async () => {
         if (!validate()) return;
-        setLoading(true);
         try {
-            await onSave(form);
-            onHide();
+            await onSave(form, setLoading);
         } catch (error) {
             console.error("Error saving firebase config:", error);
-        } finally {
-            setLoading(false);
         }
     };
 

@@ -13,6 +13,7 @@ import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessList";
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 import FirebaseConfigModal from "../../components/City/FirebaseConfigModal";
+import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
 
 
 const TABS = [
@@ -78,12 +79,16 @@ const City = () => {
     setOpenSettings(false);
   };
 
-  const handleSaveFirebaseConfig = async (config) => {
-    // This will be implemented in cityAction.js
-    console.log("Saving Firebase Config for", selectedCity.CityName, config);
-    // For now, just a placeholder to show it works
-    // await saveFirebaseConfigAction(selectedCity.CityId, config);
-    return Promise.resolve();
+  const handleSaveFirebaseConfig = async (config, setLoader) => {
+    await saveFirebaseConfigAction(
+      selectedCity.CityId,
+      config,
+      setLoader,
+      () => {
+        setOpenFirebaseConfig(false);
+        loadCities(); // Refresh city list to get updated config
+      }
+    );
   };
 
   return (
