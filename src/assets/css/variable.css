@@ -38,4 +38,12 @@
   --textPause: #f65d5d;
   /* --pending: #dda10b; */
   --pending: #f06548;
+
+   /**** Gradient Variables ***/
+  --gradientTheme: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 100%
+  );
+  
 }

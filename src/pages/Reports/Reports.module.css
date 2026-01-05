@@ -1,0 +1,92 @@
+.container {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+  margin-top: 60px;
+  padding: 10px;
+}
+
+/* Background */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gradientOrb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: dashboardFloat 25s ease-in-out infinite;
+}
+
+.orb1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
+  top: -200px;
+  left: -200px;
+}
+
+.orb2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
+  bottom: -150px;
+  right: -150px;
+  animation-delay: 8s;
+}
+
+.orb3 {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
+  top: 50%;
+  right: 20%;
+  animation-delay: 16s;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+      rgba(102, 126, 234, 0.02) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(102, 126, 234, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Particles */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  animation: dashboardParticleFloat linear infinite;
+}
+
+.leftSection {
+  background: #fffffff2;
+  backdrop-filter: blur(20px);
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: #00000014 0px 8px 32px;
+  border: 1px solid #ffffffcc;
+  height: calc(100vh - 80px);
+  width: 190px;
+}
+.rightSection{
+  width: calc(100% - 200px);
+}

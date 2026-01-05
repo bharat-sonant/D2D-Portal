@@ -77,6 +77,68 @@
   }
 }
 
+/********** Custom Scrollbar ***********/
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 0.25rem;
+    background: var(--gradientTheme);
+    -webkit-box-shadow: transparent;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: transparent;
+    border-radius: 0.25rem;
+    background-color: var(--whitef5);
+}
+
+
+/********* Gradient Theme Button **********/
+.btnTheme {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border: none;
+  background: var(--gradientTheme);
+  box-shadow: #667eea4d 0px 4px 12px;
+  color: var(--white);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  transition: 0.3s;
+  text-align: left;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.btnTheme::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btnTheme:hover::before {
+  left: 100%;
+}
+
+.btnTheme:hover {
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+}
+
 @media (max-width: 767.98px) {
   .overlay {
     position: fixed;

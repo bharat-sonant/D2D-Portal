@@ -153,11 +153,7 @@
   gap: 12px;
   padding: 14px 18px;
   border: none;
-  background: linear-gradient(
-    135deg,
-    rgb(102, 126, 234) 0%,
-    rgb(118, 75, 162) 100%
-  );
+  background: var(--gradientTheme);
   color: var(--white);
   border-radius: 6px;
   cursor: pointer;

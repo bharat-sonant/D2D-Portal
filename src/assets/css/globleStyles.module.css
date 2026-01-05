@@ -903,12 +903,12 @@ button:focus:not(:focus-visible) {
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 0.25rem;
   border-radius: 0.25rem;
-  background: var(--themeColor);
+  background: #DDD;
   -webkit-box-shadow: transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--themeColorDark);
+  background: var(--gradientTheme);
 }
 
 ::-webkit-scrollbar {
@@ -920,7 +920,7 @@ button:focus:not(:focus-visible) {
   -webkit-box-shadow: transparent;
   -webkit-border-radius: 0.25rem;
   border-radius: 0.25rem;
-  background-color: #f5f5f5;
+  background-color: #F5F5F5;
 }
 
 /*** Pages CSS Starts Here ***/
