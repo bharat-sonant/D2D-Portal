@@ -3,7 +3,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   position: relative;
   overflow: hidden;
   background: #ffffff;
@@ -152,7 +151,9 @@
   align-items: center;
   gap: 15px;
 }
-
+.logoContainerMobile {
+  display: none;
+}
 .logoIcon {
   width: 60px;
   height: 60px;
@@ -336,7 +337,6 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.5);
   min-width: 500px;
-
 }
 
 .formHeader {
@@ -372,6 +372,7 @@
   font-size: 13px;
   font-family: var(--fontGraphik);
   color: var(--black);
+  margin-bottom: 4px;
 }
 
 .inputWrapper {
@@ -405,8 +406,8 @@
   box-shadow: 0 0 0 4px #667eea1a;
 }
 .inputWrapper:focus-within .inputIcon {
-  filter: brightness(0) saturate(100%) invert(58%) sepia(44%)
-    saturate(5990%) hue-rotate(210deg) brightness(97%) contrast(88%);
+  filter: brightness(0) saturate(100%) invert(58%) sepia(44%) saturate(5990%)
+    hue-rotate(210deg) brightness(97%) contrast(88%);
 }
 .togglePassword {
   position: absolute;
@@ -632,20 +633,39 @@
   background: linear-gradient(135deg, #f8f8f8 0% 0%, #ffffff 100%);
   padding: 50px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-        backdrop-filter: blur(20px);
-        min-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  min-width: 500px;
 }
-.forgotText{
+.forgotText {
   font-size: 13px;
   font-family: var(--fontGraphik);
   color: #6b7280;
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
+@media (max-width: 1199.98px) {
+  .logoContainerDesktop {
+    display: none;
+  }
+  .logoContainerMobile {
+    display: flex;
+    flex-flow: column;
+    margin-top: 30px;
+  }
+  .brandTitle{
+    font-size: 28px;
+  }
+  .formSection {
+    order: 1;
+  }
+  .brandingSection {
+    order: 2;
+  }
   .contentWrapper {
+    padding: 20px;
+    gap: 30px;
     grid-template-columns: 1fr;
     max-width: 600px;
   }
@@ -661,20 +681,15 @@
   .featureItem {
     text-align: left;
   }
+  .forgotBG{
+    min-width: auto;
+    width: 100%;
+    padding: 30px 20px;
+    margin-left: 5px;
+  }
 }
 
 @media (max-width: 768px) {
-  .formSection{
-    order: 1;
-    margin-top: 80px;
-  }
-  .brandingSection{
-    order: 2;
-  }
-  .contentWrapper {
-    padding: 20px;
-  }
-
   .formCard {
     padding: 30px 16px;
     min-width: auto;
@@ -682,7 +697,7 @@
   }
 
   .tagline h2 {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .formHeader h2 {
