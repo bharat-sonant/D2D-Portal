@@ -13,6 +13,7 @@
 
   --gray: #757575;
   --lightGray: #cccccc;
+  --regularColor: #707070;
 
   --borderColor: #eeeeee;
   --glassBorder: #ffffff2e;
@@ -22,28 +23,21 @@
   --whitef5: #f5f5f5;
   --glassBG: #ffffffb3;
 
-  --regularColor: #707070;
 
-  --themeColor: #3fb2f1;
-  --themeColorDark: #0a6fa5;
+  /* --readytotest: #d97706;
+  --assignReviewer: #667eea;
+  --reviewDone: #0b8f7d;
+  --textPause: #f65d5d; */
+  /* --pending: #f06548; */
 
-  --readytotest: #d97706;
-  --assignReviewer: #918cf5;
   --textDanger: #f06548;
   --textDangerTransparent: #f0654818;
-  --textDangerDark: #c43c21;
-  --textSuccess: #0ab39c;
+  --textDangerDark: #c43c21;  --textSuccess: #0ab39c;
   --textSuccessDark: #0b8f7d;
-  --reviewDone: #0b8f7d;
-  --textPause: #f65d5d;
-  /* --pending: #dda10b; */
-  --pending: #f06548;
+  --pending: #dda10b;
 
-   /**** Gradient Variables ***/
-  --gradientTheme: linear-gradient(
-    135deg,
-    #667eea 0%,
-    #764ba2 100%
-  );
-  
+  --themeColor: #667eea;
+  --themeColorDark: #4b66df;
+  /**** Gradient Variables ***/
+  --gradientTheme: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }

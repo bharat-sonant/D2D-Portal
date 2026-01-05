@@ -1,4 +1,4 @@
-.container {
+.reportsContainer {
   position: relative;
   overflow: hidden;
   display: flex;
@@ -87,6 +87,19 @@
   height: calc(100vh - 80px);
   width: 190px;
 }
-.rightSection{
+.rightSection {
   width: calc(100% - 200px);
+}
+
+@media (max-width: 767.98px) {
+  .reportsContainer {
+    flex-flow: column;
+  }
+  .leftSection {
+    width: 100%;
+    height: auto;
+  }
+  .rightSection {
+    width: 100%;
+  }
 }

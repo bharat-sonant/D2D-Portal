@@ -11,4 +11,5 @@ export const images = {
   iconCloseWhite: require("../images/icons/iconCloseWhite.png"),
   noDAtaAvailable: require("../images/userNotFound.png"),
   iconUp: require("../images/icons/iconUp.png"),
+  iconExcel: require("../images/icons/iconExcel.png"),
 };

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import {  FaFileExcel } from "react-icons/fa";
+import { FaFileExcel } from "react-icons/fa";
 import { ArrowDownUp, ArrowDown, ArrowUp } from "lucide-react";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
+import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
+import { images } from "../../../assets/css/imagePath";
 
 const DailyWorkReport = () => {
   const [date, setDate] = useState("2025-12-05");
@@ -98,17 +100,17 @@ const DailyWorkReport = () => {
   const getWorkColor = (perc) => {
     const value = parseInt(perc);
 
-    if (value >= 90) return "#198754";
-    if (value >= 70) return "#667eea";
-    if (value >= 40) return "#ffca2c";
-    return "#dc3545";
+    if (value >= 90) return "var(--textSuccess)";
+    if (value >= 70) return "var(--themeColor)";
+    if (value >= 40) return "var(--pending)";
+    return "var(--textDanger";
   };
   return (
     <>
       {/* TOP BAR */}
       <div className={style.topBar}>
         {/* DATE PICKER */}
-        <div
+        {/* <div
           className={style.dateBox}
           onClick={() =>
             document.getElementById("reportDateInput").showPicker()
@@ -121,8 +123,8 @@ const DailyWorkReport = () => {
             onChange={(e) => setDate(e.target.value)}
             className={style.dateInput}
           />
-        </div>
-
+        </div> */}
+        <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
           {/* SORT BUTTON */}
@@ -131,7 +133,7 @@ const DailyWorkReport = () => {
             onClick={() => setIsSortOpen(!isSortOpen)}
           >
             <ArrowDownUp size={16} />
-            Sort by
+            <div> Sort by</div>
           </button>
 
           {/* SORT DROPDOWN */}
@@ -151,7 +153,13 @@ const DailyWorkReport = () => {
 
           {/* EXPORT BUTTON */}
           <button className={style.exportBtn}>
-            <FaFileExcel /> Export to Excel
+            <img
+              src={images.iconExcel}
+              className={style.iconExcel}
+              title="Export to Excel"
+              alt="Export to Excel"
+            />{" "}
+            <div> Export to Excel</div>
           </button>
         </div>
       </div>
@@ -190,10 +198,13 @@ const DailyWorkReport = () => {
                 <td>
                   <span className={style.vehicleNumber}> {row.vehicle}</span>
                 </td>
-                <td className={style.driverName} >{row.driver}</td>
+                <td className={style.driverName}>{row.driver}</td>
                 <td className={style.helperName}>{row.helper1}</td>
-                <td>{row.helper2}</td>
-                <td> <span className={style.tripBG}> {row.trips}</span></td>
+                <td>{row.helper2?.trim() || "-"}</td>
+
+                <td>
+                  <span className={style.tripBG}> {row.trips}</span>
+                </td>
                 <td>{row.workTime}</td>
                 <td>{row.haltTime}</td>
                 <td>

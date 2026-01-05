@@ -1,6 +1,5 @@
 import { useState } from "react";
 import SidePannel from "../../components/Reports/Sidebar/SidePannel";
-import style from "../../Style/Reports_Style/Report.module.css";
 import styles from "../Reports/Reports.module.css";
 import DailyWorkReport from "../../components/Reports/DailyWorkReport/DailyWorkReport";
 const Reports = () => {
@@ -14,7 +13,7 @@ const Reports = () => {
     }
   };
   return (
-    <div className={styles.container}>
+    <div className={styles.reportsContainer}>
       {/* Background */}
       <div className={styles.background}>
         <div className={`${styles.gradientOrb} ${styles.orb1}`} />

@@ -1,0 +1,102 @@
+@import "../../assets/css/variable.css";
+
+.wrapper {
+  position: relative;
+  width: 160px;
+}
+
+/* Input */
+.inputBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  background: var(--white);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  height: 40px;
+  span {
+    margin-right: auto;
+  }
+}
+
+/* Calendar popup */
+.calendar {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  z-index: 8;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  background: linear-gradient(135deg, #667eea0d, #764ba20d);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 13px 16px;
+}
+
+.calendarHeaderIcon {
+  cursor: pointer;
+  width: 16px;
+  color: var(--regularColor);
+  transition: 0.3s;
+  &:hover {
+    color: var(--black);
+  }
+}
+.calendarTitle {
+  font-size: 14px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.calendarBody {
+  padding: 16px;
+}
+/* Weekdays */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  color: #9ca3af;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* Days */
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.days button {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.days button:hover {
+  background: var(--whitef5);
+}
+
+.active {
+  background: var(--gradientTheme) !important;
+  color: var(--white);
+}
