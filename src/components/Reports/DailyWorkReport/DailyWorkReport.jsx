@@ -5,6 +5,7 @@ import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 import { images } from "../../../assets/css/imagePath";
 import { getDailyWorkReportAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
+import WevoisLoader from "../../Common/Loader/WevoisLoader";
 
 const DailyWorkReport = () => {
   const [date, setDate] = useState("2025-01-06");
@@ -147,7 +148,14 @@ const DailyWorkReport = () => {
             </tr>
           </thead>
           <tbody>
-            {reportData?.map((row, index) => (
+            {loading? (
+              <tr>
+                <td colSpan={4} className={style.loaderCell}>
+                  <WevoisLoader title="Loading data..." />
+                </td>
+              </tr>
+            ) :reportData?.length > 0 ?(
+              reportData?.map((row, index) => (
               <tr key={index}>
                 <td>{row.ward}</td>
                 <td>{row.duty_on_time}</td>
@@ -171,7 +179,14 @@ const DailyWorkReport = () => {
                   </div>
                 </td> */}
               </tr>
-            ))}
+              ))
+              ):(
+                <tr>
+                  <td colSpan={4} className={style.noData}>
+                    No data found
+                  </td>
+                </tr>
+              )}
           </tbody>
         </table>
       </div>
