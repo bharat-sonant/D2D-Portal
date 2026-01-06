@@ -9,10 +9,32 @@ const MONTH_NAMES = [
   "September", "October", "November", "December"
 ];
 
+const normalizeTime = (value, mode = "first") => {
+  if (!value) return null;
+
+  // Convert to array
+  let times = [];
+
+  if (Array.isArray(value)) {
+    times = value;
+  } else if (typeof value === "string") {
+    times = value.split(",").map(t => t.trim()).filter(Boolean);
+  } else {
+    return value; // fallback for unexpected types
+  }
+
+  if (!times.length) return null;
+
+  return mode === "last"
+    ? times[times.length - 1]
+    : times[0];
+};
+
+
 
 export const getDailyWorkReport = async(date, cityId) => {
   const result = await sbs.getDataByColumns('DailyWorkAssignment', {date, city_id: cityId})
-  
+
   if(!result.success){
     return {status : 'error', message : result?.error}
   }
@@ -44,9 +66,9 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
 
     return {
       ward: wardName,
-      dutyInTime: summary?.dutyInTime ?? null,
-      dutyOutTime: summary?.dutyOutTime ?? null,
-      wardReachedOn: summary?.wardReachedOn ?? null,
+      dutyInTime: normalizeTime(summary?.dutyInTime, "first"),
+      dutyOutTime: normalizeTime(summary.dutyOutTime, "last"),
+      wardReachedOn: normalizeTime(summary.wardReachedOn, "first"),
       cityId
     };
   })
