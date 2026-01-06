@@ -192,7 +192,14 @@ const DailyWorkReport = () => {
               ):(
                 <tr>
                   <td colSpan={4} className={style.noData}>
-                    No data found
+                    <div className={style.noUserData}>
+                      <img
+                        src={images.noDAtaAvailable}
+                        className={style.noUserImg}
+                        alt="No data available"
+                      />
+                      <span>No data available</span>
+                    </div>
                   </td>
                 </tr>
               )}

@@ -161,9 +161,25 @@
 }
 
 .noData {
+  height: 300px; /* controls vertical centering */
   text-align: center;
-  padding: 40px;
+  vertical-align: middle;
+}
+
+.noUserData {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   color: var(--textMuted);
+  font-size: 14px;
+  gap: 10px;
+}
+
+.noUserImg {
+  width: 120px;
+  opacity: 0.8;
 }
 
 .vehicleNumber {
