@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SidePannel from "../../components/Reports/Sidebar/SidePannel";
 import styles from "../Reports/Reports.module.css";
 import DailyWorkReport from "../../components/Reports/DailyWorkReport/DailyWorkReport";
+import { getDailyWorkReport } from "../../services/ReportServices/DailyWorkReportService";
 const Reports = () => {
   const [selectedReport, setSelectedReport] = useState("Daily Work Report");
   const renderRightComponent = () => {

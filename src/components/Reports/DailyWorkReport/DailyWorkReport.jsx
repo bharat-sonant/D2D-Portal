@@ -4,68 +4,39 @@ import { ArrowDownUp, ArrowDown, ArrowUp } from "lucide-react";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 import { images } from "../../../assets/css/imagePath";
+import { getDailyWorkReportAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
 
 const DailyWorkReport = () => {
-  const [date, setDate] = useState("2025-12-05");
+  const [date, setDate] = useState("2025-01-06");
   const [rows, setRows] = useState([
     {
       zone: "Zone 1",
       start: "12:38",
       reach: "13:14",
       end: "19:08",
-      vehicle: "LEY-AT–7174",
-      driver: "SANWAR LAL (909)",
-      helper1: "AMIT (C) (1408)",
-      helper2: "",
-      trips: 1,
-      workTime: "6:30 hr",
-      haltTime: "2:33 hr",
-      workPerc: "70%",
-      actualPerc: "33%",
-      runKm: "16.232",
-      zoneKm: "18.539",
-      remark: "",
     },
     {
       zone: "Zone 2",
       start: "07:41",
       reach: "07:49",
       end: "13:38",
-      vehicle: "TATA–AT–0662",
-      driver: "AJAY KUMAR (1437)",
-      helper1: "RAKESH KUMAR (378)",
-      helper2: "",
-      trips: 2,
-      workTime: "5:57 hr",
-      haltTime: "0:10 hr",
-      workPerc: "100%",
-      actualPerc: "100%",
-      runKm: "26.505",
-      zoneKm: "9.991",
-      remark: "",
     },
     {
       zone: "Zone 3",
       start: "12:19",
       reach: "12:38",
       end: "15:16",
-      vehicle: "TATA–AT–5520",
-      driver: "VIJAY KUMAR (745)",
-      helper1: "RAGHUNANDAN (1778)",
-      helper2: "",
-      trips: 1,
-      workTime: "2:57 hr",
-      haltTime: "0:15 hr",
-      workPerc: "91%",
-      actualPerc: "40%",
-      runKm: "15.623",
-      zoneKm: "7.311",
-      remark: "ghar per urgent kaam hone ke kaaran ward pura nhi ho paya",
     },
   ]);
+  const [reportData, setReportData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortRef = useRef(null);
+
+  useEffect(()=>{
+    getDailyWorkReportAction(date, setReportData, setLoading);
+  },[])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -169,45 +140,22 @@ const DailyWorkReport = () => {
         <table className={style.table}>
           <thead>
             <tr>
-              <th>Zone</th>
-              <th>Start Time</th>
-              <th>Ward Reach On</th>
-              <th>End Time</th>
-              <th>Vehicle</th>
-              <th>Driver</th>
-              <th>Helper</th>
-              <th>Second Helper</th>
-              <th>Trip/Bins</th>
-              <th>Work Time</th>
-              <th>Halt Time</th>
-              <th>Work %</th>
-              <th>Actual Work %</th>
-              <th>Run KM</th>
-              <th>Zone Run KM</th>
-              <th>Remark</th>
+              <th className={style.th1}>Ward</th>
+              <th className={style.th2}>Duty On Time</th>
+              <th className={style.th3}>Ward Reach Time</th>
+              <th className={style.th4}>Duty Off Time</th>
             </tr>
           </thead>
-
           <tbody>
-            {rows.map((row, index) => (
+            {reportData?.map((row, index) => (
               <tr key={index}>
-                <td>{row.zone}</td>
-                <td>{row.start}</td>
-                <td>{row.reach}</td>
-                <td>{row.end}</td>
-                <td>
-                  <span className={style.vehicleNumber}> {row.vehicle}</span>
-                </td>
-                <td className={style.driverName}>{row.driver}</td>
-                <td className={style.helperName}>{row.helper1}</td>
-                <td>{row.helper2?.trim() || "-"}</td>
-
-                <td>
-                  <span className={style.tripBG}> {row.trips}</span>
-                </td>
-                <td>{row.workTime}</td>
-                <td>{row.haltTime}</td>
-                <td>
+                <td>{row.ward}</td>
+                <td>{row.duty_on_time}</td>
+                <td>{row.ward_reach_time}</td>
+                <td>{row.duty_off_time}</td>
+               
+                
+                {/* <td>
                   <div className={style.progressCell}>
                     <span className={style.percentageText}>{row.workPerc}</span>
 
@@ -221,29 +169,7 @@ const DailyWorkReport = () => {
                       />
                     </div>
                   </div>
-                </td>
-                <td>
-                  <div className={style.progressCell}>
-                    <span className={style.percentageText}>
-                      {row.actualPerc}
-                    </span>
-
-                    <div className={style.progressBar}>
-                      <div
-                        className={style.progressFill}
-                        style={{
-                          width: row.actualPerc,
-                          "--progress-color": getWorkColor(row.actualPerc),
-                        }}
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>{row.runKm}</td>
-                <td>{row.zoneKm}</td>
-                <td>
-                  <div className={style.remark}>{row.remark}</div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
