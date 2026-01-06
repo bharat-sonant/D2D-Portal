@@ -15,10 +15,11 @@ const CustomDatePicker = ({ value, onChange }) => {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const handleSelect = (day) => {
-    const selected = new Date(year, month, day);
+    const selected = new Date(Date.UTC(year, month, day));
     onChange(selected.toISOString().split("T")[0]);
     setOpen(false);
   };
+
 
   useEffect(() => {
     const close = (e) => !ref.current?.contains(e.target) && setOpen(false);

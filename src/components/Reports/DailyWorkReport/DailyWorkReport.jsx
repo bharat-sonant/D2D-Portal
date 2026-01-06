@@ -6,9 +6,11 @@ import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 import { images } from "../../../assets/css/imagePath";
 import { getDailyWorkReportAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
 import WevoisLoader from "../../Common/Loader/WevoisLoader";
+import dayjs from "dayjs";
 
 const DailyWorkReport = () => {
-  const [date, setDate] = useState("2025-01-06");
+  const todayDate = dayjs().format('YYYY-MM-DD')
+  const [date, setDate] = useState(todayDate);
   const [rows, setRows] = useState([
     {
       zone: "Zone 1",
@@ -37,7 +39,7 @@ const DailyWorkReport = () => {
 
   useEffect(()=>{
     getDailyWorkReportAction(date, setReportData, setLoading);
-  },[])
+  },[date])
 
   // Close dropdown when clicking outside
   useEffect(() => {
