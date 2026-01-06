@@ -124,10 +124,14 @@
   cursor: default;
   height: 59px;
   white-space: nowrap;
-  background: #6a70d628;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid transparent;
   margin-left: 20px;
   width: auto;
+  transition: 0.3s;
+  &:hover{
+  background: #6a70d628;
+  border-bottom: 2px solid var(--borderColor);
+  }
 }
 .userDropdownBtn {
   display: flex;
@@ -143,7 +147,7 @@
     height: 9px;
     position: absolute;
     right: 20px;
-    top: 20px;
+    top: 17px;
     width: 10px;
   }
 }
@@ -159,7 +163,7 @@
   color: var(--black);
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 20px;
   font-family: var(--fontGraphikMedium);
   transition: 0.3s;
   text-align: left;

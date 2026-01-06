@@ -335,27 +335,29 @@ const ChangePassword = ({
             Cancel
           </button>
 
- <button
-  className={styles.submitBtn}
-  type="submit"
-  disabled={loading}
-  onClick={handleSubmit}
->
-  {loading ? (
-    <span className={styles.loaderWrap}>
-          <div
+          <button
+            className={styles.submitBtn}
+            type="submit"
+            disabled={loading}
+            onClick={handleSubmit}
+          >
+            {loading ? (
+              <span className={styles.loaderWrap}>
+                <div
                   className="spinner-border"
                   style={{ height: "18px", width: "18px", borderWidth: "2px" }}
                 ></div>
-      {/* <span className={styles.loaderText}>Please wait...</span> */}
-    </span>
-  ) : (
-    <span className={`d-flex align-items-center gap-2 ${styles.btnContent}`} >
-      <Shield size={18} />
-      <span>Change Password</span>
-    </span>
-  )}
-</button>
+                {/* <span className={styles.loaderText}>Please wait...</span> */}
+              </span>
+            ) : (
+              <span
+                className={`d-flex align-items-center gap-2 ${styles.btnContent}`}
+              >
+                <Shield size={18} />
+                <span>Change Password</span>
+              </span>
+            )}
+          </button>
         </div>
       </div>
     </div>

@@ -1,27 +1,28 @@
-
-import { useEffect, useMemo, useState } from 'react';
-import styles from '../../assets/css/DefaultCitySelection/defaultCitySelection.module.css'
-import { getAvailableCityList } from '../../Actions/commonActions';
-import { useCity } from '../../context/CityContext';
-import { changeDefaultCityAction } from '../../Actions/DefaultCitySelection/defaultCitySelectionAction';
-import WevoisLoader from '../Common/Loader/WevoisLoader';
-import { getCityFirebaseConfig } from '../../services/CityService/firebaseConfigService';
+import { useEffect, useMemo, useState } from "react";
+import styles from "./DefaultCitySelection.module.css";
+import modalStyles from "../../assets/css/popup.module.css";
+import { MapPin, X, Check, Search } from "lucide-react";
+import { getAvailableCityList } from "../../Actions/commonActions";
+import { useCity } from "../../context/CityContext";
+import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defaultCitySelectionAction";
+import WevoisLoader from "../Common/Loader/WevoisLoader";
+import { getCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
 
 const DefaultCitySelection = ({ onClose }) => {
-  let defaultCityExist = JSON.parse(localStorage.getItem('defaultCity')) ? true : false;
+  let defaultCityExist = JSON.parse(localStorage.getItem("defaultCity"))
+    ? true
+    : false;
   const { city, setCityContext } = useCity();
   const [selectedCity, setSelectedCity] = useState(null);
-
   const [setDefault, setSetDefault] = useState(!defaultCityExist);
   const [cityList, setCityList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const userId = localStorage.getItem("userId");
-
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
-    getAvailableCityList(setCityList, 'active', setLoading, userId);
+    getAvailableCityList(setCityList, "active", setLoading, userId);
   }, []);
-
 
   const handleSubmit = async (city) => {
     if (saving) return;
@@ -29,16 +30,8 @@ const DefaultCitySelection = ({ onClose }) => {
 
     try {
       const res = await getCityFirebaseConfig(city?.CityId);
-      console.log(
-        "🔥 Firebase Config (Default City):",
-        res?.data
-      );
-      await changeDefaultCityAction(
-        city,
-        setDefault,
-        setCityContext,
-        onClose
-      );
+      console.log("🔥 Firebase Config (Default City):", res?.data);
+      await changeDefaultCityAction(city, setDefault, setCityContext, onClose);
     } catch (err) {
       console.error("Error fetching firebase config:", err);
     } finally {
@@ -46,111 +39,151 @@ const DefaultCitySelection = ({ onClose }) => {
     }
   };
 
-
   useMemo(() => {
     if (cityList?.length > 0 && city) {
-      let detail = cityList.find(item => item?.CityName === city);
-      setSelectedCity(detail)
+      let detail = cityList.find((item) => item?.CityName === city);
+      setSelectedCity(detail);
     }
-  }, [cityList, city])
+  }, [cityList, city]);
 
+  const filteredCities = useMemo(() => {
+    if (!searchQuery.trim()) return cityList;
 
-
+    return cityList.filter((c) =>
+      c.CityName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [cityList, searchQuery]);
   return (
     <>
-      <div className="modal-backdrop fade show"></div>
-      <div
-        className={`modal fade show ${styles.modal}`}
-        style={{ display: "block" }}
-      >
-        <div className="modal-dialog modal-xl modal-dialog-centered">
-          <div className="modal-content">
-            {/* Header */}
-            <div className="modal-header">
-              <h5 className={styles.headerTitle}>{defaultCityExist ? 'Select City' : 'Set your default city'}</h5>
-              {defaultCityExist && <button className="btn-close" onClick={onClose} />}
+      <div className={modalStyles.overlay} aria-modal="true" role="dialog">
+        <div className={`${modalStyles.modal} ${styles.modal}`}>
+          {/* Header */}
+          <div className={modalStyles.modalHeader}>
+            <div className={modalStyles.headerLeft}>
+              <div className={modalStyles.iconWrapper}>
+                <MapPin className="map-icon" />
+              </div>
+              <div>
+                <h2 className={modalStyles.modalTitle}>
+                  {defaultCityExist ? "Select City" : "Set your default city"}
+                </h2>
+                <p className={modalStyles.modalSubtitle}>
+                  Choose your preferred city location
+                </p>
+              </div>
             </div>
+            <button className={modalStyles.closeBtn} onClick={onClose}>
+              <X size={20} />
+            </button>
+          </div>
+          {/* Search Bar */}
+          <div className={modalStyles.searchSection}>
+            <div className={modalStyles.searchWrapper}>
+              <Search size={18} className={modalStyles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search cities..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={modalStyles.searchInput}
+              />
+            </div>
+          </div>
 
-            {/* Body */}
-            <div className={`modal-body ${styles.body}`}>
-              {loading ? (
-                <WevoisLoader title={'loading cities'} height={'100%'} />
-              ) : cityList?.length === 0 ? (
-                <div className={styles.emptyState}>
-                  <h5>No City Access</h5>
-                  <p>
-                    You don’t have access to any city yet. <br />
-                    Please contact the administrator.
-                  </p>
-                </div>
-              ) : (
-                <div className="row g-3">
-                  {cityList?.map((city) => (
-                    <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6" key={city?.CityId}>
-                      <div className={`${styles.cityCard} ${selectedCity?.CityId === city?.CityId ? styles.selected : ""}`}
-                        onClick={() => setSelectedCity(city)}
-                      >
-                        <div className={styles.logoWrapper}>
-                          <img
-                            src={city?.logoUrl}
-                            alt={city.name}
-                            onError={(e) => (e.target.style.display = "none")}
-                          />
-                        </div>
-                        <div className={styles.cityName}>{city?.CityName}</div>
-                      </div>
+          {/* Body */}
+          <div className={`${modalStyles.modalBody} ${styles.modalBody}`}>
+            {loading ? (
+              <WevoisLoader title={"loading cities"} height="250px" />
+            ) : filteredCities.length === 0 ? (
+              <div className={styles.noResult}>
+                <MapPin size={42} />
+                <h5>No Cities Found</h5>
+                <p>
+                  No results for <strong>“{searchQuery}”</strong>
+                </p>
+              </div>
+            ) : (
+              <div className={styles.cityRow}>
+                {filteredCities.map((city) => (
+                  <div
+                    key={city.CityId}
+                    className={`${styles.cityCard} ${
+                      selectedCity?.CityId === city?.CityId
+                        ? styles.selected
+                        : ""
+                    }`}
+                    onClick={() => setSelectedCity(city)}
+                  >
+                    <div className={styles.logoWrapper}>
+                      <img
+                        src={city?.logoUrl}
+                        alt={city.CityName}
+                        onError={(e) => (e.target.style.display = "none")}
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
 
-            {/* Footer */}
-            <div className="modal-footer d-flex justify-content-end">
-              {defaultCityExist ? (
-                <button
-                  className="btn btn-primary"
-                  disabled={!selectedCity || saving}
-                  onClick={async () => {
-                    try {
-                      const res = await getCityFirebaseConfig(selectedCity?.CityId);
-                      console.log(
-                        "🔥 Firebase Config (Change City):",
-                        res?.data
-                      );
-                      setCityContext({
-                        city: selectedCity?.CityName,
-                        cityId: selectedCity?.CityId,
-                        cityLogo: selectedCity?.logoUrl
-                      });
+                    <div className={styles.cityName}>{city.CityName}</div>
 
-                      onClose();
-                    } catch (err) {
-                      console.error("Error fetching firebase config:", err);
-                    }
-                  }}
+                    {selectedCity?.CityId === city?.CityId && (
+                      <div
+                        className={styles.checkMark}
+                        style={{ "--bg-color": city.color }}
+                      >
+                        <Check size={10} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-                >
-                  {saving ? (
-                    <span className="spinner-border spinner-border-sm" />
-                  ) : (
-                    `Change City`
-                  )}
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary"
-                  disabled={!selectedCity || saving}
-                  onClick={() => handleSubmit(selectedCity)}
-                >
-                  {saving ? (
-                    <span className="spinner-border spinner-border-sm" />
-                  ) : (
-                    `Set`
-                  )}
-                </button>
-              )}
-            </div>
+          {/* Footer */}
+          <div className={modalStyles.modalFooter}>
+            {defaultCityExist ? (
+              <button
+                className={`${modalStyles.submitBtn} ${styles.submitBtn}`}
+                disabled={!selectedCity || saving}
+                onClick={async () => {
+                  try {
+                    const res = await getCityFirebaseConfig(
+                      selectedCity?.CityId
+                    );
+                    console.log("🔥 Firebase Config (Change City):", res?.data);
+                    setCityContext({
+                      city: selectedCity?.CityName,
+                      cityId: selectedCity?.CityId,
+                      cityLogo: selectedCity?.logoUrl,
+                    });
+
+                    onClose();
+                  } catch (err) {
+                    console.error("Error fetching firebase config:", err);
+                  }
+                }}
+              >
+                {saving ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
+                  <>
+                    <Check size={18} style={{ marginRight: "6px" }} />
+                    Change City
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary"
+                disabled={!selectedCity || saving}
+                onClick={() => handleSubmit(selectedCity)}
+              >
+                {saving ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
+                  `Set`
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -158,5 +191,4 @@ const DefaultCitySelection = ({ onClose }) => {
   );
 };
 
-
-export default DefaultCitySelection
+export default DefaultCitySelection;
