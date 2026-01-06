@@ -1,16 +1,29 @@
-import { getDailyWorkReport } from "../../services/ReportServices/DailyWorkReportService"
+import { DailyWorkReportDataFromFirebase, getDailyWorkReport, getWardData, saveDailyWorkReportToSupabase } from "../../services/ReportServices/DailyWorkReportService"
 
-export const getDailyWorkReportAction = async(date, setReportData, setLoading) => {
-  try{
+export const getDailyWorkReportAction = async(date, wards, setReportData, setLoading, cityId) => {
     setLoading(true)
-  const response = await getDailyWorkReport(date);
-  if(response.status === 'success'){
-    const sortedData = sortWards(response?.data, 'ward')
-    setReportData(sortedData)
-  }else{
-    setReportData([]);
-  }
+
+  try{
+    let response = await getDailyWorkReport(date, cityId);
+    console.log('supabase',response)
+
+    if(response.status === 'success' && response.data.length === 0 && wards?.length > 0){
+      
+      response = await DailyWorkReportDataFromFirebase(date,wards,cityId)
+
+      if(response.status === 'success' && response.data.length > 0){
+        saveDailyWorkReportToSupabase(date, response.data)
+      }
+    }
+
+    if(response.status === 'success' && response.data.length > 0){
+      const sortedData = sortWards(response?.data, 'ward')
+      setReportData(sortedData)
+    }else{
+      setReportData([]);
+    }
   }catch(error){
+    console.log(error)
     setReportData([]);
   }finally{
     setLoading(false);
@@ -57,3 +70,16 @@ export const sortWards = (list = [], key = 'ward') => {
     });
   });
 };
+
+export const getWardDataAction = async(cityId, setWards) => {
+  try{
+    const result = await getWardData(cityId);
+
+    if(result.status === "success"){
+      const wardNames = result?.data.map((ward)=> ward.name);
+      setWards(wardNames)
+    }
+  }catch(error){
+    setWards([]);
+  }
+}

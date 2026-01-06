@@ -64,6 +64,26 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
+export const getDataByColumns = async(table, filters = {}) => {
+  try{
+    let query = supabase.from(table).select('*');
+
+    Object.entries(filters).forEach(([column, value])=>{
+      if (value !== undefined && value !== null) {
+        query = query.eq(column, value);
+      }
+    })
+
+    const {data, error} = await query;
+
+    if(error) throw error;
+
+    return { success: true, data: data || [] };
+  }catch(err){
+    return { success: false, error: err.message || err };
+  }
+}
+
 export const checkDuplicayInDb = async (cityId,wardName,wardId) => {
   let query = supabase.from('Wards').select('id').eq('city_Id', cityId).ilike('name', wardName);
   if (wardId) {

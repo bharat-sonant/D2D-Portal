@@ -4,13 +4,16 @@ import { ArrowDownUp, ArrowDown, ArrowUp } from "lucide-react";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 import { images } from "../../../assets/css/imagePath";
-import { getDailyWorkReportAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
+import { getDailyWorkReportAction, getWardDataAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
 import WevoisLoader from "../../Common/Loader/WevoisLoader";
 import dayjs from "dayjs";
+import { useCity } from "../../../context/CityContext";
 
 const DailyWorkReport = () => {
   const todayDate = dayjs().format('YYYY-MM-DD')
   const [date, setDate] = useState(todayDate);
+  const {cityId} = useCity();
+  const [wards, setWards] = useState([]);
   const [rows, setRows] = useState([
     {
       zone: "Zone 1",
@@ -38,8 +41,12 @@ const DailyWorkReport = () => {
   const sortRef = useRef(null);
 
   useEffect(()=>{
-    getDailyWorkReportAction(date, setReportData, setLoading);
-  },[date])
+    getWardDataAction(cityId, setWards);
+  },[cityId])
+
+  useEffect(()=>{
+    getDailyWorkReportAction(date,wards,  setReportData, setLoading, cityId);
+  },[date,wards])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -160,9 +167,9 @@ const DailyWorkReport = () => {
               reportData?.map((row, index) => (
               <tr key={index}>
                 <td>{row.ward}</td>
-                <td>{row.duty_on_time}</td>
-                <td>{row.ward_reach_time}</td>
-                <td>{row.duty_off_time}</td>
+                <td>{row.duty_on_time || row.dutyInTime || 'N/A'}</td>
+                <td>{row.ward_reach_time || row.wardReachedOn || 'N/A'}</td>
+                <td>{row.duty_off_time || row.dutyOutTime || 'N/A'}</td>
                
                 
                 {/* <td>

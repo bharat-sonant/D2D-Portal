@@ -58,8 +58,8 @@ const CustomDatePicker = ({ value, onChange }) => {
           </div>
           <div className={styles.calendarBody}>
             <div className={styles.weekdays}>
-              {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
-                <span key={d}>{d}</span>
+              {["S", "M", "T", "W", "T", "F", "S"].map((d,i) => (
+                <span key={i}>{d}</span>
               ))}
             </div>
 
