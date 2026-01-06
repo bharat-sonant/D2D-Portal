@@ -382,6 +382,9 @@
   .modalHeader {
     padding: 20px 16px;
   }
+  .searchSection{
+    padding: 20px 16px 0px 16px;
+  }
   .modalBody {
     padding: 20px 16px;
   }

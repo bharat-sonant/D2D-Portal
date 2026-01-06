@@ -154,3 +154,20 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 1198.98px) {
+  .cityCard {
+    width: calc(100% / 5 - 8px);
+  }
+}
+@media (max-width: 767.98px) {
+  .modalBody {
+    padding: 15px 16px 30px 16px;
+  }
+  .cityCard {
+    width: calc(100% / 3 - 7px);
+  }
+  .submitBtn {
+    flex: 1;
+  }
+}
