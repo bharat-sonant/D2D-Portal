@@ -20,6 +20,7 @@ import { images } from "../assets/css/imagePath";
 import { useCity } from "../context/CityContext";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import logoStyle from "../assets/css/DefaultCitySelection/defaultCitySelection.module.css";
+import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigService";
 
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
@@ -29,12 +30,27 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const [secondchar, setSecondhar] = useState("");
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-
   const storedName = localStorage.getItem("name");
   const storedCity = localStorage.getItem("city");
-  const {setCityContext, city, cityId, cityLogo} = useCity();
+  const { setCityContext, city, cityId, cityLogo } = useCity();
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
+  const defaultCityId = localStorage.getItem('defaultCity');
+  console.log(defaultCityId)
+
+  useEffect(() => {
+    fetchDefaultCityConfig()
+  }, [defaultCityId])
+
+  const fetchDefaultCityConfig = async () => {
+    const res = await getCityFirebaseConfig(defaultCityId);
+
+    console.log(
+      "🔥 Firebase Config (Default City):",
+      res?.data
+    );
+  }
+
 
   const menuItems = [
     {
@@ -81,7 +97,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
     },
   ];
 
- useEffect(() => {
+  useEffect(() => {
     if (storedName) {
       let nameParts = storedName.split(" ");
       let nameFirstLetter = nameParts[0].charAt(0).toUpperCase();
@@ -97,7 +113,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
     }
   }, [storedName]);
 
-const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("isLogin");
     localStorage.removeItem("loginDate");
     localStorage.removeItem("name");
@@ -106,7 +122,7 @@ const handleLogout = () => {
     localStorage.removeItem("cityId");
     localStorage.removeItem("defaultCity");
     localStorage.removeItem("logoUrl");
-   
+
     setCityContext({
       city: "",
       cityId: "",
@@ -114,7 +130,7 @@ const handleLogout = () => {
     })
     navigate("/");
   };
- const changePass = () => {
+  const changePass = () => {
     setShowChangePassword(true);
   }
   return (
@@ -141,9 +157,8 @@ const handleLogout = () => {
 
         {/* DESKTOP + MOBILE MENU */}
         <div
-          className={`${styles.desktopMenu} ${
-            showMobileMenu ? styles.mobileMenuOpen : ""
-          }`}
+          className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
+            }`}
         >
           {menuItems.map((item, index) => {
             const Icon = item.icon;
@@ -153,9 +168,8 @@ const handleLogout = () => {
               <Link
                 key={item.id}
                 to={item.path}
-                className={`${styles.menuItem} ${
-                  isActive ? styles.menuItemActive : ""
-                }`}
+                className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
+                  }`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
                   "--menu-color": item.color,
@@ -163,17 +177,15 @@ const handleLogout = () => {
                 onClick={() => setShowMobileMenu(false)}
               >
                 <div
-                  className={`${styles.menuIcon} ${
-                    isActive ? styles.menuIconActive : ""
-                  }`}
+                  className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
+                    }`}
                 >
                   <Icon className={styles.navIcon} size={20} />
                 </div>
 
                 <span
-                  className={`${styles.menuLabel} ${
-                    isActive ? styles.menuLabelActive : ""
-                  }`}
+                  className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
+                    }`}
                 >
                   {item.label}
                 </span>
