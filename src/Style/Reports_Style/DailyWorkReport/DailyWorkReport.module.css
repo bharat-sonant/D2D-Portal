@@ -132,18 +132,6 @@
   vertical-align: middle;
 }
 
-.th1{
-  width: 25%;
-}
-.th2{
-  width: 25%;
-}
-.th3{
-  width: 25%;
-}
-.th4{
-  width: 25%;
-}
 .table tr > th:first-child,
 .table tr > td:first-child {
   position: sticky;

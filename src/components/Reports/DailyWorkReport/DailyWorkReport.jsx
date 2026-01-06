@@ -109,16 +109,16 @@ const DailyWorkReport = () => {
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
           {/* SORT BUTTON */}
-          <button
+          {/* <button
             className={style.sortBtn}
             onClick={() => setIsSortOpen(!isSortOpen)}
           >
             <ArrowDownUp size={16} />
             <div> Sort by</div>
-          </button>
+          </button> */}
 
           {/* SORT DROPDOWN */}
-          {isSortOpen && (
+          {/* {isSortOpen && (
             <div className={style.sortDropdown}>
               <div className={style.sortItem} onClick={sortLowToHigh}>
                 <ArrowUp size={16} className={style.sortUpIcon} />
@@ -130,7 +130,7 @@ const DailyWorkReport = () => {
                 Actual Work % ( High → Low )
               </div>
             </div>
-          )}
+          )} */}
 
           {/* EXPORT BUTTON */}
           <button className={style.exportBtn}>
