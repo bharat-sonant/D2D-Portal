@@ -6,6 +6,7 @@ import { getAvailableCityList } from "../../Actions/commonActions";
 import { useCity } from "../../context/CityContext";
 import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defaultCitySelectionAction";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
+import { getCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem("defaultCity"))
@@ -23,15 +24,29 @@ const DefaultCitySelection = ({ onClose }) => {
     getAvailableCityList(setCityList, "active", setLoading, userId);
   }, []);
 
-  const handleSubmit = async (city) => {
-    if (saving) return;
+const handleSubmit = async (city) => {
+  if (saving) return;
+  setSaving(true);
 
-    try {
-      await changeDefaultCityAction(city, setDefault, setCityContext, onClose);
-    } finally {
-      setSaving(false);
-    }
-  };
+  try {
+    const res = await getCityFirebaseConfig(city?.CityId);
+    console.log(
+      "🔥 Firebase Config (Default City):",
+      res?.data
+    );
+    await changeDefaultCityAction(
+      city,
+      setDefault,
+      setCityContext,
+      onClose
+    );
+  } catch (err) {
+    console.error("Error fetching firebase config:", err);
+  } finally {
+    setSaving(false);
+  }
+};
+
   useMemo(() => {
     if (cityList?.length > 0 && city) {
       let detail = cityList.find((item) => item?.CityName === city);
@@ -100,11 +115,10 @@ const DefaultCitySelection = ({ onClose }) => {
                 {filteredCities.map((city) => (
                   <div
                     key={city.CityId}
-                    className={`${styles.cityCard} ${
-                      selectedCity?.CityId === city?.CityId
+                    className={`${styles.cityCard} ${selectedCity?.CityId === city?.CityId
                         ? styles.selected
                         : ""
-                    }`}
+                      }`}
                     onClick={() => setSelectedCity(city)}
                   >
                     <div className={styles.logoWrapper}>
@@ -137,14 +151,25 @@ const DefaultCitySelection = ({ onClose }) => {
               <button
                 className={`${modalStyles.submitBtn} ${styles.submitBtn}`}
                 disabled={!selectedCity || saving}
-                onClick={() => {
-                  setCityContext({
-                    city: selectedCity?.CityName,
-                    cityId: selectedCity?.CityId,
-                    cityLogo: selectedCity?.logoUrl,
-                  });
-                  onClose();
+                onClick={async () => {
+                  try {
+                    const res = await getCityFirebaseConfig(selectedCity?.CityId);
+                    console.log(
+                      "🔥 Firebase Config (Change City):",
+                      res?.data
+                    );
+                    setCityContext({
+                      city: selectedCity?.CityName,
+                      cityId: selectedCity?.CityId,
+                      cityLogo: selectedCity?.logoUrl
+                    });
+
+                    onClose();
+                  } catch (err) {
+                    console.error("Error fetching firebase config:", err);
+                  }
                 }}
+
               >
                 {saving ? (
                   <span className="spinner-border spinner-border-sm" />
