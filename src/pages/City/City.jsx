@@ -38,7 +38,7 @@ const City = () => {
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [openFirebaseConfig, setOpenFirebaseConfig] = useState(false);
-
+console.log(selectedCity)
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
   };
@@ -48,8 +48,8 @@ const City = () => {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'users' && selectedCity?.CityId) {
-      getUsersByCity(selectedCity.CityId, setUsersInCity, setLoadingUsers);
+    if (activeTab === 'users' && selectedCity?.city_id) {
+      getUsersByCity(selectedCity.city_id, setUsersInCity, setLoadingUsers);
     }
   }, [activeTab, selectedCity]);
 
@@ -81,7 +81,7 @@ const City = () => {
 
   const handleSaveFirebaseConfig = async (config, setLoader) => {
     await saveFirebaseConfigAction(
-      selectedCity.CityId,
+      selectedCity.city_id,
       config,
       setLoader,
       () => {

@@ -10,12 +10,13 @@ import WevoisLoader from "../Common/Loader/WevoisLoader";
 const CityList = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCityList, setFilteredCityList] = useState(props?.cityList || []);
-console.log('props',props.cityList)
+
   useEffect(() => {
     setFilteredCityList(filterCityAction(props?.cityList, searchTerm, props?.setSelectedCity, props?.selectedCity))
   }, [props?.cityList, searchTerm]);
+
   const handleSearch = debounce((e) => { setSearchTerm(e.target.value) }, 300);
-console.log('sele',props.selectedCity)
+  
   return (
     <div className={`dropdown ${GlobalStyles.dropDown}`}>
       <div

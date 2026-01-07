@@ -59,7 +59,7 @@ export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWard
     setLoading(true)
       const response = await getCityData();
        if(response.status==='success'){
-        let currentSelected = response.data?.find(item=>item?.city_id===selectedCity?.CityId);
+        let currentSelected = response.data?.find(item=>item?.city_id===selectedCity?.city_id);
            setSelectedCity(currentSelected || response.data[0]);
            getwardList(response.data[0]?.city_id,setWardList)
            setCityList(response.data);
@@ -76,7 +76,7 @@ export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadC
     if (!selectedCity) return;
     try{
         
-        await updateCityStatus(selectedCity?.CityId,newStatus);
+        await updateCityStatus(selectedCity?.city_id,newStatus);
         setToggle(newStatus);
         setStatusConfirmation({status:false,data:null,setToggle:()=>{}})
         loadCities()
@@ -90,12 +90,12 @@ export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadC
 export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)=>{
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
-        let currentSelected = cityList?.find(item=>item?.CityId===selectedCity?.CityId);
+        let currentSelected = cityList?.find(item=>item?.city_id===selectedCity?.city_id);
         setSelectedCity(currentSelected || cityList[0] || null);
         return cityList;
     }
-    let list = cityList?.filter((item) => item?.CityName?.trim().toLowerCase().includes(term));
-    let currentSelected = list?.find(item=>item?.CityId===selectedCity?.CityId);
+    let list = cityList?.filter((item) => item?.city_name?.trim().toLowerCase().includes(term));
+    let currentSelected = list?.find(item=>item?.city_id===selectedCity?.city_id);
 
     setSelectedCity(currentSelected || list[0] || null);
 

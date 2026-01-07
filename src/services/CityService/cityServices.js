@@ -74,14 +74,14 @@ export const getAvailableCityData = async(userId) => {
   };
 }
 
-export const updateCityStatus=async(cityId,Status)=>{
+export const updateCityStatus=async(city_id,Status)=>{
     return new Promise(async(resolve,reject)=>{
         
-        if (!cityId) {
+        if (!city_id) {
             return reject('Invalid parameters');
         }
         Status = Status || Status==='active'?'active':'inactive';
-        const response = await sbs.updateData('Cities','CityId',cityId,{Status});
+        const response = await sbs.updateData('Cities','city_id',city_id,{Status});
         return !response?.success? reject(response?.error):resolve(response);
     })
 }
