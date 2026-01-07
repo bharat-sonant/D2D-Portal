@@ -81,7 +81,6 @@ const Login = () => {
     try {
       setLoading(true);
       const user = await login(emailId, password, setEmailError, setPasswordError);
-console.log('user',user)
       if(!user){
         setLoading(false)
         return;

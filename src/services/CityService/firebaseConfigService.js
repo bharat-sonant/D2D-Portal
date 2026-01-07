@@ -27,11 +27,11 @@ export const saveCityFirebaseConfig = async (cityId, firebaseConfig) => {
  * Fetches the Firebase configuration for a specific city.
  * @param {string} cityId - The UUID of the city.
  */
-export const getCityFirebaseConfig = async (cityId) => {
+export const getCityFirebaseConfig = async (city_id) => {
     try {
-        const result = await sbs.getDataByColumnName('Cities', 'CityId', cityId);
+        const result = await sbs.getDataByColumnName('Cities', 'city_id', city_id);
         if (result.success && result.data?.length > 0) {
-            return { status: 'success', data: result.data[0].firebaseConfig };
+            return { status: 'success', data: result.data[0].firebase_config };
         } else {
             return { status: 'error', message: result.error || 'City not found' };
         }
