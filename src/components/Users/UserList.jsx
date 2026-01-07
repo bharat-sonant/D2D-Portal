@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { debounce } from "lodash";
-// import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 
 import { images } from "../../assets/css/imagePath";
-import styles from "../../Style/Task-Data/TaskDataList.module.css";
+import styles from "./UserList.module.css";
 import {
   filterUserListAction,
   handleApplyFilter,
@@ -178,6 +177,7 @@ const UserList = (props) => {
                         }}
                       >
                         Active
+                        {/* <div className={styles.greenDot}></div> */}
                       </button>
                     </li>
 
@@ -192,6 +192,7 @@ const UserList = (props) => {
                         }}
                       >
                         Inactive
+                        <div className={styles.redDot}></div>
                       </button>
                     </li>
                   </ul>
@@ -262,6 +263,10 @@ const UserList = (props) => {
                         }}
                       >
                         External
+                        <div className={``}>
+                          {" "}
+                          <UserRoundCheck size={14} />{" "}
+                        </div>
                       </button>
                     </li>
                   </ul>
@@ -278,7 +283,10 @@ const UserList = (props) => {
           <div className={`${styles.userListTitle}`}>Select Employee</div>
           <div className={`${styles.userScroll}`}>
             {props?.loading ? (
-              <WevoisLoader title={"Loading user data..."} height="calc(100vh - 250px)" />
+              <WevoisLoader
+                title={"Loading user data..."}
+                height="calc(100vh - 250px)"
+              />
             ) : filteredUsersList?.length > 0 ? (
               filteredUsersList?.map((user, i) => (
                 <li className={`${GlobalStyles.dropdownLi}`} key={i}>
@@ -318,12 +326,12 @@ const UserList = (props) => {
                 </li>
               ))
             ) : (
-             <NoResult 
-               title="No Users Found"
-  query={searchTerm}
-  icon={UserSearch}
- height="calc(100vh - 280px)"
-             />
+              <NoResult
+                title="No Users Found"
+                query={searchTerm}
+                icon={UserSearch}
+                height="calc(100vh - 280px)"
+              />
             )}
           </div>
         </ul>
