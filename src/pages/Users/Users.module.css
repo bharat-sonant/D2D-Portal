@@ -18,7 +18,7 @@
   width: 600px;
   height: 600px;
   /* background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%); */
-      background: linear-gradient(135deg, #ddedfc 0%, #99a7cb 100%);
+  background: linear-gradient(135deg, #ddedfc 0%, #99a7cb 100%);
   top: -200px;
   left: -200px;
 }
@@ -89,14 +89,124 @@
   z-index: 1;
 }
 
+.userStatusCard {
+  width: 650px;
+  background: var(--white);
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px #0000000f;
+}
+
+/* LEFT */
+.userLeft {
+  display: flex;
+  align-items: center;
+}
+.avatar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: none;
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+  color: var(--black);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 20px;
+  font-family: var(--fontGraphikMedium);
+  transition: 0.3s;
+  text-align: left;
+  width: 48px;
+  height: 44px;
+  justify-content: center;
+  border: 1px solid var(--borderColor);
+}
+.userName {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  display: flex;
+  flex-flow: column;
+  p{
+    font-size: 11px;
+    font-family: var(--fontGraphik);
+    color: var(--regularColor);
+  }
+}
+
+/* RIGHT */
+.actionWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* TOGGLE */
+.activeInactiveBadge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+  height: 34px;
+}
+
+/* ACTIVE → show Deactivate */
+.badgeActive {
+  background: #f8d7da;
+  color: #842029;
+  border-color: #f5c2c7;
+}
+
+.badgeActive:hover {
+  background: #f1b0b7;
+}
+
+/* INACTIVE → show Activate */
+.badgeInactive {
+  background: #d1e7dd;
+  color: #0f5132;
+  border-color: #badbcc;
+}
+
+.badgeInactive:hover {
+  background: #a3cfbb;
+}
+
+/* EDIT ICON */
+.editIcon {
+  height: 34px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.editIcon:hover {
+  background: #f5f5f5;
+  border-color: #cccccc;
+}
+
 @media (max-width: 767.98px) {
   .userPage {
     flex-flow: column;
   }
-  .userPageLeft{
+  .userPageLeft {
     width: 100%;
   }
-  .userPageRight{
+  .userPageRight {
     width: 100%;
   }
 }
