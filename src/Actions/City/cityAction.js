@@ -4,8 +4,6 @@ import { getCityData, getCityWisewardList, saveCityData, saveCityWiseWardData, u
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
-    console.log('form',form)
-    console.log('propsss',props)
     setCityError("");
     setCityCodeError("");
     if(!form?.city_code?.trim()){

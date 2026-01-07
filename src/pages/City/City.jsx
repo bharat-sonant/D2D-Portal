@@ -256,7 +256,7 @@ const City = () => {
         <ConfirmationModal
           visible={statusConfirmation?.status}
           title={`City ${statusConfirmation?.data ? 'Active' : 'Deactive'}`}
-          message={`Are you sure you want to ${statusConfirmation?.data ? 'activate' : 'deactivate'} ${selectedCity?.CityName} city?`}
+          message={`Are you sure you want to ${statusConfirmation?.data ? 'activate' : 'deactivate'} ${selectedCity?.city_name} city?`}
           onCancel={() => setStatusConfirmation({ status: false, data: null, setToggle: () => { } })}
           onConfirm={handleStatusConfirmation}
           btnColor={!statusConfirmation?.data && 'red'}
