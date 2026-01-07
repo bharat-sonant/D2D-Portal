@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../assets/css/Dashboard/WelcomeMsg.module.css";
-import { images } from "../../assets/css/imagePath";
 import { Sun, Moon, Bell } from "lucide-react";
 
 const WelcomeMsg = () => {

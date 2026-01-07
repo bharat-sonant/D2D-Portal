@@ -12,4 +12,5 @@ export const images = {
   noDAtaAvailable: require("../images/userNotFound.png"),
   iconUp: require("../images/icons/iconUp.png"),
   iconExcel: require("../images/icons/iconExcel.png"),
+  iconDown: require("../images/icons/iconDown.png"),
 };

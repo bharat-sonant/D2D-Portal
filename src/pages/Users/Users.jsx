@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
+import styles from "./Users.module.css"
 import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
-import * as userAction from '../../Actions/UserAction/UserAction';
+import * as userAction from "../../Actions/UserAction/UserAction";
 import UserStatusDialog from "../../components/Users/AlertPopUp";
 import UserCityAccess from "../../components/Users/UserCityAccess";
 import Calendar from "../../components/Users/calendar";
@@ -19,12 +20,17 @@ const User = () => {
   const [activeInactiveUserList, setActiveInactiveUserList] = useState([]);
 
   const loadUsers = async () => {
-    await userAction.fetchUserData(setSelectedUser, setUsers, setLoading, setActiveInactiveUserList);
+    await userAction.fetchUserData(
+      setSelectedUser,
+      setUsers,
+      setLoading,
+      setActiveInactiveUserList
+    );
   };
 
   const loadCities = async () => {
     await userAction.loadCityData(setCityList);
-  }
+  };
 
   useEffect(() => {
     loadUsers();
@@ -40,7 +46,13 @@ const User = () => {
   };
 
   const handleStatusToggle = async (user) => {
-    userAction.updateStatus(user, setUsers, setActiveInactiveUserList, setSelectedUser, setConfirmUser);
+    userAction.updateStatus(
+      user,
+      setUsers,
+      setActiveInactiveUserList,
+      setSelectedUser,
+      setConfirmUser
+    );
   };
 
   const handleEditUser = () => {
@@ -59,8 +71,30 @@ const User = () => {
         </button>
       </div>
 
-      <div className={`${TaskStyles.employeePage}`}>
-        <div className={`${TaskStyles.employeeLeft}`}>
+      <div className={`${styles.userPage}`}>
+        {/* Background */}
+      <div className={styles.background}>
+        <div className={`${styles.gradientOrb} ${styles.orb1}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb2}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb3}`} />
+        <div className={styles.gridOverlay} />
+      </div>
+
+      {/* Particles */}
+      <div className={styles.particles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={styles.particle}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+        <div className={`${styles.userPageLeft}`}>
           <UserList
             users={users}
             selectedUser={selectedUser}
@@ -71,7 +105,9 @@ const User = () => {
           />
         </div>
 
-        <div className={TaskStyles.employeeRight} style={{ marginLeft: '110px' }}>
+        <div
+          className={styles.userPageRight}
+        >
           <div
             style={{
               width: "25%",
@@ -139,23 +175,14 @@ const User = () => {
               </span>
             </div>
           </div>
-          <UserCityAccess
-            cityList={cityList}
-            selectedUser={selectedUser}
-          />
-          <div style={{width:'400px'}}>
-     {selectedUser!==null&&(
-  <Calendar selectedUser={selectedUser}/>
-         )
-
-         }
+          <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
+          <div style={{ width: "400px" }}>
+            {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
           </div>
-    
-        
         </div>
       </div>
 
-      <div className={GlobalStyles.mainSections}>
+    
         <AddUser
           showCanvas={showCanvas}
           setShowCanvas={setShowCanvas}
@@ -164,7 +191,6 @@ const User = () => {
           onEdit={onEdit}
           setOnEdit={setOnEdit}
         />
-      </div>
 
       {confirmUser && (
         <UserStatusDialog

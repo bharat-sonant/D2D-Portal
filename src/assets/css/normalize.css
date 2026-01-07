@@ -272,7 +272,7 @@
    * Remove the default vertical scrollbar in IE 10+.
    */
    ::-webkit-scrollbar{
-    width: 0px;
+    width: 5px;
    }
   
   textarea {
