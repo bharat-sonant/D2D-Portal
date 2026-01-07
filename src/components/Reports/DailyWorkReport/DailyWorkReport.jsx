@@ -157,6 +157,18 @@ const DailyWorkReport = () => {
                   <td className={style.th4}>
                     {row.duty_off_time || row.dutyOutTime || "N/A"}
                   </td>
+                  <td className={style.th4}>
+                    { "N/A"}
+                  </td>
+                  <td className={style.th4}>
+                    { "N/A"}
+                  </td>
+                  <td className={style.th4}>
+                    { "N/A"}
+                  </td>
+                  <td className={style.th4}>
+                    { "N/A"}
+                  </td>
 
                   {/* <td>
                   <div className={style.progressCell}>
