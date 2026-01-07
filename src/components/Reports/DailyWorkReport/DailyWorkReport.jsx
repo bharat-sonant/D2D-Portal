@@ -122,7 +122,7 @@ const DailyWorkReport = () => {
         <table className={style.table}>
           <thead>
             <tr>
-              <th className={style.parentHeader}></th>
+              <th className={style.parentHeader}style={{width:"15%"}}></th>
               <th className={style.parentHeader} colSpan={3}>Timing Details</th>
               <th className={style.parentHeader} colSpan={4}>Person / Vehicle Details</th>
             </tr>
