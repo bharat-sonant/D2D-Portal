@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import style from "../../assets/css/User/calender.module.css"
-import "./calender.css"
+import style from "../../assets/css/User/calender.module.css";
+import "./calender.css";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import dayjs from "dayjs";
-import * as action from "../../Actions/UserAction/calendarAction"
+import * as action from "../../Actions/UserAction/calendarAction";
 import { images } from "../../assets/css/imagePath";
 
 dayjs.extend(weekOfYear);
@@ -19,22 +19,22 @@ const Calendar = (props) => {
     action.nextMonthAction(setCurrentDate);
   };
 
-
-useEffect(() => {
-  if (!props.selectedUser) return;
-  action.getDatesArrayAction(setDaysArray,currentDate,props.selectedUser.id);
-},[currentDate, props.selectedUser]);
+  useEffect(() => {
+    if (!props.selectedUser) return;
+    action.getDatesArrayAction(
+      setDaysArray,
+      currentDate,
+      props.selectedUser.id
+    );
+  }, [currentDate, props.selectedUser]);
 
   return (
     <>
-      <div className={style.boxHeader}>
-        
-      </div>
-    
+      {/* <div className={style.boxHeader}></div> */}
 
       <div className={style.box}>
         <div className="calendar-container">
-          <h6 style={{marginTop:'8px'}}>Login History</h6>
+          <h6 style={{ marginTop: "8px" }}>Login History</h6>
           <div className="calendar pb-0 ps-0 pe-0">
             <div className="header33">
               <button onClick={prevMonth} className={`btn ${style.PrevBtn}`}>
@@ -61,24 +61,27 @@ useEffect(() => {
                   <div
                     key={index}
                     style={{
-                      backgroundColor: isHoliday ? "rgb(232, 232, 232)" : action.getBackgroundColor(item.status, item.date),
+                      backgroundColor: isHoliday
+                        ? "rgb(232, 232, 232)"
+                        : action.getBackgroundColor(item.status, item.date),
                       color: item.color,
                       textAlign: "center",
                       fontSize: "11px",
                       padding: "4px",
                       cursor:
                         item.day === "" ||
-                          (dayjs(item.date).day() === 0 && (item.status === 0 || item.status === 7))
+                        (dayjs(item.date).day() === 0 &&
+                          (item.status === 0 || item.status === 7))
                           ? "default"
                           : "pointer",
                     }}
-                    className={`date ${item.day === "" ? "empty" : ""} ${dayjs(item.date).day() === 0 ? "disable" : "cursor-pointer"
-                      }`}
-                  
+                    className={`date ${item.day === "" ? "empty" : ""} ${
+                      dayjs(item.date).day() === 0
+                        ? "disable"
+                        : "cursor-pointer"
+                    }`}
                   >
-                   
-                      {item.day}
-                   
+                    {item.day}
                   </div>
                 );
               })}
@@ -88,7 +91,6 @@ useEffect(() => {
       </div>
 
       {/* Modal */}
-     
     </>
   );
 };

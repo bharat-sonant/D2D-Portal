@@ -147,6 +147,7 @@
   position: relative;
   width: 100%;
   height: calc(100vh - 80px);
+  box-shadow: 0 2px 8px #0000000f;
 }
 .mobileBtn {
   display: none;
@@ -196,10 +197,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 8px 16px;
-  background-color: var(--white);
+  background-color: var(--whitefa);
   font-size: 13px;
   font-family: var(--fontGraphik);
-  color: var(--regularColor);
+  color: var(--black);
   border-radius: 4px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
@@ -209,7 +210,7 @@
 
   &:hover {
     background-color: var(--whitef5) !important;
-    color: var(--black);
+    color: var(--darkBlack);
   }
 }
 .dropdownLi:last-child .desktopRow {

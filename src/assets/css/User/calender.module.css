@@ -4,6 +4,9 @@
   border-radius: 6px;
   border: 1px solid var(--borderColor);
   margin-bottom: 10px;
+  margin-top: 10px;
+  width: 310px;
+  box-shadow: 0 2px 8px #0000000f;
 }
 .boxHeader {
   display: flex;
@@ -86,9 +89,8 @@
   width: 14px;
 }
 
-
-@media (max-width: 767.98px){
-  .employeeSelection{
-          width: 100% !important;
+@media (max-width: 767.98px) {
+  .employeeSelection {
+    width: 100% !important;
   }
 }

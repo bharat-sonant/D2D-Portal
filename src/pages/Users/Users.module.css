@@ -87,10 +87,12 @@
   display: flex;
   flex-flow: column;
   z-index: 1;
+  height: calc(100vh - 80px);
+  overflow: auto;
 }
 
 .userStatusCard {
-  width: 650px;
+  width: 630px;
   background: var(--white);
   border-radius: 6px;
   padding: 14px 16px;
@@ -132,7 +134,7 @@
   color: var(--black);
   display: flex;
   flex-flow: column;
-  p{
+  p {
     font-size: 11px;
     font-family: var(--fontGraphik);
     color: var(--regularColor);
