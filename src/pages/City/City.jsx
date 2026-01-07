@@ -38,7 +38,7 @@ const City = () => {
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [openFirebaseConfig, setOpenFirebaseConfig] = useState(false);
-console.log(selectedCity)
+
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
   };

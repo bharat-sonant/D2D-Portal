@@ -3,16 +3,16 @@ import * as sbs from "../supabaseServices"
 
 export const saveCityData = async (cityData,logoFile,cityId) => {
     return new Promise(async(resolve,reject)=>{
-        if(!cityData && cityData?.CityName){
+        if(!cityData && cityData?.city_name){
            return reject('Invalid parameters');
         }
-          const fileName = `${cityData.CityCode}.png`;
+          const fileName = `${cityData.city_code}.png`;
           const filePath = fileName;
         let logo = null;
         if (logoFile) {
             logo = await sbs.uploadAttachment(logoFile,`CityLogo`,filePath);
         }
-        const response = !cityId ? await sbs.saveData('Cities', cityData) : await sbs.updateData('Cities','CityId',cityId,cityData);
+        const response = !cityId ? await sbs.saveData('Cities', cityData) : await sbs.updateData('Cities','city_id',cityId,cityData);
         return !response?.success? reject(response?.err || response?.error):resolve(response);
     });
 };

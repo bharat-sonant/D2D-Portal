@@ -43,10 +43,10 @@ export const getCityLogoUrl=async(cityId,setLogoUrl)=>{
     let logoUrl = images?.wevoisLogo
     const resp = await getDataByColumnName("Cities", "city_id",cityId );
     if(resp?.success){
-        logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.CityCode}.png?v=${Date.now()}`;
+        logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.city_code}.png?v=${Date.now()}`;
     }
     setLogoUrl(logoUrl);
 }
-export const createCityLogoUrl=(cityCode)=>{
-    return `${sbs.storageUrl}/CityLogo/${cityCode}.png?v=${Date.now()}`;
+export const createCityLogoUrl=(city_code)=>{
+    return `${sbs.storageUrl}/CityLogo/${city_code}.png?v=${Date.now()}`;
 }

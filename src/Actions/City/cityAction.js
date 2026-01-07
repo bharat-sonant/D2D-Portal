@@ -4,13 +4,15 @@ import { getCityData, getCityWisewardList, saveCityData, saveCityWiseWardData, u
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
+    console.log('form',form)
+    console.log('propsss',props)
     setCityError("");
     setCityCodeError("");
-    if(!form?.CityCode?.trim()){
+    if(!form?.city_code?.trim()){
         setCityCodeError("City code is required");
         isValid = false;
     }
-    if (!form?.CityName?.trim()) {
+    if (!form?.city_name?.trim()) {
         setCityError("City name is required");
         isValid = false;
     }
@@ -22,26 +24,26 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
         setLoading(true);
         let loggedUserName = localStorage.getItem("name");
         let cityDetail = {
-              CityCode:form?.CityCode?.trim(),
-              CityName: form?.CityName?.trim(),
-              Status: form?.Status, 
-              CreatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"), 
-              CreatedBy: loggedUserName 
+              city_code:form?.city_code?.trim(),
+              city_name: form?.city_name?.trim(),
+              status: form?.status, 
+              created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"), 
+              created_by: loggedUserName 
         }
        
         try {
-            await saveCityData(cityDetail,logo,props?.onEdit?.CityId);
+            await saveCityData(cityDetail,logo,props?.onEdit?.city_id);
             resetStateValues();
             props.loadCities();
             common.setAlertMessage("success", !props?.onEdit?"City added successfully": "City updated successfully");
         } catch (err) {
             setLoading(false);
                   if (err?.code === "23505") {
-                if (err?.details?.includes("CityCode")) {
+                if (err?.details?.includes("city_code")) {
                     setCityCodeError("City code already exists!");
                     return;
                 }
-                if (err?.details?.includes("CityName")) {
+                if (err?.details?.includes("city_name")) {
                     setCityError("City name already exists!");
                     return;
                 } 

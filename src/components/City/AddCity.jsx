@@ -7,10 +7,10 @@ import { saveCityAction } from "../../Actions/City/cityAction";
 
 const AddCity = (props) => {
   const initialForm = {
-    CityCode:"",
-    CityName: "",
-    Status: "active",
-    Created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    city_code:"",
+    city_name: "",
+    status: "active",
+    created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
 
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const AddCity = (props) => {
   }, [form,logo,  loading]);
 
   const handleChange = (e) => {
-    if(e.target.name==='CityCode'){
+    if(e.target.name==='city_code'){
        setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
     }else{
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -85,11 +85,11 @@ const AddCity = (props) => {
   }
   useMemo(() => {
     setForm((pre) => ({
-        CityCode: props?.onEdit?.CityCode || "",
-        CityName: props?.onEdit?.CityName || "",
-        Status: props?.onEdit?.Status || "active",
-        Created_at: dayjs(props?.onEdit?.CreatedAt).isValid()
-        ? dayjs(props?.onEdit?.CreatedAt).format("YYYY-MM-DD HH:mm:ss")
+        city_code: props?.onEdit?.city_code || "",
+        city_name: props?.onEdit?.city_name || "",
+        status: props?.onEdit?.status || "active",
+        created_at: dayjs(props?.onEdit?.created_at).isValid()
+        ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
         : dayjs().format("YYYY-MM-DD HH:mm:ss"),
     }));
     setLogoPreview(props?.onEdit?.logoUrl || '');
@@ -128,8 +128,8 @@ const AddCity = (props) => {
                   type="text"
                   className={`form-control ${styles.formTextbox}`}
                   placeholder="Enter city code"
-                  name="CityCode"
-                  value={form.CityCode}
+                  name="city_code"
+                  value={form.city_code}
                   onChange={handleChange}
                   disabled={Boolean(props?.onEdit && Object.keys(props?.onEdit).length)}
                 />
@@ -147,8 +147,8 @@ const AddCity = (props) => {
                   type="text"
                   className={`form-control ${styles.formTextbox}`}
                   placeholder="Enter city name"
-                  name="CityName"
-                  value={form.CityName}
+                  name="city_name"
+                  value={form.city_name}
                   onChange={handleChange}
                 />
               </div>
