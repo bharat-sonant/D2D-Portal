@@ -81,7 +81,7 @@ const Login = () => {
     try {
       setLoading(true);
       const user = await login(emailId, password, setEmailError, setPasswordError);
-
+console.log('user',user)
       if(!user){
         setLoading(false)
         return;
@@ -125,13 +125,13 @@ const Login = () => {
   };
   const fetchCityName = async (defaultCityId) => {
     if (defaultCityId) {
-      const resp = await getDataByColumnName("Cities", "CityId", defaultCityId);
+      const resp = await getDataByColumnName("Cities", "city_id", defaultCityId);
       if (resp?.success) {
-        const cityName = resp?.data?.[0]?.CityName || "";
+        const city_name = resp?.data?.[0]?.city_name || "";
         setCityContext({
-          city: cityName,
+          city: city_name,
           cityId: defaultCityId,
-          cityLogo: createCityLogoUrl(resp?.data?.[0]?.CityCode)
+          cityLogo: createCityLogoUrl(resp?.data?.[0]?.city_code)
         })
       }
     }

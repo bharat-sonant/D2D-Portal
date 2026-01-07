@@ -19,7 +19,6 @@ import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
 import { useCity } from "../context/CityContext";
 import ChangePassword from "../components/ChangePassword/changePassword";
-import logoStyle from "../assets/css/DefaultCitySelection/defaultCitySelection.module.css";
 import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigService";
 
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
