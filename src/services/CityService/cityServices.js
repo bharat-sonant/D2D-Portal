@@ -66,7 +66,6 @@ export const getAvailableCityData = async(userId) => {
     return a.city_name.localeCompare(b.city_name);
   })
 
-  console.log('sorted data',sortedData)
   return {
     status: 'success',
     message: 'Available city data fetched successfully',
