@@ -154,7 +154,7 @@ const City = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {selectedCity?.CityCode || "N/A"}
+                    {selectedCity?.city_code || "N/A"}
                   </span>
                   <div
                     style={{

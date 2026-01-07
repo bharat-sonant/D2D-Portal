@@ -4,9 +4,9 @@ import * as common from "../../common/common";
 export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCityContext,onClose)=>{
         
         try{
-            if (setAsDefault && selectedCity?.CityId) {
+            if (setAsDefault && selectedCity?.city_id) {
                 const userId = localStorage.getItem('userId');
-                let resp = await setUserDefaultCity(userId, selectedCity?.CityId);
+                let resp = await setUserDefaultCity(userId, selectedCity?.city_id);
                 if (resp?.status === 'success') {
                     localStorage.setItem('defaultCity', resp?.data?.default_city);
                     common.setAlertMessage("success", "Default city updated successfully!");
@@ -18,8 +18,8 @@ export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCityCont
                 }
             }
             setCityContext({
-                city: selectedCity?.CityName,
-                cityId: selectedCity?.CityId,
+                city: selectedCity?.city_name,
+                cityId: selectedCity?.city_id,
                 cityLogo: selectedCity?.logoUrl
             })
             onClose();

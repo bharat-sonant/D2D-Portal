@@ -4,6 +4,7 @@ import style from '../../assets/css/User/UserCityAccess.module.css';
 import * as userAction from '../../Actions/UserAction/UserAction';
 
 const UserCityAccess = (props) => {
+    console.log('props',props)
     const [selectedCities, setSelectedCities] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -15,15 +16,15 @@ const UserCityAccess = (props) => {
         }
     }, [props.selectedUser?.id]);
 
-    const handleCheckboxChange = async (cityId) => {
+    const handleCheckboxChange = async (city_id) => {
         if (!props.selectedUser?.id) {
             return;
         }
         const isCurrentlySelected = selectedCities.some(
-            c => c.cityId === cityId
+            c => c.city_id === city_id
         );
 
-        await userAction.handleCityAccessToggle(props.selectedUser?.id, cityId, isCurrentlySelected, setSelectedCities, setLoading, selectedCities);
+        await userAction.handleCityAccessToggle(props.selectedUser?.id, city_id, isCurrentlySelected, setSelectedCities, setLoading, selectedCities);
     };
 
     return (
@@ -47,13 +48,13 @@ const UserCityAccess = (props) => {
                         {props.cityList.map((item, index) => (
                             <li key={index} className={style.list_item}>
                                 <span className={style.designationName}>
-                                    {item.CityName}
+                                    {item.city_name}
                                 </span>
                                 <input
                                     type="checkbox"
-                                    checked={selectedCities.some(c => c.cityId === item.CityId)}
+                                    checked={selectedCities.some(c => c.city_id === item.city_id)}
                                     className={style.checkbox}
-                                    onChange={() => handleCheckboxChange(item.CityId)}
+                                    onChange={() => handleCheckboxChange(item.city_id)}
                                     disabled={loading}
                                 />
                             </li>

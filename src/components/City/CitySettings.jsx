@@ -13,7 +13,7 @@ const CitySettings = ({
   setStatusConfirmation,
   onClickFirebaseConfig
 }) => {
-  const [toggle, setToggle] = useState(selectedCity?.Status === 'active' || false);
+  const [toggle, setToggle] = useState(selectedCity?.status === 'active' || false);
 
   const handleToggle = (e) =>
     setStatusConfirmation({ status: true, data: e.target.checked, setToggle });
@@ -46,7 +46,7 @@ const CitySettings = ({
             <div className={style.controlRow}>
               <LogoImage image={selectedCity?.logoUrl} />
               <h3 className={style.taskName}>
-                {selectedCity?.CityName || 'N/A'}
+                {selectedCity?.city_name || 'N/A'}
               </h3>
 
               <div className={style.actionButtons}>

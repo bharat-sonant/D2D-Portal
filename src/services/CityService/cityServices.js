@@ -23,14 +23,14 @@ export const getCityData=async()=>{
 
       const updatedCityList = result.data.map(city => ({
           ...city,
-        logoUrl:`${sbs.storageUrl}/CityLogo/${city.CityCode}.png?v=${Date.now()}`
+        logoUrl:`${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
           }));
 
          const sortedData = [...updatedCityList].sort((a, b) => {
-     if (a.Status !== b.Status) {
-       return a.Status === "active" ? -1 : 1;
+     if (a.status !== b.status) {
+       return a.status === "active" ? -1 : 1;
      }
-     return a.CityName.localeCompare(b.CityName);
+     return a.city_name.localeCompare(b.city_name);
    });
 
   return { status: 'success', message: 'City data fetched successfully', data: sortedData };
@@ -48,7 +48,7 @@ export const getAvailableCityData = async(userId) => {
 
   const cityIds = accessResp?.data?.map(item => item.city_id)
 
-  const {data, error} = await supabase.from("Cities").select("CityId , CityName, Status, CityCode").in("CityId", cityIds);
+  const {data, error} = await supabase.from("Cities").select("city_id , city_name, status, city_code").in("city_id", cityIds);
 
   if (error) {
     return { status: 'error', message: error.message };
@@ -56,16 +56,17 @@ export const getAvailableCityData = async(userId) => {
 
   const updatedCityList = data.map(city => ({
     ...city,
-    logoUrl : `${sbs.storageUrl}/CityLogo/${city.CityCode}.png?v=${Date.now()}`
+    logoUrl : `${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
   }));
 
   const sortedData = [...updatedCityList].sort((a,b)=> {
-    if(a.Status !== b.Status){
-      return a.Status === "active" ? -1 : 1;
+    if(a.status !== b.status){
+      return a.status === "active" ? -1 : 1;
     }
-    return a.CityName.localeCompare(b.CityName);
+    return a.city_name.localeCompare(b.city_name);
   })
 
+  console.log('sorted data',sortedData)
   return {
     status: 'success',
     message: 'Available city data fetched successfully',

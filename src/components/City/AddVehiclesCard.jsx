@@ -23,7 +23,7 @@ const AddVehiclesCard = (props) => {
   // 🔄 Fetch vehicle list
   const fetchVehicles = () => {
     if (props.selectedCity) {
-      action.getVehicles(setVehicleList, setLoading, props.selectedCity.CityId);
+      action.getVehicles(setVehicleList, setLoading, props.selectedCity.city_id);
     }
   };
 

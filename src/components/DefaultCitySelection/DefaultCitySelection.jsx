@@ -30,7 +30,7 @@ const DefaultCitySelection = ({ onClose }) => {
     setSaving(true);
 
     try {
-      const res = await getCityFirebaseConfig(city?.CityId);
+      const res = await getCityFirebaseConfig(city?.city_id);
       console.log("🔥 Firebase Config (Default City):", res?.data);
       await changeDefaultCityAction(city, setDefault, setCityContext, onClose);
     } catch (err) {
@@ -42,7 +42,7 @@ const DefaultCitySelection = ({ onClose }) => {
 
   useMemo(() => {
     if (cityList?.length > 0 && city) {
-      let detail = cityList.find((item) => item?.CityName === city);
+      let detail = cityList.find((item) => item?.city_name === city);
       setSelectedCity(detail);
     }
   }, [cityList, city]);
@@ -51,7 +51,7 @@ const DefaultCitySelection = ({ onClose }) => {
     if (!searchQuery.trim()) return cityList;
 
     return cityList.filter((c) =>
-      c.CityName.toLowerCase().includes(searchQuery.toLowerCase())
+      c.city_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [cityList, searchQuery]);
   return (
@@ -105,9 +105,9 @@ const DefaultCitySelection = ({ onClose }) => {
               <div className={styles.cityRow}>
                 {filteredCities.map((city) => (
                   <div
-                    key={city.CityId}
+                    key={city.city_id}
                     className={`${styles.cityCard} ${
-                      selectedCity?.CityId === city?.CityId
+                      selectedCity?.CityId === city?.city_id
                         ? styles.selected
                         : ""
                     }`}
@@ -116,14 +116,14 @@ const DefaultCitySelection = ({ onClose }) => {
                     <div className={styles.logoWrapper}>
                       <img
                         src={city?.logoUrl}
-                        alt={city.CityName}
+                        alt={city.city_name}
                         onError={(e) => (e.target.style.display = "none")}
                       />
                     </div>
 
-                    <div className={styles.cityName}>{city.CityName}</div>
+                    <div className={styles.cityName}>{city.city_name}</div>
 
-                    {selectedCity?.CityId === city?.CityId && (
+                    {selectedCity?.city_id === city?.city_id && (
                       <div
                         className={styles.checkMark}
                         style={{ "--bg-color": city.color }}
@@ -146,12 +146,12 @@ const DefaultCitySelection = ({ onClose }) => {
                 onClick={async () => {
                   try {
                     const res = await getCityFirebaseConfig(
-                      selectedCity?.CityId
+                      selectedCity?.city_id
                     );
                     console.log("🔥 Firebase Config (Change City):", res?.data);
                     setCityContext({
-                      city: selectedCity?.CityName,
-                      cityId: selectedCity?.CityId,
+                      city: selectedCity?.city_name,
+                      cityId: selectedCity?.city_id,
                       cityLogo: selectedCity?.logoUrl,
                     });
 

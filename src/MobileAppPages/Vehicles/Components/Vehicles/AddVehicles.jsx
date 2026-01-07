@@ -79,7 +79,7 @@ const AddVehicles = ({
         setVehicleId,
         historyData,
         vehicleList,
-        selectedCity?.CityId
+        selectedCity?.city_id
       );
     } else {
       // SAVE
@@ -95,7 +95,7 @@ const AddVehicles = ({
         setVehicleId, // Pass setVehicleId
         historyData,
         vehicleList,
-        selectedCity?.CityId
+        selectedCity?.city_id
       );
     }
   };

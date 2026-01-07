@@ -156,6 +156,7 @@ const DailyWorkReport = () => {
               <th className={style.th4}>Duty Off Time</th>
             </tr>
           </thead>
+          {console.log('reportdata',reportData)}
           <tbody>
             {loading? (
               <tr>

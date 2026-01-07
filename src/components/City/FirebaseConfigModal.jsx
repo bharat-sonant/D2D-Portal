@@ -19,8 +19,8 @@ const FirebaseConfigModal = ({ show, onHide, selectedCity, onSave }) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (selectedCity?.firebaseConfig) {
-            setForm(selectedCity.firebaseConfig);
+        if (selectedCity?.firebase_config) {
+            setForm(selectedCity.firebase_config);
         } else {
             setForm({
                 apiKey: "",
@@ -83,7 +83,7 @@ const FirebaseConfigModal = ({ show, onHide, selectedCity, onSave }) => {
         <div className={styles.overlay} aria-modal="true" role="dialog">
             <div className={`${styles.modal} ${styles.modalTask}`}>
                 <div className={styles.actionBtn}>
-                    <p className={styles.headerText}>Firebase Configuration - {selectedCity?.CityName}</p>
+                    <p className={styles.headerText}>Firebase Configuration - {selectedCity?.city_name}</p>
                     <button className={styles.closeBtn} onClick={onHide} aria-label="Close">
                         <img src={images.iconClose} className={styles.iconClose} alt="close" />
                     </button>

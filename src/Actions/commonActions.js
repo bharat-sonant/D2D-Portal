@@ -25,7 +25,7 @@ export const getAvailableCityList = async (setList,type='all', setLoading, userI
         setLoading(true)
         const response = await getAvailableCityData(userId);
     if (response.status === 'success') {
-        let list = type==='active'?response?.data?.filter(city=>city?.Status==='active'):response?.data;
+        let list = type==='active'?response?.data?.filter(city=>city?.status==='active'):response?.data;
         setList(list);
     } else {
         setList([]);
@@ -41,7 +41,7 @@ export const getCityLogoUrl=async(cityId,setLogoUrl)=>{
         return images?.wevoisLogo;
     }
     let logoUrl = images?.wevoisLogo
-    const resp = await getDataByColumnName("Cities", "CityId",cityId );
+    const resp = await getDataByColumnName("Cities", "city_id",cityId );
     if(resp?.success){
         logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.CityCode}.png?v=${Date.now()}`;
     }

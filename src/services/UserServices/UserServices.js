@@ -42,11 +42,11 @@ export const getCities = async () => {
   const result = await sbs.getData('Cities');
   if (result.success) {
     const activeCities = result.data.filter(
-      city => city.Status === 'active'
+      city => city.status === 'active'
     );
 
     const sortedData = activeCities.sort((a, b) =>
-      a.CityName.localeCompare(b.CityName)
+      a.city_name.localeCompare(b.city_name)
     );
 
     return { status: 'success', message: 'City data fetched successfully', data: sortedData };

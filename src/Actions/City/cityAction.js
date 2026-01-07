@@ -59,9 +59,9 @@ export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWard
     setLoading(true)
       const response = await getCityData();
        if(response.status==='success'){
-        let currentSelected = response.data?.find(item=>item?.CityId===selectedCity?.CityId);
+        let currentSelected = response.data?.find(item=>item?.city_id===selectedCity?.CityId);
            setSelectedCity(currentSelected || response.data[0]);
-           getwardList(response.data[0]?.CityId,setWardList)
+           getwardList(response.data[0]?.city_id,setWardList)
            setCityList(response.data);
            setLoading(false)
        }else{

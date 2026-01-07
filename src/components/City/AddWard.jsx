@@ -43,7 +43,7 @@ const AddWard = (props) => {
   };
   const handleSave = async () => {
    
-    saveWardAction(form,props.selectedCity?.CityId,props.editWard?.wardId,setLoading,setWardNumberError,resetStateValues,props.setWardList);
+    saveWardAction(form,props.selectedCity?.city_id,props.editWard?.wardId,setLoading,setWardNumberError,resetStateValues,props.setWardList);
   };
 
 

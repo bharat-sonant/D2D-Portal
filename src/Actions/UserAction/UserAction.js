@@ -242,15 +242,15 @@ export const loadCityData = async (setCityList) => {
   }
 }
 
-export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected, setSelectedCities) => {
+export const handleCityAccessToggle = async (userId, city_id, isCurrentlySelected, setSelectedCities) => {
   try {
     if (isCurrentlySelected) {
 
       setSelectedCities(prev => {
-        const record = prev.find(c => c.cityId === cityId);
+        const record = prev.find(c => c.city_id === city_id);
         if (!record) return prev;
         userServices.removeCityAccess(record.id);
-        return prev.filter(c => c.cityId !== cityId);
+        return prev.filter(c => c.city_id !== city_id);
       });
 
       common.setAlertMessage('success', 'User city access removed successfully.');
@@ -259,7 +259,7 @@ export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected
 
       const payload = {
         user_id: userId,
-        city_id: cityId,
+        city_id: city_id,
         created_by: localStorage.getItem('name'),
         created_at: dayjs().format('YYYY-MM-DD HH:mm:ss')
       };
@@ -270,7 +270,7 @@ export const handleCityAccessToggle = async (userId, cityId, isCurrentlySelected
         if (resp?.data?.id) {
           setSelectedCities(prev => [
             ...prev,
-            { id: resp.data.id, cityId }
+            { id: resp.data.id, city_id }
           ]);
         };
 
@@ -288,7 +288,7 @@ export const handleGetCity = async (userId, setSelectedCities) => {
     if (resp?.status === 'success') {
       setSelectedCities(resp.data.map(item => ({
         id: item.id,
-        cityId: item.city_id
+        city_id: item.city_id
       }))
       );
 

@@ -10,12 +10,12 @@ import WevoisLoader from "../Common/Loader/WevoisLoader";
 const CityList = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCityList, setFilteredCityList] = useState(props?.cityList || []);
-
+console.log('props',props.cityList)
   useEffect(() => {
     setFilteredCityList(filterCityAction(props?.cityList, searchTerm, props?.setSelectedCity, props?.selectedCity))
   }, [props?.cityList, searchTerm]);
   const handleSearch = debounce((e) => { setSearchTerm(e.target.value) }, 300);
-
+console.log('sele',props.selectedCity)
   return (
     <div className={`dropdown ${GlobalStyles.dropDown}`}>
       <div
@@ -37,35 +37,35 @@ const CityList = (props) => {
               onChange={handleSearch}
             />
           </div>
-          <div className={`${styles.userListTitle}`}>Select Employee</div>
+          <div className={`${styles.userListTitle}`}>Select City</div>
           <div className={styles.userScroll}>
             {props.loading ? (
-              <WevoisLoader title="Loading user data..." />
+              <WevoisLoader title="Loading city data..." />
             ) : filteredCityList?.length > 0 ? (
               filteredCityList.map((city, i) => (
-                <li className={GlobalStyles.dropdownLi} key={city.CityId || i}>
+                <li className={GlobalStyles.dropdownLi} key={city.city_id || i}>
                   <div
-                    className={`dropdown-item ${GlobalStyles.dropdownItem} ${props?.selectedCity?.CityId === city.CityId
+                    className={`dropdown-item ${GlobalStyles.dropdownItem} ${props?.selectedCity?.city_id === city.city_id
                       ? GlobalStyles.selectedUser
                       : ""
                       }`}
                     style={{
                       backgroundColor:
-                        props?.selectedCity?.CityId === city.CityId
+                        props?.selectedCity?.city_id === city.city_id
                           ? "#3fb2f114"
                           : "transparent",
                     }}
                     onClick={() => {
                       props?.setSelectedCity(city);
-                      getwardList(city.CityId, props.setWardList);
+                      getwardList(city.city_id, props.setWardList);
                     }}
                   >
                     <div className={GlobalStyles.userInfo}>
                       <span className={styles.employeeName}>
-                        {city.CityName}
+                        {city.city_name}
                       </span>
 
-                      {city.Status === "inactive" && (
+                      {city.status === "inactive" && (
                         <span className={styles.redDot}></span>
                       )}
                     </div>

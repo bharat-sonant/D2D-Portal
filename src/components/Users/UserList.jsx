@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { debounce } from "lodash";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 
@@ -24,6 +24,7 @@ const UserList = (props) => {
 
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isUserTypeOpen, setIsUserTypeOpen] = useState(false);
+  const dropdownMenuRef = useRef();
   const handleSearch = debounce((e) => {
     setSearchTerm(e.target.value);
   }, 300);
@@ -33,6 +34,7 @@ const UserList = (props) => {
       filterUserListAction(props?.users, searchTerm, props?.setSelectedUser)
     );
   }, [props?.users, searchTerm]);
+  
 
   useEffect(() => {
     handleApplyFilter(
