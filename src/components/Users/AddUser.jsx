@@ -7,6 +7,7 @@ import { FaSpinner } from "react-icons/fa";
 import * as userAction from '../../Actions/UserAction/UserAction';
 
 const AddUser = (props) => {
+  console.log(props)
   const initialForm = {
     // username: "",
     name: "",

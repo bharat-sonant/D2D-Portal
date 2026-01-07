@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
+import { Edit2 } from "lucide-react";
+
 import styles from "./Users.module.css";
 import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
@@ -59,6 +61,22 @@ const User = () => {
     setShowCanvas(true);
   };
 
+  const getInitials = (name = "") => {
+    if (!name) return "";
+
+    const words = name
+      .trim()
+      .split(/\s+/) // multiple spaces safe
+      .filter(Boolean);
+
+    if (words.length === 1) {
+      return words[0].charAt(0).toUpperCase();
+    }
+
+    // 🔥 sirf first 2 words ke initials
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+  };
+
   return (
     <>
       <div className={`${GlobalStyles.floatingDiv}`}>
@@ -105,73 +123,42 @@ const User = () => {
         </div>
 
         <div className={styles.userPageRight}>
-          <div
-            style={{
-              width: "25%",
-              background: "#fff",
-              borderRadius: "12px",
-              padding: "14px 16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            }}
-          >
+          <div className={styles.userStatusCard}>
             {/* LEFT */}
-            <span
-              style={{
-                background: "#f2f2f2",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                fontSize: "14px",
-                fontWeight: 500,
-              }}
-            >
-              {selectedUser?.name || "N/A"}
-            </span>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              <div
-                onClick={() => openConfirm()}
-                style={{
-                  width: "42px",
-                  height: "22px",
-                  borderRadius: "22px",
-                  background:
-                    selectedUser?.status === "active" ? "#4caf50" : "#f8d7da",
-                  position: "relative",
-                  cursor: "pointer",
-                  transition: "0.3s",
-                }}
-              >
-                <div
-                  style={{
-                    width: "18px",
-                    height: "18px",
-                    background: "#fff",
-                    borderRadius: "50%",
-                    position: "absolute",
-                    top: "2px",
-                    left: selectedUser?.status === "active" ? "22px" : "2px",
-                    transition: "0.3s",
-                  }}
-                />
+            <div className={styles.userLeft}>
+              <div className={styles.avatar}>
+                {getInitials(selectedUser?.name)}
               </div>
+              <span className={styles.userName}>
+                {selectedUser?.name || "N/A"}
+                <p>Manage users, permissions, city access and more</p>
+              </span>
+            </div>
+            {/* RIGHT */}
+            <div className={styles.actionWrapper}>
+              {/* STATUS TOGGLE */}
+              <div
+                className={`${styles.activeInactiveBadge} ${
+                  selectedUser?.status === "active"
+                    ? styles.badgeActive
+                    : styles.badgeInactive
+                }`}
+                onClick={openConfirm}
+              >
+                {selectedUser?.status === "active" ? "Deactivate" : "Activate"}
+              </div>
+
+              {/* EDIT */}
               <span
+                className={styles.editIcon}
                 onClick={handleEditUser}
                 title="Edit"
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  padding: "6px",
-                  borderRadius: "50%",
-                  border: "1px solid #ddd",
-                }}
               >
-                ✏️
+                <Edit2 size={14} />
               </span>
             </div>
           </div>
+
           <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
           <div style={{ width: "400px" }}>
             {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
