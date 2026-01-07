@@ -1,4 +1,3 @@
-
 .noResult {
   width: 100%;
   height: 250px;
@@ -15,7 +14,10 @@
   color: #9ca3af;
   margin-bottom: 10px;
 }
-
+.noResultGif {
+  width: 80px;
+  margin-bottom: 5px;
+}
 .noResult h5 {
   font-size: 15px;
   font-family: var(--fontGraphikMedium);

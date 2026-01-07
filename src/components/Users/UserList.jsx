@@ -3,6 +3,7 @@ import { debounce } from "lodash";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 
 import { images } from "../../assets/css/imagePath";
+import userNotFound from "../../assets/images/icons/userNotFound.gif"
 import styles from "./UserList.module.css";
 import {
   filterUserListAction,
@@ -331,7 +332,7 @@ const UserList = (props) => {
               <NoResult
                 title="No Users Found"
                 query={searchTerm}
-                icon={UserSearch}
+                gif={userNotFound}
                 height="calc(100vh - 280px)"
               />
             )}

@@ -14,26 +14,7 @@ const DailyWorkReport = () => {
   const [date, setDate] = useState(todayDate);
   const {cityId} = useCity();
   const [wards, setWards] = useState([]);
-  const [rows, setRows] = useState([
-    {
-      zone: "Zone 1",
-      start: "12:38",
-      reach: "13:14",
-      end: "19:08",
-    },
-    {
-      zone: "Zone 2",
-      start: "07:41",
-      reach: "07:49",
-      end: "13:38",
-    },
-    {
-      zone: "Zone 3",
-      start: "12:19",
-      reach: "12:38",
-      end: "15:16",
-    },
-  ]);
+
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -62,21 +43,21 @@ const DailyWorkReport = () => {
   // ----------------------------
   // SORT FUNCTIONS
   // ----------------------------
-  const sortLowToHigh = () => {
-    const sorted = [...rows].sort(
-      (a, b) => parseFloat(a.actualPerc) - parseFloat(b.actualPerc)
-    );
-    setRows(sorted);
-    setIsSortOpen(false);
-  };
+  // const sortLowToHigh = () => {
+  //   const sorted = [...rows].sort(
+  //     (a, b) => parseFloat(a.actualPerc) - parseFloat(b.actualPerc)
+  //   );
+  //   setRows(sorted);
+  //   setIsSortOpen(false);
+  // };
 
-  const sortHighToLow = () => {
-    const sorted = [...rows].sort(
-      (a, b) => parseFloat(b.actualPerc) - parseFloat(a.actualPerc)
-    );
-    setRows(sorted);
-    setIsSortOpen(false);
-  };
+  // const sortHighToLow = () => {
+  //   const sorted = [...rows].sort(
+  //     (a, b) => parseFloat(b.actualPerc) - parseFloat(a.actualPerc)
+  //   );
+  //   setRows(sorted);
+  //   setIsSortOpen(false);
+  // };
 
   const getWorkColor = (perc) => {
     const value = parseInt(perc);
@@ -91,20 +72,6 @@ const DailyWorkReport = () => {
       {/* TOP BAR */}
       <div className={style.topBar}>
         {/* DATE PICKER */}
-        {/* <div
-          className={style.dateBox}
-          onClick={() =>
-            document.getElementById("reportDateInput").showPicker()
-          }
-        >
-          <input
-            id="reportDateInput"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className={style.dateInput}
-          />
-        </div> */}
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
@@ -167,10 +134,10 @@ const DailyWorkReport = () => {
             ) :reportData?.length > 0 ?(
               reportData?.map((row, index) => (
               <tr key={index}>
-                <td>{row.ward}</td>
-                <td>{row.duty_on_time || row.dutyInTime || 'N/A'}</td>
-                <td>{row.ward_reach_time || row.wardReachedOn || 'N/A'}</td>
-                <td>{row.duty_off_time || row.dutyOutTime || 'N/A'}</td>
+                <td className={style.th1}>{row.ward}</td>
+                <td className={style.th2}>{row.duty_on_time || row.dutyInTime || 'N/A'}</td>
+                <td className={style.th3}>{row.ward_reach_time || row.wardReachedOn || 'N/A'}</td>
+                <td className={style.th4}>{row.duty_off_time || row.dutyOutTime || 'N/A'}</td>
                
                 
                 {/* <td>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./DefaultCitySelection.module.css";
 import modalStyles from "../../assets/css/popup.module.css";
 import { MapPin, X, Check, Search } from "lucide-react";
+import cityNotFound from "../../assets/images/icons/cityNotFound.gif"
 import { getAvailableCityList } from "../../Actions/commonActions";
 import { useCity } from "../../context/CityContext";
 import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defaultCitySelectionAction";
@@ -99,7 +100,7 @@ const DefaultCitySelection = ({ onClose }) => {
               <NoResult
                 title="No Cities Found"
                 query={searchQuery}
-                icon={MapPin}
+                gif={cityNotFound}
               />
             ) : (
               <div className={styles.cityRow}>
