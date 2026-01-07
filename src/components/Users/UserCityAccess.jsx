@@ -4,7 +4,6 @@ import style from '../../assets/css/User/UserCityAccess.module.css';
 import * as userAction from '../../Actions/UserAction/UserAction';
 
 const UserCityAccess = (props) => {
-    console.log('props',props)
     const [selectedCities, setSelectedCities] = useState([]);
     const [loading, setLoading] = useState(false);
 

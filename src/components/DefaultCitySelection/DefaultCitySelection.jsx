@@ -108,7 +108,7 @@ const DefaultCitySelection = ({ onClose }) => {
                   <div
                     key={city.city_id}
                     className={`${styles.cityCard} ${
-                      selectedCity?.CityId === city?.city_id
+                      selectedCity?.city_id === city?.city_id
                         ? styles.selected
                         : ""
                     }`}
