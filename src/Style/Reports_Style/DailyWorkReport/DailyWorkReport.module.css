@@ -148,6 +148,30 @@
 .th2, .th3, .th4{
   text-align: right;
 }
+
+.parentHeader {
+  background: #f4f3f8;
+  font-family: var(--fontGraphikMedium);
+  font-size: 13px;
+  color: var(--black);
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--borderColor);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* Update the child headers to sit below parent headers */
+.table thead tr:nth-child(2) th {
+  top: 45px; /* Adjust based on your parent header height */
+  z-index: 1;
+}
+
+/* Keep Ward header spanning both rows with higher z-index */
+.table thead tr:nth-child(1) th:first-child {
+  z-index: 4;
+}
 .loaderCell {
   height: 300px; /* or calc(100vh - header height) */
   text-align: center;

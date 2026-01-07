@@ -122,13 +122,21 @@ const DailyWorkReport = () => {
         <table className={style.table}>
           <thead>
             <tr>
+              <th className={style.parentHeader}></th>
+              <th className={style.parentHeader} colSpan={3}>Timing Details</th>
+              <th className={style.parentHeader} colSpan={4}>Person / Vehicle Details</th>
+            </tr>
+            <tr>
               <th className={style.th1}>Ward</th>
               <th className={style.th2}>Duty On Time</th>
               <th className={style.th3}>Ward Reach Time</th>
               <th className={style.th4}>Duty Off Time</th>
+              <th className={style.th4}>Vehicle</th>
+              <th className={style.th4}>Driver</th>
+              <th className={style.th4}>Helper</th>
+              <th className={style.th4}>Second Helper</th>
             </tr>
           </thead>
-          {console.log("reportdata", reportData)}
           <tbody>
             {loading ? (
               <tr>
