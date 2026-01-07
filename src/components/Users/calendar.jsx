@@ -9,16 +9,8 @@ import { images } from "../../assets/css/imagePath";
 dayjs.extend(weekOfYear);
 
 const Calendar = (props) => {
-
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [daysArray, setDaysArray] = useState([]);
-  const [totalPresent, setTotalPresent] = useState(0);
-  const [totalAbsent, setTotalAbsent] = useState(0);
-  const [totalAvgHrs, setTotalAvgHrs] = useState(0);
-  const [selectedEmpCode, setSelectedEmpCode] = useState(null)
-  const isFirstRender = useRef(true);
-
-
   const prevMonth = () => {
     action.prevMonthAction(setCurrentDate);
   };
@@ -26,15 +18,12 @@ const Calendar = (props) => {
   const nextMonth = () => {
     action.nextMonthAction(setCurrentDate);
   };
- 
 
 
-
-  useEffect(() => {
-   
-    action.getDatesArrayAction(setDaysArray, currentDate,props.selectedUser.id);
-  }, [currentDate, props.selectedUser.id]);
-
+useEffect(() => {
+  if (!props.selectedUser) return;
+  action.getDatesArrayAction(setDaysArray,currentDate,props.selectedUser.id);
+},[currentDate, props.selectedUser]);
 
   return (
     <>
