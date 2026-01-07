@@ -17,7 +17,8 @@
 .orb1 {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
+  /* background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%); */
+      background: linear-gradient(135deg, #ddedfc 0%, #99a7cb 100%);
   top: -200px;
   left: -200px;
 }
@@ -85,6 +86,7 @@
   width: calc(100% - 300px);
   display: flex;
   flex-flow: column;
+  z-index: 1;
 }
 
 @media (max-width: 767.98px) {
