@@ -7,6 +7,7 @@ import { useCity } from "../../context/CityContext";
 import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defaultCitySelectionAction";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 import { getCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
+import NoResult from "../NoResultFound/NoResult";
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem("defaultCity"))
@@ -95,13 +96,11 @@ const DefaultCitySelection = ({ onClose }) => {
             {loading ? (
               <WevoisLoader title={"loading cities"} height="250px" />
             ) : filteredCities.length === 0 ? (
-              <div className={styles.noResult}>
-                <MapPin size={42} />
-                <h5>No Cities Found</h5>
-                <p>
-                  No results for <strong>“{searchQuery}”</strong>
-                </p>
-              </div>
+              <NoResult
+                title="No Cities Found"
+                query={searchQuery}
+                icon={MapPin}
+              />
             ) : (
               <div className={styles.cityRow}>
                 {filteredCities.map((city) => (

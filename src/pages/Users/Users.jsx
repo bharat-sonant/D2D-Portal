@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
-import styles from "./Users.module.css"
+import styles from "./Users.module.css";
 import UserList from "../../components/Users/UserList";
 import AddUser from "../../components/Users/AddUser";
 import * as userAction from "../../Actions/UserAction/UserAction";
@@ -73,27 +73,27 @@ const User = () => {
 
       <div className={`${styles.userPage}`}>
         {/* Background */}
-      <div className={styles.background}>
-        <div className={`${styles.gradientOrb} ${styles.orb1}`} />
-        <div className={`${styles.gradientOrb} ${styles.orb2}`} />
-        <div className={`${styles.gradientOrb} ${styles.orb3}`} />
-        <div className={styles.gridOverlay} />
-      </div>
+        <div className={styles.background}>
+          <div className={`${styles.gradientOrb} ${styles.orb1}`} />
+          <div className={`${styles.gradientOrb} ${styles.orb2}`} />
+          <div className={`${styles.gradientOrb} ${styles.orb3}`} />
+          <div className={styles.gridOverlay} />
+        </div>
 
-      {/* Particles */}
-      <div className={styles.particles}>
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className={styles.particle}
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
-      </div>
+        {/* Particles */}
+        <div className={styles.particles}>
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className={styles.particle}
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${5 + Math.random() * 10}s`,
+              }}
+            />
+          ))}
+        </div>
         <div className={`${styles.userPageLeft}`}>
           <UserList
             users={users}
@@ -105,9 +105,7 @@ const User = () => {
           />
         </div>
 
-        <div
-          className={styles.userPageRight}
-        >
+        <div className={styles.userPageRight}>
           <div
             style={{
               width: "25%",
@@ -182,15 +180,14 @@ const User = () => {
         </div>
       </div>
 
-    
-        <AddUser
-          showCanvas={showCanvas}
-          setShowCanvas={setShowCanvas}
-          loadUsers={loadUsers}
-          editData={selectedUser}
-          onEdit={onEdit}
-          setOnEdit={setOnEdit}
-        />
+      <AddUser
+        showCanvas={showCanvas}
+        setShowCanvas={setShowCanvas}
+        loadUsers={loadUsers}
+        editData={selectedUser}
+        onEdit={onEdit}
+        setOnEdit={setOnEdit}
+      />
 
       {confirmUser && (
         <UserStatusDialog

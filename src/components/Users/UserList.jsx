@@ -10,7 +10,8 @@ import {
   handleApplyFilter,
 } from "../../Actions/UserAction/UserAction";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
-import { UserRoundCheck } from "lucide-react";
+import { UserRoundCheck, UserSearch } from "lucide-react";
+import NoResult from "../NoResultFound/NoResult";
 
 const UserList = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -317,15 +318,12 @@ const UserList = (props) => {
                 </li>
               ))
             ) : (
-              <div className={`${styles.noUserData}`}>
-                <img
-                  src={images.imgComingSoon}
-                  className={`img-fluid ${styles.noUserImg}`}
-                  title="No User Found"
-                  alt="Image"
-                />
-                No user found
-              </div>
+             <NoResult 
+               title="No Users Found"
+  query={searchTerm}
+  icon={UserSearch}
+ height="calc(100vh - 280px)"
+             />
             )}
           </div>
         </ul>

@@ -1,0 +1,40 @@
+
+.noResult {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.noResult svg {
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.noResult h5 {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  margin-bottom: 5px;
+}
+
+.noResult p {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
