@@ -13,4 +13,5 @@ export const images = {
   iconUp: require("../images/icons/iconUp.png"),
   iconExcel: require("../images/icons/iconExcel.png"),
   iconDown: require("../images/icons/iconDown.png"),
+  noDtaa: require("../images/icons/noData.gif")
 };

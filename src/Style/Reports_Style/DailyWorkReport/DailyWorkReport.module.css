@@ -99,7 +99,6 @@
 
 .table th {
   background: #f4f3f8;
-  text-align: left;
   white-space: nowrap;
 
   color: var(--black);
@@ -115,10 +114,10 @@
   z-index: 1;
   white-space: nowrap;
 }
-.table th:nth-child(n+2),
+/* .table th:nth-child(n+2),
 .table td:nth-child(n+2) {
   text-align: center;
-}
+} */
 
 .table td {
   padding: 12px 16px;
@@ -136,7 +135,7 @@
 .table tr > td:first-child {
   position: sticky;
   left: 0;
-  border-right: 1px solid var(--borderColor);
+  /* border-right: 1px solid var(--borderColor); */
 }
 .table tr > th:first-child {
   background: #f4f3f8;
@@ -146,7 +145,9 @@
   background-color: var(--white);
   z-index: 2;
 }
-
+.th2, .th3, .th4{
+  text-align: right;
+}
 .loaderCell {
   height: 300px; /* or calc(100vh - header height) */
   text-align: center;

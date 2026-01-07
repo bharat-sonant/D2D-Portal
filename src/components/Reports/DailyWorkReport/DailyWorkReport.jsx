@@ -1,52 +1,38 @@
 import { useState, useRef, useEffect } from "react";
 import { FaFileExcel } from "react-icons/fa";
 import { ArrowDownUp, ArrowDown, ArrowUp } from "lucide-react";
+import noData from "../../../assets/images/icons/noData.gif";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 import { images } from "../../../assets/css/imagePath";
-import { getDailyWorkReportAction, getWardDataAction } from "../../../Actions/ReportAction/DailyWorkReportAction";
+import {
+  getDailyWorkReportAction,
+  getWardDataAction,
+} from "../../../Actions/ReportAction/DailyWorkReportAction";
 import WevoisLoader from "../../Common/Loader/WevoisLoader";
 import dayjs from "dayjs";
 import { useCity } from "../../../context/CityContext";
+import NoResult from "../../NoResultFound/NoResult";
 
 const DailyWorkReport = () => {
-  const todayDate = dayjs().format('YYYY-MM-DD')
+  const todayDate = dayjs().format("YYYY-MM-DD");
   const [date, setDate] = useState(todayDate);
-  const {cityId} = useCity();
+  const { cityId } = useCity();
   const [wards, setWards] = useState([]);
-  const [rows, setRows] = useState([
-    {
-      zone: "Zone 1",
-      start: "12:38",
-      reach: "13:14",
-      end: "19:08",
-    },
-    {
-      zone: "Zone 2",
-      start: "07:41",
-      reach: "07:49",
-      end: "13:38",
-    },
-    {
-      zone: "Zone 3",
-      start: "12:19",
-      reach: "12:38",
-      end: "15:16",
-    },
-  ]);
+
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     getWardDataAction(cityId, setWards);
-  },[cityId])
+  }, [cityId]);
 
-  useEffect(()=>{
-    getDailyWorkReportAction(date,wards,  setReportData, setLoading, cityId);
-  },[date,wards])
+  useEffect(() => {
+    getDailyWorkReportAction(date, wards, setReportData, setLoading, cityId);
+  }, [date, wards]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -62,21 +48,21 @@ const DailyWorkReport = () => {
   // ----------------------------
   // SORT FUNCTIONS
   // ----------------------------
-  const sortLowToHigh = () => {
-    const sorted = [...rows].sort(
-      (a, b) => parseFloat(a.actualPerc) - parseFloat(b.actualPerc)
-    );
-    setRows(sorted);
-    setIsSortOpen(false);
-  };
+  // const sortLowToHigh = () => {
+  //   const sorted = [...rows].sort(
+  //     (a, b) => parseFloat(a.actualPerc) - parseFloat(b.actualPerc)
+  //   );
+  //   setRows(sorted);
+  //   setIsSortOpen(false);
+  // };
 
-  const sortHighToLow = () => {
-    const sorted = [...rows].sort(
-      (a, b) => parseFloat(b.actualPerc) - parseFloat(a.actualPerc)
-    );
-    setRows(sorted);
-    setIsSortOpen(false);
-  };
+  // const sortHighToLow = () => {
+  //   const sorted = [...rows].sort(
+  //     (a, b) => parseFloat(b.actualPerc) - parseFloat(a.actualPerc)
+  //   );
+  //   setRows(sorted);
+  //   setIsSortOpen(false);
+  // };
 
   const getWorkColor = (perc) => {
     const value = parseInt(perc);
@@ -91,20 +77,6 @@ const DailyWorkReport = () => {
       {/* TOP BAR */}
       <div className={style.topBar}>
         {/* DATE PICKER */}
-        {/* <div
-          className={style.dateBox}
-          onClick={() =>
-            document.getElementById("reportDateInput").showPicker()
-          }
-        >
-          <input
-            id="reportDateInput"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className={style.dateInput}
-          />
-        </div> */}
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
@@ -156,24 +128,29 @@ const DailyWorkReport = () => {
               <th className={style.th4}>Duty Off Time</th>
             </tr>
           </thead>
-          {console.log('reportdata',reportData)}
+          {console.log("reportdata", reportData)}
           <tbody>
-            {loading? (
+            {loading ? (
               <tr>
                 <td colSpan={4} className={style.loaderCell}>
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
-            ) :reportData?.length > 0 ?(
+            ) : reportData?.length > 0 ? (
               reportData?.map((row, index) => (
-              <tr key={index}>
-                <td>{row.ward}</td>
-                <td>{row.duty_on_time || row.dutyInTime || 'N/A'}</td>
-                <td>{row.ward_reach_time || row.wardReachedOn || 'N/A'}</td>
-                <td>{row.duty_off_time || row.dutyOutTime || 'N/A'}</td>
-               
-                
-                {/* <td>
+                <tr key={index}>
+                  <td className={style.th1}>{row.ward}</td>
+                  <td className={style.th2}>
+                    {row.duty_on_time || row.dutyInTime || "N/A"}
+                  </td>
+                  <td className={style.th3}>
+                    {row.ward_reach_time || row.wardReachedOn || "N/A"}
+                  </td>
+                  <td className={style.th4}>
+                    {row.duty_off_time || row.dutyOutTime || "N/A"}
+                  </td>
+
+                  {/* <td>
                   <div className={style.progressCell}>
                     <span className={style.percentageText}>{row.workPerc}</span>
 
@@ -188,22 +165,28 @@ const DailyWorkReport = () => {
                     </div>
                   </div>
                 </td> */}
-              </tr>
+                </tr>
               ))
-              ):(
-                <tr>
-                  <td colSpan={4} className={style.noData}>
-                    <div className={style.noUserData}>
+            ) : (
+              <tr>
+                <td colSpan={4} className={style.noData}>
+                  <NoResult
+                    title="No data available"
+                    // query={searchTerm}
+                    gif={noData}
+                    // height="calc(100vh - 280px)"
+                  />
+                  {/* <div className={style.noUserData}>
                       <img
                         src={images.noDAtaAvailable}
                         className={style.noUserImg}
                         alt="No data available"
                       />
                       <span>No data available</span>
-                    </div>
-                  </td>
-                </tr>
-              )}
+                    </div> */}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
