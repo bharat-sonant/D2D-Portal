@@ -151,7 +151,7 @@
 /* TOGGLE */
 .activeInactiveBadge {
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 13px;
   font-family: var(--fontGraphikMedium);
   cursor: pointer;
@@ -188,7 +188,7 @@
   height: 34px;
   cursor: pointer;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid var(--borderColor);
   display: flex;
   justify-content: center;
