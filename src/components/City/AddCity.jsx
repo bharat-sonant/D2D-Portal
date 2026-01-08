@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { FaSpinner } from "react-icons/fa";
 import { images } from "../../assets/css/imagePath";
@@ -7,7 +7,7 @@ import { saveCityAction } from "../../Actions/City/cityAction";
 
 const AddCity = (props) => {
   const initialForm = {
-    city_code:"",
+    city_code: "",
     city_name: "",
     status: "active",
     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
@@ -18,61 +18,101 @@ const AddCity = (props) => {
   const [logoPreview, setLogoPreview] = useState("");
   const [logoError, setLogoError] = useState("");
   const [cityError, setCityError] = useState("");
-  const [cityCodeError,setCityCodeError]=useState("");
+  const [cityCodeError, setCityCodeError] = useState("");
   const [form, setForm] = useState(initialForm);
 
-   useEffect(() => {
-      const handleKeyDown = (e) => {
-        if (e.key === "Enter" && !loading) {
-          e.preventDefault();
-          handleSave();
-        }
-      };
-      window.addEventListener("keydown", handleKeyDown);
-      return () => {
-        window.removeEventListener("keydown", handleKeyDown);
-      };
-    
-  }, [form,logo,  loading]);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter" && !loading) {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+
+  }, [form, logo, loading]);
 
   const handleChange = (e) => {
-    if(e.target.name==='city_code'){
-       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
-    }else{
+    if (e.target.name === 'city_code') {
+      setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
+    } else {
       setForm({ ...form, [e.target.name]: e.target.value });
     }
-    
+
   };
   const handleSave = async () => {
-    saveCityAction(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError);
+    saveCityAction(form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError);
   };
 
- const handleLogoChange = (e) => {
-  const file = e.target.files[0];
-  if (!file || !file.type.startsWith("image/")) return;
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
+    const validTypes = ["image/png", "image/svg+xml", "image/jpeg"]; // Allow JPG too based on tooltip, or strictly PNG/SVG? Request said PNG/SVG. Let's stick to common images but validate size.
+    // Actually request said "Support only PNG or SVG formats". But existing tooltip says "PNG / JPG". I will respect the new strict requirement but maybe allow JPG if convenient, or strictly follow limit.
+    // Request: "Support only PNG or SVG formats."
+    if (!["image/png", "image/svg+xml"].includes(file.type)) {
+      setLogoError("Only PNG and SVG formats are allowed.");
+      return;
+    }
 
-  img.onload = () => {
-    const max = 70;
-    const scale = Math.min(max / img.width, max / img.height, 1);
+    // Size Validation
+    const minSize = 5 * 1024; // 5KB
+    const maxSize = file.type === "image/svg+xml" ? 50 * 1024 : 500 * 1024; // 50KB for SVG, 500KB for PNG
 
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width * scale;
-    canvas.height = img.height * scale;
+    if (file.size < minSize) {
+      setLogoError("Image is too small. Minimum size is 5KB.");
+      return;
+    }
+    if (file.size > maxSize) {
+      setLogoError(`Image is too large. Max size is ${file.type === "image/svg+xml" ? "50KB" : "500KB"}.`);
+      return;
+    }
 
-    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
 
-    canvas.toBlob((blob) => {
-      const resized = new File([blob], file.name, { type: file.type });
-      setLogo(resized);
-      setLogoPreview(URL.createObjectURL(resized));
-    }, file.type);
+    img.onload = () => {
+      // Dimension Validation
+      if (img.width < 100 || img.height < 100) {
+        setLogoError("Image dimensions too small. Minimum 100x100 pixels.");
+        return;
+      }
+
+      setLogoError(""); // Clear error if passed
+
+      // Auto-scaling if > 500x500
+      const maxDimension = 500;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxDimension || height > maxDimension) {
+        const scale = Math.min(maxDimension / width, maxDimension / height);
+        width = width * scale;
+        height = height * scale;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const resized = new File([blob], file.name, { type: file.type });
+          setLogo(resized);
+          setLogoPreview(URL.createObjectURL(resized));
+        }
+      }, file.type);
+    };
   };
-};
 
-  const resetStateValues=()=>{
+  const resetStateValues = () => {
     setForm(initialForm);
     setCityCodeError("")
     setCityError("");
@@ -85,10 +125,10 @@ const AddCity = (props) => {
   }
   useMemo(() => {
     setForm((pre) => ({
-        city_code: props?.onEdit?.city_code || "",
-        city_name: props?.onEdit?.city_name || "",
-        status: props?.onEdit?.status || "active",
-        created_at: dayjs(props?.onEdit?.created_at).isValid()
+      city_code: props?.onEdit?.city_code || "",
+      city_name: props?.onEdit?.city_name || "",
+      status: props?.onEdit?.status || "active",
+      created_at: dayjs(props?.onEdit?.created_at).isValid()
         ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
         : dayjs().format("YYYY-MM-DD HH:mm:ss"),
     }));
@@ -120,7 +160,7 @@ const AddCity = (props) => {
 
         <div className={styles.modalBody}>
 
-             <div className={styles.textboxGroup}>
+          <div className={styles.textboxGroup}>
             <div className={styles.textboxMain}>
               <div className={styles.textboxLeft}>City Code</div>
               <div className={styles.textboxRight}>
@@ -157,7 +197,7 @@ const AddCity = (props) => {
               <div className={`${styles.invalidfeedback}`}>{cityError}</div>
             )}
           </div>
-       
+
           {/* City Logo */}
           <div
             style={{ display: "flex", flexDirection: "column", gap: "14px" }}
@@ -201,7 +241,7 @@ const AddCity = (props) => {
                   Upload City Logo
                 </div>
                 <div style={{ fontSize: "11px", color: "#64748b" }}>
-                  PNG / JPG • Max 2MB
+                  PNG / SVG • Min 5KB, Max 500KB
                 </div>
               </label>
 

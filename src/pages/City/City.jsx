@@ -13,6 +13,7 @@ import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessList";
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
+import LogoImage from "../../components/Common/Image/LogoImage";
 
 
 const TABS = [
@@ -147,31 +148,7 @@ const City = () => {
                   >
                     {selectedCity?.city_code || "N/A"}
                   </span>
-                  <div
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "10px",
-                      border: "1px solid #e5e7eb",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#fff",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {selectedCity?.logoUrl && (
-                      <img
-                        src={selectedCity?.logoUrl || "/city-placeholder.png"}
-                        alt="City Logo"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                        }}
-                      />
-                    )}
-                  </div>
+                  <LogoImage image={selectedCity?.logoUrl} />
                 </div>
               </div>
             )}

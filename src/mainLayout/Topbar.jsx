@@ -17,6 +17,7 @@ import { images } from "../assets/css/imagePath";
 import { useCity } from "../context/CityContext";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigService";
+import LogoImage from "../components/Common/Image/LogoImage";
 
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
@@ -135,13 +136,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
         {/* LEFT */}
         <div className={styles.headerLeft}>
           <div className={styles.companyLogo}>
-            <div className={styles.logoImg}>
-              <img
-                src={Logo}
-                alt="Logo"
-                onError={(e) => (e.target.src = images?.wevoisLogo)}
-              />
-            </div>
+            <LogoImage image={Logo} />
             <div
               className={styles.logoText}
               onClick={() => setShowDefaultCity(true)}

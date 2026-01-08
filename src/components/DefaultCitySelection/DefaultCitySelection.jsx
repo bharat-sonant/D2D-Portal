@@ -9,6 +9,7 @@ import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defa
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 import { getCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
 import NoResult from "../NoResultFound/NoResult";
+import LogoImage from "../Common/Image/LogoImage";
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem("defaultCity"))
@@ -107,20 +108,15 @@ const DefaultCitySelection = ({ onClose }) => {
                 {filteredCities.map((city) => (
                   <div
                     key={city.city_id}
-                    className={`${styles.cityCard} ${
-                      selectedCity?.city_id === city?.city_id
-                        ? styles.selected
-                        : ""
-                    }`}
+                    className={`${styles.cityCard} ${selectedCity?.city_id === city?.city_id
+                      ? styles.selected
+                      : ""
+                      }`}
                     onClick={() => setSelectedCity(city)}
                   >
-                    <div className={styles.logoWrapper}>
-                      <img
-                        src={city?.logoUrl}
-                        alt={city.city_name}
-                        onError={(e) => (e.target.style.display = "none")}
-                      />
-                    </div>
+                    {/* <div className={styles.logoWrapper}> */}
+                      <LogoImage image={city?.logoUrl} />
+                    {/* </div> */}
 
                     <div className={styles.cityName}>{city.city_name}</div>
 

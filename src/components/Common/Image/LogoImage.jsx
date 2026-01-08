@@ -4,9 +4,9 @@ const LogoImage = (props) => {
     <div className={style.logo_container}>
       {props?.image && (
         <img
-          src={props?.image|| "/city-placeholder.png"}
+          src={props?.image || "/city-placeholder.png"}
           alt="City Logo"
-          className={style.logo_image}
+          // className={style.city_logo_std}
         />
       )}
     </div>

@@ -16,7 +16,7 @@ const CityList = (props) => {
   }, [props?.cityList, searchTerm]);
 
   const handleSearch = debounce((e) => { setSearchTerm(e.target.value) }, 300);
-  
+
   return (
     <div className={`dropdown ${GlobalStyles.dropDown}`}>
       <div
@@ -38,7 +38,7 @@ const CityList = (props) => {
               onChange={handleSearch}
             />
           </div>
-          <div className={`${styles.userListTitle}`}>Select City</div>
+          <div className={`${styles.userListTitle}`}></div>
           <div className={styles.userScroll}>
             {props.loading ? (
               <WevoisLoader title="Loading city data..." />
