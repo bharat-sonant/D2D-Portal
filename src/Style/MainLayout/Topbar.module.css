@@ -26,20 +26,42 @@
   padding: 0px 40px 0px 5px;
   display: flex;
   align-items: center;
-  flex-flow: column;
+  gap: 8px;
 }
 
 .logoImg {
-  width: 28px;
-  height: 28px;
+  width: 48px;
+  height: 44px;
+  background-color: var(--white);
   overflow: hidden;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+  border-radius: 4px;
 }
 .logoText {
-  font-size: 10px;
-  color: var(--darkBlack);
-  font-family: var(--fontGraphikMedium);
-  text-decoration: underline;
+  font-size: 13px;
+  color: var(--darkBlack); /* fallback */
+  font-family: var(--fontGraphikSemibold);
   cursor: pointer;
+  text-decoration: underline;
+
+  background: linear-gradient(
+    135deg,
+    rgb(102, 126, 234) 0%,
+    rgb(118, 75, 162) 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logoText:hover {
+  opacity: 0.85;
 }
 
 .desktopMenu {
@@ -128,9 +150,9 @@
   margin-left: 20px;
   width: auto;
   transition: 0.3s;
-  &:hover{
-  background: #6a70d628;
-  border-bottom: 2px solid var(--borderColor);
+  &:hover {
+    background: #6a70d628;
+    border-bottom: 2px solid var(--borderColor);
   }
 }
 .userDropdownBtn {
