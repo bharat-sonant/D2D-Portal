@@ -38,7 +38,8 @@ const sortWards = (list = []) => {
 };
 
 export const getWardData = async(cityId) => {
-  const result = await sbs.getDataByColumnName('Wards', 'city_Id', cityId)
+   let filters ={city_Id:cityId,show_realtime:'Yes'}
+  const result = await sbs.getDataByColumns('Wards',filters)
   if(!result.success){
     return {status : 'error', message : result?.error}
   }
