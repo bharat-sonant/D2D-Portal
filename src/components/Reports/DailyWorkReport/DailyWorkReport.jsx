@@ -133,13 +133,13 @@ const DailyWorkReport = () => {
           <thead>
             <tr>
               <th
-                className={`text-start ${style.parentHeader}`}
+                className={`text-start ${style.parentHeader} `}
                 style={{ width: "15%" }}
               >
                 #
               </th>
               <th
-                className={style.parentHeader}
+                className={`${style.parentHeader} `}
                 style={{ width: "30%" }}
                 colSpan={3}
               >
@@ -154,7 +154,7 @@ const DailyWorkReport = () => {
               </th>
             </tr>
             <tr>
-              <th className={style.th1}>Ward</th>
+              <th className={`${style.th1} ${style.parentHeader1}`}>Ward</th>
               <th className={style.th2}>Duty On Time</th>
               <th className={style.th3}>Ward Reach Time</th>
               <th className={`${style.th4} ${style.borderRight}`}>
