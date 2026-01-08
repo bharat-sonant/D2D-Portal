@@ -158,7 +158,7 @@ const User = () => {
               </span>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+          <div className={styles.userInnerRight}>
             <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
             {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
           </div>

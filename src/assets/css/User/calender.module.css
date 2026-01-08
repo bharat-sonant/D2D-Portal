@@ -93,4 +93,8 @@
   .employeeSelection {
     width: 100% !important;
   }
+  .box{
+    width: 100%;
+    margin-bottom: 80px;
+  }
 }

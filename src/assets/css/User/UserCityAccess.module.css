@@ -31,7 +31,7 @@
 }
 .Scroll_List {
   min-height: 40px;
- max-height: calc(100vh - 235px);
+  max-height: calc(100vh - 235px);
   overflow: auto;
 }
 
@@ -167,4 +167,21 @@
 .checkboxWrapper input:disabled + .customCheckbox {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 767.98px) {
+  .Detailscard {
+    width: 100%;
+  }
+  .Scroll_List {
+    max-height: 300px;
+  }
+  .listLine {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  /* .list_item{
+    width: calc(100% / 2);
+  } */
 }

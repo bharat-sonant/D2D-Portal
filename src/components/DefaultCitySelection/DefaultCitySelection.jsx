@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./DefaultCitySelection.module.css";
 import modalStyles from "../../assets/css/popup.module.css";
 import { MapPin, X, Check, Search } from "lucide-react";
-import cityNotFound from "../../assets/images/icons/cityNotFound.gif"
+import cityNotFound from "../../assets/images/icons/cityNotFound.gif";
 import { getAvailableCityList } from "../../Actions/commonActions";
 import { useCity } from "../../context/CityContext";
 import { changeDefaultCityAction } from "../../Actions/DefaultCitySelection/defaultCitySelectionAction";
@@ -108,14 +108,15 @@ const DefaultCitySelection = ({ onClose }) => {
                 {filteredCities.map((city) => (
                   <div
                     key={city.city_id}
-                    className={`${styles.cityCard} ${selectedCity?.city_id === city?.city_id
-                      ? styles.selected
-                      : ""
-                      }`}
+                    className={`${styles.cityCard} ${
+                      selectedCity?.city_id === city?.city_id
+                        ? styles.selected
+                        : ""
+                    }`}
                     onClick={() => setSelectedCity(city)}
                   >
                     {/* <div className={styles.logoWrapper}> */}
-                      <LogoImage image={city?.logoUrl} />
+                    <LogoImage image={city?.logoUrl} />
                     {/* </div> */}
 
                     <div className={styles.cityName}>{city.city_name}</div>

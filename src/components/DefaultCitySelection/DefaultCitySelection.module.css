@@ -17,7 +17,7 @@
 .cityCard {
   border: 1px solid var(--borderColor);
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 10px 10px;
   text-align: center;
   cursor: pointer;
   background: var(--white);

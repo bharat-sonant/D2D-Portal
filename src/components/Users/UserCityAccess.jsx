@@ -55,6 +55,7 @@ const UserCityAccess = (props) => {
                 setIsSearching(true);
                 setSearchTerm("");
               }}
+              title="Search"
             />
           </>
         ) : (
