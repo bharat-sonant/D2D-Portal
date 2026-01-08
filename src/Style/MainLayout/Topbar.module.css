@@ -30,9 +30,8 @@
 }
 
 .logoImg {
-  width: 48px;
+  width: 44px;
   height: 44px;
-  background-color: var(--white);
   overflow: hidden;
   border: 1px solid var(--borderColor);
   display: flex;
