@@ -79,7 +79,7 @@
   border-radius: 4px;
   cursor: pointer;
   border: 1px soolid var(--borderColor);
-    animation: dropdownSlideUp 0.4s ease;
+  animation: dropdownSlideUp 0.4s ease;
 }
 @keyframes dropdownSlideUp {
   from {
@@ -173,3 +173,6 @@
   height: calc(100vh - 190px);
   overflow: auto;
 }
+
+
+

@@ -6,7 +6,6 @@
   width: 310px;
   position: relative;
   box-shadow: 0 2px 8px #0000000f;
-  margin-bottom: 10px;
 }
 
 .card_header {
@@ -32,7 +31,7 @@
 }
 .Scroll_List {
   min-height: 40px;
-  max-height: 340px;
+ max-height: calc(100vh - 235px);
   overflow: auto;
 }
 

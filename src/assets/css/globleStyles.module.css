@@ -900,7 +900,7 @@ button:focus:not(:focus-visible) {
   background: var(--themeColor) !important;
 }
 
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 0.25rem;
   border-radius: 0.25rem;
   background: #DDD;
@@ -921,7 +921,7 @@ button:focus:not(:focus-visible) {
   -webkit-border-radius: 0.25rem;
   border-radius: 0.25rem;
   background-color: #F5F5F5;
-}
+} */
 
 /*** Pages CSS Starts Here ***/
 .main_content {

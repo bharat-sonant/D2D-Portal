@@ -122,7 +122,7 @@
   transition: 0.3s;
   text-align: left;
   width: 48px;
-  height: 44px;
+  height: 48px;
   justify-content: center;
   border: 1px solid var(--borderColor);
 }

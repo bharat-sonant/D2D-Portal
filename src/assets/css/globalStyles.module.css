@@ -80,19 +80,36 @@
 }
 
 /********** Custom Scrollbar ***********/
-::-webkit-scrollbar {
+/* =========================
+   GLOBAL SCROLLBAR (NO STICKY COLOR)
+   ========================= */
+
+/* Base scrollbar size */
+*::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
-::-webkit-scrollbar-thumb {
-  border-radius: 0.25rem;
-  background: var(--gradientTheme);
-  -webkit-box-shadow: transparent;
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: transparent;
-  border-radius: 0.25rem;
-  background-color: var(--whitef5);
+/* 👉 container hover pe track visible */
+*:hover::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+/* Thumb default = invisible */
+*::-webkit-scrollbar-thumb {
+  background-color: #64748b00;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* 👇 IMPORTANT
+   Only show thumb when ACTUAL container is hovered */
+*:hover > ::-webkit-scrollbar-thumb,
+*:focus-within > ::-webkit-scrollbar-thumb {
+  background: var(--gradientTheme);
 }
 
 /********* Gradient Theme Button **********/

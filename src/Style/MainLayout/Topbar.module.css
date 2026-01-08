@@ -30,8 +30,8 @@
 }
 
 .logoImg {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   overflow: hidden;
   border: 1px solid var(--borderColor);
   display: flex;
@@ -176,7 +176,7 @@
     height: 9px;
     position: absolute;
     right: 20px;
-    top: 17px;
+    top: 20px;
     width: 10px;
   }
 }
@@ -198,7 +198,7 @@
   text-align: left;
   /* box-shadow: #667eea4d 0px 4px 12px; */
   width: 48px;
-  height: 44px;
+  height: 48px;
   justify-content: center;
   border: 1px solid var(--borderColor);
 }
