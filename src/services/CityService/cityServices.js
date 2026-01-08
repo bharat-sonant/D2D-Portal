@@ -115,3 +115,8 @@ export const getCityWisewardList = async (city_Id) => {
     data: sortedData
   };
 };
+
+export const updateWardRealTimeStatus = async (wardId, realTimeStatus) => {
+  const response = await sbs.updateData('Wards','id',wardId,realTimeStatus);
+  return response.success? { status: 'success', message: 'Status updated successfully' }: { status: 'fail', message: 'Error occurred while updating status' };
+};

@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { getCityData, getCityWisewardList, saveCityData, saveCityWiseWardData, updateCityStatus } from "../../services/CityService/cityServices";
+import * as cityService from "../../services/CityService/cityServices"
+
 
 export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
     let isValid = true;
@@ -30,7 +31,7 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
         }
        
         try {
-            await saveCityData(cityDetail,logo,props?.onEdit?.city_id);
+            await cityService.saveCityData(cityDetail,logo,props?.onEdit?.city_id);
             resetStateValues();
             props.loadCities();
             common.setAlertMessage("success", !props?.onEdit?"City added successfully": "City updated successfully");
@@ -57,7 +58,7 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
 
 export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWardList,setLoading)=>{
     setLoading(true)
-      const response = await getCityData();
+      const response = await cityService.getCityData();
        if(response.status==='success'){
         let currentSelected = response.data?.find(item=>item?.city_id===selectedCity?.city_id);
            setSelectedCity(currentSelected || response.data[0]);
@@ -76,7 +77,7 @@ export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadC
     if (!selectedCity) return;
     try{
         
-        await updateCityStatus(selectedCity?.city_id,newStatus);
+        await cityService.updateCityStatus(selectedCity?.city_id,newStatus);
         setToggle(newStatus);
         setStatusConfirmation({status:false,data:null,setToggle:()=>{}})
         loadCities()
@@ -117,11 +118,12 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
               name:form?.Ward?.trim(),
               city_Id:cityId,
               created_At: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-              created_By: localStorage.getItem('name')
+              created_By: localStorage.getItem('name'),
+              show_realtime:'Yes'
         }
        
         try {
-           let response =  await saveCityWiseWardData(wardDetail,wardId)
+           let response =  await cityService.saveCityWiseWardData(wardDetail,wardId)
             if(response.duplicatefound){
             setWardNumberError(response.msg);
              setLoading(false);
@@ -152,10 +154,18 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
 
 
 export const getwardList=async (city_Id,setWardList)=>{
-   let response= await getCityWisewardList(city_Id)
+   let response= await cityService.getCityWisewardList(city_Id)
    if(response.status==='success'){
     setWardList(response.data)
    }else{
     setWardList([])
+   }
+}
+
+export const updateWardRealTimeStatusAction=async (wardId,realTimeStatus,setWardList)=>{
+    let newStatus = {show_realtime:realTimeStatus==='Yes'?'No':'Yes'}
+   let response = await cityService.updateWardRealTimeStatus(wardId,newStatus)
+   if(response.status==='success'){
+    setWardList(prevList => prevList.map(ward => ward.id === wardId ? { ...ward, show_realtime: newStatus.show_realtime}: ward));
    }
 }

@@ -6,10 +6,10 @@ import styles from "../../assets/css/modal.module.css";
 import {saveWardAction } from "../../Actions/City/cityAction";
 
 const AddWard = (props) => {
-  console.log( props.editWard)
   const initialForm = {
     CityId:0,
     Ward: "",
+    
   };
 
   const [loading, setLoading] = useState(false);

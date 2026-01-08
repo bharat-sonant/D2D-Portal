@@ -178,7 +178,7 @@ const City = () => {
             <div style={{ display: "flex", gap: "20px" }}>
               {activeTab === 'wards' && (
                 <div className={TaskStyles.cardWrapper}>
-                  <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setEditWard={setEditWard} />
+                  <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setWardList={setWardList} setEditWard={setEditWard} />
                 </div>
               )}
             </div>
