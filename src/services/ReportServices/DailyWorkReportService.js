@@ -47,6 +47,7 @@ export const getDailyWorkReport = async(date, cityId) => {
 }
 
 export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
+  if(cityId !== 95) return;
   if(!date || !wards.length) {
     return { status: 'success', data: [] };
   }
