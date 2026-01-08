@@ -5,14 +5,14 @@ import * as sbs from "../supabaseServices";
  * @param {string} cityId - The UUID of the city.
  * @param {Object} firebaseConfig - The Firebase configuration object.
  */
-export const saveCityFirebaseConfig = async (city_id, firebase_config) => {
+export const saveCityFirebaseConfig = async (city_id, firebaseConfig) => {
     return new Promise(async (resolve, reject) => {
-        if (!city_id || !firebase_config) {
+        if (!city_id || !firebaseConfig) {
             return reject('Invalid parameters');
         }
 
         try {
-            const response = await sbs.updateData('Cities', 'city_id', city_id, { firebase_config });
+            const response = await sbs.updateData('Cities', 'city_id', city_id, { firebase_db_path: firebaseConfig });
             if (!response?.success) {
                 return reject(response?.error || 'Failed to save Firebase configuration');
             }
@@ -31,7 +31,7 @@ export const getCityFirebaseConfig = async (city_id) => {
     try {
         const result = await sbs.getDataByColumnName('Cities', 'city_id', city_id);
         if (result.success && result.data?.length > 0) {
-            return { status: 'success', data: result.data[0].firebase_config };
+            return { status: 'success', data: result.data[0].firebase_db_path };
         } else {
             return { status: 'error', message: result.error || 'City not found' };
         }

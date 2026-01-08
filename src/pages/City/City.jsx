@@ -12,7 +12,6 @@ import AddWard from "../../components/City/AddWard";
 import AddVehiclesCard from "../../components/City/AddVehiclesCard";
 import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessList";
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
-import FirebaseConfigModal from "../../components/City/FirebaseConfigModal";
 import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
 
 
@@ -37,7 +36,6 @@ const City = () => {
   const [activeTab, setActiveTab] = useState('city');
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  const [openFirebaseConfig, setOpenFirebaseConfig] = useState(false);
 
   const loadCities = async () => {
     getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
@@ -73,19 +71,12 @@ const City = () => {
     );
   };
 
-  const handleOpenFirebaseConfig = (city) => {
-    setSelectedCity(city);
-    setOpenFirebaseConfig(true);
-    setOpenSettings(false);
-  };
-
-  const handleSaveFirebaseConfig = async (config, setLoader) => {
+  const handleSaveFirebaseConfig = async (dbPath, setLoader) => {
     await saveFirebaseConfigAction(
-      selectedCity.city_id,
-      config,
+      selectedCity.city_id || selectedCity.CityId,
+      dbPath, // Pass string directly
       setLoader,
       () => {
-        setOpenFirebaseConfig(false);
         loadCities(); // Refresh city list to get updated config
       }
     );
@@ -227,17 +218,10 @@ const City = () => {
           selectedCity={selectedCity}
           onClickEdit={handleOpenEditWindow}
           setStatusConfirmation={setStatusConfirmation}
-          onClickFirebaseConfig={handleOpenFirebaseConfig}
+          onSaveFirebaseConfig={handleSaveFirebaseConfig}
         />
       )}
-      {openFirebaseConfig && (
-        <FirebaseConfigModal
-          show={openFirebaseConfig}
-          onHide={() => setOpenFirebaseConfig(false)}
-          selectedCity={selectedCity}
-          onSave={handleSaveFirebaseConfig}
-        />
-      )}
+
       <div className={GlobalStyles.mainSections}>
         {openAddWardPopUp && (
           <AddWard
