@@ -1,6 +1,6 @@
-@import "../../assets/css/variable.css";
-@import "../../assets/css/fonts.css";
-@import "../../assets/css/normalize.css";
+@import "../variable.css";
+@import "../fonts.css";
+@import "../normalize.css";
 
 .employeePage {
   display: flex;
@@ -345,7 +345,7 @@
   align-items: center;
   position: relative;
   &:after {
-    background-image: url(../../assets/images/icons/iconDown.png);
+    background-image: url(../../images/icons/iconDown.png);
     background-repeat: no-repeat;
     background-size: cover;
     content: "";

@@ -1,6 +1,6 @@
 import React from 'react'
 import WevoisLoader from '../Common/Loader/WevoisLoader';
-import styles from '../../Style/Task-Data/TaskDataList.module.css'
+import styles from '../../assets/css/City/CityList.module.css'
 import {images} from '../../assets/css/imagePath'
 
 const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
