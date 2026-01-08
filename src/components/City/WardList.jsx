@@ -82,7 +82,6 @@ const WardList = (props) => {
                 {ward.name}
               </span>
             </div>
-
             <div
               data-edit-icon
               className={style.countEdit}
@@ -97,7 +96,7 @@ const WardList = (props) => {
                 transition: "opacity 0.2s ease"
               }}
             >
-              <FiEdit className={style.edit_icon} color="#9ca3af" />
+              <FiEdit  color="#9ca3af" />
             </div>
           </div>
 
@@ -124,7 +123,6 @@ const WardList = (props) => {
                 checked={ward.show_realtime === 'Yes'}
                 onChange={() => { 
                     handleToggleRealtime(ward.id ,ward.show_realtime);
-                  
                 }}
                 style={{ opacity: 0, width: 0, height: 0 }}
               />
