@@ -119,7 +119,7 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
               city_Id:cityId,
               created_At: dayjs().format("YYYY-MM-DD HH:mm:ss"),
               created_By: localStorage.getItem('name'),
-              show_realtime:'Yes'
+              ...( !wardId && { show_realtime: 'Yes' } )
         }
        
         try {
@@ -141,7 +141,6 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
                     setWardNumberError("City code already exists!");
                     return;
                 }
-                
                  else {
                     common.setAlertMessage("error", "Duplicate value exists!");
                 }
@@ -156,7 +155,8 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
 export const getwardList=async (city_Id,setWardList)=>{
    let response= await cityService.getCityWisewardList(city_Id)
    if(response.status==='success'){
-    setWardList(response.data)
+    let wardData =  sortWardsByRealtimeStatus(response.data)
+    setWardList(wardData)
    }else{
     setWardList([])
    }
@@ -167,5 +167,17 @@ export const updateWardRealTimeStatusAction=async (wardId,realTimeStatus,setWard
    let response = await cityService.updateWardRealTimeStatus(wardId,newStatus)
    if(response.status==='success'){
     setWardList(prevList => prevList.map(ward => ward.id === wardId ? { ...ward, show_realtime: newStatus.show_realtime}: ward));
+     common.setAlertMessage("success", "Ward status updated successfully");
    }
 }
+
+export const sortWardsByRealtimeStatus = (wardList = []) => {
+  if (!Array.isArray(wardList)) return [];
+  const nameSorted = [...wardList].sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+  );
+  return [
+    ...nameSorted.filter(w => w.show_realtime === 'Yes'),
+    ...nameSorted.filter(w => w.show_realtime !== 'Yes')
+  ];
+};

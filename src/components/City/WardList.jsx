@@ -112,7 +112,7 @@ const WardList = (props) => {
             <span style={{ fontSize: "13px", color: "#666", fontWeight: 500 }}>
               Show in Realtime
             </span>
-            <label style={{ 
+            <label style={{
               position: "relative", 
               display: "inline-block", 
               width: "44px", 

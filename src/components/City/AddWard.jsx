@@ -42,7 +42,6 @@ const AddWard = (props) => {
       setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSave = async () => {
-   
     saveWardAction(form,props.selectedCity?.city_id,props.editWard?.wardId,setLoading,setWardNumberError,resetStateValues,props.setWardList);
   };
 

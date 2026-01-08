@@ -11,7 +11,6 @@ export const getWardList = async (
   try{
     setLoading(true);
     const response = await getWardData(cityId);
-
     if (response.status === 'success') {
       let currentSelected = response.data?.find(
         (item) => item?.id === selectedWard?.id
