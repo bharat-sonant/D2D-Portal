@@ -56,8 +56,10 @@
     flex-direction: row;
     gap: 10px;
     overflow-x: auto;
+    justify-content: flex-start;
   }
   .menuItem {
     white-space: nowrap;
+    width: auto;
   }
 }
