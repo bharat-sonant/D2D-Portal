@@ -63,7 +63,7 @@ const DailyWorkReport = () => {
   //   setRows(sorted);
   //   setIsSortOpen(false);
   // };
-
+  
   const getWorkColor = (perc) => {
     const value = parseInt(perc);
 
@@ -149,25 +149,25 @@ const DailyWorkReport = () => {
                 <tr key={index}>
                   <td className={style.th1}>{row.ward}</td>
                   <td className={style.th2}>
-                    {row.duty_on_time || row.dutyInTime || "N/A"}
+                    {row.duty_on_time || "N/A"}
                   </td>
                   <td className={style.th3}>
-                    {row.ward_reach_time || row.wardReachedOn || "N/A"}
+                    {row.ward_reach_time  || "N/A"}
                   </td>
                   <td className={style.th4}>
-                    {row.duty_off_time || row.dutyOutTime || "N/A"}
+                    {row.duty_off_time || "N/A"}
                   </td>
                   <td className={style.th4}>
-                    { "N/A"}
+                    { row.vehicle || "N/A"}
                   </td>
                   <td className={style.th4}>
-                    { "N/A"}
+                    { row.driver_name || "N/A"}
                   </td>
                   <td className={style.th4}>
-                    { "N/A"}
+                    { row.helper_name || "N/A"}
                   </td>
                   <td className={style.th4}>
-                    { "N/A"}
+                    { row.second_helper_name || "N/A"}
                   </td>
 
                   {/* <td>

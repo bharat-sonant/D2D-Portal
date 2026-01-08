@@ -5,6 +5,7 @@ export const getDailyWorkReportAction = async(date, wards, setReportData, setLoa
 
   try{
     let response = await getDailyWorkReport(date, cityId);
+    console.log('supabase',response)
 
     if(response.status === 'success' && response.data.length === 0 && wards?.length > 0){
       
