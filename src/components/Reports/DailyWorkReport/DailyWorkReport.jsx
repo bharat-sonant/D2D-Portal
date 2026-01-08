@@ -63,7 +63,7 @@ const DailyWorkReport = () => {
   //   setRows(sorted);
   //   setIsSortOpen(false);
   // };
-  
+
   const getWorkColor = (perc) => {
     const value = parseInt(perc);
 
@@ -72,6 +72,19 @@ const DailyWorkReport = () => {
     if (value >= 40) return "var(--pending)";
     return "var(--textDanger";
   };
+const titleCaseName = (name = "") => {
+  if (!name) return "N/A";
+
+  return name
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)            // multiple spaces safe
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
+};
   return (
     <>
       {/* TOP BAR */}
@@ -122,25 +135,39 @@ const DailyWorkReport = () => {
         <table className={style.table}>
           <thead>
             <tr>
-              <th className={style.parentHeader}style={{width:"15%"}}></th>
-              <th className={style.parentHeader} colSpan={3}>Timing Details</th>
-              <th className={style.parentHeader} colSpan={4}>Person / Vehicle Details</th>
+              <th className={style.parentHeader} style={{ width: "15%" }}></th>
+              <th
+                className={style.parentHeader}
+                style={{ width: "30%" }}
+                colSpan={3}
+              >
+                Timing Details
+              </th>
+              <th
+                className={style.parentHeader}
+                style={{ width: "55%" }}
+                colSpan={4}
+              >
+                Person / Vehicle Details
+              </th>
             </tr>
             <tr>
               <th className={style.th1}>Ward</th>
               <th className={style.th2}>Duty On Time</th>
               <th className={style.th3}>Ward Reach Time</th>
-              <th className={style.th4}>Duty Off Time</th>
-              <th className={style.th4}>Vehicle</th>
-              <th className={style.th4}>Driver</th>
-              <th className={style.th4}>Helper</th>
-              <th className={style.th4}>Second Helper</th>
+              <th className={`${style.th4} ${style.borderRight}`}>
+                Duty Off Time
+              </th>
+              <th className={style.th5}>Vehicle</th>
+              <th className={style.th6}>Driver</th>
+              <th className={style.th7}>Helper</th>
+              <th className={style.th8}>Second Helper</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={4} className={style.loaderCell}>
+                <td colSpan={8} className={style.loaderCell}>
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
@@ -148,26 +175,37 @@ const DailyWorkReport = () => {
               reportData?.map((row, index) => (
                 <tr key={index}>
                   <td className={style.th1}>{row.ward}</td>
-                  <td className={style.th2}>
-                    {row.duty_on_time || "N/A"}
+                  <td className={`${style.th2}`}>
+                      {row.duty_on_time || "N/A"}
+                
                   </td>
-                  <td className={style.th3}>
-                    {row.ward_reach_time  || "N/A"}
-                  </td>
-                  <td className={style.th4}>
+                  <td className={style.th3}>{row.ward_reach_time || "N/A"}</td>
+                  <td className={`${style.th4} ${style.borderRight}`}>
                     {row.duty_off_time || "N/A"}
                   </td>
-                  <td className={style.th4}>
-                    { row.vehicle || "N/A"}
+                  <td className={`${style.th5}`}>
+                    <span className={` ${style.vehicleNumber}`}>
+                      {row.vehicle || "N/A"}
+                    </span>
                   </td>
-                  <td className={style.th4}>
-                    { row.driver_name || "N/A"}
+                  <td className={style.th6}>
+                    <span className={`${style.driverName}`}>
+                      {" "}
+                      {/* {row.driver_name || "N/A"} */}
+                     {titleCaseName(row.driver_name)}
+                    </span>
                   </td>
-                  <td className={style.th4}>
-                    { row.helper_name || "N/A"}
+                  <td className={style.th7}>
+                    <span className={`${style.helperName}`}>
+                      {/* {row.helper_name || "N/A"} */}
+                       {titleCaseName(row.helper_name)}
+                    </span>
                   </td>
-                  <td className={style.th4}>
-                    { row.second_helper_name || "N/A"}
+                  <td className={style.th8}>
+                    <span className={`${style.helperName}`}>
+                      {/* {row.second_helper_name || "N/A"} */}
+                          {titleCaseName(row.second_helper_name)}
+                    </span>
                   </td>
 
                   {/* <td>
@@ -189,7 +227,7 @@ const DailyWorkReport = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className={style.noData}>
+                <td colSpan={8} className={style.noData}>
                   <NoResult
                     title="No data available"
                     // query={searchTerm}
