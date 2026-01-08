@@ -5,7 +5,7 @@ import { Edit2, Flame, Save } from 'lucide-react';
 import { images } from '../../assets/css/imagePath';
 import LogoImage from '../Common/Image/LogoImage';
 import { FaSpinner } from "react-icons/fa";
-
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import * as common from "../../common/common";
 
 const CitySettings = ({
@@ -19,6 +19,7 @@ const CitySettings = ({
   const [toggle, setToggle] = useState(selectedCity?.status === 'active' || false);
   const [dbUrl, setDbUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (selectedCity?.firebase_db_path) {
@@ -35,18 +36,18 @@ const CitySettings = ({
   const handleSave = () => {
     // Validation
     if (!dbUrl) {
-      common.setAlertMessage("error", "Database URL is required");
+      setError("Database URL is required");
       return;
     }
 
     try {
       const url = new URL(dbUrl);
       if (!url.hostname.includes('firebaseio.com')) {
-        common.setAlertMessage("error", "Invalid URL. Must contain 'firebaseio.com'");
+        setError("Invalid URL. Must contain 'firebaseio.com'");
         return;
       }
     } catch (_) {
-      common.setAlertMessage("error", "Invalid URL format");
+      setError("Invalid URL format");
       return;
     }
 
@@ -124,13 +125,15 @@ const CitySettings = ({
                 <input
                   type="text"
                   value={dbUrl}
-                  onChange={(e) => setDbUrl(e.target.value)}
+                  onChange={(e) => {
+                    setDbUrl(e.target.value);
+                    if (error) setError(false); 
+                  }}
                   placeholder="Enter Database URL"
                   className="form-control"
                   style={{ fontSize: '14px' }}
                 />
               </div>
-
               <button
                 className={style.editButton}
                 onClick={handleSave}
@@ -141,6 +144,9 @@ const CitySettings = ({
                 {loading ? <FaSpinner className="fa-spin" /> : <Save size={18} />}
               </button>
             </div>
+            {error && (
+              <ErrorMessage message={error} />
+            )}
           </div>
 
         </div>
