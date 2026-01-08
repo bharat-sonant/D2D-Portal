@@ -74,9 +74,7 @@ export const fetchUserCityAccess = async (userId) => {
 };
 
 export const removeCityAccess = async (userId) => {
-  console.log(userId,"asd")
   const result = await sbs.deleteData("UserCityAccess", userId);
-  console.log(result)
 }
 export const setUserDefaultCity=(userId,cityId)=>{
   return new Promise(async(resolve,reject)=>{

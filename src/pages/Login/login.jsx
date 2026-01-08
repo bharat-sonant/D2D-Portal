@@ -1,19 +1,15 @@
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Mail,
   Lock,
   Eye,
   EyeOff,
   ArrowRight,
-  Sparkles,
-  Shield,
   Zap,
-  User,
   Car,
 } from "lucide-react";
 import styles from "../Login/login.module.css";
-
 import { useNavigate } from "react-router-dom";
 import { getDataByColumnName, login, saveuserLoginHistory } from "../../services/supabaseServices";
 import {

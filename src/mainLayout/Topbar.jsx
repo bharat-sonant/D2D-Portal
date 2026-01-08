@@ -33,7 +33,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem('defaultCity');
-  console.log(defaultCityId)
 
   useEffect(() => {
     fetchDefaultCityConfig()
@@ -41,11 +40,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
   const fetchDefaultCityConfig = async () => {
     const res = await getCityFirebaseConfig(defaultCityId);
-
-    console.log(
-      "🔥 Firebase Config (Default City):",
-      res?.data
-    );
   }
 
 
@@ -106,7 +100,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
         setFirsthar(nameFirstLetter);
       }
     } else {
-      console.log("Name not found in local storage");
+      console.error("Name not found in local storage");
     }
   }, [storedName]);
 

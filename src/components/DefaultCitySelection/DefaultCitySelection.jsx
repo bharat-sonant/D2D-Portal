@@ -33,7 +33,6 @@ const DefaultCitySelection = ({ onClose }) => {
 
     try {
       const res = await getCityFirebaseConfig(city?.city_id);
-      console.log("🔥 Firebase Config (Default City):", res?.data);
       await changeDefaultCityAction(city, setDefault, setCityContext, onClose);
     } catch (err) {
       console.error("Error fetching firebase config:", err);
@@ -146,7 +145,6 @@ const DefaultCitySelection = ({ onClose }) => {
                     const res = await getCityFirebaseConfig(
                       selectedCity?.city_id
                     );
-                    console.log("🔥 Firebase Config (Change City):", res?.data);
                     setCityContext({
                       city: selectedCity?.city_name,
                       cityId: selectedCity?.city_id,
