@@ -152,7 +152,7 @@
 }
 
 .parentHeader {
-  background: #f4f3f8;
+  background: var(--white)!important;
   font-family: var(--fontGraphikMedium);
   font-size: 13px;
   color: var(--black);
@@ -162,6 +162,7 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  text-transform: uppercase;
 }
 
 /* Update the child headers to sit below parent headers */

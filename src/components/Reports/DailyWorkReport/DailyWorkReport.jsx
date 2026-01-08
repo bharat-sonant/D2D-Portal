@@ -72,19 +72,16 @@ const DailyWorkReport = () => {
     if (value >= 40) return "var(--pending)";
     return "var(--textDanger";
   };
-const titleCaseName = (name = "") => {
-  if (!name) return "N/A";
+  const titleCaseName = (name = "") => {
+    if (!name) return "-";
 
-  return name
-    .toLowerCase()
-    .trim()
-    .split(/\s+/)            // multiple spaces safe
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-    )
-    .join(" ");
-};
+    return name
+      .toLowerCase()
+      .trim()
+      .split(/\s+/) // multiple spaces safe
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
   return (
     <>
       {/* TOP BAR */}
@@ -135,7 +132,12 @@ const titleCaseName = (name = "") => {
         <table className={style.table}>
           <thead>
             <tr>
-              <th className={style.parentHeader} style={{ width: "15%" }}></th>
+              <th
+                className={`text-start ${style.parentHeader}`}
+                style={{ width: "15%" }}
+              >
+                #
+              </th>
               <th
                 className={style.parentHeader}
                 style={{ width: "30%" }}
@@ -176,8 +178,7 @@ const titleCaseName = (name = "") => {
                 <tr key={index}>
                   <td className={style.th1}>{row.ward}</td>
                   <td className={`${style.th2}`}>
-                      {row.duty_on_time || "N/A"}
-                
+                    {row.duty_on_time || "N/A"}
                   </td>
                   <td className={style.th3}>{row.ward_reach_time || "N/A"}</td>
                   <td className={`${style.th4} ${style.borderRight}`}>
@@ -192,19 +193,19 @@ const titleCaseName = (name = "") => {
                     <span className={`${style.driverName}`}>
                       {" "}
                       {/* {row.driver_name || "N/A"} */}
-                     {titleCaseName(row.driver_name)}
+                      {titleCaseName(row.driver_name)}
                     </span>
                   </td>
                   <td className={style.th7}>
                     <span className={`${style.helperName}`}>
                       {/* {row.helper_name || "N/A"} */}
-                       {titleCaseName(row.helper_name)}
+                      {titleCaseName(row.helper_name)}
                     </span>
                   </td>
                   <td className={style.th8}>
                     <span className={`${style.helperName}`}>
                       {/* {row.second_helper_name || "N/A"} */}
-                          {titleCaseName(row.second_helper_name)}
+                      {titleCaseName(row.second_helper_name)}
                     </span>
                   </td>
 
