@@ -50,7 +50,7 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     const createdBy = localStorage.getItem("name");
     let userDetail = {
       // username: form.username,
-      hash_code: hashCode,
+      hash_email: hashCode,
       is_superadmin: false,
       name: form?.name,
       email: encrptMail,
@@ -64,7 +64,7 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     if (onEdit) {
       let updatedDetail = {
         // username: form?.username,
-        hash_code: hashCode,
+        hash_email: hashCode,
         name: form?.name,
         email: encrptMail,
         status: form?.status,
@@ -91,7 +91,7 @@ export const handleSaveUser = async (userDetail, email, password, loginURL, setE
     setLoading(false);
     const errMsg = response?.message?.details || "";
     if (response.message?.code === "23505") {
-      if (errMsg?.includes("email") || errMsg?.includes("hash_code")) {
+      if (errMsg?.includes("email") || errMsg?.includes("hash_email")) {
         setEmailError("Email already exists!");
       } else if (errMsg?.includes("emp_code")) {
         setEmpCodeError("Employee Code already exists!");
@@ -126,7 +126,7 @@ const handleUpdateUser = async (userId, userDetail, setLoading, loadUsers, reset
     setLoading(false);
     const errMsg = response?.error?.details || "";
     if (response?.error?.code === "23505") {
-      if (errMsg?.includes("email") || errMsg?.includes("hash_code")) {
+      if (errMsg?.includes("email") || errMsg?.includes("hash_email")) {
         setEmailError("Email already exists!");
       } else if (errMsg?.includes("emp_code")) {
         setEmpCodeError("Employee Code already exists!");

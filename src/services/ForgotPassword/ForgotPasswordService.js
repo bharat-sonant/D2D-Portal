@@ -24,7 +24,7 @@ export const forgotPasswordService = async(email, setEmailError) => {
   const normalisedEmail = email?.toLowerCase().trim();
 
   const hashCode = common.generateHash(normalisedEmail);
-  const {data, error} = await supabase.from("Users").select('*').eq("hash_code", hashCode).maybeSingle();
+  const {data, error} = await supabase.from("Users").select('*').eq("hash_email", hashCode).maybeSingle();
   if (error || !data) {
     setEmailError("Email not registered !")
     return;
