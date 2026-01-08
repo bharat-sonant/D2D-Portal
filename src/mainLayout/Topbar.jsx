@@ -145,8 +145,10 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
             <div
               className={styles.logoText}
               onClick={() => setShowDefaultCity(true)}
+              title="Chnage City"
             >
               {titleToShow}
+              <img src={images.iconDown} className={styles.iconDown} title="Chnage City" alt="Icon" />
             </div>
           </div>
         </div>

@@ -43,6 +43,8 @@
   border-radius: 4px;
 }
 .logoText {
+  display: flex;
+  align-items: center;
   font-size: 13px;
   color: var(--darkBlack); /* fallback */
   font-family: var(--fontGraphikSemibold);
@@ -62,8 +64,14 @@
 
 .logoText:hover {
   opacity: 0.85;
-}
 
+}
+.iconDown {
+  width: 10px;
+  margin-left: 3px;
+  transform: rotate(-90deg);
+  transition: 0.4s ease;
+}
 .desktopMenu {
   display: flex;
   gap: 8px;
