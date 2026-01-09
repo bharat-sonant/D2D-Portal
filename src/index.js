@@ -8,6 +8,7 @@ import "../src/assets/css/style.css";
 import { CityProvider } from './context/CityContext';
 import { LoginProvider } from './context/LoginContext';
 import { ToastContainer } from 'react-toastify';
+import { PermissionProvider } from './context/PermissionContext';
 
 const AppWrapper = () => {
   const location = useLocation();
@@ -28,10 +29,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <BrowserRouter>
+   <PermissionProvider>
     <CityProvider>
       <LoginProvider>
         <AppWrapper />
       </LoginProvider>
     </CityProvider>
+    </PermissionProvider>
   </BrowserRouter>
 );

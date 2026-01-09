@@ -89,3 +89,38 @@ export const setUserDefaultCity=(userId,cityId)=>{
     }
   });
 }
+
+export const savePagesPermission=(permissionDetail)=>{
+   return new Promise(async(resolve,reject)=>{
+    if (!permissionDetail) {
+      return reject('Invalid parameters');
+    }
+    const result = await sbs.saveuserLoginHistory('UserPortalAccess',permissionDetail);
+    // console.log(result)
+    // if (result.success) {
+    //   return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
+    // } else {
+    //   return reject({status: 'error', message: result.error, error: result?.err});
+    // }
+  });
+}
+
+export const getUserPagesPermissions=async (userId)=>{
+
+   return new Promise(async(resolve,reject)=>{
+    if (!userId) {
+      return reject('Invalid parameters');
+    }
+    const response = await sbs.getDataByColumnName('UserPortalAccess','user_id',userId)
+    if (response.success) {
+         const mappedPermissions = {};
+        response.data.forEach((item) => {mappedPermissions[item.access_page] = item.access_control});
+      return resolve ({ status: 'success', message: 'Pages permission data fetched successfully.', mappedPermissions});
+    } else {
+      return reject({status: 'error', message: response.error, error: response?.err});
+    }
+  });
+     
+     
+
+}

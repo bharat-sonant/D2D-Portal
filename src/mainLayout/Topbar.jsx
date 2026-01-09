@@ -18,11 +18,12 @@ import { useCity } from "../context/CityContext";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigService";
 import LogoImage from "../components/Common/Image/LogoImage";
+import { usePermissions } from "../context/PermissionContext";
 
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
+   const {permissionGranted} = usePermissions();
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -150,7 +151,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
           {menuItems.map((item, index) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
-
             return (
               <Link
                 key={item.id}

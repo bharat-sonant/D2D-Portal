@@ -7,6 +7,7 @@ import LogoImage from '../Common/Image/LogoImage';
 import { FaSpinner } from "react-icons/fa";
 import ConfirmationModal from '../confirmationModal/ConfirmationModal';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import GlobalAlertModal from '../GlobalAlertModal/GlobalAlertModal';
 
 const CitySettings = ({
   openCanvas,
@@ -43,14 +44,12 @@ const CitySettings = ({
 
     try {
       const url = new URL(dbUrl);
-      // Strict check for firebaseio.com domain
-      const hostname = url.hostname;
-      if (!hostname.endsWith('firebaseio.com')) {
+      if (!url.hostname.endsWith('firebaseio.com')) {
         setError("Invalid URL. Must be a valid 'firebaseio.com' URL");
         return;
       }
     } catch (_) {
-      setError("Invalid URL format. Include 'https://'");
+      setError("Invalid URL format");
       return;
     }
 
@@ -174,18 +173,18 @@ const CitySettings = ({
         </div>
       </div>
 
-      {showConfirmModal && (
-        <ConfirmationModal
-          visible={showConfirmModal}
-          title="Update Firebase URL?"
-          message="Are you sure you want to change the Firebase Database Path?"
-          confirmText="Yes, Update"
-          cancelText="Cancel"
-          onConfirm={handleConfirmSave}
-          onCancel={() => setShowConfirmModal(false)}
-          btnColor="#f57c00"
-        />
-      )}
+      <GlobalAlertModal
+        show={showConfirmModal}
+        iconType='success'
+        title="Update Firebase URL?"
+        message={`Are you sure you want to change the Firebase Database Path ${dbUrl}`}
+        successText=""
+        buttonText="Yes, Update"
+        cancelText="Cancel"
+        onConfirm={handleConfirmSave}
+        onCancel={() => setShowConfirmModal(false)}
+        btnColor="#f57c00"
+      />
     </Offcanvas>
   );
 };
