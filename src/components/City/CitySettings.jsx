@@ -44,8 +44,8 @@ const CitySettings = ({
 
     try {
       const url = new URL(dbUrl);
-      if (!url.hostname.includes('firebaseio.com')) {
-        setError("Invalid URL. Must contain 'firebaseio.com'");
+      if (!url.hostname.endsWith('firebaseio.com')) {
+        setError("Invalid URL. Must be a valid 'firebaseio.com' URL");
         return;
       }
     } catch (_) {
