@@ -64,8 +64,7 @@ export const getWardTripCountFromFirebase = async(year, monthName, date, wardNam
 }
 
 export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
-  if(Number(cityId) !== 95) return { status: 'fail', data: [] };
-  if(!date || !wards.length) {
+    if(!date || !wards.length) {
     return { status: 'success', data: [] };
   }
 
