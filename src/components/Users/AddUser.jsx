@@ -1,15 +1,24 @@
-import { images } from "../../assets/css/imagePath";
 import styles from "../../assets/css/modal.module.css";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import * as common from "../../common/common";
-import { FaSpinner } from "react-icons/fa";
-import * as userAction from '../../Actions/UserAction/UserAction';
+import * as userAction from "../../Actions/UserAction/UserAction";
+import modalStyles from "../../assets/css/popup.module.css";
+import {
+  UserRoundPlus,
+  X,
+  UserRound,
+  Mail,
+  UserRoundCheck,
+  UserStar,
+  Shield,
+  Check,
+} from "lucide-react";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const AddUser = (props) => {
-  console.log(props)
+  console.log(props);
   const initialForm = {
-    // username: "",
     name: "",
     email: "",
     status: "active",
@@ -19,7 +28,6 @@ const AddUser = (props) => {
     emp_code: "",
   };
   const [form, setForm] = useState(initialForm);
-  // const [userNameError, setUserNameError] = useState("");
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [userTypeError, setUserTypeError] = useState("");
@@ -29,13 +37,13 @@ const AddUser = (props) => {
   useEffect(() => {
     if (props.onEdit && props.editData) {
       const decryptedEmail = common.decryptValue(props.editData.email);
-      setForm({...props?.editData,email: decryptedEmail});
+      setForm({ ...props?.editData, email: decryptedEmail });
     }
   }, [props?.onEdit, props?.editData]);
 
   if (!props.showCanvas) return null;
 
-  const handleChange = (e) => userAction.formValueChangeAction(e,setForm)
+  const handleChange = (e) => userAction.formValueChangeAction(e, setForm);
 
   const handleSave = async () => {
     userAction.validateUserDetail(
@@ -68,117 +76,207 @@ const AddUser = (props) => {
       handleSave();
     }
   };
-
+  const userTypes = [
+    { value: "internal", label: "Internal", color: "var(--themeColor)" },
+    { value: "external", label: "External", color: "var(--textDanger)" },
+  ];
   return (
-    <div className={styles.overlay} aria-modal="true" role="dialog">
-      <div className={styles.modal}>
-        <div className={styles.actionBtn}>
-          <p className={styles.headerText}>{props.onEdit ? 'Edit' : 'Add'} User</p>
+    <div className={modalStyles.overlay} aria-modal="true" role="dialog">
+      <div className={`${modalStyles.modal} ${styles.modal}`}>
+        {/* Header */}
+        <div className={modalStyles.modalHeader}>
+          <div className={modalStyles.headerLeft}>
+            <div className={modalStyles.iconWrapper}>
+              <UserRoundPlus className="map-icon" />
+            </div>
+            <div className={modalStyles.headerTextRight}>
+              <h2 className={modalStyles.modalTitle}>
+                {props.onEdit ? "Edit" : "Add New"} User
+              </h2>
+              <p className={modalStyles.modalSubtitle}>
+                {props.onEdit
+                  ? "Modify the existing user account information and permissions."
+                  : "Create a new user account with access permissions"}
+              </p>
+            </div>
+          </div>
           <button
-            className={styles.closeBtn}
+            className={modalStyles.closeBtn}
             onClick={() => {
               resetStateValues();
             }}
-            aria-label="Close"
           >
-            <img
-              src={images.iconClose}
-              className={styles.iconClose}
-              title="Close"
-              alt="close"
-            />
+            <X size={20} />
           </button>
         </div>
+        {/* Body */}
+        <div className={`${modalStyles.modalBody} ${styles.modalBody}`}>
+          {/* Name */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>
+              {/* <Lock size={16} /> */}
+              Name
+            </label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <UserRound size={18} />
+              </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                name="name"
+                placeholder="Enter name"
+                value={form.name}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            {nameError && <ErrorMessage message={nameError} />}
+          </div>
+          {/* Email */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>
+              {/* <Lock size={16} /> */}
+              Email
+            </label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <Mail size={18} />
+              </div>
+              <input
+                className={modalStyles.input}
+                type="email"
+                name="email"
+                placeholder="Enter email"
+                value={form.email}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            {emailError && <ErrorMessage message={emailError} />}
+          </div>
+          {/* User Type */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>User Type</label>
+            <div className={modalStyles.userTypeGrid}>
+              {userTypes.map((type, index) => (
+                <div
+                  key={type.value}
+                  className={`${modalStyles.userTypeCard} ${
+                    form?.user_type === type.value
+                      ? modalStyles.userTypeCardActive
+                      : ""
+                  }`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: "user_type", value: type.value },
+                    })
+                  }
+                >
+                  <div
+                    className={modalStyles.userTypeIcon}
+                    style={{
+                      background: `${type.color}20`,
+                      border:
+                        form?.user_type === type.value
+                          ? `2px solid ${type.color}`
+                          : "2px solid transparent",
+                    }}
+                  >
+                    <Shield size={20} style={{ color: type.color }} />
+                  </div>
 
-        <div className={styles.modalBody}>
-         
+                  <span className={modalStyles.userTypeLabel}>
+                    {type.label}
+                  </span>
 
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}> Name</div>
-              <div className={styles.textboxRight}>
+                  {form?.user_type === type.value && (
+                    <div
+                      className={modalStyles.checkMark}
+                      style={{ background: type.color }}
+                    >
+                      <Check size={12} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {userTypeError && <ErrorMessage message={userTypeError} />}
+          </div>
+          {/* Employee Code */}
+          {form?.user_type === "internal" && (
+            <div className={modalStyles.inputGroup}>
+              <label className={modalStyles.label}>
+                {/* <Lock size={16} /> */}
+                Employee Code
+              </label>
+              <div className={modalStyles.inputWrapper}>
+                <div className={modalStyles.inputIcon}>
+                  <UserRoundCheck size={18} />
+                </div>
                 <input
+                  className={modalStyles.input}
                   type="text"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter name"
-                  name="name"
-                  value={form.name}
+                  name="emp_code"
+                  placeholder="Enter emp Code"
+                  value={form?.emp_code || ""}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
                 />
               </div>
+              {empCodeError && <ErrorMessage message={empCodeError} />}
             </div>
-            {nameError && (
-              <div className={`${styles.invalidfeedback}`}>{nameError}</div>
-            )}
-          </div>
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>Email</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
+          )}
+          {/* <div className={styles.textboxGroup}>
+                <select
                   className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter email"
-                  name="email"
-                  value={form.email}
+                  name="user_type"
+                  value={form?.user_type}
                   onChange={handleChange}
                   onKeyDown={handleKeyDown}
-                />
-              </div>
-            </div>
-            {emailError && (
-              <div className={`${styles.invalidfeedback}`}>{emailError}</div>
-            )}
-          </div>
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>User Type</div>
-              <div className={styles.textboxRight}>
-                <select  className={`form-control ${styles.formTextbox}`} name="user_type" value={form?.user_type} onChange={handleChange}  onKeyDown={handleKeyDown}>
-                  <option value="" hidden>Please select user type</option>
+                >
+                  <option value="" hidden>
+                    Please select user type
+                  </option>
                   <option value="internal">Internal</option>
                   <option value="external">External</option>
                 </select>
-              </div>
-            </div>
-            {userTypeError && (
-              <div className={`${styles.invalidfeedback}`}>{userTypeError}</div>
-            )}
-          </div>
-          {form?.user_type ==='internal' && (<div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>Emp Code</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  name="emp_code"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter emp Code"
-                  value={form?.emp_code || ''}
-                  onChange={handleChange}
-                  onKeyDown={handleKeyDown}
-                />
-              </div>
-            </div>
-            {empCodeError && (
-              <div className={`${styles.invalidfeedback}`}>{empCodeError}</div>
-            )}
-          </div>)}
+          </div> */}
+        </div>
+
+        {/* Footer */}
+        <div className={modalStyles.modalFooter}>
+          <button
+            className={modalStyles.cancelBtn}
+            onClick={() => {
+              resetStateValues();
+            }}
+          >
+            Cancel
+          </button>
           <button
             type="button"
-            className={`mt-3 ${styles.btnSave}`}
+            className={modalStyles.submitBtn}
             onClick={handleSave}
           >
             {loading ? (
-              <div className={styles.Loginloadercontainer}>
-                <FaSpinner className={styles.spinnerLogin} />
-                <span className={styles.loaderText}>Please wait...</span>
+              <div className={``}>
+                <div
+                  className="spinner-border"
+                  style={{ height: "18px", width: "18px", borderWidth: "2px" }}
+                ></div>
               </div>
             ) : props.onEdit ? (
               "Update"
             ) : (
-              "Save"
+              <>
+                <div className={`d-flex align-item-center gap-1`}>
+                  <UserRoundPlus size={18} />
+                  <span>Add User</span>
+                </div>
+              </>
             )}
           </button>
         </div>

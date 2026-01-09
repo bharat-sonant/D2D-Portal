@@ -54,7 +54,9 @@
   box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
   animation: modalPulse 2s ease-in-out infinite;
 }
-
+.headerTextRight{
+  width: calc(100% - 65px);
+}
 .modalTitle {
   font-size: 18px;
   font-family: var(--fontGraphikSemibold);
@@ -256,6 +258,81 @@
   transition: width 0.3s ease;
   font-size: 13px;
   font-family: var(--fontGraphik);
+}
+/* ================= User Type ================= */
+.userTypeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.userTypeCard {
+  position: relative;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: addUserCardPop 0.5s ease backwards;
+}
+
+.userTypeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.userTypeCardActive {
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.userTypeIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.userTypeLabel {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
+  flex: 1;
+}
+
+.checkMark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  padding: 2px;
+  animation: addUserCardPop 0.3s ease;
+}
+
+@keyframes addUserCardPop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ================= FOOTER ================= */

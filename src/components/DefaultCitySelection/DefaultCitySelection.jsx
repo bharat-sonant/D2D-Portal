@@ -65,7 +65,7 @@ const DefaultCitySelection = ({ onClose }) => {
               <div className={modalStyles.iconWrapper}>
                 <MapPin className="map-icon" />
               </div>
-              <div>
+              <div className={modalStyles.headerTextRight}>
                 <h2 className={modalStyles.modalTitle}>
                   {defaultCityExist ? "Select City" : "Set your default city"}
                 </h2>

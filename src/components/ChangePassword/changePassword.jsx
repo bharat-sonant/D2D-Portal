@@ -347,7 +347,6 @@ const ChangePassword = ({
                   className="spinner-border"
                   style={{ height: "18px", width: "18px", borderWidth: "2px" }}
                 ></div>
-                {/* <span className={styles.loaderText}>Please wait...</span> */}
               </span>
             ) : (
               <span
