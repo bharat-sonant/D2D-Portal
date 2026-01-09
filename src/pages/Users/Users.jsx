@@ -12,6 +12,7 @@ import Calendar from "../../components/Users/calendar";
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [onEdit, setOnEdit] = useState(false);
@@ -44,6 +45,7 @@ const User = () => {
 
   const openConfirm = () => {
     setConfirmUser(true);
+    setShowModal(true);
   };
 
   const handleStatusToggle = async (user) => {
@@ -176,7 +178,10 @@ const User = () => {
 
       {confirmUser && (
         <UserStatusDialog
+          showModal={showModal}
+          setShowModal={setShowModal}
           name={selectedUser.name}
+          confirmUser={confirmUser}
           setConfirmUser={setConfirmUser}
           handleStatusToggle={handleStatusToggle}
           selectedUser={selectedUser}
