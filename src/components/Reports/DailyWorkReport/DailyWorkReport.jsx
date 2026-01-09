@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import noData from "../../../assets/images/icons/noData.gif";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
@@ -43,6 +43,13 @@ const DailyWorkReport = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  const reportByWardId = useMemo(() => {
+    return reportData?.reduce((acc, row) => {
+      acc[String(row.ward_id)] = row;
+      return acc;
+    },{})
+  },[reportData])
+
   //calculating working hours on base of duty on and duty off time
   const calculateWorkingHours = (dutyOn, dutyOff) => {
     if(!dutyOn || !dutyOff) return null;
@@ -64,10 +71,12 @@ const DailyWorkReport = () => {
 
   return `${hours}h ${minutes}m`;
   }
-  
+  console.log('report data',reportData)
+  console.log('wards',wards)
+
 //without changing case -> for vehicle names
 const renderMultiLine = (value) => {
-  if (!value) return "N/A";
+  if (!value) return "-";
 
   const uniqueMap = new Map();
 
@@ -89,7 +98,7 @@ const renderMultiLine = (value) => {
 
 //changing case for driver halper names
 const renderMultiLineName = (value) => {
-  if (!value) return "N/A";
+  if (!value) return "-";
 
   const uniqueMap = new Map();
 
@@ -253,52 +262,54 @@ const renderMultiLineName = (value) => {
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
-            ) : reportData?.length > 0 ? (
-              reportData?.map((row, index) => (
-                <tr key={index}>
-                  <td className={style.th1}>{row.ward}</td>
+            ) : wards?.length > 0 ? (
+              wards?.map((ward) => {
+                const row = reportByWardId[String(ward.ward_id)];
+                return(
+                <tr key={ward.ward_id}>
+                  <td className={style.th1}>{ward.ward_display_name}</td>
                   <td className={`${style.th2}`}>
-                    {row.duty_on_time || "N/A"}
+                    {row?.duty_on_time || "-"}
                   </td>
-                  <td className={style.th3}>{row.ward_reach_time || "N/A"}</td>
+                  <td className={style.th3}>{row?.ward_reach_time || "-"}</td>
                   <td className={`${style.th4}`}>
-                    {row.duty_off_time || "N/A"}
+                    {row?.duty_off_time || "-"}
                   </td>
                    <td className={`${style.th4} ${style.borderRight}`}>
                     {calculateWorkingHours(
-                      row.duty_on_time,
-                      row.duty_off_time
+                      row?.duty_on_time,
+                      row?.duty_off_time
                     ) || "-"}
                   </td>
                   <td className={`${style.th5}`}>
                     <span 
                     // className={` ${style.vehicleNumber}`}
                     >
-                      {renderMultiLine(row.vehicle) || "N/A"}
+                      {renderMultiLine(row?.vehicle) || "-"}
                     </span>
                   </td>
                   <td className={style.th6}>
                     <span className={`${style.driverName}`}>
                       {" "}
                       {/* {row.driver_name || "N/A"} */}
-                      {renderMultiLineName(row.driver_name)}
+                      {renderMultiLineName(row?.driver_name)}
                     </span>
                   </td>
                   <td className={style.th7}>
                     <span className={`${style.helperName}`}>
                       {/* {row.helper_name || "N/A"} */}
-                      {renderMultiLineName(row.helper_name)}
+                      {renderMultiLineName(row?.helper_name)}
                     </span>
                   </td>
                   <td className={style.th8}>
                     <span className={`${style.helperName}`}>
                       {/* {row.second_helper_name || "N/A"} */}
-                      {renderMultiLineName(row.second_helper_name)}
+                      {renderMultiLineName(row?.second_helper_name)}
                     </span>
                   </td>
                    <td className={`text-center ${style.th4}`}>
                     <span className={style.tripBG }>
-                    {row.trip_count ?? 0}
+                    {row?.trip_count ?? 0}
                     </span>
                   </td>
 
@@ -318,7 +329,8 @@ const renderMultiLineName = (value) => {
                   </div>
                 </td> */}
                 </tr>
-              ))
+              )
+})
             ) : (
               <tr>
                 <td colSpan={9} className={style.noData}>

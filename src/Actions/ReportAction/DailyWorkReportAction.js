@@ -6,11 +6,12 @@ export const getDailyWorkReportAction = async(date, wards, setReportData, setLoa
 
   try{
     let response = await getDailyWorkReport(date, cityId);
+    console.log('supabase',response)
 
     if(response.status === 'success' && response.data.length === 0 && wards?.length > 0){
       
       response = await DailyWorkReportDataFromFirebase(date,wards,cityId)
-
+      console.log('firebase',response)
       if(response.status === 'success' && response.data.length > 0){
         saveDailyWorkReportToSupabase(date, response.data)
       }
@@ -76,7 +77,11 @@ export const getWardDataAction = async(cityId, setWards) => {
     const result = await getWardData(cityId);
 
     if(result.status === "success"){
-      const wardNames = result?.data.map((ward)=> ward.name);
+      const wardNames = result?.data.map((ward)=> ({
+        wardName: ward.name,
+        ward_display_name: ward.display_name, 
+        ward_id: ward.id
+      }));
       setWards(wardNames)
     }
   }catch(error){

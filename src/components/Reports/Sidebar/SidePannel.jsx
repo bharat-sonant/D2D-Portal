@@ -8,7 +8,7 @@ const SidePannel = ({ selectedReport, setSelectedReport }) => {
   return (
     <div className={style.menuList}>
       {menuItems.map((item, index) => (
-        <>
+        
           <div
             key={index}
             className={`${style.menuItem} `}
@@ -24,7 +24,7 @@ const SidePannel = ({ selectedReport, setSelectedReport }) => {
 
             {item}
           </div>
-        </>
+
       ))}
     </div>
   );

@@ -64,6 +64,7 @@ export const getWardTripCountFromFirebase = async(year, monthName, date, wardNam
 }
 
 export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
+  console.log('wards',wards)
   if(Number(cityId) !== 95) return { status: 'fail', data: [] };
   if(!date || !wards.length) {
     return { status: 'success', data: [] };
@@ -72,15 +73,15 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
   const [year, monthNum] = date.split('-');
   const monthName = MONTH_NAMES[Number(monthNum) - 1];
 
-  const requests = wards.map(async(wardName)=>{
+  const requests = wards.map(async(ward)=>{
     try{
-    const summaryURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
-    const workerURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
+    const summaryURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
+    const workerURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
 
     const [summaryResp, workerResp, tripCount] = await Promise.all([
       axios.get(summaryURL),
       axios.get(workerURL),
-      getWardTripCountFromFirebase(year, monthName, date, wardName)
+      getWardTripCountFromFirebase(year, monthName, date, ward.wardName)
     ]);
 
     const summary = summaryResp?.data;
@@ -89,7 +90,9 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
     if (!summary && !workerDetails && tripCount === 0) return null;
 
     return {
-      ward: wardName || null,
+      ward_id: ward.ward_id || null,
+      wardName: ward.wardName || null,
+      ward_display_name: ward.ward_display_name || null,
       duty_on_time: normalizeTime(summary?.dutyInTime, "first") || null,
       duty_off_time: normalizeTime(summary.dutyOutTime, "last") || null,
       ward_reach_time: normalizeTime(summary.wardReachedOn, "first") || null,
@@ -104,7 +107,7 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
       second_helper_name: workerDetails?.secondHelperName ?? null,
     };
   }catch(err){
-    console.error(`Firebase error for ward ${wardName}`, err);
+    console.error(`Firebase error for ward ${ward.wardName}`, err);
     return null;
   }
 })
@@ -122,7 +125,6 @@ export const getWardData = async(cityId) => {
   if(!result.success){
     return {status : 'error', message : result?.error}
   }
-
   return{
     status : 'success',
     message : 'Ward list fetched successfully',
@@ -136,7 +138,7 @@ export const saveDailyWorkReportToSupabase = async(date, data) => {
   for (const row of data) {
     const payload = {
       date,
-      ward: row.ward,
+      ward_id: row.ward_id,
       duty_on_time: row.duty_on_time ?? null,
       ward_reach_time: row.ward_reach_time ?? null,
       duty_off_time: row.duty_off_time ?? null,
