@@ -16,7 +16,7 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
         isValid = false;
     }
     if (!logo && !props?.onEdit && !props?.onEdit?.logo_image) {
-        setLogoError("Logo is required");
+        setLogoError("City logo is required");
         isValid = false;
     }
     if (isValid) {

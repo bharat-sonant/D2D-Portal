@@ -68,7 +68,7 @@ const AddCity = (props) => {
       return;
     }
     if (file.size > maxSize) {
-      setLogoError(`Image is too large. Max size is ${file.type === "image/svg+xml" ? "50KB" : "500KB"}.`);
+      setLogoError(`The image is too large. Please choose a smaller image. ${file.type === "image/svg+xml" ? "50KB" : "500KB"}.`);
       return;
     }
 
