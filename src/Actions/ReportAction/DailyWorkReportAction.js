@@ -1,3 +1,4 @@
+import { supabase } from "../../createClient";
 import { DailyWorkReportDataFromFirebase, getDailyWorkReport, getWardData, saveDailyWorkReportToSupabase } from "../../services/ReportServices/DailyWorkReportService"
 
 export const getDailyWorkReportAction = async(date, wards, setReportData, setLoading, cityId) => {

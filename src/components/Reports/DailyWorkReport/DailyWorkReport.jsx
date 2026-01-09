@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { FaFileExcel } from "react-icons/fa";
-import { ArrowDownUp, ArrowDown, ArrowUp } from "lucide-react";
 import noData from "../../../assets/images/icons/noData.gif";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
 import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
@@ -44,6 +42,28 @@ const DailyWorkReport = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const calculateWorkingHours = (dutyOn, dutyOff) => {
+    if(!dutyOn || !dutyOff) return null;
+
+    const toMinutes = (time) => {
+      const parts = time.split(":").map(Number);
+      const [hh, mm, ss = 0] = parts;
+      return hh * 60 + mm + ss / 60;
+    }
+    const start = toMinutes(dutyOn);
+    const end = toMinutes(dutyOff);
+
+    if (isNaN(start) || isNaN(end) || end < start) return null;
+
+  const diffMinutes = end - start;
+
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = Math.round(diffMinutes % 60);
+
+  return `${hours}h ${minutes}m`;
+  }
+
 
   // ----------------------------
   // SORT FUNCTIONS
@@ -134,7 +154,7 @@ const DailyWorkReport = () => {
             <tr>
               <th
                 className={`text-start ${style.parentHeader} `}
-                style={{ width: "15%" }}
+                style={{ width: "10%" }}
               >
                 #
               </th>
@@ -145,9 +165,15 @@ const DailyWorkReport = () => {
               >
                 Timing Details
               </th>
+               <th
+                className={`text-start ${style.parentHeader} `}
+                style={{ width: "10%" }}
+              >
+                
+              </th>
               <th
                 className={style.parentHeader}
-                style={{ width: "55%" }}
+                style={{ width: "50%" }}
                 colSpan={4}
               >
                 Person / Vehicle Details
@@ -159,6 +185,12 @@ const DailyWorkReport = () => {
               <th className={style.th3}>Ward Reach Time</th>
               <th className={`${style.th4} ${style.borderRight}`}>
                 Duty Off Time
+              </th>
+              <th className={`${style.th3}`}>
+                Trip Count
+              </th>
+              <th className={`${style.th4} ${style.borderRight}`}>
+                Working Hrs
               </th>
               <th className={style.th5}>Vehicle</th>
               <th className={style.th6}>Driver</th>
@@ -183,6 +215,15 @@ const DailyWorkReport = () => {
                   <td className={style.th3}>{row.ward_reach_time || "N/A"}</td>
                   <td className={`${style.th4} ${style.borderRight}`}>
                     {row.duty_off_time || "N/A"}
+                  </td>
+                   <td className={`${style.th4}`}>
+                    {row.trip_count ?? "-"}
+                  </td>
+                   <td className={`${style.th4} ${style.borderRight}`}>
+                    {calculateWorkingHours(
+                      row.duty_on_time,
+                      row.duty_off_time
+                    ) || "-"}
                   </td>
                   <td className={`${style.th5}`}>
                     <span className={` ${style.vehicleNumber}`}>

@@ -446,9 +446,9 @@
 .sortDownIcon {
   color: var(--textSuccess);
 }
-@media (max-width: 1500px) {
+@media (max-width: 1600px) {
   .table {
-    width: 1500px;
+    width: 1600px;
   }
 }
 @media (max-width: 767.98px) {

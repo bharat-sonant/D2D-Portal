@@ -46,6 +46,23 @@ export const getDailyWorkReport = async(date, cityId) => {
   }
 }
 
+export const getWardTripCountFromFirebase = async(year, monthName, date, wardName) => {
+  try{
+    const url = `https://reengus.firebaseio.com/WardTrips/${year}/${monthName}/${date}/${wardName}.json?alt=media`;
+
+    const resp = await axios.get(url);
+    const data = resp?.data;
+
+    if (!data || typeof data !== "object") {
+      return 0;
+    }
+
+    return data.filter(Boolean).length;
+  }catch(erroe){
+    return 0;
+  }
+}
+
 export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
   if(Number(cityId) !== 95) return { status: 'fail', data: [] };
   if(!date || !wards.length) {
@@ -57,23 +74,19 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
 
   const requests = wards.map(async(wardName)=>{
     try{
-      console.log('hi')
     const summaryURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
     const workerURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
-    console.log('url',summaryURL, workerURL)
 
-    const [summaryResp, workerResp] = await Promise.all([
+    const [summaryResp, workerResp, tripCount] = await Promise.all([
       axios.get(summaryURL),
-      axios.get(workerURL)
+      axios.get(workerURL),
+      getWardTripCountFromFirebase(year, monthName, date, wardName)
     ]);
-    console.log('summaryResp',summaryResp)
 
     const summary = summaryResp?.data;
     const workerDetails = workerResp?.data;
 
-    if (!summary && !workerDetails) return null;
-    console.log('summary',summary)
-    console.log('workerdetails',workerDetails)
+    if (!summary && !workerDetails && tripCount === 0) return null;
 
     return {
       ward: wardName || null,
@@ -81,6 +94,7 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
       duty_off_time: normalizeTime(summary.dutyOutTime, "last") || null,
       ward_reach_time: normalizeTime(summary.wardReachedOn, "first") || null,
       cityId,
+      trip_count: tripCount,
       vehicle: workerDetails?.vehicle ?? null,
       driver_id: workerDetails?.driver ?? null,
       driver_name: workerDetails?.driverName ?? null,
@@ -133,7 +147,8 @@ export const saveDailyWorkReportToSupabase = async(date, data) => {
       helper_id: row.helper_id ?? null,
       helper_name: row.helper_name ?? null,
       second_helper_id: row.second_helper_id ?? null,
-      second_helper_name: row.second_helper_name ?? null
+      second_helper_name: row.second_helper_name ?? null,
+      trip_count: row.trip_count ?? null
     };
 
     // background upsert
