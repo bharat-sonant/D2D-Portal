@@ -181,10 +181,10 @@ const DailyWorkReport = () => {
             </tr>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Ward</th>
-              <th className={style.th2}>Duty On Time</th>
-              <th className={style.th3}>Ward Reach Time</th>
+              <th className={style.th2}>Duty On </th>
+              <th className={style.th3}>Ward Reach </th>
               <th className={`${style.th4} ${style.borderRight}`}>
-                Duty Off Time
+                Duty Off 
               </th>
               <th className={`${style.th3}`}>
                 Trip Count
