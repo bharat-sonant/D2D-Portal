@@ -210,6 +210,7 @@ const City = () => {
             setOnEdit={setOnEdit}
             selectedCity={selectedCity}
             setWardList={setWardList}
+            wardList={wardList}
           />
         )}
       </div>

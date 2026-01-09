@@ -3,11 +3,11 @@ import * as common from "../../common/common";
 import * as cityService from "../../services/CityService/cityServices"
 
 
-export const saveCityAction = async(form,logo,props,setLoading,setCityError,setCityCodeError,resetStateValues,setLogoError) => {
+export const saveCityAction = async (form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError) => {
     let isValid = true;
     setCityError("");
     setCityCodeError("");
-    if(!form?.city_code?.trim()){
+    if (!form?.city_code?.trim()) {
         setCityCodeError("City code is required");
         isValid = false;
     }
@@ -23,21 +23,21 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
         setLoading(true);
         let loggedUserName = localStorage.getItem("name");
         let cityDetail = {
-              city_code:form?.city_code?.trim(),
-              city_name: form?.city_name?.trim(),
-              status: form?.status, 
-              created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"), 
-              created_by: loggedUserName 
+            city_code: form?.city_code?.trim(),
+            city_name: form?.city_name?.trim(),
+            status: form?.status,
+            created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+            created_by: loggedUserName
         }
-       
+
         try {
-            await cityService.saveCityData(cityDetail,logo,props?.onEdit?.city_id);
+            await cityService.saveCityData(cityDetail, logo, props?.onEdit?.city_id);
             resetStateValues();
             props.loadCities();
-            common.setAlertMessage("success", !props?.onEdit?"City added successfully": "City updated successfully");
+            common.setAlertMessage("success", !props?.onEdit ? "City added successfully" : "City updated successfully");
         } catch (err) {
             setLoading(false);
-                  if (err?.code === "23505") {
+            if (err?.code === "23505") {
                 if (err?.details?.includes("city_code")) {
                     setCityCodeError("City code already exists!");
                     return;
@@ -45,8 +45,8 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
                 if (err?.details?.includes("city_name")) {
                     setCityError("City name already exists!");
                     return;
-                } 
-                 else {
+                }
+                else {
                     common.setAlertMessage("error", "Duplicate value exists!");
                 }
             } else {
@@ -56,47 +56,47 @@ export const saveCityAction = async(form,logo,props,setLoading,setCityError,setC
     }
 }
 
-export const getCityList=async (setSelectedCity,setCityList,selectedCity,setWardList,setLoading)=>{
+export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading) => {
     setLoading(true)
-      const response = await cityService.getCityData();
-       if(response.status==='success'){
-        let currentSelected = response.data?.find(item=>item?.city_id===selectedCity?.city_id);
-           setSelectedCity(currentSelected || response.data[0]);
-           getwardList(response.data[0]?.city_id,setWardList)
-           setCityList(response.data);
-           setLoading(false)
-       }else{
+    const response = await cityService.getCityData();
+    if (response.status === 'success') {
+        let currentSelected = response.data?.find(item => item?.city_id === selectedCity?.city_id);
+        setSelectedCity(currentSelected || response.data[0]);
+        getwardList(response.data[0]?.city_id, setWardList)
+        setCityList(response.data);
+        setLoading(false)
+    } else {
         setSelectedCity(null)
-       setCityList([]);
-       setLoading(false)
+        setCityList([]);
+        setLoading(false)
+    }
 }
-       }
-      
-export const changeCityStatusAction=async(newStatus,selectedCity,setToggle,loadCities,setStatusConfirmation)=>{
-    
+
+export const changeCityStatusAction = async (newStatus, selectedCity, setToggle, loadCities, setStatusConfirmation) => {
+
     if (!selectedCity) return;
-    try{
-        
-        await cityService.updateCityStatus(selectedCity?.city_id,newStatus);
+    try {
+
+        await cityService.updateCityStatus(selectedCity?.city_id, newStatus);
         setToggle(newStatus);
-        setStatusConfirmation({status:false,data:null,setToggle:()=>{}})
+        setStatusConfirmation({ status: false, data: null, setToggle: () => { } })
         loadCities()
-        common.setAlertMessage("success", `City status ${newStatus?'active':'inactive'} successfully.`);
+        common.setAlertMessage("success", `City status ${newStatus ? 'active' : 'inactive'} successfully.`);
     }
-    catch(error){
+    catch (error) {
         console.error(error);
-        common.setAlertMessage("error",error);
+        common.setAlertMessage("error", error);
     }
 }
-export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)=>{
+export const filterCityAction = (cityList, searchTerm, setSelectedCity, selectedCity) => {
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
-        let currentSelected = cityList?.find(item=>item?.city_id===selectedCity?.city_id);
+        let currentSelected = cityList?.find(item => item?.city_id === selectedCity?.city_id);
         setSelectedCity(currentSelected || cityList[0] || null);
         return cityList;
     }
     let list = cityList?.filter((item) => item?.city_name?.trim().toLowerCase().includes(term));
-    let currentSelected = list?.find(item=>item?.city_id===selectedCity?.city_id);
+    let currentSelected = list?.find(item => item?.city_id === selectedCity?.city_id);
 
     setSelectedCity(currentSelected || list[0] || null);
 
@@ -105,43 +105,78 @@ export const filterCityAction=(cityList,searchTerm,setSelectedCity,selectedCity)
 
 
 
-export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberError,resetStateValues,setWardList) => {
+export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNumberError, resetStateValues, setWardList, setDisplayNameError, wardList) => {
     let isValid = true;
     setWardNumberError("");
-    if(!form?.Ward?.trim()){
+    setDisplayNameError(""); // Reset display name error
+
+    if (!form?.Ward?.trim()) {
         setWardNumberError("Ward name is required");
         isValid = false;
     }
+    if (!form?.display_name?.trim()) {
+        setDisplayNameError("Display name is required");
+        isValid = false;
+    }
+
+    // Client-side Duplicate Validation
+    if (isValid && wardList && wardList.length > 0) {
+        const lowerWardName = form.Ward.trim().toLowerCase();
+        const lowerDisplayName = form.display_name.trim().toLowerCase();
+
+        const duplicateName = wardList.find(w =>
+            w.name?.toLowerCase() === lowerWardName &&
+            w.id !== wardId // Exclude current ward if editing
+        );
+
+        if (duplicateName) {
+            setWardNumberError("Ward name already exists!");
+            isValid = false;
+        }
+
+        if (isValid) { // distinct check to show one error at a time or both
+            const duplicateDisplayName = wardList.find(w =>
+                w.display_name?.toLowerCase() === lowerDisplayName &&
+                w.id !== wardId
+            );
+            if (duplicateDisplayName) {
+                setDisplayNameError("Display name already exists!");
+                isValid = false;
+            }
+        }
+    }
+
     if (isValid) {
         setLoading(true);
         let wardDetail = {
-              name:form?.Ward?.trim(),
-              city_Id:cityId,
-              created_At: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-              created_By: localStorage.getItem('name'),
-              ...( !wardId && { show_realtime: 'Yes' } )
+            name: form?.Ward?.trim(),
+            display_name: form?.display_name?.trim(),
+            city_Id: cityId,
+            created_At: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+            created_By: localStorage.getItem('name'),
+            ...(!wardId && { show_realtime: 'Yes' })
         }
-       
+
         try {
-           let response =  await cityService.saveCityWiseWardData(wardDetail,wardId)
-            if(response.duplicatefound){
-            setWardNumberError(response.msg);
-             setLoading(false);
-            return;
+            let response = await cityService.saveCityWiseWardData(wardDetail, wardId)
+            if (response.duplicatefound) {
+                setWardNumberError(response.msg); // Or handle specifically if duplication is on display_name? Assuming generic dup check msg
+                setLoading(false);
+                return;
             }
-              getwardList(cityId,setWardList)
+            getwardList(cityId, setWardList)
             resetStateValues();
-            const message = wardId? "Ward updated successfully": "Ward added successfully";
+            const message = wardId ? "Ward updated successfully" : "Ward added successfully";
             common.setAlertMessage("success", message);
-          
+
         } catch (err) {
             setLoading(false);
-                  if (err?.code === "23505") {
+            if (err?.code === "23505") {
                 if (err?.details?.includes("CityCode")) {
-                    setWardNumberError("City code already exists!");
+                    setWardNumberError("City code already exists!"); // Keep existing legacy check if applicable
                     return;
                 }
-                 else {
+                else {
                     common.setAlertMessage("error", "Duplicate value exists!");
                 }
             } else {
@@ -152,32 +187,32 @@ export const saveWardAction = async(form,cityId,wardId,setLoading,setWardNumberE
 }
 
 
-export const getwardList=async (city_Id,setWardList)=>{
-   let response= await cityService.getCityWisewardList(city_Id)
-   if(response.status==='success'){
-    let wardData =  sortWardsByRealtimeStatus(response.data)
-    setWardList(wardData)
-   }else{
-    setWardList([])
-   }
+export const getwardList = async (city_Id, setWardList) => {
+    let response = await cityService.getCityWisewardList(city_Id)
+    if (response.status === 'success') {
+        let wardData = sortWardsByRealtimeStatus(response.data)
+        setWardList(wardData)
+    } else {
+        setWardList([])
+    }
 }
 
-export const updateWardRealTimeStatusAction=async (wardId,realTimeStatus,setWardList)=>{
-    let newStatus = {show_realtime:realTimeStatus==='Yes'?'No':'Yes'}
-   let response = await cityService.updateWardRealTimeStatus(wardId,newStatus)
-   if(response.status==='success'){
-    setWardList(prevList => prevList.map(ward => ward.id === wardId ? { ...ward, show_realtime: newStatus.show_realtime}: ward));
-     common.setAlertMessage("success", "Ward status updated successfully");
-   }
+export const updateWardRealTimeStatusAction = async (wardId, realTimeStatus, setWardList) => {
+    let newStatus = { show_realtime: realTimeStatus === 'Yes' ? 'No' : 'Yes' }
+    let response = await cityService.updateWardRealTimeStatus(wardId, newStatus)
+    if (response.status === 'success') {
+        setWardList(prevList => prevList.map(ward => ward.id === wardId ? { ...ward, show_realtime: newStatus.show_realtime } : ward));
+        common.setAlertMessage("success", "Ward status updated successfully");
+    }
 }
 
 export const sortWardsByRealtimeStatus = (wardList = []) => {
-  if (!Array.isArray(wardList)) return [];
-  const nameSorted = [...wardList].sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-  );
-  return [
-    ...nameSorted.filter(w => w.show_realtime === 'Yes'),
-    ...nameSorted.filter(w => w.show_realtime !== 'Yes')
-  ];
+    if (!Array.isArray(wardList)) return [];
+    const nameSorted = [...wardList].sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+    );
+    return [
+        ...nameSorted.filter(w => w.show_realtime === 'Yes'),
+        ...nameSorted.filter(w => w.show_realtime !== 'Yes')
+    ];
 };
