@@ -16,8 +16,7 @@ export const getDailyWorkReportAction = async(date, wards, setReportData, setLoa
     }
 
     if(response.status === 'success' && response.data.length > 0){
-      const sortedData = sortWards(response?.data, 'ward')
-      setReportData(sortedData)
+      setReportData(response?.data)
     }else{
       setReportData([]);
     }
@@ -80,7 +79,8 @@ export const getWardDataAction = async(cityId, setWards) => {
         ward_display_name: ward.display_name, 
         ward_id: ward.id
       }));
-      setWards(wardNames)
+      const sortedData = sortWards(wardNames, 'ward_display_name')
+      setWards(sortedData)
     }
   }catch(error){
     setWards([]);
