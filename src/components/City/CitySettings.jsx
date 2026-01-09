@@ -5,8 +5,8 @@ import { Edit2, Flame, Save } from 'lucide-react';
 import { images } from '../../assets/css/imagePath';
 import LogoImage from '../Common/Image/LogoImage';
 import { FaSpinner } from "react-icons/fa";
+import ConfirmationModal from '../confirmationModal/ConfirmationModal';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
-import * as common from "../../common/common";
 
 const CitySettings = ({
   openCanvas,
@@ -20,6 +20,7 @@ const CitySettings = ({
   const [dbUrl, setDbUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     if (selectedCity?.firebase_db_path) {
@@ -35,23 +36,35 @@ const CitySettings = ({
 
   const handleSave = () => {
     // Validation
-    if (!dbUrl) {
+    if (!dbUrl?.trim()) {
       setError("Database URL is required");
       return;
     }
 
     try {
       const url = new URL(dbUrl);
-      if (!url.hostname.includes('firebaseio.com')) {
-        setError("Invalid URL. Must contain 'firebaseio.com'");
+      // Strict check for firebaseio.com domain
+      const hostname = url.hostname;
+      if (!hostname.endsWith('firebaseio.com')) {
+        setError("Invalid URL. Must be a valid 'firebaseio.com' URL");
         return;
       }
     } catch (_) {
-      setError("Invalid URL format");
+      setError("Invalid URL format. Include 'https://'");
       return;
     }
 
-    // Save simple string
+    // Check if updating existing URL
+    if (selectedCity?.firebase_db_path) {
+      setShowConfirmModal(true);
+    } else {
+      // First time save - direct
+      onSaveFirebaseConfig(dbUrl, setLoading);
+    }
+  };
+
+  const handleConfirmSave = () => {
+    setShowConfirmModal(false);
     onSaveFirebaseConfig(dbUrl, setLoading);
   };
 
@@ -150,14 +163,29 @@ const CitySettings = ({
                   {loading ? <FaSpinner className="fa-spin" /> : <Save size={18} />}
                 </button>
               </div>
+              {error && (
+                <div style={{ width: '100%' }}>
+                  <ErrorMessage message={error} />
+                </div>
+              )}
             </div>
-            {error && (
-              <ErrorMessage message={error} />
-            )}
           </div>
 
         </div>
       </div>
+
+      {showConfirmModal && (
+        <ConfirmationModal
+          visible={showConfirmModal}
+          title="Update Firebase URL?"
+          message="Are you sure you want to change the Firebase Database Path?"
+          confirmText="Yes, Update"
+          cancelText="Cancel"
+          onConfirm={handleConfirmSave}
+          onCancel={() => setShowConfirmModal(false)}
+          btnColor="#f57c00"
+        />
+      )}
     </Offcanvas>
   );
 };
