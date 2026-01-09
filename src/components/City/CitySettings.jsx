@@ -117,32 +117,39 @@ const CitySettings = ({
 
           {/* 🔥 New Column : Firebase Connectivity */}
           <div className={style.taskControlCard}>
-            <div className={style.controlRow} style={{ alignItems: 'center', gap: '10px' }}>
-              <Flame size={20} className={style.icon} style={{ color: '#f57c00' }} />
+            <div className={style.controlRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
 
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '4px', color: '#555' }}>Firebase Database Path</label>
+              {/* Header: Icon + Label */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <Flame size={18} className={style.icon} style={{ color: '#f57c00' }} />
+                <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#555', margin: 0 }}>
+                  Firebase Database Path
+                </label>
+              </div>
+
+              {/* Body: Input + Button */}
+              <div style={{ display: 'flex', gap: '10px', width: '100%', alignItems: 'center' }}>
                 <input
                   type="text"
                   value={dbUrl}
                   onChange={(e) => {
                     setDbUrl(e.target.value);
-                    if (error) setError(false); 
+                    if (error) setError(false);
                   }}
                   placeholder="Enter Database URL"
                   className="form-control"
-                  style={{ fontSize: '14px' }}
+                  style={{ fontSize: '14px', flex: 1 }}
                 />
+                <button
+                  className={style.editButton}
+                  onClick={handleSave}
+                  title="Save Firebase Config"
+                  disabled={loading}
+                  style={{ padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  {loading ? <FaSpinner className="fa-spin" /> : <Save size={18} />}
+                </button>
               </div>
-              <button
-                className={style.editButton}
-                onClick={handleSave}
-                title="Save Firebase Config"
-                disabled={loading}
-                style={{ marginTop: '20px' }}
-              >
-                {loading ? <FaSpinner className="fa-spin" /> : <Save size={18} />}
-              </button>
             </div>
             {error && (
               <ErrorMessage message={error} />
