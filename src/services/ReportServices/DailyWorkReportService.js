@@ -47,7 +47,7 @@ export const getDailyWorkReport = async(date, cityId) => {
 }
 
 export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
-  if(cityId !== 95) return;
+  if(Number(cityId) !== 95) return { status: 'fail', data: [] };
   if(!date || !wards.length) {
     return { status: 'success', data: [] };
   }
@@ -57,18 +57,23 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
 
   const requests = wards.map(async(wardName)=>{
     try{
+      console.log('hi')
     const summaryURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
     const workerURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
+    console.log('url',summaryURL, workerURL)
 
     const [summaryResp, workerResp] = await Promise.all([
       axios.get(summaryURL),
       axios.get(workerURL)
     ]);
+    console.log('summaryResp',summaryResp)
 
     const summary = summaryResp?.data;
     const workerDetails = workerResp?.data;
 
     if (!summary && !workerDetails) return null;
+    console.log('summary',summary)
+    console.log('workerdetails',workerDetails)
 
     return {
       ward: wardName || null,
