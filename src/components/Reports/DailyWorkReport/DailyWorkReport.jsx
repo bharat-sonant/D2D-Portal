@@ -262,7 +262,7 @@ const renderMultiLineName = (value) => {
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
-            ) : wards?.length > 0 ? (
+            ) : wards?.length > 0 && reportData?.length > 0 ? (
               wards?.map((ward) => {
                 const row = reportByWardId[String(ward.ward_id)];
                 return(
