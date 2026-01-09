@@ -43,6 +43,7 @@ const DailyWorkReport = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  //calculating working hours on base of duty on and duty off time
   const calculateWorkingHours = (dutyOn, dutyOff) => {
     if(!dutyOn || !dutyOff) return null;
 
@@ -63,6 +64,52 @@ const DailyWorkReport = () => {
 
   return `${hours}h ${minutes}m`;
   }
+  
+//without changing case -> for vehicle names
+const renderMultiLine = (value) => {
+  if (!value) return "N/A";
+
+  const uniqueMap = new Map();
+
+  value
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean)
+    .forEach(v => {
+      const key = v.toLowerCase(); // 🔑 case-insensitive check
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, v); // preserve first seen format
+      }
+    });
+
+  return [...uniqueMap.values()].map((item, index) => (
+    <div key={index}>{item}</div>
+  ));
+};
+
+//changing case for driver halper names
+const renderMultiLineName = (value) => {
+  if (!value) return "N/A";
+
+  const uniqueMap = new Map();
+
+  value
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean)
+    .forEach(v => {
+      const key = v.toLowerCase();
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, titleCaseName(v)); // ✅ only here
+      }
+    });
+
+  return [...uniqueMap.values()].map((item, index) => (
+    <div key={index}>{item}</div>
+  ));
+};
+
+
 
 
   // ----------------------------
@@ -160,34 +207,32 @@ const DailyWorkReport = () => {
               </th>
               <th
                 className={`${style.parentHeader} `}
-                style={{ width: "25%" }}
-                colSpan={3}
+                style={{ width: "30%" }}
+                colSpan={4}
               >
                 Timing Details
               </th>
+              <th
+                className={style.parentHeader}
+                style={{ width: "50%" }}
+                colSpan={4}
+              >
+                Person / Vehicle Details
+              </th>
+              
                <th
                 className={`text-start ${style.parentHeader} `}
                 style={{ width: "10%" }}
               >
                 
               </th>
-              <th
-                className={style.parentHeader}
-                style={{ width: "55%" }}
-                colSpan={5}
-              >
-                Person / Vehicle Details
-              </th>
             </tr>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Ward</th>
               <th className={style.th2}>Duty On </th>
               <th className={style.th3}>Ward Reach </th>
-              <th className={`${style.th4} ${style.borderRight}`}>
+              <th className={`${style.th4}`}>
                 Duty Off 
-              </th>
-              <th className={`${style.th3}`}>
-                Trip Count
               </th>
               <th className={`${style.th4} ${style.borderRight}`}>
                 Working Hrs
@@ -196,6 +241,9 @@ const DailyWorkReport = () => {
               <th className={style.th6}>Driver</th>
               <th className={style.th7}>Helper</th>
               <th className={style.th8}>Second Helper</th>
+              <th className={`text-center ${style.th3}`}>
+                Trip Count
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -213,13 +261,8 @@ const DailyWorkReport = () => {
                     {row.duty_on_time || "N/A"}
                   </td>
                   <td className={style.th3}>{row.ward_reach_time || "N/A"}</td>
-                  <td className={`${style.th4} ${style.borderRight}`}>
+                  <td className={`${style.th4}`}>
                     {row.duty_off_time || "N/A"}
-                  </td>
-                   <td className={`${style.th4}`}>
-                    <span className={style.tripBG}>
-                    {row.trip_count ?? "-"}
-                    </span>
                   </td>
                    <td className={`${style.th4} ${style.borderRight}`}>
                     {calculateWorkingHours(
@@ -228,27 +271,34 @@ const DailyWorkReport = () => {
                     ) || "-"}
                   </td>
                   <td className={`${style.th5}`}>
-                    <span className={` ${style.vehicleNumber}`}>
-                      {row.vehicle || "N/A"}
+                    <span 
+                    // className={` ${style.vehicleNumber}`}
+                    >
+                      {renderMultiLine(row.vehicle) || "N/A"}
                     </span>
                   </td>
                   <td className={style.th6}>
                     <span className={`${style.driverName}`}>
                       {" "}
                       {/* {row.driver_name || "N/A"} */}
-                      {titleCaseName(row.driver_name)}
+                      {renderMultiLineName(row.driver_name)}
                     </span>
                   </td>
                   <td className={style.th7}>
                     <span className={`${style.helperName}`}>
                       {/* {row.helper_name || "N/A"} */}
-                      {titleCaseName(row.helper_name)}
+                      {renderMultiLineName(row.helper_name)}
                     </span>
                   </td>
                   <td className={style.th8}>
                     <span className={`${style.helperName}`}>
                       {/* {row.second_helper_name || "N/A"} */}
-                      {titleCaseName(row.second_helper_name)}
+                      {renderMultiLineName(row.second_helper_name)}
+                    </span>
+                  </td>
+                   <td className={`text-center ${style.th4}`}>
+                    <span className={style.tripBG }>
+                    {row.trip_count ?? 0}
                     </span>
                   </td>
 
