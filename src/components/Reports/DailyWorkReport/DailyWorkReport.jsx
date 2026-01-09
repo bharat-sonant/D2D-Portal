@@ -160,7 +160,7 @@ const DailyWorkReport = () => {
               </th>
               <th
                 className={`${style.parentHeader} `}
-                style={{ width: "30%" }}
+                style={{ width: "25%" }}
                 colSpan={3}
               >
                 Timing Details
@@ -173,8 +173,8 @@ const DailyWorkReport = () => {
               </th>
               <th
                 className={style.parentHeader}
-                style={{ width: "50%" }}
-                colSpan={4}
+                style={{ width: "55%" }}
+                colSpan={5}
               >
                 Person / Vehicle Details
               </th>
@@ -201,7 +201,7 @@ const DailyWorkReport = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className={style.loaderCell}>
+                <td colSpan={9} className={style.loaderCell}>
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
@@ -217,7 +217,9 @@ const DailyWorkReport = () => {
                     {row.duty_off_time || "N/A"}
                   </td>
                    <td className={`${style.th4}`}>
+                    <span className={style.tripBG}>
                     {row.trip_count ?? "-"}
+                    </span>
                   </td>
                    <td className={`${style.th4} ${style.borderRight}`}>
                     {calculateWorkingHours(
@@ -269,7 +271,7 @@ const DailyWorkReport = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className={style.noData}>
+                <td colSpan={9} className={style.noData}>
                   <NoResult
                     title="No data available"
                     // query={searchTerm}

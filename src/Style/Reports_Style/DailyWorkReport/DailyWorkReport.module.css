@@ -225,11 +225,12 @@
   width: 28px;
   height: 28px;
   background: var(--gradientTheme);
-  color: var(--black);
+  color: var(--white);
   border-radius: 4px;
   font-size: 13px;
   font-family: var(--fontGraphik);
-  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+  /* background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%); */
+  background:var(--gradientTheme);
 }
 .borderRight {
   border-right: 1px solid var(--borderColor);
