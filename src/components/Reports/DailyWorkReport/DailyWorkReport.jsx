@@ -71,7 +71,6 @@ const DailyWorkReport = () => {
 
   return `${hours}h ${minutes}m`;
   }
-console.log('wards',wards)
 //without changing case -> for vehicle names
 const renderMultiLine = (value) => {
   if (!value) return "-";
