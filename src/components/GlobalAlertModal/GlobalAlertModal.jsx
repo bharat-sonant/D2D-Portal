@@ -15,10 +15,6 @@ const GlobalAlertModal = ({
   onCancel,
   onConfirm,
 }) => {
-  if (!show) return null;
-  const isSuccess = iconType === "success";
-
-  const Icon = iconType === "warning" ? AlertTriangle : Check;
 
   useEffect(() => {
     if (show) {
@@ -31,6 +27,12 @@ const GlobalAlertModal = ({
       document.body.style.overflow = "auto";
     };
   }, [show]);
+
+  
+  if (!show) return null;
+  const isSuccess = iconType === "success";
+
+  const Icon = iconType === "warning" ? AlertTriangle : Check;
 
   return (
     <div className={styles.overlay}>
