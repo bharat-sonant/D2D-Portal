@@ -122,14 +122,12 @@ export const login = async (email, password, setEmailError, setPasswordError) =>
 };
 
 export const saveuserLoginHistory=async (tableName,loginDetail)=>{
-  
   await supabase
   .from(tableName)
   .upsert(
       loginDetail,
-    { onConflict: "user_id,login_date" }
+    { onConflict: "user_id,access_page" }
   );
-
 }
 
 export const uploadAttachment = async (file, bucket,filePath) => {
@@ -162,6 +160,37 @@ export const fetchCalenderData = async (userId, year, month) => {
     return {success: false,message: err.message || "Failed to fetch calendar data"};
   }
 };
+
+export const subscribeUserPermissions = ({
+  userId,
+  setPermissionGranted
+}) => {
+  const channel = supabase
+    .channel(`user-permissions-${userId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "UserPortalAccess",
+        filter: `user_id=eq.${userId}`,
+      },
+      (payload) => {
+        const { access_page, access_control } = payload.new || {};
+        if (!access_page) return;
+        setPermissionGranted((prev) => ({
+          ...prev,
+          [access_page]: access_control,
+        }));
+      }
+    )
+    .subscribe((status) => {
+      console.log("📡 Realtime status:", status);
+    });
+
+  return channel;
+};
+
 
 
 export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`

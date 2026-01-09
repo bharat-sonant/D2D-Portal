@@ -9,6 +9,7 @@ import * as userAction from "../../Actions/UserAction/UserAction";
 import UserStatusDialog from "../../components/Users/AlertPopUp";
 import UserCityAccess from "../../components/Users/UserCityAccess";
 import Calendar from "../../components/Users/calendar";
+import PermissonAccess from "../../components/Users/PermissionAccess";
 
 const User = () => {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -163,6 +164,9 @@ const User = () => {
           <div className={styles.userInnerRight}>
             <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
             {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
+          </div>
+            <div style={{width:'80%',marginTop:'12px'}}>
+            {selectedUser !== null && <PermissonAccess selectedUser={selectedUser}/>}
           </div>
         </div>
       </div>

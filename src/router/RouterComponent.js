@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
@@ -19,23 +19,49 @@ import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
 import City from "../pages/City/City";
 import Monitoring from "../pages/Monitoring/Monitoring";
+import { subscribeUserPermissions } from "../services/supabaseServices";
+import { supabase } from "../createClient";
+import { usePermissions } from "../context/PermissionContext";
 
 const RouterComponent = () => {
+   let userId = localStorage.getItem('userId')
+     const {permissionGranted,setPermissionGranted  
+ } = usePermissions();
+
+   useEffect(() => {
+  console.log("🚀 Router realtime effect fired. userId:", userId);
+
+  if (!userId) return;
+
+  const channel = subscribeUserPermissions({
+    userId, 
+    setPermissionGranted,
+  });
+
+  return () => {
+    console.log("🧹 Realtime cleanup");
+    if (channel) supabase.removeChannel(channel);
+  };
+}, [userId]);
+
+
 
   return (
     <>
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route
-          path="/Dashboard"
-          element={
-            <>
-              <MainLayout />
-              <Dashboard />
-            </>
-          }
-        />
+       <Route
+  path="/Dashboard"
+  element={
+   
+      <MainLayout>
+        <Dashboard />
+      </MainLayout>
+  
+  } 
+/>
+
 
         <Route
           path="/start-assignment"
