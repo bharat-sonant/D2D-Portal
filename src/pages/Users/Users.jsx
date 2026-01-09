@@ -161,13 +161,17 @@ const User = () => {
               </span>
             </div>
           </div>
+          
+
           <div className={styles.userInnerRight}>
-            <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
-            {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
+            <UserCityAccess cityList={cityList} selectedUser={selectedUser} /> 
+                <div className={``} style={{display: 'flex', flexFlow: 'column'}}>
+             {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
+                    {selectedUser !== null && <PermissonAccess selectedUser={selectedUser}/>}
+                    </div>
+           
           </div>
-            <div style={{width:'80%',marginTop:'12px'}}>
-            {selectedUser !== null && <PermissonAccess selectedUser={selectedUser}/>}
-          </div>
+
         </div>
       </div>
 

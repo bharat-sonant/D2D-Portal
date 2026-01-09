@@ -1,4 +1,4 @@
-import styles from "../../assets/css/modal.module.css";
+
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import * as common from "../../common/common";
@@ -43,7 +43,7 @@ const AddUser = (props) => {
 
   if (!props.showCanvas) return null;
 
-  const handleChange = (e) => userAction.formValueChangeAction(e, setForm);
+  const handleChange = (e) => userAction.formValueChangeAction(e, setForm,setEmailError,setNameError, setUserTypeError, setEmpCodeError);
 
   const handleSave = async () => {
     userAction.validateUserDetail(
@@ -82,7 +82,7 @@ const AddUser = (props) => {
   ];
   return (
     <div className={modalStyles.overlay} aria-modal="true" role="dialog">
-      <div className={`${modalStyles.modal} ${styles.modal}`}>
+      <div className={`${modalStyles.modal} `}>
         {/* Header */}
         <div className={modalStyles.modalHeader}>
           <div className={modalStyles.headerLeft}>
@@ -110,52 +110,8 @@ const AddUser = (props) => {
           </button>
         </div>
         {/* Body */}
-        <div className={`${modalStyles.modalBody} ${styles.modalBody}`}>
-          {/* Name */}
-          <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>
-              {/* <Lock size={16} /> */}
-              Name
-            </label>
-            <div className={modalStyles.inputWrapper}>
-              <div className={modalStyles.inputIcon}>
-                <UserRound size={18} />
-              </div>
-              <input
-                className={modalStyles.input}
-                type="text"
-                name="name"
-                placeholder="Enter name"
-                value={form.name}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-            {nameError && <ErrorMessage message={nameError} />}
-          </div>
-          {/* Email */}
-          <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>
-              {/* <Lock size={16} /> */}
-              Email
-            </label>
-            <div className={modalStyles.inputWrapper}>
-              <div className={modalStyles.inputIcon}>
-                <Mail size={18} />
-              </div>
-              <input
-                className={modalStyles.input}
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                value={form.email}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-            {emailError && <ErrorMessage message={emailError} />}
-          </div>
-          {/* User Type */}
+        <div className={`${modalStyles.modalBody}`}>
+                    {/* User Type */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>User Type</label>
             <div className={modalStyles.userTypeGrid}>
@@ -205,6 +161,51 @@ const AddUser = (props) => {
 
             {userTypeError && <ErrorMessage message={userTypeError} />}
           </div>
+          {/* Name */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>
+              {/* <Lock size={16} /> */}
+              Name
+            </label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <UserRound size={18} />
+              </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                name="name"
+                placeholder="Enter name"
+                value={form.name}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            {nameError && <ErrorMessage message={nameError} />}
+          </div>
+          {/* Email */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>
+              {/* <Lock size={16} /> */}
+              Email
+            </label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <Mail size={18} />
+              </div>
+              <input
+                className={modalStyles.input}
+                type="email"
+                name="email"
+                placeholder="Enter email"
+                value={form.email}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            {emailError && <ErrorMessage message={emailError} />}
+          </div>
+
           {/* Employee Code */}
           {form?.user_type === "internal" && (
             <div className={modalStyles.inputGroup}>

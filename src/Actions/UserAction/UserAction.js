@@ -201,8 +201,12 @@ export const updateStatus = async (user, setUsers, setActiveInactiveUserList, se
   }
 };
 
-export const formValueChangeAction = (e, setForm) => {
+export const formValueChangeAction = (e, setForm,setEmailError, setNameError, setUserTypeError, setEmpCodeError) => {
   setForm(pre => ({ ...pre, [e.target.name]: e.target.value }));
+  setEmailError('');
+  setNameError('');
+  setUserTypeError('');
+  setEmpCodeError('');
 };
 
 export const filterUserListAction = (usersList, searchTerm, setSelectedUser) => {
