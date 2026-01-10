@@ -1,5 +1,6 @@
 import { getDutySummary, getWardData } from "../../services/MonitoringServices/MonitoringServices";
 import * as common from '../../common/common'
+import { DailyWorkReportDataFromFirebase } from "../../services/ReportServices/DailyWorkReportService";
 
 export const getWardList = async (
   setSelectedWard,
@@ -45,19 +46,42 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
     // return list;
 }
 
-export const getDutySummaryAction = async(ward, setDutyLoading) => {
+// export const getDutySummaryAction = async(ward, setDutyLoading) => {
+//   try{
+//     const result = await getDutySummary(ward);
+//     if(!result.success){
+//       common.setAlertMessage("error", result.error);
+//       return null;
+//     }
+//     return result.data;
+//   }catch(error){
+//     const message = error.message || 'error while fetching duty time"'
+//     common.setAlertMessage("error", message);
+//     return null;
+//   }finally{
+//     setDutyLoading(false);
+//   }
+// }
+
+export const getWardDailyWorkSummaryAction = async( date, ward,cityId, setLoading) => {
   try{
-    const result = await getDutySummary(ward);
-    if(!result.success){
-      common.setAlertMessage("error", result.error);
-      return null;
+    setLoading(true);
+    if(!ward) return null;
+
+    const response = await DailyWorkReportDataFromFirebase(date, [ward], cityId);
+    if (
+      response.status === 'success' &&
+      response.data &&
+      response.data.length > 0
+    ) {
+      return response.data[0]; // ✅ single ward summary
     }
-    return result.data;
-  }catch(error){
-    const message = error.message || 'error while fetching duty time"'
-    common.setAlertMessage("error", message);
+
     return null;
-  }finally{
-    setDutyLoading(false);
+  }catch(error){
+    console.error('Ward daily summary error', error);
+    return null;
+  } finally {
+    setLoading(false);
   }
 }

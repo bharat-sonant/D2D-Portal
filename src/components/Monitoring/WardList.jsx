@@ -14,7 +14,6 @@ const WardList = (props) => {
         setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard))
     }, [props?.wardList, searchTerm]);
 
-
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
             <div
@@ -61,7 +60,7 @@ const WardList = (props) => {
                                             }}
                                         >
                                             <span className={`${styles.employeeName}`}>
-                                                {ward.name}
+                                                {ward.display_name}
                                             </span>
                                         </div>
                                     </div>

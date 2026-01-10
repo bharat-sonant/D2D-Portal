@@ -14,8 +14,8 @@ const isAlphaNumeric = (val) => /^\d+[A-Za-z0-9-]+$/.test(val);
 
 const sortWards = (list = []) => {
   return [...list].sort((a, b) => {
-    const A = normalize(a?.name);
-    const B = normalize(b?.name);
+    const A = normalize(a?.display_name);
+    const B = normalize(b?.display_name);
 
     // 1️⃣ Pure numbers
     if (isPureNumber(A) && isPureNumber(B)) return Number(A) - Number(B);
@@ -51,33 +51,33 @@ export const getWardData = async(cityId) => {
   }
 }
 
-export const getDutySummary = async (ward) => {
-  try{
-     if (!ward?.name) {
-      throw new Error("Ward name is missing");
-    }
-    const path = `WasteCollectionInfo/${ward?.name}/${year}/${month}/${date}`
-    const response = await db.getData(path);
+// export const getDutySummary = async (ward) => {
+//   try{
+//      if (!ward?.name) {
+//       throw new Error("Ward name is missing");
+//     }
+//     const path = `WasteCollectionInfo/${ward?.name}/${year}/${month}/${date}`
+//     const response = await db.getData(path);
     
-    if (!response) {
-      return { success: true, data: null };
-    }
+//     if (!response) {
+//       return { success: true, data: null };
+//     }
 
-    const summary = response.Summary;
-    const workerDetails = response.WorkerDetails;
+//     const summary = response.Summary;
+//     const workerDetails = response.WorkerDetails;
 
-    const data = {
-      dutyInTime : summary?.dutyInTime || null,
-      dutyOutTime : summary?.dutyOutTime || null,
-      wardReachedOn : summary?.wardReachedOn || null,
-      driverName : workerDetails?.driverName || null,
-      helperName : workerDetails?.helperName || null,
-    }
-    return {
-      success: true,
-      data,
-    };
-  }catch (error) {
-    return { success: false, error: error.message || "Failed to fetch duty in time" };
-  };
-};
+//     const data = {
+//       dutyInTime : summary?.dutyInTime || null,
+//       dutyOutTime : summary?.dutyOutTime || null,
+//       wardReachedOn : summary?.wardReachedOn || null,
+//       driverName : workerDetails?.driverName || null,
+//       helperName : workerDetails?.helperName || null,
+//     }
+//     return {
+//       success: true,
+//       data,
+//     };
+//   }catch (error) {
+//     return { success: false, error: error.message || "Failed to fetch duty in time" };
+//   };
+// };

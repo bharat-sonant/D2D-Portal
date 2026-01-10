@@ -84,8 +84,8 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
 
   const requests = wards.map(async(ward)=>{
     try{
-    const summaryURL = `${dbUrl}WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
-    const workerURL = `${dbUrl}WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
+    const summaryURL = `${dbUrl}WasteCollectionInfo/${ward.wardName || ward?.name}/${year}/${monthName}/${date}/Summary.json?alt=media`;
+    const workerURL = `${dbUrl}WasteCollectionInfo/${ward.wardName || ward?.name}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
     const [summaryResp, workerResp, tripCount] = await Promise.all([
       axios.get(summaryURL),
       axios.get(workerURL),
@@ -96,11 +96,10 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
     const workerDetails = workerResp?.data;
 
     if (!summary && !workerDetails && tripCount === 0) return null;
-
     return {
-      ward_id: ward.ward_id || null,
-      wardName: ward.wardName || null,
-      ward_display_name: ward.ward_display_name || null,
+      ward_id: ward.ward_id || ward.id || null,
+      wardName: ward.wardName || ward.name || null,
+      ward_display_name: ward.ward_display_name || ward.display_name || null,
       duty_on_time: summary ? normalizeTime(summary?.dutyInTime, "first") : null,
       duty_off_time: summary ? normalizeTime(summary.dutyOutTime, "last") : null,
       ward_reach_time: summary ? normalizeTime(summary.wardReachedOn, "first") : null,

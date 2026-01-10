@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
 import WardList from '../../components/Monitoring/WardList';
-import {  getDutySummaryAction, getWardList } from '../../Actions/Monitoring/WardAction';
-import * as common from '../../common/common'
-import { supabase } from '../../createClient';
+import { getDutySummaryAction, getWardDailyWorkSummaryAction, getWardList } from '../../Actions/Monitoring/WardAction';
 import { useCity } from '../../context/CityContext';
-import { getDutyInTime } from '../../services/MonitoringServices/MonitoringServices';
 import WardMonitoringPanel from '../../components/Monitoring/WardMonitoringPanel';
+import dayjs from 'dayjs';
 
 const Monitoring = () => {
   const [selectedWard, setSelectedWard] = useState('');
@@ -16,6 +14,9 @@ const Monitoring = () => {
   const {cityId, city} = useCity();
   const [dutySummary, setDutySummary] = useState(null);
   const [dutyLoading, setDutyLoading] = useState(false);
+  const year = dayjs().format('YYYY');
+  const month = dayjs().format('MMMM');
+  const date = dayjs().format('YYYY-MM-DD');
     const loadWards = async () => {
       getWardList(setSelectedWard,setWardList,selectedWard, setLoading, cityId)
     };
@@ -26,22 +27,20 @@ const Monitoring = () => {
     }, [cityId]);
 
     useEffect(()=>{
-      if(city === 'Reengus'){
         fetchDutyIntime();
-      }
     },[selectedWard, city])
 
-    useEffect(() => {
-      if (city !== 'Reengus') {
-        setDutySummary(null);
-        setDutyLoading(false);
-      }
-    }, [city]);
+    // useEffect(() => {
+    //   if (city !== 'Reengus') {
+    //     setDutySummary(null);
+    //     setDutyLoading(false);
+    //   }
+    // }, [city]);
 
     const fetchDutyIntime = async() => {
       if(!selectedWard) return;
       setDutyLoading(true);
-      const result = await getDutySummaryAction(selectedWard, setDutyLoading);
+      const result = await getWardDailyWorkSummaryAction(date, selectedWard,cityId, setDutyLoading);
       if (result) {
         setDutySummary(result);
       } else {
@@ -95,7 +94,6 @@ const Monitoring = () => {
           +
         </button> */}
       </div>
-
       <div className={`${TaskStyles.employeePage}`}>
         <div className={`${TaskStyles.employeeLeft}`}>
             <WardList
@@ -106,13 +104,13 @@ const Monitoring = () => {
           />
         </div>
 
-        {city === 'Reengus' ? (<div className={`${TaskStyles.employeeRight}`}>
+        <div className={`${TaskStyles.employeeRight}`}>
           <WardMonitoringPanel
           selectedWard={selectedWard}
           dutySummary={dutySummary}
           dutyLoading={dutyLoading}
           />
-        </div>): null}
+        </div>
       </div>
     </>
   );
