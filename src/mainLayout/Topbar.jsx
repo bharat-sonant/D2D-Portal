@@ -20,6 +20,7 @@ import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigSer
 import LogoImage from "../components/Common/Image/LogoImage";
 import { usePermissions } from "../context/PermissionContext";
 
+
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,7 +35,9 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem('defaultCity');
+  const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
 
+ 
   useEffect(() => {
     fetchDefaultCityConfig()
   }, [defaultCityId])
@@ -59,7 +62,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       color: "#b84dc5",
       path: "/users",
       permissionKey:'CanAccessUserPage'
-      
     },
     {
       id: "City",
@@ -152,9 +154,12 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
           className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
             }`}
         >
-         {menuItems
+        {menuItems
   .filter((item) => {
-    // permissionKey hi nahi hai → show
+    // 🔥 Super Admin → sab dikhao
+    if (isSuperAdmin === true) return true;
+
+    // permissionKey nahi hai → show
     if (!item.permissionKey) return true;
 
     // permissionKey hai → sirf true par show
@@ -197,6 +202,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       </Link>
     );
   })}
+
 
 
         </div>

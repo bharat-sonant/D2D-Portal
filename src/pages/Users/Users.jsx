@@ -23,7 +23,7 @@ const User = () => {
   const [loading, setLoading] = useState(false);
   const [cityList, setCityList] = useState([]);
   const [activeInactiveUserList, setActiveInactiveUserList] = useState([]);
-
+   const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
   const loadUsers = async () => {
     await userAction.fetchUserData(
       setSelectedUser,
@@ -84,16 +84,17 @@ const User = () => {
 
   return (
     <>
-      {permissionGranted?.CanAddUser === true && (
-        <div className={GlobalStyles.floatingDiv}>
-          <button
-            className={GlobalStyles.floatingBtn}
-            onClick={handleOpenModal}
-          >
-            +
-          </button>
-        </div>
-      )}
+      {(isSuperAdmin === true || permissionGranted?.CanAddUser === true) && (
+  <div className={GlobalStyles.floatingDiv}>
+    <button
+      className={GlobalStyles.floatingBtn}
+      onClick={handleOpenModal}
+    >
+      +
+    </button>
+  </div>
+)}
+
 
       <div className={`${styles.userPage}`}>
         {/* Background */}
@@ -156,16 +157,16 @@ const User = () => {
               </div>
 
               {/* EDIT */}
-                {permissionGranted?.CanAddUser === true && (
-                  <span
-                className={styles.editIcon}
-                onClick={handleEditUser}
-                title="Edit"
-              >
-                <Edit2 size={14} />
-              </span>
-                )}
-              
+                {(isSuperAdmin === true || permissionGranted?.CanAddUser === true) && (
+  <span
+    className={styles.editIcon}
+    onClick={handleEditUser}
+    title="Edit"
+  >
+    <Edit2 size={14} />
+  </span>
+)}
+
             </div>
           </div>
 
@@ -175,9 +176,11 @@ const User = () => {
               {selectedUser !== null && (
                 <Calendar selectedUser={selectedUser} />
               )}
-              {(selectedUser !== null && permissionGranted.CanGivePermissions===true) && (
-                <PermissonAccess selectedUser={selectedUser} />
-              )}
+              {selectedUser !== null &&
+  (isSuperAdmin === true || permissionGranted?.CanGivePermissions === true) && (
+    <PermissonAccess selectedUser={selectedUser} />
+)}
+
             </div>
           </div>
         </div>

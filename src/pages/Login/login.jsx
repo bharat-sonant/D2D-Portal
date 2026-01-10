@@ -81,9 +81,10 @@ const Login = () => {
         setLoading(false)
         return;
       }
-      localStorage.setItem("isLogin", "success");
+      localStorage.setItem("isLogin", "success")
       localStorage.setItem("name", user?.name);
       localStorage.setItem("userId", user?.id);
+      localStorage.setItem('isSuperAdmin',user.is_superadmin)
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       localStorage.setItem("defaultCity", user?.default_city);
       await fetchCityName(user?.default_city).then(()=> {

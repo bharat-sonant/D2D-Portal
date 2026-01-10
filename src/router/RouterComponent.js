@@ -26,22 +26,18 @@ import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 
 const RouterComponent = () => {
     const navigate = useNavigate();
+     const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
    let userId = localStorage.getItem('userId')
      const {permissionGranted,setPermissionGranted  
  } = usePermissions();
 
    useEffect(() => {
-  console.log("🚀 Router realtime effect fired. userId:", userId);
-
   if (!userId) return;
-
   const channel = subscribeUserPermissions({
     userId, 
     setPermissionGranted,
   });
-
   return () => {
-    console.log("🧹 Realtime cleanup");
     if (channel) supabase.removeChannel(channel);
   };
 }, [userId]);
@@ -187,19 +183,20 @@ console.log(permissionGranted.CanAccessUserPage)
             </ProtectedRouter>
           }
         />
+  
 
-        <Route
+     <Route
           path="/users"
           element={
             <ProtectedRouter>
               <>
                 <MainLayout />
-                {
+                {isSuperAdmin === true||
                   (Object.keys(permissionGranted).length > 0 &&
                     permissionGranted.CanAccessUserPage) ? (
-                  <User />
+                  <User/>
                 ) : Object.keys(permissionGranted).length === 0 ? (
-                  <div>Loading...</div>
+                 <div>Loading...</div>
                 ) : (
                   <Navigate to="/Dashboard" replace />
                 )}
@@ -207,7 +204,8 @@ console.log(permissionGranted.CanAccessUserPage)
             </ProtectedRouter>
           }
         />
-   
+
+      
 
 
 
