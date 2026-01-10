@@ -44,6 +44,11 @@ const AddCity = (props) => {
 
   };
   const handleSave = async () => {
+    if (logoError) return;
+    if (!props.onEdit && !logo) {
+      setLogoError("City Logo is required.");
+      return;
+    }
     saveCityAction(form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError);
   };
 
