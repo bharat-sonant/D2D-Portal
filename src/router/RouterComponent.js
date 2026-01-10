@@ -208,15 +208,7 @@ console.log(permissionGranted.CanAccessUserPage)
           }
         />
    
- {/* <Route
-          path="/users"
-          element={
-            <>
-              <MainLayout />
-              <User/>
-            </>
-          }
-        /> */}
+
 
 
         <Route
