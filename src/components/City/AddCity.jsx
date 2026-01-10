@@ -38,14 +38,16 @@ const AddCity = (props) => {
   const handleChange = (e) => {
     if (e.target.name === 'city_code') {
       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
+      if (cityCodeError) setCityCodeError("");
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
+      if (e.target.name === 'city_name' && cityError) setCityError("");
     }
-
   };
   const handleSave = async () => {
     if (logoError) return;
-    if (!props.onEdit && !logo) {
+    const hasLogo = logo || (props.onEdit && props.onEdit.logoUrl);
+    if (!hasLogo) {
       setLogoError("City Logo is required.");
       return;
     }
