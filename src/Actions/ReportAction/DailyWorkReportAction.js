@@ -8,7 +8,6 @@ export const getDailyWorkReportAction = async(date, wards, setReportData, setLoa
     let response = await getDailyWorkReport(date, cityId);
 
     if(response.status === 'success' && response.data.length === 0 && wards?.length > 0){
-      
       response = await DailyWorkReportDataFromFirebase(date,wards,cityId)
       if(response.status === 'success' && response.data.length > 0){
         saveDailyWorkReportToSupabase(date, response.data)

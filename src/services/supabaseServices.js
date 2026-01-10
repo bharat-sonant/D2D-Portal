@@ -191,6 +191,17 @@ export const subscribeUserPermissions = ({
   return channel;
 };
 
+export const getFirebase_db_url = async(city_id) => {
+  const result = await getDataByColumnName('Cities','city_id',city_id);
+  if(!result.success){
+    return {status : 'error', message : result?.error}
+  }
+  
+  return {
+    status: 'success',
+    data: result.data[0].firebase_db_path
+  };
+}
 
 
 export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`

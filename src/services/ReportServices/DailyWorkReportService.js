@@ -70,12 +70,22 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
 
   const [year, monthNum] = date.split('-');
   const monthName = MONTH_NAMES[Number(monthNum) - 1];
+    const dbResp = await sbs.getFirebase_db_url(cityId);
+
+  if (dbResp.status !== 'success' || !dbResp.data) {
+    return {
+      status: 'error',
+      message: 'Unable to fetch Firebase DB URL',
+      data: []
+    };
+  }
+
+  const dbUrl = dbResp.data;
 
   const requests = wards.map(async(ward)=>{
     try{
-    const summaryURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
-    const workerURL = `https://reengus.firebaseio.com/WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
-
+    const summaryURL = `${dbUrl}WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/Summary.json?alt=media`;
+    const workerURL = `${dbUrl}WasteCollectionInfo/${ward.wardName}/${year}/${monthName}/${date}/WorkerDetails.json?alt=media`;
     const [summaryResp, workerResp, tripCount] = await Promise.all([
       axios.get(summaryURL),
       axios.get(workerURL),
@@ -91,9 +101,9 @@ export const DailyWorkReportDataFromFirebase = async(date, wards, cityId) => {
       ward_id: ward.ward_id || null,
       wardName: ward.wardName || null,
       ward_display_name: ward.ward_display_name || null,
-      duty_on_time: normalizeTime(summary?.dutyInTime, "first") || null,
-      duty_off_time: normalizeTime(summary.dutyOutTime, "last") || null,
-      ward_reach_time: normalizeTime(summary.wardReachedOn, "first") || null,
+      duty_on_time: summary ? normalizeTime(summary?.dutyInTime, "first") : null,
+      duty_off_time: summary ? normalizeTime(summary.dutyOutTime, "last") : null,
+      ward_reach_time: summary ? normalizeTime(summary.wardReachedOn, "first") : null,
       cityId,
       trip_count: tripCount,
       vehicle: workerDetails?.vehicle ?? null,
