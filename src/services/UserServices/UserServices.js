@@ -95,7 +95,7 @@ export const savePagesPermission=(permissionDetail)=>{
     if (!permissionDetail) {
       return reject('Invalid parameters');
     }
-    const result = await sbs.saveuserLoginHistory('UserPortalAccess',permissionDetail);
+    const result = await sbs.upsertByConflictKeys('UserPortalAccess',permissionDetail,"user_id,access_page");
     // console.log(result)
     // if (result.success) {
     //   return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });

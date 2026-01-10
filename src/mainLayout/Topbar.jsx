@@ -58,6 +58,8 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       icon: Users,
       color: "#b84dc5",
       path: "/users",
+      permissionKey:'CanAccessUserPage'
+      
     },
     {
       id: "City",
@@ -86,6 +88,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       icon: Settings,
       color: "#6e35a5",
       path: "/settings",
+      
     },
   ];
 
@@ -125,6 +128,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const changePass = () => {
     setShowChangePassword(true);
   }
+ 
   return (
     <>
       <div className={styles.header}>
@@ -148,39 +152,53 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
           className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
             }`}
         >
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.id}
-                to={item.path}
-                className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
-                  }`}
-                style={{
-                  animationDelay: `${index * 0.1}s`,
-                  "--menu-color": item.color,
-                }}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <div
-                  className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
-                    }`}
-                >
-                  <Icon className={styles.navIcon} size={20} />
-                </div>
+         {menuItems
+  .filter((item) => {
+    // permissionKey hi nahi hai → show
+    if (!item.permissionKey) return true;
 
-                <span
-                  className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
-                    }`}
-                >
-                  {item.label}
-                </span>
+    // permissionKey hai → sirf true par show
+    return permissionGranted[item.permissionKey] === true;
+  })
+  .map((item, index) => {
+    const Icon = item.icon;
+    const isActive = location.pathname === item.path;
 
-                {isActive && <div className={styles.activeIndicator} />}
-              </Link>
-            );
-          })}
+    return (
+      <Link
+        key={item.id}
+        to={item.path}
+        className={`${styles.menuItem} ${
+          isActive ? styles.menuItemActive : ""
+        }`}
+        style={{
+          animationDelay: `${index * 0.1}s`,
+          "--menu-color": item.color,
+        }}
+        onClick={() => setShowMobileMenu(false)}
+      >
+        <div
+          className={`${styles.menuIcon} ${
+            isActive ? styles.menuIconActive : ""
+          }`}
+        >
+          <Icon className={styles.navIcon} size={20} />
+        </div>
+
+        <span
+          className={`${styles.menuLabel} ${
+            isActive ? styles.menuLabelActive : ""
+          }`}
+        >
+          {item.label}
+        </span>
+
+        {isActive && <div className={styles.activeIndicator} />}
+      </Link>
+    );
+  })}
+
+
         </div>
 
         {/* RIGHT */}

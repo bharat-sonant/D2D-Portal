@@ -10,8 +10,10 @@ import UserStatusDialog from "../../components/Users/AlertPopUp";
 import UserCityAccess from "../../components/Users/UserCityAccess";
 import Calendar from "../../components/Users/calendar";
 import PermissonAccess from "../../components/Users/PermissionAccess";
+import { usePermissions } from "../../context/PermissionContext";
 
 const User = () => {
+  const { permissionGranted } = usePermissions();
   const [showCanvas, setShowCanvas] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [users, setUsers] = useState([]);
@@ -82,14 +84,16 @@ const User = () => {
 
   return (
     <>
-      <div className={`${GlobalStyles.floatingDiv}`}>
-        <button
-          className={`${GlobalStyles.floatingBtn}`}
-          onClick={handleOpenModal}
-        >
-          +
-        </button>
-      </div>
+      {permissionGranted?.CanAddUser === true && (
+        <div className={GlobalStyles.floatingDiv}>
+          <button
+            className={GlobalStyles.floatingBtn}
+            onClick={handleOpenModal}
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <div className={`${styles.userPage}`}>
         {/* Background */}
@@ -152,26 +156,30 @@ const User = () => {
               </div>
 
               {/* EDIT */}
-              <span
+                {permissionGranted?.CanAddUser === true && (
+                  <span
                 className={styles.editIcon}
                 onClick={handleEditUser}
                 title="Edit"
               >
                 <Edit2 size={14} />
               </span>
+                )}
+              
             </div>
           </div>
-          
 
           <div className={styles.userInnerRight}>
-            <UserCityAccess cityList={cityList} selectedUser={selectedUser} /> 
-                <div className={``} style={{display: 'flex', flexFlow: 'column'}}>
-             {selectedUser !== null && <Calendar selectedUser={selectedUser} />}
-                    {selectedUser !== null && <PermissonAccess selectedUser={selectedUser}/>}
-                    </div>
-           
+            <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
+            <div className={``} style={{ display: "flex", flexFlow: "column" }}>
+              {selectedUser !== null && (
+                <Calendar selectedUser={selectedUser} />
+              )}
+              {(selectedUser !== null && permissionGranted.CanGivePermissions===true) && (
+                <PermissonAccess selectedUser={selectedUser} />
+              )}
+            </div>
           </div>
-
         </div>
       </div>
 

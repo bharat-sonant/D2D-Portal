@@ -121,12 +121,12 @@ export const login = async (email, password, setEmailError, setPasswordError) =>
   return data;
 };
 
-export const saveuserLoginHistory=async (tableName,loginDetail)=>{
+export const upsertByConflictKeys =async (tableName,Detail,conflictKeys)=>{
   await supabase
   .from(tableName)
   .upsert(
-      loginDetail,
-    { onConflict: "user_id,access_page" }
+      Detail,
+    { onConflict: conflictKeys }
   );
 }
 

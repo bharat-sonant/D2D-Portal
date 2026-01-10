@@ -5,12 +5,7 @@ import dayjs from 'dayjs';
 
 const PermissonAccess = (props) => {
   const pages = [
-    { pageName: "Dashboard", pageNumber: 1, Module: ["Can Access Dashboard"] },
-    { pageName: "User",pageNumber: 2,Module: ["Can Access User Page","Can Add User","Can Edit User","Can Make User Active/Inactive","Can Access City section","Can Give City Permission"]},
-    { pageName: "City", pageNumber: 3, Module: ["Can Access City Page"] },
-    { pageName: "Reports", pageNumber: 4, Module: ["Can Access Reports Page"] },
-    { pageName: "Monitoring", pageNumber: 5, Module: ["Can Access Monitoring Page"]},
-    { pageName: "Setting", pageNumber: 6, Module: ["Can Access Setting Page"]},
+    { pageName: "User",pageNumber:1,Module: ["Can Access User Page","Can Add User","Can Give Permissions"]},
   ];
   const [activeTab, setActiveTab] = useState(1);
   const [ModuleList, setModuleList] = useState([]);

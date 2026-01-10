@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,6 @@ import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
 import DutyStart from "../MobileAppPages/DutyStart/pages/DutyStart";
 import Reports from "../pages/Reports/Reports";
-// import Vehicle from "../MobileAppPages/Vehicles/Pages/Vehicles/Vehicle";
 import User from "../pages/Users/Users";
 import Login from "../pages/Login/login";
 import ProtectedRouter from "./ProtectedRouter/ProtectedRouter";
@@ -22,8 +21,11 @@ import Monitoring from "../pages/Monitoring/Monitoring";
 import { subscribeUserPermissions } from "../services/supabaseServices";
 import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
+import { getUserPagesPermissions } from "../services/UserServices/UserServices";
+
 
 const RouterComponent = () => {
+    const navigate = useNavigate();
    let userId = localStorage.getItem('userId')
      const {permissionGranted,setPermissionGranted  
  } = usePermissions();
@@ -45,6 +47,21 @@ const RouterComponent = () => {
 }, [userId]);
 
 
+useEffect(() => {
+  if (!userId) return;
+
+  const fetchPermissions = async () => {
+    const response = await getUserPagesPermissions(userId);
+
+    if (response?.status === "success") {
+      setPermissionGranted(response.mappedPermissions);
+    }
+  };
+
+  fetchPermissions();
+}, [userId]);
+
+console.log(permissionGranted.CanAccessUserPage)
 
   return (
     <>
@@ -170,15 +187,37 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
+
         <Route
+          path="/users"
+          element={
+            <ProtectedRouter>
+              <>
+                <MainLayout />
+                {
+                  (Object.keys(permissionGranted).length > 0 &&
+                    permissionGranted.CanAccessUserPage) ? (
+                  <User />
+                ) : Object.keys(permissionGranted).length === 0 ? (
+                  <div>Loading...</div>
+                ) : (
+                  <Navigate to="/Dashboard" replace />
+                )}
+              </>
+            </ProtectedRouter>
+          }
+        />
+   
+ {/* <Route
           path="/users"
           element={
             <>
               <MainLayout />
-              <User />
+              <User/>
             </>
           }
-        />
+        /> */}
+
 
         <Route
           path="/cities"

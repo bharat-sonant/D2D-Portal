@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import styles from "../Login/login.module.css";
 import { useNavigate } from "react-router-dom";
-import { getDataByColumnName, login, saveuserLoginHistory } from "../../services/supabaseServices";
+import { getDataByColumnName, login, upsertByConflictKeys } from "../../services/supabaseServices";
 import {
   decryptValue,
   encryptValue,
@@ -100,7 +100,7 @@ const Login = () => {
         user_id:user?.id,
         login_date:dayjs().format("YYYY-MM-DD")
       }
-      saveuserLoginHistory('UserLoginHistory',loginDetail)
+      upsertByConflictKeys('UserLoginHistory',loginDetail,"user_id,login_date")
       
     } catch (err) {
       setAlertMessage("error", err.message);
