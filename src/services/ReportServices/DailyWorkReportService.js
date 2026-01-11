@@ -77,23 +77,23 @@ export const getDailyWorkWardWise = async (date, cityId, wards) => {
 export const getWorkAssignment = async (date, cityId, ward_id, wardName, ward_display_name) => {
   let response = await sbs.getDataByColumns('DailyWorkAssignment', { date, city_id: cityId, ward_id });
   if (response?.data.length > 0) {
-    return response?.data
+    return response?.data;
   }
   else {
     let firebaseResponse = await DailyWorkAnalysisDataFromFirebase(date, ward_id, wardName, cityId, ward_display_name);
     if (firebaseResponse != null) {
-      saveDailyWorkReportToSupabase(date, firebaseResponse.data);
+      saveDailyWorkReportToSupabase(date, firebaseResponse.data, cityId, ward_id);
     }
-    return firebaseResponse?.data
+    return firebaseResponse?.data;
   }
 }
 
 export const getWorkAssignmentCurrentDate = async (date, cityId, ward_id, wardName, ward_display_name) => {
   let firebaseResponse = await DailyWorkAnalysisDataFromFirebase(date, ward_id, wardName, cityId, ward_display_name);
   if (firebaseResponse != null) {
-    saveDailyWorkReportToSupabase(date, firebaseResponse.data);
+    saveDailyWorkReportToSupabase(date, firebaseResponse.data, cityId, ward_id);
   }
-  return firebaseResponse?.data
+  return firebaseResponse?.data;
 }
 
 
@@ -244,7 +244,7 @@ export const getWardData = async (cityId) => {
   }
 }
 
-export const saveDailyWorkReportToSupabase = async (date, data) => {
+export const saveDailyWorkReportToSupabase = async (date, data, city_id, ward_id) => {
   if (!date || !data.length) return;
 
   for (const row of data) {
@@ -266,6 +266,14 @@ export const saveDailyWorkReportToSupabase = async (date, data) => {
     };
 
     // background upsert
-    const result = sbs.saveData("DailyWorkAssignment", payload);
+
+    let response = await sbs.getDataByColumns('DailyWorkAssignment', { date, city_id, ward_id });
+    if (response?.data.length == 0) {
+      const result = sbs.saveData("DailyWorkAssignment", payload);
+    }
+    else{
+      let id=response.data[0]["id"];
+      const result =sbs.updateData("DailyWorkAssignment","id",id,payload);
+    }
   }
 }
