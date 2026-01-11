@@ -14,6 +14,8 @@ import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessLi
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
 import LogoImage from "../../components/Common/Image/LogoImage";
+import PermissonAccess from "../../components/Users/PermissionAccess";
+import WardSetting from "../../components/City/WardSetting";
 
 
 const TABS = [
@@ -37,9 +39,10 @@ const City = () => {
   const [activeTab, setActiveTab] = useState('city');
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [selectedWard,setSelectedWard]=useState("")
 
   const loadCities = async () => {
-    getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading)
+    getCityList(setSelectedCity, setCityList, selectedCity, setWardList, setLoading,setSelectedWard)
   };
 
   useEffect(() => {
@@ -108,6 +111,7 @@ const City = () => {
             setWardList={setWardList}
             setLoading={setLoading}
             loading={loading}
+            setSelectedWard={setSelectedWard}
           />
         </div>
 
@@ -152,13 +156,38 @@ const City = () => {
                 </div>
               </div>
             )}
-            <div style={{ display: "flex", gap: "20px" }}>
-              {activeTab === 'wards' && (
-                <div className={TaskStyles.cardWrapper}>
-                  <WardList setOpenAddWardPopUp={setOpenAddWardPopUp} wardList={wardList} setWardList={setWardList} setEditWard={setEditWard} />
-                </div>
-              )}
-            </div>
+            <div
+  style={{
+    display: "flex",
+    gap: "24px",
+    alignItems: "flex-start",
+  }}
+>
+  {activeTab === "wards" && (
+    <>
+      {/* LEFT SIDE – Ward List */}
+      <div style={{ flex: 2 }}>
+        <WardList
+          setOpenAddWardPopUp={setOpenAddWardPopUp}
+          wardList={wardList}
+          setWardList={setWardList}
+          setEditWard={setEditWard}
+          setSelectedWard={setSelectedWard}
+           selectedWard={selectedWard}
+        />
+      </div>
+      
+      {/* RIGHT SIDE – Settings */}
+      {selectedWard!==undefined&&(
+ <div style={{ flex: 1, position: "sticky", top: "20px" }}>
+        <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
+      </div>
+      )}
+     
+    </>
+  )}
+</div>
+
             <div>
               {activeTab === 'vehicle' && (
                 <div className={TaskStyles.cardWrapper}>
@@ -211,6 +240,7 @@ const City = () => {
             selectedCity={selectedCity}
             setWardList={setWardList}
             wardList={wardList}
+            setSelectedWard={setSelectedWard}
           />
         )}
       </div>

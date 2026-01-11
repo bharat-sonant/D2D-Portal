@@ -56,13 +56,13 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
     }
 }
 
-export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading) => {
+export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading,setSelectedWard) => {
     setLoading(true)
     const response = await cityService.getCityData();
     if (response.status === 'success') {
         let currentSelected = response.data?.find(item => item?.city_id === selectedCity?.city_id);
         setSelectedCity(currentSelected || response.data[0]);
-        getwardList(response.data[0]?.city_id, setWardList)
+        getwardList(response.data[0]?.city_id, setWardList,setSelectedWard)
         setCityList(response.data);
         setLoading(false)
     } else {
@@ -105,7 +105,7 @@ export const filterCityAction = (cityList, searchTerm, setSelectedCity, selected
 
 
 
-export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNumberError, resetStateValues, setWardList, setDisplayNameError, wardList) => {
+export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNumberError, resetStateValues, setWardList, setDisplayNameError, wardList,setSelectedWard) => {
     let isValid = true;
     setWardNumberError("");
     setDisplayNameError(""); // Reset display name error
@@ -164,7 +164,7 @@ export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNu
                 setLoading(false);
                 return;
             }
-            getwardList(cityId, setWardList)
+            getwardList(cityId, setWardList,setSelectedWard)
             resetStateValues();
             const message = wardId ? "Ward updated successfully" : "Ward added successfully";
             common.setAlertMessage("success", message);
@@ -187,10 +187,12 @@ export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNu
 }
 
 
-export const getwardList = async (city_Id, setWardList) => {
+export const getwardList = async (city_Id, setWardList,setSelectedWard) => {
+    
     let response = await cityService.getCityWisewardList(city_Id)
     if (response.status === 'success') {
         let wardData = sortWardsByRealtimeStatus(response.data)
+        setSelectedWard(wardData[0])
         setWardList(wardData)
     } else {
         setWardList([])
@@ -211,8 +213,5 @@ export const sortWardsByRealtimeStatus = (wardList = []) => {
     const nameSorted = [...wardList].sort((a, b) =>
         a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
     );
-    return [
-        ...nameSorted.filter(w => w.show_realtime === 'Yes'),
-        ...nameSorted.filter(w => w.show_realtime !== 'Yes')
-    ];
+    return nameSorted;
 };

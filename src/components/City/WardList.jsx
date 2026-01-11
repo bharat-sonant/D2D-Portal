@@ -3,7 +3,6 @@ import style from "../../assets/css/City/wardList.module.css"
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 import { FiEdit } from "react-icons/fi";
 import { LocateFixed } from "lucide-react";
-import { updateWardRealTimeStatusAction } from "../../Actions/City/cityAction";
 import { debounce } from "lodash";
 import { useState, useMemo } from "react";
 
@@ -24,13 +23,15 @@ const WardList = (props) => {
   }, [props.wardList, searchTerm]);
 
 
-  const handleToggleRealtime = (wardId, realTimeStatus) => {
-    updateWardRealTimeStatusAction(wardId, realTimeStatus, props.setWardList)
+  const onWardClick = (ward) => {
+    props.setSelectedWard(ward)
+   
   }
 
 
   return (
     <div className={style.Detailscard}>
+       
       <div className={style.card_header}>
         <h5 className={style.heading}>Add Wards </h5>
 
@@ -60,9 +61,10 @@ const WardList = (props) => {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "15px", padding: "10px 0" }}>
             {filteredWardList.map((ward, index) => (
               <div
+              onClick={()=>onWardClick(ward)}
                 key={index}
                 style={{
-                  background: "#fff",
+                 cursor:'pointer',
                   border: "1px solid #eee",
                   borderRadius: "10px",
                   padding: "15px",
@@ -71,8 +73,13 @@ const WardList = (props) => {
                   gap: "12px",
                   boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
                   transition: "all 0.2s",
-                  position: "relative"
+                  position: "relative",
+                       backgroundColor:
+                        props?.selectedWard?.id === ward.id
+                          ? "#3fb2f114"
+                          : "transparent",
                 }}
+                   
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-3px)";
                   e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.1)";
@@ -136,58 +143,6 @@ const WardList = (props) => {
                     <FiEdit color="#9ca3af" />
                   </div>
                 </div>
-
-                {/* Realtime Toggle Row */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingTop: "8px",
-                  borderTop: "1px solid #f0f0f0"
-                }}>
-                  <span style={{ fontSize: "13px", color: "#666", fontWeight: 500 }}>
-                    Show in Realtime
-                  </span>
-                  <label style={{
-                    position: "relative",
-                    display: "inline-block",
-                    width: "44px",
-                    height: "24px",
-                    cursor: "pointer"
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={ward.show_realtime === 'Yes'}
-                      onChange={() => {
-                        handleToggleRealtime(ward.id, ward.show_realtime);
-                      }}
-                      style={{ opacity: 0, width: 0, height: 0 }}
-                    />
-                    <span style={{
-                      position: "absolute",
-                      cursor: "pointer",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: ward.show_realtime === 'Yes' ? "#6B7FDE" : "#ccc",
-                      transition: "0.3s",
-                      borderRadius: "24px"
-                    }}>
-                      <span style={{
-                        position: "absolute",
-                        content: "",
-                        height: "18px",
-                        width: "18px",
-                        left: ward.show_realtime === 'Yes' ? "23px" : "3px",
-                        bottom: "3px",
-                        backgroundColor: "white",
-                        transition: "0.3s",
-                        borderRadius: "50%"
-                      }}></span>
-                    </span>
-                  </label>
-                </div>
               </div>
             ))}
           </div>
@@ -197,7 +152,11 @@ const WardList = (props) => {
             No ward found
           </div>
         )}
+          
       </div>
+       
+                
+                
     </div>
   );
 };

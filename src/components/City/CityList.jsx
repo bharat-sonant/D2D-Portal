@@ -58,7 +58,7 @@ const CityList = (props) => {
                     }}
                     onClick={() => {
                       props?.setSelectedCity(city);
-                      getwardList(city.city_id, props.setWardList);
+                      getwardList(city.city_id, props.setWardList,props.setSelectedWard);
                     }}
                   >
                     <div className={GlobalStyles.userInfo}>

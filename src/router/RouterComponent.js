@@ -57,7 +57,6 @@ useEffect(() => {
   fetchPermissions();
 }, [userId]);
 
-console.log(permissionGranted.CanAccessUserPage)
 
   return (
     <>
