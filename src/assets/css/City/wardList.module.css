@@ -3,8 +3,31 @@
     margin-top: 10px;
     border-radius: 6px;
     padding: 16px;
-   
+     width: 33%
 }
+
+.ward_List{
+     background-color: #ffff;
+    margin-top: 10px;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.ward-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.ward-left {
+  width: 100%;
+}
+
+.ward-right {
+  width: 100%;
+}
+
 
 .card_header {
     display: flex;

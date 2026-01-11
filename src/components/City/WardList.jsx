@@ -30,7 +30,7 @@ const WardList = (props) => {
 
 
   return (
-    <div className={style.Detailscard}>
+    <div className={style.ward_List}>
        
       <div className={style.card_header}>
         <h5 className={style.heading}>Add Wards </h5>

@@ -14,7 +14,7 @@ import UserCityAccessList from "../../components/UserCityAccess/UserCityAccessLi
 import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
 import LogoImage from "../../components/Common/Image/LogoImage";
-import PermissonAccess from "../../components/Users/PermissionAccess";
+
 import WardSetting from "../../components/City/WardSetting";
 
 
@@ -165,9 +165,14 @@ const City = () => {
 >
   {activeTab === "wards" && (
     <>
-      {/* LEFT SIDE – Ward List */}
-      <div style={{ flex: 2 }}>
-        <WardList
+    <div  style={{
+    display: 'flex',
+    gap: '24px',
+    alignItems: 'flex-start',
+    width: '100%'
+  }}>
+  <div className="ward-left">
+         <WardList
           setOpenAddWardPopUp={setOpenAddWardPopUp}
           wardList={wardList}
           setWardList={setWardList}
@@ -175,14 +180,18 @@ const City = () => {
           setSelectedWard={setSelectedWard}
            selectedWard={selectedWard}
         />
-      </div>
-      
-      {/* RIGHT SIDE – Settings */}
-      {selectedWard!==undefined&&(
- <div style={{ flex: 1, position: "sticky", top: "20px" }}>
+  </div>
+
+  <div style={{ flex: 1 }}>
+     {/* <div style={{ flex: 1, position: "sticky", top: "20px" }}>
         <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
-      </div>
-      )}
+      </div> */}
+    <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
+  </div>
+</div>
+
+     
+     
      
     </>
   )}
