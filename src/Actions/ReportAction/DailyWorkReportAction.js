@@ -1,19 +1,12 @@
 import { supabase } from "../../createClient";
-import { DailyWorkReportDataFromFirebase, getDailyWorkReport, getWardData, saveDailyWorkReportToSupabase } from "../../services/ReportServices/DailyWorkReportService"
+import { DailyWorkReportDataFromFirebase, getDailyWorkReport,getDailyWorkWardWise, getWardData, saveDailyWorkReportToSupabase } from "../../services/ReportServices/DailyWorkReportService"
 
 export const getDailyWorkReportAction = async(date, wards, setReportData, setLoading, cityId) => {
-    setLoading(true)
+    setLoading(true);
 
   try{
-    let response = await getDailyWorkReport(date, cityId);
-
-    if(response.status === 'success' && response.data.length === 0 && wards?.length > 0){
-      response = await DailyWorkReportDataFromFirebase(date,wards,cityId)
-      if(response.status === 'success' && response.data.length > 0){
-        saveDailyWorkReportToSupabase(date, response.data)
-      }
-    }
-
+    
+    let response=await getDailyWorkWardWise(date,cityId,wards);
     if(response.status === 'success' && response.data.length > 0){
       setReportData(response?.data)
     }else{

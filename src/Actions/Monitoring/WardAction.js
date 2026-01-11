@@ -46,23 +46,6 @@ export const filterWardAction=(wardList,searchTerm,setSelectedWard,selectedWard)
     // return list;
 }
 
-// export const getDutySummaryAction = async(ward, setDutyLoading) => {
-//   try{
-//     const result = await getDutySummary(ward);
-//     if(!result.success){
-//       common.setAlertMessage("error", result.error);
-//       return null;
-//     }
-//     return result.data;
-//   }catch(error){
-//     const message = error.message || 'error while fetching duty time"'
-//     common.setAlertMessage("error", message);
-//     return null;
-//   }finally{
-//     setDutyLoading(false);
-//   }
-// }
-
 export const getWardDailyWorkSummaryAction = async( date, ward,cityId, setLoading) => {
   try{
     setLoading(true);
