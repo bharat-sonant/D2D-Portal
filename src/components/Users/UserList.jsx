@@ -25,6 +25,9 @@ const UserList = (props) => {
 
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isUserTypeOpen, setIsUserTypeOpen] = useState(false);
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const dropdownMenuRef = useRef();
   const handleSearch = debounce((e) => {
     setSearchTerm(e.target.value);
@@ -132,7 +135,8 @@ const UserList = (props) => {
         >
           {/* FILTER BAR */}
           <div className={`${styles.userFilterBG}`}>
-            <div className={`${styles.userFilter}`}>
+           <div className={`${styles.userFilter} ${isSearchOpen ? styles.searchOpen : ""}`}>
+{!isSearchOpen && (
               <div className="dropdown" style={{ flex: 1 }}>
                 <button
                   className={styles.customDropdownBtn}
@@ -200,8 +204,10 @@ const UserList = (props) => {
                   </ul>
                 )}
               </div>
+)}
 
               {/* User Type Filter */}
+              {!isSearchOpen && (
               <div className="dropdown" style={{ flex: 1 }}>
                 {/* BUTTON */}
                 <button
@@ -274,13 +280,31 @@ const UserList = (props) => {
                   </ul>
                 )}
               </div>
+              )}
+<div   className={`${styles.searchWrapper} ${
+    isSearchOpen ? styles.searchExpanded : styles.searchCollapsed
+  }`}>
+  <input
+    className={`${styles.inputSearch} ${
+      isSearchOpen ? styles.inputExpand : ""
+    }`}
+    type="text"
+    placeholder={isSearchOpen ? "Search" : ""}
+    onFocus={() => setIsSearchOpen(true)}
+    onChange={handleSearch}
+  />
+
+  {isSearchOpen && (
+    <span
+      className={styles.closeIcon}
+      onClick={() => setIsSearchOpen(false)}
+    >
+      ✕
+    </span>
+  )}
+</div>
+
             </div>
-            <input
-              className={`${GlobalStyles.inputSearch}`}
-              type="text"
-              placeholder="Search"
-              onChange={handleSearch}
-            />
           </div>
           <div className={`${styles.userListTitle}`}>Select Employee</div>
           <div className={`${styles.userScroll}`}>
