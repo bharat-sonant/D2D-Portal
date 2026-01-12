@@ -15,7 +15,7 @@ import { getUsersByCity } from "../../Actions/City/UserCityAccessAction";
 import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigAction";
 import LogoImage from "../../components/Common/Image/LogoImage";
 
-import WardSetting from "../../components/City/WardSetting";
+// import WardSetting from "../../components/City/WardSetting";
 
 
 const TABS = [
@@ -186,7 +186,7 @@ const City = () => {
      {/* <div style={{ flex: 1, position: "sticky", top: "20px" }}>
         <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
       </div> */}
-    <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
+    {/* <WardSetting selectedWard={selectedWard} setWardList={setWardList} /> */}
   </div>
 </div>
 

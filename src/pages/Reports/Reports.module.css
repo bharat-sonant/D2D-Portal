@@ -78,16 +78,10 @@
 }
 
 .leftSection {
-  background: var(--white);
-  backdrop-filter: blur(20px);
-  border-radius: 6px;
-  box-shadow: #00000014 0px 8px 32px;
-  border: 1px solid #ffffffcc;
-  height: calc(100vh - 80px);
-  width: 100px;
+  width: 75px;
 }
 .rightSection {
-  width: calc(100% - 110px);
+  width: calc(100% - 85px);
 }
 
 @media (max-width: 767.98px) {
