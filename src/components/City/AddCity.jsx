@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { FaSpinner } from "react-icons/fa";
-import { images } from "../../assets/css/imagePath";
-import styles from "../../assets/css/modal.module.css";
+
+import { Building2, X, Code, Upload, Plus, Check } from "lucide-react";
+// import styles from "../../assets/css/modal.module.css";
+import styles from "./AddCity.module.css";
+import modalStyles from "../../assets/css/popup.module.css";
+
 import { saveCityAction } from "../../Actions/City/cityAction";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const AddCity = (props) => {
   const initialForm = {
@@ -20,6 +25,7 @@ const AddCity = (props) => {
   const [cityError, setCityError] = useState("");
   const [cityCodeError, setCityCodeError] = useState("");
   const [form, setForm] = useState(initialForm);
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -32,16 +38,15 @@ const AddCity = (props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-
   }, [form, logo, loading]);
 
   const handleChange = (e) => {
-    if (e.target.name === 'city_code') {
+    if (e.target.name === "city_code") {
       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
       if (cityCodeError) setCityCodeError("");
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
-      if (e.target.name === 'city_name' && cityError) setCityError("");
+      if (e.target.name === "city_name" && cityError) setCityError("");
     }
   };
   const handleSave = async () => {
@@ -51,7 +56,16 @@ const AddCity = (props) => {
       setLogoError("City Logo is required.");
       return;
     }
-    saveCityAction(form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError);
+    saveCityAction(
+      form,
+      logo,
+      props,
+      setLoading,
+      setCityError,
+      setCityCodeError,
+      resetStateValues,
+      setLogoError
+    );
   };
 
   const handleLogoChange = (e) => {
@@ -75,7 +89,11 @@ const AddCity = (props) => {
       return;
     }
     if (file.size > maxSize) {
-      setLogoError(`The image is too large. Please choose a smaller image. ${file.type === "image/svg+xml" ? "50KB" : "500KB"}.`);
+      setLogoError(
+        `The image is too large. Please choose a smaller image. ${
+          file.type === "image/svg+xml" ? "50KB" : "500KB"
+        }.`
+      );
       return;
     }
 
@@ -121,7 +139,7 @@ const AddCity = (props) => {
 
   const resetStateValues = () => {
     setForm(initialForm);
-    setCityCodeError("")
+    setCityCodeError("");
     setCityError("");
     setLogoError("");
     props.setShowCanvas(false);
@@ -129,7 +147,7 @@ const AddCity = (props) => {
     setLogo(null);
     setLogoPreview("");
     props?.setOnEdit(false);
-  }
+  };
   useMemo(() => {
     setForm((pre) => ({
       city_code: props?.onEdit?.city_code || "",
@@ -139,77 +157,177 @@ const AddCity = (props) => {
         ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
         : dayjs().format("YYYY-MM-DD HH:mm:ss"),
     }));
-    setLogoPreview(props?.onEdit?.logoUrl || '');
+    setLogoPreview(props?.onEdit?.logoUrl || "");
   }, [props?.onEdit]);
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+
+      // fake event bana ke same validation reuse
+      handleLogoChange({ target: { files: [file] } });
+    }
+  };
   return (
-    <div className={styles.overlay} aria-modal="true" role="dialog">
-      <div className={styles.modal}>
-        <div className={styles.actionBtn}>
-          <p className={styles.headerText}>
-            {props?.onEdit ? "Update" : "Add"} City
-          </p>
+    <div className={modalStyles.overlay} aria-modal="true" role="dialog">
+      <div className={`${modalStyles.modal} ${styles.modal}`}>
+        {/* Header */}
+        <div className={modalStyles.modalHeader}>
+          <div className={modalStyles.headerLeft}>
+            <div className={modalStyles.iconWrapper}>
+              <Building2 className="map-icon" />
+            </div>
+            <div className={modalStyles.headerTextRight}>
+              <h2 className={modalStyles.modalTitle}>
+                {props?.onEdit ? "Update" : "Add New"} City
+              </h2>
+              <p className={modalStyles.modalSubtitle}>
+                {props?.onEdit
+                  ? "Modify your city information"
+                  : "Choose your preferred city location"}
+              </p>
+            </div>
+          </div>
           <button
-            className={styles.closeBtn}
+            className={modalStyles.closeBtn}
             onClick={() => {
               resetStateValues();
             }}
-            aria-label="Close"
           >
-            <img
-              src={images.iconClose}
-              className={styles.iconClose}
-              title="Close"
-              alt="close"
-            />
+            <X size={20} />
           </button>
         </div>
 
-        <div className={styles.modalBody}>
-
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>City Code</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter city code"
-                  name="city_code"
-                  value={form.city_code}
-                  onChange={handleChange}
-                  disabled={Boolean(props?.onEdit && Object.keys(props?.onEdit).length)}
-                />
+        {/* Modal Body */}
+        <div className={modalStyles.modalBody}>
+          {/* City Code */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>City Code</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <Code size={18} />
               </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                placeholder="Enter city code"
+                name="city_code"
+                value={form.city_code}
+                onChange={handleChange}
+                disabled={Boolean(
+                  props?.onEdit && Object.keys(props?.onEdit).length
+                )}
+              />
             </div>
-            {cityCodeError && (
-              <div className={`${styles.invalidfeedback}`}>{cityCodeError}</div>
-            )}
+            {cityCodeError && <ErrorMessage message={cityCodeError} />}
           </div>
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>City Name</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter city name"
-                  name="city_name"
-                  value={form.city_name}
-                  onChange={handleChange}
-                />
+
+          {/* City Code */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>City Name</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <Building2 size={18} />
               </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                placeholder="Enter city name"
+                name="city_name"
+                value={form.city_name}
+                onChange={handleChange}
+              />
             </div>
-            {cityError && (
-              <div className={`${styles.invalidfeedback}`}>{cityError}</div>
-            )}
+            {cityError && <ErrorMessage message={cityError} />}
           </div>
 
           {/* City Logo */}
-          <div
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>Upload City Logo</label>
+            <div className={styles.uploadWrapper}>
+              {/* hidden input */}
+              <input
+                type="file"
+                accept="image/png, image/svg+xml"
+                id="cityLogoInput"
+                className={styles.fileInput}
+                onChange={handleLogoChange}
+              />
+
+              <div className={styles.uploadRow}>
+                {/* preview */}
+                {logoPreview && (
+                  <div className={styles.previewBox}>
+                    <img
+                      src={logoPreview}
+                      alt="City Logo"
+                      className={styles.previewImg}
+                    />
+                  </div>
+                )}
+                {/* upload box */}
+                <label
+                  htmlFor="cityLogoInput"
+                  className={`${styles.uploadArea} 
+        ${dragActive ? styles.uploadAreaActive : ""} 
+        ${logoPreview ? styles.uploadAreaSuccess : ""}`}
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  {!logoPreview ? (
+                    <>
+                      <div className={styles.uploadIcon}>
+                        <Upload />
+                      </div>
+                      <p className={styles.uploadText}>
+                        <strong>Click to upload</strong> or drag & drop
+                      </p>
+                      <p className={styles.uploadSubtext}>
+                        PNG / SVG • Min 5KB, Max 500KB
+                      </p>
+                    </>
+                  ) : (
+                    <div
+                      className={styles.uploadSuccess}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById("cityLogoInput").click();
+                      }}
+                      title="Change File"
+                    >
+                      <div className={styles.successIcon}>
+                        <Plus />
+                      </div>
+                      {/* <p className={styles.fileName}>Logo Uploaded</p>
+                      <button type="button" className={globleStyles.btnTheme}>
+                        Change File
+                      </button> */}
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
+            {/* error */}
+            {logoError && <ErrorMessage message={logoError} />}
+          </div>
+          {/* <div
             style={{ display: "flex", flexDirection: "column", gap: "14px" }}
           >
-            {/* Upload + Preview Row */}
             <div
               style={{
                 display: "flex",
@@ -217,7 +335,6 @@ const AddCity = (props) => {
                 alignItems: "center",
               }}
             >
-              {/* hidden input */}
               <input
                 type="file"
                 accept="image/*"
@@ -226,12 +343,12 @@ const AddCity = (props) => {
                 onChange={handleLogoChange}
               />
 
-              {/* upload box */}
+     
               <label
                 htmlFor="cityLogoInput"
                 style={{
                   flex: 1,
-                  height: "90px", // 👈 reduced height
+                  height: "90px", 
                   border: "2px dashed #cbd5e1",
                   borderRadius: "8px",
                   cursor: "pointer",
@@ -252,7 +369,7 @@ const AddCity = (props) => {
                 </div>
               </label>
 
-              {/* preview left aligned */}
+      
               {logoPreview && (
                 <div
                   style={{
@@ -279,26 +396,34 @@ const AddCity = (props) => {
               )}
             </div>
 
-            {/* error */}
+     
             {logoError && (
               <div style={{ color: "red", fontSize: "13px" }}>{logoError}</div>
             )}
-          </div>
-
+          </div> */}
+        </div>
+        {/* Footer */}
+        <div className={modalStyles.modalFooter}>
           <button
             type="button"
-            className={`mt-3 ${styles.btnSave}`}
+            className={`${modalStyles.submitBtn}`}
             onClick={handleSave}
           >
             {loading ? (
-              <div className={styles.Loginloadercontainer}>
-                <FaSpinner className={styles.spinnerLogin} />
-                <span className={styles.loaderText}>Please wait...</span>
-              </div>
+              <div
+                className="spinner-border"
+                style={{ height: "18px", width: "18px", borderWidth: "2px" }}
+              ></div>
             ) : props.onEdit ? (
-              "Update"
+              <div className={styles.btnContent}>
+                <Check size={18} />
+                <span>Update City</span>
+              </div>
             ) : (
-              "Save"
+              <div className={styles.btnContent}>
+                <Plus size={18} />
+                <span style={{ marginTop: "2px" }}>Add City</span>
+              </div>
             )}
           </button>
         </div>

@@ -54,7 +54,7 @@
   box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
   animation: modalPulse 2s ease-in-out infinite;
 }
-.headerTextRight{
+.headerTextRight {
   width: calc(100% - 65px);
 }
 .modalTitle {
@@ -202,6 +202,22 @@
   transition: color 0.3s ease;
 }
 
+/* ================ Disabled INNPUT ===============*/
+.input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed; 
+  opacity: 0.5;
+}
+
+.input:disabled::placeholder {
+  color: #9ca3af;
+}
+
+
+.input:disabled:hover {
+  box-shadow: none;
+  border-color: #e5e7eb;
+}
 /* ================= REQUIREMENTS ================= */
 .requirementsBox {
   margin-top: 10px;
@@ -457,7 +473,7 @@
   .modalHeader {
     padding: 20px 16px;
   }
-  .searchSection{
+  .searchSection {
     padding: 20px 16px 0px 16px;
   }
   .modalBody {
