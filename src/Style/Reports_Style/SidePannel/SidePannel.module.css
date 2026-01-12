@@ -67,7 +67,12 @@
 /********** Dark Theme ************/
 
 .dark {
-background: linear-gradient(180deg, #040c25 0%, rgb(8, 20, 58) 50%, #061649 100%);
+  background: linear-gradient(
+    180deg,
+    #040c25 0%,
+    rgb(9 27 87) 50%,
+    #061649 100%
+  );
   /* background: linear-gradient(to top right, #5a6cf0 0%, #320567  100%); */
 }
 
@@ -102,7 +107,6 @@ background: linear-gradient(180deg, #040c25 0%, rgb(8, 20, 58) 50%, #061649 100%
     overflow-x: auto;
     justify-content: flex-start;
     height: auto;
-
   }
   .menuItem {
     white-space: nowrap;
