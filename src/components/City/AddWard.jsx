@@ -12,6 +12,9 @@ const AddWard = (props) => {
     display_name: "",
   };
 
+
+  console.log('props',props)
+
   const [loading, setLoading] = useState(false);
   const [wardNumberError, setWardNumberError] = useState("");
   const [displayNameError, setDisplayNameError] = useState("");
@@ -41,6 +44,9 @@ const AddWard = (props) => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    setWardNumberError('');
+    setDisplayNameError('');
   };
   const handleSave = async () => {
     saveWardAction(
@@ -53,7 +59,8 @@ const AddWard = (props) => {
       props.setWardList,
       setDisplayNameError,
       props.wardList,
-      props.setSelectedWard
+      props.setSelectedWard,
+      props.setOnEdit
     );
   };
 
@@ -64,6 +71,7 @@ const AddWard = (props) => {
     props.setOpenAddWardPopUp(false);
     setLoading(false);
     props.setEditWard({ ward: "", wardId: "", display_name: "" });
+    props.setOnEdit(false)
   };
 
   return (

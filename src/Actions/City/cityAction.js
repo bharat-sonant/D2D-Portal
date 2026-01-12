@@ -105,7 +105,7 @@ export const filterCityAction = (cityList, searchTerm, setSelectedCity, selected
 
 
 
-export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNumberError, resetStateValues, setWardList, setDisplayNameError, wardList,setSelectedWard) => {
+export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNumberError, resetStateValues, setWardList, setDisplayNameError, wardList,setSelectedWard,setOnEdit) => {
     let isValid = true;
     setWardNumberError("");
     setDisplayNameError(""); // Reset display name error
@@ -182,6 +182,9 @@ export const saveWardAction = async (form, cityId, wardId, setLoading, setWardNu
             } else {
                 common.setAlertMessage("error", "Something went wrong!");
             }
+        }
+        finally{
+            setOnEdit(false)
         }
     }
 }

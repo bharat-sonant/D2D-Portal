@@ -179,6 +179,7 @@ const City = () => {
           setEditWard={setEditWard}
           setSelectedWard={setSelectedWard}
            selectedWard={selectedWard}
+           setOnEdit={setOnEdit}
         />
   </div>
   {selectedWard!==undefined&&(

@@ -132,6 +132,8 @@ const WardList = (props) => {
                     onClick={() => {
                       props.setEditWard({ ward: ward.name, wardId: ward.id, display_name: ward.display_name });
                       props.setOpenAddWardPopUp(true);
+
+                      props.setOnEdit(true);
                     }}
                     style={{
                       cursor: "pointer",
