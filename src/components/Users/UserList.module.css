@@ -19,6 +19,12 @@
 .userListTitle {
   display: none;
 }
+.userMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* spacing between emp_code, icon, and red dot */
+
+}
 /********** New CSS *******/
 .userFilterBG {
   padding: 10px 10px;
@@ -122,8 +128,22 @@
   color: var(--white);
 }
 .textHighlight {
-  font-family: var(--fontGraphikMedium);
-  font-size: 11px;
+  font-family: var(--fontGraphik);
+  font-size: 9px;
+  color: var(--regularColor);
+}
+.selectedText {
+  font-family: var(--fontGraphikSemibold);
+  font-size: 9px;
+  color: var(--white);
+  background: var(--gradientTheme);
+  border-radius: 4px;
+  padding: 2px 4px;
+  letter-spacing: 0.5px;
+}
+.listIcon {
+  width: 12px;
+  color: var(--regularColor);
 }
 
 .noUserData {
@@ -173,6 +193,3 @@
   height: calc(100vh - 190px);
   overflow: auto;
 }
-
-
-

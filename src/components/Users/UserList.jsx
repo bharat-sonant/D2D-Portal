@@ -3,7 +3,7 @@ import { debounce } from "lodash";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 
 import { images } from "../../assets/css/imagePath";
-import userNotFound from "../../assets/images/icons/userNotFound.gif"
+import userNotFound from "../../assets/images/icons/userNotFound.gif";
 import styles from "./UserList.module.css";
 import {
   filterUserListAction,
@@ -35,7 +35,6 @@ const UserList = (props) => {
       filterUserListAction(props?.users, searchTerm, props?.setSelectedUser)
     );
   }, [props?.users, searchTerm]);
-  
 
   useEffect(() => {
     handleApplyFilter(
@@ -304,21 +303,26 @@ const UserList = (props) => {
                       closeDropdown(); // ✅ close on select
                     }}
                   >
-                    <div>
+                    <div className={styles.leftSection}>
                       {user?.name}
-                      {user?.emp_code && (
-                        <>
-                          <span className={`${styles.textHighlight}`}>
-                            {" "}
-                            ({user.emp_code})
-                          </span>
-                        </>
-                      )}
+                      {user?.emp_code && <></>}
                     </div>
                     {/* RIGHT SIDE : Icons */}
-                    <div>
+                    <div className={styles.userMeta}>
+                      {user?.user_type !== "external" && (
+                        <span
+                          className={`${styles.textHighlight} ${
+                            props?.selectedUser?.id === user?.id
+                              ? styles.selectedText
+                              : ""
+                          }`}
+                        >
+                          {user?.emp_code}
+                        </span>
+                      )}
+
                       {user?.user_type === "external" && (
-                        <UserRoundCheck size={14} />
+                        <UserRoundCheck className={styles.listIcon} />
                       )}
 
                       {user?.status === "inactive" && (
