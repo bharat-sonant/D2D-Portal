@@ -4,13 +4,26 @@ import { updateWardRealTimeStatusAction } from '../../Actions/City/cityAction';
 export default function WardSetting(props) {
   const [isEnabled, setIsEnabled] = useState(false);
 
-  useEffect(()=>{
-    if(props.selectedWard.show_realtime==='Yes'){
-        setIsEnabled(true)
-    }else{
-      setIsEnabled(false)
-    }
-  },[props.selectedWard])
+  useEffect(() => {
+  if (!props?.selectedWard) {
+    setIsEnabled(false);
+    return;
+  }
+  if (props.selectedWard.show_realtime === 'Yes') {
+    setIsEnabled(true);
+  } else {
+    setIsEnabled(false);
+  }
+}, [props.selectedWard]);
+
+
+  // useEffect(()=>{
+  //   if(props.selectedWard.show_realtime==='Yes'){
+  //       setIsEnabled(true)
+  //   }else{
+  //     setIsEnabled(false)
+  //   }
+  // },[props.selectedWard])
 
    const handleToggleSwitch=()=>{
        setIsEnabled(!isEnabled)
@@ -115,8 +128,54 @@ export default function WardSetting(props) {
                   <span className="toggle-slider"></span>
                 </button>
               </div>
+              
             </div>
           </div>
+          {/* <div className="card bg-light border-0 mt-3">
+  <div className="card-body">
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      <p
+        style={{
+          margin: 0,
+          fontSize: '13px',
+          color: '#212121',
+          fontFamily: 'Graphik-Medium'
+        }}
+      >
+        Ward Maps
+      </p>
+
+      <button
+        onClick={() => {
+          console.log('Show Maps + clicked');
+        }}
+        style={{
+          width: '30px',
+          height: '30px',
+          borderRadius: '50%',
+          backgroundColor: '#6B7FDE',
+          color: '#fff',
+          border: 'none',
+          fontSize: '18px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        +
+      </button>
+    </div>
+  </div>
+</div> */}
+
         </div>
       </div>
     </>
