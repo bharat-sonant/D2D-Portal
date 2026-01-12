@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import * as common from "../../common/common";
@@ -43,7 +42,15 @@ const AddUser = (props) => {
 
   if (!props.showCanvas) return null;
 
-  const handleChange = (e) => userAction.formValueChangeAction(e, setForm,setEmailError,setNameError, setUserTypeError, setEmpCodeError);
+  const handleChange = (e) =>
+    userAction.formValueChangeAction(
+      e,
+      setForm,
+      setEmailError,
+      setNameError,
+      setUserTypeError,
+      setEmpCodeError
+    );
 
   const handleSave = async () => {
     userAction.validateUserDetail(
@@ -111,7 +118,7 @@ const AddUser = (props) => {
         </div>
         {/* Body */}
         <div className={`${modalStyles.modalBody}`}>
-                    {/* User Type */}
+          {/* User Type */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>User Type</label>
             <div className={modalStyles.userTypeGrid}>
@@ -250,34 +257,27 @@ const AddUser = (props) => {
         {/* Footer */}
         <div className={modalStyles.modalFooter}>
           <button
-            className={modalStyles.cancelBtn}
-            onClick={() => {
-              resetStateValues();
-            }}
-          >
-            Cancel
-          </button>
-          <button
             type="button"
             className={modalStyles.submitBtn}
             onClick={handleSave}
           >
             {loading ? (
-              <div className={``}>
+              <div>
                 <div
                   className="spinner-border"
                   style={{ height: "18px", width: "18px", borderWidth: "2px" }}
                 ></div>
               </div>
             ) : props.onEdit ? (
-              "Update"
+              <div className="d-flex align-items-center gap-1">
+                <Check size={18} />
+                <span style={{ marginTop: "2px" }}>Update</span>
+              </div>
             ) : (
-              <>
-                <div className={`d-flex align-item-center gap-1`}>
-                  <UserRoundPlus size={18} />
-                  <span>Add User</span>
-                </div>
-              </>
+              <div className="d-flex align-items-center gap-1">
+                <UserRoundPlus size={18} />
+                <span style={{ marginTop: "2px" }}>Add User</span>
+              </div>
             )}
           </button>
         </div>

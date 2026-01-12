@@ -20,11 +20,10 @@ import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigSer
 import LogoImage from "../components/Common/Image/LogoImage";
 import { usePermissions } from "../context/PermissionContext";
 
-
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
   const navigate = useNavigate();
-   const {permissionGranted} = usePermissions();
+  const { permissionGranted } = usePermissions();
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -34,18 +33,16 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const { setCityContext, city, cityId, cityLogo } = useCity();
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
-  const defaultCityId = localStorage.getItem('defaultCity');
+  const defaultCityId = localStorage.getItem("defaultCity");
   const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
 
- 
   useEffect(() => {
-    fetchDefaultCityConfig()
-  }, [defaultCityId])
+    fetchDefaultCityConfig();
+  }, [defaultCityId]);
 
   const fetchDefaultCityConfig = async () => {
     const res = await getCityFirebaseConfig(defaultCityId);
-  }
-
+  };
 
   const menuItems = [
     {
@@ -61,7 +58,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       icon: Users,
       color: "#b84dc5",
       path: "/users",
-      permissionKey:'CanAccessUserPage'
+      permissionKey: "CanAccessUserPage",
     },
     {
       id: "City",
@@ -90,7 +87,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       icon: Settings,
       color: "#6e35a5",
       path: "/settings",
-      
     },
   ];
 
@@ -123,14 +119,14 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
     setCityContext({
       city: "",
       cityId: "",
-      cityLogo: ""
-    })
+      cityLogo: "",
+    });
     navigate("/");
   };
   const changePass = () => {
     setShowChangePassword(true);
-  }
- 
+  };
+
   return (
     <>
       <div className={styles.header}>
@@ -141,70 +137,74 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
             <div
               className={styles.logoText}
               onClick={() => setShowDefaultCity(true)}
-              title="Chnage City"
+              title="Change City"
             >
               {titleToShow}
-              <img src={images.iconDown} className={styles.iconDown} title="Chnage City" alt="Icon" />
+
+              <img
+                src={images.iconDown}
+                className={styles.iconDown}
+                title="Change City"
+                alt="Icon"
+              />
             </div>
           </div>
         </div>
 
         {/* DESKTOP + MOBILE MENU */}
         <div
-          className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
-            }`}
-        >
-        {menuItems
-  .filter((item) => {
-    // 🔥 Super Admin → sab dikhao
-    if (isSuperAdmin === true) return true;
-
-    // permissionKey nahi hai → show
-    if (!item.permissionKey) return true;
-
-    // permissionKey hai → sirf true par show
-    return permissionGranted[item.permissionKey] === true;
-  })
-  .map((item, index) => {
-    const Icon = item.icon;
-    const isActive = location.pathname === item.path;
-
-    return (
-      <Link
-        key={item.id}
-        to={item.path}
-        className={`${styles.menuItem} ${
-          isActive ? styles.menuItemActive : ""
-        }`}
-        style={{
-          animationDelay: `${index * 0.1}s`,
-          "--menu-color": item.color,
-        }}
-        onClick={() => setShowMobileMenu(false)}
-      >
-        <div
-          className={`${styles.menuIcon} ${
-            isActive ? styles.menuIconActive : ""
+          className={`${styles.desktopMenu} ${
+            showMobileMenu ? styles.mobileMenuOpen : ""
           }`}
         >
-          <Icon className={styles.navIcon} size={20} />
-        </div>
+          {menuItems
+            .filter((item) => {
+              // 🔥 Super Admin → sab dikhao
+              if (isSuperAdmin === true) return true;
 
-        <span
-          className={`${styles.menuLabel} ${
-            isActive ? styles.menuLabelActive : ""
-          }`}
-        >
-          {item.label}
-        </span>
+              // permissionKey nahi hai → show
+              if (!item.permissionKey) return true;
 
-        {isActive && <div className={styles.activeIndicator} />}
-      </Link>
-    );
-  })}
+              // permissionKey hai → sirf true par show
+              return permissionGranted[item.permissionKey] === true;
+            })
+            .map((item, index) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
 
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.menuItemActive : ""
+                  }`}
+                  style={{
+                    animationDelay: `${index * 0.1}s`,
+                    "--menu-color": item.color,
+                  }}
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <div
+                    className={`${styles.menuIcon} ${
+                      isActive ? styles.menuIconActive : ""
+                    }`}
+                  >
+                    <Icon className={styles.navIcon} size={20} />
+                  </div>
 
+                  <span
+                    className={`${styles.menuLabel} ${
+                      isActive ? styles.menuLabelActive : ""
+                    }`}
+                  >
+                    {item.label}
+                  </span>
 
+                  {isActive && <div className={styles.activeIndicator} />}
+                </Link>
+              );
+            })}
         </div>
 
         {/* RIGHT */}
@@ -232,10 +232,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
               </button>
 
               <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
-                <li
-                  onClick={changePass}
-                  className={styles.dropdownLI}
-                >
+                <li onClick={changePass} className={styles.dropdownLI}>
                   <span className={styles.dropdownItem}>
                     <LockKeyhole size={16} /> Change Password
                   </span>

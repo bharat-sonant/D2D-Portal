@@ -331,10 +331,6 @@ const ChangePassword = ({
 
         {/* Footer */}
         <div className={styles.modalFooter}>
-          <button className={styles.cancelBtn} onClick={handleClose}>
-            Cancel
-          </button>
-
           <button
             className={styles.submitBtn}
             type="submit"
