@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-
-import { FaSpinner } from "react-icons/fa";
-import { images } from "../../assets/css/imagePath";
-import styles from "../../assets/css/modal.module.css";
+import styles from "./AddWard.module.css";
+import { MapPinned, X, Eclipse, Check, Plus } from "lucide-react";
+import modalStyles from "../..//assets/css/popup.module.css";
 import { saveWardAction } from "../../Actions/City/cityAction";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 const AddWard = (props) => {
   const initialForm = {
     CityId: 0,
     Ward: "",
     display_name: "",
-
   };
 
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,6 @@ const AddWard = (props) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-
   }, [form, loading]);
 
   useEffect(() => {
@@ -39,107 +37,129 @@ const AddWard = (props) => {
         display_name: props.editWard?.display_name || "",
       }));
     }
-  }, [])
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSave = async () => {
-    saveWardAction(form, props.selectedCity?.city_id, props.editWard?.wardId, setLoading, setWardNumberError, resetStateValues, props.setWardList, setDisplayNameError, props.wardList,props.setSelectedWard);
+    saveWardAction(
+      form,
+      props.selectedCity?.city_id,
+      props.editWard?.wardId,
+      setLoading,
+      setWardNumberError,
+      resetStateValues,
+      props.setWardList,
+      setDisplayNameError,
+      props.wardList,
+      props.setSelectedWard
+    );
   };
-
-
 
   const resetStateValues = () => {
     setForm(initialForm);
-    setWardNumberError("")
-    setDisplayNameError("")
+    setWardNumberError("");
+    setDisplayNameError("");
     props.setOpenAddWardPopUp(false);
     setLoading(false);
-    props.setEditWard({ ward: '', wardId: "", display_name: "" })
-  }
-
+    props.setEditWard({ ward: "", wardId: "", display_name: "" });
+  };
 
   return (
-    <div className={styles.overlay} aria-modal="true" role="dialog">
-      <div className={styles.modal}>
-        <div className={styles.actionBtn}>
-          <p className={styles.headerText}>
-            {props?.onEdit ? "Update" : "Add"} Ward
-          </p>
+    <div className={modalStyles.overlay} aria-modal="true" role="dialog">
+      <div className={`${modalStyles.modal} ${styles.modal}`}>
+        {/* Header */}
+        <div className={modalStyles.modalHeader}>
+          <div className={modalStyles.headerLeft}>
+            <div className={modalStyles.iconWrapper}>
+              <MapPinned className="map-icon" />
+            </div>
+            <div className={modalStyles.headerTextRight}>
+              <h2 className={modalStyles.modalTitle}>
+                {props?.onEdit ? "Update" : "Add New"} Ward
+              </h2>
+              <p className={modalStyles.modalSubtitle}>
+                {props?.onEdit
+                  ? "Modify your ward information"
+                  : "Choose your preferred ward location"}
+              </p>
+            </div>
+          </div>
           <button
-            className={styles.closeBtn}
+            className={modalStyles.closeBtn}
             onClick={() => {
               resetStateValues();
             }}
-            aria-label="Close"
           >
-            <img
-              src={images.iconClose}
-              className={styles.iconClose}
-              title="Close"
-              alt="close"
-            />
+            <X size={20} />
           </button>
         </div>
-
-        <div className={styles.modalBody}>
-
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>Display Name</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter display name"
-                  name="display_name"
-                  value={form.display_name}
-                  onChange={handleChange}
-                // disabled={Boolean(props?.onEdit && Object.keys(props?.onEdit).length)} // Assuming display_name is editable
-                />
+        {/* Modal Body */}
+        <div className={modalStyles.modalBody}>
+          {/* Dispaly Name */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>Display Name</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <Eclipse size={18} />
               </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                placeholder="Enter dispaly name"
+                name="display_name"
+                value={form.display_name}
+                onChange={handleChange}
+              />
             </div>
-            {displayNameError && (
-              <div className={`${styles.invalidfeedback}`}>{displayNameError}</div>
-            )}
+            {displayNameError && <ErrorMessage message={displayNameError} />}
           </div>
-
-          <div className={styles.textboxGroup}>
-            <div className={styles.textboxMain}>
-              <div className={styles.textboxLeft}>Ward</div>
-              <div className={styles.textboxRight}>
-                <input
-                  type="text"
-                  className={`form-control ${styles.formTextbox}`}
-                  placeholder="Enter ward name"
-                  name="Ward"
-                  value={form.Ward}
-                  onChange={handleChange}
-                  disabled={Boolean(props?.onEdit && Object.keys(props?.onEdit).length)}
-                />
+          {/* Ward */}
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>Ward Name</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <MapPinned size={18} />
               </div>
+              <input
+                className={modalStyles.input}
+                type="text"
+                placeholder="Enter ward name"
+                name="Ward"
+                value={form.Ward}
+                onChange={handleChange}
+                disabled={Boolean(
+                  props?.onEdit && Object.keys(props?.onEdit).length
+                )}
+              />
             </div>
-            {wardNumberError && (
-              <div className={`${styles.invalidfeedback}`}>{wardNumberError}</div>
-            )}
+            {wardNumberError && <ErrorMessage message={wardNumberError} />}
           </div>
-
+        </div>
+        {/* Footer */}
+        <div className={modalStyles.modalFooter}>
           <button
             type="button"
-            className={`mt-3 ${styles.btnSave}`}
+            className={`${modalStyles.submitBtn}`}
             onClick={handleSave}
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? (
-              <div className={styles.Loginloadercontainer}>
-                <FaSpinner className={styles.spinnerLogin} />
-                <span className={styles.loaderText}>Please wait...</span>
-              </div>
+              <div
+                className="spinner-border"
+                style={{ height: "18px", width: "18px", borderWidth: "2px" }}
+              ></div>
             ) : props.onEdit ? (
-              "Update"
+              <div className={styles.btnContent}>
+                <Check size={18} />
+                <span>Update</span>
+              </div>
             ) : (
-              "Save"
+              <div className={styles.btnContent}>
+                <Plus size={18} />
+                <span style={{ marginTop: "2px" }}>Add Ward</span>
+              </div>
             )}
           </button>
         </div>

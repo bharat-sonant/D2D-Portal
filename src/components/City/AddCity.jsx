@@ -235,7 +235,7 @@ const AddCity = (props) => {
             {cityCodeError && <ErrorMessage message={cityCodeError} />}
           </div>
 
-          {/* City Code */}
+          {/* City Name */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>City Name</label>
             <div className={modalStyles.inputWrapper}>
