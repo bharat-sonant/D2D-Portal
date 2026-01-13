@@ -12,9 +12,12 @@ const PermissonAccess = (props) => {
   const [permissions, setPermissions] = useState({});
 
   useEffect(()=>{
-    const activePage = pages.find((page) => page.pageNumber === activeTab);
+    if(props.selectedUser!==undefined){
+         const activePage = pages.find((page) => page.pageNumber === activeTab);
     setModuleList(activePage.Module);
   action.getUserPagesPermissionsAction(props.selectedUser.id,setPermissions)
+    }
+
   },[props.selectedUser])
 
 
