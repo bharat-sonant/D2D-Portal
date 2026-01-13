@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { images } from "../../assets/css/imagePath";
 import cityNotFound from "../../assets/images/icons/cityNotFound.gif";
 import userNotFound from "../../assets/images/icons/userNotFound.gif";
 import { Search } from "lucide-react";
 import style from "../../assets/css/User/UserCityAccess.module.css";
 import * as userAction from "../../Actions/UserAction/UserAction";
 import NoResult from "../NoResultFound/NoResult";
+import GlobalCheckbox from "../Common/GlobalCheckbox/GlobalCheckbox";
 
 const UserCityAccess = (props) => {
   //   console.log("props", props);
@@ -98,19 +98,14 @@ const UserCityAccess = (props) => {
           <ul className={style.listLine}>
             {filteredCityList.map((item, index) => (
               <li key={index} className={style.list_item}>
-                <span className={style.designationName}>{item.city_name}</span>
-
-                <label className={style.checkboxWrapper}>
-                  <input
-                    type="checkbox"
-                    checked={selectedCities.some(
-                      (c) => c.city_id === item.city_id
-                    )}
-                    onChange={() => handleCheckboxChange(item.city_id)}
-                    disabled={loading}
-                  />
-                  <span className={style.customCheckbox}></span>
-                </label>
+                <GlobalCheckbox
+                  label={item.city_name}
+                  checked={selectedCities.some(
+                    (c) => c.city_id === item.city_id
+                  )}
+                  onChange={() => handleCheckboxChange(item.city_id)}
+                  disabled={loading}
+                />
               </li>
             ))}
           </ul>
