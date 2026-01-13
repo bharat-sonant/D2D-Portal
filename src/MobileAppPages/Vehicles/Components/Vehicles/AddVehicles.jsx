@@ -4,6 +4,7 @@ import modalStyles from "../../../../assets/css/popup.module.css";
 import styles from "./AddVehicles.module.css";
 import * as commonAction from "../../../../Actions/VehiclesAction/VehiclesAction";
 import ErrorMessage from "../../../../components/ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../../../../components/Common/Loader/GlobalSpinnerLoader";
 
 const AddVehicles = ({
   showModal,
@@ -198,10 +199,7 @@ const AddVehicles = ({
             disabled={loader}
           >
             {loader ? (
-              <div
-                className="spinner-border"
-                style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-              ></div>
+              <GlobalSpinnerLoader />
             ) : vehicleId ? (
               <div className={styles.btnContent}>
                 <Check size={18} />

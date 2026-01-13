@@ -4,6 +4,7 @@ import { MapPinned, X, Eclipse, Check, Plus } from "lucide-react";
 import modalStyles from "../..//assets/css/popup.module.css";
 import { saveWardAction } from "../../Actions/City/cityAction";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const AddWard = (props) => {
   const initialForm = {
@@ -12,8 +13,7 @@ const AddWard = (props) => {
     display_name: "",
   };
 
-
-  console.log('props',props)
+  console.log("props", props);
 
   const [loading, setLoading] = useState(false);
   const [wardNumberError, setWardNumberError] = useState("");
@@ -45,8 +45,8 @@ const AddWard = (props) => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
 
-    setWardNumberError('');
-    setDisplayNameError('');
+    setWardNumberError("");
+    setDisplayNameError("");
   };
   const handleSave = async () => {
     saveWardAction(
@@ -71,7 +71,7 @@ const AddWard = (props) => {
     props.setOpenAddWardPopUp(false);
     setLoading(false);
     props.setEditWard({ ward: "", wardId: "", display_name: "" });
-    props.setOnEdit(false)
+    props.setOnEdit(false);
   };
 
   return (
@@ -154,10 +154,7 @@ const AddWard = (props) => {
             disabled={loading}
           >
             {loading ? (
-              <div
-                className="spinner-border"
-                style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-              ></div>
+              <GlobalSpinnerLoader />
             ) : props.onEdit ? (
               <div className={styles.btnContent}>
                 <Check size={18} />

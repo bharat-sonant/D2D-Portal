@@ -9,6 +9,7 @@ import modalStyles from "../../assets/css/popup.module.css";
 
 import { saveCityAction } from "../../Actions/City/cityAction";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const AddCity = (props) => {
   const initialForm = {
@@ -410,10 +411,7 @@ const AddCity = (props) => {
             onClick={handleSave}
           >
             {loading ? (
-              <div
-                className="spinner-border"
-                style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-              ></div>
+              <GlobalSpinnerLoader />
             ) : props.onEdit ? (
               <div className={styles.btnContent}>
                 <Check size={18} />
