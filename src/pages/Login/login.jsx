@@ -1,17 +1,12 @@
-
 import { useEffect, useState } from "react";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Zap,
-  Car,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Car } from "lucide-react";
 import styles from "../Login/login.module.css";
 import { useNavigate } from "react-router-dom";
-import { getDataByColumnName, login, upsertByConflictKeys } from "../../services/supabaseServices";
+import {
+  getDataByColumnName,
+  login,
+  upsertByConflictKeys,
+} from "../../services/supabaseServices";
 import {
   decryptValue,
   encryptValue,
@@ -22,6 +17,7 @@ import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import { useCity } from "../../context/CityContext";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { createCityLogoUrl } from "../../Actions/commonActions";
+import GlobalSpinnerLoader from "../../components/Common/Loader/GlobalSpinnerLoader";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,7 +27,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [forgotPassword, setforgetPassword] = useState(false);
-  const {setCityContext} = useCity();
+  const { setCityContext } = useCity();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -76,33 +72,41 @@ const Login = () => {
     setPasswordError("");
     try {
       setLoading(true);
-      const user = await login(emailId, password, setEmailError, setPasswordError);
-      if(!user){
-        setLoading(false)
+      const user = await login(
+        emailId,
+        password,
+        setEmailError,
+        setPasswordError
+      );
+      if (!user) {
+        setLoading(false);
         return;
       }
-      localStorage.setItem("isLogin", "success")
+      localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
       localStorage.setItem("userId", user?.id);
-      localStorage.setItem('isSuperAdmin',user.is_superadmin)
+      localStorage.setItem("isSuperAdmin", user.is_superadmin);
       localStorage.setItem("loginDate", dayjs().format("DD/MM/YYYY"));
       localStorage.setItem("defaultCity", user?.default_city);
-      await fetchCityName(user?.default_city).then(()=> {
+      await fetchCityName(user?.default_city).then(() => {
         if (rememberMe) {
-        localStorage.setItem("savedEmail", encryptValue(emailId));
-        localStorage.setItem("savedPassword", encryptValue(password));
-      } else {
-        localStorage.removeItem("savedEmail");
-        localStorage.removeItem("savedPassword");
-      }
-      navigate("/Dashboard");
-      })
-       const loginDetail = {
-        user_id:user?.id,
-        login_date:dayjs().format("YYYY-MM-DD")
-      }
-      upsertByConflictKeys('UserLoginHistory',loginDetail,"user_id,login_date")
-      
+          localStorage.setItem("savedEmail", encryptValue(emailId));
+          localStorage.setItem("savedPassword", encryptValue(password));
+        } else {
+          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedPassword");
+        }
+        navigate("/Dashboard");
+      });
+      const loginDetail = {
+        user_id: user?.id,
+        login_date: dayjs().format("YYYY-MM-DD"),
+      };
+      upsertByConflictKeys(
+        "UserLoginHistory",
+        loginDetail,
+        "user_id,login_date"
+      );
     } catch (err) {
       setAlertMessage("error", err.message);
     } finally {
@@ -121,14 +125,18 @@ const Login = () => {
   };
   const fetchCityName = async (defaultCityId) => {
     if (defaultCityId) {
-      const resp = await getDataByColumnName("Cities", "city_id", defaultCityId);
+      const resp = await getDataByColumnName(
+        "Cities",
+        "city_id",
+        defaultCityId
+      );
       if (resp?.success) {
         const city_name = resp?.data?.[0]?.city_name || "";
         setCityContext({
           city: city_name,
           cityId: defaultCityId,
-          cityLogo: createCityLogoUrl(resp?.data?.[0]?.city_code)
-        })
+          cityLogo: createCityLogoUrl(resp?.data?.[0]?.city_code),
+        });
       }
     }
     return;
@@ -168,7 +176,9 @@ const Login = () => {
             {/* Left Side - Branding */}
 
             <div className={`${styles.brandingSection}`}>
-              <div className={`${styles.logoContainer} ${styles.logoContainerDesktop}`}>
+              <div
+                className={`${styles.logoContainer} ${styles.logoContainerDesktop}`}
+              >
                 <div className={styles.logoIcon}>
                   {/* <Sparkles className={styles.sparkle} /> */}
                   <img src="/wevoisLogo.png" alt="WeVOIS logo" />
@@ -228,13 +238,15 @@ const Login = () => {
             </div>
 
             {/* Right Side - Login Form */}
-                          <div className={`${styles.logoContainer} ${styles.logoContainerMobile}`}>
-                <div className={styles.logoIcon}>
-                  {/* <Sparkles className={styles.sparkle} /> */}
-                  <img src="/wevoisLogo.png" alt="WeVOIS logo" />
-                </div>
-                <h1 className={styles.brandTitle}>WeVOIS Portal</h1>
+            <div
+              className={`${styles.logoContainer} ${styles.logoContainerMobile}`}
+            >
+              <div className={styles.logoIcon}>
+                {/* <Sparkles className={styles.sparkle} /> */}
+                <img src="/wevoisLogo.png" alt="WeVOIS logo" />
               </div>
+              <h1 className={styles.brandTitle}>WeVOIS Portal</h1>
+            </div>
             <div className={styles.formSection}>
               <div className={styles.formCard}>
                 <div className={styles.formHeader}>
@@ -253,8 +265,8 @@ const Login = () => {
                         placeholder="Enter your email"
                         value={emailId}
                         onChange={(e) => {
-                          setEmailId(e.target.value)
-                          if(emailError) setEmailError("")
+                          setEmailId(e.target.value);
+                          if (emailError) setEmailError("");
                         }}
                         onKeyDown={handleKeyDown}
                         autoComplete="new-password"
@@ -262,7 +274,7 @@ const Login = () => {
                       />
                     </div>
                     {emailError && (
-                      <p >
+                      <p>
                         <ErrorMessage message={emailError} />
                       </p>
                     )}
@@ -278,8 +290,8 @@ const Login = () => {
                         value={password}
                         onKeyDown={handleKeyDown}
                         onChange={(e) => {
-                          setPassword(e.target.value)
-                          if(passwordError) setPasswordError("")
+                          setPassword(e.target.value);
+                          if (passwordError) setPasswordError("");
                         }}
                         placeholder="Enter your password"
                         autoComplete="new-password"
@@ -296,8 +308,8 @@ const Login = () => {
                       </button>
                     </div>
                     {passwordError && (
-                      <p >
-                      <ErrorMessage message={passwordError} />
+                      <p>
+                        <ErrorMessage message={passwordError} />
                       </p>
                     )}
                   </div>
@@ -354,14 +366,7 @@ const Login = () => {
                     disabled={loading}
                   >
                     {loading ? (
-                      <div
-                        className="spinner-border"
-                        style={{
-                          height: "18px",
-                          width: "18px",
-                          borderWidth: "2px",
-                        }}
-                      ></div>
+                      <GlobalSpinnerLoader />
                     ) : (
                       <>
                         <span>Login</span>

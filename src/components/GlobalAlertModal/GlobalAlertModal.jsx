@@ -115,16 +115,8 @@ const GlobalAlertModal = ({
         )}
 
         <div className={styles.actions}>
-          <button className={styles.cancelBtn} onClick={onCancel}>
+          {/* <button className={styles.cancelBtn} onClick={onCancel}>
             Cancel
-          </button>
-
-          {/* <button
-            className={styles.actionBtn}
-            style={{ background: buttonGradient }}
-            onClick={onConfirm}
-          >
-            {buttonText}
           </button> */}
           <button
             className={`${styles.actionBtn} ${isSuccess ? styles.activateBtn : styles.deactivateBtn

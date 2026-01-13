@@ -7,14 +7,14 @@ import {
 import { setAlertMessage } from "../../common/common";
 import styles from "../../pages/Login/login.module.css";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const ForgotPassword = ({ onBack }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [emailError, setEmailError] = useState('')
+  const [emailError, setEmailError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 
   const handleSubmit = async () => {
     if (loading) return;
@@ -60,61 +60,55 @@ const ForgotPassword = ({ onBack }) => {
         padding: "20px",
       }}
     >
-      <div
-        className={styles.forgotBG}
-      >
+      <div className={styles.forgotBG}>
         {isSuccess ? (
           /* ✅ SUCCESS VIEW */
           <>
-          <div className={`${styles.formHeader}`}>
-            <div
-              className="d-flex align-items-center justify-content-center mx-auto mb-3"
-              style={{
-                width: "80px",
-                height: "80px",
-                borderRadius: "50%",
-                background: "#2ecc71",
-              }}
-            >
-              <Mail size={36} color="#fff" />
+            <div className={`${styles.formHeader}`}>
+              <div
+                className="d-flex align-items-center justify-content-center mx-auto mb-3"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  background: "#2ecc71",
+                }}
+              >
+                <Mail size={36} color="#fff" />
+              </div>
+
+              <h2>Email Sent!</h2>
+
+              <p>
+                Your login credentials have been sent to your registered email
+                address.
+              </p>
             </div>
-
-            <h2 >
-              Email Sent!
-            </h2>
-
-            <p >
-              Your login credentials have been sent to your registered email
-              address.
-            </p>
-
-            
-          </div>
-           <div className="text-center mt-3">
-          <p className={styles.forgotText}>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                onBack();
-              }}
-              style={{
-                color: "#667eea",
-                textDecoration: "none",
-                fontWeight: "600",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.textDecoration = "underline";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.textDecoration = "none";
-              }}
-            >
-              Back to Login
-            </a>
-          </p>
-        </div>
-        </>
+            <div className="text-center mt-3">
+              <p className={styles.forgotText}>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onBack();
+                  }}
+                  style={{
+                    color: "#667eea",
+                    textDecoration: "none",
+                    fontWeight: "600",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.textDecoration = "underline";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.textDecoration = "none";
+                  }}
+                >
+                  Back to Login
+                </a>
+              </p>
+            </div>
+          </>
         ) : (
           <>
             <div className="text-center mb-3">
@@ -134,19 +128,15 @@ const ForgotPassword = ({ onBack }) => {
 
             {/* Title */}
             <div className={` ${styles.formHeader}`}>
-              <h2 >
-                Forgot Password?
-              </h2>
-              <p
-                className="text-muted mb-0"
-              >
+              <h2>Forgot Password?</h2>
+              <p className="text-muted mb-0">
                 Please enter your email to get password
               </p>
             </div>
 
             {/* Email Input */}
 
-            <div className={styles.inputGroup} style={{marginBottom: "30px"}}>
+            <div className={styles.inputGroup} style={{ marginBottom: "30px" }}>
               <label>Email Address</label>
               <div className={styles.inputWrapper}>
                 <Mail className={styles.inputIcon} size={20} />
@@ -154,8 +144,8 @@ const ForgotPassword = ({ onBack }) => {
                   type="email"
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value)
-                    if(emailError) setEmailError("")
+                    setEmail(e.target.value);
+                    if (emailError) setEmailError("");
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder="Enter your email"
@@ -163,7 +153,7 @@ const ForgotPassword = ({ onBack }) => {
                 />
               </div>
               {emailError && (
-                <p >
+                <p>
                   <ErrorMessage message={emailError} />
                 </p>
               )}
@@ -172,8 +162,7 @@ const ForgotPassword = ({ onBack }) => {
             {/* Send Button */}
             <button
               onClick={handleSubmit}
-            className={`w-100 ${styles.loginButton}`}
-              
+              className={`w-100 ${styles.loginButton}`}
               onMouseEnter={(e) => {
                 e.target.style.transform = "translateY(-2px)";
                 e.target.style.boxShadow =
@@ -184,46 +173,37 @@ const ForgotPassword = ({ onBack }) => {
                 e.target.style.boxShadow = "none";
               }}
             >
-              {loading ? (
-                <div
-                  className="spinner-border"
-                  style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-                ></div>
-              ) : (
-                "Send"
-              )}
+              {loading ? <GlobalSpinnerLoader /> : "Send"}
             </button>
 
-             {/* Back to Login */}
-        <div className="text-center mt-3">
-          <p className={styles.forgotText}>
-            Wait, I remembered my password!{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                onBack();
-              }}
-              style={{
-                color: "#667eea",
-                textDecoration: "none",
-                fontWeight: "600",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.textDecoration = "underline";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.textDecoration = "none";
-              }}
-            >
-              Back to Login
-            </a>
-          </p>
-        </div>
+            {/* Back to Login */}
+            <div className="text-center mt-3">
+              <p className={styles.forgotText}>
+                Wait, I remembered my password!{" "}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onBack();
+                  }}
+                  style={{
+                    color: "#667eea",
+                    textDecoration: "none",
+                    fontWeight: "600",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.textDecoration = "underline";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.textDecoration = "none";
+                  }}
+                >
+                  Back to Login
+                </a>
+              </p>
+            </div>
           </>
         )}
-
-       
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import WevoisLoader from "../Common/Loader/WevoisLoader";
 import { getCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
 import NoResult from "../NoResultFound/NoResult";
 import LogoImage from "../Common/Image/LogoImage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const DefaultCitySelection = ({ onClose }) => {
   let defaultCityExist = JSON.parse(localStorage.getItem("defaultCity"))
@@ -158,7 +159,7 @@ const DefaultCitySelection = ({ onClose }) => {
                 }}
               >
                 {saving ? (
-                  <span className="spinner-border spinner-border-sm" />
+                  <GlobalSpinnerLoader />
                 ) : (
                   <>
                     <Check size={18} style={{ marginRight: "6px" }} />

@@ -10,14 +10,14 @@ export default function UserStatusDialog(props) {
     ? {
         title: "Confirm Deactivation",
         message: "Are you sure you want to deactivate ",
-        buttonText: "Deactivate",
+        buttonText: "Yes, Deactivate",
         buttonGradient: "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)",
         iconType: "warning",
       }
     : {
         title: "Confirm Activation",
         message: "Are you sure you want to activate ",
-        buttonText: "Activate",
+        buttonText: "Yes, Activate",
         buttonGradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
         iconType: "success",
       };

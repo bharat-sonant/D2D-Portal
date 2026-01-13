@@ -1,0 +1,50 @@
+.loader {
+  width: 18px;              /* default size */
+  height: 18px;
+  border: 2px solid var(--white);
+  border-top: 2px solid #ced0d400;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* size variants */
+.small {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+.medium {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+.large {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+}
+
+/* color variants */
+.primary {
+  border-top-color: #6366f1;
+}
+
+.success {
+  border-top-color: #22c55e;
+}
+
+.danger {
+  border-top-color: #ef4444;
+}
+
+.white {
+  border-top-color: #ffffff;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

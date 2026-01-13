@@ -14,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const AddUser = (props) => {
   console.log(props);
@@ -262,12 +263,7 @@ const AddUser = (props) => {
             onClick={handleSave}
           >
             {loading ? (
-              <div>
-                <div
-                  className="spinner-border"
-                  style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-                ></div>
-              </div>
+              <GlobalSpinnerLoader />
             ) : props.onEdit ? (
               <div className="d-flex align-items-center gap-1">
                 <Check size={18} />

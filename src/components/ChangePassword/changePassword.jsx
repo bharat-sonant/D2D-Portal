@@ -6,6 +6,7 @@ import { changePasswordAction } from "../../Actions/ChangePassword/ChangePasswor
 import { setAlertMessage } from "../../common/common";
 import { getPasswordChecks, getPasswordStrength } from "../../common/common";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const ChangePassword = ({
   onClose,
@@ -339,10 +340,7 @@ const ChangePassword = ({
           >
             {loading ? (
               <span className={styles.loaderWrap}>
-                <div
-                  className="spinner-border"
-                  style={{ height: "18px", width: "18px", borderWidth: "2px" }}
-                ></div>
+                <GlobalSpinnerLoader />
               </span>
             ) : (
               <span
