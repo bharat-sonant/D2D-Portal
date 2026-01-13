@@ -1,0 +1,89 @@
+.gd_wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
+.gd_button {
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  padding: 0 16px;
+  transition: 0.3s;
+  height: 36px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.gd_button::after {
+  background-image: url(../../../assets/images/icons/iconDown.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  content: "";
+  height: 9px;
+  position: absolute;
+  right: 10px;
+  top: 14px;
+  width: 10px;
+}
+
+.gd_menu {
+  list-style-type: none;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 0 8px 0 #0000001a;
+  margin-top: 6px;
+  padding: 12px 10px;
+  background-color: var(--white);
+  animation: dropdownSlideUp 0.3s ease;
+}
+
+.gd_item {
+  padding: 12px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+  border: none;
+  width: 100%;
+  background-color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gd_item:hover {
+  background-color: var(--whitef5);
+  color: var(--darkBlack);
+}
+
+.gd_active {
+  background: var(--gradientTheme);
+  color: var(--white);
+}
+.gd_active:hover {
+  color: var(--white);
+}
+@keyframes dropdownSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.gd_right {
+  line-height: 0px;
+}
