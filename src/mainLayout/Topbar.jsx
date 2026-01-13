@@ -35,6 +35,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem("defaultCity");
   const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
+const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     fetchDefaultCityConfig();
@@ -219,11 +220,14 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
           {/* User */}
           {city && (
-            <div className={`dropdown ${styles.userBadge}`}>
-              <button
-                className={`btn ${styles.userDropdownBtn}`}
-                data-bs-toggle="dropdown"
-              >
+<div
+  className={`${styles.userBadge}`}
+  onMouseEnter={() => setIsProfileOpen(true)}
+  onMouseLeave={() => setIsProfileOpen(false)}
+>
+<button className={`btn ${styles.userDropdownBtn} ${
+    isProfileOpen ? styles.rotateIcon : ""
+  }`}>
                 <span className={styles.userBG}>
                   {firstchar}
                   {secondchar}
@@ -231,18 +235,20 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                 <span className={styles.userName}>{storedName}</span>
               </button>
 
-              <ul className={`dropdown-menu ${styles.dropdownCustom}`}>
-                <li onClick={changePass} className={styles.dropdownLI}>
-                  <span className={styles.dropdownItem}>
-                    <LockKeyhole size={16} /> Change Password
-                  </span>
-                </li>
-                <li onClick={handleLogout} className={styles.dropdownLI}>
-                  <span className={styles.dropdownItem}>
-                    <Frown size={16} /> Log Out
-                  </span>
-                </li>
-              </ul>
+{isProfileOpen && (
+  <ul className={`${styles.dropdownCustom}`}>
+    <li onClick={changePass} className={styles.dropdownLI}>
+      <span className={styles.dropdownItem}>
+        <LockKeyhole size={16} /> Change Password
+      </span>
+    </li>
+    <li onClick={handleLogout} className={styles.dropdownLI}>
+      <span className={styles.dropdownItem}>
+        <Frown size={16} /> Log Out
+      </span>
+    </li>
+  </ul>
+)}
             </div>
           )}
         </div>
