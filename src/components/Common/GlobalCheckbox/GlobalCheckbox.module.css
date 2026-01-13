@@ -3,8 +3,26 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  justify-content: space-between;
+  gap: 6px;
+  width: auto;
+}
+
+/* Full width support */
+.fullWidth {
   width: 100%;
+  justify-content: space-between;
+}
+
+/* Right aligned checkbox */
+.rightAlign {
+  flex-direction: row;
+}
+
+/* Hide native checkbox */
+.checkboxWrapper input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .checkboxName {
@@ -15,19 +33,11 @@
 }
 
 .checkboxWrapper:hover .checkboxName {
-  background-color: var(--whitef5);
   color: var(--darkBlack);
 }
 
 .checkboxWrapper:has(input:checked) .checkboxName {
   color: var(--darkBlack);
-}
-
-/* Hide native checkbox */
-.checkboxWrapper input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* Checkbox box */
@@ -70,7 +80,6 @@
   position: relative;
 }
 
-/* Animate tick */
 .checkboxWrapper input:checked + .customCheckbox::after {
   transform: rotate(45deg) scale(1);
 }

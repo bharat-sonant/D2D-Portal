@@ -105,6 +105,8 @@ const UserCityAccess = (props) => {
                   )}
                   onChange={() => handleCheckboxChange(item.city_id)}
                   disabled={loading}
+                  align="right"
+                  fullWidth
                 />
               </li>
             ))}

@@ -18,6 +18,7 @@ import { useCity } from "../../context/CityContext";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { createCityLogoUrl } from "../../Actions/commonActions";
 import GlobalSpinnerLoader from "../../components/Common/Loader/GlobalSpinnerLoader";
+import GlobalCheckbox from "../../components/Common/GlobalCheckbox/GlobalCheckbox";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -315,7 +316,7 @@ const Login = () => {
                   </div>
 
                   <div className={styles.formFooter}>
-                    <div className="">
+                    {/* <div className="">
                       <input
                         type="checkbox"
                         id="rememberMe"
@@ -341,7 +342,14 @@ const Login = () => {
                       >
                         Remember me
                       </label>
-                    </div>
+                    </div> */}
+                    <GlobalCheckbox
+                      id="rememberMe"
+                      label="Remember me"
+                      checked={rememberMe}
+                      onChange={handleRememberMe}
+                    />
+
                     <a
                       href="#"
                       className={styles.forgotLink}

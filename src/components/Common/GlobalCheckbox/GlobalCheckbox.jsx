@@ -1,18 +1,50 @@
 import styles from "./GlobalCheckbox.module.css";
 
-const GlobalCheckbox = ({ label, checked, onChange, disabled = false }) => {
+const GlobalCheckbox = ({
+  id,
+  label,
+  checked,
+  onChange,
+  disabled = false,
+  align = "left", // "left" | "right"
+  fullWidth = false,
+  className = "",
+}) => {
   return (
-    <label className={styles.checkboxWrapper}>
-      <span className={styles.checkboxName}>{label}</span>
+    <label
+      htmlFor={id}
+      className={`${styles.checkboxWrapper} 
+      ${align === "right" ? styles.rightAlign : ""}
+      ${fullWidth ? styles.fullWidth : ""}
+      ${className}`}
+    >
+      {align === "left" && (
+        <>
+          <input
+            type="checkbox"
+            id={id}
+            checked={checked}
+            onChange={onChange}
+            disabled={disabled}
+          />
+          <span className={styles.customCheckbox}></span>
+          <span className={styles.checkboxName}>{label}</span>
+        </>
+      )}
 
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        disabled={disabled}
-      />
-
-      <span className={styles.customCheckbox}></span>
+      {align === "right" && (
+        <>
+          <span className={styles.checkboxName}>{label}</span>
+          <input
+            type="checkbox"
+            id={id}
+            checked={checked}
+            onChange={onChange}
+            disabled={disabled}
+          />
+          <span className={styles.customCheckbox}></span>
+        </>
+      )}
     </label>
   );
 };
