@@ -238,11 +238,17 @@
   padding: 12px 10px;
   border-radius: 4px;
   cursor: pointer;
+  &:nth-last-child(1) .dropdownItem {
+    color: var(--textDanger);
+  }
+  &:nth-last-child(1):hover .dropdownItem {
+    color: var(--textDangerDark);
+  }
 }
 .dropdownLI:hover {
   background-color: var(--whitef5);
   .dropdownItem {
-    color: var(--black);
+    color: var(--darkBlack);
   }
   .dropdownIcon {
     filter: brightness(0) saturate(100%) invert(45%) sepia(100%) saturate(327%)
