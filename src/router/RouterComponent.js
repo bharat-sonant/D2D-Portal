@@ -66,11 +66,10 @@ useEffect(() => {
        <Route
   path="/Dashboard"
   element={
-   
-      <MainLayout>
-        <Dashboard />
-      </MainLayout>
-  
+   <>
+      <MainLayout/>
+      <Dashboard />
+   </>
   } 
 />
 
