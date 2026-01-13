@@ -12,6 +12,7 @@ import {
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 import { UserRoundCheck, UserSearch } from "lucide-react";
 import NoResult from "../NoResultFound/NoResult";
+import GlobalDropdown from "../Common/GlobalDropdown/GlobalDropdown";
 
 const UserList = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -135,175 +136,216 @@ const UserList = (props) => {
         >
           {/* FILTER BAR */}
           <div className={`${styles.userFilterBG}`}>
-           <div className={`${styles.userFilter} ${isSearchOpen ? styles.searchOpen : ""}`}>
-{!isSearchOpen && (
-              <div className="dropdown" style={{ flex: 1 }}>
-                <button
-                  className={styles.customDropdownBtn}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsStatusOpen((prev) => !prev);
-                    setIsUserTypeOpen(false); // dusra band
-                  }}
-                >
-                  {statusFilter === "all"
-                    ? "All Status"
-                    : statusFilter === "active"
-                    ? "Active"
-                    : "Inactive"}
-                </button>
-
-                {isStatusOpen && (
-                  <ul
-                    className={`dropdown-menu w-100 ${styles.customDropdownMenu} show`}
+            <div
+              className={`${styles.userFilter} ${
+                isSearchOpen ? styles.searchOpen : ""
+              }`}
+            >
+              {/* All Status Filter */}
+              {/* {!isSearchOpen && (
+                <div className="dropdown" style={{ flex: 1 }}>
+                  <button
+                    className={styles.customDropdownBtn}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsStatusOpen((prev) => !prev);
+                      setIsUserTypeOpen(false); // dusra band
+                    }}
                   >
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          statusFilter === "all" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setStatusFilter("all");
-                          setIsStatusOpen(false); // ✅ sirf child close
-                        }}
-                      >
-                        All Status
-                      </button>
-                    </li>
+                    {statusFilter === "all"
+                      ? "All Status"
+                      : statusFilter === "active"
+                      ? "Active"
+                      : "Inactive"}
+                  </button>
 
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          statusFilter === "active" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setStatusFilter("active");
-                          setIsStatusOpen(false);
-                        }}
-                      >
-                        Active
-                        {/* <div className={styles.greenDot}></div> */}
-                      </button>
-                    </li>
+                  {isStatusOpen && (
+                    <ul
+                      className={`dropdown-menu w-100 ${styles.customDropdownMenu} show`}
+                    >
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            statusFilter === "all" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setStatusFilter("all");
+                            setIsStatusOpen(false); // ✅ sirf child close
+                          }}
+                        >
+                          All Status
+                        </button>
+                      </li>
 
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          statusFilter === "inactive" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setStatusFilter("inactive");
-                          setIsStatusOpen(false);
-                        }}
-                      >
-                        Inactive
-                        <div className={styles.redDot}></div>
-                      </button>
-                    </li>
-                  </ul>
-                )}
-              </div>
-)}
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            statusFilter === "active" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setStatusFilter("active");
+                            setIsStatusOpen(false);
+                          }}
+                        >
+                          Active
+                        </button>
+                      </li>
+
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            statusFilter === "inactive" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setStatusFilter("inactive");
+                            setIsStatusOpen(false);
+                          }}
+                        >
+                          Inactive
+                          <div className={styles.redDot}></div>
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              )} */}
+              <GlobalDropdown
+                value={statusFilter}
+                labelMap={{
+                  all: "All Status",
+                  active: "Active",
+                  inactive: "Inactive",
+                }}
+                options={[
+                  { value: "all", label: "All Status" },
+                  { value: "active", label: "Active" },
+                  {
+                    value: "inactive",
+                    label: "Inactive",
+                    rightElement: <span className={styles.redDot}></span>,
+                  },
+                ]}
+                onChange={(val) => setStatusFilter(val)}
+              />
 
               {/* User Type Filter */}
-              {!isSearchOpen && (
-              <div className="dropdown" style={{ flex: 1 }}>
-                {/* BUTTON */}
-                <button
-                  className={styles.customDropdownBtn}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsUserTypeOpen((prev) => !prev);
-                    setIsStatusOpen(false); // 🔒 status dropdown band
-                  }}
-                >
-                  {userTypeFilter === "all"
-                    ? "All Users"
-                    : userTypeFilter === "internal"
-                    ? "Internal"
-                    : "External"}
-                </button>
-
-                {/* DROPDOWN MENU */}
-                {isUserTypeOpen && (
-                  <ul
-                    className={`dropdown-menu w-100 ${styles.customDropdownMenu} show`}
-                    onClick={(e) => e.stopPropagation()}
+              {/* {!isSearchOpen && (
+                <div className="dropdown" style={{ flex: 1 }}>
+                  <button
+                    className={styles.customDropdownBtn}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsUserTypeOpen((prev) => !prev);
+                      setIsStatusOpen(false); // 🔒 status dropdown band
+                    }}
                   >
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          userTypeFilter === "all" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setUserTypeFilter("all");
-                          setIsUserTypeOpen(false); // ✅ sirf ye dropdown close
-                        }}
-                      >
-                        All Users
-                      </button>
-                    </li>
+                    {userTypeFilter === "all"
+                      ? "All Users"
+                      : userTypeFilter === "internal"
+                      ? "Internal"
+                      : "External"}
+                  </button>
 
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          userTypeFilter === "internal" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setUserTypeFilter("internal");
-                          setIsUserTypeOpen(false);
-                        }}
-                      >
-                        Internal
-                      </button>
-                    </li>
+              
+                  {isUserTypeOpen && (
+                    <ul
+                      className={`dropdown-menu w-100 ${styles.customDropdownMenu} show`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            userTypeFilter === "all" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setUserTypeFilter("all");
+                            setIsUserTypeOpen(false); // ✅ sirf ye dropdown close
+                          }}
+                        >
+                          All Users
+                        </button>
+                      </li>
 
-                    <li className={styles.dropdownLi}>
-                      <button
-                        className={`${styles.dropdownItem} ${
-                          userTypeFilter === "external" ? styles.active : ""
-                        }`}
-                        onClick={() => {
-                          setUserTypeFilter("external");
-                          setIsUserTypeOpen(false);
-                        }}
-                      >
-                        External
-                        <div className={``}>
-                          {" "}
-                          <UserRoundCheck size={14} />{" "}
-                        </div>
-                      </button>
-                    </li>
-                  </ul>
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            userTypeFilter === "internal" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setUserTypeFilter("internal");
+                            setIsUserTypeOpen(false);
+                          }}
+                        >
+                          Internal
+                        </button>
+                      </li>
+
+                      <li className={styles.dropdownLi}>
+                        <button
+                          className={`${styles.dropdownItem} ${
+                            userTypeFilter === "external" ? styles.active : ""
+                          }`}
+                          onClick={() => {
+                            setUserTypeFilter("external");
+                            setIsUserTypeOpen(false);
+                          }}
+                        >
+                          External
+                          <div className={``}>
+                            {" "}
+                            <UserRoundCheck size={14} />{" "}
+                          </div>
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              )} */}
+              <GlobalDropdown
+                value={userTypeFilter}
+                labelMap={{
+                  all: "All Users",
+                  internal: "Internal",
+                  external: "External",
+                }}
+                options={[
+                  { value: "all", label: "All Users" },
+                  { value: "internal", label: "Internal" },
+                  {
+                    value: "external",
+                    label: "External",
+                    rightIcon: <UserRoundCheck size={12} />,
+                  },
+                ]}
+                onChange={(val) => setUserTypeFilter(val)}
+              />
+
+              <div
+                className={`${styles.searchWrapper} ${
+                  isSearchOpen ? styles.searchExpanded : styles.searchCollapsed
+                }`}
+              >
+                <input
+                  className={`${styles.inputSearch} ${
+                    isSearchOpen ? styles.inputExpand : ""
+                  }`}
+                  type="text"
+                  placeholder={isSearchOpen ? "Search" : ""}
+                  onFocus={() => setIsSearchOpen(true)}
+                  onChange={handleSearch}
+                />
+
+                {isSearchOpen && (
+                  <span
+                    className={styles.closeIcon}
+                    onClick={() => setIsSearchOpen(false)}
+                  >
+                    ✕
+                  </span>
                 )}
               </div>
-              )}
-<div   className={`${styles.searchWrapper} ${
-    isSearchOpen ? styles.searchExpanded : styles.searchCollapsed
-  }`}>
-  <input
-    className={`${styles.inputSearch} ${
-      isSearchOpen ? styles.inputExpand : ""
-    }`}
-    type="text"
-    placeholder={isSearchOpen ? "Search" : ""}
-    onFocus={() => setIsSearchOpen(true)}
-    onChange={handleSearch}
-  />
-
-  {isSearchOpen && (
-    <span
-      className={styles.closeIcon}
-      onClick={() => setIsSearchOpen(false)}
-    >
-      ✕
-    </span>
-  )}
-</div>
-
             </div>
           </div>
           <div className={`${styles.userListTitle}`}>Select Employee</div>
