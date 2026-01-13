@@ -1,7 +1,6 @@
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 import styles from '../../assets/css/City/CityList.module.css'
 import {images} from '../../assets/css/imagePath'
-import { MapContainer, Marker, Popup, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { useEffect, useRef, useState } from 'react';
 import { GoogleMap } from '@react-google-maps/api';
 
