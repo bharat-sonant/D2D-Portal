@@ -255,7 +255,7 @@ const renderMultiLineName = (value) => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={9} className={style.loaderCell}>
+                <td colSpan={10} className={style.loaderCell}>
                   <WevoisLoader title="Loading data..." />
                 </td>
               </tr>
@@ -330,7 +330,7 @@ const renderMultiLineName = (value) => {
 })
             ) : (
               <tr>
-                <td colSpan={9} className={style.noData}>
+                <td colSpan={10} className={style.noData}>
                   <NoResult
                     title="No data available"
                     // query={searchTerm}

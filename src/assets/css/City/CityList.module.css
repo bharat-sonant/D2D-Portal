@@ -44,8 +44,6 @@
   display: none;
 }
 
-
-
 .userListTitle {
   font-size: 15px;
   color: var(--darkBlack);
@@ -75,7 +73,6 @@
 .checkMark {
   margin: 0px;
 }
-
 
 .loaderContainer {
   text-align: center;
@@ -312,7 +309,7 @@
 /********** New CSS *******/
 .userFilterBG {
   padding: 10px 10px;
-    background: linear-gradient(10deg, #ffffff, #f0f8ff);
+  background: linear-gradient(10deg, #ffffff, #f0f8ff);
 
   /* border-bottom: 1px solid rgba(0, 0, 0, 0.05); */
   display: flex;
@@ -398,8 +395,8 @@
   color: var(--white);
 }
 .textHighlight {
-    font-family: var(--fontGraphikMedium);
-    font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  font-size: 11px;
 }
 
 .noUserData {
@@ -445,7 +442,8 @@
   margin-top: 10px;
 }
 .userScroll {
-    padding: 5px 10px 10px 10px;
-  height: calc(100vh - 190px);
-    overflow: auto;
+  padding: 5px 10px 10px 10px;
+  height: calc(100vh - 70px);
+
+  overflow: auto;
 }
