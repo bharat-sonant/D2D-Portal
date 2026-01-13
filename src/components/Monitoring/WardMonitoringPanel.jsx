@@ -1,9 +1,17 @@
-import React from 'react'
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 import styles from '../../assets/css/City/CityList.module.css'
 import {images} from '../../assets/css/imagePath'
+import { MapContainer, Marker, Popup, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { useEffect, useRef, useState } from 'react';
+import { GoogleMap } from '@react-google-maps/api';
 
 const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
+  const mapRef = useRef();
+  const center = {
+        lat: 26.9124,
+        lng: 75.7873,
+    };
+
     if (!selectedWard) {
     return (
       <div className={`${styles.noUserData}`}>
@@ -30,6 +38,7 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
   }
 
   return (
+   <div className={styles.panelWrapper}>
     <div className={`${styles.detailContainer} ${styles.monitoringPanel}`}>
       <h4 className={styles.detailTitle}>
         Ward: {dutySummary?.ward_display_name}
@@ -63,9 +72,20 @@ const WardMonitoringPanel = ({selectedWard, dutySummary, dutyLoading}) => {
         <span className={styles.value}>{dutySummary?.helper_name || "N/A"}</span>
       </div>
      </div>
-
-      
     </div>
+
+     {/* ===== MAP SECTION ===== */}
+      <div className={styles.mapContainer}>
+       <GoogleMap
+                                    onLoad={(map) => (mapRef.current = map)}
+                                    center={center}
+                                    zoom={18}
+                                    mapContainerStyle={{ width: "100%", height: "100%" }}
+                                >
+                                </GoogleMap>
+      </div>
+   </div>
+
   )
 }
 

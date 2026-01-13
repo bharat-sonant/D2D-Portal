@@ -189,10 +189,26 @@
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+.panelWrapper {
+  display: flex;
+  flex-direction: column; /* 👈 stack vertically */
+  gap: 10px;
+}
+
 
 .detailContainer {
   padding: 20px;
-  max-width: 600px;
+  width: 50%;
+  max-width: 620px;   /* details stay compact */
+}
+
+.mapContainer {
+  height: 420px;                /* 👈 smaller map */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  width: 90%;
 }
 
 .detailTitle {

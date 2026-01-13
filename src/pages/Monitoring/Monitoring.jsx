@@ -22,20 +22,12 @@ const Monitoring = () => {
     };
   
     useEffect(() => {
-      console.log("MONITORING LOAD", { city, cityId });
       loadWards();
     }, [cityId]);
 
     useEffect(()=>{
         fetchDutyIntime();
     },[selectedWard, city])
-
-    // useEffect(() => {
-    //   if (city !== 'Reengus') {
-    //     setDutySummary(null);
-    //     setDutyLoading(false);
-    //   }
-    // }, [city]);
 
     const fetchDutyIntime = async() => {
       if(!selectedWard) return;
@@ -47,39 +39,6 @@ const Monitoring = () => {
         setDutySummary(null);
       }
     }
-
-    const handleAttachMap = async(ward) => {
-  // open file picker / modal
-  // const input = document.createElement('input');
-  // input.type = 'file';
-  // input.accept = ".pdf, .png, .jpg, .jpeg, .geojson, .kml, .kmz"
-
-  // input.onchange = async(e)=> {
-  //   const file = e.target.files[0];
-  //   if(!file) return;
-
-  //   try{
-  //     const fileExt = file.name.split(".").pop();
-  //     console.log('fileExt', fileExt)
-  //     const filePath = `city_${ward.city_Id}/ward_${ward.id}/ward_map.${fileExt}`;
-
-  //     const {error} = await supabase.storage.from("WardMaps").upload(filePath, file, {
-  //       upsert: true,
-  //     })
-  //     if (error) throw error;
-
-  //     const {data} = supabase.storage.from("WardMaps").getPublicUrl(filePath);
-
-  //     console.log("Uploaded map URL:", data.publicUrl);
-  //     common.setAlertMessage('success', 'Ward Map uploaded successfully')
-
-  //      window.open(data.publicUrl, "_blank");
-  //   }catch(err){
-  //     common.setAlertMessage('error', 'Filed to upload ward map, Please try again.')
-  //   }
-  // };
-  // input.click();
-};
 
      return (
     <>
