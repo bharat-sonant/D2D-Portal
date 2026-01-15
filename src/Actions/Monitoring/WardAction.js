@@ -1,6 +1,6 @@
-import { getDutySummary, getWardData } from "../../services/MonitoringServices/MonitoringServices";
-import * as common from '../../common/common'
+import { getDutySummary, getWardBoundryJson, getWardData } from "../../services/MonitoringServices/MonitoringServices";
 import { DailyWorkReportDataFromFirebase } from "../../services/ReportServices/DailyWorkReportService";
+import * as sbs from '../../services/supabaseServices';
 
 export const getWardList = async (
   setSelectedWard,
@@ -66,5 +66,57 @@ export const getWardDailyWorkSummaryAction = async( date, ward,cityId, setLoadin
     return null;
   } finally {
     setLoading(false);
+  }
+}
+
+export const getWardBoundryAction = async(cityId, wardId, setWardBoundaryGeoJsonData,setWardLineGeoJsonData, setBoundryLoading) => {
+  setBoundryLoading(true);
+  try{
+    const latestBoundary = await sbs.getLatestDate(wardId);
+    let boundryData = null;
+    let linesData = null;
+
+    if(latestBoundary?.data){
+      boundryData = await sbs.getGeoJsonFromStorage(`city_${cityId}/WardBoundaries/ward_${wardId}/${latestBoundary?.data}`)
+
+      linesData = await sbs.getGeoJsonFromStorage(
+      `city_${cityId}/WardHouseLine/ward_${wardId}/${latestBoundary?.data}`
+    );
+    }
+    //ward boundry -> polygon
+    if(boundryData?.points && Array.isArray(boundryData?.points)){
+      const polygonPath = boundryData?.points?.map(([lat,lng]) => ({
+        lat : Number(lat),
+        lng : Number(lng)
+      }))
+      setWardBoundaryGeoJsonData(polygonPath)
+    }else{
+      setWardBoundaryGeoJsonData(null)
+    }
+
+    //ward lines -> polylines
+  if(linesData && typeof linesData === 'object') {
+    const polylinePaths = [];
+
+    Object.keys(linesData).forEach((key) => {
+      if(isNaN(key)) return;
+
+      const line = linesData[key];
+      if(!line?.points) return;
+
+      const path = line.points.map(([lat, lng]) => ({
+        lat : Number(lat),
+        lng : Number(lng),
+      }));
+
+      polylinePaths.push(path);
+    });
+    setWardLineGeoJsonData(polylinePaths);
+  }
+
+  }catch(error){
+    setWardBoundaryGeoJsonData(null);
+  }finally{
+    setBoundryLoading(false)
   }
 }
