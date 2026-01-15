@@ -39,9 +39,7 @@ useEffect(() => {
   mapRef.current.setCenter(fallbackCenter);
   mapRef.current.setZoom(13);
   setHasPositioned(true);
-}, [  selectedWard?.id,
-  mapLoaded,
-  boundryLoading,
+}, [  
   wardBoundaryGeoJsonData,
   hasPositioned,
 ]);
