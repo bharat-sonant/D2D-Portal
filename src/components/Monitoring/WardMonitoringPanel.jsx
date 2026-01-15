@@ -40,6 +40,7 @@ useEffect(() => {
   mapRef.current.setZoom(13);
   setHasPositioned(true);
 }, [  
+  mapLoaded,
   wardBoundaryGeoJsonData,
   hasPositioned,
 ]);
