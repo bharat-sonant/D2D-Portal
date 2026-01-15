@@ -27,6 +27,7 @@ const WardMapCanvas = (props) => {
     const [isWardLinePopupOpen,setIsWardLinePopOpen]=useState(false)
   const [previoisMapList,setPreviousMapList]=useState([])
   const[HoldArray,setHoldArray]=useState([])
+  const [selectedDate,setSelectedDate]=useState(null)
 
   const mapContainerStyle = {
   width: "100%",
@@ -67,7 +68,17 @@ useEffect(() => {
   fitToBoundsForBoundaryAndLines();
 }, [wardBoundaryGeoJsonData, wardMapGeoJsonData]);
 
-
+useEffect(()=>{
+   getSelectWardBoundaryAndLine(
+          props.wardId,
+          props.selectedCity,
+          null,
+          setWardBoundaryGeoJsonData,
+          setWardMapGeoJsonData,
+          previoisMapList,
+          setSelectedDate
+        )
+},[previoisMapList])
 
   const sectionStyle = {
     background: "#fff",
@@ -199,8 +210,8 @@ useEffect(() => {
         borderRadius: "8px",
         overflow: "hidden",
       }}
-      center={center} // dummy, fitBounds override karega
-      zoom={13} // ignore hoga after fitBounds
+      center={center} 
+      zoom={13} 
     >
       {wardBoundaryGeoJsonData && (
         <Polygon
@@ -215,7 +226,6 @@ useEffect(() => {
       )}
     </GoogleMap>
 
-      {/* Upload Button */}
 
       {HoldArray?.length !== 0 && (
        <div
@@ -295,8 +305,6 @@ useEffect(() => {
           ✕
         </span>
       </div>
-
-      {/* MAP */}
     <GoogleMap
     mapContainerStyle={mapContainerStyle}
     center={center}
@@ -352,10 +360,9 @@ useEffect(() => {
             cursor: "pointer",
             fontSize: "14px",
           }}
-           onClick={()=>saveWardMapData(props.wardId,props.selectedCity,HoldArray,setHoldArray,setIsWardLinePopOpen,setPreviousMapList)}
+           onClick={()=>saveWardMapData(props.wardId,props.selectedCity,HoldArray,setHoldArray,setIsWardLinePopOpen,setPreviousMapList,setSelectedDate)}
         >
           Upload GeoJSON
-         
         </label>
       </div>
     )}
@@ -363,10 +370,14 @@ useEffect(() => {
   </div>
 )}
 
-          {/* <GoogleMap
+          <GoogleMap
     mapContainerStyle={mapContainerStyle}
     center={center}
     zoom={13}
+        onLoad={(map) => {
+    mapRef.current = map;
+    fitToBoundsForBoundaryAndLines();
+  }}
   >
    
    {wardBoundaryGeoJsonData && (
@@ -387,39 +398,60 @@ useEffect(() => {
       key={index}
       path={path}
       options={{
-        strokeColor: "#000",
+        strokeColor: "#2563eb",
         strokeOpacity: 1,
         strokeWeight: 2,
       }}
     />
   ))}
 
-  </GoogleMap> */}
+  </GoogleMap>
+
+
+  
             <div style={sectionStyle}>
               <div style={titleStyle}>Uploaded Maps</div>
-              <ul style={{ paddingLeft: "16px", margin: 0, fontSize: "13px" ,cursor:'pointer' }}>
-     {previoisMapList
-  ?.filter(item => item.map_updated_at) // undefined / null / empty remove
-  .map(item => (
-    <li
-      key={item.id}
-      style={{ marginBottom: "6px", cursor: "pointer" }}
-      onClick={() =>
-        getSelectWardBoundaryAndLine(
-          props.wardId,
-          props.selectedCity,
-          item.map_updated_at,
-          setWardBoundaryGeoJsonData,
-          setWardMapGeoJsonData,
-          setIsWardLinePopOpen
-        )
-      }
-    >
-      {dayjs(item.map_updated_at).format("DD-MM-YYYY")}
-    </li>
-  ))}
+                  <ul
+  style={{
+    paddingLeft: "16px",
+    margin: 0,
+    fontSize: "13px",
+    cursor: "pointer",
+  }}
+>
+  {previoisMapList
+    ?.filter(item => item.map_updated_at)
+    .map(item => {
+      const isSelected = item.map_updated_at === selectedDate;
 
+      return (
+        <li
+          key={item.id}
+          onClick={() => {
+            setSelectedDate(item.map_updated_at);
+            getSelectWardBoundaryAndLine(
+              props.wardId,
+              props.selectedCity,
+              item.map_updated_at,
+              setWardBoundaryGeoJsonData,
+              setWardMapGeoJsonData,
+              [],
+              setSelectedDate
+            );
+          }}
+          style={{
+            marginBottom: "6px",
+            cursor: "pointer",
+            color: isSelected ? "#0d6efd" : "#000", // blue if selected
+            fontWeight: isSelected ? "600" : "400",
+          }}
+        >
+          {dayjs(item.map_updated_at).format("DD-MM-YYYY")}
+        </li>
+      );
+    })}
 </ul>
+
             </div>
           </div>
         </div>
