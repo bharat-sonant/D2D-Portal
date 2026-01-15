@@ -1,18 +1,18 @@
 
+import { setAlertMessage } from '../../common/common';
 import  * as sbs from  '../../services/supabaseServices'
 import dayjs from 'dayjs';
 
 export const uploadWardBoundaryJson = (
   file,
-  wardId,
-  cityId,
   setWardBoundaryGeoJsonData,
-  setIsWardBoundaryMapPopupOpen
+  setIsWardBoundaryMapPopupOpen,
+  setHoldArray
 ) => {
   if (!file) return;
 
   const reader = new FileReader();
-  const loggedInUserName = localStorage.getItem("name");
+ 
 
   reader.onload = async (e) => {
     try {
@@ -23,14 +23,15 @@ export const uploadWardBoundaryJson = (
         geojson.type !== "FeatureCollection" ||
         !geojson.features?.length
       ) {
-        console.error("Invalid GeoJSON");
+     
+       setAlertMessage('error',"Invalid GeoJSON");
         return;
       }
 
       const feature = geojson.features[0];
 
       if (feature.geometry.type !== "Polygon") {
-        console.error("Only Polygon supported");
+       setAlertMessage('error',"Only Polygon supported");
         return;
       }
 
@@ -52,7 +53,20 @@ export const uploadWardBoundaryJson = (
       /**
        * 3️⃣ STORAGE USE (your existing format)
        */
-      const points = coordinates.map(([lng, lat]) => [
+     setHoldArray(coordinates)
+
+    } catch (err) {
+       setAlertMessage('error',"Invalid GeoJSON");
+    }
+  };
+
+  reader.readAsText(file);
+};
+
+
+export const saveWardBoundaryGeojsonInDb=async (wardId,cityId,holdArray,setHoldArray,setIsWardBoundaryMapPopupOpen)=>{
+      const loggedInUserName = localStorage.getItem("name");
+        const points = holdArray.map(([lng, lat]) => [
         String(lat),
         String(lng),
       ]);
@@ -78,16 +92,12 @@ export const uploadWardBoundaryJson = (
         updated_by: loggedInUserName,
       };
       await sbs.upsertByConflictKeys("WardsBoundaries", tableData,"ward_id,boundary_updated_at");
-     
-    } catch (err) {
-      console.error("File parse error:", err);
-    }
-  };
+      setIsWardBoundaryMapPopupOpen(false)
+      setAlertMessage('success','Ward boundary updated successfully')
+      setHoldArray([])
+}
 
-  reader.readAsText(file);
-};
-
-export const uploadWardMapJson=(file,wardId,cityId,setWardMapGeoJsonData,setIsWardLinePopOpen)=>{
+export const uploadWardMapJson=(file,setWardMapGeoJsonData,setIsWardLinePopOpen,setHoldArray)=>{
   
   if (!file) return;
 
@@ -96,16 +106,16 @@ export const uploadWardMapJson=(file,wardId,cityId,setWardMapGeoJsonData,setIsWa
   reader.onload = (e) => {
     try {
       const geoJson = JSON.parse(e.target.result);
-
+       console.log(geoJson)
       // basic validation
       if (!geoJson.features || !Array.isArray(geoJson.features)) {
-        console.error("❌ Invalid GeoJSON file");
+        setAlertMessage('error',"Invalid GeoJSON file");
         return;
       }
 
-      convertWardGeoJSON(cityId,wardId,geoJson,setWardMapGeoJsonData,setIsWardLinePopOpen);
+      convertWardGeoJSON(geoJson,setWardMapGeoJsonData,setIsWardLinePopOpen,setHoldArray);
     } catch (err) {
-      console.error("❌ File read / parse error", err);
+      setAlertMessage('error',"Invalid GeoJSON file");
     }
   };
 
@@ -114,15 +124,14 @@ export const uploadWardMapJson=(file,wardId,cityId,setWardMapGeoJsonData,setIsWa
 
 
 export async function convertWardGeoJSON(
-  cityId,
-  wardId,
   geoJson,
   setWardMapGeoJsonData,
-  setIsWardLinePopOpen
+  setIsWardLinePopOpen,
+  setHoldArray
 ) {
   let totalWardLength = 0;
   let lineIndex = 1;
-  const loggedInUserName = localStorage.getItem("name");
+  
 
   const polylinePaths = []; // 👉 MAP use
 
@@ -161,14 +170,18 @@ export async function convertWardGeoJSON(
   output.totalHouseCount = 0;
 
   // 👉 MAP STATE (Polyline paths)
-  
+  setHoldArray(output)
   setWardMapGeoJsonData(polylinePaths);
   setIsWardLinePopOpen(true)
+  
+ 
 
-  /**
-   * STORAGE (unchanged logic)
-   */
-  const jsonString = JSON.stringify(output, null, 2);
+}
+
+export const saveWardMapData=async (wardId,cityId,HoldArray,setHoldArray,setIsWardLinePopOpen,setPreviousMapList)=>{
+ 
+  const loggedInUserName = localStorage.getItem("name");
+    const jsonString = JSON.stringify(HoldArray, null, 2);
   const jsonFile = new File(
     [jsonString],
     `ward_${wardId}_points.json`,
@@ -188,8 +201,19 @@ export async function convertWardGeoJSON(
   };
 
   await sbs.upsertByConflictKeys("WardsMaps", tableData,"ward_id,map_updated_at");
-}
+  setIsWardLinePopOpen(false)
+ setPreviousMapList((prev) => {
+  const filtered = prev.filter(
+    (item) => item.map_updated_at !== tableData.map_updated_at
+  );
 
+  return [tableData, ...filtered];
+});
+
+  setAlertMessage('success','Ward map updated successfully')
+  setHoldArray([])
+
+}
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -221,41 +245,12 @@ function calculateLineLength(points) {
 
 
 
-export const saveGeoJsonData=async (cityId,wardId,wardBoundaryGeoJsonData)=>{
-    console.log(wardBoundaryGeoJsonData)
-    return;
-       try {
-        const loggedInUserName = localStorage.getItem('name');
-      const points = wardBoundaryGeoJsonData.coordinates[0].map(coord => [
-        String(coord[1]), // lat
-        String(coord[0])  // lng
-      ]);
-
-      const parsedData = {points};
-      const jsonString = JSON.stringify(parsedData, null, 2);
-      const jsonFile = new File(
-        [jsonString],
-        `ward_${wardId}_points.json`,
-        { type: "application/json"}
-      );
-
-      const filePath = `city_${cityId}/WardBoundaries/ward_${wardId}/${dayjs().format('YYYY-MM-DD')}`;
-      sbs.uploadAttachment(jsonFile, "WardMaps", filePath);
-        let tableData={
-        ward_id:wardId,
-        boundary_updated_at:dayjs().format('YYYY-MM-DD'),
-        updated_by:loggedInUserName
-      }
-     await sbs.saveData('WardsBoundaries',tableData)
-    } catch (err) {
-      console.error("File parse error:", err);
-    }
-}
 
 
 export const getPrevousMapList=async (wardId,setPreviousMapList)=>{
     let response = await sbs.getDataByColumnName('WardsMaps','ward_id',wardId)
      if(response.success===true){
+    
        setPreviousMapList(response.data)
      }
 }
@@ -268,33 +263,29 @@ export const getSelectWardBoundaryAndLine = async (
   setWardMapGeoJsonData,
   setIsWardLinePopOpen
 ) => {
-   
+   let  boundaryData =[]
   const latestBoundary = await sbs.getLatestDate(wardId)
-
-  const boundaryData = await sbs.getGeoJsonFromStorage(
+  if(latestBoundary.data!==null){
+      boundaryData = await sbs.getGeoJsonFromStorage(
     `city_${selectedCity}/WardBoundaries/ward_${wardId}/${latestBoundary.data}`
   );
-
+  }
   const linesData = await sbs.getGeoJsonFromStorage(
     `city_${selectedCity}/WardHouseLine/ward_${wardId}/${date}`
   );
 
-  // 2️⃣ Boundary → Polygon
   if (boundaryData?.points && Array.isArray(boundaryData.points)) {
     const polygonPath = boundaryData.points.map(([lat, lng]) => ({
       lat: Number(lat),
       lng: Number(lng),
     }));
-
     setWardBoundaryGeoJsonData(polygonPath);
   }
-
-  // 3️⃣ Lines → Polyline paths (IMPORTANT PART)
   if (linesData && typeof linesData === "object") {
     const polylinePaths = [];
 
     Object.keys(linesData).forEach((key) => {
-      if (isNaN(key)) return; // skip totalLines, totalWardLength
+      if (isNaN(key)) return; 
 
       const line = linesData[key];
       if (!line?.points) return;
