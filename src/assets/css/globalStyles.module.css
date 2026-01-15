@@ -74,8 +74,12 @@
   &:focus {
     background-position: 97% 12px;
     padding: 13px 13px 13px 16px;
-
+    border: 1px solid var(--themeColor);
+    box-shadow: 0 0px 30px #93a2e166;
     color: var(--black);
+  }
+  &:hover {
+    border: 1px solid var(--themeColor);
   }
 }
 
