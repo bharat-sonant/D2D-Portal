@@ -4,7 +4,6 @@ import "./calender.css";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getUserData } from "../../services/UserServices/UserServices";
-import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 dayjs.extend(relativeTime);
 
@@ -42,7 +41,10 @@ const Calendar = (props) => {
   return (
     <div className={style.box}>
       <div className="calendar-container">
-        <div className="calendar pb-0 ps-0 pe-0" style={{ minHeight: "auto" }}>
+        <div
+          className="calendar pb-0 ps-0 pe-0"
+          style={{ minHeight: "auto" }}
+        >
           <div
             style={{
               marginTop: "8px",
@@ -63,7 +65,12 @@ const Calendar = (props) => {
 
           <div style={{ padding: "10px 0 20px 0", textAlign: "center" }}>
             {loading ? (
-              <GlobalSpinnerLoader/>
+              <div
+                className="spinner-border spinner-border-sm text-primary"
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </div>
             ) : userLastLogin ? (
               <div>
                 <h4
@@ -76,7 +83,9 @@ const Calendar = (props) => {
                   {dayjs(userLastLogin).fromNow()}
                 </h4>
                 <div style={{ fontSize: "13px", color: "#888" }}>
-                  {dayjs(userLastLogin).format("dddd, MMMM D, YYYY")}
+                  {dayjs(userLastLogin).format(
+                    "dddd, MMMM D, YYYY"
+                  )}
                 </div>
               </div>
             ) : (
