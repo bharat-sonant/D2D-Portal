@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import UserLoginHistory from "./UserLogInHistory";
 import style from "../../assets/css/User/calender.module.css";
 import "./calender.css";
 import weekOfYear from "dayjs/plugin/weekOfYear";
@@ -11,6 +12,7 @@ dayjs.extend(weekOfYear);
 const Calendar = (props) => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [daysArray, setDaysArray] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
   const prevMonth = () => {
     action.prevMonthAction(setCurrentDate);
   };
@@ -28,13 +30,28 @@ const Calendar = (props) => {
     );
   }, [currentDate, props.selectedUser]);
 
+  useEffect(() => {
+    if (props.onHistoryToggle) {
+      props.onHistoryToggle(showHistory);
+    }
+  }, [showHistory, props.onHistoryToggle]);
+
   return (
     <>
       {/* <div className={style.boxHeader}></div> */}
 
       <div className={style.box}>
         <div className="calendar-container">
-          <h6 style={{ marginTop: "8px" }}>Login History</h6>
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h6 style={{ marginTop: "8px", marginBottom: "0" }}>Login History</h6>
+            <button
+              className="btn view-history-btn"
+              onClick={() => setShowHistory(true)}
+            >
+              View History
+            </button>
+          </div>
+
           <div className="calendar pb-0 ps-0 pe-0">
             <div className="header33">
               <button onClick={prevMonth} className={`btn ${style.PrevBtn}`}>
@@ -70,16 +87,15 @@ const Calendar = (props) => {
                       padding: "4px",
                       cursor:
                         item.day === "" ||
-                        (dayjs(item.date).day() === 0 &&
-                          (item.status === 0 || item.status === 7))
+                          (dayjs(item.date).day() === 0 &&
+                            (item.status === 0 || item.status === 7))
                           ? "default"
                           : "pointer",
                     }}
-                    className={`date ${item.day === "" ? "empty" : ""} ${
-                      dayjs(item.date).day() === 0
-                        ? "disable"
-                        : "cursor-pointer"
-                    }`}
+                    className={`date ${item.day === "" ? "empty" : ""} ${dayjs(item.date).day() === 0
+                      ? "disable"
+                      : "cursor-pointer"
+                      }`}
                   >
                     {item.day}
                   </div>
@@ -90,7 +106,13 @@ const Calendar = (props) => {
         </div>
       </div>
 
-      {/* Modal */}
+
+
+      <UserLoginHistory
+        userId={props.selectedUser?.id}
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+      />
     </>
   );
 };

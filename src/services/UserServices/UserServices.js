@@ -76,26 +76,26 @@ export const fetchUserCityAccess = async (userId) => {
 export const removeCityAccess = async (userId) => {
   const result = await sbs.deleteData("UserCityAccess", userId);
 }
-export const setUserDefaultCity=(userId,cityId)=>{
-  return new Promise(async(resolve,reject)=>{
+export const setUserDefaultCity = (userId, cityId) => {
+  return new Promise(async (resolve, reject) => {
     if (!userId && cityId) {
       return reject('Invalid parameters');
     }
-    const result = await sbs.updateData('Users', 'id', userId, {default_city:cityId});
+    const result = await sbs.updateData('Users', 'id', userId, { default_city: cityId });
     if (result.success) {
-      return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
+      return resolve({ status: 'success', message: 'Default city updated successfully.', data: result.data });
     } else {
-      return reject({status: 'error', message: result.error, error: result?.err});
+      return reject({ status: 'error', message: result.error, error: result?.err });
     }
   });
 }
 
-export const savePagesPermission=(permissionDetail)=>{
-   return new Promise(async(resolve,reject)=>{
+export const savePagesPermission = (permissionDetail) => {
+  return new Promise(async (resolve, reject) => {
     if (!permissionDetail) {
       return reject('Invalid parameters');
     }
-    const result = await sbs.upsertByConflictKeys('UserPortalAccess',permissionDetail,"user_id,access_page");
+    const result = await sbs.upsertByConflictKeys('UserPortalAccess', permissionDetail, "user_id,access_page");
     // console.log(result)
     // if (result.success) {
     //   return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
@@ -105,22 +105,31 @@ export const savePagesPermission=(permissionDetail)=>{
   });
 }
 
-export const getUserPagesPermissions=async (userId)=>{
+export const getUserPagesPermissions = async (userId) => {
 
-   return new Promise(async(resolve,reject)=>{
+  return new Promise(async (resolve, reject) => {
     if (!userId) {
       return reject('Invalid parameters');
     }
-    const response = await sbs.getDataByColumnName('UserPortalAccess','user_id',userId)
+    const response = await sbs.getDataByColumnName('UserPortalAccess', 'user_id', userId)
     if (response.success) {
-         const mappedPermissions = {};
-        response.data.forEach((item) => {mappedPermissions[item.access_page] = item.access_control});
-      return resolve ({ status: 'success', message: 'Pages permission data fetched successfully.', mappedPermissions});
+      const mappedPermissions = {};
+      response.data.forEach((item) => { mappedPermissions[item.access_page] = item.access_control });
+      return resolve({ status: 'success', message: 'Pages permission data fetched successfully.', mappedPermissions });
     } else {
-      return reject({status: 'error', message: response.error, error: response?.err});
+      return reject({ status: 'error', message: response.error, error: response?.err });
     }
   });
-     
-     
-
 }
+
+export const fetchUserLoginHistory = async (userId) => {
+  const result = await sbs.getDataByColumnName('UserLoginHistory', 'user_id', userId);
+  if (result.success) {
+    const sortedData = result.data
+      .sort((a, b) => new Date(b.login_date) - new Date(a.login_date))
+      .slice(0, 50);
+    return { status: "success", message: "Login history fetched successfully", data: sortedData };
+  } else {
+    return { status: "error", message: result.error };
+  }
+};
