@@ -18,12 +18,12 @@
 }
 
 .cityPageRight {
-    width: calc(100% - 250px);
-    display: flex;
-    flex-flow: column;
-    z-index: 1;
-    height: calc(100vh - 80px);
-    overflow: auto;
+  width: calc(100% - 250px);
+  display: flex;
+  flex-flow: column;
+  z-index: 1;
+  height: calc(100vh - 80px);
+  overflow: auto;
 }
 
 /* Ensure content fills width */
@@ -38,9 +38,8 @@
   margin-top: 0px;
   /* Requested by user */
   background: #fff;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -50,71 +49,97 @@
 /* Folder Tab Styles */
 .tabContainer {
   display: flex;
-  background-color: var(--themeColor);
-  background: linear-gradient(
-    135deg,
-    var(--themeColor) 0%,
-    var(--themeColorDark) 100%
-  );
-  padding: 15px 15px 0 15px;
-  border-radius: 12px 12px 0 0;
-  margin-bottom: 0;
+  margin-bottom: 10px;
   overflow-x: auto;
   gap: 8px;
   width: 100%;
   flex-shrink: 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* background: var(--whitefa); */
 }
 
 .tabContainer::-webkit-scrollbar {
   display: none;
 }
-
-.tabButton {
-  padding: 14px 28px;
-  /* Larger touch targets */
-  border: none;
-  cursor: pointer;
-  font-family: var(--fontGraphikMedium);
-  font-size: 15px;
-  background: rgba(255, 255, 255, 0.15);
-  /* Glass-like effect for inactive */
-  color: rgba(255, 255, 255, 0.95);
-  border-radius: 12px 12px 0 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  flex: 1;
-  /* Tabs try to fill space equally */
-  min-width: 100px;
-  text-align: center;
+.tabContainer {
+  display: flex;
+  gap: 8px;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: none;
 }
 
+/* BASE TAB */
+.tabButton {
+  padding: 13px 20px;
+  background: var(--white);
+  backdrop-filter: blur(14px);
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--regularColor);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.35s ease, color 0.3s ease;
+}
+
+/* Magnetic hover */
 .tabButton:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
-  transform: translateY(-2px);
+  /* transform: translateY(-4px) scale(1.06); */
+  box-shadow: none !important;
+  background: linear-gradient(135deg, #ffffff, #f6f0ff);
 }
 
+/* Active */
 .tabButton.active {
-  background-color: #fff;
-  color: var(--themeColorDark);
-  font-weight: 600;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(0);
-  z-index: 1;
+  color: var(--white);
+  /* transform: scale(1.12); */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
 }
 
-/* Ensure the content area blends with tabs */
-/* Note: The content container in .jsx needs to match background: #fff */
+/* Gradient liquid background */
+.tabButton.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gradientTheme);
+  z-index: -1;
+  animation: liquid 3s ease infinite;
+}
 
-.tabButton:focus {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
-  outline-offset: -2px;
+@keyframes liquid {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(20deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Icon */
+/* .tabIcon {
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+} */
+
+.tabButton.active .tabIcon {
+  transform: scale(1.2) rotate(-8deg);
+}
+
+/* Text */
+.tabName {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Red Dot */
@@ -129,27 +154,43 @@
   box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
 }
 
-/* Responsive adjustments */
+/* Media Query Starts Here */
 @media (max-width: 767.98px) {
-  .employeeLeft {
+  .cityPage {
+    flex-flow: column;
+  }
+  .cityPageLeft {
     width: 100%;
-    position: fixed;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    background: var(--white);
-    padding: 10px 16px;
-    height: 60px;
-    border-bottom: 1px solid var(--borderColor);
-    z-index: 2;
-    display: flex;
+  }
+  .cityPageRight {
+    width: 100%;
+  }
+  .tabButton {
+    max-width: 44px;
+    overflow: hidden;
+    padding: 12px;
+    justify-content: flex-start;
   }
 
-  .employeeRight {
-    margin-top: 120px;
-    width: 100%;
-    /* removed padding to be consistent with desktop (20px) */
+  .tabButton.active {
+    max-width: 220px;
+    justify-content: flex-start;
   }
 
-  /* Removed tabContainer and tabButton responsive overrides to match desktop styles */
+  .tabName {
+    opacity: 0;
+    transform: translateX(-16px);
+    white-space: nowrap;
+  }
+
+  .tabButton.active .tabName {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .tabIcon {
+    opacity: 1;
+    transform: none;
+    flex-shrink: 0;
+  }
 }

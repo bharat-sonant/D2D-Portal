@@ -47,12 +47,7 @@
   cursor: pointer;
   text-decoration: underline;
 
-  background: linear-gradient(
-    135deg,
-    rgb(102, 126, 234) 0%,
-    rgb(118, 75, 162) 100%
-  );
-
+  background: var(--gradientTheme);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -186,7 +181,6 @@
   transform: rotate(180deg);
 }
 
-
 .userBG {
   display: flex;
   align-items: center;
@@ -230,9 +224,9 @@
   background-color: var(--white);
   /* transform: translate(16px, 66px) !important; */
   animation: dropdownSlideUp 0.4s ease;
-   position: absolute;
-  top: 100%;           /* button ke neeche */
-  right: 0;           /* align right */
+  position: absolute;
+  top: 100%; /* button ke neeche */
+  right: 0; /* align right */
 
   z-index: 9999;
   min-width: 180px;

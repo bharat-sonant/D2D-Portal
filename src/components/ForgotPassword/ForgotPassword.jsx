@@ -71,7 +71,7 @@ const ForgotPassword = ({ onBack }) => {
                   width: "80px",
                   height: "80px",
                   borderRadius: "50%",
-                  background: "#2ecc71",
+                  background: "var(--gradientTheme)",
                 }}
               >
                 <Mail size={36} color="#fff" />
@@ -79,12 +79,12 @@ const ForgotPassword = ({ onBack }) => {
 
               <h2>Email Sent!</h2>
 
-              <p>
+              <p style={{width: "320px", margin: "0 auto"}}>
                 Your login credentials have been sent to your registered email
                 address.
               </p>
             </div>
-            <div className="text-center mt-3">
+            <div className="text-center" style={{marginTop: "-1rem"}}>
               <p className={styles.forgotText}>
                 <a
                   href="#"
@@ -93,7 +93,7 @@ const ForgotPassword = ({ onBack }) => {
                     onBack();
                   }}
                   style={{
-                    color: "#667eea",
+                    color: "var(--themeColor)",
                     textDecoration: "none",
                     fontWeight: "600",
                   }}
@@ -118,8 +118,8 @@ const ForgotPassword = ({ onBack }) => {
                   width: "80px",
                   height: "80px",
                   borderRadius: "50%",
-                  background:
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+               background: "var(--gradientTheme)",
+
                 }}
               >
                 <Key size={40} color="#ffffff" />
@@ -187,7 +187,7 @@ const ForgotPassword = ({ onBack }) => {
                     onBack();
                   }}
                   style={{
-                    color: "#667eea",
+                    color: "var(--themeColor",
                     textDecoration: "none",
                     fontWeight: "600",
                   }}

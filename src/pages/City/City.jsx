@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Building2, Grid3x3, Truck, Users } from "lucide-react";
+
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "./City.module.css";
 import CityList from "../../components/City/CityList";
@@ -21,10 +23,10 @@ import LogoImage from "../../components/Common/Image/LogoImage";
 import WardSetting from "../../components/City/WardSetting";
 
 const TABS = [
-  { key: "city", label: "City Details" },
-  { key: "wards", label: "Wards" },
-  { key: "vehicle", label: "Vehicles" },
-  { key: "users", label: "Users In City" },
+  { key: "city", label: "City Details", icon: Building2 },
+  { key: "wards", label: "Wards", icon: Grid3x3 },
+  { key: "vehicle", label: "Vehicles", icon: Truck },
+  { key: "users", label: "Users In City", icon: Users },
 ];
 
 const City = () => {
@@ -131,17 +133,21 @@ const City = () => {
         {selectedCity !== null && (
           <div className={TaskStyles.cityPageRight}>
             <div className={TaskStyles.tabContainer}>
-              {TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`${TaskStyles.tabButton} ${
-                    activeTab === tab.key ? TaskStyles.active : ""
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              {TABS.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`${TaskStyles.tabButton} ${
+                      activeTab === tab.key ? TaskStyles.active : ""
+                    }`}
+                  >
+                    <Icon size={16} className={TaskStyles.tabIcon} />
+                    <span className={TaskStyles.tabName}>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {activeTab === "city" && (
@@ -234,16 +240,15 @@ const City = () => {
         )}
       </div>
 
-
-        {showCanvas && (
-          <AddCity
-            showCanvas={showCanvas}
-            setShowCanvas={setShowCanvas}
-            loadCities={loadCities}
-            onEdit={onEdit}
-            setOnEdit={setOnEdit}
-          />
-        )}
+      {showCanvas && (
+        <AddCity
+          showCanvas={showCanvas}
+          setShowCanvas={setShowCanvas}
+          loadCities={loadCities}
+          onEdit={onEdit}
+          setOnEdit={setOnEdit}
+        />
+      )}
       {openSettings && (
         <CitySettings
           openCanvas={openSettings}
@@ -255,21 +260,20 @@ const City = () => {
         />
       )}
 
-
-        {openAddWardPopUp && (
-          <AddWard
-            openAddWardPopUp={openAddWardPopUp}
-            setOpenAddWardPopUp={setOpenAddWardPopUp}
-            setEditWard={setEditWard}
-            editWard={editWard}
-            onEdit={onEdit}
-            setOnEdit={setOnEdit}
-            selectedCity={selectedCity}
-            setWardList={setWardList}
-            wardList={wardList}
-            setSelectedWard={setSelectedWard}
-          />
-        )}
+      {openAddWardPopUp && (
+        <AddWard
+          openAddWardPopUp={openAddWardPopUp}
+          setOpenAddWardPopUp={setOpenAddWardPopUp}
+          setEditWard={setEditWard}
+          editWard={editWard}
+          onEdit={onEdit}
+          setOnEdit={setOnEdit}
+          selectedCity={selectedCity}
+          setWardList={setWardList}
+          wardList={wardList}
+          setSelectedWard={setSelectedWard}
+        />
+      )}
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}

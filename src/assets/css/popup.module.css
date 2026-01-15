@@ -45,7 +45,7 @@
 .iconWrapper {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradientTheme);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@
   font-family: var(--fontGraphikSemibold);
   word-break: break-word;
   color: var(--darkBlack);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradientTheme);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -183,12 +183,14 @@
 }
 .input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--themeColor);
   box-shadow: 0 0 0 4px #667eea1a;
 }
 .inputWrapper:focus-within .inputIcon {
-  filter: brightness(0) saturate(100%) invert(58%) sepia(44%) saturate(5990%)
-    hue-rotate(210deg) brightness(97%) contrast(88%);
+  color: var(--themeColor);
+}
+.inputWrapper:focus-within svg {
+  color: var(--themeColor);
 }
 .eyeBtn {
   position: absolute;
@@ -205,14 +207,13 @@
 /* ================ Disabled INNPUT ===============*/
 .input:disabled {
   background: #f3f4f6;
-  cursor: not-allowed; 
+  cursor: not-allowed;
   opacity: 0.5;
 }
 
 .input:disabled::placeholder {
   color: #9ca3af;
 }
-
 
 .input:disabled:hover {
   box-shadow: none;
@@ -377,7 +378,7 @@
 
 .submitBtn {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradientTheme);
   border: none;
   border-radius: 4px;
   font-size: 14px;

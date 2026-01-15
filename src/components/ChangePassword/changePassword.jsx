@@ -149,9 +149,8 @@ const ChangePassword = ({
               Old Password
             </label>
             <div className={styles.inputWrapper}>
-              <div className={styles.inputIcon}>
-                <Lock size={18} />
-              </div>
+                <Lock size={18} className={styles.inputIcon} />
+          
               <input
                 className={styles.input}
                 type={showOldPassword ? "text" : "password"}

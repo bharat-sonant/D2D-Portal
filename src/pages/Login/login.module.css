@@ -196,7 +196,7 @@
 .brandTitle {
   font-size: 32px;
   font-family: var(--fontGraphikSemibold);
-  background: linear-gradient(135deg, #677ae5 0%, #361756 100%);
+  background: var(--gradientTheme);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -241,7 +241,7 @@
 }
 
 .featureIcon {
-  color: #667eea;
+  color: var(--themeColor);
   min-width: 24px;
 }
 
@@ -395,19 +395,18 @@
   border-radius: 4px;
   font-size: 13px;
   transition: all 0.3s ease;
-  background: white;
+  background: var(--white);
 
   font-family: var(--fontGraphik);
 }
 
 .inputWrapper input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--themeColor);
   box-shadow: 0 0 0 4px #667eea1a;
 }
 .inputWrapper:focus-within .inputIcon {
-  filter: brightness(0) saturate(100%) invert(58%) sepia(44%) saturate(5990%)
-    hue-rotate(210deg) brightness(97%) contrast(88%);
+filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-rotate(154deg) brightness(93%) contrast(92%);
 }
 .togglePassword {
   position: absolute;
@@ -423,7 +422,7 @@
 }
 
 .togglePassword:hover {
-  color: #667eea;
+  color: #4f6ef7;
 }
 
 .formFooter {
@@ -445,64 +444,22 @@
   padding-left: 28px;
 }
 
-.checkboxContainer input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.checkmark {
-  position: absolute;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.checkboxContainer:hover input ~ .checkmark {
-  border-color: #667eea;
-}
-
-.checkboxContainer input:checked ~ .checkmark {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: transparent;
-}
-
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 6px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.checkboxContainer input:checked ~ .checkmark:after {
-  display: block;
-}
 
 .forgotLink {
   font-size: 13px;
   font-family: var(--fontGraphik);
-  color: #667eea;
+  color: #4f6ef7;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .forgotLink:hover {
-  color: #764ba2;
+  color: #2898ca;
 }
 
 .loginButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradientTheme);
   color: var(--white);
   border: none;
   padding: 16px;
