@@ -24,6 +24,31 @@ const DailyWorkReport = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortRef = useRef(null);
 
+  // Generate 7 days around the selected date if it's outside the last 7 days of "today"
+  const last7Days = useMemo(() => {
+    const arr = [];
+    const today = dayjs();
+    const selected = dayjs(date);
+
+    // Default range: last 7 days from today
+    let startDate = today.subtract(6, "day");
+
+    // If selected date is NOT within [today-6, today], center the range around selected date
+    if (selected.isBefore(startDate) || selected.isAfter(today)) {
+      startDate = selected.subtract(3, "day");
+    }
+
+    for (let i = 0; i < 7; i++) {
+      const d = startDate.add(i, "day");
+      arr.push({
+        full: d.format("YYYY-MM-DD"),
+        display: d.format("DD MMM"),
+        day: d.format("ddd"),
+      });
+    }
+    return arr;
+  }, [date]);
+
   useEffect(() => {
     getWardDataAction(cityId, setWards);
   }, [cityId]);
@@ -47,12 +72,12 @@ const DailyWorkReport = () => {
     return reportData?.reduce((acc, row) => {
       acc[String(row.ward_id)] = row;
       return acc;
-    },{})
-  },[reportData])
+    }, {})
+  }, [reportData])
 
   //calculating working hours on base of duty on and duty off time
   const calculateWorkingHours = (dutyOn, dutyOff) => {
-    if(!dutyOn || !dutyOff) return null;
+    if (!dutyOn || !dutyOff) return null;
 
     const toMinutes = (time) => {
       const parts = time.split(":").map(Number);
@@ -64,59 +89,57 @@ const DailyWorkReport = () => {
 
     if (isNaN(start) || isNaN(end) || end < start) return null;
 
-  const diffMinutes = end - start;
+    const diffMinutes = end - start;
 
-  const hours = Math.floor(diffMinutes / 60);
-  const minutes = Math.round(diffMinutes % 60);
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = Math.round(diffMinutes % 60);
 
-  return `${hours}h ${minutes}m`;
+    return `${hours}h ${minutes}m`;
   }
-//without changing case -> for vehicle names
-const renderMultiLine = (value) => {
-  if (!value) return "-";
 
-  const uniqueMap = new Map();
+  //without changing case -> for vehicle names
+  const renderMultiLine = (value) => {
+    if (!value) return "-";
 
-  value
-    .split(",")
-    .map(v => v.trim())
-    .filter(Boolean)
-    .forEach(v => {
-      const key = v.toLowerCase(); // 🔑 case-insensitive check
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, v); // preserve first seen format
-      }
-    });
+    const uniqueMap = new Map();
 
-  return [...uniqueMap.values()].map((item, index) => (
-    <div key={index}>{item}</div>
-  ));
-};
+    value
+      .split(",")
+      .map(v => v.trim())
+      .filter(Boolean)
+      .forEach(v => {
+        const key = v.toLowerCase(); // 🔑 case-insensitive check
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, v); // preserve first seen format
+        }
+      });
 
-//changing case for driver halper names
-const renderMultiLineName = (value) => {
-  if (!value) return "-";
+    return [...uniqueMap.values()].map((item, index) => (
+      <div key={index}>{item}</div>
+    ));
+  };
 
-  const uniqueMap = new Map();
+  //changing case for driver helper names
+  const renderMultiLineName = (value) => {
+    if (!value) return "-";
 
-  value
-    .split(",")
-    .map(v => v.trim())
-    .filter(Boolean)
-    .forEach(v => {
-      const key = v.toLowerCase();
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, titleCaseName(v)); // ✅ only here
-      }
-    });
+    const uniqueMap = new Map();
 
-  return [...uniqueMap.values()].map((item, index) => (
-    <div key={index}>{item}</div>
-  ));
-};
+    value
+      .split(",")
+      .map(v => v.trim())
+      .filter(Boolean)
+      .forEach(v => {
+        const key = v.toLowerCase();
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, titleCaseName(v)); // ✅ only here
+        }
+      });
 
-
-
+    return [...uniqueMap.values()].map((item, index) => (
+      <div key={index}>{item}</div>
+    ));
+  };
 
   // ----------------------------
   // SORT FUNCTIONS
@@ -160,6 +183,19 @@ const renderMultiLineName = (value) => {
       {/* TOP BAR */}
       <div className={style.topBar}>
         {/* DATE PICKER */}
+        {/* -------------------- HORIZONTAL DATE BOXES -------------------- */}
+        <div className={style.dateBoxContainer}>
+          {last7Days.map((d) => (
+            <div
+              key={d.full}
+              className={`${style.dateBox} ${d.full === date ? style.selectedDateBox : ""}`}
+              onClick={() => setDate(d.full)}
+            >
+              <div className={style.dateBoxDay}>{d.day}</div>
+              <div className={style.dateBoxDisplay}>{d.display}</div>
+            </div>
+          ))}
+        </div>
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
@@ -200,6 +236,8 @@ const renderMultiLineName = (value) => {
         </div>
       </div>
 
+
+
       {/* TABLE */}
       <div className={style.tableContainer}>
         <table className={style.table}>
@@ -225,12 +263,12 @@ const renderMultiLineName = (value) => {
               >
                 Person / Vehicle Details
               </th>
-              
-               <th
+
+              <th
                 className={`text-start ${style.parentHeader} `}
                 style={{ width: "10%" }}
               >
-                
+
               </th>
             </tr>
             <tr>
@@ -238,7 +276,7 @@ const renderMultiLineName = (value) => {
               <th className={style.th2}>Duty On </th>
               <th className={style.th3}>Ward Reach </th>
               <th className={`${style.th4}`}>
-                Duty Off 
+                Duty Off
               </th>
               <th className={`${style.th4} ${style.borderRight}`}>
                 Working Hrs
@@ -262,55 +300,55 @@ const renderMultiLineName = (value) => {
             ) : wards?.length > 0 && reportData?.length > 0 ? (
               wards?.map((ward) => {
                 const row = reportByWardId[String(ward.ward_id)];
-                return(
-                <tr key={ward.ward_id}>
-                  <td className={style.th1}>{ward.ward_display_name}</td>
-                  <td className={`${style.th2}`}>
-                    {row?.duty_on_time || "-"}
-                  </td>
-                  <td className={style.th3}>{row?.ward_reach_time || "-"}</td>
-                  <td className={`${style.th4}`}>
-                    {row?.duty_off_time || "-"}
-                  </td>
-                   <td className={`${style.th4} ${style.borderRight}`}>
-                    {calculateWorkingHours(
-                      row?.duty_on_time,
-                      row?.duty_off_time
-                    ) || "-"}
-                  </td>
-                  <td className={`${style.th5}`}>
-                    <span 
-                    // className={` ${style.vehicleNumber}`}
-                    >
-                      {renderMultiLine(row?.vehicle) || "-"}
-                    </span>
-                  </td>
-                  <td className={style.th6}>
-                    <span className={`${style.driverName}`}>
-                      {" "}
-                      {/* {row.driver_name || "N/A"} */}
-                      {renderMultiLineName(row?.driver_name)}
-                    </span>
-                  </td>
-                  <td className={style.th7}>
-                    <span className={`${style.helperName}`}>
-                      {/* {row.helper_name || "N/A"} */}
-                      {renderMultiLineName(row?.helper_name)}
-                    </span>
-                  </td>
-                  <td className={style.th8}>
-                    <span className={`${style.helperName}`}>
-                      {/* {row.second_helper_name || "N/A"} */}
-                      {renderMultiLineName(row?.second_helper_name)}
-                    </span>
-                  </td>
-                   <td className={`text-center ${style.th4}`}>
-                    <span className={style.tripBG }>
-                    {row?.trip_count ?? 0}
-                    </span>
-                  </td>
+                return (
+                  <tr key={ward.ward_id}>
+                    <td className={style.th1}>{ward.ward_display_name}</td>
+                    <td className={`${style.th2}`}>
+                      {row?.duty_on_time || "-"}
+                    </td>
+                    <td className={style.th3}>{row?.ward_reach_time || "-"}</td>
+                    <td className={`${style.th4}`}>
+                      {row?.duty_off_time || "-"}
+                    </td>
+                    <td className={`${style.th4} ${style.borderRight}`}>
+                      {calculateWorkingHours(
+                        row?.duty_on_time,
+                        row?.duty_off_time
+                      ) || "-"}
+                    </td>
+                    <td className={`${style.th5}`}>
+                      <span
+                      // className={` ${style.vehicleNumber}`}
+                      >
+                        {renderMultiLine(row?.vehicle) || "-"}
+                      </span>
+                    </td>
+                    <td className={style.th6}>
+                      <span className={`${style.driverName}`}>
+                        {" "}
+                        {/* {row.driver_name || "N/A"} */}
+                        {renderMultiLineName(row?.driver_name)}
+                      </span>
+                    </td>
+                    <td className={style.th7}>
+                      <span className={`${style.helperName}`}>
+                        {/* {row.helper_name || "N/A"} */}
+                        {renderMultiLineName(row?.helper_name)}
+                      </span>
+                    </td>
+                    <td className={style.th8}>
+                      <span className={`${style.helperName}`}>
+                        {/* {row.second_helper_name || "N/A"} */}
+                        {renderMultiLineName(row?.second_helper_name)}
+                      </span>
+                    </td>
+                    <td className={`text-center ${style.th4}`}>
+                      <span className={style.tripBG}>
+                        {row?.trip_count ?? 0}
+                      </span>
+                    </td>
 
-                  {/* <td>
+                    {/* <td>
                   <div className={style.progressCell}>
                     <span className={style.percentageText}>{row.workPerc}</span>
 
@@ -325,9 +363,9 @@ const renderMultiLineName = (value) => {
                     </div>
                   </div>
                 </td> */}
-                </tr>
-              )
-})
+                  </tr>
+                )
+              })
             ) : (
               <tr>
                 <td colSpan={10} className={style.noData}>
@@ -335,7 +373,7 @@ const renderMultiLineName = (value) => {
                     title="No data available"
                     // query={searchTerm}
                     gif={noData}
-                    // height="calc(100vh - 280px)"
+                  // height="calc(100vh - 280px)"
                   />
                   {/* <div className={style.noUserData}>
                       <img

@@ -18,6 +18,7 @@
   font-size: 13px;
   font-family: var(--fontGraphik);
   height: 40px;
+
   span {
     margin-right: auto;
   }
@@ -52,18 +53,22 @@
   width: 16px;
   color: var(--regularColor);
   transition: 0.3s;
+
   &:hover {
     color: var(--black);
   }
 }
+
 .calendarTitle {
   font-size: 14px;
   color: var(--black);
   font-family: var(--fontGraphikMedium);
 }
+
 .calendarBody {
   padding: 16px;
 }
+
 /* Weekdays */
 .weekdays {
   display: grid;

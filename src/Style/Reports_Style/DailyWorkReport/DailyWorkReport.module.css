@@ -74,11 +74,12 @@
   box-shadow: #667eea4d 0px 4px 12px;
   height: 40px;
 }
+
 .iconExcel {
   width: 16px;
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%)
-    hue-rotate(9deg) brightness(105%) contrast(100%);
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(9deg) brightness(105%) contrast(100%);
 }
+
 .tableContainer {
   margin-top: 10px;
   background-color: var(--white);
@@ -114,6 +115,7 @@
   white-space: nowrap;
   z-index: 1;
 }
+
 /* .table th:nth-child(n+2),
 .table td:nth-child(n+2) {
   text-align: center;
@@ -127,24 +129,28 @@
   font-size: 13px;
   white-space: nowrap;
 }
+
 .table td {
   vertical-align: middle;
 }
 
-.table tr > th:first-child,
-.table tr > td:first-child {
+.table tr>th:first-child,
+.table tr>td:first-child {
   position: sticky;
   left: 0;
   /* border-right: 1px solid var(--borderColor); */
 }
-.table tr > th:first-child {
+
+.table tr>th:first-child {
   background: #f4f3f8;
   z-index: 2;
 }
-.table tr > td:first-child {
+
+.table tr>td:first-child {
   background-color: var(--white);
   z-index: 1;
 }
+
 .th2,
 .th3,
 .th4 {
@@ -163,13 +169,16 @@
   top: 0;
   text-transform: uppercase;
 }
-.parentHeader1{
-  z-index: 3!important;
+
+.parentHeader1 {
+  z-index: 3 !important;
 }
+
 /* Update the child headers to sit below parent headers */
 
 .table thead tr:nth-child(2) th {
-  top: 43px; /* Adjust based on your parent header height */
+  top: 43px;
+  /* Adjust based on your parent header height */
   z-index: 2;
 }
 
@@ -177,13 +186,15 @@
 .table thead tr:nth-child(1) th:first-child {
   z-index: 2;
 }
+
 .loaderCell {
-  height: 300px; /* or calc(100vh - header height) */
+  height: 300px;
+  /* or calc(100vh - header height) */
   text-align: center;
   vertical-align: middle;
 }
 
-.loaderCell > div {
+.loaderCell>div {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,7 +202,8 @@
 }
 
 .noData {
-  height: 300px; /* controls vertical centering */
+  height: 300px;
+  /* controls vertical centering */
   text-align: center;
   vertical-align: middle;
 }
@@ -218,6 +230,7 @@
   color: var(--black);
   border-radius: 4px;
 }
+
 .tripBG {
   display: inline-flex;
   align-items: center;
@@ -230,11 +243,13 @@
   font-size: 13px;
   font-family: var(--fontGraphik);
   /* background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%); */
-  background:var(--gradientTheme);
+  background: var(--gradientTheme);
 }
+
 .borderRight {
   border-right: 1px solid var(--borderColor);
 }
+
 .progressCell {
   display: flex;
   flex-direction: column;
@@ -447,30 +462,118 @@
 .sortDownIcon {
   color: var(--textSuccess);
 }
+
 @media (max-width: 1600px) {
   .table {
     width: 1600px;
   }
 }
+
 @media (max-width: 767.98px) {
   .topbar {
     gap: 10px;
     flex-wrap: wrap;
   }
-  .table tr > th:first-child,
-  .table tr > td:first-child {
+
+  .table tr>th:first-child,
+  .table tr>td:first-child {
     left: auto;
   }
+
   .sortBtn div {
     display: none;
   }
+
   .exportBtn div {
     display: none;
   }
+
   .parentHeader:first-child {
     width: 150px !important;
   }
+
   .parentHeader:nth-last-child(1) {
     width: calc(100% - 35% - 150px) !important;
   }
+}
+
+
+
+
+.dateBoxContainer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.dateBoxContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.dateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border: 1.5px solid var(--borderColor);
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: var(--white);
+  min-width: 85px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.dateBoxDay {
+  font-size: 10px;
+  font-family: var(--fontGraphikSemiBold);
+  color: var(--textMuted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.dateBoxDisplay {
+  font-size: 13px;
+  font-family: var(--fontGraphikBold);
+  color: var(--black);
+}
+
+.dateBox:hover {
+  border-color: var(--themeColor);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+  background: linear-gradient(to bottom, #ffffff, #f8faff);
+}
+
+.selectedDateBox {
+  background: var(--gradientTheme);
+  border-color: transparent;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.selectedDateBox .dateBoxDay {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.selectedDateBox .dateBoxDisplay {
+  color: var(--white);
+}
+
+.selectedDateBox::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  pointer-events: none;
 }
