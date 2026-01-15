@@ -11,6 +11,7 @@ import UserCityAccess from "../../components/Users/UserCityAccess";
 import Calendar from "../../components/Users/calendar";
 import PermissonAccess from "../../components/Users/PermissionAccess";
 import { usePermissions } from "../../context/PermissionContext";
+import UserLoginHistory from "../../components/Users/UserLogInHistory";
 
 const User = () => {
   const { permissionGranted } = usePermissions();
@@ -147,8 +148,8 @@ const User = () => {
               {/* STATUS TOGGLE */}
               <div
                 className={`${styles.activeInactiveBadge} ${selectedUser?.status === "active"
-                    ? styles.badgeActive
-                    : styles.badgeInactive
+                  ? styles.badgeActive
+                  : styles.badgeInactive
                   }`}
                 onClick={openConfirm}
               >
@@ -205,6 +206,12 @@ const User = () => {
           selectedUser={selectedUser}
         />
       )}
+      <UserLoginHistory
+        userId={selectedUser?.id}
+        userName={selectedUser?.name}
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
     </>
   );
 };

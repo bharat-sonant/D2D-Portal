@@ -8,7 +8,7 @@ import { LogIn, Clock, Calendar } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
-const UserLoginHistory = ({ userId, open, onClose }) => {
+const UserLoginHistory = ({ userId, userName, open, onClose }) => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
 

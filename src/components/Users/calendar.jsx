@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import UserLoginHistory from "./UserLogInHistory";
 import style from "../../assets/css/User/calender.module.css";
 import "./calender.css";
 import weekOfYear from "dayjs/plugin/weekOfYear";
@@ -12,7 +11,7 @@ dayjs.extend(weekOfYear);
 const Calendar = (props) => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [daysArray, setDaysArray] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
+
   const prevMonth = () => {
     action.prevMonthAction(setCurrentDate);
   };
@@ -30,29 +29,18 @@ const Calendar = (props) => {
     );
   }, [currentDate, props.selectedUser]);
 
-  useEffect(() => {
-    if (props.onHistoryToggle) {
-      props.onHistoryToggle(showHistory);
-    }
-  }, [showHistory, props.onHistoryToggle]);
-
   return (
     <>
       {/* <div className={style.boxHeader}></div> */}
 
       <div className={style.box}>
         <div className="calendar-container">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <h6 style={{ marginTop: "8px", marginBottom: "0" }}>Login History</h6>
-            <button
-              className="btn view-history-btn"
-              onClick={() => setShowHistory(true)}
-            >
-              View History
-            </button>
-          </div>
 
           <div className="calendar pb-0 ps-0 pe-0">
+            <div style={{ marginTop: '8px', display: "flex", justifyContent: "space-between" }}>
+              <h6> Login History</h6>
+              <button onClick={() => props.onHistoryToggle(true)} className="btn view-history-btn">View History</button>
+            </div>
             <div className="header33">
               <button onClick={prevMonth} className={`btn ${style.PrevBtn}`}>
                 <img src={images.iconUp} className={`${style.Icon}`} />
@@ -105,14 +93,6 @@ const Calendar = (props) => {
           </div>
         </div>
       </div>
-
-
-
-      <UserLoginHistory
-        userId={props.selectedUser?.id}
-        open={showHistory}
-        onClose={() => setShowHistory(false)}
-      />
     </>
   );
 };
