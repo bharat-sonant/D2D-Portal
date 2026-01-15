@@ -106,7 +106,7 @@ const City = () => {
       <div className={`${GlobalStyles.floatingDiv}`}>
         {activeTab === "city" && (
           <>
-            {selectedCity && <SettingsBtn click={handleOpenSettings} />}
+            {/* {selectedCity && <SettingsBtn click={handleOpenSettings} />} */}
             <button
               className={`${GlobalStyles.floatingBtn}`}
               onClick={handleOpenModal}
@@ -151,28 +151,23 @@ const City = () => {
             </div>
 
             {activeTab === "city" && (
-              <div className={TaskStyles.cardWrapper}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                  }}
-                >
-                  <span
-                    style={{
-                      background: "#f2f2f2",
-                      padding: "8px 16px",
-                      borderRadius: "8px",
-                      fontSize: "15px",
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {selectedCity?.city_code || "N/A"}
-                  </span>
+              <div className={TaskStyles.cityCard}>
+                <div className={TaskStyles.cityLeft}>
                   <LogoImage image={selectedCity?.logoUrl} />
+                  <span className={TaskStyles.userName}>
+                    {selectedCity?.city_code || "N/A"}
+                    <p>Manage permissions, city access and more</p>
+                  </span>
+                </div>
+
+                <div className={TaskStyles.cityRight}>
+                  {activeTab === "city" && (
+                    <>
+                      {selectedCity && (
+                        <SettingsBtn click={handleOpenSettings} />
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             )}

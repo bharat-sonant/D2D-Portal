@@ -1,0 +1,23 @@
+.btnSetting {
+  height: 42px;
+  width: 42px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikSeminbold);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  background-color: var(--white);
+  &:hover {
+    background: var(--gradientTheme);
+    color: var(--white);
+  }
+}
+.iconSetting {
+  width: 18px;
+}
