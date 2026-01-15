@@ -240,6 +240,6 @@
 }
 .userScroll {
   padding: 5px 10px 10px 10px;
-  height: calc(100vh - 190px);
+  height: calc(100vh - 140px);
   overflow: auto;
 }
