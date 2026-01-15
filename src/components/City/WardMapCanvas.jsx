@@ -118,7 +118,7 @@ useEffect(() => {
     >
       <div className={style.canvas_container}>
         <div className={style.OffcanvasHeader}>
-          <h4 className={style.header_title}>City Settings</h4>
+          <h4 className={style.header_title}>Ward Settings</h4>
         </div>
         <div className={style.scroll_section}>
           <div className={style.canvas_header_end}>
@@ -178,7 +178,7 @@ useEffect(() => {
           fontWeight: 600,
         }}
       >
-        <span>Ward Boundary Preview</span>
+        <span>Ward Map Preview</span>
         <span
           style={{ cursor: "pointer", fontSize: "18px" }}
           onClick={() => setIsWardBoundaryMapPopupOpen(false)}
@@ -287,7 +287,7 @@ useEffect(() => {
           fontWeight: 600,
         }}
       >
-        <span>Ward Boundary Preview</span>
+        <span>Ward Map Preview</span>
         <span
           style={{ cursor: "pointer", fontSize: "18px" }}
           onClick={() => setIsWardLinePopOpen(false)}
