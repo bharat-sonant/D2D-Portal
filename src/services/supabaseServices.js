@@ -17,7 +17,6 @@ export const saveData = async (tableName, tableData) => {
     if (error) throw error;
     return { success: true, data };
   } catch (err) {
-
     return { success: false, error: err };
   }
 };
@@ -202,6 +201,54 @@ export const getFirebase_db_url = async(city_id) => {
     data: result.data[0].firebase_db_path
   };
 }
+
+export const getLatestDate = async (wardId) => {
+  try {
+    const { data, error } = await supabase
+      .from('WardsBoundaries')
+      .select('boundary_updated_at')
+      .eq('ward_id', wardId)
+      .order('boundary_updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(); 
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data ? data.boundary_updated_at : null
+    };
+
+  } catch (err) {
+    console.error('getLatestDate error:', err.message);
+
+    return {
+      success: false,
+      data: null,
+      error: err.message
+    };
+  }
+};
+
+export const getGeoJsonFromStorage = async (filePath) => {
+
+  const cleanPath = filePath.trim(); // 🔥 IMPORTANT
+
+  const { data } = supabase.storage
+    .from("WardMaps")
+    .getPublicUrl(cleanPath);
+
+  const res = await fetch(data.publicUrl);
+  
+  if (!res.ok) {
+    throw new Error(`Failed to fetch GeoJSON: ${res.status}`);
+  }
+
+  return await res.json();
+};
+
+
+
 
 
 export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`

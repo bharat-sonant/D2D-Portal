@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
+import WardMapCanvas from './WardMapCanvas';
 import { updateWardRealTimeStatusAction } from '../../Actions/City/cityAction';
 
 export default function WardSetting(props) {
   const [isEnabled, setIsEnabled] = useState(false);
-
+  const [openCanvas,setOpenCanvas]=useState(false)
   useEffect(() => {
   if (!props?.selectedWard) {
     setIsEnabled(false);
     return;
   }
+
   if (props.selectedWard.show_realtime === 'Yes') {
     setIsEnabled(true);
   } else {
@@ -16,14 +18,6 @@ export default function WardSetting(props) {
   }
 }, [props.selectedWard]);
 
-
-  // useEffect(()=>{
-  //   if(props.selectedWard.show_realtime==='Yes'){
-  //       setIsEnabled(true)
-  //   }else{
-  //     setIsEnabled(false)
-  //   }
-  // },[props.selectedWard])
 
    const handleToggleSwitch=()=>{
        setIsEnabled(!isEnabled)
@@ -131,7 +125,7 @@ export default function WardSetting(props) {
               
             </div>
           </div>
-          {/* <div className="card bg-light border-0 mt-3">
+          <div className="card bg-light border-0 mt-3">
   <div className="card-body">
     <div
       style={{
@@ -153,7 +147,7 @@ export default function WardSetting(props) {
 
       <button
         onClick={() => {
-          console.log('Show Maps + clicked');
+         setOpenCanvas(true)
         }}
         style={{
           width: '30px',
@@ -174,10 +168,18 @@ export default function WardSetting(props) {
       </button>
     </div>
   </div>
-</div> */}
+</div>
 
         </div>
       </div>
+        {openCanvas && (
+        <WardMapCanvas
+          openCanvas={openCanvas}
+          setOpenCanvas={setOpenCanvas}
+          wardId={props.selectedWard.id}
+          selectedCity={props.selectedCity.city_id}
+        />
+      )}
     </>
   );
 }

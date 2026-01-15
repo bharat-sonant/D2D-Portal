@@ -184,7 +184,7 @@ const City = () => {
   </div>
   {selectedWard!==undefined&&(
 <div style={{ flex: 1 }}>
-    <WardSetting selectedWard={selectedWard} setWardList={setWardList} />
+    <WardSetting selectedWard={selectedWard} setWardList={setWardList} selectedCity={selectedCity} />
   </div>
   )
 
