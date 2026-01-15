@@ -232,14 +232,14 @@
   &:hover {
     background-color: var(--whitef5) !important;
     color: var(--darkBlack);
-    border-left: 3px solid #667eea;
+    border-left: 3px solid var(--themeColor);
   }
 }
 .dropdownLi:last-child .desktopRow {
   border-bottom: none;
 }
 .desktopRow.desktopRowSelected {
-  border-left: 3px solid #667eea;
+  border-left: 3px solid var(--themeColor);
   color: var(--darkBlack);
   background: #667eea18;
 }
