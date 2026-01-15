@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 import { images } from "../../assets/css/imagePath";
-import userNotFound from "../../assets/images/icons/userNotFound.gif";
+import cityNotFound from "../../assets/images/icons/cityNotFound.gif";
 import styles from "./CityList.module.css";
 import { debounce } from "lodash";
 import { filterCityAction, getwardList } from "../../Actions/City/cityAction";
@@ -76,16 +76,15 @@ const CityList = (props) => {
       >
         <div
           className={`${GlobalStyles.selectedText} 
-          ${props.selectedUser ? GlobalStyles.active : ""}`}
+          ${props.selectedCity ? GlobalStyles.active : ""}`}
         >
-{props.selectedCity
-  ? `${props.selectedCity.city_name}${
-      props.selectedCity.city_id
-        ? ` (${props.selectedCity.city_id})`
-        : ""
-    }`
-  : "Select City"}
-
+          {props.selectedCity
+            ? `${props.selectedCity.city_name}${
+                props.selectedCity.city_id
+                  ? ` (${props.selectedCity.city_id})`
+                  : ""
+              }`
+            : "Select City"}
         </div>
         <img
           src={images.iconDown}
@@ -128,7 +127,7 @@ const CityList = (props) => {
                     }`}
                     onClick={() => {
                       props?.setSelectedCity(city);
-                       closeDropdown(); 
+                      closeDropdown();
                       getwardList(
                         city.city_id,
                         props.setWardList,
@@ -149,7 +148,7 @@ const CityList = (props) => {
               <NoResult
                 title="City Not Found"
                 query={searchTerm}
-                gif={userNotFound}
+                gif={cityNotFound}
                 height="calc(100vh - 280px)"
               />
             )}
