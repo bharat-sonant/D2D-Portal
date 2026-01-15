@@ -54,7 +54,7 @@ const Calendar = (props) => {
               marginBottom: "15px",
             }}
           >
-            <h6 style={{ margin: 0 }}>Last Login Day</h6>
+            <h6 style={{ margin: 0 }}>Last Login </h6>
             <button
               onClick={() => props.onHistoryToggle(true)}
               className="btn view-history-btn"
