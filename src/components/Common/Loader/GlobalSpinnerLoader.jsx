@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./GlobalSpinnerLoader.module.css";
 
 const GlobalSpinnerLoader = ({ className = "" }) => {
