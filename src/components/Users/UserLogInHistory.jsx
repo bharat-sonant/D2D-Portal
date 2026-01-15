@@ -96,11 +96,12 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
 
                 {/* Fixed Calendar Section */}
                 <div style={{
-                    padding: '0 1.5rem',
+                    padding: '0 16px',
                     background: '#fff',
                     borderBottom: '1px solid rgba(0,0,0,0.05)',
                     flexShrink: 0,
-                    zIndex: 10
+                    zIndex: 10,
+                    display: "flex",justifyContent:"center"
                 }}>
                     <div className={calendarStyle.box} style={{ border: 'none', boxShadow: 'none', padding: 0 }}>
                         <div className="calendar-container">
