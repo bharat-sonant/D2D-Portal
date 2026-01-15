@@ -88,6 +88,8 @@
 .day {
   text-align: center;
   font-size: 12px;
+  font-weight: 600;
+  color: #555;
 }
 
 .date {
@@ -102,6 +104,7 @@
   height: 30px;
   margin-bottom: 7px;
   font-family: var(--fontGraphik);
+  transition: background-color 0.2s;
 }
 
 .date.empty {
