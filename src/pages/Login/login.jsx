@@ -19,6 +19,7 @@ import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { createCityLogoUrl } from "../../Actions/commonActions";
 import GlobalSpinnerLoader from "../../components/Common/Loader/GlobalSpinnerLoader";
 import GlobalCheckbox from "../../components/Common/GlobalCheckbox/GlobalCheckbox";
+import { updateUserLastLogin } from "../../services/UserServices/UserServices";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -83,6 +84,8 @@ const Login = () => {
         setLoading(false);
         return;
       }
+      await updateUserLastLogin(user.id);/////////////////
+
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
       localStorage.setItem("userId", user?.id);

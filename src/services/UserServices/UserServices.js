@@ -133,3 +133,34 @@ export const fetchUserLoginHistory = async (userId) => {
     return { status: "error", message: result.error };
   }
 };
+
+export const updateUserLastLogin = async (userId) => {
+  if (!userId) {
+    return { status: "error", message: "Invalid user id" };
+  }
+
+  const payload = {
+    last_login_at: new Date().toISOString()
+  };
+
+  const result = await sbs.updateData(
+    "Users",
+    "id",
+    userId,
+    payload
+  );
+
+  if (result?.success) {
+    return {
+      status: "success",
+      message: "User last login updated successfully",
+      data: result.data
+    };
+  } else {
+    return {
+      status: "error",
+      message: result?.error,
+      error: result?.err
+    };
+  }
+};
