@@ -31,23 +31,24 @@ const DailyWorkReport = () => {
     const selected = dayjs(date);
 
     // Default range: last 7 days from today
-    let startDate = today.subtract(6, "day");
+    let endDate = today;
 
     // If selected date is NOT within [today-6, today], center the range around selected date
-    if (selected.isBefore(startDate) || selected.isAfter(today)) {
-      startDate = selected.subtract(3, "day");
+    if (selected.isBefore(today.subtract(6, "day")) || selected.isAfter(today)) {
+      endDate = selected.add(3, "day");
     }
 
     for (let i = 0; i < 7; i++) {
-      const d = startDate.add(i, "day");
+      const d = endDate.subtract(i, "day");
+      const fullDate = d.format("YYYY-MM-DD");
       arr.push({
-        full: d.format("YYYY-MM-DD"),
-        display: d.format("DD MMM"),
+        full: fullDate,
+        display: fullDate === todayDate ? "Today" : d.format("DD MMM"),
         day: d.format("ddd"),
       });
     }
     return arr;
-  }, [date]);
+  }, [date, todayDate]);
 
   useEffect(() => {
     getWardDataAction(cityId, setWards);

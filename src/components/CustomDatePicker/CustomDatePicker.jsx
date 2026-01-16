@@ -6,6 +6,7 @@ const CustomDatePicker = ({ value, onChange }) => {
   const today = value ? new Date(value) : new Date();
   const [currentDate, setCurrentDate] = useState(today);
   const [open, setOpen] = useState(false);
+  const [isDateSelected, setIsDateSelected] = useState(false);
   const ref = useRef(null);
 
   const year = currentDate.getFullYear();
@@ -17,9 +18,9 @@ const CustomDatePicker = ({ value, onChange }) => {
   const handleSelect = (day) => {
     const selected = new Date(Date.UTC(year, month, day));
     onChange(selected.toISOString().split("T")[0]);
+    setIsDateSelected(true);
     setOpen(false);
   };
-
 
   useEffect(() => {
     const close = (e) => !ref.current?.contains(e.target) && setOpen(false);
@@ -32,7 +33,9 @@ const CustomDatePicker = ({ value, onChange }) => {
       {/* Input */}
       <div className={styles.inputBox} onClick={() => setOpen(!open)}>
         <span>
-          {value ? new Date(value).toLocaleDateString("en-GB") : "Select date"}
+          {isDateSelected && value
+            ? new Date(value).toLocaleDateString("en-GB")
+            : "Customize Date"}
         </span>
         <Calendar size={16} />
       </div>
@@ -58,7 +61,7 @@ const CustomDatePicker = ({ value, onChange }) => {
           </div>
           <div className={styles.calendarBody}>
             <div className={styles.weekdays}>
-              {["S", "M", "T", "W", "T", "F", "S"].map((d,i) => (
+              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
                 <span key={i}>{d}</span>
               ))}
             </div>
@@ -74,8 +77,8 @@ const CustomDatePicker = ({ value, onChange }) => {
                   onClick={() => handleSelect(i + 1)}
                   className={
                     value &&
-                    new Date(value).getDate() === i + 1 &&
-                    new Date(value).getMonth() === month
+                      new Date(value).getDate() === i + 1 &&
+                      new Date(value).getMonth() === month
                       ? styles.active
                       : ""
                   }
