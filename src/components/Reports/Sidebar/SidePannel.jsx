@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import style from "../../../Style/Reports_Style/SidePannel/SidePannel.module.css";
-import { File } from "lucide-react";
+import { File, Trash2 } from "lucide-react";
 
 const THEME_KEY = "sidepanel-theme";
 const THEME_TIME_KEY = "sidepanel-theme-time";
@@ -9,7 +9,16 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 const SidePannel = ({ selectedReport, setSelectedReport }) => {
   const [theme, setTheme] = useState("dark");
 
-  const menuItems = ["Daily Work Report"];
+  const menuItems = [
+    {
+      label: "Zone",
+      icon: File,
+    },
+    {
+      label: "Binlifting",
+      icon: Trash2,
+    },
+  ];
 
   useEffect(() => {
     const savedTheme = localStorage.getItem(THEME_KEY);
@@ -58,18 +67,18 @@ const SidePannel = ({ selectedReport, setSelectedReport }) => {
 
   return (
     <div className={`${style.menuList} ${style[theme]}`}>
-      {menuItems.map((item, index) => (
+      {menuItems.map(({label, icon : Icon}) => (
         <div
-          key={index}
+          key={label}
           className={`${style.menuItem} ${
-            selectedReport === item ? style.active : ""
+            selectedReport === label ? style.active : ""
           }`}
-          onClick={() => setSelectedReport(item)}
+          onClick={() => setSelectedReport(label)}
         >
           <div className={style.menuIconBG}>
-            <File className={style.menuIcon} />
+            <Icon className={style.menuIcon} />
           </div>
-          <div className={style.menuText}>{item}</div>
+          <div className={style.menuText}>{label}</div>
         </div>
       ))}
     </div>

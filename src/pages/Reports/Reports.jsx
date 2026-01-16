@@ -3,12 +3,15 @@ import SidePannel from "../../components/Reports/Sidebar/SidePannel";
 import styles from "../Reports/Reports.module.css";
 import DailyWorkReport from "../../components/Reports/DailyWorkReport/DailyWorkReport";
 import { getDailyWorkReport } from "../../services/ReportServices/DailyWorkReportService";
+import Binlifting from "../../components/Reports/Binlifting/Binlifting";
 const Reports = () => {
-  const [selectedReport, setSelectedReport] = useState("Daily Work Report");
+  const [selectedReport, setSelectedReport] = useState("Zone");
   const renderRightComponent = () => {
     switch (selectedReport) {
-      case "Daily Work Report":
+      case "Zone":
         return <DailyWorkReport />;
+      case "Binlifting":
+        return <Binlifting/>;
       default:
         return <div>Select a report</div>;
     }
