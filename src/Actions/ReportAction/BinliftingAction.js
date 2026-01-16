@@ -1,4 +1,46 @@
 import {getBinliftingPlanFromSupabase,getBinliftingPlanService,saveBinliftingData} from "../../services/ReportServices/BinliftingService";
+const normalize = (value = '') =>
+  value.toString().replace(/[_-]/g, ' ').trim();
+
+const startsWithNumber = (val) => /^\d/.test(val);
+const isPureNumber = (val) => /^\d+$/.test(val);
+const isNumericAlpha = (val) => /^\d+[A-Za-z-]+$/.test(val);
+
+const getPriority = (rawVal = '') => {
+  const val = rawVal.toString().trim();
+
+  // 1️⃣ Starts with number
+  if (startsWithNumber(val)) {
+    if (isPureNumber(val)) return 1;    // 3, 11
+    if (isNumericAlpha(val)) return 2;  // 54-A
+    return 3;                           // 11-R2, 54-1-A
+  }
+
+  // 2️⃣ Starts with alphabet → ALWAYS plain text
+  return 4;                             // A-54_ward, Ward_65, Bin Lifting
+};
+
+export const sortPlanNames = (list = [], key = 'plan_name') => {
+  return [...list].sort((a, b) => {
+    const rawA = a?.[key];
+    const rawB = b?.[key];
+
+    const pA = getPriority(rawA);
+    const pB = getPriority(rawB);
+
+    if (pA !== pB) return pA - pB;
+
+    // Same group → readable alphabetical order
+    const A = normalize(rawA);
+    const B = normalize(rawB);
+
+    return A.localeCompare(B, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    });
+  });
+};
+
 
 export const getBinliftingData = async (
   cityId,
@@ -8,7 +50,6 @@ export const getBinliftingData = async (
   setBinliftingData,
   setLoading
 ) => {
-  console.log('cityid',cityId)
   setLoading(true);
   try {
     // 1️⃣ Try Supabase first
@@ -21,8 +62,12 @@ export const getBinliftingData = async (
       supabaseResponse?.status === "success" &&
       supabaseResponse?.data?.length > 0
     ) {
+       const sortedData = sortPlanNames(
+        supabaseResponse.data,
+        "plan_name"
+      );
       // ✅ Supabase has data
-      setBinliftingData(supabaseResponse.data);
+      setBinliftingData(sortedData);
       return;
     }
 
@@ -43,8 +88,12 @@ export const getBinliftingData = async (
       //   cityId
       // );
 
+      const sortedData = sortPlanNames(
+        firebaseResponse.data,
+        "plan_name"
+      );
       // Set UI data
-      setBinliftingData(firebaseResponse.data);
+      setBinliftingData(sortedData);
     } else {
       // No data anywhere
       setBinliftingData([]);
