@@ -59,7 +59,7 @@ export const getBinliftingData = async (
     //case 1 : today -> always firebase 
     if(isToday){
       const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
-      console.log('today firebase',firebaseResponse)
+      // console.log('today firebase',firebaseResponse)
 
       if (
         firebaseResponse?.status === "success" &&
@@ -89,6 +89,7 @@ export const getBinliftingData = async (
     // 📌 CASE 2: PAST DATE → Supabase First
     // ============================
     const supabaseResponse = await getBinliftingPlanFromSupabase(selectedDate, cityId);
+    // console.log('supabase',supabaseResponse)
 
     if (
       supabaseResponse?.status === "success" &&
@@ -105,6 +106,7 @@ export const getBinliftingData = async (
     // 📌 Supabase empty → Firebase fallback
     // ============================
     const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
+    // console.log('firebase',firebaseResponse)
 
     if (
       firebaseResponse?.status === "success" &&
@@ -127,7 +129,7 @@ export const getBinliftingData = async (
       setBinliftingData([]);
     }
   } catch (error) {
-    console.error("Binlifting data fetch error:", error);
+    // console.error("Binlifting data fetch error:", error);
     setBinliftingData([]);
   } finally {
     setLoading(false);

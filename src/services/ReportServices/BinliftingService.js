@@ -24,7 +24,6 @@ export const getBinliftingPlanService = async (
 
       const completedURL = `${dbUrl}DustbinData/DustbinPickingPlanHistory/${year}/${month}/${selectedDate}.json`;
       const uncompletedURL = `${dbUrl}DustbinData/DustbinPickingPlans/${selectedDate}.json`;
-      console.log('url',completedURL)
 
     const [compResp, uncompResp] = await Promise.all([
       axios.get(completedURL),
@@ -35,12 +34,18 @@ export const getBinliftingPlanService = async (
       if (!resp || typeof resp !== "object") return [];
 
       // Case : raw firebase object
-      return Object.entries(resp).map(([id, planData]) => ({
-        plan_id: id,
-        plan_name: planData?.planName || "",
-        status, // future use (completed / pending)
-      }));
-    }
+      return Object.entries(resp)
+        .filter(([_, planData]) => {
+          // ❌ exclude if planName missing / empty
+          const name = planData?.planName;
+          return name && name.toString().trim().length > 0;
+        })
+        .map(([id, planData]) => ({
+          plan_id: id,
+          plan_name: planData.planName.trim(),
+          status,
+        }));
+    };
     const completedPlans = normalizeData(compResp?.data, "completed");
     const uncompletedPlans = normalizeData(uncompResp?.data, "pending");
     
