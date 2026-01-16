@@ -48,6 +48,22 @@ export const deleteData = async (tableName, id) => {
   }
 };
 
+export const saveBulkData = async (tableName, tableDataArray) => {
+  try {
+    const { data, error } = await supabase
+      .from(tableName)
+      .insert(tableDataArray)
+      .select();
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (err) {
+    console.error("Bulk insert error:", err);
+    return { success: false, error: err };
+  }
+};
+
+
 export const getDataByColumnName = async (table, column, columnValue) => {
   try {
     const { data, error } = await supabase
