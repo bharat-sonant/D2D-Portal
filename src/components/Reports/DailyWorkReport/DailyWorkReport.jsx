@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import noData from "../../../assets/images/icons/noData.gif";
 import style from "../../../Style/Reports_Style/DailyWorkReport/DailyWorkReport.module.css";
-import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
+import QuickDateSelection from "../../Common/QuickDateSelection/QuickDateSelection";
 import { images } from "../../../assets/css/imagePath";
 import {
   getDailyWorkReportAction,
@@ -11,6 +11,7 @@ import WevoisLoader from "../../Common/Loader/WevoisLoader";
 import dayjs from "dayjs";
 import { useCity } from "../../../context/CityContext";
 import NoResult from "../../NoResultFound/NoResult";
+import CustomDatePicker from "../../CustomDatePicker/CustomDatePicker";
 
 const DailyWorkReport = () => {
   const todayDate = dayjs().format("YYYY-MM-DD");
@@ -23,32 +24,6 @@ const DailyWorkReport = () => {
 
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortRef = useRef(null);
-
-  // Generate 7 days around the selected date if it's outside the last 7 days of "today"
-  const last7Days = useMemo(() => {
-    const arr = [];
-    const today = dayjs();
-    const selected = dayjs(date);
-
-    // Default range: last 7 days from today
-    let endDate = today;
-
-    // If selected date is NOT within [today-6, today], center the range around selected date
-    if (selected.isBefore(today.subtract(6, "day")) || selected.isAfter(today)) {
-      endDate = selected.add(3, "day");
-    }
-
-    for (let i = 0; i < 7; i++) {
-      const d = endDate.subtract(i, "day");
-      const fullDate = d.format("YYYY-MM-DD");
-      arr.push({
-        full: fullDate,
-        display: fullDate === todayDate ? "Today" : d.format("DD MMM"),
-        day: d.format("ddd"),
-      });
-    }
-    return arr;
-  }, [date, todayDate]);
 
   useEffect(() => {
     getWardDataAction(cityId, setWards);
@@ -183,21 +158,11 @@ const DailyWorkReport = () => {
     <>
       {/* TOP BAR */}
       <div className={style.topBar}>
-        {/* DATE PICKER */}
-        {/* -------------------- HORIZONTAL DATE BOXES -------------------- */}
-        <div className={style.dateBoxContainer}>
-          {last7Days.map((d) => (
-            <div
-              key={d.full}
-              className={`${style.dateBox} ${d.full === date ? style.selectedDateBox : ""}`}
-              onClick={() => setDate(d.full)}
-            >
-              <div className={style.dateBoxDay}>{d.day}</div>
-              <div className={style.dateBoxDisplay}>{d.display}</div>
-            </div>
-          ))}
-        </div>
+        <div className={`d-flex gap-2 align-items-center`}>
+        <QuickDateSelection value={date} onChange={(val) => setDate(val)} />
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
+          </div>
+
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
           {/* SORT BUTTON */}
