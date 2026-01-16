@@ -34,7 +34,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem("defaultCity");
-  const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
 const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
@@ -160,13 +159,7 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
         >
           {menuItems
             .filter((item) => {
-              // 🔥 Super Admin → sab dikhao
-              if (isSuperAdmin === true) return true;
-
-              // permissionKey nahi hai → show
               if (!item.permissionKey) return true;
-
-              // permissionKey hai → sirf true par show
               return permissionGranted[item.permissionKey] === true;
             })
             .map((item, index) => {

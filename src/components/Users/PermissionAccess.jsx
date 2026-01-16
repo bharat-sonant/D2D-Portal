@@ -4,6 +4,7 @@ import * as action from "../../Actions/UserAction/PermissionAction";
 import dayjs from 'dayjs';
 
 const PermissonAccess = (props) => {
+
   const pages = [
     { pageName: "User",pageNumber:1,Module: ["Can Access User Page","Can Add User","Can Give Permissions"]},
   ];
@@ -13,12 +14,22 @@ const PermissonAccess = (props) => {
 
   useEffect(()=>{
     if(props.selectedUser!==undefined){
-         const activePage = pages.find((page) => page.pageNumber === activeTab);
-    setModuleList(activePage.Module);
-  action.getUserPagesPermissionsAction(props.selectedUser.id,setPermissions)
+      if(props.selectedUser.is_superadmin===false){
+          getUserPermissions()
+      }else{
+         savePagesPermissionsForSuperAdmin()
+      }
+   
     }
-
   },[props.selectedUser])
+
+  const getUserPermissions=()=>{
+      const activePage = pages.find((page) => page.pageNumber === activeTab);
+    setModuleList(activePage.Module);
+     action.getUserPagesPermissionsAction(props.selectedUser.id,setPermissions)
+  }
+
+ 
 
 
   const handleTabClick = (tabIndex) => {
@@ -44,7 +55,21 @@ const PermissonAccess = (props) => {
     action.savePagesPermnissionAction(permissionDetail)
 };
 
+ const savePagesPermissionsForSuperAdmin=()=>{
+const permission = pages.flatMap(page =>
+  page.Module.map(module => ({
+    access_page: module.replace(/\s+/g, ""),
+    access_control: true,
+    created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    created_by: localStorage.getItem('name'),
+    user_id:props.selectedUser.id
+  }))
+);
+  console.log()
+action.saveSuperAdminPermissionsAction(permission,getUserPermissions)
 
+
+ }
 
   return (
     <div
@@ -85,15 +110,16 @@ const PermissonAccess = (props) => {
                         permissions[moduleName.replace(/\s+/g, "")]
                           ? styles.on
                           : styles.off
-                      }`}
-                      onClick={() =>
-                        handleAttendanceCheckboxChange({
-                          target: {
-                            value: moduleName,
-                            checked: !permissions[moduleName.replace(/\s+/g, "")],
-                          },
-                        })
-                      }
+                      }  ${props.selectedUser.is_superadmin ? styles.disabled : ""}`}
+                       onClick={() => {
+            if (props.selectedUser.is_superadmin) return; // 🔒 hard block
+            handleAttendanceCheckboxChange({
+              target: {
+                value: moduleName,
+                 checked: !permissions[moduleName.replace(/\s+/g, "")],
+              },
+            });
+          }}
                     >
                       <div className={styles.toggleCircle}></div>
                     </div>

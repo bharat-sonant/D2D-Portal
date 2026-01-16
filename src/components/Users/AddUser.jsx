@@ -17,7 +17,7 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const AddUser = (props) => {
-  console.log(props);
+
   const initialForm = {
     name: "",
     email: "",

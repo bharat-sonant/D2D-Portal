@@ -120,14 +120,37 @@ export const login = async (email, password, setEmailError, setPasswordError) =>
   return data;
 };
 
-export const upsertByConflictKeys =async (tableName,Detail,conflictKeys)=>{
-  await supabase
-  .from(tableName)
-  .upsert(
-      Detail,
-    { onConflict: conflictKeys }
-  );
-}
+
+export const upsertByConflictKeys = async (tableName,data,conflictKeys) => {
+  if (!tableName || !data || !conflictKeys) {
+    return {
+      success: false,
+      message: "Missing required parameters",
+    };
+  }
+
+  const { data: result, error } = await supabase
+    .from(tableName)
+    .upsert(data, {
+      onConflict: conflictKeys,
+      ignoreDuplicates: false,
+    });
+
+  if (error) {
+    console.error("Upsert failed:", error);
+    return {
+      success: false,
+      message: error.message || "Upsert failed",
+    };
+  }
+
+  return {
+    success: true,
+    data: result,
+  };
+};
+
+
 
 export const uploadAttachment = async (file, bucket,filePath) => {
   if (!file) return null;

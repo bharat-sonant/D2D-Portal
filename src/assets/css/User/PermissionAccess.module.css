@@ -259,3 +259,10 @@
   border-bottom: 1px solid var(--borderColor);
   padding-bottom: 4px;
 }
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

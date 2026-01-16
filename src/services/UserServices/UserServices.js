@@ -96,12 +96,11 @@ export const savePagesPermission = (permissionDetail) => {
       return reject('Invalid parameters');
     }
     const result = await sbs.upsertByConflictKeys('UserPortalAccess', permissionDetail, "user_id,access_page");
-    // console.log(result)
-    // if (result.success) {
-    //   return resolve ({ status: 'success', message: 'Default city updated successfully.', data: result.data });
-    // } else {
-    //   return reject({status: 'error', message: result.error, error: result?.err});
-    // }
+    if (result.success) {
+      return resolve ({ status: 'success', message: 'User permission updated successfully.', data:{} });
+    } else {
+      return reject({status: 'error', message: result.error, error: result?.err});
+    }
   });
 }
 

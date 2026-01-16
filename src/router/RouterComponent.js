@@ -26,7 +26,7 @@ import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 
 const RouterComponent = () => {
     const navigate = useNavigate();
-     const isSuperAdmin = JSON.parse(localStorage.getItem("isSuperAdmin"));
+  
    let userId = localStorage.getItem('userId')
      const {permissionGranted,setPermissionGranted  
  } = usePermissions();
@@ -189,8 +189,7 @@ useEffect(() => {
             <ProtectedRouter>
               <>
                 <MainLayout />
-                {isSuperAdmin === true||
-                  (Object.keys(permissionGranted).length > 0 &&
+                {(Object.keys(permissionGranted).length > 0 &&
                     permissionGranted.CanAccessUserPage) ? (
                   <User/>
                 ) : Object.keys(permissionGranted).length === 0 ? (
@@ -202,11 +201,6 @@ useEffect(() => {
             </ProtectedRouter>
           }
         />
-
-      
-
-
-
         <Route
           path="/cities"
           element={
@@ -217,53 +211,10 @@ useEffect(() => {
           }
         />
       </Routes>
-
-
-
-
-
-
     </>
   );
 };
-const AutoLogoutComponent = ({
-  loggedInempCode,
-  emp_code,
-  loginStatus,
-  isUserActive,
-  ref,
-}) => {
-  const navigate = useNavigate(); // Moved inside the BrowserRouter context
 
-  useEffect(() => {
-    if (
-      Number(isUserActive) === 2 &&
-      emp_code === loggedInempCode &&
-      loginStatus === "success"
-    ) {
-      localStorage.setItem("islogin", "Fail");
-      localStorage.removeItem("name");
-      localStorage.removeItem("isOwner");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("loginDate");
-      localStorage.removeItem("lastPath");
-      localStorage.removeItem("empCode");
-      localStorage.removeItem("company");
-      localStorage.removeItem("branchCode");
-      localStorage.removeItem("profileImage");
-      localStorage.removeItem("companyEmail");
-      // Check if ref and ref.current are defined before accessing them
-      if (ref?.current) {
-        ref.current();
-        ref.current = null;
-      }
-
-      navigate("/");
-    }
-  }, [isUserActive, loggedInempCode, ref, loginStatus, navigate]);
-
-  return null; // Since this is a logic-only component
-};
 
 export default RouterComponent;
 //showUpdateNotification
