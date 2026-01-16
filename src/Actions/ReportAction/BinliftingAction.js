@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {getBinliftingPlanFromSupabase,getBinliftingPlanService,saveBinliftingData} from "../../services/ReportServices/BinliftingService";
 const normalize = (value = '') =>
   value.toString().replace(/[_-]/g, ' ').trim();
@@ -52,56 +53,83 @@ export const getBinliftingData = async (
 ) => {
   setLoading(true);
   try {
-    // 1️⃣ Try Supabase first
-    const supabaseResponse =
-      await getBinliftingPlanFromSupabase(selectedDate, cityId);
+    const todayDate = dayjs().format('YYYY-MM-DD');
+    const isToday = selectedDate === todayDate;
 
-    console.log("supabase", supabaseResponse);
+    //case 1 : today -> always firebase 
+    if(isToday){
+      const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
+      console.log('today firebase',firebaseResponse)
+
+      if (
+        firebaseResponse?.status === "success" &&
+        firebaseResponse?.data?.length > 0
+      ) {
+        const sortedData = sortPlanNames(
+          firebaseResponse.data,
+          "plan_name"
+        );
+
+        // 🔁 Always update Supabase for today
+        saveBinliftingData(
+          selectedDate,
+          sortedData,
+          cityId
+        );
+
+        setBinliftingData(sortedData);
+      } else {
+        setBinliftingData([]);
+      }
+
+      return;
+    }
+
+     // ============================
+    // 📌 CASE 2: PAST DATE → Supabase First
+    // ============================
+    const supabaseResponse = await getBinliftingPlanFromSupabase(selectedDate, cityId);
 
     if (
       supabaseResponse?.status === "success" &&
       supabaseResponse?.data?.length > 0
     ) {
-       const sortedData = sortPlanNames(
+      const sortedData = sortPlanNames(
         supabaseResponse.data,
         "plan_name"
       );
-      // ✅ Supabase has data
       setBinliftingData(sortedData);
       return;
     }
-
-    // 2️⃣ Supabase empty → fetch from Firebase
-    const firebaseResponse =
-      await getBinliftingPlanService(cityId,year, month, selectedDate);
-
-    console.log("firebase", firebaseResponse);
+    // ============================
+    // 📌 Supabase empty → Firebase fallback
+    // ============================
+    const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
 
     if (
       firebaseResponse?.status === "success" &&
       firebaseResponse?.data?.length > 0
     ) {
-      // Save into Supabase for future
-      // await saveBinliftingData(
-      //   selectedDate,
-      //   firebaseResponse.data,
-      //   cityId
-      // );
-
       const sortedData = sortPlanNames(
         firebaseResponse.data,
         "plan_name"
       );
-      // Set UI data
+
+      // Save once in supabase in plan history
+      saveBinliftingData(
+        selectedDate,
+        sortedData,
+        cityId
+      );
+
       setBinliftingData(sortedData);
     } else {
-      // No data anywhere
       setBinliftingData([]);
     }
   } catch (error) {
     console.error("Binlifting data fetch error:", error);
     setBinliftingData([]);
-  }finally{
+  } finally {
     setLoading(false);
   }
 };

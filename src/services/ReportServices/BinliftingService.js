@@ -1,5 +1,7 @@
 import axios from "axios";
 import * as sbs from "../supabaseServices"
+import { supabase } from "../../createClient";
+import dayjs from "dayjs";
 
 export const getBinliftingPlanService = async (
   cityId,
@@ -56,32 +58,70 @@ export const getBinliftingPlanService = async (
   }
 };
 
-//save binlifting data in supabase
+// save binlifting data in supabase (BACKGROUND)
 export const saveBinliftingData = (date, data, city_id) => {
-  if(!date || !data.length) return;
-  const completedPayloads = [];
-  const pendingPayloads = [];
+  if (!date || !data.length) return;
 
-  for(const row of data){
-    const payload = {
-      date,
-      plan_id : row?.plan_id,
-      plan_name : row?.plan_name,
-      city_id
+  // 🔥 fire-and-forget async wrapper
+  (async () => {
+    try {
+      const todayDate = dayjs().format("YYYY-MM-DD");
+      const isToday = date === todayDate;
+
+      // 1️⃣ DELETE only for today
+      if (isToday) {
+        await supabase
+          .from("DustbinPickingPlans")
+          .delete()
+          .eq("date", date)
+          .eq("city_id", city_id);
+
+        await supabase
+          .from("DustbinPickingPlanHistory")
+          .delete()
+          .eq("date", date)
+          .eq("city_id", city_id);
+      }
+
+      const pendingPayloads = [];
+      const completedPayloads = [];
+
+      for (const row of data) {
+        const payload = {
+          date,
+          plan_id: row.plan_id,
+          plan_name: row.plan_name,
+          city_id,
+        };
+
+        if (row.status === "pending") {
+          pendingPayloads.push(payload);
+        }
+
+        if (row.status === "completed") {
+          completedPayloads.push(payload);
+        }
+      }
+
+      // 2️⃣ INSERT fresh data
+      if (pendingPayloads.length) {
+        await sbs.saveBulkData(
+          "DustbinPickingPlans",
+          pendingPayloads
+        );
+      }
+
+      if (completedPayloads.length) {
+        await sbs.saveBulkData(
+          "DustbinPickingPlanHistory",
+          completedPayloads
+        );
+      }
+    } catch (err) {
+      console.error("Background binlifting supabase sync failed:", err);
     }
-    if (row.status === "completed") {
-      completedPayloads.push(payload);
-    } else if (row.status === "pending") {
-      pendingPayloads.push(payload);
-    }
-}
-  if(completedPayloads.length){
-    sbs.saveBulkData('DustbinPickingPlanHistory',completedPayloads)
-  }
-  if(pendingPayloads.length){
-    sbs.saveBulkData('DustbinPickingPlans',pendingPayloads)
-  }
-}
+  })();
+};
 
 export const getBinliftingPlanFromSupabase = async(selectedDate, cityId) => {
   try{
