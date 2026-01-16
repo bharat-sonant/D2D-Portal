@@ -143,7 +143,9 @@ const City = () => {
                       activeTab === tab.key ? TaskStyles.active : ""
                     }`}
                   >
+                    <div className={TaskStyles.tabIconBG}>
                     <Icon size={16} className={TaskStyles.tabIcon} />
+                    </div>
                     <span className={TaskStyles.tabName}>{tab.label}</span>
                   </button>
                 );

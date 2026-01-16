@@ -215,17 +215,16 @@
 .wardLayout {
   display: flex;
   flex-flow: column;
-  gap: 5px;
 }
 .wardBox {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 16px;
-  border-radius: 6px;
-  background: #f8fafc;
-  border: 1px solid transparent;
+  padding: 9px 16px;
+  border-radius: 0px;
+  background: var(--whitefa);
+  border-bottom: 1px solid var(--borderColor);
   transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -234,10 +233,12 @@
       opacity: 1;
     }
   }
+  &:nth-last-child(1) {
+    border-bottom: none;
+  }
 }
 .wardBox.active {
-  background: var(--white);
-  border: 1px solid var(--borderColor);
+  background: var(--whitefa);
 }
 
 .wardNumber {
