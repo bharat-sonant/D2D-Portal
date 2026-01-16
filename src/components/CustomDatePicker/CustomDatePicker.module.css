@@ -13,8 +13,8 @@
   padding: 8px 16px;
   border: none;
   border-radius: 12px;
-  background: var(--gradientTheme);
-  color: var(--white);
+  background: #9a9cff;
+  color: black;
   cursor: pointer;
   font-size: 13px;
   font-family: var(--fontGraphikMedium);
@@ -114,6 +114,6 @@
 }
 
 .active {
-  background: var(--gradientTheme) !important;
-  color: var(--white);
+  background: #9a9cff !important;
+  color: black
 }

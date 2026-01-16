@@ -53,25 +53,25 @@
 }
 
 .selectedDateBox {
-    background: var(--gradientTheme);
+    background: #9a9cff;
     border-color: transparent;
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     transform: translateY(-2px);
 }
 
 .selectedDateBox:hover {
-    background: var(--gradientTheme);
+    background: #9a9cff;
     opacity: 0.9;
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
 }
 
 .selectedDateBox .dateBoxDay {
-    color: rgba(255, 255, 255, 0.9);
+    color: black;
 }
 
 .selectedDateBox .dateBoxDisplay {
-    color: var(--white);
+    color: black;
 }
 
 .selectedDateBox::after {
