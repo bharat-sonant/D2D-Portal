@@ -65,7 +65,7 @@ const permission = pages.flatMap(page =>
     user_id:props.selectedUser.id
   }))
 );
-  console.log()
+
 action.saveSuperAdminPermissionsAction(permission,getUserPermissions)
 
 
