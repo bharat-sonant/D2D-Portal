@@ -259,6 +259,13 @@
     transform: none;
     flex-shrink: 0;
   }
+  .cityCard {
+    width: 100%;
+  }
+
+  .wardTab {
+    flex-flow: column;
+  }
 }
 
 .wardTab {

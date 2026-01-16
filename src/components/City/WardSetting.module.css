@@ -97,3 +97,9 @@
   align-items: center;
   justify-content: center;
 }
+
+@media (max-width: 767.98px) {
+  .toggleCard {
+    width: 100%;
+  }
+}

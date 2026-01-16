@@ -296,3 +296,9 @@
 .iconEdit:hover {
   color: var(--themeColor);
 }
+
+@media (max-width: 767.98px) {
+  .vehicleList {
+    width: 100%;
+  }
+}
