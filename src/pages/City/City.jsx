@@ -144,7 +144,7 @@ const City = () => {
                     }`}
                   >
                     <div className={TaskStyles.tabIconBG}>
-                    <Icon size={16} className={TaskStyles.tabIcon} />
+                      <Icon size={16} className={TaskStyles.tabIcon} />
                     </div>
                     <span className={TaskStyles.tabName}>{tab.label}</span>
                   </button>
@@ -173,47 +173,30 @@ const City = () => {
                 </div>
               </div>
             )}
-            <div
-              style={{
-                display: "flex",
-                gap: "24px",
-                alignItems: "flex-start",
-              }}
-            >
-              {activeTab === "wards" && (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "24px",
-                      alignItems: "flex-start",
-                      width: "100%",
-                    }}
-                  >
-                    <div className="ward-left">
-                      <WardList
-                        setOpenAddWardPopUp={setOpenAddWardPopUp}
-                        wardList={wardList}
-                        setWardList={setWardList}
-                        setEditWard={setEditWard}
-                        setSelectedWard={setSelectedWard}
-                        selectedWard={selectedWard}
-                        setOnEdit={setOnEdit}
-                      />
-                    </div>
-                    {selectedWard !== undefined && (
-                      <div style={{ flex: 1 }}>
-                        <WardSetting
-                          selectedWard={selectedWard}
-                          setWardList={setWardList}
-                          selectedCity={selectedCity}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+            {activeTab === "wards" && (
+              <>
+                <div
+                className={`${TaskStyles.wardTab}`}
+                >
+                  <WardList
+                    setOpenAddWardPopUp={setOpenAddWardPopUp}
+                    wardList={wardList}
+                    setWardList={setWardList}
+                    setEditWard={setEditWard}
+                    setSelectedWard={setSelectedWard}
+                    selectedWard={selectedWard}
+                    setOnEdit={setOnEdit}
+                  />
+                  {selectedWard !== undefined && (
+                    <WardSetting
+                      selectedWard={selectedWard}
+                      setWardList={setWardList}
+                      selectedCity={selectedCity}
+                    />
+                  )}
+                </div>
+              </>
+            )}
 
             <div>
               {activeTab === "vehicle" && (

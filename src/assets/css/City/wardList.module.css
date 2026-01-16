@@ -209,8 +209,9 @@
 
 .scrollList {
   min-height: 40px;
-  max-height: 657px;
+  max-height: 652px;
   overflow: auto;
+  border-radius: 6px;
 }
 .wardLayout {
   display: flex;
@@ -238,7 +239,7 @@
   }
 }
 .wardBox.active {
-  background: var(--whitefa);
+  background: #667eea18;
 }
 
 .wardNumber {
@@ -261,6 +262,7 @@
   font-size: 13px;
   color: var(--regularColor);
   font-family: var(--fontGraphik);
+  /* border: 1px solid var(--borderColor); */
 }
 .wardData {
   display: flex;

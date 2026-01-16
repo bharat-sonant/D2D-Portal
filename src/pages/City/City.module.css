@@ -195,10 +195,10 @@
     color: var(--regularColor);
   }
 }
-.cityRight{
+.cityRight {
   display: flex;
-    align-items: center;
-    gap: 10px;
+  align-items: center;
+  gap: 10px;
 }
 
 .btnCityRight {
@@ -259,4 +259,10 @@
     transform: none;
     flex-shrink: 0;
   }
+}
+
+.wardTab {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
