@@ -50,6 +50,9 @@ const Binlifting = () => {
           <thead>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Plan Name</th>
+              <th className={style.th6}>Driver</th>
+              <th className={style.th7}>Helper</th>
+              <th className={style.th5}>Vehicle</th>
               <th className={`text-center ${style.th3}`}>Bin Count</th>
             </tr>
           </thead>
@@ -65,6 +68,19 @@ const Binlifting = () => {
                 return (
                   <tr key={plan.plan_id}>
                     <td className={style.th1}>{plan.plan_name || "-"}</td>
+                    <td className={style.th7}>
+                      <span className={`${style.helperName}`}>
+                        {/* {row.helper_name || "N/A"} */}
+                        {plan.driver_name}
+                      </span>
+                    </td>
+                    <td className={style.th7}>
+                      <span className={`${style.helperName}`}>
+                        {/* {row.helper_name || "N/A"} */}
+                        {plan.helper_name}
+                      </span>
+                    </td>
+                    <td className={style.th1}>{plan.vehicle || "-"}</td>
                     <td className={`text-center ${style.th4}`}>
                       <span className={style.tripBG}>
                         {plan?.bin_count ?? 0}

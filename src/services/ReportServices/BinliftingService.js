@@ -3,6 +3,56 @@ import * as sbs from "../supabaseServices"
 import { supabase } from "../../createClient";
 import dayjs from "dayjs";
 
+
+
+const dustbinAssignmentData = async (dbUrl, year, month, selectedDate) => {
+try{
+    const assignmentUrl = `${dbUrl}DustbinData/DustbinAssignment/${year}/${month}/${selectedDate}.json`;
+  const result = await axios.get(assignmentUrl)
+  
+  if(result.status === 200) {
+    return Object.values(result.data).reduce((acc, item) => {
+      if (item?.planId) {
+        acc[item.planId] = {
+          vehicle: item.vehicle || null,
+          driverId: item.driver || null,
+          helperId: item.helper || null,
+        };
+      }
+      return acc;
+    }, {});
+  }else{
+    return {};
+  }
+}catch(error){
+  return {};
+}
+}
+
+export const getEmployeesName = async(dbUrl, employeeIds) => {
+    if (!employeeIds.length) return {};
+
+  try{
+    const uniqueIds = [...new Set(employeeIds)];
+   
+    const requests = uniqueIds.map(id =>
+      axios.get(`${dbUrl}Employees/${id}/GeneralDetails/name.json`)
+        .then(res => ({ id, name: res.data || null }))
+        .catch(() => ({ id, name: null }))
+    );
+
+    const responses = await Promise.all(requests);
+
+    return responses.reduce((acc, { id, name }) => {
+      acc[id] = name;
+      return acc;
+    }, {});
+  }catch(error){
+
+  }
+
+}
+
 export const getBinliftingPlanService = async (
   cityId,
   year,
@@ -25,12 +75,12 @@ export const getBinliftingPlanService = async (
       const completedURL = `${dbUrl}DustbinData/DustbinPickingPlanHistory/${year}/${month}/${selectedDate}.json`;
       const uncompletedURL = `${dbUrl}DustbinData/DustbinPickingPlans/${selectedDate}.json`;
 
-    const [compResp, uncompResp] = await Promise.all([
+    const [compResp, uncompResp, assingmentResp] = await Promise.all([
       axios.get(completedURL),
       axios.get(uncompletedURL),
+      dustbinAssignmentData(dbUrl, year, month, selectedDate)
     ]);
 
-    console.log('completeddd',compResp)
 
     const normalizeData = (resp, status) => {
       if (!resp || typeof resp !== "object") return [];
@@ -42,20 +92,56 @@ export const getBinliftingPlanService = async (
           const name = planData?.planName;
           return name && name.toString().trim().length > 0;
         })
-        .map(([id, planData]) => ({
-          plan_id: id,
+        .map(([id, planData]) => {
+          const assignment = assingmentResp[id] || {};
+         return {
+           plan_id: id,
           plan_name: planData.planName.trim(),
           status,
           bin_count : planData?.totalDustbin,
-        }));
+          vehicle : assignment?.vehicle ?? null,
+          driver_id: assignment.driverId ?? null,
+          helper_id: assignment.helperId ?? null,
+         }
+        });
     };
-    const completedPlans = normalizeData(compResp?.data, "completed");
-    const uncompletedPlans = normalizeData(uncompResp?.data, "pending");
+    const plans = [
+      ...normalizeData(uncompResp?.data, "pending"),
+      ...normalizeData(compResp?.data, "completed"),
+    ];
+
+    const employeeIds = plans.flatMap(p =>
+      [p.driver_id, p.helper_id].filter(Boolean)
+    );
+
+    const employeeNameMap = await getEmployeesName(dbUrl, employeeIds);
+    const driverIds = plans
+    .map(p => p.driver_id)
+    .filter(Boolean);
+
+    // const inOutTimeMap = await getInOutTimeFromFirebase(
+    //   dbUrl,
+    //   year,
+    //   month,
+    //   selectedDate,
+    //   driverIds
+    // );
+    let inOutTimeMap;
+    const finalPlans = plans.map(p => {
+      const timeInfo = inOutTimeMap[p.plan_id] || {};
+      return{
+      ...p,
+      driver_name: employeeNameMap[p.driver_id] ?? null,
+      helper_name: employeeNameMap[p.helper_id] ?? null,
+      in_time: timeInfo.in_time ?? null,
+      out_time: timeInfo.out_time ?? null,
+      }
+    });
     
     return {
       status : 'success',
       message : 'Binlifting data fetched successfully',
-      data : [...uncompletedPlans, ...completedPlans],
+      data : finalPlans,
     };
   } catch (error) {
      return {
