@@ -31,7 +31,7 @@
 }
 
 .dateBoxDay {
-    font-size: 10px;
+    font-size: 12px;
     font-family: var(--fontGraphikSemiBold);
     color: var(--textMuted);
     text-transform: uppercase;
