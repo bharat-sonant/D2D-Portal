@@ -1,14 +1,24 @@
-import { images } from "../../assets/css/imagePath";
-import style from "../../assets/css/City/wardList.module.css"
+import style from "../../assets/css/City/wardList.module.css";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
-import { FiEdit } from "react-icons/fi";
-import { LocateFixed } from "lucide-react";
+import { LocateFixed, Pencil } from "lucide-react";
 import { debounce } from "lodash";
 import { useState, useMemo } from "react";
+import map from "../../assets/images/icons/map.gif";
+import NoResult from "../NoResultFound/NoResult";
+
+const COLORS = [
+  "#4f6ef7", // soft blue
+  "#22c55e", // soft green
+  "#f59e0b", // soft amber
+  "#ec4899", // soft pink
+  "#8b5cf6", // soft violet
+  "#06b6d4", // soft cyan
+];
 
 const WardList = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
 
+const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = debounce((e) => {
     setSearchTerm(e.target.value);
   }, 300);
@@ -16,34 +26,34 @@ const WardList = (props) => {
   const filteredWardList = useMemo(() => {
     if (!searchTerm) return props.wardList;
     const lowerTerm = searchTerm.toLowerCase();
-    return props.wardList?.filter(ward =>
-      ward.name?.toLowerCase().includes(lowerTerm) ||
-      ward.display_name?.toLowerCase().includes(lowerTerm)
-    ) || [];
+    return (
+      props.wardList?.filter(
+        (ward) =>
+          ward.name?.toLowerCase().includes(lowerTerm) ||
+          ward.display_name?.toLowerCase().includes(lowerTerm)
+      ) || []
+    );
   }, [props.wardList, searchTerm]);
 
-
   const onWardClick = (ward) => {
-    props.setSelectedWard(ward)
-   
-  }
-
+    props.setSelectedWard(ward);
+  };
 
   return (
-    <div className={style.ward_List}>
-       
-      <div className={style.card_header}>
-        <h5 className={style.heading}>Add Wards </h5>
+    <div className={style.wardList}>
+      <div className={style.cardHeader}>
+        <h5 className={style.heading}>Wards</h5>
 
         <div className="d-flex justify-content-center align-items-center">
           <button
             className={`btn ${style.custom_AddDesignation_btn} p-0`}
-            onClick={() => { props.setOpenAddWardPopUp(true) }}
+            onClick={() => {
+              props.setOpenAddWardPopUp(true);
+            }}
           >
             +
           </button>
         </div>
-
       </div>
 
       <div className={style.searchContainer}>
@@ -55,110 +65,81 @@ const WardList = (props) => {
         />
       </div>
 
-      <div className={style.Scroll_List}>
+      <div className={style.scrollList}>
         {filteredWardList && filteredWardList.length > 0 ? (
-          // GRID LAYOUT for Wards
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "15px", padding: "10px 0" }}>
-            {filteredWardList.map((ward, index) => (
-              <div
-              onClick={()=>onWardClick(ward)}
-                key={index}
-                style={{
-                 cursor:'pointer',
-                  border: "1px solid #eee",
-                  borderRadius: "10px",
-                  padding: "15px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "12px",
-                  boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
-                  transition: "all 0.2s",
-                  position: "relative",
-                       backgroundColor:
-                        props?.selectedWard?.id === ward.id
-                          ? "#3fb2f114"
-                          : "transparent",
-                }}
-                   
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-3px)";
-                  e.currentTarget.style.boxShadow = "0 5px 15px rgba(0,0,0,0.1)";
-                  // Edit icon ko visible karo
-                  const editIcon = e.currentTarget.querySelector('[data-edit-icon]');
-                  if (editIcon) editIcon.style.opacity = "1";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 5px rgba(0,0,0,0.05)";
-                  // Edit icon ko hide karo
-                  const editIcon = e.currentTarget.querySelector('[data-edit-icon]');
-                  if (editIcon) editIcon.style.opacity = "0";
-                }}
-              >
-                {/* Ward Name and Edit Row */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
-                    <div style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "8px",
-                      background: "#e0e7ff",
-                      color: "#6B7FDE",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "bold",
-                      flexShrink: 0
-                    }}>
+          <div className={style.wardLayout}>
+            {filteredWardList.map((ward, index) => {
+              const isActive = props.selectedWard?.id === ward.id;
+              const color = COLORS[index % COLORS.length];
+
+              return (
+                <div
+                  onClick={() => onWardClick(ward)}
+                  key={index}
+                  className={`${style.wardBox} ${isActive ? style.active : ""}`}
+                  // style={
+                  //   isActive
+                  //     ? {
+                  //         border: `1px solid ${color}`,
+                  //       }
+                  //     : {}
+                  // }
+                >
+                  <div className={style.wardLeft}>
+                    <div
+                      className={style.wardNumber}
+                      style={
+                        isActive
+                          ? {
+                              color: "var(--white",
+                              background: ` ${color}`,
+                            }
+                          : {}
+                      }
+                    >
                       {index + 1}
-                      {/* <LocateFixed size={18} /> */}
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <span className={style.designationName} style={{ fontWeight: 600, fontSize: "14px", display: "flex", alignItems: "center", gap: "5px" }}>
-                        {!ward.display_name && <LocateFixed size={14} color="#6B7FDE" />}
+
+                    <div className={style.wardData}>
+                      <span className={style.wardDisplayName}>
+                        {!ward.display_name && (
+                          <LocateFixed size={14} color={color} />
+                        )}
                         {ward.display_name || ward.name}
                       </span>
+
                       {ward.display_name && (
-                        <span style={{ fontSize: "12px", color: "#666", display: "flex", alignItems: "center", gap: "3px" }}>
-                          <LocateFixed size={12} color="#6B7FDE" />
+                        <span className={style.wardName}>
                           Ward: {ward.name}
                         </span>
                       )}
                     </div>
                   </div>
+
                   <div
                     data-edit-icon
-                    className={style.countEdit}
-                    onClick={() => {
-                      props.setEditWard({ ward: ward.name, wardId: ward.id, display_name: ward.display_name });
+                    className={style.wardRight}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      props.setEditWard({
+                        ward: ward.name,
+                        wardId: ward.id,
+                        display_name: ward.display_name,
+                      });
                       props.setOpenAddWardPopUp(true);
-
                       props.setOnEdit(true);
                     }}
-                    style={{
-                      cursor: "pointer",
-                      padding: "5px",
-                      opacity: 0,
-                      transition: "opacity 0.2s ease"
-                    }}
                   >
-                    <FiEdit color="#9ca3af" />
+                    <Pencil className={style.iconEdit} />
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
-          <div className={style.dropdownItemNot}>
-            <img src={images.imgComingSoon} className={`${style.foundNot}`} />
-            No ward found
-          </div>
+          <NoResult title="No ward found" query={searchQuery} gif={map} />
         )}
-          
       </div>
-       
-                
-                
     </div>
   );
 };
