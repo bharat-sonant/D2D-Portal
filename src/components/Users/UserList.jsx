@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { debounce } from "lodash";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 
@@ -24,21 +24,35 @@ const UserList = (props) => {
   const [statusFilter, setStatusFilter] = useState("active");
   const [userTypeFilter, setUserTypeFilter] = useState("all");
 
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [isUserTypeOpen, setIsUserTypeOpen] = useState(false);
-
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const dropdownMenuRef = useRef();
-  const handleSearch = debounce((e) => {
-    setSearchTerm(e.target.value);
-  }, 300);
+
+  useEffect(() => {
+  debouncedFilter(props?.users, searchTerm);
+}, [props?.users, searchTerm]);
+
+const debouncedFilter = useMemo(
+  () =>
+    debounce((users, term) => {
+      setFilteredUsersList(
+        filterUserListAction(users, term, props?.setSelectedUser)
+      );
+    }, 300),
+  []
+);
+
+
+const handleSearch = (e) => {
+  setSearchTerm(e.target.value);
+};
+
 
   useEffect(() => {
     setFilteredUsersList(
       filterUserListAction(props?.users, searchTerm, props?.setSelectedUser)
     );
-  }, [props?.users, searchTerm]);
+  }, [props?.users]);
 
   useEffect(() => {
     handleApplyFilter(
@@ -195,6 +209,7 @@ const UserList = (props) => {
                     isSearchOpen ? styles.inputExpand : ""
                   }`}
                   type="text"
+                  value={searchTerm}
                   placeholder={isSearchOpen ? "Search" : ""}
                   onFocus={() => setIsSearchOpen(true)}
                   onChange={handleSearch}
@@ -203,7 +218,7 @@ const UserList = (props) => {
                 {isSearchOpen && (
                   <span
                     className={styles.closeIcon}
-                    onClick={() => setIsSearchOpen(false)}
+                    onClick={() => {setIsSearchOpen(false);setSearchTerm("");}}
                   >
                     ✕
                   </span>
