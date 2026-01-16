@@ -30,6 +30,8 @@ export const getBinliftingPlanService = async (
       axios.get(uncompletedURL),
     ]);
 
+    console.log('completeddd',compResp)
+
     const normalizeData = (resp, status) => {
       if (!resp || typeof resp !== "object") return [];
 
@@ -44,6 +46,7 @@ export const getBinliftingPlanService = async (
           plan_id: id,
           plan_name: planData.planName.trim(),
           status,
+          bin_count : planData?.totalDustbin,
         }));
     };
     const completedPlans = normalizeData(compResp?.data, "completed");
