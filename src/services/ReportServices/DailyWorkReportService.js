@@ -120,7 +120,7 @@ export const DailyWorkAnalysisDataFromFirebase = async (date, ward_id, wardName,
   const [summaryResp, workerResp, tripCount] = await Promise.all([
     axios.get(summaryURL),
     axios.get(workerURL),
-    getWardTripCountFromFirebase(year, monthName, date, wardName)
+    getWardTripCountFromFirebase(cityId, year, monthName, date, wardName)
   ]);
 
   const summary = summaryResp?.data;
@@ -151,9 +151,20 @@ export const DailyWorkAnalysisDataFromFirebase = async (date, ward_id, wardName,
   };
 }
 
-export const getWardTripCountFromFirebase = async (year, monthName, date, wardName) => {
+export const getWardTripCountFromFirebase = async (cityId, year, monthName, date, wardName) => {
   try {
-    const url = `https://reengus.firebaseio.com/WardTrips/${year}/${monthName}/${date}/${wardName}.json?alt=media`;
+     const dbResp = await sbs.getFirebase_db_url(cityId);
+
+  if (dbResp.status !== 'success' || !dbResp.data) {
+    return {
+      status: 'error',
+      message: 'Unable to fetch Firebase DB URL',
+      data: []
+    };
+  }
+
+  const dbUrl = dbResp.data;
+    const url = `${dbUrl}WardTrips/${year}/${monthName}/${date}/${wardName}.json?alt=media`;
 
     const resp = await axios.get(url);
     const data = resp?.data;
@@ -194,7 +205,7 @@ export const DailyWorkReportDataFromFirebase = async (date, wards, cityId) => {
       const [summaryResp, workerResp, tripCount] = await Promise.all([
         axios.get(summaryURL),
         axios.get(workerURL),
-        getWardTripCountFromFirebase(year, monthName, date, ward.wardName)
+        getWardTripCountFromFirebase(cityId, year, monthName, date, ward.wardName)
       ]);
 
       const summary = summaryResp?.data;
