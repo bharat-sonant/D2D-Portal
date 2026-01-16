@@ -105,9 +105,11 @@
   transition: background-color 0.3s ease;
 }
 
+
 .toggle.on {
-  background-color: var(--textSuccess);
+  background: linear-gradient(135deg, #4f6ef7, #2898ca);
 }
+
 
 .toggle.off {
   background-color: #dbdbdb;
