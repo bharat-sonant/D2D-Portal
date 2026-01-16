@@ -1,0 +1,51 @@
+.vehicleLayout {
+  display: flex;
+  flex-flow: column;
+}
+
+.vehicleLayout:nth-last-child(1) .vehicleBox {
+  border-bottom: none;
+}
+.vehicleBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 16px;
+  border-radius: 0px;
+  background: var(--whitefa);
+  border-bottom: 1px solid var(--borderColor);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  &:hover {
+    .vehicleRight {
+      opacity: 1;
+    }
+  }
+}
+.vehicleBox.active {
+  background: #667eea18;
+}
+
+.vehicleLeft {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+}
+.vehicleRight {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2 ease;
+  .iconEdit {
+    cursor: pointer;
+    width: 16px;
+  }
+}
+.iconEdit:hover {
+  color: var(--themeColor);
+}

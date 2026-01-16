@@ -1,4 +1,4 @@
-import style from "../../assets/css/City/wardList.module.css";
+import styles from "./WardList.module.css";
 import GlobalStyles from "../../assets/css/globalStyles.module.css";
 import { LocateFixed, Pencil } from "lucide-react";
 import { debounce } from "lodash";
@@ -40,13 +40,13 @@ const [searchQuery, setSearchQuery] = useState("");
   };
 
   return (
-    <div className={style.wardList}>
-      <div className={style.cardHeader}>
-        <h5 className={style.heading}>Wards</h5>
+    <div className={styles.wardList}>
+      <div className={styles.cardHeader}>
+        <h5 className={styles.heading}>Wards</h5>
 
         <div className="d-flex justify-content-center align-items-center">
           <button
-            className={`btn ${style.custom_AddDesignation_btn} p-0`}
+            className={`btn ${styles.custom_AddDesignation_btn} p-0`}
             onClick={() => {
               props.setOpenAddWardPopUp(true);
             }}
@@ -56,7 +56,7 @@ const [searchQuery, setSearchQuery] = useState("");
         </div>
       </div>
 
-      <div className={style.searchContainer}>
+      <div className={styles.searchContainer}>
         <input
           className={`${GlobalStyles.inputSearch}`}
           type="text"
@@ -65,9 +65,9 @@ const [searchQuery, setSearchQuery] = useState("");
         />
       </div>
 
-      <div className={style.scrollList}>
+      <div className={styles.scrollList}>
         {filteredWardList && filteredWardList.length > 0 ? (
-          <div className={style.wardLayout}>
+          <div className={styles.wardLayout}>
             {filteredWardList.map((ward, index) => {
               const isActive = props.selectedWard?.id === ward.id;
               const color = COLORS[index % COLORS.length];
@@ -76,7 +76,7 @@ const [searchQuery, setSearchQuery] = useState("");
                 <div
                   onClick={() => onWardClick(ward)}
                   key={index}
-                  className={`${style.wardBox} ${isActive ? style.active : ""}`}
+                  className={`${styles.wardBox} ${isActive ? styles.active : ""}`}
                   // style={
                   //   isActive
                   //     ? {
@@ -85,9 +85,9 @@ const [searchQuery, setSearchQuery] = useState("");
                   //     : {}
                   // }
                 >
-                  <div className={style.wardLeft}>
+                  <div className={styles.wardLeft}>
                     <div
-                      className={style.wardNumber}
+                      className={styles.wardNumber}
                       style={
                         isActive
                           ? {
@@ -100,8 +100,8 @@ const [searchQuery, setSearchQuery] = useState("");
                       {index + 1}
                     </div>
 
-                    <div className={style.wardData}>
-                      <span className={style.wardDisplayName}>
+                    <div className={styles.wardData}>
+                      <span className={styles.wardDisplayName}>
                         {!ward.display_name && (
                           <LocateFixed size={14} color={color} />
                         )}
@@ -109,7 +109,7 @@ const [searchQuery, setSearchQuery] = useState("");
                       </span>
 
                       {ward.display_name && (
-                        <span className={style.wardName}>
+                        <span className={styles.wardName}>
                           Ward: {ward.name}
                         </span>
                       )}
@@ -118,7 +118,7 @@ const [searchQuery, setSearchQuery] = useState("");
 
                   <div
                     data-edit-icon
-                    className={style.wardRight}
+                    className={styles.wardRight}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.setEditWard({
@@ -130,7 +130,7 @@ const [searchQuery, setSearchQuery] = useState("");
                       props.setOnEdit(true);
                     }}
                   >
-                    <Pencil className={style.iconEdit} />
+                    <Pencil className={styles.iconEdit} />
                   </div>
                 </div>
               );

@@ -1,0 +1,298 @@
+.Detailscard {
+  background-color: var(--white);
+  border-radius: 6px;
+  padding: 16px;
+  width: 250px;
+}
+
+.listLine {
+  padding: 0px;
+  margin: 0px;
+}
+
+.Icon {
+  width: 13px;
+  cursor: pointer;
+}
+
+.Icon:hover {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(77%) saturate(1520%)
+    hue-rotate(162deg) brightness(99%) contrast(101%);
+}
+.ward-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.ward-left {
+  width: 100%;
+}
+
+.ward-right {
+  width: 100%;
+}
+.card_footer {
+  padding: 1px 13px 12px 13px;
+  border-top: 1px solid #e9ebec;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card_footer h5 {
+  font-size: 13px;
+  font-weight: 400;
+  color: #878a99;
+}
+
+.custom_AddDesignation_btn {
+  color: var(--themeColor);
+  border: none;
+  width: 26px;
+  height: 22px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--themeColor);
+  line-height: 0px;
+}
+
+.custom_AddDesignation_btn:hover {
+  background-color: var(--themeColor);
+  color: var(--white);
+}
+
+.icon_add_designation {
+  font-size: 15px;
+}
+
+.AddDesignation_button2 {
+  right: 14px;
+  bottom: 50px;
+}
+
+/* .list_item {
+    font-size: 13px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+    list-style-type: none;
+    cursor: pointer;
+} */
+.icon {
+  width: 15px;
+}
+
+.list_item:last-child {
+  margin-bottom: 0;
+  /* Remove bottom margin for the last item */
+}
+
+.countEdit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.totalcount {
+  /* background-color: var(--themeColor); */
+  color: var(--lightBlack);
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  padding: 3px 0px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  line-height: 1;
+}
+
+.list_item {
+  background-color: var(--whitefa);
+  border-bottom: 1px solid var(--borderColor) !important;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  width: 100%;
+}
+
+.list_item:hover {
+  background-color: var(--whitef5);
+}
+
+.list_item:nth-last-child(1) {
+  border-bottom: none !important;
+}
+
+.designationName {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--lightBlack);
+  cursor: pointer;
+}
+
+.dropdownItemNot {
+  height: 204px;
+  font-size: 12px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.foundNot {
+  height: 80px;
+}
+
+.edit_icon {
+  width: 13px;
+  color: #555;
+  cursor: pointer;
+  opacity: 0;
+  /* Initially hidden */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.edit_icon:hover {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(77%) saturate(1520%)
+    hue-rotate(162deg) brightness(99%) contrast(101%);
+}
+
+.list_item:hover .edit_icon {
+  opacity: 1;
+}
+
+.add_icon {
+  width: 10px;
+  /* margin-right: 4px; */
+  filter: brightness(0) saturate(100%) invert(69%) sepia(75%) saturate(2919%)
+    hue-rotate(172deg) brightness(99%) contrast(91%);
+}
+
+.custom_AddDesignation_btn:hover .add_icon {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%)
+    hue-rotate(318deg) brightness(103%) contrast(102%);
+}
+
+.vehicleList {
+  background-color: var(--white);
+  border-radius: 6px;
+  padding: 16px;
+  width: 320px;
+}
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.heading {
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.searchContainer {
+  margin-bottom: 10px;
+}
+
+.scrollList {
+  min-height: 40px;
+  max-height: 652px;
+  overflow: auto;
+  border-radius: 6px;
+
+  margin-top: 10px;
+}
+.wardLayout {
+  display: flex;
+  flex-flow: column;
+}
+.wardBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 16px;
+  border-radius: 0px;
+  background: var(--whitefa);
+  border-bottom: 1px solid var(--borderColor);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  &:hover {
+    .wardRight {
+      opacity: 1;
+    }
+  }
+  &:nth-last-child(1) {
+    border-bottom: none;
+  }
+}
+.wardBox.active {
+  background: #667eea18;
+}
+
+.wardNumber {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.wardLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wardNumber {
+  width: 32px;
+  height: 32px;
+  background-color: var(--white);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+  /* border: 1px solid var(--borderColor); */
+}
+.wardData {
+  display: flex;
+  flex-flow: column;
+}
+.wardDisplayName {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+.wardName {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
+}
+.wardRight {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2 ease;
+  .iconEdit {
+    cursor: pointer;
+    width: 16px;
+  }
+}
+.iconEdit:hover {
+  color: var(--themeColor);
+}

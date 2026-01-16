@@ -175,9 +175,7 @@ const City = () => {
             )}
             {activeTab === "wards" && (
               <>
-                <div
-                className={`${TaskStyles.wardTab}`}
-                >
+                <div className={`${TaskStyles.wardTab}`}>
                   <WardList
                     setOpenAddWardPopUp={setOpenAddWardPopUp}
                     wardList={wardList}
@@ -198,24 +196,18 @@ const City = () => {
               </>
             )}
 
-            <div>
-              {activeTab === "vehicle" && (
-                <div className={TaskStyles.cardWrapper}>
-                  <AddVehiclesCard selectedCity={selectedCity} />
-                </div>
-              )}
+            {activeTab === "vehicle" && (
+              <AddVehiclesCard selectedCity={selectedCity} />
+            )}
 
-              {activeTab === "users" && (
-                <div className={TaskStyles.cardWrapper}>
-                  <UserCityAccessList
-                    selectedCity={selectedCity}
-                    userList={usersInCity}
-                    loading={loadingUsers}
-                    isEmbedded={true}
-                  />
-                </div>
-              )}
-            </div>
+            {activeTab === "users" && (
+                <UserCityAccessList
+                  selectedCity={selectedCity}
+                  userList={usersInCity}
+                  loading={loadingUsers}
+                  isEmbedded={true}
+                />
+            )}
           </div>
         )}
       </div>

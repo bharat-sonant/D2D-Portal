@@ -1,16 +1,17 @@
-import { images } from "../../assets/css/imagePath";
-import style from "../../assets/css/City/wardList.module.css";
+import styles from "./AddVehiclesCard.module.css";
 import AddVehicles from "../../MobileAppPages/Vehicles/Components/Vehicles/AddVehicles";
+import GlobalStyles from "../../assets/css/globalStyles.module.css";
 import { useEffect, useState } from "react";
 import * as action from "../../Actions/VehiclesAction/VehiclesAction";
 import VehicleList from "../../MobileAppPages/Vehicles/Components/Vehicles/VehicleList";
 import VehicleHistoryData from "../../MobileAppPages/Vehicles/Components/VehicleHistory/VehicleHistoryData";
 import DeleteConfirmation from "../../MobileAppPages/Tasks/Components/DeleteConfirmation/DeleteConfirmation";
+import { useMemo } from "react";
 
 const AddVehiclesCard = (props) => {
   const [showModal, setShowModal] = useState(false);
-  const [vehicleName, setVehicleName] = useState('');
-  const [chassisNo, setChassisNo] = useState('');
+  const [vehicleName, setVehicleName] = useState("");
+  const [chassisNo, setChassisNo] = useState("");
   const [vehicleList, setVehicleList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
@@ -20,10 +21,15 @@ const AddVehiclesCard = (props) => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [vehicleHistory, setVehicleHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   // 🔄 Fetch vehicle list
   const fetchVehicles = () => {
     if (props.selectedCity) {
-      action.getVehicles(setVehicleList, setLoading, props.selectedCity.city_id);
+      action.getVehicles(
+        setVehicleList,
+        setLoading,
+        props.selectedCity.city_id
+      );
     }
   };
 
@@ -62,8 +68,8 @@ const AddVehiclesCard = (props) => {
     setCanvasModal(false);
     setShowModal(true);
     setShowHistory(false);
-    setVehicleName(vehicleDetails?.vehicles_No || '');
-    setChassisNo(vehicleDetails?.chassis_no || '');
+    setVehicleName(vehicleDetails?.vehicles_No || "");
+    setChassisNo(vehicleDetails?.chassis_no || "");
     setVehicleId(vehicleDetails?.id);
   };
 
@@ -83,30 +89,48 @@ const AddVehiclesCard = (props) => {
       setVehicleDetails
     );
   };
+  const filteredVehicles = useMemo(() => {
+    return [...vehicleList]
+      .filter((vehicle) =>
+        vehicle.vehicles_No?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => {
+        if (a.status === "inactive" && b.status !== "inactive") return 1;
+        if (a.status !== "inactive" && b.status === "inactive") return -1;
+        return 0;
+      });
+  }, [vehicleList, searchTerm]);
 
   return (
-    <div className={style.Detailscard} style={{ marginTop: '0px' }}>
-      <div className={style.card_header}>
-        <h5 className={style.heading}>Add Vehicles</h5>
+    <div className={styles.vehicleList}>
+      <div className={styles.cardHeader}>
+        <h5 className={styles.heading}>Vehicles</h5>
         <div className="d-flex justify-content-center align-items-center">
           <button
-            className={`btn ${style.custom_AddDesignation_btn} p-0`}
+            className={`btn ${styles.custom_AddDesignation_btn} p-0`}
             onClick={() => setShowModal(true)}
           >
             +
           </button>
         </div>
       </div>
-
+      {/* Search */}
+      <input
+        className={GlobalStyles.inputSearch}
+        type="text"
+        placeholder="Search vehicle..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
       {/* 🚗 Vehicle List */}
-      <div className={style.Scroll_List}>
+      <div className={styles.scrollList}>
         <VehicleList
-          vehicleList={vehicleList}
+          vehicleList={filteredVehicles}
           loading={loading}
           selectedVehicleId={selectedVehicleId}
           isEmbedded={true}
           onSelectVehicle={handleVehicleSelect} // row click
-          onEditVehicle={handleEditIconClick}   // 3-dot click
+          onEditVehicle={handleEditIconClick} // 3-dot click
         />
       </div>
 
