@@ -58,30 +58,30 @@ export const getBinliftingData = async (
 
     //case 1 : today -> always firebase 
     if(isToday){
-      const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
+      // const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
       // console.log('today firebase',firebaseResponse)
 
-      if (
-        firebaseResponse?.status === "success" &&
-        firebaseResponse?.data?.length > 0
-      ) {
-        const sortedData = sortPlanNames(
-          firebaseResponse.data,
-          "plan_name"
-        );
+      // if (
+      //   firebaseResponse?.status === "success" &&
+      //   firebaseResponse?.data?.length > 0
+      // ) {
+      //   const sortedData = sortPlanNames(
+      //     firebaseResponse.data,
+      //     "plan_name"
+      //   );
 
-        // 🔁 Always update Supabase for today
-        saveBinliftingData(
-          selectedDate,
-          sortedData,
-          cityId
-        );
+      //   // 🔁 Always update Supabase for today
+      //   saveBinliftingData(
+      //     selectedDate,
+      //     sortedData,
+      //     cityId
+      //   );
 
-        setBinliftingData(sortedData);
-      } else {
-        setBinliftingData([]);
-      }
-
+      //   setBinliftingData(sortedData);
+      // } else {
+      //   setBinliftingData([]);
+      // }
+      setBinliftingData([]);
       return;
     }
 
