@@ -11,15 +11,15 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border: none;
+  border: 1px solid var(--themeColor);
   border-radius: 12px;
-  background: #9a9cff;
-  color: black;
+  background: #f0f7ff;
+  color: var(--themeColorDark);
   cursor: pointer;
   font-size: 13px;
   font-family: var(--fontGraphikMedium);
-  height: 40px;
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  height: 60px;
+  box-shadow: 0 10px 25px rgba(40, 152, 202, 0.1);
   transition: all 0.3s ease;
 
   span {
@@ -27,7 +27,7 @@
   }
 
   svg {
-    color: var(--white);
+    color: var(--themeColor);
   }
 }
 
@@ -114,6 +114,6 @@
 }
 
 .active {
-  background: #9a9cff !important;
-  color: black
+  background: var(--themeColor) !important;
+  color: var(--white) !important;
 }

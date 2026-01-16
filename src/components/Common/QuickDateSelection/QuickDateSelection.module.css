@@ -53,25 +53,26 @@
 }
 
 .selectedDateBox {
-    background: #9a9cff;
-    border-color: transparent;
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    background: #f0f7ff;
+    border: 1px solid var(--themeColor);
+    box-shadow: 0 10px 25px rgba(40, 152, 202, 0.15);
     transform: translateY(-2px);
 }
 
 .selectedDateBox:hover {
-    background: #9a9cff;
-    opacity: 0.9;
+    background: #e6f0ff;
+    opacity: 1;
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 10px 25px rgba(40, 152, 202, 0.2);
 }
 
 .selectedDateBox .dateBoxDay {
-    color: black;
+    color: var(--themeColorDark);
+    opacity: 0.8;
 }
 
 .selectedDateBox .dateBoxDisplay {
-    color: black;
+    color: var(--themeColorDark);
 }
 
 .selectedDateBox::after {
@@ -81,6 +82,6 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(40, 152, 202, 0.05) 0%, transparent 60%);
     pointer-events: none;
 }
