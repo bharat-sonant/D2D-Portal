@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import styles from "./CustomDatePicker.module.css";
+import dayjs from "dayjs";
 
 const CustomDatePicker = ({ value, onChange }) => {
   const today = value ? new Date(value) : new Date();
@@ -34,7 +35,7 @@ const CustomDatePicker = ({ value, onChange }) => {
       <div className={styles.inputBox} onClick={() => setOpen(!open)}>
         <span>
           {isDateSelected && value
-            ? new Date(value).toLocaleDateString("en-GB")
+            ? dayjs(value).format("D MMM YYYY")
             : "Customize Date"}
         </span>
         <Calendar size={16} />
