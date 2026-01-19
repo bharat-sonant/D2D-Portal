@@ -10,63 +10,52 @@ const getInOutTimeFromFirebase = async (
   date,
   driverIds = []
 ) => {
-  if (!driverIds.length) {
-    return {};
-  }
+  if (!driverIds.length) return {};
+
+  const result = {};
 
   try {
-    const uniqueDriverIds = [...new Set(driverIds)];
+    // 1️⃣ One request per driver (parallel)
+    const responses = await Promise.all(
+      driverIds.map(async driverId => {
+        const url = `${dbUrl}DailyWorkDetail/${year}/${month}/${date}/${driverId}.json`;
+        try {
+          const res = await axios.get(url);
+          return { driverId, data: res.data };
+        } catch {
+          return { driverId, data: null };
+        }
+      })
+    );
 
-    const requests = uniqueDriverIds.map(async driverId => {
-      const url = `${dbUrl}DailyWorkDetail/${year}/${month}/${date}/${driverId}/task1.json`;
+    // 2️⃣ Logical loops (cheap, in-memory)
+    for (const { driverId, data } of responses) {
+      if (!data) continue;
 
-      try {
-        const res = await axios.get(url);
+      for (const task of Object.values(data)) {
+        if (!task) continue;
 
-        return { driverId, data: res.data };
-      } catch (err) {
-        return { driverId, data: null };
+        const planId = task.binLiftingPlanId;
+        const inOut = task["in-out"];
+
+        if (!planId || !inOut || result[planId]) continue;
+
+        const entries = Object.entries(inOut);
+
+        result[planId] = {
+          driverId,
+          in_time: entries.find(([_, v]) => v === "In")?.[0] || null,
+          out_time: entries.find(([_, v]) => v === "Out")?.[0] || null,
+        };
+
+        // ✅ break task loop once plan matched
+        break;
       }
-    });
-
-    const responses = await Promise.all(requests);
-
-    const result = {};
-
-    responses.forEach(({ driverId, data }) => {
-      if (!data) {
-        return;
-      }
-
-    const binLiftingPlanId = data.binLiftingPlanId;
-    const inOut = data["in-out"];
-
-
-      if (!binLiftingPlanId) {
-        return;
-      }
-
-      if (!inOut || typeof inOut !== "object") {
-        return;
-      }
-
-      const entries = Object.entries(inOut);
-
-      const inTime =
-        entries.find(([_, v]) => v === "In")?.[0] || null;
-
-      const outTime =
-        entries.find(([_, v]) => v === "Out")?.[0] || null;
-
-      result[binLiftingPlanId] = {
-        driverId,
-        in_time: inTime,
-        out_time: outTime,
-      };
-    });
+    }
 
     return result;
-  } catch (error) {
+  } catch (err) {
+    console.error("InOut fetch failed:", err);
     return {};
   }
 };
@@ -253,7 +242,9 @@ export const saveBinliftingData = (date, data, city_id) => {
           plan_name: row.plan_name,
           city_id,
           bin_count: row.bin_count,
+          driver_id: row.driver_id,
           driver_name: row.driver_name,
+          helper_id: row.helper_id,
           helper_name: row.helper_name,
           in_time: row.in_time,
           out_time: row.out_time,

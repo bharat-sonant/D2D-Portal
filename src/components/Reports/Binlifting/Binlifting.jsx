@@ -23,26 +23,34 @@ const Binlifting = () => {
     getBinliftingData(cityId, year, month, selectedDate, setBinliftingData, setLoading)
   },[cityId,date])
 
-    const calculateWorkingHours = (dutyOn, dutyOff) => {
-    if (!dutyOn || !dutyOff) return null;
+  //includes times in seconds also
+const calculateWorkingHours = (dutyOn, dutyOff) => {
+  if (!dutyOn || !dutyOff) return null;
 
-    const toMinutes = (time) => {
-      const parts = time.split(":").map(Number);
-      const [hh, mm, ss = 0] = parts;
-      return hh * 60 + mm + ss / 60;
-    }
-    const start = toMinutes(dutyOn);
-    const end = toMinutes(dutyOff);
+  const toSeconds = (time) => {
+    const [hh = 0, mm = 0, ss = 0] = time.split(":").map(Number);
+    return hh * 3600 + mm * 60 + ss;
+  };
 
-    if (isNaN(start) || isNaN(end) || end < start) return null;
+  let start = toSeconds(dutyOn);
+  let end = toSeconds(dutyOff);
 
-    const diffMinutes = end - start;
+  if (isNaN(start) || isNaN(end)) return null;
 
-    const hours = Math.floor(diffMinutes / 60);
-    const minutes = Math.round(diffMinutes % 60);
-
-    return `${hours}h ${minutes}m`;
+  // 🌙 Night shift handling (crosses midnight)
+  if (end < start) {
+    end += 24 * 3600;
   }
+
+  const diffSeconds = end - start;
+
+  const hours = Math.floor(diffSeconds / 3600);
+  const minutes = Math.floor((diffSeconds % 3600) / 60);
+  const seconds = diffSeconds % 60;
+
+  return `${hours}h ${minutes}m ${seconds}s`;
+};
+
 
   return (
     <>
@@ -108,15 +116,15 @@ const Binlifting = () => {
                       ) || "-"}
                     </td>
                     <td className={style.th7}>
-                      <span className={`${style.helperName}`}>
-                        {/* {row.helper_name || "N/A"} */}
+                      <span className={style.helperName}>
                         {plan.driver_name}
+                        {plan.driver_id ? ` (${plan.driver_id})` : ""}
                       </span>
                     </td>
                     <td className={style.th7}>
                       <span className={`${style.helperName}`}>
-                        {/* {row.helper_name || "N/A"} */}
                         {plan.helper_name}
+                        {plan.helper_id ? ` (${plan.helper_id})` : ""}
                       </span>
                     </td>
                     <td className={style.th1}>{plan.vehicle || "-"}</td>
