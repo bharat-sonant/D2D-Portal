@@ -3,6 +3,73 @@ import * as sbs from "../supabaseServices"
 import { supabase } from "../../createClient";
 import dayjs from "dayjs";
 
+const getInOutTimeFromFirebase = async (
+  dbUrl,
+  year,
+  month,
+  date,
+  driverIds = []
+) => {
+  if (!driverIds.length) {
+    return {};
+  }
+
+  try {
+    const uniqueDriverIds = [...new Set(driverIds)];
+
+    const requests = uniqueDriverIds.map(async driverId => {
+      const url = `${dbUrl}DailyWorkDetail/${year}/${month}/${date}/${driverId}/task1.json`;
+
+      try {
+        const res = await axios.get(url);
+
+        return { driverId, data: res.data };
+      } catch (err) {
+        return { driverId, data: null };
+      }
+    });
+
+    const responses = await Promise.all(requests);
+
+    const result = {};
+
+    responses.forEach(({ driverId, data }) => {
+      if (!data) {
+        return;
+      }
+
+    const binLiftingPlanId = data.binLiftingPlanId;
+    const inOut = data["in-out"];
+
+
+      if (!binLiftingPlanId) {
+        return;
+      }
+
+      if (!inOut || typeof inOut !== "object") {
+        return;
+      }
+
+      const entries = Object.entries(inOut);
+
+      const inTime =
+        entries.find(([_, v]) => v === "In")?.[0] || null;
+
+      const outTime =
+        entries.find(([_, v]) => v === "Out")?.[0] || null;
+
+      result[binLiftingPlanId] = {
+        driverId,
+        in_time: inTime,
+        out_time: outTime,
+      };
+    });
+
+    return result;
+  } catch (error) {
+    return {};
+  }
+};
 
 
 const dustbinAssignmentData = async (dbUrl, year, month, selectedDate) => {
@@ -119,14 +186,13 @@ export const getBinliftingPlanService = async (
     .map(p => p.driver_id)
     .filter(Boolean);
 
-    // const inOutTimeMap = await getInOutTimeFromFirebase(
-    //   dbUrl,
-    //   year,
-    //   month,
-    //   selectedDate,
-    //   driverIds
-    // );
-    let inOutTimeMap;
+    const inOutTimeMap = await getInOutTimeFromFirebase(
+      dbUrl,
+      year,
+      month,
+      selectedDate,
+      driverIds
+    );
     const finalPlans = plans.map(p => {
       const timeInfo = inOutTimeMap[p.plan_id] || {};
       return{
@@ -154,6 +220,7 @@ export const getBinliftingPlanService = async (
 
 // save binlifting data in supabase (BACKGROUND)
 export const saveBinliftingData = (date, data, city_id) => {
+  console.log('data',data)
   if (!date || !data.length) return;
 
   // 🔥 fire-and-forget async wrapper
@@ -186,6 +253,12 @@ export const saveBinliftingData = (date, data, city_id) => {
           plan_id: row.plan_id,
           plan_name: row.plan_name,
           city_id,
+          bin_count: row.bin_count,
+          driver_name: row.driver_name,
+          helper_name: row.helper_name,
+          in_time: row.in_time,
+          out_time: row.out_time,
+          vehicle: row.vehicle
         };
 
         if (row.status === "pending") {

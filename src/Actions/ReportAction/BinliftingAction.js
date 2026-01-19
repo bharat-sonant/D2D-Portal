@@ -88,25 +88,25 @@ export const getBinliftingData = async (
      // ============================
     // 📌 CASE 2: PAST DATE → Supabase First
     // ============================
-    // const supabaseResponse = await getBinliftingPlanFromSupabase(selectedDate, cityId);
-    // console.log('supabase',supabaseResponse)
+    const supabaseResponse = await getBinliftingPlanFromSupabase(selectedDate, cityId);
+    console.log('supabase',supabaseResponse)
 
-    // if (
-    //   supabaseResponse?.status === "success" &&
-    //   supabaseResponse?.data?.length > 0
-    // ) {
-    //   const sortedData = sortPlanNames(
-    //     supabaseResponse.data,
-    //     "plan_name"
-    //   );
-    //   setBinliftingData(sortedData);
-    //   return;
-    // }
+    if (
+      supabaseResponse?.status === "success" &&
+      supabaseResponse?.data?.length > 0
+    ) {
+      const sortedData = sortPlanNames(
+        supabaseResponse.data,
+        "plan_name"
+      );
+      setBinliftingData(sortedData);
+      return;
+    }
     // ============================
     // 📌 Supabase empty → Firebase fallback
     // ============================
     const firebaseResponse = await getBinliftingPlanService(cityId, year, month, selectedDate);
-    // console.log('firebase',firebaseResponse)
+    console.log('firebase',firebaseResponse)
 
     if (
       firebaseResponse?.status === "success" &&

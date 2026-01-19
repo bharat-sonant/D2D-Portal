@@ -23,6 +23,27 @@ const Binlifting = () => {
     getBinliftingData(cityId, year, month, selectedDate, setBinliftingData, setLoading)
   },[cityId,date])
 
+    const calculateWorkingHours = (dutyOn, dutyOff) => {
+    if (!dutyOn || !dutyOff) return null;
+
+    const toMinutes = (time) => {
+      const parts = time.split(":").map(Number);
+      const [hh, mm, ss = 0] = parts;
+      return hh * 60 + mm + ss / 60;
+    }
+    const start = toMinutes(dutyOn);
+    const end = toMinutes(dutyOff);
+
+    if (isNaN(start) || isNaN(end) || end < start) return null;
+
+    const diffMinutes = end - start;
+
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = Math.round(diffMinutes % 60);
+
+    return `${hours}h ${minutes}m`;
+  }
+
   return (
     <>
        <div className={style.topBar}>
@@ -43,13 +64,20 @@ const Binlifting = () => {
           </button>
         </div>
       </div>
-      {console.log('binlifting',binliftingData)}
+      {/* {console.log('binlifting',binliftingData)} */}
 
       <div className={style.tableContainer}>
         <table className={style.table}>
           <thead>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Plan Name</th>
+              <th className={style.th2}>Duty On </th>
+              <th className={`${style.th4}`}>
+                Duty Off
+              </th>
+              <th className={`${style.th4} ${style.borderRight}`}>
+                Working Hrs
+              </th>
               <th className={style.th6}>Driver</th>
               <th className={style.th7}>Helper</th>
               <th className={style.th5}>Vehicle</th>
@@ -68,6 +96,18 @@ const Binlifting = () => {
                 return (
                   <tr key={plan.plan_id}>
                     <td className={style.th1}>{plan.plan_name || "-"}</td>
+                    <td className={`${style.th2}`}>
+                      {plan?.in_time || "-"}
+                    </td>
+                    <td className={`${style.th4}`}>
+                      {plan?.out_time || "-"}
+                    </td>
+                    <td className={`${style.th4} ${style.borderRight}`}>
+                      {calculateWorkingHours(
+                        plan?.in_time,
+                        plan?.out_time
+                      ) || "-"}
+                    </td>
                     <td className={style.th7}>
                       <span className={`${style.helperName}`}>
                         {/* {row.helper_name || "N/A"} */}
