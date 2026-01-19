@@ -76,6 +76,35 @@ const calculateWorkingHours = (dutyOn, dutyOff) => {
       <div className={style.tableContainer}>
         <table className={style.table}>
           <thead>
+             <tr>
+              <th
+                className={`text-start ${style.parentHeader} `}
+                style={{ width: "15%" }}
+              >
+                #
+              </th>
+              <th
+                className={`${style.parentHeader} `}
+                style={{ width: "35%" }}
+                colSpan={3}
+              >
+                Timing Details
+              </th>
+              <th
+                className={style.parentHeader}
+                style={{ width: "50%" }}
+                colSpan={3}
+              >
+                Person / Vehicle Details
+              </th>
+
+              <th
+                className={`text-start ${style.parentHeader} `}
+                style={{ width: "10%" }}
+              >
+
+              </th>
+            </tr>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Plan Name</th>
               <th className={style.th2}>Duty On </th>
