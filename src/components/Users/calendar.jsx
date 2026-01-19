@@ -7,7 +7,7 @@ import { getUserData } from "../../services/UserServices/UserServices";
 import { ChevronRight } from "lucide-react";
 import { images } from "../../assets/css/imagePath";
 import NoResult from "../NoResultFound/NoResult";
-import userNotFound from "../../assets/images/icons/cityNotFound.gif";
+import userNotFound from "../../assets/images/icons/userNotFound.gif";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 
 dayjs.extend(relativeTime);
