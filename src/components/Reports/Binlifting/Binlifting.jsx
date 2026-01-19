@@ -64,7 +64,6 @@ const Binlifting = () => {
           </button>
         </div>
       </div>
-      {/* {console.log('binlifting',binliftingData)} */}
 
       <div className={style.tableContainer}>
         <table className={style.table}>

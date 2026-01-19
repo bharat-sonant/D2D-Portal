@@ -220,7 +220,6 @@ export const getBinliftingPlanService = async (
 
 // save binlifting data in supabase (BACKGROUND)
 export const saveBinliftingData = (date, data, city_id) => {
-  console.log('data',data)
   if (!date || !data.length) return;
 
   // 🔥 fire-and-forget async wrapper
