@@ -8,7 +8,12 @@
   position: relative;
   z-index: 3;
 }
-
+.leftSection {
+  display: flex;
+  gap: 5px;
+  max-width: calc(100% - 70px);
+  overflow-x: auto;
+}
 .dateBox {
   position: relative;
 }
@@ -77,7 +82,8 @@
 
 .iconExcel {
   width: 16px;
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(9deg) brightness(105%) contrast(100%);
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%)
+    hue-rotate(9deg) brightness(105%) contrast(100%);
 }
 
 .tableContainer {
@@ -134,19 +140,19 @@
   vertical-align: middle;
 }
 
-.table tr>th:first-child,
-.table tr>td:first-child {
+.table tr > th:first-child,
+.table tr > td:first-child {
   position: sticky;
   left: 0;
   /* border-right: 1px solid var(--borderColor); */
 }
 
-.table tr>th:first-child {
+.table tr > th:first-child {
   background: #f4f3f8;
   z-index: 2;
 }
 
-.table tr>td:first-child {
+.table tr > td:first-child {
   background-color: var(--white);
   z-index: 1;
 }
@@ -194,7 +200,7 @@
   vertical-align: middle;
 }
 
-.loaderCell>div {
+.loaderCell > div {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -475,8 +481,8 @@
     flex-wrap: wrap;
   }
 
-  .table tr>th:first-child,
-  .table tr>td:first-child {
+  .table tr > th:first-child,
+  .table tr > td:first-child {
     left: auto;
   }
 
@@ -494,5 +500,16 @@
 
   .parentHeader:nth-last-child(1) {
     width: calc(100% - 35% - 150px) !important;
+  }
+  .leftSection{
+    max-width: calc(100% - 112px);
+            margin-bottom: -5px;
+  }
+  .exportBtn{
+    height: 45px;
+    padding: 14px 16px;
+    .iconExcel{
+      width: 18px;
+    }
   }
 }

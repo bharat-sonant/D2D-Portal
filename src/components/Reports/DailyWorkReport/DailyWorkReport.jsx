@@ -158,10 +158,11 @@ const DailyWorkReport = () => {
     <>
       {/* TOP BAR */}
       <div className={style.topBar}>
-        <div className={`d-flex gap-2 align-items-center`}>
+        <div className={`${style.leftSection}`}>
         <QuickDateSelection value={date} onChange={(val) => setDate(val)} />
+             </div>
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
-          </div>
+       
 
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
