@@ -85,7 +85,7 @@ const User = () => {
 
   return (
     <>
-      {!isHistoryOpen && (permissionGranted?.CanAddUser === true) && (
+      {!isHistoryOpen && permissionGranted?.CanAddUser === true && (
         <div className={GlobalStyles.floatingDiv}>
           <button
             className={GlobalStyles.floatingBtn}
@@ -146,25 +146,26 @@ const User = () => {
             <div className={styles.actionWrapper}>
               {/* STATUS TOGGLE */}
               <div
-                className={`${styles.activeInactiveBadge} ${selectedUser?.status === "active"
-                  ? styles.badgeActive
-                  : styles.badgeInactive
-                  }`}
+                className={`${styles.activeInactiveBadge} ${
+                  selectedUser?.status === "active"
+                    ? styles.badgeActive
+                    : styles.badgeInactive
+                }`}
                 onClick={openConfirm}
               >
                 {selectedUser?.status === "active" ? "Deactivate" : "Activate"}
               </div>
 
               {/* EDIT */}
-              {(permissionGranted?.CanAddUser === true) && (
-                  <span
-                    className={styles.editIcon}
-                    onClick={handleEditUser}
-                    title="Edit"
-                  >
-                    <Edit2 size={14} />
-                  </span>
-                )}
+              {permissionGranted?.CanAddUser === true && (
+                <span
+                  className={styles.editIcon}
+                  onClick={handleEditUser}
+                  title="Edit"
+                >
+                  <Edit2 size={14} />
+                </span>
+              )}
             </div>
           </div>
 
@@ -172,10 +173,13 @@ const User = () => {
             <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
             <div className={``} style={{ display: "flex", flexFlow: "column" }}>
               {selectedUser !== null && (
-                <Calendar selectedUser={selectedUser} onHistoryToggle={setIsHistoryOpen} />
+                <Calendar
+                  selectedUser={selectedUser}
+                  onHistoryToggle={setIsHistoryOpen}
+                />
               )}
               {selectedUser !== null &&
-                (permissionGranted?.CanGivePermissions === true) && (
+                permissionGranted?.CanGivePermissions === true && (
                   <PermissonAccess selectedUser={selectedUser} />
                 )}
             </div>

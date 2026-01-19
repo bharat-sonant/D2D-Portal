@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import style from "../../assets/css/User/calender.module.css";
+import style from "./calendar.module.css";
 import "./calender.css";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getUserData } from "../../services/UserServices/UserServices";
+import { ChevronRight } from "lucide-react";
+import { images } from "../../assets/css/imagePath";
+import NoResult from "../NoResultFound/NoResult";
+import userNotFound from "../../assets/images/icons/cityNotFound.gif";
+import WevoisLoader from "../Common/Loader/WevoisLoader";
 
 dayjs.extend(relativeTime);
 
@@ -39,68 +44,33 @@ const Calendar = (props) => {
   };
 
   return (
-    <div className={style.box}>
-      <div className="calendar-container">
-        <div
-          className="calendar pb-0 ps-0 pe-0"
-          style={{ minHeight: "auto" }}
+    <div className={style.lastLoginBox}>
+      <div className={style.lastLoginHeader}>
+        Last Login
+        <button
+          onClick={() => props.onHistoryToggle(true)}
+          className={style.viewhistoryBtn}
         >
-          <div
-            style={{
-              marginTop: "8px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "15px",
-            }}
-          >
-            <h6 style={{ margin: 0 }}>Last Login </h6>
-            <button
-              onClick={() => props.onHistoryToggle(true)}
-              className="btn view-history-btn"
-            >
-              View History
-            </button>
-          </div>
+          <ChevronRight size={14} />
+        </button>
+      </div>
 
-          <div style={{ padding: "10px 0 20px 0", textAlign: "center" }}>
-            {loading ? (
-              <div
-                className="spinner-border spinner-border-sm text-primary"
-                role="status"
-              >
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            ) : userLastLogin ? (
-              <div>
-                <h4
-                  style={{
-                    fontWeight: "600",
-                    color: "#2c3e50",
-                    marginBottom: "4px",
-                  }}
-                >
-                  {dayjs(userLastLogin).fromNow()}
-                </h4>
-                <div style={{ fontSize: "13px", color: "#888" }}>
-                  {dayjs(userLastLogin).format(
-                    "dddd, MMMM D, YYYY"
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#999",
-                  fontStyle: "italic",
-                }}
-              >
-                No login records found
-              </p>
-            )}
-          </div>
-        </div>
+      <div className={style.boxBody}>
+        {loading ? (
+          <WevoisLoader title={"loading"} height="100px" />
+        ) : userLastLogin ? (
+          <>
+            <img src={images.timeManagement} className={style.loginImg} />
+            <h4 className={style.loginTitle}>
+              {dayjs(userLastLogin).fromNow()}
+            </h4>
+            <div className={style.loginTime}>
+              {dayjs(userLastLogin).format("D, MMMM YYYY, dddd")}
+            </div>
+          </>
+        ) : (
+          <NoResult title=" No login records found" gif={userNotFound} />
+        )}
       </div>
     </div>
   );

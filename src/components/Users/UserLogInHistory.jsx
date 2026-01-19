@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import style from "./loginHistory.module.css";
+import style from "./UserLogInHistory.module.css";
 import calendarStyle from "../../assets/css/User/calender.module.css";
 import "./calender.css";
 
@@ -17,11 +17,7 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
   useEffect(() => {
     if (!userId || !open) return;
 
-    action.getDatesArrayAction(
-      setDaysArray,
-      currentDate,
-      userId
-    );
+    action.getDatesArrayAction(setDaysArray, currentDate, userId);
   }, [currentDate, userId, open]);
 
   const prevMonth = () => {
@@ -50,13 +46,11 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
           display: "flex",
           flexDirection: "column",
           visibility: "visible",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         <div className={style.offcanvasHeader}>
-          <h6 className={style.title}>
-           {userName ? ` ${userName}` : ""}
-          </h6>
+          <h6 className={style.title}>{userName ? ` ${userName}` : ""}</h6>
           <button
             type="button"
             className={style.closeBtn}
@@ -75,7 +69,7 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
             display: "flex",
             justifyContent: "center",
             flex: 1,
-            overflow: "auto"
+            overflow: "auto",
           }}
         >
           <div
@@ -113,11 +107,13 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
                 </div>
 
                 <div className="days-header">
-                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                    <div key={day} className="day">
-                      {day}
-                    </div>
-                  ))}
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                    (day) => (
+                      <div key={day} className="day">
+                        {day}
+                      </div>
+                    )
+                  )}
                 </div>
 
                 <div className="days">
@@ -130,10 +126,7 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
                         style={{
                           backgroundColor: isHoliday
                             ? "rgb(232, 232, 232)"
-                            : action.getBackgroundColor(
-                                item.status,
-                                item.date
-                              ),
+                            : action.getBackgroundColor(item.status, item.date),
                           color: item.color,
                           textAlign: "center",
                           fontSize: "11px",
@@ -143,11 +136,9 @@ const UserLoginHistory = ({ userId, userName, open, onClose }) => {
                             (dayjs(item.date).day() === 0 &&
                               (item.status === 0 || item.status === 7))
                               ? "default"
-                              : "pointer"
+                              : "pointer",
                         }}
-                        className={`date ${
-                          item.day === "" ? "empty" : ""
-                        } ${
+                        className={`date ${item.day === "" ? "empty" : ""} ${
                           dayjs(item.date).day() === 0
                             ? "disable"
                             : "cursor-pointer"
