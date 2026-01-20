@@ -5,6 +5,7 @@ import style from '../../Style/Login/Login.module.css';
 import { images } from '../../../../assets/css/imagePath';
 import ErrorMessage from '../../../../components/ErrorMessage/ErrorMessage';
 import * as loginAction from '../../Action/Login/LoginAction';
+import { useNavigate } from 'react-router-dom';
 
 const MyOfficeLogin = () => {
     const [formData, setFormData] = useState({ empCode: '', password: '' });
@@ -12,13 +13,14 @@ const MyOfficeLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleOnChange = (e) => {
         loginAction.handleChange(e, setFormData, setErrors);
     }
 
     const onSubmit = (e) => {
-        loginAction.handleSubmit(e, setIsLoading, formData, setErrors);
+        loginAction.handleSubmit(e, setIsLoading, formData, setErrors, navigate);
     }
 
     return (

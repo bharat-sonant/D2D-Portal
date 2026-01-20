@@ -30,6 +30,7 @@ import EmployeeDashboard from "../pages/EmployeeManagement/EmployeeDashboard";
 import Employees from "../pages/EmployeeManagement/Employees";
 import Branches from "../pages/EmployeeManagement/Branches";
 import Departments from "../pages/EmployeeManagement/Departments";
+import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboard";
 
 
 const RouterComponent = () => {
@@ -228,6 +229,8 @@ const RouterComponent = () => {
             </>
           }
         />
+
+        <Route path='MyOfficeDashboard' element={<OfficeDashboard />} />
       </Routes>
     </>
   );

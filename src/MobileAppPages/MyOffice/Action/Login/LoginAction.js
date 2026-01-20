@@ -23,7 +23,7 @@ export const handleChange = (e, setFormData, setErrors) => {
     setErrors(prev => ({ ...prev, [name]: '' }));
 };
 
-export const handleSubmit = (e, setIsLoading, formData, setErrors) => {
+export const handleSubmit = (e, setIsLoading, formData, setErrors, navigate) => {
     e.preventDefault();
 
     if (!validateForm(formData, setErrors)) return;
@@ -32,6 +32,6 @@ export const handleSubmit = (e, setIsLoading, formData, setErrors) => {
 
     setTimeout(() => {
         setIsLoading(false);
-        
+        navigate('/MyOfficeDashboard');
     }, 1500);
 };
