@@ -5,7 +5,6 @@ import {
     Building2,
     MapPin,
     Check,
-    Phone,
     Settings
 } from "lucide-react";
 
@@ -13,9 +12,7 @@ const AddBranch = ({ showCanvas, setShowCanvas }) => {
     const [form, setForm] = useState({
         name: "",
         code: "",
-        address: "",
-        phone: "",
-        city: ""
+        address: ""
     });
 
     if (!showCanvas) return null;
@@ -32,7 +29,7 @@ const AddBranch = ({ showCanvas, setShowCanvas }) => {
 
     return (
         <div className={modalStyles.overlay}>
-            <div className={modalStyles.modal} style={{ maxWidth: "600px" }}>
+            <div className={modalStyles.modal} style={{ maxWidth: "500px" }}>
                 {/* Header */}
                 <div className={modalStyles.modalHeader}>
                     <div className={modalStyles.headerLeft}>
@@ -51,63 +48,32 @@ const AddBranch = ({ showCanvas, setShowCanvas }) => {
 
                 {/* Body */}
                 <div className={modalStyles.modalBody} style={{ padding: "24px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                        <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>Branch Name</label>
-                            <div className={modalStyles.inputWrapper}>
-                                <div className={modalStyles.inputIcon}><Building2 size={18} /></div>
-                                <input
-                                    className={modalStyles.input}
-                                    name="name"
-                                    placeholder="Enter branch name"
-                                    value={form.name}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        </div>
 
-                        <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>Branch Code</label>
-                            <div className={modalStyles.inputWrapper}>
-                                <div className={modalStyles.inputIcon}><Settings size={18} /></div>
-                                <input
-                                    className={modalStyles.input}
-                                    name="code"
-                                    placeholder="Enter branch code"
-                                    value={form.code}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                    <div className={modalStyles.inputGroup}>
+                        <label className={modalStyles.label}>Branch Name</label>
+                        <div className={modalStyles.inputWrapper}>
+                            <div className={modalStyles.inputIcon}><Building2 size={18} /></div>
+                            <input
+                                className={modalStyles.input}
+                                name="name"
+                                placeholder="Enter branch name"
+                                value={form.name}
+                                onChange={handleChange}
+                            />
                         </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "16px" }}>
-                        <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>Phone Number</label>
-                            <div className={modalStyles.inputWrapper}>
-                                <div className={modalStyles.inputIcon}><Phone size={18} /></div>
-                                <input
-                                    className={modalStyles.input}
-                                    name="phone"
-                                    placeholder="Enter phone number"
-                                    value={form.phone}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>City</label>
-                            <div className={modalStyles.inputWrapper}>
-                                <div className={modalStyles.inputIcon}><MapPin size={18} /></div>
-                                <input
-                                    className={modalStyles.input}
-                                    name="city"
-                                    placeholder="Enter city"
-                                    value={form.city}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                    <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
+                        <label className={modalStyles.label}>Branch Code</label>
+                        <div className={modalStyles.inputWrapper}>
+                            <div className={modalStyles.inputIcon}><Settings size={18} /></div>
+                            <input
+                                className={modalStyles.input}
+                                name="code"
+                                placeholder="Enter branch code"
+                                value={form.code}
+                                onChange={handleChange}
+                            />
                         </div>
                     </div>
 

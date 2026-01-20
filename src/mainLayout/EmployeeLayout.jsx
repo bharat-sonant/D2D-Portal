@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import EmployeeTopbar from "./EmployeeTopbar";
-import DefaultCitySelection from "../components/DefaultCitySelection/DefaultCitySelection";
 
 const EmployeeLayout = ({ children }) => {
-    const [showDefaultCity, setShowDefaultCity] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
 
     useEffect(() => {
@@ -38,17 +36,10 @@ const EmployeeLayout = ({ children }) => {
 
     return (
         <>
-            <EmployeeTopbar
-                setShowDefaultCity={setShowDefaultCity}
-            />
+            <EmployeeTopbar />
             <div style={{ paddingTop: "60px" }}>
                 {children}
             </div>
-            {showDefaultCity && (
-                <DefaultCitySelection
-                    onClose={() => setShowDefaultCity(false)}
-                />
-            )}
         </>
     );
 };

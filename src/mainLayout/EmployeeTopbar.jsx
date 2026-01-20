@@ -7,27 +7,23 @@ import {
     GitBranch,
     LockKeyhole,
     Frown,
-    Menu
+    Menu,
+    LogOut
 } from "lucide-react";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
-import { useCity } from "../context/CityContext";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import LogoImage from "../components/Common/Image/LogoImage";
 import QuickAppSelection from "./QuickAppSelection";
 
-const EmployeeTopbar = ({ setShowDefaultCity }) => {
+const EmployeeTopbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [firstchar, setFirsthar] = useState("");
     const [secondchar, setSecondhar] = useState("");
     const [showChangePassword, setShowChangePassword] = useState(false);
     const storedName = localStorage.getItem("name");
-    const { cityLogo, city } = useCity();
-    const Logo = cityLogo || images?.wevoisLogo;
-    const titleToShow = city || "D2D PORTAL";
 
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
 
     const menuItems = [
@@ -85,9 +81,9 @@ const EmployeeTopbar = ({ setShowDefaultCity }) => {
             <div className={styles.header}>
                 <div className={styles.headerLeft}>
                     <div className={styles.companyLogo}>
-                        <LogoImage image={Logo} />
-                        <div className={styles.logoText}>
-                            {titleToShow}
+                        <LogoImage image={images?.wevoisLogo} />
+                        <div className={styles.logoText} style={{ cursor: "default" }}>
+                            Employee Management
                         </div>
                     </div>
                 </div>
@@ -120,34 +116,18 @@ const EmployeeTopbar = ({ setShowDefaultCity }) => {
                 </div>
 
                 <div className={styles.headerRight}>
-                    {city && (
-                        <div
-                            className={`${styles.userBadge}`}
-                            onMouseEnter={() => setIsProfileOpen(true)}
-                            onMouseLeave={() => setIsProfileOpen(false)}
-                        >
-                            <button className={`btn ${styles.userDropdownBtn} ${isProfileOpen ? styles.rotateIcon : ""}`}>
-                                <span className={styles.userBG}>
-                                    {firstchar}{secondchar}
-                                </span>
-                                <span className={styles.userName}>{storedName}</span>
-                            </button>
-
-                            {isProfileOpen && (
-                                <ul className={`${styles.dropdownCustom}`}>
-                                    <li onClick={() => setShowQuickAppSelect(true)} className={styles.dropdownLI}>
-                                        <span className={styles.dropdownItem}><Menu size={16} /> Quick Apps</span>
-                                    </li>
-                                    <li onClick={() => setShowChangePassword(true)} className={styles.dropdownLI}>
-                                        <span className={styles.dropdownItem}><LockKeyhole size={16} /> Change Password</span>
-                                    </li>
-                                    <li onClick={handleLogout} className={styles.dropdownLI}>
-                                        <span className={styles.dropdownItem}><Frown size={16} /> Log Out</span>
-                                    </li>
-                                </ul>
-                            )}
-                        </div>
-                    )}
+                    <div
+                        className={`${styles.userBadge}`}
+                        onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
+                        style={{ cursor: "pointer" }}
+                    >
+                        <button className={`btn ${styles.userDropdownBtn}`}>
+                            <span className={styles.userBG}>
+                                {firstchar}{secondchar}
+                            </span>
+                            <span className={styles.userName}>{storedName}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -158,6 +138,9 @@ const EmployeeTopbar = ({ setShowDefaultCity }) => {
             <QuickAppSelection
                 showQuickAppSelect={showQuickAppSelect}
                 onClose={() => setShowQuickAppSelect(false)}
+                isDropdown={true}
+                onChangePassword={() => setShowChangePassword(true)}
+                onLogout={handleLogout}
             />
         </>
     );

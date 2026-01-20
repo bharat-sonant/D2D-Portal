@@ -258,12 +258,11 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
           {city && (
             <div
               className={`${styles.userBadge}`}
-              onMouseEnter={() => setIsProfileOpen(true)}
-              onMouseLeave={() => setIsProfileOpen(false)}
+              onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
+              style={{ cursor: "pointer" }}
             >
               <button
-                className={`btn ${styles.userDropdownBtn} ${isProfileOpen ? styles.rotateIcon : ""
-                  }`}
+                className={`btn ${styles.userDropdownBtn}`}
               >
                 <span className={styles.userBG}>
                   {firstchar}
@@ -271,26 +270,6 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                 </span>
                 <span className={styles.userName}>{storedName}</span>
               </button>
-
-              {isProfileOpen && (
-                <ul className={`${styles.dropdownCustom}`}>
-                  <li onClick={() => setShowQuickAppSelect(true)} className={styles.dropdownLI}>
-                    <span className={styles.dropdownItem}>
-                      <Menu size={16} /> Quick Apps
-                    </span>
-                  </li>
-                  <li onClick={changePass} className={styles.dropdownLI}>
-                    <span className={styles.dropdownItem}>
-                      <LockKeyhole size={16} /> Change Password
-                    </span>
-                  </li>
-                  <li onClick={handleLogout} className={styles.dropdownLI}>
-                    <span className={styles.dropdownItem}>
-                      <Frown size={16} /> Log Out
-                    </span>
-                  </li>
-                </ul>
-              )}
             </div>
           )}
         </div>
@@ -303,6 +282,9 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       <QuickAppSelection
         showQuickAppSelect={showQuickAppSelect}
         onClose={() => setShowQuickAppSelect(false)}
+        isDropdown={true}
+        onChangePassword={changePass}
+        onLogout={handleLogout}
       />
     </>
   );

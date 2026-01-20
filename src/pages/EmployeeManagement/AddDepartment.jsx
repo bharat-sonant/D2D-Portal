@@ -4,15 +4,13 @@ import {
     X,
     GitBranch,
     Check,
-    Settings,
-    AlignLeft
+    Settings
 } from "lucide-react";
 
 const AddDepartment = ({ showCanvas, setShowCanvas }) => {
     const [form, setForm] = useState({
         name: "",
-        code: "",
-        description: ""
+        code: ""
     });
 
     if (!showCanvas) return null;
@@ -29,7 +27,7 @@ const AddDepartment = ({ showCanvas, setShowCanvas }) => {
 
     return (
         <div className={modalStyles.overlay}>
-            <div className={modalStyles.modal} style={{ maxWidth: "500px" }}>
+            <div className={modalStyles.modal} style={{ maxWidth: "450px" }}>
                 {/* Header */}
                 <div className={modalStyles.modalHeader}>
                     <div className={modalStyles.headerLeft}>
@@ -71,22 +69,6 @@ const AddDepartment = ({ showCanvas, setShowCanvas }) => {
                                 name="code"
                                 placeholder="e.g. ENG-01"
                                 value={form.code}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
-                        <label className={modalStyles.label}>Description</label>
-                        <div className={modalStyles.inputWrapper}>
-                            <div className={modalStyles.inputIcon}><AlignLeft size={18} /></div>
-                            <textarea
-                                className={modalStyles.input}
-                                name="description"
-                                placeholder="Briefly describe the department's role"
-                                rows="3"
-                                style={{ height: "auto", padding: "12px 12px 12px 48px" }}
-                                value={form.description}
                                 onChange={handleChange}
                             />
                         </div>
