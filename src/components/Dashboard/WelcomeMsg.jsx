@@ -41,11 +41,17 @@ const WelcomeMsg = () => {
     return styles.night;
   };
 
+  // const getSessionIcon = () => {
+  //   if (greeting.includes("Night")) return <Moon size={40} />;
+  //   // return <Sun size={40} />;
+  //   return <span style={{ fontSize: "35px" }}>☀️</span>;
+  // };
   const getSessionIcon = () => {
-    if (greeting.includes("Night")) return <Moon size={40} />;
-    // return <Sun size={40} />;
-    return <span style={{ fontSize: "35px" }}>☀️</span>;
-  };
+  if (greeting.includes("Morning")) return <span style={{ fontSize: "35px" }}>☀️</span>;
+  if (greeting.includes("Afternoon")) return <span style={{ fontSize: "35px" }}>☀️</span>;
+  if (greeting.includes("Evening")) return <span style={{ fontSize: "35px" }}>🌤️</span>;
+  return <span style={{ fontSize: "35px" }}>🌙</span>;
+};
 
   return (
     <div className={styles.container}>
