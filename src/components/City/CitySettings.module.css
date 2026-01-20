@@ -1,0 +1,217 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: 0.3s ease;
+  z-index: 999;
+}
+
+.backdrop.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.offcanvas {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: calc(100% - 20px);
+  margin: auto 10px;
+  background: var(--white);
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  width: 500px;
+  border-radius: 12px;
+
+  /* Start hidden on right */
+  transform: translateX(110%);
+  transition: transform 0.4s ease-in-out;
+}
+
+/* When open */
+.offcanvas.open {
+  transform: translateX(0);
+}
+
+.OffcanvasHeader {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #667eea0d, #764ba20d);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.OffcanvasHeaderTitle {
+  font-size: 18px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(30%) sepia(19%) saturate(5835%)
+      hue-rotate(343deg) brightness(97%) contrast(94%);
+  }
+}
+.OffcanvasBody {
+  padding: 14px 20px;
+  height: calc(100vh - 90px);
+  overflow: auto;
+}
+.cityCard,
+.firebaseCard {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px #0000000f;
+  margin-bottom: 20px;
+}
+.cityCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.cityName {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+.cityCardRight {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+}
+/* TOGGLE */
+.activeInactiveBadge {
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+  height: 34px;
+}
+/* ACTIVE → show Deactivate */
+.badgeActive {
+  background: #f8d7da;
+  color: #842029;
+  border-color: #f5c2c7;
+}
+
+.badgeActive:hover {
+  background: #f1b0b7;
+}
+
+/* INACTIVE → show Activate */
+.badgeInactive {
+  background: #d1e7dd;
+  color: #0f5132;
+  border-color: #badbcc;
+}
+
+.badgeInactive:hover {
+  background: #a3cfbb;
+}
+
+/* EDIT ICON */
+.editIcon {
+  height: 34px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.editIcon:hover {
+  background: #f5f5f5;
+  border-color: #cccccc;
+}
+.inputGroup {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+.labelText {
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+}
+.inputWrapper {
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+.firebaseInput {
+  width: 100%;
+  padding: 7px 56px 7px 16px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  outline: none;
+  transition: 0.3s ease-in-out;
+  background-color: #f8fafc;
+  font-family: inherit;
+  box-shadow: none;
+  height: 44px;
+  &:focus {
+    background-color: var(--white);
+    border: 1px solid var(--themeColor);
+  }
+  &:hover {
+    border: 1px solid var(--themeColor);
+  }
+}
+.btnSave {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: none;
+  background: var(--gradientTheme);
+  color: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  &:hover {
+    background: var(--themeColor);
+  }
+}
