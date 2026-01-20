@@ -1,18 +1,28 @@
 import dayjs from "dayjs";
-import { createContext, useContext, useEffect, useState} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const LoginContext = createContext();
 
 export const LoginProvider = ({ children }) => {
-  const [isLogin,setIsLogin]=useState(false);  
+  const [isLogin, setIsLogin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      return;
+    }
+
+    if (location.pathname === "/") {
+      return;
+    }
+
     const savedDate = localStorage.getItem("loginDate");
     const isLogin = localStorage.getItem("isLogin");
     const today = dayjs().format("DD/MM/YYYY");
+
     if (!savedDate || isLogin !== "success" || savedDate !== today) {
       localStorage.removeItem("isLogin");
       localStorage.removeItem("loginDate");
@@ -20,7 +30,7 @@ export const LoginProvider = ({ children }) => {
       localStorage.removeItem("userId");
       localStorage.removeItem("city");
       localStorage.removeItem("defaultCity");
-      
+
       navigate("/", { replace: true });
       return;
     }

@@ -64,7 +64,7 @@ const RouterComponent = () => {
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route path="/login" element={<MyOfficeLogin />} />
+        <Route path="/login" element={<><MyOfficeLogin /></>} />
 
         <Route
           path="/Dashboard"
