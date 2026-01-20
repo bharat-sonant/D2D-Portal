@@ -44,7 +44,8 @@ const WelcomeMsg = () => {
 
 const getSessionIcon = () => {
   if (greeting.includes("Night")) return <Moon size={40} />;
-  return <Sun size={40} />;
+  // return <Sun size={40} />;
+  return <span style={{ fontSize: "35px" }}>☀️</span>;
 };
 
   return (
