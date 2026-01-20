@@ -56,9 +56,7 @@ const ForgotPassword = ({ onBack }) => {
   return (
     <div
       className="min-vh-900 d-flex align-items-center justify-content-center"
-      style={{
-        padding: "20px",
-      }}
+
     >
       <div className={styles.forgotBG}>
         {isSuccess ? (

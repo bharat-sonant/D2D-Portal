@@ -70,10 +70,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(
-      rgba(102, 126, 234, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image:
+    linear-gradient(rgba(102, 126, 234, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(102, 126, 234, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
 }
@@ -406,7 +404,8 @@
   box-shadow: 0 0 0 4px #667eea1a;
 }
 .inputWrapper:focus-within .inputIcon {
-filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-rotate(154deg) brightness(93%) contrast(92%);
+  filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%)
+    hue-rotate(154deg) brightness(93%) contrast(92%);
 }
 .togglePassword {
   position: absolute;
@@ -443,7 +442,6 @@ filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-
   position: relative;
   padding-left: 28px;
 }
-
 
 .forgotLink {
   font-size: 13px;
@@ -601,8 +599,264 @@ filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-
   color: #6b7280;
 }
 
+/*************** Login Design 2 *****************/
+
+.designWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.designScreen {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+  /* transition: all 0.8s ease-in-out; */
+}
+
+.designScreen.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.designScreen.hidden {
+  opacity: 0;
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+/* BACKGROUND */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #667eea,
+    #4facfe,
+    #f093fb,
+    #764ba2,
+    #00f2fe
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* FLOATING ORBS */
+.floatingOrbs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  /* animation: float 20s infinite ease-in-out; */
+}
+
+.orbOne {
+  width: 300px;
+  height: 300px;
+  background: #667eea;
+  top: -150px;
+  left: -150px;
+}
+
+.orbTwo {
+  width: 400px;
+  height: 400px;
+  background: #764ba2;
+  bottom: -200px;
+  right: -200px;
+  animation-delay: 6s;
+}
+
+.orbThree {
+  width: 250px;
+  height: 250px;
+  background: #4facfe;
+  top: 50%;
+  left: 50%;
+  animation-delay: 12s;
+}
+
+/* CARD */
+.mainCard {
+  background: #fffffff2;
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1;
+  animation: slideUp 0.8s ease;
+}
+
+/* LEFT */
+.leftSection {
+  padding: 60px 50px;
+  background: var(--gradientTheme);
+  color: var(--white);
+}
+
+.logo {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.logoIcon1 {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+}
+
+.logoText {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.heroTitle {
+  font-size: 36px;
+  font-family: var(--fontGraphikBold);
+  margin-bottom: 5px;
+}
+
+.heroSubtitle {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  margin-bottom: 50px;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.feature {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #ffffff26;
+  transition: 0.3s;
+}
+
+.feature:hover {
+  background: #ffffff40;
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #ffffff40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    color: var(--white);
+  }
+}
+.featureTitle {
+  font-size: 16px;
+  font-family: var(--fontGraphikSemibold);
+}
+.featureDesc {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+}
+/* RIGHT */
+.rightSection {
+  padding: 60px 50px;
+  margin: auto 0;
+}
+
+.welcomeText {
+  font-size: 36px;
+  font-family: var(--fontGraphikSemibold);
+  background: var(--themeColor);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: #64748b;
+  font-family: var(--fontGraphik);
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+/* AI INFO */
+.aiIndicator {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.rightSection .logo {
+  display: none;
+}
+/* ANIMATIONS */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(30px, -30px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1199.98px) {
+  .loginContainer {
+    overflow: auto;
+    min-height: auto;
+  }
   .logoContainerDesktop {
     display: none;
   }
@@ -611,7 +865,7 @@ filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-
     flex-flow: column;
     margin-top: 30px;
   }
-  .brandTitle{
+  .brandTitle {
     font-size: 28px;
   }
   .formSection {
@@ -638,14 +892,48 @@ filter: brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1748%) hue-
   .featureItem {
     text-align: left;
   }
-  .forgotBG{
+  .forgotBG {
     min-width: auto;
     width: 100%;
     padding: 30px 20px;
     margin-left: 5px;
   }
 }
-
+@media (max-width: 968px) {
+  .designWrapper {
+    overflow: clip;
+  }
+  .mainCard {
+    grid-template-columns: 1fr;
+  }
+  .leftSection {
+    display: none;
+  }
+  .rightSection {
+    padding: 30px 16px;
+  }
+  .welcomeText {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 13px;
+  }
+  .logoIcon1 {
+    margin: 0 auto;
+  }
+  .rightSection .logo {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    .logoText {
+      font-size: 13px;
+    }
+  }
+  .welcomeText,
+  .subtitle {
+    text-align: center;
+  }
+}
 @media (max-width: 768px) {
   .formCard {
     padding: 30px 16px;
