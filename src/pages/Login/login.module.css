@@ -633,13 +633,22 @@
 /* BACKGROUND */
 .container {
   min-height: 100vh;
-  background: linear-gradient(
+  /* background:
+    linear-gradient(
     135deg,
     #667eea,
     #4facfe,
     #f093fb,
     #764ba2,
     #00f2fe
+  ); */
+  background: linear-gradient(
+    135deg,
+    #b4c1ff,
+    #75beff,
+    #e990f1,
+    #6a77db,
+    #a6fafe
   );
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
