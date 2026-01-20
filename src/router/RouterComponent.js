@@ -64,6 +64,8 @@ const RouterComponent = () => {
       <Routes>
         <Route path="/" element={<Login />} />
 
+        <Route path="/login" element={<MyOfficeLogin />} />
+
         <Route
           path="/Dashboard"
           element={
@@ -211,8 +213,6 @@ const RouterComponent = () => {
             </>
           }
         />
-
-        <Route path="/login" element={<><MyOfficeLogin /></>} />
       </Routes>
     </>
   );
