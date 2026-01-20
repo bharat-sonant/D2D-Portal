@@ -22,40 +22,41 @@ import { subscribeUserPermissions } from "../services/supabaseServices";
 import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
+import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login";
 
 
 const RouterComponent = () => {
-    const navigate = useNavigate();
-  
-   let userId = localStorage.getItem('userId')
-     const {permissionGranted,setPermissionGranted  
- } = usePermissions();
+  const navigate = useNavigate();
 
-   useEffect(() => {
-  if (!userId) return;
-  const channel = subscribeUserPermissions({
-    userId, 
-    setPermissionGranted,
-  });
-  return () => {
-    if (channel) supabase.removeChannel(channel);
-  };
-}, [userId]);
+  let userId = localStorage.getItem('userId')
+  const { permissionGranted, setPermissionGranted
+  } = usePermissions();
+
+  useEffect(() => {
+    if (!userId) return;
+    const channel = subscribeUserPermissions({
+      userId,
+      setPermissionGranted,
+    });
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
 
-useEffect(() => {
-  if (!userId) return;
+  useEffect(() => {
+    if (!userId) return;
 
-  const fetchPermissions = async () => {
-    const response = await getUserPagesPermissions(userId);
+    const fetchPermissions = async () => {
+      const response = await getUserPagesPermissions(userId);
 
-    if (response?.status === "success") {
-      setPermissionGranted(response.mappedPermissions);
-    }
-  };
+      if (response?.status === "success") {
+        setPermissionGranted(response.mappedPermissions);
+      }
+    };
 
-  fetchPermissions();
-}, [userId]);
+    fetchPermissions();
+  }, [userId]);
 
 
   return (
@@ -63,15 +64,15 @@ useEffect(() => {
       <Routes>
         <Route path="/" element={<Login />} />
 
-       <Route
-  path="/Dashboard"
-  element={
-   <>
-      <MainLayout/>
-      <Dashboard />
-   </>
-  } 
-/>
+        <Route
+          path="/Dashboard"
+          element={
+            <>
+              <MainLayout />
+              <Dashboard />
+            </>
+          }
+        />
 
 
         <Route
@@ -181,19 +182,19 @@ useEffect(() => {
             </ProtectedRouter>
           }
         />
-  
 
-     <Route
+
+        <Route
           path="/users"
           element={
             <ProtectedRouter>
               <>
                 <MainLayout />
                 {(Object.keys(permissionGranted).length > 0 &&
-                    permissionGranted.CanAccessUserPage) ? (
-                  <User/>
+                  permissionGranted.CanAccessUserPage) ? (
+                  <User />
                 ) : Object.keys(permissionGranted).length === 0 ? (
-                 <div>Loading...</div>
+                  <div>Loading...</div>
                 ) : (
                   <Navigate to="/Dashboard" replace />
                 )}
@@ -210,6 +211,8 @@ useEffect(() => {
             </>
           }
         />
+
+        <Route path="/login" element={<><MyOfficeLogin /></>} />
       </Routes>
     </>
   );
