@@ -34,19 +34,18 @@ const WelcomeMsg = () => {
     return () => clearInterval(timer);
   }, []);
 
-
   const getSessionClass = () => {
-  if (greeting.includes("Morning")) return styles.morning;
-  if (greeting.includes("Afternoon")) return styles.afternoon;
-  if (greeting.includes("Evening")) return styles.evening;
-  return styles.night;
-};
+    if (greeting.includes("Morning")) return styles.morning;
+    if (greeting.includes("Afternoon")) return styles.afternoon;
+    if (greeting.includes("Evening")) return styles.evening;
+    return styles.night;
+  };
 
-const getSessionIcon = () => {
-  if (greeting.includes("Night")) return <Moon size={40} />;
-  // return <Sun size={40} />;
-  return <span style={{ fontSize: "35px" }}>☀️</span>;
-};
+  const getSessionIcon = () => {
+    if (greeting.includes("Night")) return <Moon size={40} />;
+    // return <Sun size={40} />;
+    return <span style={{ fontSize: "35px" }}>☀️</span>;
+  };
 
   return (
     <div className={styles.container}>
@@ -77,12 +76,14 @@ const getSessionIcon = () => {
       <div className={styles.content}>
         <div className={styles.greetingSection}>
           <div className={styles.greetingLeft}>
-        <div className={`${styles.sunIcon} ${getSessionClass()}`}>
-       {getSessionIcon()}
+            <div className={`${styles.sunIcon} ${getSessionClass()}`}>
+              {getSessionIcon()}
             </div>
 
             <div>
-              <p className={styles.hello}>Hello, <strong className={styles.bold}> {userName}</strong></p>
+              <p className={styles.hello}>
+                Hello, <strong className={styles.bold}> {userName}</strong>
+              </p>
               <h1 className={styles.greeting}>{greeting}</h1>
               <p className={styles.date}>{currentDate}</p>
             </div>

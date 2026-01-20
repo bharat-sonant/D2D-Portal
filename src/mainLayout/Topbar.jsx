@@ -34,7 +34,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const Logo = cityLogo || images?.wevoisLogo;
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem("defaultCity");
-const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     fetchDefaultCityConfig();
@@ -44,19 +44,64 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
     const res = await getCityFirebaseConfig(defaultCityId);
   };
 
+  // const menuItems = [
+  //   {
+  //     id: "Dashboard",
+  //     label: "Dashboard",
+  //     icon: LayoutDashboard,
+  //     color: "#354db9",
+  //     path: "/Dashboard",
+  //   },
+  //   {
+  //     id: "User",
+  //     label: "User",
+  //     icon: Users,
+  //     color: "#b84dc5",
+  //     path: "/users",
+  //     permissionKey: "CanAccessUserPage",
+  //   },
+  //   {
+  //     id: "City",
+  //     label: "City",
+  //     icon: Building2,
+  //     color: "#3481c6",
+  //     path: "/cities",
+  //   },
+  //   {
+  //     id: "Reports",
+  //     label: "Reports",
+  //     icon: FileText,
+  //     color: "#17a748",
+  //     path: "/reports",
+  //   },
+  //   {
+  //     id: "Monitoring",
+  //     label: "Monitoring",
+  //     icon: Eye,
+  //     color: "#d84672",
+  //     path: "/monitoring",
+  //   },
+  //   {
+  //     id: "Settings",
+  //     label: "Settings",
+  //     icon: Settings,
+  //     color: "#6e35a5",
+  //     path: "/settings",
+  //   },
+  // ];
   const menuItems = [
     {
       id: "Dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
-      color: "#354db9",
+      color: "var(--themeColor)",
       path: "/Dashboard",
     },
     {
       id: "User",
       label: "User",
       icon: Users,
-      color: "#b84dc5",
+      color: "var(--themeColor)",
       path: "/users",
       permissionKey: "CanAccessUserPage",
     },
@@ -64,32 +109,31 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
       id: "City",
       label: "City",
       icon: Building2,
-      color: "#3481c6",
+      color: "var(--themeColor)",
       path: "/cities",
     },
     {
       id: "Reports",
       label: "Reports",
       icon: FileText,
-      color: "#17a748",
+      color: "var(--themeColor)",
       path: "/reports",
     },
     {
       id: "Monitoring",
       label: "Monitoring",
       icon: Eye,
-      color: "#d84672",
+      color: "var(--themeColor)",
       path: "/monitoring",
     },
     {
       id: "Settings",
       label: "Settings",
       icon: Settings,
-      color: "#6e35a5",
+      color: "var(--themeColor)", 
       path: "/settings",
     },
   ];
-
   useEffect(() => {
     if (storedName) {
       let nameParts = storedName.split(" ");
@@ -195,7 +239,7 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
                     {item.label}
                   </span>
 
-                  {isActive && <div className={styles.activeIndicator} />}
+                  {/* {isActive && <div className={styles.activeIndicator} />} */}
                 </Link>
               );
             })}
@@ -213,14 +257,16 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
 
           {/* User */}
           {city && (
-<div
-  className={`${styles.userBadge}`}
-  onMouseEnter={() => setIsProfileOpen(true)}
-  onMouseLeave={() => setIsProfileOpen(false)}
->
-<button className={`btn ${styles.userDropdownBtn} ${
-    isProfileOpen ? styles.rotateIcon : ""
-  }`}>
+            <div
+              className={`${styles.userBadge}`}
+              onMouseEnter={() => setIsProfileOpen(true)}
+              onMouseLeave={() => setIsProfileOpen(false)}
+            >
+              <button
+                className={`btn ${styles.userDropdownBtn} ${
+                  isProfileOpen ? styles.rotateIcon : ""
+                }`}
+              >
                 <span className={styles.userBG}>
                   {firstchar}
                   {secondchar}
@@ -228,20 +274,20 @@ const [isProfileOpen, setIsProfileOpen] = useState(false);
                 <span className={styles.userName}>{storedName}</span>
               </button>
 
-{isProfileOpen && (
-  <ul className={`${styles.dropdownCustom}`}>
-    <li onClick={changePass} className={styles.dropdownLI}>
-      <span className={styles.dropdownItem}>
-        <LockKeyhole size={16} /> Change Password
-      </span>
-    </li>
-    <li onClick={handleLogout} className={styles.dropdownLI}>
-      <span className={styles.dropdownItem}>
-        <Frown size={16} /> Log Out
-      </span>
-    </li>
-  </ul>
-)}
+              {isProfileOpen && (
+                <ul className={`${styles.dropdownCustom}`}>
+                  <li onClick={changePass} className={styles.dropdownLI}>
+                    <span className={styles.dropdownItem}>
+                      <LockKeyhole size={16} /> Change Password
+                    </span>
+                  </li>
+                  <li onClick={handleLogout} className={styles.dropdownLI}>
+                    <span className={styles.dropdownItem}>
+                      <Frown size={16} /> Log Out
+                    </span>
+                  </li>
+                </ul>
+              )}
             </div>
           )}
         </div>
