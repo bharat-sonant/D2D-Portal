@@ -22,7 +22,7 @@ import { subscribeUserPermissions } from "../services/supabaseServices";
 import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
-import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login";
+import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
 
 
 const RouterComponent = () => {

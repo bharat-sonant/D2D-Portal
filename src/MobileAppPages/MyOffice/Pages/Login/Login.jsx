@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { FaUserAlt } from "react-icons/fa";
-import style from '../Style/Login/Login.module.css';
-import { images } from '../../../assets/css/imagePath';
-import ErrorMessage from '../../../components/ErrorMessage/ErrorMessage';
-import * as loginAction from '../Action/Login/LoginAction';
+import style from '../../Style/Login/Login.module.css';
+import { images } from '../../../../assets/css/imagePath';
+import ErrorMessage from '../../../../components/ErrorMessage/ErrorMessage';
+import * as loginAction from '../../Action/Login/LoginAction';
 
 const MyOfficeLogin = () => {
     const [formData, setFormData] = useState({ empCode: '', password: '' });
