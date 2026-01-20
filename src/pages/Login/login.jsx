@@ -46,7 +46,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const DESIGN_DURATION = 3 * 24 * 60 * 60 * 1000; 
-  // const DESIGN_DURATION = 15 * 1000;
+  // const DESIGN_DURATION = 30 * 1000;
 
 
   const [activeDesign, setActiveDesign] = useState(1);
