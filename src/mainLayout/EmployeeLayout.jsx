@@ -38,7 +38,9 @@ const EmployeeLayout = ({ children }) => {
 
     return (
         <>
-            <EmployeeTopbar setShowDefaultCity={setShowDefaultCity} />
+            <EmployeeTopbar
+                setShowDefaultCity={setShowDefaultCity}
+            />
             <div style={{ paddingTop: "60px" }}>
                 {children}
             </div>
