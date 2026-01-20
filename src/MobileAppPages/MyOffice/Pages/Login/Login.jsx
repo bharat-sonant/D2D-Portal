@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, X } from 'lucide-react';
 import { FaUserAlt } from "react-icons/fa";
 import style from '../../Style/Login/Login.module.css';
 import { images } from '../../../../assets/css/imagePath';
@@ -13,6 +13,9 @@ const MyOfficeLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showForgotPopup, setShowForgotPopup] = useState(false);
+    const [forgotEmpCode, setForgotEmpCode] = useState('');
+    const [forgotError, setForgotError] = useState('');
     const navigate = useNavigate();
 
     const handleOnChange = (e) => {
@@ -21,6 +24,16 @@ const MyOfficeLogin = () => {
 
     const onSubmit = (e) => {
         loginAction.handleSubmit(e, setIsLoading, formData, setErrors, navigate);
+    }
+
+    const handleForgetSubmit = () => {
+        loginAction.onForgotSubmit(forgotEmpCode, setForgotError);
+    }
+
+    const handleClose = () => {
+        setShowForgotPopup(false);
+        setForgotEmpCode('');
+        setForgotError('');
     }
 
     return (
@@ -93,7 +106,16 @@ const MyOfficeLogin = () => {
                                 />
                                 Remember me
                             </label>
-                            <a href="#" className={style.forgotLink}>Forgot Password?</a>
+                            <span
+                                className={style.forgotLink}
+                                onClick={() => setShowForgotPopup(true)}
+                                role="button"
+                                tabIndex={0}
+                            >
+                                Forgot Password?
+                            </span>
+
+
                         </div>
                         <button type="submit" className={style.loginButton} disabled={isLoading}>
                             {isLoading ? (
@@ -106,6 +128,35 @@ const MyOfficeLogin = () => {
                     </form>
                 </div>
             </div>
+
+            {showForgotPopup && (
+                <div className={style.popupOverlay}>
+                    <div className={style.popupContainer}>
+                        <div className={style.popupHeader}>
+                            <h5>Forgot Password</h5>
+                            <span className={style.closeBtn} onClick={handleClose} >
+                                <X size={20} />
+                            </span>
+                        </div>
+
+                        <div className={style.popupBody}>
+                            <div className={style.inputWrapper}>
+                                <span className={style.inputIcon}>
+                                    <FaUserAlt size={16} />
+                                </span>
+                                <input type="text" value={forgotEmpCode} onChange={(e) => setForgotEmpCode(e.target.value)} placeholder="Enter your employee code" className={style.formInput} />
+                            </div>
+                            {forgotError && <ErrorMessage message={forgotError} />}
+
+                            <button className={style.loginButton} onClick={handleForgetSubmit} >
+                                Get Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
         </div>
     );
 };
