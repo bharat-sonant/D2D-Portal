@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Offcanvas } from 'react-bootstrap';
-import style from '../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.module.css';
-import { Edit2, Flame, Save } from 'lucide-react';
-import { images } from '../../assets/css/imagePath';
-import LogoImage from '../Common/Image/LogoImage';
+import { useState, useEffect } from "react";
+// import style from '../../MobileAppPages/Tasks/Styles/HistoryData/HistoryData.module.css';
+import style from "./CitySettings.module.css";
+import { Edit2, Database, Save, X } from "lucide-react";
+import LogoImage from "../Common/Image/LogoImage";
 import { FaSpinner } from "react-icons/fa";
-import ConfirmationModal from '../confirmationModal/ConfirmationModal';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
-import GlobalAlertModal from '../GlobalAlertModal/GlobalAlertModal';
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import GlobalAlertModal from "../GlobalAlertModal/GlobalAlertModal";
+import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const CitySettings = ({
   openCanvas,
@@ -15,10 +14,12 @@ const CitySettings = ({
   selectedCity,
   onClickEdit,
   setStatusConfirmation,
-  onSaveFirebaseConfig
+  onSaveFirebaseConfig,
 }) => {
-  const [toggle, setToggle] = useState(selectedCity?.status === 'active' || false);
-  const [dbUrl, setDbUrl] = useState('');
+  const [toggle, setToggle] = useState(
+    selectedCity?.status === "active" || false,
+  );
+  const [dbUrl, setDbUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -27,9 +28,9 @@ const CitySettings = ({
     if (selectedCity?.firebase_db_path) {
       setDbUrl(selectedCity.firebase_db_path);
     } else {
-      setDbUrl('');
+      setDbUrl("");
     }
-    setToggle(selectedCity?.status === 'active' || false);
+    setToggle(selectedCity?.status === "active" || false);
   }, [selectedCity]);
 
   const handleToggle = (e) =>
@@ -44,7 +45,7 @@ const CitySettings = ({
 
     try {
       const url = new URL(dbUrl);
-      if (!url.hostname.endsWith('firebaseio.com')) {
+      if (!url.hostname.endsWith("firebaseio.com")) {
         setError("Invalid URL. Must be a valid 'firebaseio.com' URL");
         return;
       }
@@ -68,47 +69,56 @@ const CitySettings = ({
   };
 
   return (
-    <Offcanvas
-      placement="end"
-      show={openCanvas}
-      onHide={onHide}
-      className={style.responsiveOffcanvas}
-      style={{ width: '45%' }}
-    >
-      <div className={style.canvas_container}>
+    <>
+      {/* Backdrop */}
+      <div
+        className={`${style.backdrop} ${openCanvas ? style.show : ""}`}
+        onClick={onHide}
+      />
+
+      {/* Offcanvas Panel */}
+      <div className={`${style.offcanvas} ${openCanvas ? style.open : ""}`}>
         <div className={style.OffcanvasHeader}>
-          <h4 className={style.header_title}>City Settings</h4>
+          <div className={style.OffcanvasHeaderTitle}>City Settings</div>
+          <button className={style.closeBtn} onClick={onHide}>
+            <X size={20} />
+          </button>
         </div>
 
-        <div className={style.scroll_section}>
-          <div className={style.canvas_header_end}>
-            <img
-              src={images.iconClose}
-              className={style.close_popup}
-              onClick={onHide}
-              alt="Close"
-            />
-          </div>
-
+        <div className={style.OffcanvasBody}>
           {/* City Info */}
-          <div className={style.taskControlCard}>
-            <div className={style.controlRow}>
+          <div className={style.cityCard}>
+            <div className={style.cityCardLeft}>
               <LogoImage image={selectedCity?.logoUrl} />
-              <h3 className={style.taskName}>
-                {selectedCity?.city_name || 'N/A'}
-              </h3>
-
-              <div className={style.actionButtons}>
-                <button
-                  className={style.editButton}
-                  onClick={onClickEdit}
-                  title="Edit City"
-                >
-                  <Edit2 size={18} />
-                </button>
+              <div className={style.cityName}>
+                {selectedCity?.city_name || "N/A"}
+              </div>
+            </div>
+            <div className={style.cityCardRight}>
+              <div
+                className={`${style.activeInactiveBadge} ${
+                  toggle ? style.badgeActive : style.badgeInactive
+                }`}
+                onClick={() =>
+                  setStatusConfirmation({
+                    status: true,
+                    data: !toggle, // toggle flip
+                    setToggle,
+                  })
+                }
+              >
+                {toggle ? "Deactivate" : "Activate"}
               </div>
 
-              <div className={style.statusSection}>
+              <button
+                className={style.editIcon}
+                onClick={onClickEdit}
+                title="Edit City"
+              >
+                <Edit2 size={14} />
+              </button>
+
+              {/* <div className={style.statusSection}>
                 <label className={style.toggleSwitch}>
                   <input
                     type="checkbox"
@@ -118,29 +128,27 @@ const CitySettings = ({
                   <span className={style.toggleSlider}></span>
                 </label>
                 <span
-                  className={`${style.statusText} ${toggle ? style.active : style.inactive
-                    }`}
+                  className={`${style.statusText} ${
+                    toggle ? style.active : style.inactive
+                  }`}
                 >
-                  {toggle ? 'Active' : 'Inactive'}
+                  {toggle ? "Active" : "Inactive"}
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
 
-          {/* 🔥 New Column : Firebase Connectivity */}
-          <div className={style.taskControlCard}>
-            <div className={style.controlRow} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-
-              {/* Header: Icon + Label */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
-                <Flame size={18} className={style.icon} style={{ color: '#f57c00' }} />
-                <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#555', margin: 0 }}>
+          {/* Firebase Section */}
+          <div className={style.firebaseCard}>
+            <div className={style.inputGroup}>
+              <div className={style.labelRow}>
+                <Database size={14} />
+                <label className={style.labelText}>
                   Firebase Database Path
                 </label>
               </div>
 
-              {/* Body: Input + Button */}
-              <div style={{ display: 'flex', gap: '10px', width: '100%', alignItems: 'center' }}>
+              <div className={style.inputWrapper}>
                 <input
                   type="text"
                   value={dbUrl}
@@ -149,43 +157,36 @@ const CitySettings = ({
                     if (error) setError(false);
                   }}
                   placeholder="Enter Database URL"
-                  className="form-control"
-                  style={{ fontSize: '14px', flex: 1 }}
+                  className={style.firebaseInput}
                 />
+
                 <button
-                  className={style.editButton}
+                  className={style.btnSave}
                   onClick={handleSave}
-                  title="Save Firebase Config"
                   disabled={loading}
-                  style={{ padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  {loading ? <FaSpinner className="fa-spin" /> : <Save size={18} />}
+                  {loading ? <GlobalSpinnerLoader /> : <Save size={16} />}
                 </button>
               </div>
-              {error && (
-                <div style={{ width: '100%' }}>
-                  <ErrorMessage message={error} />
-                </div>
-              )}
+
+              {error && <ErrorMessage message={error} />}
             </div>
           </div>
-
         </div>
-      </div>
 
-      <GlobalAlertModal
-        show={showConfirmModal}
-        iconType='success'
-        title="Update Firebase URL?"
-        message={`Are you sure you want to change the Firebase Database Path ${dbUrl}`}
-        // successText="Firebase Database Path updated successfully."
-        buttonText="Yes, Update"
-        cancelText="Cancel"
-        onConfirm={handleConfirmSave}
-        onCancel={() => setShowConfirmModal(false)}
-        btnColor="#f57c00"
-      />
-    </Offcanvas>
+        <GlobalAlertModal
+          show={showConfirmModal}
+          iconType="success"
+          title="Update Firebase URL?"
+          message={`Are you sure you want to change the Firebase Database Path ${dbUrl}`}
+          buttonText="Yes, Update"
+          cancelText="Cancel"
+          onConfirm={handleConfirmSave}
+          onCancel={() => setShowConfirmModal(false)}
+          btnColor="#f57c00"
+        />
+      </div>
+    </>
   );
 };
 
