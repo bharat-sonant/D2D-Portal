@@ -11,6 +11,7 @@ import {
   Frown,
   Ellipsis,
   X,
+  Menu
 } from "lucide-react";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
@@ -19,6 +20,7 @@ import ChangePassword from "../components/ChangePassword/changePassword";
 import { getCityFirebaseConfig } from "../services/CityService/firebaseConfigService";
 import LogoImage from "../components/Common/Image/LogoImage";
 import { usePermissions } from "../context/PermissionContext";
+import QuickAppSelection from "./QuickAppSelection";
 
 const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const location = useLocation();
@@ -35,6 +37,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
   const titleToShow = city || customTitle || storedCity || "D2D PORTAL";
   const defaultCityId = localStorage.getItem("defaultCity");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
 
   useEffect(() => {
     fetchDefaultCityConfig();
@@ -130,7 +133,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       id: "Settings",
       label: "Settings",
       icon: Settings,
-      color: "var(--themeColor)", 
+      color: "var(--themeColor)",
       path: "/settings",
     },
   ];
@@ -197,9 +200,8 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
         {/* DESKTOP + MOBILE MENU */}
         <div
-          className={`${styles.desktopMenu} ${
-            showMobileMenu ? styles.mobileMenuOpen : ""
-          }`}
+          className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
+            }`}
         >
           {menuItems
             .filter((item) => {
@@ -214,9 +216,8 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                 <Link
                   key={item.id}
                   to={item.path}
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.menuItemActive : ""
-                  }`}
+                  className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
+                    }`}
                   style={{
                     animationDelay: `${index * 0.1}s`,
                     "--menu-color": item.color,
@@ -224,17 +225,15 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                   onClick={() => setShowMobileMenu(false)}
                 >
                   <div
-                    className={`${styles.menuIcon} ${
-                      isActive ? styles.menuIconActive : ""
-                    }`}
+                    className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
+                      }`}
                   >
                     <Icon className={styles.navIcon} size={20} />
                   </div>
 
                   <span
-                    className={`${styles.menuLabel} ${
-                      isActive ? styles.menuLabelActive : ""
-                    }`}
+                    className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
+                      }`}
                   >
                     {item.label}
                   </span>
@@ -263,9 +262,8 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
               onMouseLeave={() => setIsProfileOpen(false)}
             >
               <button
-                className={`btn ${styles.userDropdownBtn} ${
-                  isProfileOpen ? styles.rotateIcon : ""
-                }`}
+                className={`btn ${styles.userDropdownBtn} ${isProfileOpen ? styles.rotateIcon : ""
+                  }`}
               >
                 <span className={styles.userBG}>
                   {firstchar}
@@ -276,6 +274,11 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
               {isProfileOpen && (
                 <ul className={`${styles.dropdownCustom}`}>
+                  <li onClick={() => setShowQuickAppSelect(true)} className={styles.dropdownLI}>
+                    <span className={styles.dropdownItem}>
+                      <Menu size={16} /> Quick Apps
+                    </span>
+                  </li>
                   <li onClick={changePass} className={styles.dropdownLI}>
                     <span className={styles.dropdownItem}>
                       <LockKeyhole size={16} /> Change Password
@@ -296,6 +299,10 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       <ChangePassword
         showChangePassword={showChangePassword}
         setShowChangePassword={setShowChangePassword}
+      />
+      <QuickAppSelection
+        showQuickAppSelect={showQuickAppSelect}
+        onClose={() => setShowQuickAppSelect(false)}
       />
     </>
   );

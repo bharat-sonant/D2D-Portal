@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import MainLayout from "../mainLayout/MainLayout";
+import EmployeeLayout from "../mainLayout/EmployeeLayout";
 import { useNavigate } from "react-router-dom";
 import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/pages/StartAssignment/StartAssignment";
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
@@ -23,6 +24,12 @@ import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
+
+// Employee section pages
+import EmployeeDashboard from "../pages/EmployeeManagement/EmployeeDashboard";
+import Employees from "../pages/EmployeeManagement/Employees";
+import Branches from "../pages/EmployeeManagement/Branches";
+import Departments from "../pages/EmployeeManagement/Departments";
 
 
 const RouterComponent = () => {
@@ -76,6 +83,14 @@ const RouterComponent = () => {
           }
         />
 
+        {/* Employee Management Section */}
+        <Route path="/employee/dashboard" element={<ProtectedRouter><EmployeeLayout><EmployeeDashboard /></EmployeeLayout></ProtectedRouter>} />
+        <Route path="/employee/employees" element={<ProtectedRouter><EmployeeLayout><Employees /></EmployeeLayout></ProtectedRouter>} />
+        <Route path="/employee/branches" element={<ProtectedRouter><EmployeeLayout><Branches /></EmployeeLayout></ProtectedRouter>} />
+        <Route path="/employee/departments" element={<ProtectedRouter><EmployeeLayout><Departments /></EmployeeLayout></ProtectedRouter>} />
+
+        {/* Redirect old path */}
+        <Route path="/employee-management" element={<Navigate to="/employee/dashboard" replace />} />
 
         <Route
           path="/start-assignment"
