@@ -35,3 +35,22 @@ export const handleSubmit = (e, setIsLoading, formData, setErrors, navigate) => 
         navigate('/MyOfficeDashboard');
     }, 1500);
 };
+
+export const validateForgotEmpCode = (forgotEmpCode, setForgotError) => {
+    if (!forgotEmpCode.trim()) {
+        setForgotError('Employee code is required');
+        return false;
+    }
+
+    if (forgotEmpCode.trim().length < 3) {
+        setForgotError('Employee code must be at least 3 characters');
+        return false;
+    }
+
+    setForgotError('');
+    return true;
+};
+
+export const onForgotSubmit = (forgotEmpCode, setForgotError) => {
+    if (!validateForgotEmpCode(forgotEmpCode, setForgotError)) return;
+}
