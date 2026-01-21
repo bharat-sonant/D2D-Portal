@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import styles from "../Reports/Reports.module.css";
+import styles from "../../pages/Reports/Reports.module.css";
 import { Search, Plus, User, MoreVertical, Edit2, Trash2, Loader2 } from "lucide-react";
-import AddEmployee from "./AddEmployee";
+import AddEmployee from "../components/AddEmployee";
 import { getEmployeesAction, deleteEmployeeAction } from "../../services/EmployeeService/EmployeeAction";
 
 const Employees = () => {
@@ -25,9 +25,8 @@ const Employees = () => {
     };
 
     const handleDelete = (emp) => {
-        if (window.confirm(`Are you sure you want to delete ${emp["Employee Name"]}?`)) {
-            // sbs.deleteData uses 'id' by default. I used employeeCode in EmployeeService.js but schema has 'id'.
-            // I'll ensure I pass the correct ID.
+        if (window.confirm(`Are you sure you want to delete ${emp.employee_name}?`)) {
+            // Using the internal 'id' as the common deleteData uses the 'id' column
             deleteEmployeeAction(
                 emp.id,
                 (msg) => {
@@ -40,8 +39,8 @@ const Employees = () => {
     };
 
     const filteredEmployees = employees.filter(emp =>
-        (emp["Employee Name"] || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (emp["Employee Code"]?.toString() || "").includes(searchTerm)
+        (emp.employee_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (emp.employee_code?.toString() || "").includes(searchTerm)
     );
 
     return (
@@ -91,6 +90,7 @@ const Employees = () => {
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Code</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Contact</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Branch</th>
+                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Status</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)", textAlign: "center" }}>Actions</th>
                             </tr>
                         </thead>
@@ -112,18 +112,30 @@ const Employees = () => {
                                     <td style={{ padding: "15px 20px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                                             <div style={{ width: "35px", height: "35px", borderRadius: "50%", background: "var(--gradientTheme)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>
-                                                {emp["Employee Name"]?.charAt(0) || "U"}
+                                                {emp.employee_name?.charAt(0) || "U"}
                                             </div>
                                             <div>
-                                                <div style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{emp["Employee Name"]}</div>
-                                                <div style={{ fontSize: "12px", color: "var(--textMuted)" }}>{emp["Email Address"] || "N/A"}</div>
+                                                <div style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{emp.employee_name}</div>
+                                                <div style={{ fontSize: "12px", color: "var(--textMuted)" }}>{emp.email || "N/A"}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp["Employee Code"]}</td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp["Phone Number"] || "N/A"}</td>
+                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp.employee_code}</td>
+                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp.phone_number || "N/A"}</td>
                                     <td style={{ padding: "15px 20px" }}>
-                                        <span style={{ padding: "4px 10px", borderRadius: "20px", background: "#edf2ff", color: "#445add", fontSize: "12px", fontWeight: "500" }}>{emp["Branch Name"] || "N/A"}</span>
+                                        <span style={{ padding: "4px 10px", borderRadius: "20px", background: "#edf2ff", color: "#445add", fontSize: "12px", fontWeight: "500" }}>{emp.branch_id || "N/A"}</span>
+                                    </td>
+                                    <td style={{ padding: "15px 20px" }}>
+                                        <span style={{
+                                            padding: "4px 10px",
+                                            borderRadius: "20px",
+                                            background: emp.status ? "#ecfdf5" : "#fef2f2",
+                                            color: emp.status ? "#059669" : "#dc2626",
+                                            fontSize: "12px",
+                                            fontWeight: "500"
+                                        }}>
+                                            {emp.status ? "Active" : "Inactive"}
+                                        </span>
                                     </td>
                                     <td style={{ padding: "15px 20px", textAlign: "center" }}>
                                         <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>

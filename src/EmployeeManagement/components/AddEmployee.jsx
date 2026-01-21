@@ -14,11 +14,12 @@ import { saveEmployeeAction, getBranchesAction } from "../../services/EmployeeSe
 
 const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) => {
     const [form, setForm] = useState({
-        "Employee Name": "",
-        "Phone Number": "",
-        "Email Address": "",
-        "Employee Code": "",
-        "Branch Name": ""
+        employee_name: "",
+        phone_number: "",
+        email: "",
+        employee_code: "",
+        branch_id: "",
+        status: true
     });
     const [branches, setBranches] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -30,19 +31,22 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
             if (employeeToEdit) {
                 setForm({
                     id: employeeToEdit.id,
-                    "Employee Name": employeeToEdit["Employee Name"] || "",
-                    "Phone Number": employeeToEdit["Phone Number"] || "",
-                    "Email Address": employeeToEdit["Email Address"] || "",
-                    "Employee Code": employeeToEdit["Employee Code"] || "",
-                    "Branch Name": employeeToEdit["Branch Name"] || ""
+                    employee_name: employeeToEdit.employee_name || "",
+                    phone_number: employeeToEdit.phone_number || "",
+                    email: employeeToEdit.email || "",
+                    employee_code: employeeToEdit.employee_code || "",
+                    branch_id: employeeToEdit.branch_id || "",
+                    status: employeeToEdit.status ?? true,
+                    created_at: employeeToEdit.created_at
                 });
             } else {
                 setForm({
-                    "Employee Name": "",
-                    "Phone Number": "",
-                    "Email Address": "",
-                    "Employee Code": "",
-                    "Branch Name": ""
+                    employee_name: "",
+                    phone_number: "",
+                    email: "",
+                    employee_code: "",
+                    branch_id: "",
+                    status: true
                 });
             }
         }
@@ -56,7 +60,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
     };
 
     const handleSave = () => {
-        if (!form["Employee Name"] || !form["Employee Code"]) {
+        if (!form.employee_name || !form.employee_code) {
             alert("Employee Name and Code are required");
             return;
         }
@@ -106,9 +110,9 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                 <div className={modalStyles.inputIcon}><User size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="Employee Name"
+                                    name="employee_name"
                                     placeholder="Enter full name"
-                                    value={form["Employee Name"]}
+                                    value={form.employee_name}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -121,10 +125,10 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                 <div className={modalStyles.inputIcon}><Hash size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="Employee Code"
+                                    name="employee_code"
                                     placeholder="e.g. 1001"
                                     type="number"
-                                    value={form["Employee Code"]}
+                                    value={form.employee_code}
                                     onChange={handleChange}
                                     disabled={!!employeeToEdit} // Usually unique IDs shouldn't change
                                 />
@@ -140,10 +144,10 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                 <div className={modalStyles.inputIcon}><Phone size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="Phone Number"
+                                    name="phone_number"
                                     placeholder="Enter phone number"
                                     type="number"
-                                    value={form["Phone Number"]}
+                                    value={form.phone_number}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -156,9 +160,9 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                 <div className={modalStyles.inputIcon}><Mail size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="Email Address"
+                                    name="email"
                                     placeholder="Enter email address"
-                                    value={form["Email Address"]}
+                                    value={form.email}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -173,8 +177,8 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                 <div className={modalStyles.inputIcon}><Building2 size={18} /></div>
                                 <select
                                     className={modalStyles.input}
-                                    name="Branch Name"
-                                    value={form["Branch Name"]}
+                                    name="branch_id"
+                                    value={form.branch_id}
                                     onChange={handleChange}
                                     style={{ paddingLeft: "45px", appearance: "none" }}
                                 >
@@ -195,6 +199,20 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     <Hash size={12} style={{ opacity: 0 }} /> {/* Spacer */}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Status Toggle */}
+                        <div className={modalStyles.inputGroup}>
+                            <label className={modalStyles.label} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                                <input
+                                    type="checkbox"
+                                    name="status"
+                                    checked={form.status}
+                                    onChange={(e) => setForm(prev => ({ ...prev, status: e.target.checked }))}
+                                    style={{ width: "18px", height: "18px" }}
+                                />
+                                Active Status
+                            </label>
                         </div>
                     </div>
 

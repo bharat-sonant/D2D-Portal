@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import styles from "../Reports/Reports.module.css";
-import { GitBranch, Plus, Edit2, Trash2, Settings } from "lucide-react";
-import AddDepartment from "./AddDepartment";
+import styles from "../../pages/Reports/Reports.module.css";
+import { Building2, Plus, Edit2, Trash2, MapPin } from "lucide-react";
+import AddBranch from "../components/AddBranch";
 
-const staticDepartments = [
-    { id: 1, name: "Engineering", code: "ENG-HUB" },
-    { id: 2, name: "Marketing & Sales", code: "MKT-SALES" },
-    { id: 3, name: "Human Resources", code: "HR-PEOPLE" },
-    { id: 4, name: "Finance & Accounts", code: "FIN-ACC" },
-    { id: 5, name: "Operations", icon: GitBranch, code: "OPS-TEAM" },
+const staticBranches = [
+    { id: 1, name: "Jaipur Main Office", code: "JPR-01", address: "Plot No. 12, Vidhyadhar Nagar, Jaipur, Rajasthan" },
+    { id: 2, name: "Delhi West Branch", code: "DL-02", address: "B-45, Janakpuri, New Delhi" },
+    { id: 3, name: "Mumbai South Hub", code: "MUM-01", address: "Maker Chambers, Nariman Point, Mumbai" },
+    { id: 4, name: "Pune Tech Center", code: "PNE-04", address: "Hinjewadi Phase 1, Pune, Maharashtra" },
 ];
 
-const Departments = () => {
+const Branches = () => {
     const [showAddModal, setShowAddModal] = useState(false);
 
     return (
@@ -24,36 +23,42 @@ const Departments = () => {
             </div>
             <div style={{ position: "relative", zIndex: 1, padding: "30px" }}>
                 <div style={{ marginBottom: "25px" }}>
-                    <h2 style={{ fontFamily: "var(--fontGraphikBold)", margin: 0 }}>Department Management</h2>
-                    <p style={{ color: "var(--textMuted)", fontSize: "14px", marginTop: "5px" }}>Define and organize company departments and structures</p>
+                    <h2 style={{ fontFamily: "var(--fontGraphikBold)", margin: 0 }}>Branch Management</h2>
+                    <p style={{ color: "var(--textMuted)", fontSize: "14px", marginTop: "5px" }}>Manage all company physical locations and codes</p>
                 </div>
 
                 <div style={{
                     background: "var(--white)",
                     borderRadius: "12px",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                    overflow: "hidden",
-                    maxWidth: "800px"
+                    overflow: "hidden"
                 }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
                         <thead>
                             <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--borderColor)" }}>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Department Name</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Dept Code</th>
+                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Branch Name</th>
+                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Code</th>
+                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Address</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)", textAlign: "center" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {staticDepartments.map((dept) => (
-                                <tr key={dept.id} style={{ borderBottom: "1px solid var(--borderColor)" }}>
+                            {staticBranches.map((branch) => (
+                                <tr key={branch.id} style={{ borderBottom: "1px solid var(--borderColor)" }}>
                                     <td style={{ padding: "15px 20px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                            <div style={{ color: "#17a748" }}><GitBranch size={18} /></div>
-                                            <span style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{dept.name}</span>
+                                            <div style={{ color: "var(--themeColor)" }}><Building2 size={18} /></div>
+                                            <span style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{branch.name}</span>
                                         </div>
                                     </td>
                                     <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                        <code style={{ background: "#f0fdf4", color: "#166534", padding: "2px 6px", borderRadius: "4px", fontSize: "12px", border: "1px solid #dcfce7" }}>{dept.code}</code>
+                                        <code style={{ background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{branch.code}</code>
+                                    </td>
+                                    <td style={{ padding: "15px 20px", fontSize: "14px", color: "var(--textMuted)", maxWidth: "300px" }}>
+                                        <div style={{ display: "flex", alignItems: "flex-start", gap: "5px" }}>
+                                            <MapPin size={14} style={{ marginTop: "3px", flexShrink: 0 }} />
+                                            {branch.address}
+                                        </div>
                                     </td>
                                     <td style={{ padding: "15px 20px", textAlign: "center" }}>
                                         <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
@@ -91,12 +96,12 @@ const Departments = () => {
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1) translateY(-5px)"}
                 onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1) translateY(0)"}
-                title="Add New Department"
+                title="Add New Branch"
             >
                 <Plus size={28} />
             </button>
 
-            <AddDepartment
+            <AddBranch
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
             />
@@ -104,4 +109,4 @@ const Departments = () => {
     );
 };
 
-export default Departments;
+export default Branches;

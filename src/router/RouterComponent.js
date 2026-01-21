@@ -26,10 +26,10 @@ import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
 
 // Employee section pages
-import EmployeeDashboard from "../pages/EmployeeManagement/EmployeeDashboard";
-import Employees from "../pages/EmployeeManagement/Employees";
-import Branches from "../pages/EmployeeManagement/Branches";
-import Departments from "../pages/EmployeeManagement/Departments";
+import EmployeeDashboard from "../EmployeeManagement/pages/EmployeeDashboard";
+import Employees from "../EmployeeManagement/pages/Employees";
+import Branches from "../EmployeeManagement/pages/Branches";
+import Departments from "../EmployeeManagement/pages/Departments";
 import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboard";
 import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
 import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
@@ -97,7 +97,7 @@ const RouterComponent = () => {
           path="/fuel/add-field-employee"
           element={
             <ProtectedRouter>
-              <FuelManagementLayout/>
+              <FuelManagementLayout />
               <FieldEmployees />
             </ProtectedRouter>
           }

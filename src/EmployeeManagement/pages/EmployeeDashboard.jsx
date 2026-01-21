@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../Reports/Reports.module.css";
+import styles from "../../pages/Reports/Reports.module.css";
 
 const EmployeeDashboard = () => {
     const stats = [
