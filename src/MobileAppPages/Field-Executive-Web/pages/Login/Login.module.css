@@ -1,0 +1,245 @@
+.pageContainer {
+  /* Fixing viewport issue to prevent scrolling */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0fdf4;
+  /* Using system fonts for better performance and clean look */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  overflow: hidden; /* Stops any unnecessary scrolling */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Background Decorations */
+.circleTop {
+  position: absolute;
+  top: -100px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%);
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circleBottom {
+  position: absolute;
+  bottom: -150px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: #286c1b;
+  border-radius: 50%;
+  opacity: 0.05;
+}
+
+/* Main Card */
+.loginCard {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 27px; /* Slightly smoother */
+  padding: 30px; /* Adjusted padding to fit content better */
+  box-shadow: 0 20px 40px -10px rgba(40, 108, 27, 0.15);
+  border: 1px solid rgba(63, 185, 67, 0.1);
+  position: relative;
+  z-index: 10;
+  height: auto;
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logoContainer {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.logoCircle {
+  width: 80px;
+  height: 80px;
+  background: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0fdf4;
+}
+
+.logo {
+  width: 95%;
+  height: auto;
+}
+
+.mainTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a4a12; /* Deep Emerald shade */
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.subTitle {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Form Styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  padding-left: 2px;
+}
+
+.inputField {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 0 14px;
+  transition: all 0.2s ease;
+}
+
+.inputField:focus-within {
+  border-color: #3fb943;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(63, 185, 67, 0.1);
+}
+
+.fieldIcon {
+  color: #94a3b8;
+  margin-right: 10px;
+}
+
+.inputField input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 14px 0;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.eyeBtn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+}
+
+/* Button with your requested Gradient */
+.loginButton {
+  width: 100%;
+  background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 16px rgba(40, 108, 27, 0.2);
+  transition: all 0.3s ease;
+}
+
+.loginButton:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Footer */
+.cardFooter {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.secureLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.copyText {
+  color: #94a3b8;
+  font-size: 11px;
+  margin: 0;
+}
+/* Auth Error Box */
+.authError {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #fee2e2;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Red Border for Inputs on Error */
+.errorBorder {
+  border-color: #ef4444 !important;
+}
+
+/* Spinner Animation */
+.spinner {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Disabled State for Button */
+.loginButton:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}

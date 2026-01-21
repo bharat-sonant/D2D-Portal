@@ -1,0 +1,94 @@
+/* Existing Wrapper and Section styles remain same... */
+.dashboardWrapper { background-color: #f8faf9; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.fixedTopSection { flex-shrink: 0; z-index: 20; background-color: #f8faf9; padding-bottom: 10px; }
+.headerSection { background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%); padding: 40px 20px 45px; border-radius: 0 0 35px 35px; }
+.topBar { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start; 
+  margin-bottom: 25px; 
+}
+/* USER INFO & LOGOUT SECTION */
+.userInfo { display: flex; align-items: center; gap: 12px; }
+.userMeta { display: flex; flex-direction: column; gap: 4px; }
+.avatar { width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); }
+.userName { color: white; font-size: 16px; margin: 0; font-weight: 800; line-height: 1.2; }
+.greeting { color: rgba(255,255,255,0.8); font-size: 11px; margin: 0; }
+
+/* Logout Button alignment */
+.logoutInlineBtn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px; /* Avatar ke top se match karne ke liye spacing */
+  transition: all 0.2s;
+}
+
+.logoutInlineBtn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.userMeta { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+}
+/* DateChip ko user info ke niche proper pill shape mein set kiya */
+.dateChip { 
+  background: rgba(255, 255, 255, 0.15); 
+  padding: 5px 12px; 
+  border-radius: 12px; 
+  color: white; 
+  font-size: 11px; 
+  font-weight: 600; 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  width: fit-content; /* Yeh zaroori hai taaki chip text ke hisaab se width le */
+}.tabSwitcher { display: flex; background: rgba(0,0,0,0.1); padding: 4px; border-radius: 14px; }
+.tabActive { flex: 1; border: none; padding: 10px; border-radius: 10px; background: white; color: #286c1b; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.tabInactive { flex: 1; border: none; background: transparent; color: white; font-weight: 600; font-size: 12px; opacity: 0.7; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.statsContainer { padding: 0 20px; margin-top: -22px; z-index: 10; flex-shrink: 0; }
+.statsGrid { display: flex; gap: 12px; }
+.statCard { flex: 1; background: white; padding: 15px; border-radius: 22px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); }
+.iconCircle { width: 38px; height: 38px; background: #ecfdf5; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.iconCircleRed { width: 38px; height: 38px; background: #fff1f2; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.statLabel { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+.statValue { font-size: 20px; font-weight: 800; color: #1e293b; margin: 2px 0 0; line-height: 1; }
+.redText { color: #ef4444; }
+.mainContent { flex: 1; overflow-y: auto; padding: 0 20px 100px; }
+.sectionHeader { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 30; background-color: #f8faf9; padding: 20px 0 15px 0; margin-bottom: 5px; }
+.sectionHeader h3 { font-size: 17px; color: #1e293b; font-weight: 800; margin: 0; }
+.pillBadge { background: #e8f5e9; color: #286c1b; font-size: 10px; padding: 4px 12px; border-radius: 20px; font-weight: 800; }
+.modernCard { background: white; border-radius: 22px; display: flex; align-items: center; margin-bottom: 15px; position: relative; overflow: hidden; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.01); }
+.sideBarHigh { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #ef4444; }
+.sideBarNormal { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #286c1b; }
+.cardInfo { flex: 1; padding-left: 8px; }
+.cardTop { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.tag { font-size: 9px; font-weight: 800; color: #286c1b; letter-spacing: 0.5px; }
+.timeInfo { font-size: 10px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+.titleText { font-size: 15px; color: #1e293b; font-weight: 700; margin: 0; line-height: 1.4; }
+.actionBtn { background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%); color: white; border: none; padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.1s; }
+.actionBtn:active { transform: scale(0.92); }
+.subFab { background: white; border: none; padding: 10px 14px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; min-width: 170px; gap: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
+.subFab:active { transform: scale(0.95); background-color: #f0fdf4; }
+.subFabText { flex: 1; text-align: left; font-weight: 800; font-size: 13px; color: #1e293b; }
+.subIcon { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%); }
+.fabContainer { position: fixed; bottom: 30px; right: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.masterFab { width: 62px; height: 62px; border-radius: 20px; background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%); border: none; box-shadow: 0 10px 25px rgba(40, 108, 27, 0.4); display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; }
+.masterFab:active { transform: scale(0.9); }
+.fabClose { background: #1e293b; }
+.optionsList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(1px); z-index: 998; }
+.priorityRow { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+.priorityHigh { font-size: 8px; font-weight: 900; color: #ef4444; background: #fef2f2; padding: 2px 8px; border-radius: 4px; width: fit-content; letter-spacing: 0.5px; border: 0.5px solid rgba(239, 68, 68, 0.2); }
+.priorityNormal { font-size: 8px; font-weight: 900; color: #286c1b; background: #f0fdf4; padding: 2px 8px; border-radius: 4px; width: fit-content; letter-spacing: 0.5px; border: 0.5px solid rgba(40, 108, 27, 0.2); }
+button { -webkit-tap-highlight-color: transparent; outline: none; cursor: pointer; }
