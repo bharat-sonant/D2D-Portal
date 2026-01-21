@@ -1,0 +1,257 @@
+/* Layout */
+.container {
+  display: flex;
+  height: 100vh;
+  background: #f3f4f6;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.headerTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Header Controls */
+.headerControls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Control Group */
+.controlBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controlLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* Select */
+.selectWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+    appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+
+/* Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.wrapper {
+  max-width: 1280px;
+  margin: auto;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+/* Grid */
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.infoRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+/* Status */
+.statusRow {
+  display: flex;
+  gap: 32px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px;
+  resize: none;
+  outline: none;
+}
+
+/* Images */
+.imageGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.imageBox {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.imageTitle {
+  text-align: center;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 12px;
+}
+
+.imageWrapper {
+  background: #f3f4f6;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.imageDark {
+  background: #111827;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Footer */
+.submitted {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.subDate {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnReset {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btnApprove {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btnReject {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  background: #fff;
+  border-left: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+.sidebarTitle {
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.vehicleBtn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.vehicleBtn:hover {
+  background: #f9fafb;
+}
+
+.vehicleActive {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
