@@ -5,8 +5,21 @@
   background-color: var(--white);
   border-radius: 6px;
   padding: 10px;
-  position: relative;
+  /* position: relative; */
+  position: sticky;
+
   z-index: 3;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+.hideTopBar {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 .leftSection {
   display: flex;
@@ -87,16 +100,19 @@
 }
 
 .tableContainer {
-  margin-top: 10px;
   background-color: var(--white);
   border-radius: 6px;
   overflow-x: auto;
   z-index: 1;
   position: relative;
-  max-height: calc(100vh - 150px);
+  transition: all 0.3s ease;
+  max-height: calc(100vh - 155px);
   overflow: auto;
 }
 
+.tableContainerFull {
+  max-height: calc(100vh - 80px);
+}
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -501,14 +517,14 @@
   .parentHeader:nth-last-child(1) {
     width: calc(100% - 35% - 150px) !important;
   }
-  .leftSection{
+  .leftSection {
     max-width: calc(100% - 112px);
-            margin-bottom: -5px;
+    margin-bottom: -5px;
   }
-  .exportBtn{
+  .exportBtn {
     height: 45px;
     padding: 14px 16px;
-    .iconExcel{
+    .iconExcel {
       width: 18px;
     }
   }

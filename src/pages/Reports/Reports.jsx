@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SidePannel from "../../components/Reports/Sidebar/SidePannel";
 import styles from "../Reports/Reports.module.css";
 import DailyWorkReport from "../../components/Reports/DailyWorkReport/DailyWorkReport";
-import { getDailyWorkReport } from "../../services/ReportServices/DailyWorkReportService";
 import Binlifting from "../../components/Reports/Binlifting/Binlifting";
 const Reports = () => {
   const [selectedReport, setSelectedReport] = useState("Zone");
@@ -11,7 +10,7 @@ const Reports = () => {
       case "Zone":
         return <DailyWorkReport />;
       case "Binlifting":
-        return <Binlifting/>;
+        return <Binlifting />;
       default:
         return <div>Select a report</div>;
     }
@@ -46,7 +45,7 @@ const Reports = () => {
           setSelectedReport={setSelectedReport}
         />
       </div>
-      <div className={styles.rightSection}>{renderRightComponent()}</div>
+      <div className={styles.rightSection} >{renderRightComponent()}</div>
     </div>
   );
 };

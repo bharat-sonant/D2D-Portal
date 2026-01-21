@@ -18,9 +18,11 @@ const DailyWorkReport = () => {
   const [date, setDate] = useState(todayDate);
   const { cityId } = useCity();
   const [wards, setWards] = useState([]);
+  const tableRef = useRef(null);
 
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hideTopBar, setHideTopBar] = useState(false);
 
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortRef = useRef(null);
@@ -48,8 +50,8 @@ const DailyWorkReport = () => {
     return reportData?.reduce((acc, row) => {
       acc[String(row.ward_id)] = row;
       return acc;
-    }, {})
-  }, [reportData])
+    }, {});
+  }, [reportData]);
 
   //calculating working hours on base of duty on and duty off time
   const calculateWorkingHours = (dutyOn, dutyOff) => {
@@ -59,7 +61,7 @@ const DailyWorkReport = () => {
       const parts = time.split(":").map(Number);
       const [hh, mm, ss = 0] = parts;
       return hh * 60 + mm + ss / 60;
-    }
+    };
     const start = toMinutes(dutyOn);
     const end = toMinutes(dutyOff);
 
@@ -71,7 +73,7 @@ const DailyWorkReport = () => {
     const minutes = Math.round(diffMinutes % 60);
 
     return `${hours}h ${minutes}m`;
-  }
+  };
 
   //without changing case -> for vehicle names
   const renderMultiLine = (value) => {
@@ -81,9 +83,9 @@ const DailyWorkReport = () => {
 
     value
       .split(",")
-      .map(v => v.trim())
+      .map((v) => v.trim())
       .filter(Boolean)
-      .forEach(v => {
+      .forEach((v) => {
         const key = v.toLowerCase(); // 🔑 case-insensitive check
         if (!uniqueMap.has(key)) {
           uniqueMap.set(key, v); // preserve first seen format
@@ -103,9 +105,9 @@ const DailyWorkReport = () => {
 
     value
       .split(",")
-      .map(v => v.trim())
+      .map((v) => v.trim())
       .filter(Boolean)
-      .forEach(v => {
+      .forEach((v) => {
         const key = v.toLowerCase();
         if (!uniqueMap.has(key)) {
           uniqueMap.set(key, titleCaseName(v)); // ✅ only here
@@ -116,6 +118,28 @@ const DailyWorkReport = () => {
       <div key={index}>{item}</div>
     ));
   };
+useEffect(() => {
+  const el = tableRef.current;
+  if (!el) return;
+
+  const HIDE_THRESHOLD = 100; // px
+  const SHOW_THRESHOLD = 40;  // hysteresis to avoid flicker
+
+  const handleTableScroll = () => {
+    const scrollTop = el.scrollTop;
+
+    if (scrollTop > HIDE_THRESHOLD && !hideTopBar) {
+      setHideTopBar(true);
+    }
+
+    if (scrollTop < SHOW_THRESHOLD && hideTopBar) {
+      setHideTopBar(false);
+    }
+  };
+
+  el.addEventListener("scroll", handleTableScroll);
+  return () => el.removeEventListener("scroll", handleTableScroll);
+}, [hideTopBar]);
 
   // ----------------------------
   // SORT FUNCTIONS
@@ -157,39 +181,14 @@ const DailyWorkReport = () => {
   return (
     <>
       {/* TOP BAR */}
-      <div className={style.topBar}>
+      <div className={`${style.topBar} ${hideTopBar ? style.hideTopBar : ""}`}>
         <div className={`${style.leftSection}`}>
-        <QuickDateSelection value={date} onChange={(val) => setDate(val)} />
-             </div>
+          <QuickDateSelection value={date} onChange={(val) => setDate(val)} />
+        </div>
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
-       
 
         {/* SORT + EXPORT BUTTONS */}
         <div className={style.rightButtons} ref={sortRef}>
-          {/* SORT BUTTON */}
-          {/* <button
-            className={style.sortBtn}
-            onClick={() => setIsSortOpen(!isSortOpen)}
-          >
-            <ArrowDownUp size={16} />
-            <div> Sort by</div>
-          </button> */}
-
-          {/* SORT DROPDOWN */}
-          {/* {isSortOpen && (
-            <div className={style.sortDropdown}>
-              <div className={style.sortItem} onClick={sortLowToHigh}>
-                <ArrowUp size={16} className={style.sortUpIcon} />
-                Actual Work % ( Low → High )
-              </div>
-
-              <div className={style.sortItem} onClick={sortHighToLow}>
-                <ArrowDown size={16} className={style.sortDownIcon} />
-                Actual Work % ( High → Low )
-              </div>
-            </div>
-          )} */}
-
           {/* EXPORT BUTTON */}
           <button className={style.exportBtn}>
             <img
@@ -203,10 +202,13 @@ const DailyWorkReport = () => {
         </div>
       </div>
 
-
-
       {/* TABLE */}
-      <div className={style.tableContainer}>
+      <div
+        ref={tableRef}
+        className={`${style.tableContainer} ${
+          hideTopBar ? style.tableContainerFull : ""
+        }`}
+      >
         <table className={style.table}>
           <thead>
             <tr>
@@ -234,17 +236,13 @@ const DailyWorkReport = () => {
               <th
                 className={`text-start ${style.parentHeader} `}
                 style={{ width: "10%" }}
-              >
-
-              </th>
+              ></th>
             </tr>
             <tr>
               <th className={`${style.th1} ${style.parentHeader1}`}>Ward</th>
               <th className={style.th2}>Duty On </th>
               <th className={style.th3}>Ward Reach </th>
-              <th className={`${style.th4}`}>
-                Duty Off
-              </th>
+              <th className={`${style.th4}`}>Duty Off</th>
               <th className={`${style.th4} ${style.borderRight}`}>
                 Working Hrs
               </th>
@@ -252,9 +250,7 @@ const DailyWorkReport = () => {
               <th className={style.th6}>Driver</th>
               <th className={style.th7}>Helper</th>
               <th className={style.th8}>Second Helper</th>
-              <th className={`text-center ${style.th3}`}>
-                Trip Count
-              </th>
+              <th className={`text-center ${style.th3}`}>Trip Count</th>
             </tr>
           </thead>
           <tbody>
@@ -280,7 +276,7 @@ const DailyWorkReport = () => {
                     <td className={`${style.th4} ${style.borderRight}`}>
                       {calculateWorkingHours(
                         row?.duty_on_time,
-                        row?.duty_off_time
+                        row?.duty_off_time,
                       ) || "-"}
                     </td>
                     <td className={`${style.th5}`}>
@@ -331,7 +327,7 @@ const DailyWorkReport = () => {
                   </div>
                 </td> */}
                   </tr>
-                )
+                );
               })
             ) : (
               <tr>
@@ -340,7 +336,7 @@ const DailyWorkReport = () => {
                     title="No data available"
                     // query={searchTerm}
                     gif={noData}
-                  // height="calc(100vh - 280px)"
+                    // height="calc(100vh - 280px)"
                   />
                   {/* <div className={style.noUserData}>
                       <img
