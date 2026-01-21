@@ -28,29 +28,34 @@ const GlobalAlertModal = ({
   }, [show]);
 
   if (!show) return null;
-  
+
   const isSuccess = iconType === "success";
 
   const Icon = iconType === "warning" ? AlertTriangle : Check;
+  console.log("msf", message);
 
   return (
     <div className={styles.overlay}>
       {/* Background Orbs */}
       <div
-        className={`${styles.modalBackground} ${isSuccess ? styles.successBackground : styles.warningBackground
-          }`}
+        className={`${styles.modalBackground} ${
+          isSuccess ? styles.successBackground : styles.warningBackground
+        }`}
       >
         <div
-          className={`${styles.modalOrb} ${isSuccess ? styles.successOrb1 : styles.modalOrb1
-            }`}
+          className={`${styles.modalOrb} ${
+            isSuccess ? styles.successOrb1 : styles.modalOrb1
+          }`}
         />
         <div
-          className={`${styles.modalOrb} ${isSuccess ? styles.successOrb2 : styles.modalOrb2
-            }`}
+          className={`${styles.modalOrb} ${
+            isSuccess ? styles.successOrb2 : styles.modalOrb2
+          }`}
         />
         <div
-          className={`${styles.modalOrb} ${isSuccess ? styles.successOrb3 : styles.modalOrb3
-            }`}
+          className={`${styles.modalOrb} ${
+            isSuccess ? styles.successOrb3 : styles.modalOrb3
+          }`}
         />
       </div>
 
@@ -59,8 +64,9 @@ const GlobalAlertModal = ({
         {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className={`${styles.modalParticle} ${isSuccess ? styles.successParticle : styles.warningParticle
-              }`}
+            className={`${styles.modalParticle} ${
+              isSuccess ? styles.successParticle : styles.warningParticle
+            }`}
           />
         ))}
       </div>
@@ -71,39 +77,35 @@ const GlobalAlertModal = ({
         </button>
         <div className={styles.iconWrapper}>
           <div
-            className={`${styles.iconRing} ${isSuccess ? styles.successRing : styles.warningRing
-              }`}
+            className={`${styles.iconRing} ${
+              isSuccess ? styles.successRing : styles.warningRing
+            }`}
           ></div>
 
           <div
-            className={`${styles.iconRing2} ${isSuccess ? styles.successRing2 : styles.warningRing2
-              }`}
+            className={`${styles.iconRing2} ${
+              isSuccess ? styles.successRing2 : styles.warningRing2
+            }`}
           ></div>
 
           <div
-            className={`${styles.iconCircle} ${isSuccess ? styles.iconSuccess : styles.iconWarning
-              }`}
+            className={`${styles.iconCircle} ${
+              isSuccess ? styles.iconSuccess : styles.iconWarning
+            }`}
           >
             <Icon size={30} />
           </div>
         </div>
 
         <h2
-          className={`${styles.title} ${isSuccess ? styles.successTitle : styles.warningTitle
-            }`}
+          className={`${styles.title} ${
+            isSuccess ? styles.successTitle : styles.warningTitle
+          }`}
         >
           {title}
         </h2>
 
-        <p className={styles.message}>
-          {message}{" "}
-          <strong
-            className={isSuccess ? styles.successName : styles.warningName}
-          >
-            {userName}
-          </strong>
-          ?
-        </p>
+        <p className={styles.message}>{message}</p>
 
         {/* 👇 Conditional Text */}
         {iconType === "warning" && warningText && (
@@ -119,8 +121,9 @@ const GlobalAlertModal = ({
             Cancel
           </button> */}
           <button
-            className={`${styles.actionBtn} ${isSuccess ? styles.activateBtn : styles.deactivateBtn
-              }`}
+            className={`${styles.actionBtn} ${
+              isSuccess ? styles.activateBtn : styles.deactivateBtn
+            }`}
             onClick={onConfirm}
           >
             {buttonText}

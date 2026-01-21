@@ -3,6 +3,7 @@ import { Building2, Grid3x3, Truck, Users } from "lucide-react";
 
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "./City.module.css";
+import globalAlert from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 import CityList from "../../components/City/CityList";
 import AddCity from "../../components/City/AddCity";
 import SettingsBtn from "../../components/Common/SettingsBtn";
@@ -56,7 +57,7 @@ const City = () => {
       selectedCity,
       setWardList,
       setLoading,
-      setSelectedWard
+      setSelectedWard,
     );
   };
 
@@ -86,7 +87,7 @@ const City = () => {
       selectedCity,
       statusConfirmation?.setToggle,
       loadCities,
-      setStatusConfirmation
+      setStatusConfirmation,
     );
   };
 
@@ -97,7 +98,7 @@ const City = () => {
       setLoader,
       () => {
         loadCities(); // Refresh city list to get updated config
-      }
+      },
     );
   };
 
@@ -201,12 +202,12 @@ const City = () => {
             )}
 
             {activeTab === "users" && (
-                <UserCityAccessList
-                  selectedCity={selectedCity}
-                  userList={usersInCity}
-                  loading={loadingUsers}
-                  isEmbedded={true}
-                />
+              <UserCityAccessList
+                selectedCity={selectedCity}
+                userList={usersInCity}
+                loading={loadingUsers}
+                isEmbedded={true}
+              />
             )}
           </div>
         )}
@@ -249,10 +250,23 @@ const City = () => {
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}
-          title={`City ${statusConfirmation?.data ? "Active" : "Deactive"}`}
-          message={`Are you sure you want to ${
-            statusConfirmation?.data ? "activate" : "deactivate"
-          } ${selectedCity?.city_name} city?`}
+          title={`City ${statusConfirmation?.data ? "Activate" : "Deactivate"}`}
+          message={
+            <>
+              Are you sure you want to{" "}
+              {statusConfirmation?.data ? "activate" : "deactivate"}{" "}
+              <strong
+                className={
+                  statusConfirmation?.data
+                    ? globalAlert.successName
+                    : globalAlert.warningName
+                }
+              >
+                {selectedCity?.city_name}
+              </strong>{" "}
+              city?
+            </>
+          }
           onCancel={() =>
             setStatusConfirmation({
               status: false,

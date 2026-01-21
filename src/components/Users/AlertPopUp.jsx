@@ -1,7 +1,5 @@
-import { useState } from "react";
-import "./AlertPopUp.css";
-import modalStyles from "../../assets/css/popup.module.css";
 import GlobalAlertModal from "../GlobalAlertModal/GlobalAlertModal";
+import globalAlert from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 
 export default function UserStatusDialog(props) {
   const isActive = props.selectedUser.status === "active";
@@ -28,7 +26,19 @@ export default function UserStatusDialog(props) {
         <GlobalAlertModal
           show={props.showModal}
           title={config.title}
-          message={config.message}
+          message={
+            <>
+              Are you sure you want to {isActive ? "deactivate" : "activate"}{" "}
+              <strong
+                className={
+                  isActive ? globalAlert.warningName : globalAlert.successName
+                }
+              >
+                {props.selectedUser?.name}
+              </strong>
+              ?
+            </>
+          }
           userName={props.name}
           buttonText={config.buttonText}
           buttonGradient={config.buttonGradient}
