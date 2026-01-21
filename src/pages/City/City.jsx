@@ -26,6 +26,7 @@ import WardSetting from "../../components/City/WardSetting";
 import GlobalOffcanvas from "../../components/Common/globalOffcanvas/globalOffcanvas";
 import WardMapCanvas from "../../components/City/WardMapCanvas";
 import { useRef } from "react";
+import { saveWardBoundaryGeojsonInDb, saveWardMapData, uploadWardBoundaryJson, uploadWardMapJson } from "../../Actions/City/wardMapAction";
 
 const TABS = [
   { key: "city", label: "City Details", icon: Building2 },
@@ -34,7 +35,7 @@ const TABS = [
   { key: "users", label: "Users In City", icon: Users },
 ];
 
-const City = () => {
+const City = (props) => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false);
   const [cityList, setCityList] = useState([]);
@@ -60,6 +61,8 @@ const City = () => {
   const [isWardLinePopupOpen, setIsWardLinePopOpen] = useState(false);
   const [wardBoundaryGeoJsonData, setWardBoundaryGeoJsonData] = useState(null);
 const [wardMapGeoJsonData, setWardMapGeoJsonData] = useState(null);
+const [ PreviousMapList,setPreviousMapList] = useState([]);
+const [SelectedDate,setSelectedDate] = useState([]);
 
   const [HoldArray, setHoldArray] = useState([]);
     const mapRef = useRef(null);
