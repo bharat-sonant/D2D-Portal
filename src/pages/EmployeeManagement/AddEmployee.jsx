@@ -1,24 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import modalStyles from "../../assets/css/popup.module.css";
 import {
     X,
     User,
     Phone,
     Mail,
-    Briefcase,
     Building2,
     Check,
-    Hash
+    Hash,
+    Loader2
 } from "lucide-react";
+import { saveEmployeeAction, getBranchesAction } from "../../services/EmployeeService/EmployeeAction";
 
-const AddEmployee = ({ showCanvas, setShowCanvas }) => {
+const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) => {
     const [form, setForm] = useState({
-        name: "",
-        phone: "",
-        email: "",
-        employeeCode: "",
-        branch: ""
+        "Employee Name": "",
+        "Phone Number": "",
+        "Email Address": "",
+        "Employee Code": "",
+        "Branch Name": ""
     });
+    const [branches, setBranches] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [fetchingBranches, setFetchingBranches] = useState(false);
+
+    useEffect(() => {
+        if (showCanvas) {
+            getBranchesAction(setBranches);
+            if (employeeToEdit) {
+                setForm({
+                    id: employeeToEdit.id,
+                    "Employee Name": employeeToEdit["Employee Name"] || "",
+                    "Phone Number": employeeToEdit["Phone Number"] || "",
+                    "Email Address": employeeToEdit["Email Address"] || "",
+                    "Employee Code": employeeToEdit["Employee Code"] || "",
+                    "Branch Name": employeeToEdit["Branch Name"] || ""
+                });
+            } else {
+                setForm({
+                    "Employee Name": "",
+                    "Phone Number": "",
+                    "Email Address": "",
+                    "Employee Code": "",
+                    "Branch Name": ""
+                });
+            }
+        }
+    }, [showCanvas, employeeToEdit]);
 
     if (!showCanvas) return null;
 
@@ -28,8 +56,24 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
     };
 
     const handleSave = () => {
-        console.log("Saving Employee:", form);
-        setShowCanvas(false);
+        if (!form["Employee Name"] || !form["Employee Code"]) {
+            alert("Employee Name and Code are required");
+            return;
+        }
+
+        setLoading(true);
+        saveEmployeeAction(
+            form,
+            (message) => {
+                setLoading(false);
+                setShowCanvas(false);
+                if (onRefresh) onRefresh();
+            },
+            (error) => {
+                setLoading(false);
+                alert(error);
+            }
+        );
     };
 
     return (
@@ -42,8 +86,8 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                             <User size={24} />
                         </div>
                         <div className={modalStyles.headerTextRight}>
-                            <h2 className={modalStyles.modalTitle}>Add New Employee</h2>
-                            <p className={modalStyles.modalSubtitle}>Fill in the professional details for the new staff member.</p>
+                            <h2 className={modalStyles.modalTitle}>{employeeToEdit ? "Edit Employee" : "Add New Employee"}</h2>
+                            <p className={modalStyles.modalSubtitle}>Fill in the professional details for the staff member.</p>
                         </div>
                     </div>
                     <button className={modalStyles.closeBtn} onClick={() => setShowCanvas(false)}>
@@ -57,14 +101,14 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                         {/* User Name */}
                         <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>User Name</label>
+                            <label className={modalStyles.label}>Employee Name</label>
                             <div className={modalStyles.inputWrapper}>
                                 <div className={modalStyles.inputIcon}><User size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="name"
+                                    name="Employee Name"
                                     placeholder="Enter full name"
-                                    value={form.name}
+                                    value={form["Employee Name"]}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -77,10 +121,12 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                                 <div className={modalStyles.inputIcon}><Hash size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="employeeCode"
-                                    placeholder="e.g. EMP123"
-                                    value={form.employeeCode}
+                                    name="Employee Code"
+                                    placeholder="e.g. 1001"
+                                    type="number"
+                                    value={form["Employee Code"]}
                                     onChange={handleChange}
+                                    disabled={!!employeeToEdit} // Usually unique IDs shouldn't change
                                 />
                             </div>
                         </div>
@@ -94,9 +140,10 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                                 <div className={modalStyles.inputIcon}><Phone size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="phone"
+                                    name="Phone Number"
                                     placeholder="Enter phone number"
-                                    value={form.phone}
+                                    type="number"
+                                    value={form["Phone Number"]}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -109,9 +156,9 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                                 <div className={modalStyles.inputIcon}><Mail size={18} /></div>
                                 <input
                                     className={modalStyles.input}
-                                    name="email"
+                                    name="Email Address"
                                     placeholder="Enter email address"
-                                    value={form.email}
+                                    value={form["Email Address"]}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -121,21 +168,32 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "20px", marginTop: "20px" }}>
                         {/* Branch Dropdown */}
                         <div className={modalStyles.inputGroup}>
-                            <label className={modalStyles.label}>Branch</label>
+                            <label className={modalStyles.label}>Branch Name</label>
                             <div className={modalStyles.inputWrapper}>
                                 <div className={modalStyles.inputIcon}><Building2 size={18} /></div>
                                 <select
                                     className={modalStyles.input}
-                                    name="branch"
-                                    value={form.branch}
+                                    name="Branch Name"
+                                    value={form["Branch Name"]}
                                     onChange={handleChange}
-                                    style={{ paddingLeft: "45px" }}
+                                    style={{ paddingLeft: "45px", appearance: "none" }}
                                 >
                                     <option value="">Select Branch</option>
-                                    <option value="main">Main Office (Jaipur)</option>
-                                    <option value="west">West Branch (Delhi)</option>
-                                    <option value="south">South Branch (Mumbai)</option>
+                                    {branches.map((branch, idx) => (
+                                        <option key={idx} value={branch.name}>{branch.name}</option>
+                                    ))}
+                                    {/* Fallback if no branches in DB yet */}
+                                    {branches.length === 0 && (
+                                        <>
+                                            <option value="Jaipur Main Office">Jaipur Main Office</option>
+                                            <option value="Delhi West Branch">Delhi West Branch</option>
+                                            <option value="Mumbai South Hub">Mumbai South Hub</option>
+                                        </>
+                                    )}
                                 </select>
+                                <div style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--textMuted)" }}>
+                                    <Hash size={12} style={{ opacity: 0 }} /> {/* Spacer */}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -144,9 +202,10 @@ const AddEmployee = ({ showCanvas, setShowCanvas }) => {
 
                 {/* Footer */}
                 <div className={modalStyles.modalFooter}>
-                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)}>Cancel</button>
-                    <button className={modalStyles.submitBtn} onClick={handleSave}>
-                        <Check size={18} /> Save Employee
+                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)} disabled={loading}>Cancel</button>
+                    <button className={modalStyles.submitBtn} onClick={handleSave} disabled={loading}>
+                        {loading ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
+                        {employeeToEdit ? "Update Employee" : "Save Employee"}
                     </button>
                 </div>
             </div>

@@ -1,18 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../Reports/Reports.module.css";
-import { Search, Plus, User, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { Search, Plus, User, MoreVertical, Edit2, Trash2, Loader2 } from "lucide-react";
 import AddEmployee from "./AddEmployee";
-
-const staticEmployees = [
-    { id: 1, name: "Amit Sharma", code: "EMP001", email: "amit.sharma@example.com", phone: "+91 98765 43210", branch: "Jaipur Main" },
-    { id: 2, name: "Priya Singh", code: "EMP002", email: "priya.singh@example.com", phone: "+91 87654 32109", branch: "Delhi West" },
-    { id: 3, name: "Rahul Verma", code: "EMP003", email: "rahul.verma@example.com", phone: "+91 76543 21098", branch: "Mumbai South" },
-    { id: 4, name: "Sneha Kapoor", code: "EMP004", email: "sneha.kapoor@example.com", phone: "+91 65432 10987", branch: "Jaipur Main" },
-    { id: 5, name: "Vikram Malhotra", code: "EMP005", email: "vikram.malm@example.com", phone: "+91 54321 09876", branch: "Delhi West" },
-];
+import { getEmployeesAction, deleteEmployeeAction } from "../../services/EmployeeService/EmployeeAction";
 
 const Employees = () => {
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [employeeToEdit, setEmployeeToEdit] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const fetchEmployees = () => {
+        getEmployeesAction(setEmployees, setLoading);
+    };
+
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
+
+    const handleEdit = (emp) => {
+        setEmployeeToEdit(emp);
+        setShowAddModal(true);
+    };
+
+    const handleDelete = (emp) => {
+        if (window.confirm(`Are you sure you want to delete ${emp["Employee Name"]}?`)) {
+            // sbs.deleteData uses 'id' by default. I used employeeCode in EmployeeService.js but schema has 'id'.
+            // I'll ensure I pass the correct ID.
+            deleteEmployeeAction(
+                emp.id,
+                (msg) => {
+                    alert(msg);
+                    fetchEmployees();
+                },
+                (err) => alert(err)
+            );
+        }
+    };
+
+    const filteredEmployees = employees.filter(emp =>
+        (emp["Employee Name"] || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (emp["Employee Code"]?.toString() || "").includes(searchTerm)
+    );
 
     return (
         <div className={styles.reportsContainer}>
@@ -24,7 +54,7 @@ const Employees = () => {
             </div>
 
             <div style={{ position: "relative", zIndex: 1, padding: "30px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px", flexWrap: "wrap", gap: "15px" }}>
                     <div>
                         <h2 style={{ fontFamily: "var(--fontGraphikBold)", margin: 0 }}>Employees Management</h2>
                         <p style={{ color: "var(--textMuted)", fontSize: "14px", marginTop: "5px" }}>Manage and monitor all company staff members</p>
@@ -34,6 +64,8 @@ const Employees = () => {
                             <Search size={18} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--textMuted)" }} />
                             <input
                                 placeholder="Search employees..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                                 style={{
                                     padding: "10px 15px 10px 40px",
                                     borderRadius: "8px",
@@ -50,9 +82,9 @@ const Employees = () => {
                     background: "var(--white)",
                     borderRadius: "12px",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                    overflow: "hidden"
+                    overflow: "auto"
                 }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "800px" }}>
                         <thead>
                             <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--borderColor)" }}>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Employee</th>
@@ -63,28 +95,50 @@ const Employees = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {staticEmployees.map((emp) => (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="5" style={{ padding: "40px", textAlign: "center" }}>
+                                        <Loader2 className="animate-spin" size={32} style={{ margin: "auto", color: "var(--themeColor)" }} />
+                                    </td>
+                                </tr>
+                            ) : filteredEmployees.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
+                                        No employees found.
+                                    </td>
+                                </tr>
+                            ) : filteredEmployees.map((emp) => (
                                 <tr key={emp.id} style={{ borderBottom: "1px solid var(--borderColor)", transition: "background 0.2s" }} className={styles.tableRow}>
                                     <td style={{ padding: "15px 20px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                                             <div style={{ width: "35px", height: "35px", borderRadius: "50%", background: "var(--gradientTheme)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>
-                                                {emp.name.charAt(0)}
+                                                {emp["Employee Name"]?.charAt(0) || "U"}
                                             </div>
                                             <div>
-                                                <div style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{emp.name}</div>
-                                                <div style={{ fontSize: "12px", color: "var(--textMuted)" }}>{emp.email}</div>
+                                                <div style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{emp["Employee Name"]}</div>
+                                                <div style={{ fontSize: "12px", color: "var(--textMuted)" }}>{emp["Email Address"] || "N/A"}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp.code}</td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp.phone}</td>
+                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp["Employee Code"]}</td>
+                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>{emp["Phone Number"] || "N/A"}</td>
                                     <td style={{ padding: "15px 20px" }}>
-                                        <span style={{ padding: "4px 10px", borderRadius: "20px", background: "#edf2ff", color: "#445add", fontSize: "12px", fontWeight: "500" }}>{emp.branch}</span>
+                                        <span style={{ padding: "4px 10px", borderRadius: "20px", background: "#edf2ff", color: "#445add", fontSize: "12px", fontWeight: "500" }}>{emp["Branch Name"] || "N/A"}</span>
                                     </td>
                                     <td style={{ padding: "15px 20px", textAlign: "center" }}>
                                         <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                                            <button style={{ border: "none", background: "none", color: "var(--textMuted)", cursor: "pointer" }}><Edit2 size={16} /></button>
-                                            <button style={{ border: "none", background: "none", color: "#ff4d4f", cursor: "pointer" }}><Trash2 size={16} /></button>
+                                            <button
+                                                onClick={() => handleEdit(emp)}
+                                                style={{ border: "none", background: "none", color: "var(--textMuted)", cursor: "pointer" }}
+                                            >
+                                                <Edit2 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(emp)}
+                                                style={{ border: "none", background: "none", color: "#ff4d4f", cursor: "pointer" }}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -96,7 +150,10 @@ const Employees = () => {
 
             {/* FAB */}
             <button
-                onClick={() => setShowAddModal(true)}
+                onClick={() => {
+                    setEmployeeToEdit(null);
+                    setShowAddModal(true);
+                }}
                 style={{
                     position: "fixed",
                     bottom: "30px",
@@ -125,6 +182,8 @@ const Employees = () => {
             <AddEmployee
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
+                employeeToEdit={employeeToEdit}
+                onRefresh={fetchEmployees}
             />
         </div>
     );

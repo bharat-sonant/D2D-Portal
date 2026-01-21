@@ -8,7 +8,8 @@ import {
     LockKeyhole,
     Frown,
     Menu,
-    LogOut
+    LogOut,
+    X
 } from "lucide-react";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
@@ -25,6 +26,7 @@ const EmployeeTopbar = () => {
     const storedName = localStorage.getItem("name");
 
     const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const menuItems = [
         {
@@ -88,7 +90,7 @@ const EmployeeTopbar = () => {
                     </div>
                 </div>
 
-                <div className={`${styles.desktopMenu}`}>
+                <div className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""}`}>
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -98,6 +100,7 @@ const EmployeeTopbar = () => {
                                 key={item.id}
                                 to={item.path}
                                 className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""}`}
+                                onClick={() => setShowMobileMenu(false)}
                                 style={{
                                     animationDelay: `${index * 0.1}s`,
                                     "--menu-color": item.color,
@@ -116,6 +119,12 @@ const EmployeeTopbar = () => {
                 </div>
 
                 <div className={styles.headerRight}>
+                    <button
+                        className={styles.hamburger}
+                        onClick={() => setShowMobileMenu(!showMobileMenu)}
+                    >
+                        {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
+                    </button>
                     <div
                         className={`${styles.userBadge}`}
                         onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
