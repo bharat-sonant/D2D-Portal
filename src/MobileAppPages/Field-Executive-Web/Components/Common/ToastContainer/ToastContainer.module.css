@@ -1,0 +1,98 @@
+.toastContainer {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 90%;
+  max-width: 380px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space create karne ke liye */
+  gap: 12px;
+  box-shadow: 0 10px 25px -5px rgba(40, 108, 27, 0.15);
+  border: 1px solid rgba(63, 185, 67, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: smoothReveal 0.5s ease-out forwards;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Icon size chota na ho */
+}
+
+/* Ye main part hai: Content area expand hoga aur button ko right mein rakhega */
+.content {
+  flex: 1; 
+  display: flex;
+  align-items: center;
+}
+
+.toastMessage {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  flex-shrink: 0; /* Button dabe nahi */
+  transition: color 0.2s ease;
+  margin-left: 8px;
+}
+
+.closeBtn:hover {
+  color: #1e293b;
+}
+
+/* Progress Bars (Synced to 3s) */
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  animation: progressAnim 3s linear forwards; /* 3s match with timeout */
+}
+
+.progress_success { background: linear-gradient(90deg, #286c1b, #3fb943); }
+.progress_error   { background: #ef4444; }
+.progress_warning { background: #d97706; }
+.progress_info    { background: #0891b2; }
+
+/* Colors Match */
+.success .iconBox { color: #286c1b; }
+.error .iconBox   { color: #ef4444; }
+.warning .iconBox { color: #d97706; }
+.info .iconBox    { color: #0891b2; }
+
+@keyframes smoothReveal {
+  0% { opacity: 0; filter: blur(1px); transform: scale(0.95); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+@keyframes progressAnim {
+  from { width: 100%; }
+  to { width: 0%; }
+}

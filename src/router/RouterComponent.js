@@ -34,12 +34,13 @@ import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboar
 import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
 import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
 import FuelAnalysis from "../FuelManagement/pages/FuelAnalysis/FuelAnalysis";
+import MobileAppsRoutes from "./MobileAppsRoutes";
 
 
 const RouterComponent = () => {
   const navigate = useNavigate();
 
-  let userId = localStorage.getItem('userId')
+  let userId = localStorage.getItem('userId');
   const { permissionGranted, setPermissionGranted
   } = usePermissions();
 
@@ -253,6 +254,9 @@ const RouterComponent = () => {
           }
         />
         <Route path='MyOfficeDashboard' element={<OfficeDashboard />} />
+        <>
+          {MobileAppsRoutes()}
+        </>
       </Routes>
     </>
   );
