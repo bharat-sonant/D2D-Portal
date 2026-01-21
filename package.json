@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "@react-google-maps/api": "^2.20.7",
+    "@supabase/supabase-js": "^2.87.1",
     "@tensorflow/tfjs": "^4.22.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@vis.gl/react-google-maps": "^1.7.1",
     "axios": "^1.12.2",
     "blockhash-core": "^0.1.0",
     "crypto-js": "^4.2.0",

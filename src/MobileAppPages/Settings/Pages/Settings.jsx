@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import style from "../../Settings/Style/Settings.module.css";
+import styles from "../Pages/Settings.module.css";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import DailyAssignment from "../Component/DailyAssignment/DailyAssignment.jsx";
@@ -67,35 +67,45 @@ const Settings = () => {
   }
 
   return (
-    <div className={style.verticalContainer}>
-      <div className={style.verticalTabs}>
-        <div className={`${style.tabItem} ${activeTab === "backoffice" ? style.activeTab : ""}`} onClick={() => setActiveTab("backoffice")}>
+    <div className={styles.verticalContainer}>
+       {/* Background */}
+      <div className={styles.background}>
+        <div className={`${styles.gradientOrb} ${styles.orb1}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb2}`} />
+        <div className={`${styles.gradientOrb} ${styles.orb3}`} />
+        <div className={styles.gridOverlay} />
+      </div>
+
+      {/* Particles */}
+      <div className={styles.particles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={styles.particle}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+      <div className={styles.verticalTabs}>
+        <div className={`${styles.tabItem} ${activeTab === "backoffice" ? styles.activeTab : ""}`} onClick={() => setActiveTab("backoffice")}>
           BackOffice Settings
         </div>
-        <div className={`${style.tabItem} ${activeTab === "report" ? style.activeTab : ""}`} onClick={() => setActiveTab("report")}>
+        <div className={`${styles.tabItem} ${activeTab === "report" ? styles.activeTab : ""}`} onClick={() => setActiveTab("report")}>
           Duty On/Off Report
         </div>
-        <div className={`${style.tabItem} ${activeTab === "navigator" ? style.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
+        <div className={`${styles.tabItem} ${activeTab === "navigator" ? styles.activeTab : ""}`} onClick={() => setActiveTab("navigator")}>
           Navigator Settings
         </div>
       </div>
 
-      <div className={style.verticalContent}>
-        {activeTab === "navigator" && (
-          <div className={style.backofficeRow}>
-            <Navigator />
-          </div>
-        )}
-
-        {activeTab === "report" && (
-          <div className={style.backofficeRow}>
-            <DutyReport />
-          </div>
-        )}
-
-        {activeTab === "backoffice" && (
+      <div className={styles.verticalContent}>
+          {activeTab === "backoffice" && (
           <>
-            <div className={style.backofficeRow}>
+            <div className={styles.backofficeRow}>
               <Penalties
                 isPenaltiesOn={isPenaltiesOn}
                 setIsPenaltiesOn={setIsPenaltiesOn}
@@ -126,6 +136,19 @@ const Settings = () => {
             </div>
           </>
         )}
+        {activeTab === "report" && (
+          <div className={styles.backofficeRow}>
+            <DutyReport />
+          </div>
+        )}
+
+        {activeTab === "navigator" && (
+          <div className={styles.backofficeRow}>
+            <Navigator />
+          </div>
+        )}
+
+      
       </div>
     </div>
   );
