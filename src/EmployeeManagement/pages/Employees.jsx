@@ -5,6 +5,7 @@ import AddEmployee from "../components/AddEmployee";
 import { getEmployeesAction, deleteEmployeeAction } from "../../services/EmployeeService/EmployeeAction";
 import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
+import Toast from "../../components/Common/GlobalToast/GlobalToast";
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
@@ -14,6 +15,8 @@ const Employees = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [toast, setToast] = useState(null);
 
     const fetchEmployees = () => {
         getEmployeesAction(setEmployees, setLoading);
@@ -35,17 +38,25 @@ const Employees = () => {
 
     const confirmDelete = () => {
         if (!employeeToDelete) return;
+        setIsDeleting(true);
         deleteEmployeeAction(
             employeeToDelete.id,
             (msg) => {
+                setIsDeleting(false);
                 setShowDeleteModal(false);
                 setEmployeeToDelete(null);
+                setToast({
+                    message: msg || "Employee deleted successfully", type: "success"
+                });
                 fetchEmployees();
             },
             (err) => {
+                setIsDeleting(false);
                 setShowDeleteModal(false);
                 setEmployeeToDelete(null);
-                alert(err);
+                setToast({
+                    message: err || "Failed to delete employee", type: "error"
+                });
             }
         );
     };
@@ -207,7 +218,13 @@ const Employees = () => {
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
                 employeeToEdit={employeeToEdit}
-                onRefresh={fetchEmployees}
+                onRefresh={() => {
+                    fetchEmployees();
+                    setToast({
+                        message: employeeToEdit ? "Employee updated successfully" : "Employee added successfully",
+                        type: "success"
+                    });
+                }}
             />
 
             {showDeleteModal && (
@@ -232,6 +249,15 @@ const Employees = () => {
                         setEmployeeToDelete(null);
                     }}
                     onConfirm={confirmDelete}
+                />
+            )}
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    duration={3000}
+                    onClose={() => setToast(null)}
                 />
             )}
         </div>

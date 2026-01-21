@@ -10,7 +10,10 @@ import {
     Hash,
     Loader2
 } from "lucide-react";
-import { saveEmployeeAction, getBranchesAction } from "../../services/EmployeeService/EmployeeAction";
+import { getBranchesAction, validateEmployeeDetail, employeeFormValueChangeAction } from "../../services/EmployeeService/EmployeeAction";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import * as common from "../../common/common";
+import Toast from "../../components/Common/GlobalToast/GlobalToast";
 
 const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) => {
     const [form, setForm] = useState({
@@ -23,7 +26,12 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
     });
     const [branches, setBranches] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [fetchingBranches, setFetchingBranches] = useState(false);
+    const [nameError, setNameError] = useState("");
+    const [phoneError, setPhoneError] = useState("");
+    const [empCodeError, setEmpCodeError] = useState("");
+    const [branchError, setBranchError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [toast, setToast] = useState(null);
 
     useEffect(() => {
         if (showCanvas) {
@@ -54,30 +62,41 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
 
     if (!showCanvas) return null;
 
+    const resetErrors = () => {
+        setNameError("");
+        setPhoneError("");
+        setEmpCodeError("");
+        setBranchError("");
+        setEmailError("");
+    };
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+        employeeFormValueChangeAction(e, setForm, {
+            employee_name: setNameError,
+            phone_number: setPhoneError,
+            employee_code: setEmpCodeError,
+            branch_id: setBranchError,
+            email: setEmailError
+        });
     };
 
     const handleSave = () => {
-        if (!form.employee_name || !form.employee_code) {
-            alert("Employee Name and Code are required");
-            return;
-        }
-
-        setLoading(true);
-        saveEmployeeAction(
+        validateEmployeeDetail({
             form,
-            (message) => {
-                setLoading(false);
+            setNameError,
+            setPhoneError,
+            setEmpCodeError,
+            setBranchError,
+            setEmailError,
+            setLoading,
+            onSuccess: (message) => {
                 setShowCanvas(false);
                 if (onRefresh) onRefresh();
             },
-            (error) => {
-                setLoading(false);
-                alert(error);
+            onError: (error) => {
+                setToast({ message: error || "An error occurred", type: "error" });
             }
-        );
+        });
     };
 
     return (
@@ -94,7 +113,10 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                             <p className={modalStyles.modalSubtitle}>Fill in the professional details for the staff member.</p>
                         </div>
                     </div>
-                    <button className={modalStyles.closeBtn} onClick={() => setShowCanvas(false)}>
+                    <button className={modalStyles.closeBtn} onClick={() => {
+                        resetErrors();
+                        setShowCanvas(false);
+                    }}>
                         <X size={20} />
                     </button>
                 </div>
@@ -116,6 +138,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     onChange={handleChange}
                                 />
                             </div>
+                            {nameError && <ErrorMessage message={nameError} />}
                         </div>
 
                         {/* Employee Code */}
@@ -133,6 +156,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     disabled={!!employeeToEdit} // Usually unique IDs shouldn't change
                                 />
                             </div>
+                            {empCodeError && <ErrorMessage message={empCodeError} />}
                         </div>
                     </div>
 
@@ -151,6 +175,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     onChange={handleChange}
                                 />
                             </div>
+                            {phoneError && <ErrorMessage message={phoneError} />}
                         </div>
 
                         {/* Email Address */}
@@ -166,6 +191,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     onChange={handleChange}
                                 />
                             </div>
+                            {emailError && <ErrorMessage message={emailError} />}
                         </div>
                     </div>
 
@@ -199,6 +225,7 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
                                     <Hash size={12} style={{ opacity: 0 }} /> {/* Spacer */}
                                 </div>
                             </div>
+                            {branchError && <ErrorMessage message={branchError} />}
                         </div>
 
                         {/* Status Toggle */}
@@ -220,13 +247,24 @@ const AddEmployee = ({ showCanvas, setShowCanvas, employeeToEdit, onRefresh }) =
 
                 {/* Footer */}
                 <div className={modalStyles.modalFooter}>
-                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)} disabled={loading}>Cancel</button>
+                    <button className={modalStyles.cancelBtn} onClick={() => {
+                        resetErrors();
+                        setShowCanvas(false);
+                    }} disabled={loading}>Cancel</button>
                     <button className={modalStyles.submitBtn} onClick={handleSave} disabled={loading}>
                         {loading ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
                         {employeeToEdit ? "Update Employee" : "Save Employee"}
                     </button>
                 </div>
             </div>
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    duration={3000}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 };

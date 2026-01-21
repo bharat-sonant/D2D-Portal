@@ -1,4 +1,5 @@
 import * as EmployeeService from "./EmployeeService";
+import * as common from "../../common/common";
 
 /**
  * Action to fetch employees and update state
@@ -48,6 +49,88 @@ export const deleteEmployeeAction = async (employeeId, onSuccess, onError) => {
         }
     } catch (error) {
         if (onError) onError(error.message || "An unexpected error occurred");
+    }
+};
+
+/**
+ * Validates employee details before saving
+ */
+export const validateEmployeeDetail = ({
+    form,
+    setNameError,
+    setPhoneError,
+    setEmpCodeError,
+    setBranchError,
+    setEmailError,
+    setLoading,
+    onSuccess,
+    onError
+}) => {
+    let isValid = true;
+    setNameError("");
+    setPhoneError("");
+    setEmpCodeError("");
+    setBranchError("");
+    setEmailError("");
+
+    if (!form.employee_name) {
+        setNameError("Employee Name is required");
+        isValid = false;
+    }
+    if (!form.employee_code) {
+        setEmpCodeError("Employee Code is required");
+        isValid = false;
+    }
+    if (!form.phone_number) {
+        setPhoneError("Phone Number is required");
+        isValid = false;
+    } else if (form.phone_number.toString().length < 10) {
+        setPhoneError("Valid 10-digit Phone Number is required");
+        isValid = false;
+    }
+    if (!form.branch_id) {
+        setBranchError("Branch is required");
+        isValid = false;
+    }
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        setEmailError("Please enter a valid email address");
+        isValid = false;
+    }
+
+    if (isValid) {
+        setLoading(true);
+        saveEmployeeAction(
+            form,
+            (msg) => {
+                setLoading(false);
+                if (onSuccess) onSuccess(msg);
+            },
+            (err) => {
+                setLoading(false);
+                if (err.includes("employee_code")) {
+                    setEmpCodeError("Employee Code already exists");
+                } else if (err.includes("phone_number")) {
+                    setPhoneError("Phone Number already exists");
+                } else if (err.includes("email")) {
+                    setEmailError("Email already exists");
+                } else {
+                    if (onError) onError(err);
+                }
+            }
+        );
+    }
+};
+
+/**
+ * Handles form field changes and clears respective errors
+ */
+export const employeeFormValueChangeAction = (e, setForm, errorSetters) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+
+    // Clear errors when user types
+    if (errorSetters[name]) {
+        errorSetters[name]("");
     }
 };
 

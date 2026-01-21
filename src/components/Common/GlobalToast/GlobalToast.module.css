@@ -12,6 +12,7 @@
   gap: 12px;
   padding: 16px 20px;
   border-radius: 16px;
+  height: 80px;
   min-width: 320px;
   max-width: 500px;
   position: relative;
