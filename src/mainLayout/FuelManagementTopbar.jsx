@@ -19,13 +19,6 @@ const FuelManagementTopbar = () => {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const menuItems = [
-        // {
-        //     id: "Dashboard",
-        //     label: "Dashboard",
-        //     icon: LayoutDashboard,
-        //     color: "#354db9",
-        //     path: "/employee/dashboard",
-        // },
         {
             id: "Add Field Employees",
             label: "Employees",

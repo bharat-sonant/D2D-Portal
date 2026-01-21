@@ -9,6 +9,15 @@ const FieldEmployees = () => {
   const [employees, setEmployees] = useState([])
   const [selectedEmp, setSelectedEmp] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+      state: "",
+      manager: "",
+      employeeName: "",
+      email: "",
+      employeeId: "",
+      vehicleType: "",
+      average: ""
+    });
 
 
   const handleOpenModal = () => {
@@ -68,6 +77,8 @@ const FieldEmployees = () => {
         showCanvas={showCanvas}
         setShowCanvas={setShowCanvas}
         onAddEmployee={handleAddEmployee}
+        errors={errors}
+        setErrors={setErrors}
         />
       </>
   )

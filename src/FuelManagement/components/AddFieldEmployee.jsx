@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styles from './AddFieldEmployee.module.css';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
-const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
+const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee, errors, setErrors }) => {
   const [formData, setFormData] = useState({
     state: '',
     manager: '',
@@ -29,10 +30,59 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
       ...prev,
       [name]: value
     }));
+
+    setErrors(prev => ({
+    ...prev,
+    [name]: ""
+  }));
   };
+
+  const validate = () => {
+  let newErrors = {};
+
+  if (!formData.state) {
+    newErrors.state = "State is required";
+  }
+
+  if (!formData.manager) {
+    newErrors.manager = "Manager is required";
+  }
+
+  if (!formData.employeeName.trim()) {
+    newErrors.employeeName = "Employee name is required";
+  } else if (!/^[A-Za-z\s]+$/.test(formData.employeeName)) {
+    newErrors.employeeName = "Name should contain only letters";
+  }
+
+  if (!formData.email) {
+    newErrors.email = "Email is required";
+  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    newErrors.email = "Invalid email address";
+  }
+
+  if (!formData.employeeId.trim()) {
+    newErrors.employeeId = "Employee ID is required";
+  }
+
+  if (!formData.vehicleType) {
+    newErrors.vehicleType = "Vehicle type is required";
+  }
+
+  if (!formData.average) {
+    newErrors.average = "Average is required";
+  } else if (Number(formData.average) <= 0) {
+    newErrors.average = "Average must be greater than 0";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
 
     const newEmployee = {
       id: Date.now(),
@@ -96,7 +146,13 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                     <option key={state} value={state}>{state}</option>
                   ))}
                 </select>
+                 {errors.state && (
+                <ErrorMessage message={errors.state}/>
+              )}
               </div>
+
+             
+
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>
@@ -114,6 +170,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                     <option key={manager} value={manager}>{manager}</option>
                   ))}
                 </select>
+                 {errors.manager && (
+                <ErrorMessage message={errors.manager}/>
+              )}
               </div>
             </div>
 
@@ -132,6 +191,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                   placeholder="Enter employee name"
                   className={styles.input}
                 />
+                 {errors.employeeName && (
+                <ErrorMessage message={errors.employeeName}/>
+              )}
               </div>
 
               <div className={styles.formGroup}>
@@ -147,6 +209,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                   placeholder="employee@example.com"
                   className={styles.input}
                 />
+                {errors.email && (
+                <ErrorMessage message={errors.email}/>
+              )}
               </div>
             </div>
 
@@ -164,7 +229,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                   required
                   placeholder="Enter employee ID"
                   className={styles.input}
-                />
+                />{errors.employeeId && (
+                <ErrorMessage message={errors.employeeId}/>
+              )}
               </div>
 
               <div className={styles.formGroup}>
@@ -183,6 +250,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
+                {errors.vehicleType && (
+                <ErrorMessage message={errors.vehicleType}/>
+              )}
               </div>
             </div>
 
@@ -202,6 +272,9 @@ const AddFieldEmployee = ({ showCanvas, setShowCanvas, onAddEmployee }) => {
                   placeholder="Enter fuel average"
                   className={styles.input}
                 />
+                {errors.average && (
+                <ErrorMessage message={errors.average}/>
+              )}
               </div>
             </div>
 
