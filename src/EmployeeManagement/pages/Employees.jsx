@@ -3,6 +3,8 @@ import styles from "../../pages/Reports/Reports.module.css";
 import { Search, Plus, User, MoreVertical, Edit2, Trash2, Loader2 } from "lucide-react";
 import AddEmployee from "../components/AddEmployee";
 import { getEmployeesAction, deleteEmployeeAction } from "../../services/EmployeeService/EmployeeAction";
+import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
+import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
@@ -10,6 +12,8 @@ const Employees = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [employeeToEdit, setEmployeeToEdit] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [employeeToDelete, setEmployeeToDelete] = useState(null);
 
     const fetchEmployees = () => {
         getEmployeesAction(setEmployees, setLoading);
@@ -25,17 +29,25 @@ const Employees = () => {
     };
 
     const handleDelete = (emp) => {
-        if (window.confirm(`Are you sure you want to delete ${emp.employee_name}?`)) {
-            // Using the internal 'id' as the common deleteData uses the 'id' column
-            deleteEmployeeAction(
-                emp.id,
-                (msg) => {
-                    alert(msg);
-                    fetchEmployees();
-                },
-                (err) => alert(err)
-            );
-        }
+        setEmployeeToDelete(emp);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = () => {
+        if (!employeeToDelete) return;
+        deleteEmployeeAction(
+            employeeToDelete.id,
+            (msg) => {
+                setShowDeleteModal(false);
+                setEmployeeToDelete(null);
+                fetchEmployees();
+            },
+            (err) => {
+                setShowDeleteModal(false);
+                setEmployeeToDelete(null);
+                alert(err);
+            }
+        );
     };
 
     const filteredEmployees = employees.filter(emp =>
@@ -197,6 +209,31 @@ const Employees = () => {
                 employeeToEdit={employeeToEdit}
                 onRefresh={fetchEmployees}
             />
+
+            {showDeleteModal && (
+                <GlobalAlertModal
+                    show={showDeleteModal}
+                    title="Confirm Deletion"
+                    message={
+                        <>
+                            Are you sure you want to delete{" "}
+                            <strong className={globalAlertStyles.warningName}>
+                                {employeeToDelete?.employee_name}
+                            </strong>
+                            ?
+                        </>
+                    }
+                    buttonText="Yes, Delete"
+                    buttonGradient="linear-gradient(135deg, #dc2626 0%, #991b1b 100%)"
+                    iconType="warning"
+                    warningText="This action is permanent and will remove all record of this employee from the system."
+                    onCancel={() => {
+                        setShowDeleteModal(false);
+                        setEmployeeToDelete(null);
+                    }}
+                    onConfirm={confirmDelete}
+                />
+            )}
         </div>
     );
 };
