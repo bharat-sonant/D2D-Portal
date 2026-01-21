@@ -1,0 +1,77 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: 0.3s ease;
+  z-index: 999;
+}
+
+.backdrop.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.offcanvas {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: calc(100% - 20px);
+  margin: auto 10px;
+  background: var(--white);
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  width: 500px;
+  border-radius: 12px;
+
+  /* Start hidden on right */
+  transform: translateX(110%);
+  transition: transform 0.4s ease-in-out;
+}
+
+/* When open */
+.offcanvas.open {
+  transform: translateX(0);
+}
+
+.OffcanvasHeader {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #667eea0d, #764ba20d);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.OffcanvasTitle {
+  font-size: 18px;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(30%) sepia(19%) saturate(5835%)
+      hue-rotate(343deg) brightness(97%) contrast(94%);
+  }
+}
+.OffcanvasBody {
+  padding: 14px 20px;
+  height: calc(100vh - 90px);
+  overflow: auto;
+}

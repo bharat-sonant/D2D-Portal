@@ -1,0 +1,12 @@
+.labelText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  font-size: 13px;
+}
+.wardCard {
+  margin-bottom: 10px;
+}

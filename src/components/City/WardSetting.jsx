@@ -3,6 +3,7 @@ import WardMapCanvas from "./WardMapCanvas";
 import { updateWardRealTimeStatusAction } from "../../Actions/City/cityAction";
 import styles from "./WardSetting.module.css";
 import { MapPinned, Disc3, ChevronRight } from "lucide-react";
+import GlobalOffcanvas from "../Common/globalOffcanvas/globalOffcanvas";
 
 export default function WardSetting(props) {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -27,7 +28,7 @@ export default function WardSetting(props) {
       props.selectedWard.id,
       props.selectedWard.show_realtime,
       props.setWardList,
-      setIsEnabled
+      setIsEnabled,
     );
   };
 
@@ -62,20 +63,16 @@ export default function WardSetting(props) {
             <p className={styles.textLabel}>Ward Maps</p>
           </div>
 
-          <button onClick={() => setOpenCanvas(true)} className={styles.addBtn}>
-            <ChevronRight size={14} />
-          </button>
+<button
+  onClick={() => props.openWardMap(props.selectedWard.id)}
+  className={styles.addBtn}
+>
+  <ChevronRight size={14} />
+</button>
         </div>
       </div>
 
-      {openCanvas && (
-        <WardMapCanvas
-          openCanvas={openCanvas}
-          setOpenCanvas={setOpenCanvas}
-          wardId={props.selectedWard.id}
-          selectedCity={props.selectedCity.city_id}
-        />
-      )}
+
     </>
   );
 }

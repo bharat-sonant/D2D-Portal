@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
-import { FaSpinner } from "react-icons/fa";
 
 import { Building2, X, Code, Upload, Plus, Check } from "lucide-react";
-// import styles from "../../assets/css/modal.module.css";
 import styles from "./AddCity.module.css";
 import modalStyles from "../../assets/css/popup.module.css";
 

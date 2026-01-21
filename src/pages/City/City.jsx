@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Building2, Grid3x3, Truck, Users } from "lucide-react";
 
+import { GoogleMap, Polygon, Polyline } from "@react-google-maps/api";
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "./City.module.css";
 import globalAlert from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
@@ -22,6 +23,9 @@ import { saveFirebaseConfigAction } from "../../Actions/City/firebaseConfigActio
 import LogoImage from "../../components/Common/Image/LogoImage";
 
 import WardSetting from "../../components/City/WardSetting";
+import GlobalOffcanvas from "../../components/Common/globalOffcanvas/globalOffcanvas";
+import WardMapCanvas from "../../components/City/WardMapCanvas";
+import { useRef } from "react";
 
 const TABS = [
   { key: "city", label: "City Details", icon: Building2 },
@@ -49,7 +53,16 @@ const City = () => {
   const [usersInCity, setUsersInCity] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [selectedWard, setSelectedWard] = useState("");
+  const [openWardMapCanvas, setOpenWardMapCanvas] = useState(false);
+  const [activeWardId, setActiveWardId] = useState(null);
+  const [isWardBoundaryMapPopupOpen, setIsWardBoundaryMapPopupOpen] =
+    useState(false);
+  const [isWardLinePopupOpen, setIsWardLinePopOpen] = useState(false);
+  const [wardBoundaryGeoJsonData, setWardBoundaryGeoJsonData] = useState(null);
+const [wardMapGeoJsonData, setWardMapGeoJsonData] = useState(null);
 
+  const [HoldArray, setHoldArray] = useState([]);
+    const mapRef = useRef(null);
   const loadCities = async () => {
     getCityList(
       setSelectedCity,
@@ -102,6 +115,59 @@ const City = () => {
     );
   };
 
+  const mapContainerStyle = {
+    width: "100%",
+    height: "320px",
+  };
+
+  const center = {
+    lat: 26.901875,
+    lng: 75.738869,
+  };
+   const handleGeoJsonUpload = async (event) => {
+    const file = event.target.files[0];
+    uploadWardBoundaryJson(
+      file,
+      setWardBoundaryGeoJsonData,
+      props.setIsWardBoundaryMapPopupOpen,
+      setHoldArray,
+    );
+  };
+
+  function handleWardGeoJsonUpload(event) {
+    const file = event.target.files[0];
+    uploadWardMapJson(
+      file,
+      setWardMapGeoJsonData,
+      props.setIsWardLinePopOpen,
+      setHoldArray,
+    );
+  }
+    const fitToBoundsForBoundaryAndLines = () => {
+    if (!mapRef.current) return;
+
+    const bounds = new window.google.maps.LatLngBounds();
+
+    // Boundary
+    if (wardBoundaryGeoJsonData?.length) {
+      wardBoundaryGeoJsonData.forEach((p) => {
+        bounds.extend(new window.google.maps.LatLng(p.lat, p.lng));
+      });
+    }
+
+    // Lines (multiple polylines)
+    if (wardMapGeoJsonData?.length) {
+      wardMapGeoJsonData.forEach((path) => {
+        path.forEach((p) => {
+          bounds.extend(new window.google.maps.LatLng(p.lat, p.lng));
+        });
+      });
+    }
+
+    if (!bounds.isEmpty()) {
+      mapRef.current.fitBounds(bounds);
+    }
+  };
   return (
     <>
       <div className={`${GlobalStyles.floatingDiv}`}>
@@ -191,6 +257,10 @@ const City = () => {
                       selectedWard={selectedWard}
                       setWardList={setWardList}
                       selectedCity={selectedCity}
+                      openWardMap={(wardId) => {
+                        setActiveWardId(wardId);
+                        setOpenWardMapCanvas(true);
+                      }}
                     />
                   )}
                 </div>
@@ -277,6 +347,241 @@ const City = () => {
           onConfirm={handleStatusConfirmation}
           btnColor={!statusConfirmation?.data && "red"}
         />
+      )}
+      {openWardMapCanvas && (
+        <GlobalOffcanvas
+          open={openWardMapCanvas}
+          onClose={() => setOpenWardMapCanvas(false)}
+          title="Ward Settings"
+        >
+          <WardMapCanvas
+            wardId={activeWardId}
+            selectedCity={selectedCity.city_id}
+           setIsWardBoundaryMapPopupOpen={setIsWardBoundaryMapPopupOpen}
+  setIsWardLinePopOpen={setIsWardLinePopOpen}
+
+  setWardBoundaryGeoJsonData={setWardBoundaryGeoJsonData}
+  setWardMapGeoJsonData={setWardMapGeoJsonData}
+  setHoldArray={setHoldArray}
+          />
+        </GlobalOffcanvas>
+      )}
+{isWardBoundaryMapPopupOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              width: "700px",
+              borderRadius: "10px",
+              padding: "14px",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px",
+                fontWeight: 600,
+              }}
+            >
+              <span>Ward Map Preview</span>
+              <span
+                style={{ cursor: "pointer", fontSize: "18px" }}
+                onClick={() => setIsWardBoundaryMapPopupOpen(false)}
+              >
+                ✕
+              </span>
+            </div>
+
+            {/* MAP */}
+            <GoogleMap
+              onLoad={(map) => {
+                mapRef.current = map;
+                fitToBoundsForBoundaryAndLines();
+              }}
+              mapContainerStyle={{
+                width: "100%",
+                height: "360px",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+              center={center}
+              zoom={13}
+            >
+              {wardBoundaryGeoJsonData && (
+                <Polygon
+                  paths={wardBoundaryGeoJsonData}
+                  options={{
+                    strokeColor: "#000",
+                    strokeWeight: 3,
+                    strokeOpacity: 1,
+                    fillOpacity: 0,
+                  }}
+                />
+              )}
+            </GoogleMap>
+
+            {HoldArray?.length !== 0 && (
+              <div
+                style={{
+                  marginTop: "12px",
+                  textAlign: "right",
+                }}
+              >
+                <label
+                  style={{
+                    display: "inline-block",
+                    padding: "8px 14px",
+                    backgroundColor: "#2563eb",
+                    color: "#fff",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                  onClick={() =>
+                    saveWardBoundaryGeojsonInDb(
+                      props.wardId,
+                      props.selectedCity,
+                      HoldArray,
+                      setHoldArray,
+                      props.setIsWardBoundaryMapPopupOpen,
+                    )
+                  }
+                >
+                  Upload GeoJSON
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+{isWardLinePopupOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              width: "700px",
+              borderRadius: "10px",
+              padding: "14px",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px",
+                fontWeight: 600,
+              }}
+            >
+              <span>Ward Map Preview</span>
+              <span
+                style={{ cursor: "pointer", fontSize: "18px" }}
+                onClick={() => setIsWardLinePopOpen(false)}
+              >
+                ✕
+              </span>
+            </div>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={center}
+              zoom={13}
+              onLoad={(map) => {
+                mapRef.current = map;
+                fitToBoundsForBoundaryAndLines();
+              }}
+            >
+              {wardBoundaryGeoJsonData && (
+                <Polygon
+                  paths={wardBoundaryGeoJsonData}
+                  options={{
+                    strokeColor: "#000",
+                    strokeWeight: 3,
+                    strokeOpacity: 1,
+                    fillOpacity: 0,
+                  }}
+                />
+              )}
+
+              {wardMapGeoJsonData &&
+                wardMapGeoJsonData.map((path, index) => (
+                  <Polyline
+                    key={index}
+                    path={path}
+                    options={{
+                      strokeColor: "#2563eb",
+                      strokeOpacity: 1,
+                      strokeWeight: 2,
+                    }}
+                  />
+                ))}
+            </GoogleMap>
+
+            {HoldArray?.length !== 0 && (
+              <div
+                style={{
+                  marginTop: "12px",
+                  textAlign: "right",
+                }}
+              >
+                <label
+                  style={{
+                    display: "inline-block",
+                    padding: "8px 14px",
+                    backgroundColor: "#2563eb",
+                    color: "#fff",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                  onClick={() =>
+                    saveWardMapData(
+                      props.wardId,
+                      props.selectedCity,
+                      HoldArray,
+                      setHoldArray,
+                      props.setIsWardLinePopOpen,
+                      setPreviousMapList,
+                      setSelectedDate,
+                    )
+                  }
+                >
+                  Upload GeoJSON
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </>
   );

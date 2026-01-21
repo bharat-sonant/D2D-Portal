@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import style from "./CitySettings.module.css";
 import { Edit2, Database, Save, X } from "lucide-react";
 import LogoImage from "../Common/Image/LogoImage";
-import { FaSpinner } from "react-icons/fa";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import GlobalAlertModal from "../GlobalAlertModal/GlobalAlertModal";
 import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
