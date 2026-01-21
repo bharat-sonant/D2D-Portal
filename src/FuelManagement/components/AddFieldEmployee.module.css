@@ -1,0 +1,202 @@
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  transition: opacity 0.3s ease;
+}
+
+/* Modal Container */
+.modalContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal Content */
+.modalContent {
+  position: relative;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 700px;
+  transition: all 0.3s ease;
+}
+
+/* Header */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-radius: 12px 12px 0 0;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+  border-radius: 4px;
+}
+
+.closeButton:hover {
+  color: #4b5563;
+  background-color: #e5e7eb;
+}
+
+.closeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Form Body */
+.modalBody {
+  padding: 2rem;
+}
+
+/* Form Row - 2 columns */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Form Group */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroupFull {
+  grid-column: 1 / -1;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 0.125rem;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #111827;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.select {
+  cursor: pointer;
+}
+
+/* Footer */
+.modalFooter {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btnCancel,
+.btnSubmit {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btnCancel {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.btnCancel:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btnSubmit {
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btnSubmit:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btnSubmit:active {
+  transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .modalContent {
+    max-width: 100%;
+    margin: 0.5rem;
+  }
+  
+  .modalHeader,
+  .modalBody {
+    padding: 1.25rem;
+  }
+  
+  .modalTitle {
+    font-size: 1.25rem;
+  }
+}

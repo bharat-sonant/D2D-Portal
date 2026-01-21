@@ -26,7 +26,7 @@ const appsList = [
   { id: 5, name: "Survey Management", icon: ClipboardList, color: "#38b2ac" },
   { id: 6, name: "UCC Management", icon: Building, color: "#9f7aea" },
   { id: 7, name: "IEC Management", icon: Info, color: "#ed64a6" },
-  { id: 8, name: "Fuel Management", icon: Fuel, color: "#f6ad55" },
+  { id: 8, name: "Fuel Management", icon: Fuel, color: "#f6ad55" , path: "/fuel/add-field-employee"},
   { id: 9, name: "Administrators", icon: LayoutDashboard, color: "#4a5568", path: "/Dashboard" },
 ];
 

@@ -31,6 +31,8 @@ import Employees from "../pages/EmployeeManagement/Employees";
 import Branches from "../pages/EmployeeManagement/Branches";
 import Departments from "../pages/EmployeeManagement/Departments";
 import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboard";
+import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
+import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
 
 
 const RouterComponent = () => {
@@ -89,6 +91,17 @@ const RouterComponent = () => {
         <Route path="/employee/employees" element={<ProtectedRouter><EmployeeLayout><Employees /></EmployeeLayout></ProtectedRouter>} />
         <Route path="/employee/branches" element={<ProtectedRouter><EmployeeLayout><Branches /></EmployeeLayout></ProtectedRouter>} />
         <Route path="/employee/departments" element={<ProtectedRouter><EmployeeLayout><Departments /></EmployeeLayout></ProtectedRouter>} />
+
+        {/*Fuel Management Section*/}
+        <Route
+          path="/fuel/add-field-employee"
+          element={
+            <ProtectedRouter>
+              <FuelManagementLayout/>
+              <FieldEmployees />
+            </ProtectedRouter>
+          }
+        />
 
         {/* Redirect old path */}
         <Route path="/employee-management" element={<Navigate to="/employee/dashboard" replace />} />
@@ -229,7 +242,6 @@ const RouterComponent = () => {
             </>
           }
         />
-
         <Route path='MyOfficeDashboard' element={<OfficeDashboard />} />
       </Routes>
     </>
