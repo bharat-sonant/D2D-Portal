@@ -33,6 +33,7 @@ import Departments from "../EmployeeManagement/pages/Departments";
 import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboard";
 import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
 import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
+import FuelAnalysis from "../FuelManagement/pages/FuelAnalysis/FuelAnalysis";
 
 
 const RouterComponent = () => {
@@ -99,6 +100,15 @@ const RouterComponent = () => {
             <ProtectedRouter>
               <FuelManagementLayout />
               <FieldEmployees />
+            </ProtectedRouter>
+          }
+        />
+        <Route
+          path="/fuel/fuel_analysis"
+          element={
+            <ProtectedRouter>
+              <FuelManagementLayout />
+              <FuelAnalysis />
             </ProtectedRouter>
           }
         />

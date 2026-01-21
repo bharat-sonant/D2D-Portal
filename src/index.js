@@ -13,7 +13,7 @@ import { PermissionProvider } from './context/PermissionContext';
 const AppWrapper = () => {
   const location = useLocation();
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ['/settings', '/tasks', '/realtime-monitoring', '/reports', '/vehicle', '/users', '/', '/cities', "/Dashboard", "/monitoring","/employee/dashboard","/employee/employees","/employee/branches","/employee/departments", '/fuel/add-field-employee']; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/tasks', '/realtime-monitoring', '/reports', '/vehicle', '/users', '/', '/cities', "/Dashboard", "/monitoring","/employee/dashboard","/employee/employees","/employee/branches","/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis']; // <-- yaha route add karo
 
   const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
 
