@@ -7,13 +7,28 @@ import styles from './FuelAnalysis.module.css';
 import CustomDatePicker from '../../../components/CustomDatePicker/CustomDatePicker';
 
 const FuelAnalysis = () => {
-  const [analysisStatus, setAnalysisStatus] = useState('ok');
   const [rejectionReason, setRejectionReason] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState('LEY-AT-4618');
   const [alreadyApproved, setAlreadyApproved] = useState(false)
   const entries = ['Entry 1', 'Entry 2', 'Entry 3'];
   const [selectedEntry, setSelectedEntry] = useState(entries[0]);
   const [date, setDate] = useState(null);
+  const [analysisStatus, setAnalysisStatus] = useState('ok');
+
+const [slipIssues, setSlipIssues] = useState({
+  photoWrong: false,
+  wrongQuantity: false,
+  wrongVehicleNumber: false,
+});
+
+const [meterIssues, setMeterIssues] = useState({
+  photoWrong: false,
+  readingWrong: false,
+  meterWrong: false,
+});
+
+const [additionalReason, setAdditionalReason] = useState('');
+
 
 
   const vehicles = ['LEY-AT-4611', 'LEY-AT-4618', 'TATA-AT-5511'];
@@ -28,13 +43,27 @@ const FuelAnalysis = () => {
   };
 
   const handleApproveReject = () => {
-  if (analysisStatus === 'not-ok' && !rejectionReason.trim()) {
-    alert('Please enter rejection reason');
+    if (analysisStatus === 'not-ok') {
+  const hasSlipIssue = Object.values(slipIssues).some(Boolean);
+  const hasMeterIssue = Object.values(meterIssues).some(Boolean);
+
+  if (!hasSlipIssue && !hasMeterIssue && !additionalReason.trim()) {
+    alert('Please select at least one issue or provide a reason');
     return;
   }
+}
 
   setAlreadyApproved(true);
 };
+
+const toggleSlipIssue = (key) => {
+  setSlipIssues(prev => ({ ...prev, [key]: !prev[key] }));
+};
+
+const toggleMeterIssue = (key) => {
+  setMeterIssues(prev => ({ ...prev, [key]: !prev[key] }));
+};
+
 
 
   return (
@@ -102,13 +131,86 @@ const FuelAnalysis = () => {
               </div>
 
               {analysisStatus === 'not-ok' && (
-                <textarea
-                  className={styles.textarea}
-                  placeholder="Rejection reason"
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                />
-              )}
+  <div className={styles.notOkContainer}>
+
+    {/* Slip Analysis */}
+    <div className={styles.subSection}>
+      <h3 className={styles.subTitle}>Slip Analysis</h3>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={slipIssues.photoWrong}
+          onChange={() => toggleSlipIssue('photoWrong')}
+        />
+        स्लिप की फोटो सही नहीं है |
+      </label>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={slipIssues.wrongQuantity}
+          onChange={() => toggleSlipIssue('wrongQuantity')}
+        />
+        Quantity सही नहीं है |
+      </label>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={slipIssues.wrongVehicleNumber}
+          onChange={() => toggleSlipIssue('wrongVehicleNumber')}
+        />
+        गाड़ी नंबर सही नहीं है |
+      </label>
+    </div>
+
+    {/* Meter Reading Analysis */}
+    <div className={styles.subSection}>
+      <h3 className={styles.subTitle}>Meter Reading Analysis</h3>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={meterIssues.photoWrong}
+          onChange={() => toggleMeterIssue('photoWrong')}
+        />
+        मीटर की फोटो सही नहीं है |
+      </label>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={meterIssues.readingWrong}
+          onChange={() => toggleMeterIssue('readingWrong')}
+        />
+        मीटर रीडिंग सही नहीं है |
+      </label>
+
+      <label className={styles.checkbox}>
+        <input
+          type="checkbox"
+          checked={meterIssues.meterWrong}
+          onChange={() => toggleMeterIssue('meterWrong')}
+        />
+        गाड़ी का मीटर सही नहीं है |
+      </label>
+    </div>
+
+    {/* Optional Reason */}
+    <div className={styles.subSection}>
+      <h3 className={styles.subTitle}>Additional Reason (optional)</h3>
+      <textarea
+        className={styles.textarea}
+        placeholder="Any additional explanation..."
+        value={additionalReason}
+        onChange={(e) => setAdditionalReason(e.target.value)}
+      />
+    </div>
+
+  </div>
+)}
+
             </div>
 
             <div className={styles.imageGrid}>

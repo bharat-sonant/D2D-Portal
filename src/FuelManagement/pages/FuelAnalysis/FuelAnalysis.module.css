@@ -128,15 +128,46 @@
   cursor: pointer;
 }
 
-/* Textarea */
+.notOkContainer {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subSection {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+  background: #f9fafb;
+}
+
+.subTitle {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #374151;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
 .textarea {
   width: 100%;
+  min-height: 80px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   padding: 8px;
   resize: none;
   outline: none;
 }
+
 
 /* Images */
 .imageGrid {
@@ -245,12 +276,8 @@
   gap: 10px;
   border: 1px solid transparent;
   cursor: pointer;
+  margin-bottom: 8px;
 }
-
-.vehicleBtn:hover {
-  background: #f9fafb;
-}
-
 .vehicleActive {
   background: #dcfce7;
   border: 1px solid #86efac;
