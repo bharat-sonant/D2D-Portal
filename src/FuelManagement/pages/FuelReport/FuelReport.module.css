@@ -1,0 +1,141 @@
+.page {
+  background: #f4f6fb;
+  padding: 16px;
+}
+
+/* ===== HEADER 1 ===== */
+.headerTop {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ✅ key line */
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summaryBar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.summaryItem {
+  text-align: center;
+}
+
+.summaryItem strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.summaryItem span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.exportBtn {
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid #22c55e;
+  background: white;
+  color: #22c55e;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ===== HEADER 2 ===== */
+.headerBottom {
+  background: white;
+  padding: 14px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.datePickerBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.arrow {
+  font-size: 16px;
+  color: #374151;
+}
+
+.dateText {
+  font-size: 14px;
+}
+
+.rightStats {
+  display: flex;
+  gap: 24px;
+}
+
+.rightStats div {
+  text-align: center;
+}
+
+.rightStats strong {
+  display: block;
+  font-size: 15px;
+}
+
+.rightStats span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===== TABLE ===== */
+.tableWrapper {
+  background: white;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  text-align: left;
+  font-size: 13px;
+  padding: 10px;
+  border-bottom: 2px solid #111827;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  height: 38px;
+}
+.reimburseBtn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.reimburseBtn:hover {
+  background: #1d4ed8;
+}
