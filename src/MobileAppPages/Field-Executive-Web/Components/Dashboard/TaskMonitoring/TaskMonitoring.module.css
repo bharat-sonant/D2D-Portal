@@ -1,0 +1,406 @@
+.monitoringWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0;
+  flex: 1;
+  background: white;
+}
+
+/* ========== FILTER SECTION ========== */
+.filterSection {
+  flex-shrink: 0;
+  padding: 14px 12px;
+  background: linear-gradient(135deg, #f9fef8 0%, #f0fdf4 100%);
+  border-bottom: 1px solid #286c1b;
+}
+
+.filterRow {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Individual Filter Groups */
+.dateFilterGroup,
+.statusFilterGroup,
+.taskCountSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.dateFilterGroup {
+  flex: 1;
+  min-width: 160px;
+  max-width: 160px;
+}
+
+.statusFilterGroup {
+  flex: 0 1 auto;
+  min-width: 50px;
+}
+
+.taskCountSection {
+  flex: 0 1 auto;
+  min-width: 70px;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Filter Labels */
+.filterLabel {
+  font-size: 8px;
+  font-weight: 800;
+  color: #1f5213;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block;
+}
+
+/* Custom Date Picker Wrapper */
+.datePickerWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.customDateDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: white;
+  border: 2px solid #286c1b;
+  border-radius: 8px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: #286c1b;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.customDateDisplay:hover {
+  background: white;
+  border-color: #286c1b;
+}
+
+.customDateDisplay:active {
+  background: white;
+  border-color: #286c1b;
+}
+
+.customDateDisplay svg {
+  flex-shrink: 0;
+  color: #286c1b;
+}
+
+/* Date Picker Container */
+.datePickerContainer {
+  display: none;
+}
+
+.datePickerField .MuiOutlinedInput-notchedOutline,
+.datePickerField .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.datePickerField .MuiIconButton-root {
+  color: #286c1b;
+}
+
+.datePickerField input::selection {
+  background: transparent;
+}
+
+.datePickerField input::-moz-selection {
+  background: transparent;
+}
+
+/* Remove focus ring completely */
+.datePickerField .MuiOutlinedInput-root::before,
+.datePickerField .MuiOutlinedInput-root::after {
+  border: none !important;
+}
+
+/* Old react-datepicker styles - removed */
+
+.statusMenuWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.statusMenuBtn {
+  background: white;
+  border: 2px solid #286c1b;
+  color: #286c1b;
+  padding: 7px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 40px;
+  font-size: 16px;
+  box-shadow: 0 1px 3px rgba(40, 108, 27, 0.1);
+}
+
+.statusMenuBtn:hover {
+  border-color: #3fb943;
+  background: rgba(63, 185, 67, 0.1);
+  box-shadow: 0 2px 6px rgba(40, 108, 27, 0.15);
+  transform: translateY(-1px);
+}
+
+.statusMenuBtn:active {
+  transform: scale(0.96);
+}
+
+.statusDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(40, 108, 27, 0.2);
+  z-index: 100;
+  min-width: 160px;
+  overflow: hidden;
+  animation: slideDown 0.15s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statusOption {
+  width: 100%;
+  background: white;
+  border: none;
+  color: #286c1b;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusOption:hover {
+  background: rgba(40, 108, 27, 0.08);
+  color: #3fb943;
+  padding-left: 18px;
+}
+
+.statusOption:active {
+  background: rgba(40, 108, 27, 0.12);
+}
+
+.statusOptionActive {
+  background: linear-gradient(135deg, #286c1b 0%, #3fb943 100%);
+  color: white;
+  font-weight: 800;
+}
+
+.statusOptionActive:hover {
+  background: linear-gradient(135deg, #1f5213 0%, #2f8a37 100%);
+  padding-left: 14px;
+}
+
+
+
+/* ========== TASK LIST SECTION ========== */
+.taskListContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: white;
+}
+
+.taskListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-bottom: 1px solid rgba(40, 108, 27, 0.1);
+  flex-shrink: 0;
+}
+
+.headerTask {
+  flex: 1;
+  font-size: 9px;
+  font-weight: 900;
+  color: #286c1b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.headerStatus {
+  font-size: 9px;
+  font-weight: 900;
+  color: #286c1b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  width: 85px;
+  text-align: center;
+}
+
+.taskListScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 6px;
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+.taskListScroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.taskListScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.taskListScroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #286c1b 0%, #3fb943 100%);
+  border-radius: 10px;
+}
+
+.taskListScroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #1f5213 0%, #2f8a37 100%);
+}
+
+/* Task Item */
+.taskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 10px;
+  margin: 4px 4px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(40, 108, 27, 0.06);
+  transition: all 0.15s ease;
+}
+
+.taskItem:hover {
+  border-color: rgba(40, 108, 27, 0.15);
+  box-shadow: 0 2px 6px rgba(40, 108, 27, 0.05);
+  transform: translateY(-0.5px);
+}
+
+.taskItemContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskItemNumber {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+  color: #286c1b;
+  padding: 4px 7px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  min-width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.taskItemDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taskItemTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.taskItemStatusWrapper {
+  display: flex;
+  align-items: center;
+  width: 85px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Status Labels */
+.statusLabel {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 8px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  width: 100px;
+  transition: all 0.2s ease;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.approved {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+  color: #286c1b;
+  border-color: rgba(40, 108, 27, 0.15);
+}
+
+.pending {
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.15);
+}
+
+.notapproved {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.15);
+}
+
+
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emptyState p {
+  margin: 0;
+}

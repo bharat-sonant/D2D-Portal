@@ -1,63 +1,77 @@
 import React, { useState } from 'react';
-import { Plus, CheckCircle2, ClipboardList, ChevronRight, Calendar, LayoutGrid, Activity, Clock, X, LogOut } from 'lucide-react';
+import { Plus, CheckCircle2, ClipboardList, ChevronRight, LayoutGrid, Building2, ClipboardCheck, Clock, X, LogOut } from 'lucide-react';
 import styles from './Dashboard.module.css';
+import TaskMonitoring from '../../Components/Dashboard/TaskMonitoring/TaskMonitoring';
+import KpiTaskExecutionForm from '../../Components/Dashboard/KpiTaskExecutionForm/KpiTaskExecutionForm';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [showAddOptions, setShowAddOptions] = useState(false);
 
   const tasks = [
-    { id: 1, title: 'Network Maintenance - Zone A', priority: 'high', type: 'KPI', time: '09:30 AM' },
-    { id: 2, title: 'Regular Site Audit', priority: 'low', type: 'Other', time: '11:45 AM' },
-    { id: 3, title: 'Equipment Checkup', priority: 'low', type: 'KPI', time: '02:00 PM' },
-    { id: 4, title: 'System Security Patch', priority: 'high', type: 'KPI', time: '04:15 PM' },
-    { id: 5, title: 'Fiber Inspection', priority: 'low', type: 'KPI', time: '05:00 PM' },
+    { id: 1, title: 'Network Maintenance - Zone A', type: 'Priority Task', time: '09:30 AM' },
+    { id: 2, title: 'Regular Site Audit', type: 'Other', time: '11:45 AM' },
+    { id: 3, title: 'Equipment Checkup', type: 'KPI', time: '02:00 PM' },
+    { id: 4, title: 'System Security Patch', type: 'Priority Task', time: '04:15 PM' },
+    { id: 5, title: 'Fiber Inspection', type: 'KPI', time: '05:00 PM' },
+    { id: 6, title: 'Network Optimization', type: 'KPI', time: '06:30 PM' },
+    { id: 7, title: 'System Upgrade', type: 'Other', time: '07:15 PM' },
+    { id: 8, title: 'Critical Alert Response', type: 'Priority Task', time: '08:00 PM' },
   ];
 
+  // Sort tasks - Priority Task always on top
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.type === 'Priority Task' && b.type !== 'Priority Task') return -1;
+    if (a.type !== 'Priority Task' && b.type === 'Priority Task') return 1;
+    return 0;
+  });
+
   return (
+    // <>
+    // {/* <KpiTaskExecutionForm mode="Pick" /> */}
+    // </>
     <div className={styles.dashboardWrapper}>
       <div className={styles.fixedTopSection}>
         <div className={styles.headerSection}>
           <div className={styles.topBar}>
-            {/* User Info with Always Visible Logout */}
             <div className={styles.userInfo}>
-              <div className={styles.avatar}>AD</div>
+              <div className={styles.avatar}>A</div>
               <div className={styles.userMeta}>
                 <div className={styles.textContainer}>
-                  <p className={styles.greeting}>Good Morning,</p>
+                  <p className={styles.greeting}>Good Morning</p>
                   <h2 className={styles.userName}>Admin Professional</h2>
                 </div>
-                  <div className={styles.dateChip}>
-              <Calendar size={14} />
-              <span>21 Jan 2026</span>
-            </div>
+                {/* DateChip only for Today Tab */}
+
+                <div className={styles.dateChip}>
+                  <Building2 size={14} />
+                  <span>JAIPUR</span>
+                </div>
+
               </div>
             </div>
-
-                <button className={styles.logoutInlineBtn}>
-                   <LogOut size={12} /> Logout
-                </button>
-          
+            <button className={styles.logoutInlineBtn}><LogOut size={12} /> Logout</button>
           </div>
 
           <div className={styles.tabSwitcher}>
-            <button 
+            <button
               className={activeTab === 'today' ? styles.tabActive : styles.tabInactive}
               onClick={() => setActiveTab('today')}
             >
               <LayoutGrid size={16} /> Today's Task
             </button>
-            <button 
+            <button
               className={activeTab === 'monitoring' ? styles.tabActive : styles.tabInactive}
               onClick={() => setActiveTab('monitoring')}
             >
-              <Activity size={16} /> Monitoring
+              <ClipboardCheck size={16} /> Task Monitoring
             </button>
           </div>
         </div>
 
-        <div className={styles.statsContainer}>
-          {activeTab === 'today' && (
+        {/* Stats Container: Only visible in 'today' tab */}
+        {activeTab === 'today' && (
+          <div className={styles.statsContainer}>
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
                 <div className={styles.iconCircle}><CheckCircle2 size={18} color="#286c1b" /></div>
@@ -74,8 +88,8 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className={styles.mainContent}>
@@ -83,24 +97,18 @@ const Dashboard = () => {
           <div className={styles.tasksSection}>
             <div className={styles.sectionHeader}>
               <h3>Current Tasks</h3>
-              <span className={styles.pillBadge}>{tasks.length} Assigned</span>
+              <span className={styles.pillBadge}>Assigned : {tasks.length}</span>
             </div>
-
             <div className={styles.taskItems}>
-              {tasks.map((task) => (
-                <div key={task.id} className={styles.modernCard}>
-                  <div className={task.priority === 'high' ? styles.sideBarHigh : styles.sideBarNormal} />
+              {sortedTasks.map((task) => (
+                <div key={task.id} className={`${styles.modernCard} ${task.type === 'Priority Task' ? styles.priorityCardHighlight : ''}`}>
+                  <div className={task.type === 'Priority Task' ? styles.sideBarHigh : styles.sideBarNormal} />
                   <div className={styles.cardInfo}>
                     <div className={styles.cardTop}>
-                      <span className={styles.tag}>{task.type}</span>
-                      <div className={styles.timeInfo}><Clock size={12}/> {task.time}</div>
+                      <span className={task.type === 'Priority Task' ? styles.tagRed : styles.tag}>{task.type}</span>
+                      <div className={styles.timeInfo}><Clock size={12} /> {task.time}</div>
                     </div>
-                    <div className={styles.priorityRow}>
-                       <h4 className={styles.titleText}>{task.title}</h4>
-                       <span className={task.priority === 'high' ? styles.priorityHigh : styles.priorityNormal}>
-                         {task.priority.toUpperCase()}
-                       </span>
-                    </div>
+                    <h4 className={styles.titleText}>{task.title}</h4>
                   </div>
                   <button className={styles.actionBtn}>Pick <ChevronRight size={14} /></button>
                 </div>
@@ -108,31 +116,28 @@ const Dashboard = () => {
             </div>
           </div>
         ) : (
-          <div className={styles.emptyMonitoring}></div>
+          /* Task Monitoring loads in available space without back button */
+          <div className={styles.monitoringWrapperInner}>
+            <TaskMonitoring />
+          </div>
         )}
       </div>
 
-      {showAddOptions && <div className={styles.overlay} onClick={() => setShowAddOptions(false)} />}
-      <div className={styles.fabContainer}>
-        {showAddOptions && (
-          <div className={styles.optionsList}>
-            <button className={styles.subFab}>
-              <span className={styles.subFabText}>Add KPI Task</span>
-              <div className={styles.subIcon} ><Plus size={14}/></div>
-            </button>
-            <button className={styles.subFab}>
-              <span className={styles.subFabText}>Add Other Task</span>
-              <div className={styles.subIcon} ><Plus size={14}/></div>
-            </button>
-          </div>
-        )}
-        <button 
-          className={`${styles.masterFab} ${showAddOptions ? styles.fabClose : ''}`}
-          onClick={() => setShowAddOptions(!showAddOptions)}
-        >
-          {showAddOptions ? <X size={24} /> : <Plus size={32} />}
-        </button>
-      </div>
+      {/* FAB - Only for Today Tab */}
+      {activeTab === 'today' && (
+        <div className={styles.fabContainer}>
+          {showAddOptions && (
+            <div className={styles.optionsList}>
+              <button className={styles.subFab}><span className={styles.subFabText}>Add KPI Task</span><div className={styles.subIcon}><Plus size={14} /></div></button>
+              <button className={styles.subFab}><span className={styles.subFabText}>Add Other Task</span><div className={styles.subIcon}><Plus size={14} /></div></button>
+            </div>
+          )}
+          <button className={`${styles.masterFab} ${showAddOptions ? styles.fabClose : ''}`} onClick={() => setShowAddOptions(!showAddOptions)}>
+            {showAddOptions ? <X size={24} /> : <Plus size={32} />}
+          </button>
+        </div>
+      )}
+      {showAddOptions && activeTab === 'today' && <div className={styles.overlay} onClick={() => setShowAddOptions(false)} />}
     </div>
   );
 };
