@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import { Edit, Image } from 'lucide-react';
 
 const FuelEntries = () => {
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [searchVehicle, setSearchVehicle] = useState("");
    const [form, setForm] = useState({
       vehicle: "",
@@ -50,6 +52,25 @@ const filteredEntries = entries.filter((entry) => {
 
   return matchVehicle;
 });
+
+  const handleEdit = (entry) => {
+  setForm({
+    vehicle: entry.vehicle,
+    fuelType: entry.fuelType,
+    date: entry.date,
+    meterReading: entry.meterReading,
+    fuelVehicle: entry.fuelVehicle,
+    petrolPump: entry.petrolPump,
+    quantity: entry.quantity,
+    amount: entry.amount,
+    payMethod: entry.payMethod,
+    remark: entry.remark || "",
+  });
+
+  setIsEdit(true);
+  setEditingId(entry.id);
+  setShowCanvas(true);
+};
 
   return (
     <div className={styles.container}>
@@ -98,7 +119,8 @@ const filteredEntries = entries.filter((entry) => {
 
               <div className={styles.amount}>₹{entry.amount}</div>
               <Image size={20}/>
-              <Edit size={20}/>
+              <Edit size={20} onClick={() => handleEdit(entry)} />
+
             </div>
 
             {/* Middle grid */}
@@ -149,6 +171,12 @@ const filteredEntries = entries.filter((entry) => {
         form={form}
         setForm={setForm}
         onAddEntry={handleAddEntry}
+        isEdit={isEdit}
+  editingId={editingId}
+  setIsEdit={setIsEdit}
+  setEditingId={setEditingId}
+  entries={entries}
+  setEntries={setEntries}
       />
     </div>
   );

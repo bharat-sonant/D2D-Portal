@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./AddFuelEntries.module.css";
 
 const AddFuelEntries = ({
@@ -9,6 +9,12 @@ const AddFuelEntries = ({
   form,
   setForm,
   onAddEntry,
+   isEdit,
+  editingId,
+  setIsEdit,
+  setEditingId,
+  entries,
+  setEntries,
 }) => {
   const [meterPreview, setMeterPreview] = useState(null);
   const [slipPreview, setSlipPreview] = useState(null);
@@ -18,6 +24,16 @@ const AddFuelEntries = ({
 
   const meterImageRef = useRef(null);
   const slipImageRef = useRef(null);
+
+    useEffect(() => {
+    if (isEdit) {
+      const entry = entries.find((e) => e.id === editingId);
+      if (entry) {
+        setMeterPreview(entry.meterImage || null);
+        setSlipPreview(entry.slipImage || null);
+      }
+    }
+  }, [isEdit, editingId, entries]);
 
   if (!showCanvas) return null;
 
@@ -53,31 +69,37 @@ const AddFuelEntries = ({
     if (!form.quantity) newErrors.quantity = "Quantity is required";
     if (!form.amount) newErrors.amount = "Amount is required";
     if (!form.payMethod) newErrors.payMethod = "Payment method is required";
-    if (!meterFile) newErrors.meterImage = "Meter image required";
-    if (!slipFile) newErrors.slipImage = "Slip image required";
     if(!form.remark) newErrors.remark = "Please Enter Remark"
+    if (!isEdit && !meterFile) newErrors.meterImage = "Meter image required";
+    if (!isEdit && !slipFile) newErrors.slipImage = "Slip image required";
 
-    setErrors((prev) => ({ ...prev, ...newErrors }));
+    setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const formData = new FormData();
-
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    formData.append("meterImage", meterFile);
-    formData.append("slipImage", slipFile);
-
-    const newEntry = {
-      id: Date.now(), // temporary ID
-      ...form,
-      meterImage: meterPreview,
-      slipImage: slipPreview,
-      createdAt: new Date().toISOString(),
-    };
-
-    onAddEntry(newEntry);
+    if (isEdit) {
+      setEntries((prev) =>
+        prev.map((item) =>
+          item.id === editingId
+            ? {
+                ...item,
+                ...form,
+                meterImage: meterPreview || item.meterImage,
+                slipImage: slipPreview || item.slipImage,
+              }
+            : item
+        )
+      );
+      setIsEdit(false);
+      setEditingId(null);
+    } else {
+      onAddEntry({
+        id: Date.now(),
+        ...form,
+        meterImage: meterPreview,
+        slipImage: slipPreview,
+        createdAt: new Date().toISOString(),
+      });
+    }
     resetForm();
     setShowCanvas(false);
   };
@@ -110,13 +132,12 @@ const AddFuelEntries = ({
   // Reset file input values (VERY IMPORTANT)
   if (meterImageRef.current) meterImageRef.current.value = "";
   if (slipImageRef.current) slipImageRef.current.value = "";
-
-  setShowCanvas(false);
 };
 
 const handleback = () => {
+  setIsEdit(false);
+  setEditingId(false)
   setShowCanvas(false);
-  setErrors({});
   resetForm();
 }
 
@@ -131,7 +152,10 @@ const handleback = () => {
         >
           ←
         </button>
-        <h2 className={styles.title}>Add Fuel Entry</h2>
+      <h2 className={styles.title}>
+        {isEdit ? "Edit Fuel Entry" : "Add Fuel Entry"}
+      </h2>
+
       </div>
 
       <div className={styles.content}>
@@ -426,12 +450,10 @@ const handleback = () => {
               </div>
 
               {/* Save */}
-              <button
-                className={styles.saveDetailsButton}
-                onClick={handleSubmit}
-              >
-                Save Details
-              </button>
+              <button className={styles.saveDetailsButton} onClick={handleSubmit}>
+  {isEdit ? "Update Entry" : "Save Details"}
+</button>
+
             </div>
           </div>
         </div>
