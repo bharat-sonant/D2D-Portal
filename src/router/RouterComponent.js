@@ -35,6 +35,7 @@ import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
 import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
 import FuelAnalysis from "../FuelManagement/pages/FuelAnalysis/FuelAnalysis";
 import MobileAppsRoutes from "./MobileAppsRoutes";
+import FuelEntries from "../FuelManagement/pages/FuelEntries/FuelEntries";
 
 
 const RouterComponent = () => {
@@ -110,6 +111,15 @@ const RouterComponent = () => {
             <ProtectedRouter>
               <FuelManagementLayout />
               <FuelAnalysis />
+            </ProtectedRouter>
+          }
+        />
+        <Route
+          path="/fuel/add_fuel_entries"
+          element={
+            <ProtectedRouter>
+              <FuelManagementLayout />
+              <FuelEntries/>
             </ProtectedRouter>
           }
         />
