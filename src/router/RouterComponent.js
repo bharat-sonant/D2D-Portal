@@ -36,6 +36,13 @@ import FieldEmployees from "../FuelManagement/pages/FieldEmployees";
 import FuelAnalysis from "../FuelManagement/pages/FuelAnalysis/FuelAnalysis";
 import MobileAppsRoutes from "./MobileAppsRoutes";
 import FuelEntries from "../FuelManagement/pages/FuelEntries/FuelEntries";
+import FE_Dashboard from "../FieldTrackingManagement/Pages/FE-Dashboard/FE_Dashboard";
+import FEEmployees from "../FieldTrackingManagement/Pages/FEEmployees/FEEmployees";
+import FETracking from "../FieldTrackingManagement/Pages/FETracking/FETracking";
+import FEReports from "../FieldTrackingManagement/Pages/FEReports/FEReports";
+import FETasks from "../FieldTrackingManagement/Pages/FETasks/FETasks";
+import FEAnalysis from "../FieldTrackingManagement/Pages/FEAnalysis/FEAnalysis";
+import FE_Layout from "../FieldTrackingManagement/Layout/FE_Layout";
 
 
 const RouterComponent = () => {
@@ -119,7 +126,7 @@ const RouterComponent = () => {
           element={
             <ProtectedRouter>
               <FuelManagementLayout />
-              <FuelEntries/>
+              <FuelEntries />
             </ProtectedRouter>
           }
         />
@@ -264,6 +271,74 @@ const RouterComponent = () => {
           }
         />
         <Route path='MyOfficeDashboard' element={<OfficeDashboard />} />
+        {/* ================= FIELD EXECUTIVE ROUTES ================= */}
+
+        <Route
+          path="/field-executive/dashboard"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FE_Dashboard />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/field-executive/employees"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FEEmployees />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/field-executive/tracking"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FETracking />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/field-executive/reports"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FEReports />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/field-executive/tasks"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FETasks />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
+          path="/field-executive/analysis"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FEAnalysis />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+
         <>
           {MobileAppsRoutes()}
         </>

@@ -22,7 +22,7 @@ const appsList = [
   { id: 1, name: "D2D Monitoring", icon: Eye, color: "#667eea" },
   { id: 2, name: "Dustbin Management", icon: Trash2, color: "#f56565" },
   { id: 3, name: "Attendance Management", icon: CalendarCheck, color: "#48bb78" },
-  { id: 4, name: "Field Tracking", icon: MapPin, color: "#ecc94b" },
+  { id: 4, name: "Field Tracking", icon: MapPin, color: "#ecc94b", path: "/field-executive/dashboard" },
   { id: 5, name: "Survey Management", icon: ClipboardList, color: "#38b2ac" },
   { id: 6, name: "UCC Management", icon: Building, color: "#9f7aea" },
   { id: 7, name: "IEC Management", icon: Info, color: "#ed64a6" },
