@@ -112,7 +112,7 @@ const EmployeeTopbar = () => {
                                 <span className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""}`}>
                                     {item.label}
                                 </span>
-                                {isActive && <div className={styles.activeIndicator} />}
+                                {/* {isActive && <div className={styles.activeIndicator} />} */}
                             </Link>
                         );
                     })}
