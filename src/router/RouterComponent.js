@@ -43,6 +43,7 @@ import FEReports from "../FieldTrackingManagement/Pages/FEReports/FEReports";
 import FETasks from "../FieldTrackingManagement/Pages/FETasks/FETasks";
 import FEAnalysis from "../FieldTrackingManagement/Pages/FEAnalysis/FEAnalysis";
 import FE_Layout from "../FieldTrackingManagement/Layout/FE_Layout";
+import FEAssignments from "../FieldTrackingManagement/Pages/FEAssignments/FEAssignments";
 
 
 const RouterComponent = () => {
@@ -334,6 +335,16 @@ const RouterComponent = () => {
             <ProtectedRouter>
               <FE_Layout>
                 <FEAnalysis />
+              </FE_Layout>
+            </ProtectedRouter>
+          }
+        />
+        <Route
+          path="/field-executive/assignments"
+          element={
+            <ProtectedRouter>
+              <FE_Layout>
+                <FEAssignments />
               </FE_Layout>
             </ProtectedRouter>
           }

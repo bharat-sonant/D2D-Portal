@@ -9,6 +9,7 @@ import {
   BarChart3,
   Menu,
   X,
+  ClipboardCheck
 } from "lucide-react";
 
 import styles from "../../../Style/MainLayout/Topbar.module.css";
@@ -29,50 +30,63 @@ const FE_TopBar = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const menuItems = [
-    {
-      id: "Dashboard",
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      color: "#3b82f6",
-      path: "/field-executive/dashboard",
-    },
-    {
-      id: "Employees",
-      label: "Employees",
-      icon: Users,
-      color: "#8b5cf6",
-      path: "/field-executive/employees",
-    },
-    {
-      id: "Tracking",
-      label: "Tracking",
-      icon: MapPin,
-      color: "#22c55e",
-      path: "/field-executive/tracking",
-    },
-    {
-      id: "Reports",
-      label: "Reports",
-      icon: FileText,
-      color: "#f97316",
-      path: "/field-executive/reports",
-    },
-    {
-      id: "Tasks",
-      label: "Tasks",
-      icon: ClipboardList,
-      color: "#14b8a6",
-      path: "/field-executive/tasks",
-    },
-    {
-      id: "Analysis",
-      label: "Analysis",
-      icon: BarChart3,
-      color: "#ef4444",
-      path: "/field-executive/analysis",
-    },
-  ];
+const menuItems = [
+  {
+    id: "Dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    color: "#1e40af", // Deep Blue
+    path: "/field-executive/dashboard",
+  },
+
+  {
+    id: "Tasks",
+    label: "Tasks",
+    icon: ClipboardList,
+    color: "#0f766e", // Deep Teal
+    path: "/field-executive/tasks",
+  },
+  {
+    id: "Assignments",
+    label: "Assignments",
+    icon: ClipboardCheck,
+    color: "#075985", // Strong Cyan-Blue
+    path: "/field-executive/assignments",
+  },
+
+  {
+    id: "Employees",
+    label: "Employees",
+    icon: Users,
+    color: "#5b21b6", // Deep Purple
+    path: "/field-executive/employees",
+  },
+
+  {
+    id: "Tracking",
+    label: "Tracking",
+    icon: MapPin,
+    color: "#166534", // Forest Green
+    path: "/field-executive/tracking",
+  },
+
+  {
+    id: "Reports",
+    label: "Reports",
+    icon: FileText,
+    color: "#9a3412", // Burnt Orange
+    path: "/field-executive/reports",
+  },
+  {
+    id: "Analysis",
+    label: "Analysis",
+    icon: BarChart3,
+    color: "#7f1d1d", // Deep Red
+    path: "/field-executive/analysis",
+  },
+];
+
+
 
   useEffect(() => {
     if (storedName) {
