@@ -1,6 +1,6 @@
 .toastContainer {
   position: fixed;
-  top: 20px;
+  top: 70px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
@@ -9,69 +9,103 @@
 .toast {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  border-radius: 16px;
-  height: 80px;
-  min-width: 320px;
-  max-width: 500px;
+  gap: 14px;
+  padding: 20px 18px;
+  border-radius: 6px;
+  min-width: 340px;
+  max-width: 420px;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  background: rgba(255, 255, 255, 0.65);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+
   animation: slideDown 0.4s ease-out;
 }
-
-.exit {
-  animation: slideUp 0.4s ease-out;
+.toastLeft {
+  display: flex;
+  gap: 14px;
+  width: calc(100% - 44px);
 }
-
-.success {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #1a5f5a;
-}
-
-.error {
-  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-  color: #d63031;
-}
-
-.info {
-  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-  color: #00695c;
-}
-
 .iconWrapper {
-  width: 24px;
-  height: 24px;
+  background: #0000000d;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
   animation: bounce 0.6s ease-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
+.toastContent {
+  display: flex;
+  flex-flow: column;
+  width: calc(100% - 38px);
+}
+.title {
+  font-size: 15px;
+  font-family: var(--fontGraphikBold);
+  color: var(--black);
+  flex: 1;
+}
 .message {
   flex: 1;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
   line-height: 1.5;
 }
-
 .closeBtn {
-  background: rgba(255, 255, 255, 0.5);
+  background: #0000000d;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 28px;
   height: 28px;
   cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+.exit {
+  animation: slideUp 0.4s ease-out;
+}
+.success {
+  background: linear-gradient(135deg, #e0fff4, #f0fffb);
+  color: #1f7a6f;
+  /* border-left: 4px solid #2fd2a3; */
+}
+
+.error {
+  background: linear-gradient(135deg, #fff0f0, #ffe5e5);
+  color: #b42318;
+  /* border-left: 4px solid #ff6b6b; */
+}
+
+.info {
+  background: linear-gradient(135deg, #eef5ff, #f6f9ff);
+  color: #1f4fd8;
+  /* border-left: 4px solid #4f7cff; */
 }
 
 .progressBar {
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 3px;
+  height: 2px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.1);
   transform-origin: left;
   animation: progress 3s linear;
 }
