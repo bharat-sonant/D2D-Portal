@@ -4,8 +4,9 @@ import ChangePassword from '../components/ChangePassword/changePassword';
 import LogoImage from '../components/Common/Image/LogoImage';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from "../Style/MainLayout/Topbar.module.css";
-import { File, Fuel, Menu, Users, X } from 'lucide-react';
+import { ClipboardPlus, File, Fuel, Menu, Users, X } from 'lucide-react';
 import { images } from "../assets/css/imagePath";
+import { FaRegHandPointRight } from 'react-icons/fa';
 
 const FuelManagementTopbar = () => {
    const location = useLocation();
@@ -32,6 +33,13 @@ const FuelManagementTopbar = () => {
             icon: Fuel,
             color: "#17a748",
             path: "/fuel/fuel_analysis",
+        },
+        {
+            id: "Fuel Report",
+            label: "Report",
+            icon: ClipboardPlus,
+            color: "#17a748",
+            path: "/fuel/fuel_report",
         },
     ];
 

@@ -44,6 +44,7 @@ import FETasks from "../FieldTrackingManagement/Pages/FETasks/FETasks";
 import FEAnalysis from "../FieldTrackingManagement/Pages/FEAnalysis/FEAnalysis";
 import FE_Layout from "../FieldTrackingManagement/Layout/FE_Layout";
 import FEAssignments from "../FieldTrackingManagement/Pages/FEAssignments/FEAssignments";
+import FuelReport from "../FuelManagement/pages/FuelReport/FuelReport";
 
 
 const RouterComponent = () => {
@@ -128,6 +129,15 @@ const RouterComponent = () => {
             <ProtectedRouter>
               <FuelManagementLayout />
               <FuelEntries />
+            </ProtectedRouter>
+          }
+        />
+        <Route
+          path="/fuel/fuel_report"
+          element={
+            <ProtectedRouter>
+              <FuelManagementLayout />
+              <FuelReport />
             </ProtectedRouter>
           }
         />
