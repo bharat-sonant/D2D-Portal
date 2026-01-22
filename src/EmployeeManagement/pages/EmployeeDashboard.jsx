@@ -149,14 +149,14 @@ const EmployeeDashboard = () => {
       //   gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
       //   gradient: "var(--gradientTheme)",
     },
-    {
-      title: "Incomplete Profiles",
-      value: "43",
-      change: "-15%",
-      icon: <AlertCircle size={24} />,
-      //   gradient: "linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
+    // {
+    //   title: "Incomplete Profiles",
+    //   value: "43",
+    //   change: "-15%",
+    //   icon: <AlertCircle size={24} />,
+    //   //   gradient: "linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)",
+    //   //   gradient: "var(--gradientTheme)",
+    // },
   ];
 
   const quickActions = [
