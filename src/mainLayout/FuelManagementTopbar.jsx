@@ -4,7 +4,7 @@ import ChangePassword from '../components/ChangePassword/changePassword';
 import LogoImage from '../components/Common/Image/LogoImage';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from "../Style/MainLayout/Topbar.module.css";
-import { Fuel, Menu, Users, X } from 'lucide-react';
+import { File, Fuel, Menu, Users, X } from 'lucide-react';
 import { images } from "../assets/css/imagePath";
 
 const FuelManagementTopbar = () => {
@@ -19,13 +19,13 @@ const FuelManagementTopbar = () => {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const menuItems = [
-        // {
-        //     id: "Add Field Employees",
-        //     label: "Employees",
-        //     icon: Users,
-        //     color: "#17a748",
-        //     path: "/fuel/add-field-employee",
-        // },
+        {
+            id: "Add Fuel Entries",
+            label: "Fuel Entries",
+            icon: File,
+            color: "#17a748",
+            path: "/fuel/add_fuel_entries",
+        },
         {
             id: "Fuel Analysis",
             label: "Analysis",

@@ -1,0 +1,59 @@
+.container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.header {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.addButton {
+  background-color: #2563eb;
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 24px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addButton:hover {
+  background-color: #1d4ed8;
+}
+
+.content {
+  padding: 16px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 0;
+  color: #6b7280;
+}
+
+.emptyStateSubtext {
+  font-size: 14px;
+  margin-top: 8px;
+}
