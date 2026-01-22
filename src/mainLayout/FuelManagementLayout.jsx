@@ -4,10 +4,13 @@ import FuelManagementTopbar from './FuelManagementTopbar'
 const FuelManagementLayout = ({children}) => {
   return (
     <div>
-      <FuelManagementTopbar />
-            <div style={{ paddingTop: "60px" }}>
+      {/* <FuelManagementTopbar /> */}
+            {/* <div style={{ paddingTop: "60px" }}>
                 {children}
-            </div>
+            </div> */}
+            <>
+            {children}
+            </>
     </div>
   )
 }

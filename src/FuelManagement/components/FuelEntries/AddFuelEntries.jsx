@@ -1,54 +1,156 @@
 import React, { useRef, useState } from "react";
 import styles from "./AddFuelEntries.module.css";
 
-const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
+const AddFuelEntries = ({
+  showCanvas,
+  setShowCanvas,
+  errors,
+  setErrors,
+  form,
+  setForm,
+  onAddEntry,
+}) => {
   const [meterPreview, setMeterPreview] = useState(null);
   const [slipPreview, setSlipPreview] = useState(null);
+
+  const [meterFile, setMeterFile] = useState(null);
+  const [slipFile, setSlipFile] = useState(null);
 
   const meterImageRef = useRef(null);
   const slipImageRef = useRef(null);
 
-  const handleSubmit = () => {
-    console.log("Form submitted");
-    setShowCanvas(false);
+  if (!showCanvas) return null;
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const handleCaptureClick = (inputRef) => {
     inputRef.current?.click();
   };
 
-  const handleImageChange = (event, setPreview) => {
+  const handleImageChange = (event, setPreview, setFile, errorKey) => {
     const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-    }
+    if (!file) return;
+
+    setFile(file);
+    const imageUrl = URL.createObjectURL(file);
+    setPreview(imageUrl);
+    setErrors((prev) => ({ ...prev, [errorKey]: "" }));
   };
 
-  if (!showCanvas) return null;
+  const handleSubmit = () => {
+    let newErrors = {};
+
+    if (!form.vehicle) newErrors.vehicle = "Vehicle is required";
+    if (!form.fuelType) newErrors.fuelType = "Fuel type is required";
+    if (!form.date) newErrors.date = "Date is required";
+    if (!form.meterReading)
+      newErrors.meterReading = "Meter reading is required";
+    if (!form.fuelVehicle) newErrors.fuelVehicle = "Fuel vehicle is required";
+    if (!form.petrolPump) newErrors.petrolPump = "Petrol pump is required";
+    if (!form.quantity) newErrors.quantity = "Quantity is required";
+    if (!form.amount) newErrors.amount = "Amount is required";
+    if (!form.payMethod) newErrors.payMethod = "Payment method is required";
+    if (!meterFile) newErrors.meterImage = "Meter image required";
+    if (!slipFile) newErrors.slipImage = "Slip image required";
+    if(!form.remark) newErrors.remark = "Please Enter Remark"
+
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+    if (Object.keys(newErrors).length > 0) return;
+
+    const formData = new FormData();
+
+    Object.entries(form).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    formData.append("meterImage", meterFile);
+    formData.append("slipImage", slipFile);
+
+    const newEntry = {
+      id: Date.now(), // temporary ID
+      ...form,
+      meterImage: meterPreview,
+      slipImage: slipPreview,
+      createdAt: new Date().toISOString(),
+    };
+
+    onAddEntry(newEntry);
+    resetForm();
+    setShowCanvas(false);
+  };
+
+  const resetForm = () => {
+  // Reset text fields
+  setForm({
+    vehicle: "",
+    fuelType: "",
+    date: "",
+    meterReading: "",
+    fuelVehicle: "",
+    petrolPump: "",
+    quantity: "",
+    amount: "",
+    payMethod: "",
+    remark: ""
+  });
+
+  // Reset errors
+  setErrors({});
+
+  setMeterPreview(null);
+  setSlipPreview(null);
+
+  // Reset image files
+  setMeterFile(null);
+  setSlipFile(null);
+
+  // Reset file input values (VERY IMPORTANT)
+  if (meterImageRef.current) meterImageRef.current.value = "";
+  if (slipImageRef.current) slipImageRef.current.value = "";
+
+  setShowCanvas(false);
+};
+
+const handleback = () => {
+  setShowCanvas(false);
+  setErrors({});
+  resetForm();
+}
+
 
   return (
     <div className={styles.page}>
-      {/* Page Header */}
+      {/* Header */}
       <div className={styles.header}>
         <button
           className={styles.backButton}
-          onClick={() => setShowCanvas(false)}
+          onClick={handleback}
         >
           ←
         </button>
         <h2 className={styles.title}>Add Fuel Entry</h2>
       </div>
 
-      {/* Page Content */}
       <div className={styles.content}>
-        {/* Form Card */}
         <div className={styles.formCard}>
           <div className={styles.formFields}>
             {/* Vehicle */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Vehicle</label>
-              <select className={styles.input}>
+              <label className={styles.label}>
+                Vehicle
+                {errors.vehicle && (
+                  <span className={styles.errorText}> · {errors.vehicle}</span>
+                )}
+              </label>
+
+              <select
+                className={`${styles.input} ${errors.vehicle ? styles.errorInput : ""}`}
+                value={form.vehicle}
+                onChange={(e) => handleChange("vehicle", e.target.value)}
+              >
                 <option value="">Select Vehicle</option>
                 <option value="vehicle1">Vehicle 1</option>
                 <option value="vehicle2">Vehicle 2</option>
@@ -57,8 +159,18 @@ const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
 
             {/* Fuel Type */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Fuel Type</label>
-              <select className={styles.input}>
+              <label className={styles.label}>
+                Fuel Type
+                {errors.fuelType && (
+                  <span className={styles.errorText}> · {errors.fuelType}</span>
+                )}
+              </label>
+
+              <select
+                className={`${styles.input} ${errors.fuelType ? styles.errorInput : ""}`}
+                value={form.fuelType}
+                onChange={(e) => handleChange("fuelType", e.target.value)}
+              >
                 <option value="">Select Fuel Type</option>
                 <option value="petrol">Petrol</option>
                 <option value="diesel">Diesel</option>
@@ -66,26 +178,60 @@ const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
               </select>
             </div>
 
+           <div className={styles.row}>
             {/* Date */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Date</label>
-              <input type="date" className={styles.input} />
+              <label className={styles.label}>
+                Date
+                {errors.date && (
+                  <span className={styles.errorText}> · {errors.date}</span>
+                )}
+              </label>
+
+              <input
+                type="date"
+                className={`${styles.input} ${errors.date ? styles.errorInput : ""}`}
+                value={form.date}
+                onChange={(e) => handleChange("date", e.target.value)}
+              />
             </div>
 
             {/* Meter Reading */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Meter Reading</label>
+              <label className={styles.label}>Meter Reading
+                {errors.meterReading && (
+                <span className={styles.errorText}>
+                  {" "}
+                  · {errors.meterReading}
+                </span>
+              )}
+              </label>
               <input
                 type="number"
-                placeholder="Enter meter reading"
-                className={styles.input}
+                className={`${styles.input} ${errors.meterReading ? styles.errorInput : ""}`}
+                value={form.meterReading}
+                onChange={(e) => handleChange("meterReading", e.target.value)}
               />
             </div>
+           </div>
 
             {/* Fuel Vehicle */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Fuel Vehicle</label>
-              <select className={styles.input}>
+              <label className={styles.label}>
+                Fuel Vehicle
+                {errors.fuelVehicle && (
+                  <span className={styles.errorText}>
+                    {" "}
+                    · {errors.fuelVehicle}
+                  </span>
+                )}
+              </label>
+
+              <select
+                className={`${styles.input} ${errors.fuelVehicle ? styles.errorInput : ""}`}
+                value={form.fuelVehicle}
+                onChange={(e) => handleChange("fuelVehicle", e.target.value)}
+              >
                 <option value="">Select Fuel Vehicle</option>
                 <option value="d2d">D2D Vehicle</option>
                 <option value="open_depo">Open Depo Vehicle</option>
@@ -94,8 +240,21 @@ const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
 
             {/* Petrol Pump */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Petrol Pump</label>
-              <select className={styles.input}>
+              <label className={styles.label}>
+                Petrol Pump
+                {errors.petrolPump && (
+                  <span className={styles.errorText}>
+                    {" "}
+                    · {errors.petrolPump}
+                  </span>
+                )}
+              </label>
+
+              <select
+                className={`${styles.input} ${errors.petrolPump ? styles.errorInput : ""}`}
+                value={form.petrolPump}
+                onChange={(e) => handleChange("petrolPump", e.target.value)}
+              >
                 <option value="">Select Petrol Pump</option>
                 <option value="pump1">Pump 1</option>
                 <option value="pump2">Pump 2</option>
@@ -103,34 +262,61 @@ const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
               </select>
             </div>
 
-           <div className={styles.row}>
-             {/* Quantity */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Quantity (Liters)</label>
-              <input
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                className={styles.input}
-              />
-            </div>
+            {/* Quantity & Amount */}
+            <div className={styles.row}>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Quantity (Liters)
+                  {errors.quantity && (
+                    <span className={styles.errorText}>
+                      {" "}
+                      · {errors.quantity}
+                    </span>
+                  )}
+                </label>
 
-            {/* Amount */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Amount (₹)</label>
-              <input
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                className={styles.input}
-              />
+                <input
+                  type="number"
+                  className={`${styles.input} ${errors.quantity ? styles.errorInput : ""}`}
+                  value={form.quantity}
+                  onChange={(e) => handleChange("quantity", e.target.value)}
+                />
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Amount (₹)
+                  {errors.amount && (
+                    <span className={styles.errorText}> · {errors.amount}</span>
+                  )}
+                </label>
+
+                <input
+                  type="number"
+                  className={`${styles.input} ${errors.amount ? styles.errorInput : ""}`}
+                  value={form.amount}
+                  onChange={(e) => handleChange("amount", e.target.value)}
+                />
+              </div>
             </div>
-           </div>
 
             {/* Pay Method */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Pay Method</label>
-              <select className={styles.input}>
+              <label className={styles.label}>
+                Pay Method
+                {errors.payMethod && (
+                  <span className={styles.errorText}>
+                    {" "}
+                    · {errors.payMethod}
+                  </span>
+                )}
+              </label>
+
+              <select
+                className={`${styles.input} ${errors.payMethod ? styles.errorInput : ""}`}
+                value={form.payMethod}
+                onChange={(e) => handleChange("payMethod", e.target.value)}
+              >
                 <option value="">Select Payment Method</option>
                 <option value="cash">Cash</option>
                 <option value="card">Card</option>
@@ -139,91 +325,114 @@ const AddFuelEntries = ({ showCanvas, setShowCanvas }) => {
               </select>
             </div>
 
+            {/* Meter Reading */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Meter Reading Image</label>
-
-              {/* Preview Box */}
-              <div className={styles.imagePreviewBox}>
-                {meterPreview ? (
-                  <img
-                    src={meterPreview}
-                    alt="Meter Reading"
-                    className={styles.previewImage}
-                  />
-                ) : (
-                  <span className={styles.placeholderText}>
-                    No image selected
-                  </span>
-                )}
-              </div>
-
-              <div className={styles.uploadContainer}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  ref={meterImageRef}
-                  className={styles.fileInput}
-                  onChange={(e) => handleImageChange(e, setMeterPreview)}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleCaptureClick(meterImageRef)}
-                  className={styles.captureButton}
-                >
-                  <span className={styles.cameraIcon}>📷</span>
-                  <span>Capture Meter Reading</span>
-                </button>
-              </div>
+              <label className={styles.label}>Remark
+                {errors.remark && (
+                <span className={styles.errorText}>
+                  {" "}
+                  · {errors.remark}
+                </span>
+              )}
+              </label>
+              
+              <textarea
+                type="text"
+                className={`${styles.input} ${errors.remark ? styles.errorInput : ""}`}
+                value={form.remark}
+                onChange={(e) => handleChange("remark", e.target.value)}
+              />
             </div>
 
-            {/* Upload Amount Slip Image */}
+            {/* Meter Image */}
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>Amount Slip Image</label>
+              <label className={styles.label}>
+                Meter Reading Image
+                {errors.meterImage && (
+                  <span className={styles.errorText}>
+                    {" "}
+                    · {errors.meterImage}
+                  </span>
+                )}
+              </label>
 
-              {/* Preview Box */}
-              <div className={styles.imagePreviewBox}>
-                {slipPreview ? (
-                  <img
-                    src={slipPreview}
-                    alt="Amount Slip"
-                    className={styles.previewImage}
-                  />
+              <div
+                className={styles.imagePreviewBox}
+                onClick={() => handleCaptureClick(meterImageRef)}
+              >
+                {meterPreview ? (
+                  <img src={meterPreview} className={styles.previewImage} />
                 ) : (
                   <span className={styles.placeholderText}>
-                    No image selected
+                    Upload Meter Image
                   </span>
                 )}
               </div>
 
-              <div className={styles.uploadContainer}>
+              <input
+                type="file"
+                accept="image/*"
+                ref={meterImageRef}
+                className={styles.fileInput}
+                onChange={(e) =>
+                  handleImageChange(
+                    e,
+                    setMeterPreview,
+                    setMeterFile,
+                    "meterImage",
+                  )
+                }
+              />
+
+              {/* Slip Image */}
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Amount Slip Image
+                  {errors.slipImage && (
+                    <span className={styles.errorText}>
+                      {" "}
+                      · {errors.slipImage}
+                    </span>
+                  )}
+                </label>
+
+                <div
+                  className={styles.imagePreviewBox}
+                  onClick={() => handleCaptureClick(slipImageRef)}
+                >
+                  {slipPreview ? (
+                    <img src={slipPreview} className={styles.previewImage} />
+                  ) : (
+                    <span className={styles.placeholderText}>
+                      Upload Slip Image
+                    </span>
+                  )}
+                </div>
+
                 <input
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   ref={slipImageRef}
                   className={styles.fileInput}
-                  onChange={(e) => handleImageChange(e, setSlipPreview)}
+                  onChange={(e) =>
+                    handleImageChange(
+                      e,
+                      setSlipPreview,
+                      setSlipFile,
+                      "slipImage",
+                    )
+                  }
                 />
-                <button
-                  type="button"
-                  onClick={() => handleCaptureClick(slipImageRef)}
-                  className={styles.captureButton}
-                >
-                  <span className={styles.cameraIcon}>📷</span>
-                  <span>Capture Amount Slip</span>
-                </button>
               </div>
-            </div>
 
-            {/* Save Button */}
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className={styles.saveDetailsButton}
-            >
-              Save Details
-            </button>
+              {/* Save */}
+              <button
+                className={styles.saveDetailsButton}
+                onClick={handleSubmit}
+              >
+                Save Details
+              </button>
+            </div>
           </div>
         </div>
       </div>
