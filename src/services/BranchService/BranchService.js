@@ -21,17 +21,15 @@ export const saveBranch = async (branchData) => {
     // get user id from local storage
     const userId = localStorage.getItem('userId');
     const createdBy = branchData.id ? branchData.created_by : userId;
-
-    // Extract time part for updated_at (HH:mm:ss.sssZ) because DB column is 'time with time zone'
     const nowIso = new Date().toISOString();
     const timePart = nowIso.split('T')[1];
 
     const dataToSave = {
-        ...branchData,
-        city_id: branchData.city_id ? parseInt(branchData.city_id, 10) : null,
+        name: branchData.name,
+        code: branchData.code,
+        address: branchData.address,
         created_by: createdBy ? parseInt(createdBy, 10) : null,
         updated_by: userId ? parseInt(userId, 10) : null,
-        status: branchData.status ?? true,
         created_at: branchData.id ? branchData.created_at : nowIso,
         updated_at: timePart
     };

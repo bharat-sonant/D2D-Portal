@@ -64,8 +64,6 @@ export const validateBranchDetail = ({
     setNameError,
     setCodeError,
     setAddressError,
-    setManagerError,
-    setCityError,
     setLoading,
     onSuccess,
     onError,
@@ -74,8 +72,6 @@ export const validateBranchDetail = ({
     setNameError('');
     setCodeError('');
     setAddressError('');
-    setManagerError('');
-    setCityError('');
 
     if (!form.name || !form.name.toString().trim()) {
         setNameError('Branch name is required');
@@ -87,14 +83,6 @@ export const validateBranchDetail = ({
     }
     if (!form.address || !form.address.toString().trim()) {
         setAddressError('Address is required');
-        isValid = false;
-    }
-    if (!form.manager_name || !form.manager_name.toString().trim()) {
-        setManagerError('Manager name is required');
-        isValid = false;
-    }
-    if (!form.city_id || !form.city_id.toString().trim()) {
-        setCityError('City ID is required');
         isValid = false;
     }
 

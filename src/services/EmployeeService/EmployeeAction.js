@@ -73,18 +73,18 @@ export const validateEmployeeDetail = ({
     setBranchError("");
     setEmailError("");
 
-    if (!form.employee_name) {
+    if (!form.employee_name || !form.employee_name.toString().trim()) {
         setNameError("Employee Name is required");
         isValid = false;
     }
-    if (!form.employee_code) {
+    if (!form.employee_code || !form.employee_code.toString().trim()) {
         setEmpCodeError("Employee Code is required");
         isValid = false;
     }
-    if (!form.phone_number) {
+    if (!form.phone_number || !form.phone_number.toString().trim()) {
         setPhoneError("Phone Number is required");
         isValid = false;
-    } else if (form.phone_number.toString().length < 10) {
+    } else if (form.phone_number.toString().trim().length < 10) {
         setPhoneError("Valid 10-digit Phone Number is required");
         isValid = false;
     }
@@ -92,7 +92,7 @@ export const validateEmployeeDetail = ({
         setBranchError("Branch is required");
         isValid = false;
     }
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    if (form.email && form.email.toString().trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.toString().trim())) {
         setEmailError("Please enter a valid email address");
         isValid = false;
     }

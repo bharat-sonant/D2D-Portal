@@ -6,31 +6,24 @@ import {
     MapPin,
     Check,
     Settings,
-    User,
     Loader2
 } from "lucide-react";
 import { saveBranchAction, validateBranchDetail } from "../../services/BranchService/BranchAction";
-import Toast from "../../components/Common/GlobalToast/GlobalToast";
+import * as common from "../../common/common";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     const [form, setForm] = useState({
         name: "",
         code: "",
-        address: "",
-        manager_name: "",
-        city_id: "",
-        status: true
+        address: ""
     });
 
     // error states
     const [nameError, setNameError] = useState("");
     const [codeError, setCodeError] = useState("");
     const [addressError, setAddressError] = useState("");
-    const [managerError, setManagerError] = useState("");
-    const [cityError, setCityError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [toast, setToast] = useState(null);
 
     // Populate form if initialData exists (Edit Mode)
     useEffect(() => {
@@ -40,9 +33,6 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                 name: initialData.name || "",
                 code: initialData.code || "",
                 address: initialData.address || "",
-                manager_name: initialData.manager_name || "",
-                city_id: initialData.city_id || "",
-                status: initialData.status !== undefined ? initialData.status : true,
                 created_at: initialData.created_at || new Date().toISOString()
             });
         } else if (showCanvas && !initialData) {
@@ -50,10 +40,7 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
             setForm({
                 name: "",
                 code: "",
-                address: "",
-                manager_name: "",
-                city_id: "",
-                status: true
+                address: ""
             });
         }
         // Reset errors whenever canvas opens/closes
@@ -61,9 +48,6 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
             setNameError("");
             setCodeError("");
             setAddressError("");
-            setManagerError("");
-            setCityError("");
-            setToast(null);
         }
     }, [showCanvas, initialData]);
 
@@ -71,20 +55,11 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        // Strict numeric check for city_id
-        if (name === 'city_id' && value && !/^\d+$/.test(value)) {
-            return;
-        }
-
         setForm(prev => ({ ...prev, [name]: value }));
 
-        // Clear specific error
         if (name === 'name') setNameError("");
         if (name === 'code') setCodeError("");
         if (name === 'address') setAddressError("");
-        if (name === 'manager_name') setManagerError("");
-        if (name === 'city_id') setCityError("");
     };
 
     const handleSave = () => {
@@ -93,21 +68,15 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
             setNameError,
             setCodeError,
             setAddressError,
-            setManagerError,
-            setCityError,
             setLoading,
             onSuccess: (msg) => {
                 setLoading(false);
-                setToast({ message: initialData ? "Branch updated successfully" : (msg || "Branch saved successfully"), type: "success" });
-                // Delay close to show toast or just close immediately and show toast in parent
-                setTimeout(() => {
-                    setShowCanvas(false);
-                    if (onRefresh) onRefresh();
-                }, 1000);
+                setShowCanvas(false);
+                if (onRefresh) onRefresh(msg);
             },
             onError: (err) => {
                 setLoading(false);
-                setToast({ message: err || "Failed to save branch", type: "error" });
+                common.setAlertMessage("error", err || "Failed to save branch");
             }
         });
     };
@@ -133,7 +102,6 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
 
                 {/* Body */}
                 <div className={modalStyles.modalBody} style={{ padding: "24px", overflowY: "auto" }}>
-
                     <div className={modalStyles.inputGroup}>
                         <label className={modalStyles.label}>Branch Name</label>
                         <div className={modalStyles.inputWrapper}>
@@ -144,6 +112,7 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                                 placeholder="Enter branch name"
                                 value={form.name}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
                         </div>
                         {nameError && <ErrorMessage message={nameError} />}
@@ -159,42 +128,13 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                                 placeholder="Enter branch code"
                                 value={form.code}
                                 onChange={handleChange}
-                                disabled={!!initialData} // Optionally disable code editing if it's considered immutable or unique key
+                                disabled={!!initialData}
                                 style={initialData ? { background: "#f1f5f9", cursor: "not-allowed" } : {}}
+                                autoComplete="off"
                             />
                         </div>
                         {codeError && <ErrorMessage message={codeError} />}
                         {initialData && <span style={{ fontSize: "10px", color: "var(--textMuted)" }}>Code cannot be changed</span>}
-                    </div>
-
-                    <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
-                        <label className={modalStyles.label}>Manager Name</label>
-                        <div className={modalStyles.inputWrapper}>
-                            <div className={modalStyles.inputIcon}><User size={18} /></div>
-                            <input
-                                className={modalStyles.input}
-                                name="manager_name"
-                                placeholder="Enter manager name"
-                                value={form.manager_name}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        {managerError && <ErrorMessage message={managerError} />}
-                    </div>
-
-                    <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
-                        <label className={modalStyles.label}>City ID</label>
-                        <div className={modalStyles.inputWrapper}>
-                            <div className={modalStyles.inputIcon}><MapPin size={18} /></div>
-                            <input
-                                className={modalStyles.input}
-                                name="city_id"
-                                placeholder="Enter city ID"
-                                value={form.city_id}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        {cityError && <ErrorMessage message={cityError} />}
                     </div>
 
                     <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
@@ -209,43 +149,22 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                                 style={{ height: "auto", padding: "12px 12px 12px 48px" }}
                                 value={form.address}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
                         </div>
                         {addressError && <ErrorMessage message={addressError} />}
                     </div>
-
-                    <div className={modalStyles.inputGroup} style={{ marginTop: "16px" }}>
-                        <label className={modalStyles.label} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-                            <input
-                                type="checkbox"
-                                name="status"
-                                checked={form.status}
-                                onChange={(e) => setForm(prev => ({ ...prev, status: e.target.checked }))}
-                                style={{ width: "18px", height: "18px" }}
-                            />
-                            Active Status
-                        </label>
-                    </div>
-
                 </div>
 
                 {/* Footer */}
                 <div className={modalStyles.modalFooter}>
                     <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)} disabled={loading}>Cancel</button>
                     <button className={modalStyles.submitBtn} onClick={handleSave} disabled={loading}>
-                        {loading ? <Loader2 className="animate-spin" size={18} /> : (initialData ? <Check size={18} /> : <Check size={18} />)}
+                        {loading ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
                         {" "}{initialData ? "Update Branch" : "Add Branch"}
                     </button>
                 </div>
             </div>
-            {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    duration={3000}
-                    onClose={() => setToast(null)}
-                />
-            )}
         </div>
     );
 };

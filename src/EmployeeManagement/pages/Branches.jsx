@@ -5,7 +5,7 @@ import AddBranch from "../components/AddBranch";
 import { getBranchesAction, deleteBranchAction } from "../../services/BranchService/BranchAction";
 import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
-import Toast from "../../components/Common/GlobalToast/GlobalToast";
+import * as common from "../../common/common";
 
 const Branches = () => {
     const [branches, setBranches] = useState([]);
@@ -15,7 +15,6 @@ const Branches = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [branchToDelete, setBranchToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [toast, setToast] = useState(null);
 
     const fetchBranches = () => {
         getBranchesAction(setBranches, setLoading);
@@ -44,14 +43,14 @@ const Branches = () => {
                 setIsDeleting(false);
                 setShowDeleteModal(false);
                 setBranchToDelete(null);
-                setToast({ message: msg || "Branch deleted successfully", type: "success" });
+                common.setAlertMessage("success", msg || "Branch deleted successfully");
                 fetchBranches();
             },
             (err) => {
                 setIsDeleting(false);
                 setShowDeleteModal(false);
                 setBranchToDelete(null);
-                setToast({ message: err || "Failed to delete branch", type: "error" });
+                common.setAlertMessage("error", err || "Failed to delete branch");
             }
         );
     };
@@ -83,23 +82,20 @@ const Branches = () => {
                             <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--borderColor)" }}>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Branch Name</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Code</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Manager</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>City ID</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Address</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Status</th>
                                 <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)", textAlign: "center" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="7" style={{ padding: "40px", textAlign: "center" }}>
+                                    <td colSpan="4" style={{ padding: "40px", textAlign: "center" }}>
                                         <Loader2 className="animate-spin" size={32} style={{ margin: "auto", color: "var(--themeColor)" }} />
                                     </td>
                                 </tr>
                             ) : branches.length === 0 ? (
                                 <tr>
-                                    <td colSpan="7" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
+                                    <td colSpan="4" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
                                         No branches found.
                                     </td>
                                 </tr>
@@ -114,12 +110,6 @@ const Branches = () => {
                                     <td style={{ padding: "15px 20px", fontSize: "14px" }}>
                                         <code style={{ background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{branch.code}</code>
                                     </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                        {branch.manager_name || "-"}
-                                    </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                        {branch.city_id || "-"}
-                                    </td>
                                     <td style={{ padding: "15px 20px", fontSize: "14px", color: "var(--textMuted)", maxWidth: "250px" }}>
                                         <div style={{ display: "flex", alignItems: "flex-start", gap: "5px" }}>
                                             <MapPin size={14} style={{ marginTop: "3px", flexShrink: 0 }} />
@@ -127,18 +117,6 @@ const Branches = () => {
                                                 {branch.address}
                                             </span>
                                         </div>
-                                    </td>
-                                    <td style={{ padding: "15px 20px" }}>
-                                        <span style={{
-                                            padding: "4px 10px",
-                                            borderRadius: "20px",
-                                            background: branch.status ? "#ecfdf5" : "#fef2f2",
-                                            color: branch.status ? "#059669" : "#dc2626",
-                                            fontSize: "12px",
-                                            fontWeight: "500"
-                                        }}>
-                                            {branch.status ? "Active" : "Inactive"}
-                                        </span>
                                     </td>
                                     <td style={{ padding: "15px 20px", textAlign: "center" }}>
                                         <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
@@ -200,9 +178,9 @@ const Branches = () => {
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
                 initialData={branchToEdit}
-                onRefresh={() => {
+                onRefresh={(msg) => {
                     fetchBranches();
-                    setToast({ message: branchToEdit ? "Branch updated successfully" : "Branch created successfully", type: "success" });
+                    if (msg) common.setAlertMessage("success", msg);
                 }}
             />
 
@@ -231,14 +209,6 @@ const Branches = () => {
                 />
             )}
 
-            {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    duration={3000}
-                    onClose={() => setToast(null)}
-                />
-            )}
         </div>
     );
 };
