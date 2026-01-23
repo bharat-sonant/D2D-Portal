@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import styles from "../../pages/Reports/Reports.module.css";
+import empStyles from "./Employees.module.css";
 import {
     Search,
     Plus,
-    User,
-    MoreVertical,
     Edit2,
     Trash2,
     Loader2,
@@ -76,160 +74,49 @@ const Employees = () => {
     );
 
     return (
-        <div className={styles.reportsContainer}>
-            <div className={styles.background}>
-                <div className={`${styles.gradientOrb} ${styles.orb1}`} />
-                <div className={`${styles.gradientOrb} ${styles.orb2}`} />
-                <div className={`${styles.gradientOrb} ${styles.orb3}`} />
-                <div className={styles.gridOverlay} />
+        <div className={empStyles.employeesContainer}>
+            <div className={empStyles.background}>
+                <div className={`${empStyles.gradientOrb} ${empStyles.orb1}`} />
+                <div className={`${empStyles.gradientOrb} ${empStyles.orb2}`} />
+                <div className={`${empStyles.gradientOrb} ${empStyles.orb3}`} />
+                <div className={empStyles.gridOverlay} />
             </div>
 
-            <div style={{ position: "relative", zIndex: 1, padding: "30px" }}>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "25px",
-                        flexWrap: "wrap",
-                        gap: "15px",
-                    }}
-                >
+            <div className={empStyles.contentWrapper}>
+                <div className={empStyles.headerRow}>
                     <div>
-                        <h2 style={{ fontFamily: "var(--fontGraphikBold)", margin: 0 }}>
-                            Employees Management
-                        </h2>
-                        <p
-                            style={{
-                                color: "var(--textMuted)",
-                                fontSize: "14px",
-                                marginTop: "5px",
-                            }}
-                        >
-                            Manage and monitor all company staff members
-                        </p>
+                        <h2 className={empStyles.pageTitle}>Employees Management</h2>
+                        <p className={empStyles.pageSubtitle}>Manage and monitor all company staff members</p>
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        <div style={{ position: "relative" }}>
-                            <Search
-                                size={18}
-                                style={{
-                                    position: "absolute",
-                                    left: "12px",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                    color: "var(--textMuted)",
-                                }}
-                            />
+                    <div className={empStyles.searchActions}>
+                        <div className={empStyles.searchWrapper}>
+                            <Search size={18} className={empStyles.searchIcon} />
                             <input
                                 placeholder="Search employees..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{
-                                    padding: "10px 15px 10px 40px",
-                                    borderRadius: "8px",
-                                    border: "1px solid var(--borderColor)",
-                                    fontSize: "14px",
-                                    width: "250px",
-                                }}
+                                className={empStyles.searchInput}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div
-                    style={{
-                        background: "var(--white)",
-                        borderRadius: "12px",
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                        overflow: "auto",
-                    }}
-                >
-                    <table
-                        style={{
-                            width: "100%",
-                            borderCollapse: "collapse",
-                            textAlign: "left",
-                            minWidth: "800px",
-                        }}
-                    >
+                <div className={empStyles.tableContainer}>
+                    <table className={empStyles.employeesTable}>
                         <thead>
-                            <tr
-                                style={{
-                                    background: "#f8fafc",
-                                    borderBottom: "1px solid var(--borderColor)",
-                                }}
-                            >
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                    }}
-                                >
-                                    Employee
-                                </th>
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                    }}
-                                >
-                                    Code
-                                </th>
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                    }}
-                                >
-                                    Contact
-                                </th>
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                    }}
-                                >
-                                    Branch
-                                </th>
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                    }}
-                                >
-                                    Status
-                                </th>
-                                <th
-                                    style={{
-                                        padding: "15px 20px",
-                                        fontSize: "12px",
-                                        textTransform: "uppercase",
-                                        color: "var(--textMuted)",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    Actions
-                                </th>
+                            <tr className={empStyles.tableHeader}>
+                                <th>Employee</th>
+                                <th>Code</th>
+                                <th>Contact</th>
+                                <th>Branch</th>
+                                <th>Status</th>
+                                <th style={{ textAlign: "center" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td
-                                        colSpan="5"
-                                        style={{ padding: "40px", textAlign: "center" }}
-                                    >
+                                    <td colSpan="6" className={empStyles.loadingCell}>
                                         <Loader2
                                             className="animate-spin"
                                             size={32}
@@ -239,131 +126,47 @@ const Employees = () => {
                                 </tr>
                             ) : filteredEmployees.length === 0 ? (
                                 <tr>
-                                    <td
-                                        colSpan="5"
-                                        style={{
-                                            padding: "40px",
-                                            textAlign: "center",
-                                            color: "var(--textMuted)",
-                                        }}
-                                    >
+                                    <td colSpan="6" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
                                         No employees found.
                                     </td>
                                 </tr>
                             ) : (
                                 filteredEmployees.map((emp) => (
-                                    <tr
-                                        key={emp.id}
-                                        style={{
-                                            borderBottom: "1px solid var(--borderColor)",
-                                            transition: "background 0.2s",
-                                        }}
-                                        className={styles.tableRow}
-                                    >
+                                    <tr key={emp.id} className={empStyles.tableRow}>
                                         <td style={{ padding: "15px 20px" }}>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: "12px",
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        width: "35px",
-                                                        height: "35px",
-                                                        borderRadius: "50%",
-                                                        background: "var(--gradientTheme)",
-                                                        color: "white",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
+                                            <div className={empStyles.employeeInfo}>
+                                                <div className={empStyles.avatar}>
                                                     {emp.employee_name?.charAt(0) || "U"}
                                                 </div>
                                                 <div>
-                                                    <div
-                                                        style={{
-                                                            fontFamily: "var(--fontGraphikMedium)",
-                                                            fontSize: "14px",
-                                                        }}
-                                                    >
-                                                        {emp.employee_name}
-                                                    </div>
-                                                    <div
-                                                        style={{
-                                                            fontSize: "12px",
-                                                            color: "var(--textMuted)",
-                                                        }}
-                                                    >
-                                                        {emp.email || "N/A"}
-                                                    </div>
+                                                    <div className={empStyles.employeeName}>{emp.employee_name}</div>
+                                                    <div className={empStyles.employeeEmail}>{emp.email || "N/A"}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                            {emp.employee_code}
-                                        </td>
-                                        <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                            {emp.phone_number || "N/A"}
+                                        <td className={empStyles.cellText}>{emp.employee_code}</td>
+                                        <td className={empStyles.cellText}>{emp.phone_number || "N/A"}</td>
+                                        <td style={{ padding: "15px 20px" }}>
+                                            <span className={empStyles.branchBadge}>{emp.branch_id || "N/A"}</span>
                                         </td>
                                         <td style={{ padding: "15px 20px" }}>
-                                            <span
-                                                style={{
-                                                    padding: "4px 10px",
-                                                    borderRadius: "20px",
-                                                    background: "#edf2ff",
-                                                    color: "#445add",
-                                                    fontSize: "12px",
-                                                    fontWeight: "500",
-                                                }}
-                                            >
-                                                {emp.branch_id || "N/A"}
-                                            </span>
-                                        </td>
-                                        <td style={{ padding: "15px 20px" }}>
-                                            <span
-                                                style={{
-                                                    padding: "4px 10px",
-                                                    borderRadius: "20px",
-                                                    background: emp.status ? "#ecfdf5" : "#fef2f2",
-                                                    color: emp.status ? "#059669" : "#dc2626",
-                                                    fontSize: "12px",
-                                                    fontWeight: "500",
-                                                }}
-                                            >
+                                            <span className={`${empStyles.statusBadge} ${emp.status ? empStyles.statusActive : empStyles.statusInactive}`}>
                                                 {emp.status ? "Active" : "Inactive"}
                                             </span>
                                         </td>
                                         <td style={{ padding: "15px 20px", textAlign: "center" }}>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    gap: "10px",
-                                                }}
-                                            >
+                                            <div className={empStyles.actionsContainer}>
                                                 <button
                                                     onClick={() => handleEdit(emp)}
-                                                    style={{
-                                                        border: "none",
-                                                        background: "none",
-                                                        color: "var(--textMuted)",
-                                                        cursor: "pointer",
-                                                    }}
+                                                    className={empStyles.actionBtn}
+                                                    title="Edit Employee"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(emp)}
-                                                    style={{
-                                                        border: "none",
-                                                        background: "none",
-                                                        color: "#ff4d4f",
-                                                        cursor: "pointer",
-                                                    }}
+                                                    className={empStyles.deleteBtn}
+                                                    title="Delete Employee"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -383,30 +186,7 @@ const Employees = () => {
                     setEmployeeToEdit(null);
                     setShowAddModal(true);
                 }}
-                style={{
-                    position: "fixed",
-                    bottom: "30px",
-                    right: "30px",
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "50%",
-                    background: "var(--gradientTheme)",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "none",
-                    cursor: "pointer",
-                    boxShadow: "0 10px 25px rgba(102, 126, 234, 0.4)",
-                    transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                    zIndex: 1000,
-                }}
-                onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.1) translateY(-5px)")
-                }
-                onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = "scale(1) translateY(0)")
-                }
+                className={empStyles.fab}
                 title="Add New Employee"
             >
                 <Plus size={28} />

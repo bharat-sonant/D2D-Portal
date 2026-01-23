@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+// Removed Autocomplete component to prevent Invariant Violation due to index.html script conflict
 import modalStyles from "../../assets/css/popup.module.css";
 import {
     X,
@@ -16,7 +17,9 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     const [form, setForm] = useState({
         name: "",
         code: "",
-        address: ""
+        address: "",
+        lat: "",
+        lng: ""
     });
 
     // error states
@@ -24,6 +27,39 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     const [codeError, setCodeError] = useState("");
     const [addressError, setAddressError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    // Use native ref for autocomplete to bypass library validation errors
+    const inputRef = useRef(null);
+    const autocompleteInstance = useRef(null);
+
+    // Native logic follows
+
+    // Initialize native Google Places Autocomplete
+    useEffect(() => {
+        if (showCanvas && window.google && window.google.maps && window.google.maps.places && inputRef.current) {
+            try {
+                autocompleteInstance.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+                    fields: ["formatted_address", "geometry"]
+                });
+
+                autocompleteInstance.current.addListener("place_changed", () => {
+                    const place = autocompleteInstance.current.getPlace();
+                    if (place && place.geometry) {
+                        const lat = place.geometry.location.lat();
+                        const lng = place.geometry.location.lng();
+                        setForm(prev => ({
+                            ...prev,
+                            address: place.formatted_address || prev.address,
+                            lat: lat.toString(),
+                            lng: lng.toString()
+                        }));
+                    }
+                });
+            } catch (err) {
+                console.error("Error initializing Google Autocomplete:", err);
+            }
+        }
+    }, [showCanvas]);
 
     // Populate form if initialData exists (Edit Mode)
     useEffect(() => {
@@ -33,6 +69,8 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                 name: initialData.name || "",
                 code: initialData.code || "",
                 address: initialData.address || "",
+                lat: initialData.lat || "",
+                lng: initialData.lng || "",
                 created_at: initialData.created_at || new Date().toISOString()
             });
         } else if (showCanvas && !initialData) {
@@ -40,7 +78,9 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
             setForm({
                 name: "",
                 code: "",
-                address: ""
+                address: "",
+                lat: "",
+                lng: ""
             });
         }
         // Reset errors whenever canvas opens/closes
@@ -83,6 +123,13 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
 
     return (
         <div className={modalStyles.overlay}>
+            <style>
+                {`
+                    .pac-container {
+                        z-index: 10000 !important;
+                    }
+                `}
+            </style>
             <div className={modalStyles.modal} style={{ maxWidth: "500px", maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
                 {/* Header */}
                 <div className={modalStyles.modalHeader}>
@@ -141,11 +188,12 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                         <label className={modalStyles.label}>Complete Address</label>
                         <div className={modalStyles.inputWrapper}>
                             <div className={modalStyles.inputIcon}><MapPin size={18} /></div>
-                            <textarea
+                            <input
+                                type="text"
+                                ref={inputRef}
                                 className={modalStyles.input}
                                 name="address"
-                                placeholder="Enter complete office address"
-                                rows="3"
+                                placeholder={window.google?.maps?.places ? "Enter complete office address" : "Enter address (Autocomplete unavailable)"}
                                 style={{ height: "auto", padding: "12px 12px 12px 48px" }}
                                 value={form.address}
                                 onChange={handleChange}
@@ -153,6 +201,37 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
                             />
                         </div>
                         {addressError && <ErrorMessage message={addressError} />}
+                    </div>
+
+                    <div style={{ display: "flex", gap: "16px", marginTop: "16px" }}>
+                        <div className={modalStyles.inputGroup} style={{ flex: 1 }}>
+                            <label className={modalStyles.label}>Latitude</label>
+                            <div className={modalStyles.inputWrapper}>
+                                <div className={modalStyles.inputIcon}><MapPin size={18} /></div>
+                                <input
+                                    className={modalStyles.input}
+                                    name="lat"
+                                    placeholder="e.g. 26.9124"
+                                    value={form.lat}
+                                    onChange={handleChange}
+                                    autoComplete="off"
+                                />
+                            </div>
+                        </div>
+                        <div className={modalStyles.inputGroup} style={{ flex: 1 }}>
+                            <label className={modalStyles.label}>Longitude</label>
+                            <div className={modalStyles.inputWrapper}>
+                                <div className={modalStyles.inputIcon}><MapPin size={18} /></div>
+                                <input
+                                    className={modalStyles.input}
+                                    name="lng"
+                                    placeholder="e.g. 75.7873"
+                                    value={form.lng}
+                                    onChange={handleChange}
+                                    autoComplete="off"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 

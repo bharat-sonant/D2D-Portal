@@ -64,8 +64,11 @@
 
 // export default EmployeeDashboard;
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./EmployeeDashboard.module.css";
+import * as EmployeeAction from "../../services/EmployeeService/EmployeeAction";
+import * as DepartmentAction from "../../services/DepartmentService/DepartmentAction";
+import * as LucideIcons from "lucide-react";
 import {
   Users,
   UserPlus,
@@ -90,74 +93,78 @@ import {
 
 const EmployeeDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [employees, setEmployees] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedIncompleteEmp, setSelectedIncompleteEmp] = useState(null);
 
-  const branches = [
-    { name: "Jaipur", employees: 156, color: "#667eea" },
-    { name: "Sikar", employees: 134, color: "#f093fb" },
-    { name: "Reengus", employees: 198, color: "#4facfe" },
-    { name: "Jodhpur", employees: 89, color: "#43e97b" },
-    { name: "Jaisalmer", employees: 112, color: "#fa709a" },
-  ];
+  useEffect(() => {
+    EmployeeAction.getEmployeesAction(setEmployees, setLoading);
+    DepartmentAction.getDepartmentsAction(setDepartments);
+    EmployeeAction.getBranchesAction(setBranches);
+  }, []);
 
-  const departments = [
-    { name: "Engineering", count: 245, color: "#667eea", icon: "💻" },
-    { name: "Sales", count: 156, color: "#f093fb", icon: "💼" },
-    { name: "Marketing", count: 89, color: "#4facfe", icon: "📢" },
-    { name: "HR", count: 45, color: "#43e97b", icon: "👥" },
-    { name: "Finance", count: 67, color: "#fa709a", icon: "💰" },
-    { name: "Operations", count: 87, color: "#feca57", icon: "⚙️" },
-  ];
+  const DynamicLucideIcon = ({ name, size = 24, color = "var(--themeColor)" }) => {
+    // If name is an emoji or missing, fallback to GitBranch
+    const isLucideIcon = name && LucideIcons[name];
+    const IconComponent = isLucideIcon ? LucideIcons[name] : LucideIcons.GitBranch;
+    return <IconComponent size={size} color={color} />;
+  };
 
-  const stats = [
-    {
-      title: "Total Employees",
-      value: "689",
-      change: "+12%",
-      icon: <Users size={24} />,
-      //   gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
-    {
-      title: "This Month Joiners",
-      value: "24",
-      change: "+12%",
-      icon: <UserCheck size={24} />,
-      //   gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
-    {
-      title: "Recent Joiners",
-      value: "12",
-      change: "+8%",
-      icon: <UserPlus size={24} />,
-      //   gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
-    {
-      title: "Ex-Employees",
-      value: "15",
-      change: "-3%",
-      icon: <UserMinus size={24} />,
-      //   gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
-    {
-      title: "On Leave Today",
-      value: "07",
-      change: "+5%",
-      icon: <Calendar size={24} />,
-      //   gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-      //   gradient: "var(--gradientTheme)",
-    },
-    // {
-    //   title: "Incomplete Profiles",
-    //   value: "43",
-    //   change: "-15%",
-    //   icon: <AlertCircle size={24} />,
-    //   //   gradient: "linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)",
-    //   //   gradient: "var(--gradientTheme)",
-    // },
-  ];
+  const calculateStats = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const totalEmployees = employees.length;
+    const activeEmployees = employees.filter((emp) => emp.status !== false).length;
+    const exEmployees = employees.filter((emp) => emp.status === false).length;
+
+    const thisMonthJoiners = employees.filter((emp) => {
+      const joinDate = new Date(emp.created_at);
+      return joinDate.getMonth() === currentMonth && joinDate.getFullYear() === currentYear;
+    }).length;
+
+    const last30Days = new Date();
+    last30Days.setDate(now.getDate() - 30);
+    const recentJoiners = employees.filter((emp) => new Date(emp.created_at) > last30Days).length;
+
+    return [
+      {
+        title: "Total Employees",
+        value: totalEmployees.toString().padStart(2, '0'),
+        change: "+0%",
+        icon: <Users size={24} />,
+      },
+      {
+        title: "Active Employees",
+        value: activeEmployees.toString().padStart(2, '0'),
+        change: "+0%",
+        icon: <UserCheck size={24} />,
+      },
+      {
+        title: "This Month Joiners",
+        value: thisMonthJoiners.toString().padStart(2, '0'),
+        change: "+0%",
+        icon: <UserPlus size={24} />,
+      },
+      {
+        title: "Ex-Employees",
+        value: exEmployees.toString().padStart(2, '0'),
+        change: "-0%",
+        icon: <UserMinus size={24} />,
+      },
+      {
+        title: "Recent Joiners (30d)",
+        value: recentJoiners.toString().padStart(2, '0'),
+        change: "+0%",
+        icon: <Activity size={24} />,
+      },
+    ];
+  };
+
+  const stats = calculateStats();
 
   const quickActions = [
     { title: "Add Employee", icon: <UserPlus size={18} />, color: "#667eea" },
@@ -172,32 +179,25 @@ const EmployeeDashboard = () => {
     { title: "Performance", icon: <Target size={18} />, color: "#feca57" },
   ];
 
-  const recentActivities = [
-    {
-      name: "Rahul Sharma",
-      action: "joined Engineering dept",
-      time: "2 hours ago",
-      avatar: "👨‍💼",
-    },
-    {
-      name: "Priya Patel",
-      action: "updated profile",
-      time: "4 hours ago",
-      avatar: "👩‍💼",
-    },
-    {
-      name: "Amit Kumar",
-      action: "completed onboarding",
-      time: "6 hours ago",
-      avatar: "👨‍💻",
-    },
-    {
-      name: "Sneha Reddy",
-      action: "applied for leave",
-      time: "8 hours ago",
-      avatar: "👩‍🔬",
-    },
-  ];
+  const getIncompleteProfiles = () => {
+    return employees.filter(emp => {
+      const missingFields = [];
+      if (!emp.employee_code) missingFields.push("Code");
+      if (!emp.phone_number) missingFields.push("Phone");
+      if (!emp.email) missingFields.push("Email");
+      if (!emp.branch_id) missingFields.push("Branch");
+      if (!emp.department_id) missingFields.push("Dept");
+
+      if (missingFields.length > 0) {
+        emp.missingDetailsCount = missingFields.length;
+        emp.missingFieldsText = missingFields.join(", ");
+        return true;
+      }
+      return false;
+    });
+  };
+
+  const incompleteProfiles = getIncompleteProfiles();
 
   return (
     <div className={styles.container}>
@@ -299,38 +299,44 @@ const EmployeeDashboard = () => {
               style={{
                 background: `conic-gradient(
           ${branches
-            .map((b, i) => {
-              const total = branches.reduce((sum, x) => sum + x.employees, 0);
-              const start =
-                (branches.slice(0, i).reduce((sum, x) => sum + x.employees, 0) /
-                  total) *
-                100;
-              const end = start + (b.employees / total) * 100;
-              return `${b.color} ${start}% ${end}%`;
-            })
-            .join(",")}
+                    .map((b, i) => {
+                      const branchEmployees = employees.filter(emp => emp.branch_id === b.name).length;
+                      const total = employees.length || 1;
+                      const start =
+                        (branches.slice(0, i).reduce((sum, x) => sum + employees.filter(e => e.branch_id === x.name).length, 0) /
+                          total) *
+                        100;
+                      const end = start + (branchEmployees / total) * 100;
+                      const colors = ["#667eea", "#f093fb", "#4facfe", "#43e97b", "#fa709a", "#feca57", "#6a11cb", "#2575fc"];
+                      const color = colors[i % colors.length];
+                      return `${color} ${start}% ${end}%`;
+                    })
+                    .join(",")}
         )`,
               }}
             >
               <div className={styles.pieCenter}>
                 <span>Total</span>
-                <strong>
-                  {branches.reduce((sum, x) => sum + x.employees, 0)}
-                </strong>
+                <strong>{employees.length}</strong>
               </div>
             </div>
 
             <div className={styles.pieLegend}>
-              {branches.map((branch, idx) => (
-                <div key={idx} className={styles.legendItem}>
-                  <span
-                    className={styles.legendDot}
-                    style={{ background: branch.color }}
-                  ></span>
-                  <span>{branch.name}</span>
-                  <strong>{branch.employees}</strong>
-                </div>
-              ))}
+              {branches.map((branch, idx) => {
+                const branchEmployees = employees.filter(emp => emp.branch_id === branch.name).length;
+                const colors = ["#667eea", "#f093fb", "#4facfe", "#43e97b", "#fa709a", "#feca57", "#6a11cb", "#2575fc"];
+                const color = colors[idx % colors.length];
+                return (
+                  <div key={idx} className={styles.legendItem}>
+                    <span
+                      className={styles.legendDot}
+                      style={{ background: color }}
+                    ></span>
+                    <span>{branch.name}</span>
+                    <strong>{branchEmployees}</strong>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -346,56 +352,85 @@ const EmployeeDashboard = () => {
           </div>
 
           <div className={styles.deptGrid}>
-            {departments.map((dept, idx) => (
-              <div key={idx} className={styles.deptCard}>
-                <div className={styles.deptIcon}>{dept.icon}</div>
+            {departments.map((dept, idx) => {
+              const deptCount = employees.filter(emp => emp.department_id === dept.id).length;
+              const maxCount = Math.max(...departments.map(d => employees.filter(e => e.department_id === d.id).length), 1);
 
-                <div className={styles.deptInfo}>
-                  <div className={styles.deptName}>{dept.name}</div>
-                  <div className={styles.deptCount}>{dept.count}</div>
-                </div>
+              return (
+                <div key={idx} className={styles.deptCard}>
+                  <div className={styles.deptIcon}>
+                    <DynamicLucideIcon name={dept.icon} />
+                  </div>
 
-                <div
-                  className={styles.deptBar}
-                  style={{ background: `${dept.color}20` }}
-                >
+                  <div className={styles.deptInfo}>
+                    <div className={styles.deptName}>{dept.name}</div>
+                    <div className={styles.deptCount}>{deptCount}</div>
+                  </div>
+
                   <div
-                    className={styles.deptBarFill}
-                    style={{
-                      width: `${(dept.count / 250) * 100}%`,
-                      background: dept.color,
-                    }}
-                  />
+                    className={styles.deptBar}
+                    style={{ background: `var(--themeColor)20` }}
+                  >
+                    <div
+                      className={styles.deptBarFill}
+                      style={{
+                        width: `${(deptCount / maxCount) * 100}%`,
+                        background: "var(--themeColor)",
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         <div className={`${styles.card} ${styles.fadeInDelay3}`}>
           <div className={styles.cardHeader}>
             <div>
               <h3 className={styles.cardTitle}>Incomplete Profile</h3>
-              <p className={styles.cardSubtitle}>Total <b> 43</b> Incomple Profile</p>
+              <p className={styles.cardSubtitle}>Total <b> {incompleteProfiles.length}</b> Incomplete Profiles</p>
             </div>
             <AlertCircle size={24} color="var(--themeColor)" />
           </div>
 
           <div className={styles.activityList}>
-            {recentActivities.map((activity, idx) => (
-              <div key={idx} className={styles.activityItem}>
-                <div className={styles.activityAvatar}>{activity.avatar}</div>
-
-                <div className={styles.activityContent}>
-                  <div className={styles.activityName}>{activity.name}</div>
-                  {/* <div className={styles.activityAction}>{activity.action}</div> */}
-                </div>
-
-                <div className={styles.activityTime}>
-                    {/* {activity.time} */}
-                    6 missing details
+            {incompleteProfiles.length > 0 ? (
+              incompleteProfiles.slice(0, 5).map((emp, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.activityItem} ${selectedIncompleteEmp === emp.id ? styles.activeActivity : ""}`}
+                  onClick={() => setSelectedIncompleteEmp(selectedIncompleteEmp === emp.id ? null : emp.id)}
+                  style={{ cursor: "pointer", transition: "all 0.3s ease", flexDirection: "column", alignItems: "flex-start", gap: "8px" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", width: "100%", gap: "12px" }}>
+                    <div className={styles.activityAvatar}>
+                      {emp.employee_name ? emp.employee_name.charAt(0).toUpperCase() : "?"}
                     </div>
+
+                    <div className={styles.activityContent}>
+                      <div className={styles.activityName}>{emp.employee_name || "Unknown Name"}</div>
+                      <div style={{ fontSize: "12px", color: "var(--textMuted)" }}>
+                        {emp.employee_code || "No Code"}
+                      </div>
+                    </div>
+
+                    <div className={styles.activityTime} style={{ color: "#fa709a", fontWeight: "500", marginLeft: "auto" }}>
+                      {emp.missingDetailsCount} missing
+                    </div>
+                  </div>
+
+                  {selectedIncompleteEmp === emp.id && (
+                    <div className={styles.missingDetailsBox}>
+                      <strong>Missing:</strong> {emp.missingFieldsText}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: "center", padding: "20px", color: "var(--textMuted)" }}>
+                All profiles are complete! 🎉
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from "react";
-import styles from "../../pages/Reports/Reports.module.css";
-import { Building2, Plus, Edit2, Trash2, MapPin, Loader2, RefreshCw } from "lucide-react";
+import branchStyles from "./Branches.module.css";
+import { Building2, Plus, Edit2, Trash2, MapPin, Loader2, RefreshCw, Search, Navigation } from "lucide-react";
+import { useJsApiLoader } from "@react-google-maps/api";
 import AddBranch from "../components/AddBranch";
+import BranchMap from "../components/BranchMap";
 import { getBranchesAction, deleteBranchAction } from "../../services/BranchService/BranchAction";
 import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 import * as common from "../../common/common";
 
+const libraries = ["places"];
+
 const Branches = () => {
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: "AIzaSyB9KvPlqKdCqq-KJIq0yHfSS8x1Ys18JSM",
+        libraries: libraries
+    });
+
     const [branches, setBranches] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -16,8 +26,28 @@ const Branches = () => {
     const [branchToDelete, setBranchToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const [selectedBranch, setSelectedBranch] = useState(null);
+    const [mapRef, setMapRef] = useState(null);
+    const [center, setCenter] = useState({ lat: 21.1458, lng: 79.0882 }); // Default to India center or specific default
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredBranches = branches.filter(branch =>
+        branch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        branch.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        branch.address?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const fetchBranches = () => {
-        getBranchesAction(setBranches, setLoading);
+        getBranchesAction((data) => {
+            setBranches(data);
+            if (data.length > 0 && !selectedBranch) {
+                // Optionally set initial center to first branch with coords
+                const firstWithCoords = data.find(b => b.lat && b.lng);
+                if (firstWithCoords) {
+                    setCenter({ lat: parseFloat(firstWithCoords.lat), lng: parseFloat(firstWithCoords.lng) });
+                }
+            }
+        }, setLoading);
     };
 
     useEffect(() => {
@@ -32,6 +62,18 @@ const Branches = () => {
     const handleEdit = (branch) => {
         setBranchToEdit(branch);
         setShowAddModal(true);
+    };
+
+    const handleBranchClick = (branch) => {
+        setSelectedBranch(branch.id);
+        if (branch.lat && branch.lng) {
+            const newCenter = { lat: parseFloat(branch.lat), lng: parseFloat(branch.lng) };
+            setCenter(newCenter);
+            if (mapRef) {
+                mapRef.panTo(newCenter);
+                mapRef.setZoom(12);
+            }
+        }
     };
 
     const confirmDelete = () => {
@@ -56,90 +98,156 @@ const Branches = () => {
     };
 
     return (
-        <div className={styles.reportsContainer}>
-            <div className={styles.background}>
-                <div className={`${styles.gradientOrb} ${styles.orb1}`} />
-                <div className={`${styles.gradientOrb} ${styles.orb2}`} />
-                <div className={`${styles.gradientOrb} ${styles.orb3}`} />
-                <div className={styles.gridOverlay} />
-            </div>
-            <div style={{ position: "relative", zIndex: 1, padding: "30px" }}>
-                <div style={{ marginBottom: "25px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className={branchStyles.branchesContainer}>
+            {/* Background Decor */}
+            <div className={branchStyles.orb} style={{ top: "-100px", right: "-100px", background: "radial-gradient(circle, #667eea 0%, #764ba2 100%)" }} />
+            <div className={branchStyles.orb} style={{ bottom: "-100px", left: "-100px", background: "radial-gradient(circle, #ebbba7 0%, #cfc7f8 100%)", animationDelay: "-5s" }} />
+            <div className={branchStyles.orb} style={{ top: "30%", left: "40%", width: "300px", height: "300px", background: "radial-gradient(circle, #fff1eb 0%, #ace0f9 100%)", animationDelay: "-10s" }} />
+
+            <div className={branchStyles.headerSection}>
+                <div className={branchStyles.headerContent}>
                     <div>
-                        <h2 style={{ fontFamily: "var(--fontGraphikBold)", margin: 0 }}>Branch Management</h2>
-                        <p style={{ color: "var(--textMuted)", fontSize: "14px", marginTop: "5px" }}>Manage all company physical locations and codes</p>
+                        <div className={branchStyles.headerTitleWrapper}>
+                            <div className={branchStyles.headerIconBox}>
+                                <Building2 size={24} />
+                            </div>
+                            <h2 className={branchStyles.headerTitle}>Branch Network</h2>
+                        </div>
+                        <p className={branchStyles.headerSubtitle}>
+                            Overview and management of your global physical presence
+                        </p>
+                    </div>
+
+                    <div className={branchStyles.searchActions}>
+                        <div className={branchStyles.searchWrapper}>
+                            <Search size={18} className={branchStyles.searchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Search by name, code or address..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className={branchStyles.searchInput}
+                            />
+                        </div>
+                        <button
+                            onClick={fetchBranches}
+                            className={branchStyles.refreshBtn}
+                            title="Refresh Data"
+                        >
+                            <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className={branchStyles.mainLayout}>
+                <div className={branchStyles.sidebar}>
+                    <div className={branchStyles.sidebarHeader}>
+                        <span className={branchStyles.sidebarTitle}>
+                            Registered Branches ({filteredBranches.length})
+                        </span>
+                        <div className={branchStyles.activeBadge}>
+                            Active
+                        </div>
+                    </div>
+
+                    <div className={`${branchStyles.branchList} ${branchStyles.customScrollbar}`}>
+                        {loading ? (
+                            <div style={{ padding: "100px 0", textAlign: "center" }}>
+                                <Loader2 className="animate-spin" size={40} style={{ margin: "auto", color: "var(--themeColor)", opacity: 0.5 }} />
+                                <p style={{ marginTop: "15px", color: "var(--textMuted)", fontSize: "14px" }}>Securing connection...</p>
+                            </div>
+                        ) : filteredBranches.length === 0 ? (
+                            <div style={{
+                                padding: "100px 20px",
+                                textAlign: "center",
+                                background: "rgba(255,255,255,0.4)",
+                                borderRadius: "20px",
+                                border: "2px dashed rgba(0,0,0,0.05)"
+                            }}>
+                                <Building2 size={48} style={{ margin: "0 auto 15px", color: "#cbd5e1" }} />
+                                <p style={{ color: "var(--textMuted)", fontSize: "15px" }}>No branches found in your network.</p>
+                            </div>
+                        ) : filteredBranches.map((branch, index) => (
+                            <div
+                                key={branch.id}
+                                className={`${branchStyles.branchCard} ${selectedBranch === branch.id ? branchStyles.branchCardActive : ""}`}
+                                onClick={() => handleBranchClick(branch)}
+                                style={{ animationDelay: `${index * 0.05}s` }}
+                            >
+                                {selectedBranch === branch.id && (
+                                    <div className={branchStyles.activeIndicator} />
+                                )}
+
+                                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                    <div className={branchStyles.cardTopRow}>
+                                        <div className={branchStyles.branchInfo}>
+                                            <div className={branchStyles.branchIconBox}>
+                                                <Building2 size={18} />
+                                            </div>
+                                            <div className={branchStyles.branchTextDetails}>
+                                                <div className={branchStyles.branchName}>{branch.name}</div>
+                                                <div className={branchStyles.branchMeta}>
+                                                    <Navigation size={11} style={{ color: "var(--themeColor)" }} />
+                                                    {branch.lat ? `${parseFloat(branch.lat).toFixed(3)}, ${parseFloat(branch.lng).toFixed(3)}` : "No GPS"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={branchStyles.cardActions}>
+                                            <code className={branchStyles.branchCode}>{branch.code}</code>
+
+                                            <div className={branchStyles.actionButtons}>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleEdit(branch); }}
+                                                    className={branchStyles.editBtn}
+                                                    title="Edit"
+                                                >
+                                                    <Edit2 size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleDelete(branch); }}
+                                                    className={branchStyles.deleteBtn}
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={branchStyles.addressBox}>
+                                        <MapPin size={16} style={{ marginTop: "2px", flexShrink: 0, color: "var(--themeColor)", opacity: 0.6 }} />
+                                        <span>{branch.address}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div style={{
-                    background: "var(--white)",
-                    borderRadius: "12px",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                    overflow: "hidden"
-                }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-                        <thead>
-                            <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--borderColor)" }}>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Branch Name</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Code</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)" }}>Address</th>
-                                <th style={{ padding: "15px 20px", fontSize: "12px", textTransform: "uppercase", color: "var(--textMuted)", textAlign: "center" }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan="4" style={{ padding: "40px", textAlign: "center" }}>
-                                        <Loader2 className="animate-spin" size={32} style={{ margin: "auto", color: "var(--themeColor)" }} />
-                                    </td>
-                                </tr>
-                            ) : branches.length === 0 ? (
-                                <tr>
-                                    <td colSpan="4" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
-                                        No branches found.
-                                    </td>
-                                </tr>
-                            ) : branches.map((branch) => (
-                                <tr key={branch.id} style={{ borderBottom: "1px solid var(--borderColor)" }}>
-                                    <td style={{ padding: "15px 20px" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                            <div style={{ color: "var(--themeColor)" }}><Building2 size={18} /></div>
-                                            <span style={{ fontFamily: "var(--fontGraphikMedium)", fontSize: "14px" }}>{branch.name}</span>
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px" }}>
-                                        <code style={{ background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px", fontSize: "12px" }}>{branch.code}</code>
-                                    </td>
-                                    <td style={{ padding: "15px 20px", fontSize: "14px", color: "var(--textMuted)", maxWidth: "250px" }}>
-                                        <div style={{ display: "flex", alignItems: "flex-start", gap: "5px" }}>
-                                            <MapPin size={14} style={{ marginTop: "3px", flexShrink: 0 }} />
-                                            <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "220px", display: "inline-block" }}>
-                                                {branch.address}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: "15px 20px", textAlign: "center" }}>
-                                        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                                            <button
-                                                onClick={() => handleEdit(branch)}
-                                                style={{ border: "none", background: "none", color: "var(--textMuted)", cursor: "pointer" }}
-                                                title="Edit"
-                                            >
-                                                <Edit2 size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(branch)}
-                                                style={{ border: "none", background: "none", color: "#ff4d4f", cursor: "pointer" }}
-                                                title="Delete"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {/* Right Side: Map */}
+                <div className={branchStyles.mapWrapper}>
+                    {isLoaded ? (
+                        <BranchMap
+                            branchData={filteredBranches}
+                            selectedBranch={selectedBranch}
+                            setSelectedBranch={setSelectedBranch}
+                            mapRef={mapRef}
+                            setMapRef={setMapRef}
+                            center={center}
+                            setCenter={setCenter}
+                        />
+                    ) : (
+                        <div style={{
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "rgba(241, 245, 249, 0.5)",
+                            backdropFilter: "blur(10px)"
+                        }}>
+                            <Loader2 className="animate-spin" size={32} style={{ color: "var(--themeColor)" }} />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -149,40 +257,23 @@ const Branches = () => {
                     setBranchToEdit(null);
                     setShowAddModal(true);
                 }}
-                style={{
-                    position: "fixed",
-                    bottom: "30px",
-                    right: "30px",
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "50%",
-                    background: "var(--gradientTheme)",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "none",
-                    cursor: "pointer",
-                    boxShadow: "0 10px 25px rgba(102, 126, 234, 0.4)",
-                    transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                    zIndex: 1000
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1) translateY(-5px)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1) translateY(0)"}
+                className={branchStyles.fab}
                 title="Add New Branch"
             >
-                <Plus size={28} />
+                <Plus size={32} />
             </button>
 
-            <AddBranch
-                showCanvas={showAddModal}
-                setShowCanvas={setShowAddModal}
-                initialData={branchToEdit}
-                onRefresh={(msg) => {
-                    fetchBranches();
-                    if (msg) common.setAlertMessage("success", msg);
-                }}
-            />
+            {isLoaded && (
+                <AddBranch
+                    showCanvas={showAddModal}
+                    setShowCanvas={setShowAddModal}
+                    initialData={branchToEdit}
+                    onRefresh={(msg) => {
+                        fetchBranches();
+                        if (msg) common.setAlertMessage("success", msg);
+                    }}
+                />
+            )}
 
             {showDeleteModal && (
                 <GlobalAlertModal

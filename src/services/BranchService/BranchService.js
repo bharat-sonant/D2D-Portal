@@ -28,6 +28,8 @@ export const saveBranch = async (branchData) => {
         name: branchData.name,
         code: branchData.code,
         address: branchData.address,
+        lat: branchData.lat ? parseFloat(branchData.lat) : null,
+        lng: branchData.lng ? parseFloat(branchData.lng) : null,
         created_by: createdBy ? parseInt(createdBy, 10) : null,
         updated_by: userId ? parseInt(userId, 10) : null,
         created_at: branchData.id ? branchData.created_at : nowIso,
