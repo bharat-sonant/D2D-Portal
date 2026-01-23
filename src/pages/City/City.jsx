@@ -29,10 +29,10 @@ import { useRef } from "react";
 import { saveWardBoundaryGeojsonInDb, saveWardMapData, uploadWardBoundaryJson, uploadWardMapJson } from "../../Actions/City/wardMapAction";
 
 const TABS = [
-  { key: "city", label: "City Details", icon: Building2 },
+  { key: "city", label: "Site Details", icon: Building2 },
   { key: "wards", label: "Wards", icon: Grid3x3 },
   { key: "vehicle", label: "Vehicles", icon: Truck },
-  { key: "users", label: "Users In City", icon: Users },
+  { key: "users", label: "Users In Site", icon: Users },
 ];
 
 const City = (props) => {

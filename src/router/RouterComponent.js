@@ -273,7 +273,7 @@ const RouterComponent = () => {
           }
         />
         <Route
-          path="/cities"
+          path="/sites"
           element={
             <>
               <MainLayout />
