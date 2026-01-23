@@ -81,7 +81,7 @@ export const changeCityStatusAction = async (newStatus, selectedCity, setToggle,
         setToggle(newStatus);
         setStatusConfirmation({ status: false, data: null, setToggle: () => { } })
         loadCities()
-        common.setAlertMessage("success", `City status ${newStatus ? 'active' : 'inactive'} successfully.`);
+        common.setAlertMessage("success", `Site status ${newStatus ? 'active' : 'inactive'} successfully.`);
     }
     catch (error) {
         console.error(error);

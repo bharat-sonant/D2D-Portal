@@ -29,10 +29,10 @@ import { useRef } from "react";
 import { saveWardBoundaryGeojsonInDb, saveWardMapData, uploadWardBoundaryJson, uploadWardMapJson } from "../../Actions/City/wardMapAction";
 
 const TABS = [
-  { key: "city", label: "City Details", icon: Building2 },
+  { key: "city", label: "Site Details", icon: Building2 },
   { key: "wards", label: "Wards", icon: Grid3x3 },
   { key: "vehicle", label: "Vehicles", icon: Truck },
-  { key: "users", label: "Users In City", icon: Users },
+  { key: "users", label: "Users In Site", icon: Users },
 ];
 
 const City = (props) => {
@@ -228,7 +228,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
                   <LogoImage image={selectedCity?.logoUrl} />
                   <span className={TaskStyles.userName}>
                     {selectedCity?.city_code || "N/A"}
-                    <p>Manage permissions, city access and more</p>
+                    <p>Manage permissions, site access and more</p>
                   </span>
                 </div>
 
@@ -323,7 +323,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}
-          title={`City ${statusConfirmation?.data ? "Activate" : "Deactivate"}`}
+          title={`Site ${statusConfirmation?.data ? "Activate" : "Deactivate"}`}
           message={
             <>
               Are you sure you want to{" "}
@@ -337,7 +337,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
               >
                 {selectedCity?.city_name}
               </strong>{" "}
-              city?
+              site?
             </>
           }
           onCancel={() =>

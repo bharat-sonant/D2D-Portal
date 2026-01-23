@@ -106,8 +106,8 @@ const ConfirmationModal = ({
       onCancel={onCancel}
       iconType={config.iconType}
       btnColor={config.btnColor}
-      warningText="This action will temporarily disable the city and all associated services. Users will not be able to access city-related features until it is reactivated."
-      successText="This will activate the city and restore full access to all city-related services and features."
+      warningText="This action will temporarily disable the site and all associated services. Users will not be able to access site-related features until it is reactivated."
+      successText="This will activate the site and restore full access to all site-related services and features."
     />
   );
 };

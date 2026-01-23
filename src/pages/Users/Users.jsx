@@ -139,7 +139,7 @@ const User = () => {
               </div>
               <span className={styles.userName}>
                 {selectedUser?.name || "N/A"}
-                <p>Manage users, permissions, city access and more</p>
+                <p>Manage users, permissions, site access and more</p>
               </span>
             </div>
             {/* RIGHT */}

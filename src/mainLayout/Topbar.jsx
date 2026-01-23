@@ -109,11 +109,11 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       permissionKey: "CanAccessUserPage",
     },
     {
-      id: "City",
-      label: "City",
+      id: "Site",
+      label: "Site",
       icon: Building2,
       color: "var(--themeColor)",
-      path: "/cities",
+      path: "/sites",
     },
     {
       id: "Reports",

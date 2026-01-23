@@ -13,7 +13,7 @@ import { PermissionProvider } from './context/PermissionContext';
 const AppWrapper = () => {
   const location = useLocation();
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ['/settings', '/tasks', '/realtime-monitoring', '/reports', '/vehicle', '/users', '/', '/cities', "/Dashboard", "/monitoring","/employee/dashboard","/employee/employees","/employee/branches","/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis',"/fe-WebView/login","/fe-WebView/dashboard", "/fuel/add_fuel_entries","/field-executive/dashboard","/field-executive/employees","/field-executive/tracking","/field-executive/reports","/field-executive/tasks","/field-executive/analysis","/field-executive/assignments", "/fuel/fuel_report"]; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/tasks', '/realtime-monitoring', '/reports', '/vehicle', '/users', '/', '/sites', "/Dashboard", "/monitoring", "/employee/dashboard", "/employee/employees", "/employee/branches", "/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis', "/fe-WebView/login", "/fe-WebView/dashboard", "/fuel/add_fuel_entries", "/field-executive/dashboard", "/field-executive/users", "/field-executive/tracking", "/field-executive/reports", "/field-executive/tasks", "/field-executive/analysis", "/field-executive/assignments", "/fuel/fuel_report"]; // <-- yaha route add karo
 
   const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
 
@@ -23,18 +23,18 @@ const AppWrapper = () => {
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
-}
+};
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <BrowserRouter>
-   <PermissionProvider>
-    <CityProvider>
-      <LoginProvider>
-        <AppWrapper />
-      </LoginProvider>
-    </CityProvider>
+    <PermissionProvider>
+      <CityProvider>
+        <LoginProvider>
+          <AppWrapper />
+        </LoginProvider>
+      </CityProvider>
     </PermissionProvider>
   </BrowserRouter>
 );

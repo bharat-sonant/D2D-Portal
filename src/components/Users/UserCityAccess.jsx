@@ -46,7 +46,7 @@ const UserCityAccess = (props) => {
       <div className={style.card_header}>
         {!isSearching ? (
           <>
-            <h5 className={style.heading}>User City Access</h5>
+            <h5 className={style.heading}>User Site  Access</h5>
 
             <Search
               size={14}
@@ -63,7 +63,7 @@ const UserCityAccess = (props) => {
             <input
               type="text"
               className={style.searchInput}
-              placeholder="Search city..."
+              placeholder="Search site..."
               autoFocus
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -112,7 +112,7 @@ const UserCityAccess = (props) => {
             ))}
           </ul>
         ) : (
-          <NoResult title="No Cities Found" gif={cityNotFound} height="340px" />
+          <NoResult title="No Site Found" gif={cityNotFound} height="340px" />
         )}
       </div>
     </div>

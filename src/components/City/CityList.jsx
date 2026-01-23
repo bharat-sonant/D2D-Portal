@@ -146,7 +146,7 @@ const CityList = (props) => {
               ))
             ) : (
               <NoResult
-                title="City Not Found"
+                title="Site Not Found"
                 query={searchTerm}
                 gif={cityNotFound}
                 height="calc(100vh - 280px)"
