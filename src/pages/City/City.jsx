@@ -228,7 +228,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
                   <LogoImage image={selectedCity?.logoUrl} />
                   <span className={TaskStyles.userName}>
                     {selectedCity?.city_code || "N/A"}
-                    <p>Manage permissions, city access and more</p>
+                    <p>Manage permissions, site access and more</p>
                   </span>
                 </div>
 
@@ -323,7 +323,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
       {statusConfirmation?.status && (
         <ConfirmationModal
           visible={statusConfirmation?.status}
-          title={`City ${statusConfirmation?.data ? "Activate" : "Deactivate"}`}
+          title={`Site ${statusConfirmation?.data ? "Activate" : "Deactivate"}`}
           message={
             <>
               Are you sure you want to{" "}
@@ -337,7 +337,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
               >
                 {selectedCity?.city_name}
               </strong>{" "}
-              city?
+              site?
             </>
           }
           onCancel={() =>

@@ -191,12 +191,12 @@ const AddCity = (props) => {
             </div>
             <div className={modalStyles.headerTextRight}>
               <h2 className={modalStyles.modalTitle}>
-                {props?.onEdit ? "Update" : "Add New"} City
+                {props?.onEdit ? "Update" : "Add New"} Site
               </h2>
               <p className={modalStyles.modalSubtitle}>
                 {props?.onEdit
-                  ? "Modify your city information"
-                  : "Choose your preferred city location"}
+                  ? "Modify your Site information"
+                  : "Choose your preferred site location"}
               </p>
             </div>
           </div>
@@ -214,7 +214,7 @@ const AddCity = (props) => {
         <div className={modalStyles.modalBody}>
           {/* City Code */}
           <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>City Code</label>
+            <label className={modalStyles.label}>Site Code</label>
             <div className={modalStyles.inputWrapper}>
               <div className={modalStyles.inputIcon}>
                 <Code size={18} />
@@ -222,7 +222,7 @@ const AddCity = (props) => {
               <input
                 className={modalStyles.input}
                 type="text"
-                placeholder="Enter city code"
+                placeholder="Enter site code"
                 name="city_code"
                 value={form.city_code}
                 onChange={handleChange}
@@ -236,7 +236,7 @@ const AddCity = (props) => {
 
           {/* City Name */}
           <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>City Name</label>
+            <label className={modalStyles.label}>Site Name</label>
             <div className={modalStyles.inputWrapper}>
               <div className={modalStyles.inputIcon}>
                 <Building2 size={18} />
@@ -244,7 +244,7 @@ const AddCity = (props) => {
               <input
                 className={modalStyles.input}
                 type="text"
-                placeholder="Enter city name"
+                placeholder="Enter site name"
                 name="city_name"
                 value={form.city_name}
                 onChange={handleChange}
@@ -255,7 +255,7 @@ const AddCity = (props) => {
 
           {/* City Logo */}
           <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>Upload City Logo</label>
+            <label className={modalStyles.label}>Upload Site Logo</label>
             <div className={styles.uploadWrapper}>
               {/* hidden input */}
               <input
@@ -312,10 +312,6 @@ const AddCity = (props) => {
                       <div className={styles.successIcon}>
                         <Plus />
                       </div>
-                      {/* <p className={styles.fileName}>Logo Uploaded</p>
-                      <button type="button" className={globleStyles.btnTheme}>
-                        Change File
-                      </button> */}
                     </div>
                   )}
                 </label>
@@ -324,82 +320,7 @@ const AddCity = (props) => {
             {/* error */}
             {logoError && <ErrorMessage message={logoError} />}
           </div>
-          {/* <div
-            style={{ display: "flex", flexDirection: "column", gap: "14px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                alignItems: "center",
-              }}
-            >
-              <input
-                type="file"
-                accept="image/*"
-                id="cityLogoInput"
-                style={{ display: "none" }}
-                onChange={handleLogoChange}
-              />
-
-     
-              <label
-                htmlFor="cityLogoInput"
-                style={{
-                  flex: 1,
-                  height: "90px", 
-                  border: "2px dashed #cbd5e1",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "4px",
-                  backgroundColor: "#f8fafc",
-                }}
-              >
-                <div style={{ fontSize: "18px" }}>📎</div>
-                <div style={{ fontSize: "14px", fontWeight: 600 }}>
-                  Upload City Logo
-                </div>
-                <div style={{ fontSize: "11px", color: "#64748b" }}>
-                  PNG / SVG • Min 5KB, Max 500KB
-                </div>
-              </label>
-
-      
-              {logoPreview && (
-                <div
-                  style={{
-                    width: "90px",
-                    height: "90px",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  <img
-                    src={logoPreview}
-                    alt="City Logo"
-                    style={{
-                      width: "70px",
-                      height: "70px",
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-
-     
-            {logoError && (
-              <div style={{ color: "red", fontSize: "13px" }}>{logoError}</div>
-            )}
-          </div> */}
+         
         </div>
         {/* Footer */}
         <div className={modalStyles.modalFooter}>
@@ -413,12 +334,12 @@ const AddCity = (props) => {
             ) : props.onEdit ? (
               <div className={styles.btnContent}>
                 <Check size={18} />
-                <span>Update City</span>
+                <span>Update Site</span>
               </div>
             ) : (
               <div className={styles.btnContent}>
                 <Plus size={18} />
-                <span style={{ marginTop: "2px" }}>Add City</span>
+                <span style={{ marginTop: "2px" }}>Add Site</span>
               </div>
             )}
           </button>

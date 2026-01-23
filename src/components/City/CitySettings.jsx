@@ -78,7 +78,7 @@ const CitySettings = ({
       {/* Offcanvas Panel */}
       <div className={`${style.offcanvas} ${openCanvas ? style.open : ""}`}>
         <div className={style.OffcanvasHeader}>
-          <div className={style.OffcanvasHeaderTitle}>City Settings</div>
+          <div className={style.OffcanvasHeaderTitle}>Site Settings</div>
           <button className={style.closeBtn} onClick={onHide}>
             <X size={20} />
           </button>
