@@ -37,7 +37,6 @@ import FuelAnalysis from "../FuelManagement/pages/FuelAnalysis/FuelAnalysis";
 import MobileAppsRoutes from "./MobileAppsRoutes";
 import FuelEntries from "../FuelManagement/pages/FuelEntries/FuelEntries";
 import FE_Dashboard from "../FieldTrackingManagement/Pages/FE-Dashboard/FE_Dashboard";
-import FEEmployees from "../FieldTrackingManagement/Pages/FEEmployees/FEEmployees";
 import FETracking from "../FieldTrackingManagement/Pages/FETracking/FETracking";
 import FEReports from "../FieldTrackingManagement/Pages/FEReports/FEReports";
 import FETasks from "../FieldTrackingManagement/Pages/FETasks/FETasks";
@@ -45,6 +44,7 @@ import FEAnalysis from "../FieldTrackingManagement/Pages/FEAnalysis/FEAnalysis";
 import FE_Layout from "../FieldTrackingManagement/Layout/FE_Layout";
 import FEAssignments from "../FieldTrackingManagement/Pages/FEAssignments/FEAssignments";
 import FuelReport from "../FuelManagement/pages/FuelReport/FuelReport";
+import FEUsers from "../FieldTrackingManagement/Pages/FEEmployees/FEUsers";
 
 
 const RouterComponent = () => {
@@ -296,11 +296,11 @@ const RouterComponent = () => {
         />
 
         <Route
-          path="/field-executive/employees"
+          path="/field-executive/users"
           element={
             <ProtectedRouter>
               <FE_Layout>
-                <FEEmployees />
+                <FEUsers />
               </FE_Layout>
             </ProtectedRouter>
           }

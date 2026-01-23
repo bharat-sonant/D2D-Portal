@@ -30,61 +30,61 @@ const FE_TopBar = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-const menuItems = [
-  {
-    id: "Dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    color: "#1e40af", // Deep Blue
-    path: "/field-executive/dashboard",
-  },
+  const menuItems = [
+    {
+      id: "Dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      color: "#1e40af", // Deep Blue
+      path: "/field-executive/dashboard",
+    },
 
-  {
-    id: "Tasks",
-    label: "Tasks",
-    icon: ClipboardList,
-    color: "#0f766e", // Deep Teal
-    path: "/field-executive/tasks",
-  },
-  {
-    id: "Assignments",
-    label: "Assignments",
-    icon: ClipboardCheck,
-    color: "#075985", // Strong Cyan-Blue
-    path: "/field-executive/assignments",
-  },
+    {
+      id: "Tasks",
+      label: "Tasks",
+      icon: ClipboardList,
+      color: "#0f766e", // Deep Teal
+      path: "/field-executive/tasks",
+    },
+    {
+      id: "Assignments",
+      label: "Assignments",
+      icon: ClipboardCheck,
+      color: "#075985", // Strong Cyan-Blue
+      path: "/field-executive/assignments",
+    },
 
-  {
-    id: "Employees",
-    label: "Users",
-    icon: Users,
-    color: "#5b21b6", // Deep Purple
-    path: "/field-executive/employees",
-  },
+    {
+      id: "Employees",
+      label: "Users",
+      icon: Users,
+      color: "#5b21b6", // Deep Purple
+      path: "/field-executive/users",
+    },
 
-  {
-    id: "Tracking",
-    label: "Tracking",
-    icon: MapPin,
-    color: "#166534", // Forest Green
-    path: "/field-executive/tracking",
-  },
+    {
+      id: "Tracking",
+      label: "Tracking",
+      icon: MapPin,
+      color: "#166534", // Forest Green
+      path: "/field-executive/tracking",
+    },
 
-  {
-    id: "Reports",
-    label: "Report",
-    icon: FileText,
-    color: "#9a3412", // Burnt Orange
-    path: "/field-executive/reports",
-  },
-  {
-    id: "Analysis",
-    label: "Analysis",
-    icon: BarChart3,
-    color: "#7f1d1d", // Deep Red
-    path: "/field-executive/analysis",
-  },
-];
+    {
+      id: "Reports",
+      label: "Report",
+      icon: FileText,
+      color: "#9a3412", // Burnt Orange
+      path: "/field-executive/reports",
+    },
+    {
+      id: "Analysis",
+      label: "Analysis",
+      icon: BarChart3,
+      color: "#7f1d1d", // Deep Red
+      path: "/field-executive/analysis",
+    },
+  ];
 
 
 
