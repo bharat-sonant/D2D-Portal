@@ -1,0 +1,67 @@
+.container {
+  padding: 20px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.empty {
+  color: #6b7280;
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead {
+  background: #f3f4f6;
+}
+
+.table th,
+.table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.actionCol {
+  display: flex;
+  gap: 8px;
+}
+
+.editBtn {
+  padding: 4px 10px;
+  border: 1px solid #4f46e5;
+  background: white;
+  color: #4f46e5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  padding: 4px 10px;
+  border: 1px solid #ef4444;
+  background: white;
+  color: #ef4444;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.editBtn:disabled,
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
