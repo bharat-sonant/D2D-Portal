@@ -56,7 +56,7 @@ const menuItems = [
 
   {
     id: "Employees",
-    label: "Employees",
+    label: "Users",
     icon: Users,
     color: "#5b21b6", // Deep Purple
     path: "/field-executive/employees",
@@ -72,7 +72,7 @@ const menuItems = [
 
   {
     id: "Reports",
-    label: "Reports",
+    label: "Report",
     icon: FileText,
     color: "#9a3412", // Burnt Orange
     path: "/field-executive/reports",
