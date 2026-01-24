@@ -31,6 +31,11 @@
   color: #6b7280; /* soft gray */
 }
 
+.tableWrapper {
+  max-height: calc(100vh - 60px); /* 👈 adjust as needed */
+  overflow-y: auto;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

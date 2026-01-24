@@ -106,7 +106,8 @@ const FETasks = () => {
 
       {/* Tasks Table */}
       <div className={style.container}>
-        <table className={style.table}>
+        <div className={style.tableWrapper}>
+          <table className={style.table}>
           <thead>
             <tr>
               <th>S. No</th>
@@ -150,6 +151,7 @@ const FETasks = () => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {openCanvas && (

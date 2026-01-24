@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import styles from './AddTask.module.css'
 import ErrorMessage from '../../../components/ErrorMessage/ErrorMessage';
+import modalStyles from '../../../assets/css/popup.module.css'
+import { ClipboardList, X } from 'lucide-react';
 
 const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCanvas, isEdit,setIsEdit,setEditIndex, onSave}) => {
   
@@ -51,12 +53,19 @@ const validate = () => {
   }
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <div className={styles.header}>
-          <h2>{isEdit ? 'Update Task' : 'Add New Task'}</h2>
-          <button className={styles.closeBtn} onClick={handleClose}>
-            ✕
+    <div className={modalStyles.overlay} aria-modal="true" role="dialog">
+      <div className={modalStyles.modal}>
+        <div className={modalStyles.modalHeader}>
+          <div className={modalStyles.iconWrapper}>
+              <ClipboardList className="map-icon" /> 
+            </div>
+            <div className={modalStyles.headerTextRight}>
+              <h2 className={modalStyles.modalTitle}>
+                {isEdit ? 'Update Task' : 'Add New Task'}
+              </h2>
+            </div>
+          <button className={modalStyles.closeBtn} onClick={handleClose}>
+            <X size={20} />
           </button>
         </div>
 
