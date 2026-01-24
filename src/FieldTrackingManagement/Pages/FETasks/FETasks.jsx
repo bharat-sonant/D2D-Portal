@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import GlobalStyles from '../../../assets/css/globleStyles.module.css'
 import AddTask from '../../Components/FETasks/AddTask';
 import style from './FETasks.module.css'
-import { Pen } from 'lucide-react';
+import notFoundImage from '../../../assets/images/userNotFound.png'
 
 const FETasks = () => {
   const [openCanvas, setOpenCanvas] = useState(false);
@@ -62,10 +62,12 @@ const FETasks = () => {
 
         {/* Tasks Table */}
       <div className={style.container}>
-        <h2 className={style.title}>Tasks</h2>
 
         {tasks.length === 0 ? (
-          <p className={style.empty}>No tasks added yet</p>
+          <div className={style.emptyState}>
+            <img src={notFoundImage} alt="No tasks" />
+            <p className={style.empty}>No tasks added yet</p>
+          </div>
         ) : (
           <table className={style.table}>
             <thead>
