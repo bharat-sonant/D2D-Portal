@@ -7,6 +7,7 @@ import styles from "../Style/MainLayout/Topbar.module.css";
 import { ClipboardPlus, File, Fuel, Menu, Users, X } from 'lucide-react';
 import { images } from "../assets/css/imagePath";
 import { FaRegHandPointRight } from 'react-icons/fa';
+import { useCity } from '../context/CityContext';
 
 const FuelManagementTopbar = () => {
    const location = useLocation();
@@ -15,6 +16,7 @@ const FuelManagementTopbar = () => {
     const [secondchar, setSecondhar] = useState("");
     const [showChangePassword, setShowChangePassword] = useState(false);
     const storedName = localStorage.getItem("name");
+    const { setCityContext, city, cityId, cityLogo } = useCity();
 
     const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -58,8 +60,21 @@ const FuelManagementTopbar = () => {
     }, [storedName]);
 
     const handleLogout = () => {
-        localStorage.clear();
-        navigate("/");
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("loginDate");
+    localStorage.removeItem("name");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("city");
+    localStorage.removeItem("cityId");
+    localStorage.removeItem("defaultCity");
+    localStorage.removeItem("logoUrl");
+
+    setCityContext({
+      city: "",
+      cityId: "",
+      cityLogo: "",
+    });
+    navigate("/");
     }
 
   return (

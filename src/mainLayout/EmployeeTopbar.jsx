@@ -16,6 +16,7 @@ import { images } from "../assets/css/imagePath";
 import ChangePassword from "../components/ChangePassword/changePassword";
 import LogoImage from "../components/Common/Image/LogoImage";
 import QuickAppSelection from "./QuickAppSelection";
+import { useCity } from "../context/CityContext";
 
 const EmployeeTopbar = () => {
     const location = useLocation();
@@ -24,7 +25,7 @@ const EmployeeTopbar = () => {
     const [secondchar, setSecondhar] = useState("");
     const [showChangePassword, setShowChangePassword] = useState(false);
     const storedName = localStorage.getItem("name");
-
+    const { setCityContext, city, cityId, cityLogo } = useCity();
     const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -74,8 +75,21 @@ const EmployeeTopbar = () => {
     }, [storedName]);
 
     const handleLogout = () => {
-        localStorage.clear();
-        navigate("/");
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("loginDate");
+    localStorage.removeItem("name");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("city");
+    localStorage.removeItem("cityId");
+    localStorage.removeItem("defaultCity");
+    localStorage.removeItem("logoUrl");
+
+    setCityContext({
+      city: "",
+      cityId: "",
+      cityLogo: "",
+    });
+    navigate("/");
     };
 
     return (

@@ -17,13 +17,14 @@ import { images } from "../../../assets/css/imagePath";
 import LogoImage from "../../../components/Common/Image/LogoImage";
 import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
 import ChangePassword from "../../../components/ChangePassword/changePassword";
+import { useCity } from "../../../context/CityContext";
 
 const FE_TopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const storedName = localStorage.getItem("name") || "Field Executive";
-
+ const { setCityContext, city, cityId, cityLogo } = useCity();
   const [firstChar, setFirstChar] = useState("");
   const [secondChar, setSecondChar] = useState("");
   const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
@@ -97,7 +98,20 @@ const FE_TopBar = () => {
   }, [storedName]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("loginDate");
+    localStorage.removeItem("name");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("city");
+    localStorage.removeItem("cityId");
+    localStorage.removeItem("defaultCity");
+    localStorage.removeItem("logoUrl");
+
+    setCityContext({
+      city: "",
+      cityId: "",
+      cityLogo: "",
+    });
     navigate("/");
   };
 
