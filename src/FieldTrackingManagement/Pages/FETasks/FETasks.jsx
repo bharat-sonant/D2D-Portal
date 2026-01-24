@@ -1,8 +1,14 @@
-import React, { useState } from 'react'
-import GlobalStyles from '../../../assets/css/globleStyles.module.css'
-import AddTask from '../../Components/FETasks/AddTask';
-import style from './FETasks.module.css'
-import notFoundImage from '../../../assets/images/userNotFound.png'
+import React, { useEffect, useState } from "react";
+import GlobalStyles from "../../../assets/css/globleStyles.module.css";
+import AddTask from "../../Components/FETasks/AddTask";
+import style from "./FETasks.module.css";
+import notFoundImage from "../../../assets/images/userNotFound.png";
+import {
+  getallTasks,
+  saveTaskAction,
+  updateTaskAction,
+} from "../../Actions/FETasks/FETasksAction";
+import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
 const FETasks = () => {
   const [openCanvas, setOpenCanvas] = useState(false);
@@ -10,94 +16,144 @@ const FETasks = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editTaskId, setEditTaskId] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getallTasks(setTasks, setLoading);
+  }, []);
 
   const handleOpenModal = () => {
-    console.log('open')
     setOpenCanvas(true);
-  }
+  };
 
-  const handleSaveTask = (taskData) => {
-    if(isEdit){
-      setTasks((prev) => 
-        prev.map((task,index) => 
-        index === editIndex
-          ? {...task, ...taskData}
-          : task
-    ))
-    }else{
-      setTasks((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        ...taskData,
-      },
-    ])
+  const normalizeTask = (task) => ({
+    id: task.id,
+    taskName: task.taskName ?? task.task_name,
+    description: task.description,
+  });
+
+  const handleSaveTask = async (taskData) => {
+    if (isEdit) {
+      // optimistic update
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === editTaskId ? { ...task, ...taskData } : task,
+        ),
+      );
+
+      try {
+        const updated = await updateTaskAction(editTaskId, taskData);
+        const updatedTask = normalizeTask(updated);
+
+        setTasks((prev) =>
+          prev.map((task) => (task.id === editTaskId ? updatedTask : task)),
+        );
+      } catch {
+        // optional rollback (if needed)
+      }
+
+      setEditTaskId(null);
+      setIsEdit(false);
+      return;
     }
-    setEditIndex(null)
-    setIsEdit(false)
-  }
 
-  const handleEdit = (index) => {
-    const selectedTask = tasks[index];
-    setIsEdit(true)
-    setEditIndex(index);
+    // =====================
+    // ADD TASK (OPTIMISTIC)
+    // =====================
+    const tempId = Date.now();
 
-    setTaskName(selectedTask.taskName);
-    setDescription(selectedTask.description)
+    const tempTask = {
+      id: tempId,
+      ...taskData,
+    };
 
-    setOpenCanvas(true)
-  }
+    setTasks((prev) => [...prev, tempTask]);
+
+    try {
+      const created = await saveTaskAction(taskData);
+      const createdTask = normalizeTask(created);
+
+      setTasks((prev) =>
+        prev.map((task) => (task.id === tempId ? createdTask : task)),
+      );
+    } catch {
+      // rollback
+      setTasks((prev) => prev.filter((task) => task.id !== tempId));
+    }
+
+    setEditTaskId(null);
+    setIsEdit(false);
+  };
+
+  const handleEdit = (task) => {
+    setIsEdit(true);
+    setEditTaskId(task.id);
+
+    setTaskName(task.taskName);
+    setDescription(task.description);
+
+    setOpenCanvas(true);
+  };
 
   return (
     <>
-        <div className={GlobalStyles.floatingDiv}>
-          <button
-            className={GlobalStyles.floatingBtn}
-            onClick={handleOpenModal}
-          >
-            +
-          </button>
-        </div>
+      <div className={GlobalStyles.floatingDiv}>
+        <button className={GlobalStyles.floatingBtn} onClick={handleOpenModal}>
+          +
+        </button>
+      </div>
 
-        {/* Tasks Table */}
+      {/* Tasks Table */}
       <div className={style.container}>
-
-        {tasks.length === 0 ? (
-          <div className={style.emptyState}>
-            <img src={notFoundImage} alt="No tasks" />
-            <p className={style.empty}>No tasks added yet</p>
-          </div>
-        ) : (
-          <table className={style.table}>
-            <thead>
+        <table className={style.table}>
+          <thead>
+            <tr>
+              <th>S. No</th>
+              <th>Task Name</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
               <tr>
-                <th>S. No</th>
-                <th>Task Name</th>
-                <th>Description</th>
-                <th>Action</th>
+                <td colSpan="4" className={style.loaderCell}>
+                  <WevoisLoader title="loading tasks" />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task, index) => (
+            ) : tasks.length === 0 ? (
+              <tr>
+                <td colSpan="4" className={style.emptyCell}>
+                  <div className={style.emptyContent}>
+                    <img src={notFoundImage} alt="No tasks" />
+                    <p>No tasks added yet</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              tasks.map((task, index) => (
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.taskName}</td>
                   <td>{task.description}</td>
                   <td className={style.actionCol}>
-                    <button className={style.editBtn} onClick={()=> handleEdit(index)}>
+                    <button
+                      className={style.editBtn}
+                      onClick={() => handleEdit(task)}
+                    >
                       Update
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
 
-        {openCanvas && (
-          <AddTask
+      {openCanvas && (
+        <AddTask
           taskName={taskName}
           setTaskName={setTaskName}
           description={description}
@@ -105,12 +161,12 @@ const FETasks = () => {
           setOpenCanvas={setOpenCanvas}
           isEdit={isEdit}
           setIsEdit={setIsEdit}
-          setEditIndex={setEditIndex}
+          setEditIndex={setEditTaskId}
           onSave={handleSaveTask}
-          />
-        )}
+        />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default FETasks
+export default FETasks;
