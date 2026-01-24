@@ -1,0 +1,440 @@
+.container {
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    height: calc(100vh - 60px);
+    /* Full screen height */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    /* Main page scroll nahi hoga */
+}
+
+/* Sticky Top Wrapper */
+.stickyTopSection {
+    flex-shrink: 0;
+    /* Iska size change nahi hoga */
+}
+
+/* Header */
+.header {
+    margin-bottom: 1.2rem;
+}
+
+.titleSection h1 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin: 0;
+    font-weight: 700;
+}
+
+.titleSection p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* Summary Stats */
+.summaryWrapper {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.statCard {
+    background: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    max-width: 220px;
+}
+
+.statInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.statLabel {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.iconBlue {
+    color: #3b82f6;
+}
+
+.iconGreen {
+    color: #10b981;
+}
+
+.iconOrange {
+    color: #f59e0b;
+}
+
+/* Filters Bar - Fixed above the table */
+.tableControls {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+    /* Table se connect karne ke liye */
+    border-radius: 10px 10px 0 0;
+}
+
+.leftGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.rightGroup {
+    display: flex;
+    align-items: center;
+}
+
+.searchWrapper {
+    position: relative;
+    width: 280px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.searchWrapper input {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+
+
+/* Table Card & Scroll Area */
+.tableContainer {
+    flex: 1;
+    /* Bacha hua saara space legi */
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0 0 10px 10px;
+    overflow: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    margin-bottom: 0px;
+    height: calc(100vh - 171px);
+}
+
+.tableScrollArea {
+    flex: 1;
+    overflow-y: auto;
+    /* Sirf table data scroll hoga */
+}
+
+.userTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.userTable th {
+    position: sticky;
+    /* Header fix rahega jab body scroll ho */
+    top: 0;
+    background: #f8fafc;
+    padding: 12px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #64748b;
+    z-index: 2;
+    box-shadow: inset 0 -1px 0 #e2e8f0;
+    text-align: left;
+}
+
+.userTable td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    color: #334155;
+}
+
+/* Visual Components */
+.nameText {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.emailText {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.codeBadge {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+
+.siteBadge {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.sitePending {
+    font-style: italic;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.passwordCell {
+    letter-spacing: 2px;
+    color: #cbd5e1;
+}
+
+.dimText {
+    color: #64748b;
+}
+
+/* Custom Select Wrapper */
+.selectWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.customSelect {
+    appearance: none;
+    /* Default arrow hidden */
+    padding: 8px 32px 8px 12px;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #475569;
+    cursor: pointer;
+    outline: none;
+    min-width: 140px;
+    transition: all 0.2s;
+}
+
+.customSelect:hover {
+    border-color: #3b82f6;
+    /* Blue Border */
+}
+
+.customSelect:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.selectIcon {
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+    color: #94a3b8;
+}
+
+/* Summary Icons */
+.iconBlue {
+    color: #3b82f6;
+}
+
+.iconGreen {
+    color: #10b981;
+}
+
+.iconRed {
+    color: #ef4444;
+}
+
+.iconOrange {
+    color: #f59e0b;
+}
+
+/* Status Styles */
+.statusActive {
+    background: #00800020;
+    color: #008000;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.statusInactive {
+    background: #ff000020;
+    color: #ff0000;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Toggle Action Buttons */
+.btnActivate {
+    color: #10b981 !important;
+    border-color: #d1fae5 !important;
+}
+
+.btnDeactivate {
+    color: #ef4444 !important;
+    border-color: #fee2e2 !important;
+}
+
+/* Fixed Table Logic */
+.tableContainer {
+    flex: 1;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    height: calc(100vh - 280px);
+    /* Adjusting for 4 cards + header */
+}
+
+/* FAB */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.2s;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.actionBtn {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    background: white;
+}
+
+.actionBtn:hover {
+    color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.textCenter {
+    text-align: center;
+}
+
+/* Ensure actions are centered */
+.actions {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+/* Emerald Touch for Summary */
+.iconGreen {
+    color: #059669;
+}
+
+
+
+/* Deep Emerald & Functional Colors */
+.iconEmerald {
+    color: #059669;
+}
+
+.iconRed {
+    color: #dc2626;
+}
+
+.iconBlue {
+    color: #2563eb;
+}
+
+.iconOrange {
+    color: #d97706;
+}
+
+/* Adjusted Summary Cards for 4 items */
+.summaryWrapper {
+    display: flex;
+    gap: 0.75rem;
+    /* Gap thoda kam kiya taaki 4 cards fit ho jayein */
+    margin-bottom: 1.5rem;
+}
+
+.statCard {
+    background: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    /* Equal width for all cards */
+    min-width: 180px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+
+
+/* Action Button Toggles */
+.btnActivate {
+    color: #059669 !important;
+    border-color: #d1fae5 !important;
+}
+
+.btnActivate:hover {
+    background-color: #f0fdf4 !important;
+}
+
+.btnDeactivate {
+    color: #dc2626 !important;
+    border-color: #fee2e2 !important;
+}
+
+.btnDeactivate:hover {
+    background-color: #fef2f2 !important;
+}
+
+/* Keep existing container and table styles... */
