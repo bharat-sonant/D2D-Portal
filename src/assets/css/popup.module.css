@@ -1,3 +1,178 @@
+/* ================= Quick App Selection ================= */
+.overlay2 {
+  background: transparent;
+  padding: 70px 20px 0px 0px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 9;
+  display: flex;
+}
+.modalApp {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 480px;
+  width: 100%;
+  flex-flow: column;
+  border-radius: 12px;
+  background: #fffffffa;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ffffffcc;
+  overflow: hidden;
+  animation: modalSlideUp 0.5s ease;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  /* animation: float 20s infinite ease-in-out; */
+}
+
+.orbOne {
+  width: 300px;
+  height: 300px;
+  background: #e3cbfc;
+  top: -150px;
+  left: -150px;
+}
+
+.orbTwo {
+  width: 400px;
+  height: 400px;
+  background: #e3cbfc;
+  bottom: -200px;
+  right: -200px;
+  animation-delay: 6s;
+}
+
+.orbThree {
+  width: 250px;
+  height: 250px;
+  background: #fbffc6;
+  top: 30%;
+  left: 32%;
+  animation-delay: 12s;
+}
+
+/* Overlay */
+.dropdownOverlay {
+  background: transparent;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 70px 20px 0 0;
+}
+
+/* Modal body */
+
+.modalBodyApp{
+max-height: calc(100vh - 90px);
+}
+
+/* Section Titles */
+.sectionHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.sectionTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+.sectionNumber{
+  font-size: 11px;
+    font-family: var(--fontGraphikSemibold);
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+/* Grids */
+.appsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 7px;
+}
+
+.appsGridDropdown {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.managementGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.singleColumn {
+  grid-template-columns: 1fr;
+}
+
+.accountGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Cards */
+.userTypeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--white);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userTypeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Icons */
+.userTypeIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBlue {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+}
+
+.iconRed {
+  background: rgba(245, 101, 101, 0.15);
+  color: #f56565;
+}
+
+/* Labels */
+.userTypeLabel2 {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
+}
+
+/* Divider */
+.sectionDivider {
+  /* border-top: 1px solid var(--borderColor); */
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
 /* ================= OVERLAY ================= */
 .overlay {
   position: fixed;
@@ -7,7 +182,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 9;
   padding: 20px;
   animation: popup_modalFadeIn__yzkB8 0.3s ease;
 }
@@ -286,13 +461,13 @@
 
 .userTypeCard {
   position: relative;
-  padding: 12px 16px;
+  padding: 12px 10px;
   background: var(--white);
   border: 1px solid var(--borderColor);
   border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
   animation: addUserCardPop 0.5s ease backwards;

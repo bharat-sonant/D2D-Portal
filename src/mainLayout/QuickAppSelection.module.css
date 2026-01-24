@@ -1,0 +1,266 @@
+/* ================= Quick App Selection ================= */
+
+.overlay2 {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  background: transparent;
+  padding: 70px 20px 0 0;
+}
+
+.dropdownOverlay {
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+/* ================= Modal ================= */
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+.modalApp {
+  max-width: 480px;
+  width: 100%;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  animation: modalSlideUp 0.4s ease;
+}
+
+/* 🔺 Peek Arrow */
+.modalApp::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 28px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  transform: rotate(45deg);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ================= Body ================= */
+
+.modalBody {
+  padding: 20px;
+  position: relative;
+}
+
+.modalBodyApp {
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+}
+
+/* ================= Floating Orbs ================= */
+
+.floatingOrbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+}
+
+.orbOne {
+  width: 300px;
+  height: 300px;
+  background: #cbd6fc;
+  top: -150px;
+  left: -150px;
+}
+
+.orbTwo {
+  width: 400px;
+  height: 400px;
+  background: #e3cbfc;
+  bottom: -200px;
+  right: -200px;
+}
+
+.orbThree {
+  width: 250px;
+  height: 250px;
+  background: #f2f7b2;
+  top: 20%;
+  left: 32%;
+}
+
+/* ================= Section Header ================= */
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.sectionNumber {
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: #94a3b8;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+/* ================= Grids ================= */
+
+.appsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 7px;
+}
+
+.appsGridDropdown {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.managementGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* .singleColumn {
+  grid-template-columns: 1fr;
+} */
+
+.accountGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ================= Cards ================= */
+
+.userTypeCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 4px;
+  background: var(--whitefa);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userTypeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  .userTypeLabel2{
+    color: var(--black);
+  }
+}
+
+/* ================= Icons ================= */
+
+.userTypeIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon helpers */
+.iconBlue {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+}
+
+.iconRed {
+  background: rgba(245, 101, 101, 0.15);
+  color: #f56565;
+}
+
+/* ================= Labels ================= */
+
+.userTypeLabel2 {
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--regularColor);
+}
+
+/* ================= Divider ================= */
+
+.sectionDivider {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+/* ================= Animations ================= */
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= Active Style ================= */
+.activeCard {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.12),
+    rgba(118, 75, 162, 0.12)
+  );
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 22px rgba(102, 126, 234, 0.25);
+  transform: translateY(-2px);
+}
+
+/* icon auto highlight */
+.activeCard .userTypeIcon {
+  background: var(--gradientTheme) !important;
+  color: var(--white) !important;
+}
+
+/* text highlight */
+.activeCard .userTypeLabel2 {
+  color: var(--darkBlack);
+}
+/* ================= Responsive ================= */
+
+@media (max-width: 768px) {
+  .dropdownOverlay{
+        padding: 70px 10px 0 10px;
+  }
+  .appsGridDropdown {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modalApp {
+    max-width: 100%;
+  }
+}
