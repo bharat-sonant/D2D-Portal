@@ -9,8 +9,7 @@ const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCan
 
   const handleClose = () => {
     setOpenCanvas(false);
-    setIsEdit(false);
-    setEditIndex(null)
+    resetForm();
   };
 
 const validate = () => {
@@ -44,6 +43,8 @@ const validate = () => {
   }
 
   const resetForm = () => {
+    setEditIndex(null)
+    setIsEdit(false);
     setTaskName("");
     setDescription("");
     setOpenCanvas(false);
