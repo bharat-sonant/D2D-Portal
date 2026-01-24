@@ -160,7 +160,7 @@ const FEUsers = () => {
                       {user.status === 'Active' ? <PowerOff size={16} /> : <Power size={16} />}
                     </button>
                     <button className={style.actionBtn} title="Assign Site"><MapPin size={16} /></button>
-                    <button className={style.actionBtn} title="Resend SMS"><Send size={16} /></button>
+                    <button className={style.actionBtn} title="Resend Login Credentials"><Send size={16} /></button>
                   </td>
                 </tr>
               ))}
