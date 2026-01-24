@@ -149,9 +149,27 @@
 } */
 
 .accountGrid {
-  display: grid;
+  /* display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 12px; */
+  display: flex;
+  /* flex-flow: column; */
+  align-items: flex-start;
+  /* background: #fafafa; */
+
+  gap: 10px;
+  border-radius: 6px;
+  .userTypeCard {
+    flex-flow: row;
+            width: calc(100% / 2 - 0px);
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 16px;
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 }
 
 /* ================= Cards ================= */
@@ -173,7 +191,7 @@
 .userTypeCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-  .userTypeLabel2{
+  .userTypeLabel2 {
     color: var(--black);
   }
 }
@@ -253,8 +271,8 @@
 /* ================= Responsive ================= */
 
 @media (max-width: 768px) {
-  .dropdownOverlay{
-        padding: 70px 10px 0 10px;
+  .dropdownOverlay {
+    padding: 70px 10px 0 10px;
   }
   .appsGridDropdown {
     grid-template-columns: repeat(2, 1fr);
