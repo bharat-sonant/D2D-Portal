@@ -257,7 +257,7 @@ export const handleCityAccessToggle = async (userId, city_id, isCurrentlySelecte
         return prev.filter(c => c.city_id !== city_id);
       });
 
-      common.setAlertMessage('success', 'User city access removed successfully.');
+      common.setAlertMessage('success', 'User site access removed successfully.');
 
     } else {
 
@@ -278,11 +278,11 @@ export const handleCityAccessToggle = async (userId, city_id, isCurrentlySelecte
           ]);
         };
 
-        common.setAlertMessage('success', 'User city access saved successfully.');
+        common.setAlertMessage('success', 'User site access saved successfully.');
       };
     };
   } catch (err) {
-    console.error('City toggle failed:', err);
+    console.error('Site toggle failed:', err);
   };
 };
 
@@ -295,7 +295,6 @@ export const handleGetCity = async (userId, setSelectedCities) => {
         city_id: item.city_id
       }))
       );
-
     } else {
       setSelectedCities([]);
     }

@@ -29,7 +29,7 @@ const UserCityAccessList = ({
     <>
       <div className={styles.userCard}>
         <div className={styles.cardHeader}>
-          <div className={styles.heading}>Vehicles</div>
+          <div className={styles.heading}>Users</div>
         </div>
         {/* Search */}
         <input

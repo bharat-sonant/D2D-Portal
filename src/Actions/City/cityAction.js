@@ -8,15 +8,15 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
     setCityError("");
     setCityCodeError("");
     if (!form?.city_code?.trim()) {
-        setCityCodeError("City code is required");
+        setCityCodeError("Site code is required");
         isValid = false;
     }
     if (!form?.city_name?.trim()) {
-        setCityError("City name is required");
+        setCityError("Site name is required");
         isValid = false;
     }
     if (!logo && !props?.onEdit && !props?.onEdit?.logo_image) {
-        setLogoError("City logo is required");
+        setLogoError("Site logo is required");
         isValid = false;
     }
     if (isValid) {
@@ -34,16 +34,16 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
             await cityService.saveCityData(cityDetail, logo, props?.onEdit?.city_id);
             resetStateValues();
             props.loadCities();
-            common.setAlertMessage("success", !props?.onEdit ? "City added successfully" : "City updated successfully");
+            common.setAlertMessage("success", !props?.onEdit ? "Site added successfully" : "Site updated successfully");
         } catch (err) {
             setLoading(false);
             if (err?.code === "23505") {
                 if (err?.details?.includes("city_code")) {
-                    setCityCodeError("City code already exists!");
+                    setCityCodeError("Site code already exists!");
                     return;
                 }
                 if (err?.details?.includes("city_name")) {
-                    setCityError("City name already exists!");
+                    setCityError("Site name already exists!");
                     return;
                 }
                 else {

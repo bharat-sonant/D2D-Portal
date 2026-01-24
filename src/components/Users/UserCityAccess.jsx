@@ -46,7 +46,7 @@ const UserCityAccess = (props) => {
       <div className={style.card_header}>
         {!isSearching ? (
           <>
-            <h5 className={style.heading}>User Site  Access</h5>
+            <h5 className={style.heading}>User Site Access</h5>
 
             <Search
               size={14}

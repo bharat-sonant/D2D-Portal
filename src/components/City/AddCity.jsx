@@ -52,7 +52,7 @@ const AddCity = (props) => {
     if (logoError) return;
     const hasLogo = logo || (props.onEdit && props.onEdit.logoUrl);
     if (!hasLogo) {
-      setLogoError("City Logo is required.");
+      setLogoError("Site Logo is required.");
       return;
     }
     saveCityAction(
