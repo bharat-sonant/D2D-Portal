@@ -263,8 +263,8 @@ export const handleCityAccessToggle = async (
       userId: userId,
       assignedBy:localStorage.getItem('name'),
     };
-    const response = await axios.post(
-      'http://localhost:3001/site-assignment/assignsite',
+    const response = await axios.post( 
+      'https://d2d-backend-922o.onrender.com/site-assignment/assignsite',
       payload
     );
     const apiData = response.data;
@@ -292,7 +292,7 @@ async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
     const recordToRemove = selectedCities.find(c => c.city_id === city_id);
     if (!recordToRemove?.id) return;  
     const response = await axios.delete(
-      'http://localhost:3001/site-assignment/unassignsite',
+      'https://d2d-backend-922o.onrender.com/site-assignment/unassignsite',
       {
         data: { id: Number(recordToRemove.id) },
       }
