@@ -1,4 +1,5 @@
 import * as sbs from "../supabaseServices";
+import axios from "axios";
 
 export const saveUserData = async (userDetail) => {
   const result = await sbs.saveData('Users', userDetail);
@@ -55,13 +56,20 @@ export const getCities = async () => {
   };
 };
 
+
 export const saveUserCityAccess = async (payload) => {
-  const result = await sbs.saveData('UserCityAccess', payload);
-  if (result?.success) {
-    return { status: 'success', message: 'User saved successfully', data: result?.data };
-  } else {
-    return { status: 'error', message: result?.error };
-  };
+  try {
+    const response = await axios.post('http://localhost:3001/site-assignment/create',payload);
+    return {status: 'success',message: response.data?.message || 'Site assigned successfully',data: response.data?.data,};
+  } catch (error) {
+      if(error.response) {
+      return {status: 'error',message:error.response.data?.message ||'Request failed',errors: error.response.data,statusCode: error.response.status};
+    }
+    return {
+      status: 'error',
+      message: 'Network error or server not reachable',
+    };
+  }
 };
 
 export const fetchUserCityAccess = async (userId) => {
@@ -74,6 +82,7 @@ export const fetchUserCityAccess = async (userId) => {
 };
 
 export const removeCityAccess = async (userId) => {
+ 
   const result = await sbs.deleteData("UserCityAccess", userId);
 }
 export const setUserDefaultCity = (userId, cityId) => {

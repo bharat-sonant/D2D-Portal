@@ -246,45 +246,66 @@ export const loadCityData = async (setCityList) => {
   }
 }
 
-export const handleCityAccessToggle = async (userId, city_id, isCurrentlySelected, setSelectedCities) => {
+export const handleCityAccessToggle = async (
+  userId,
+  city_id,
+  isCurrentlySelected,
+  setSelectedCities,
+  selectedCities
+) => {
+
   try {
     if (isCurrentlySelected) {
-
-      setSelectedCities(prev => {
-        const record = prev.find(c => c.city_id === city_id);
-        if (!record) return prev;
-        userServices.removeCityAccess(record.id);
-        return prev.filter(c => c.city_id !== city_id);
-      });
-
-      common.setAlertMessage('success', 'User site access removed successfully.');
-
-    } else {
-
+      removeSiteAccess(setSelectedCities,city_id,selectedCities)
+     }else{
       const payload = {
-        user_id: userId,
-        city_id: city_id,
-        created_by: localStorage.getItem('name'),
-        created_at: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      };
-
-      const resp = await userServices.saveUserCityAccess(payload);
-      if (resp.status === 'success') {
-
-        if (resp?.data?.id) {
-          setSelectedCities(prev => [
-            ...prev,
-            { id: resp.data.id, city_id }
-          ]);
-        };
-
-        common.setAlertMessage('success', 'User site access saved successfully.');
-      };
+      cityId: city_id,
+      userId: userId,
+      assignedBy:localStorage.getItem('name'),
     };
+    const response = await axios.post(
+      'http://localhost:3001/site-assignment/assignsite',
+      payload
+    );
+    const apiData = response.data;
+    if (apiData?.data?.id) {
+      setSelectedCities(prev => [
+        ...prev,
+        {
+          id: apiData.data.id,
+          city_id,
+        },
+      ]);
+    }
+    common.setAlertMessage('success', apiData.message || 'Site assigned successfully.');
+     }
+
   } catch (err) {
-    console.error('Site toggle failed:', err);
-  };
+    console.error(err.response?.data?.message)
+    common.setAlertMessage('error','Failed to update site access');
+  }
 };
+
+
+async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
+  try {
+    const recordToRemove = selectedCities.find(c => c.city_id === city_id);
+    if (!recordToRemove?.id) return;  
+    const response = await axios.delete(
+      'http://localhost:3001/site-assignment/unassignsite',
+      {
+        data: { id: Number(recordToRemove.id) },
+      }
+    );
+    setSelectedCities(prev =>
+      prev.filter(c => c.city_id !== city_id)
+    );
+    common.setAlertMessage('success',response.data?.message || 'Site unassigned successfully.');
+  } catch (err) {
+    console.error(err.response?.data?.message)
+    common.setAlertMessage('error','Failed to update site access');
+  }
+}
 
 export const handleGetCity = async (userId, setSelectedCities) => {
   try {

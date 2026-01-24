@@ -255,7 +255,7 @@ const RouterComponent = () => {
 
 
         <Route
-          path="/users"
+          path="/employee"
           element={
             <ProtectedRouter>
               <>

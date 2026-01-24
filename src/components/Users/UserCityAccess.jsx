@@ -34,7 +34,6 @@ const UserCityAccess = (props) => {
       city_id,
       isCurrentlySelected,
       setSelectedCities,
-      setLoading,
       selectedCities
     );
   };

@@ -102,10 +102,10 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
     },
     {
       id: "User",
-      label: "User",
+      label: "Employee",
       icon: Users,
       color: "var(--themeColor)",
-      path: "/users",
+      path: "/employee",
       permissionKey: "CanAccessUserPage",
     },
     {
