@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import styles from './AssignSiteModal.module.css';
-import { X, User, MapPin, Check, Fingerprint, MapPinned } from 'lucide-react';
+import { X, User, Check, Fingerprint, MapPinned } from 'lucide-react';
 
 const AssignSiteModal = ({ user, managerSites, onClose, onAssign }) => {
   // Static sites functionality for demonstration

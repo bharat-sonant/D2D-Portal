@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import styles from "./AddFEAppUserModal.module.css";
-import { X, Contact, Search, User, Mail, Lock, Check, UserPlus, Loader2, Eye, EyeOff } from "lucide-react";
+import { X, Contact, Search, User, Mail, Check, UserPlus, Loader2 } from "lucide-react";
 
 const AddFEAppUserModal = ({ showCanvas, setShowCanvas }) => {
     const [empCode, setEmpCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isFetched, setIsFetched] = useState(false);
-    const [showPass, setShowPass] = useState(false); // Password visibility toggle
 
     const handleFetch = () => {
         if (!empCode) return;

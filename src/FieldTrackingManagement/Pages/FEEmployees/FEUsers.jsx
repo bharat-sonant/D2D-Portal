@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import style from './FEUsers.module.css';
-import { Plus, MapPin, Send, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
+import { Plus, MapPin, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
 import AddFEAppUserModal from '../../Components/FEUsers/AddFEAppUserModal/AddFEAppUserModal';
 import AssignSiteModal from '../../Components/FEUsers/AssignSiteModal/AssignSiteModal';
 
