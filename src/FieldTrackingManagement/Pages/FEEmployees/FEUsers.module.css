@@ -72,17 +72,13 @@
     text-transform: uppercase;
 }
 
-.iconBlue {
-    color: #3b82f6;
-}
+
 
 .iconGreen {
     color: #10b981;
 }
 
-.iconOrange {
-    color: #f59e0b;
-}
+
 
 /* Filters Bar - Fixed above the table */
 .tableControls {
@@ -163,16 +159,81 @@
     top: 0;
     background: #f8fafc;
     padding: 12px 16px;
-    font-size: 11px;
-    text-transform: uppercase;
+    font-size: 13px;
+    text-transform: capitalize;
     color: #64748b;
     z-index: 2;
     box-shadow: inset 0 -1px 0 #e2e8f0;
     text-align: left;
 }
+/* Table Header alignment */
+.userTable th.textCenter {
+  text-align: center;
+  padding-right: 20px;
+}
 
+/* Action Cell Container */
+.actionsCell {
+  width: 160px; /* Fixed width taaki column shake na kare */
+  text-align: right;
+  padding-right: 24px !important;
+}
+
+.actionButtonsGroup {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end; /* Right align as per dashboard standard */
+  align-items: center;
+}
+
+.actionBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  background-color: #f8fafc;
+  color: #3b82f6;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+/* Deep Emerald Theme Updates */
+.iconGreen, .iconEmerald {
+  color: #059669; /* Deep Emerald */
+}
+
+.statusActive {
+  background: #ecfdf5;
+  color: #059669; /* Emerald Text */
+  border: 1px solid #d1fae5;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Specific button overrides */
+.btnActivate {
+  color: #059669 !important;
+  border-color: #05966930 !important;
+}
+
+.btnDeactivate {
+  color: #ef4444 !important;
+  border-color: #ef444430 !important;
+}
 .userTable td {
-    padding: 12px 16px;
+    padding: 8px 16px;
     border-bottom: 1px solid #f1f5f9;
     font-size: 13px;
     color: #334155;
@@ -258,31 +319,20 @@
 }
 
 /* Summary Icons */
-.iconBlue {
-    color: #3b82f6;
-}
+
 
 .iconGreen {
     color: #10b981;
 }
 
-.iconRed {
-    color: #ef4444;
-}
+
 
 .iconOrange {
     color: #f59e0b;
 }
 
 /* Status Styles */
-.statusActive {
-    background: #00800020;
-    color: #008000;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-}
+
 
 .statusInactive {
     background: #ff000020;
@@ -390,9 +440,7 @@
     color: #2563eb;
 }
 
-.iconOrange {
-    color: #d97706;
-}
+
 
 /* Adjusted Summary Cards for 4 items */
 .summaryWrapper {

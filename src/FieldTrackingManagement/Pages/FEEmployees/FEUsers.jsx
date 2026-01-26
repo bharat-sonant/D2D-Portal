@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import style from './FEUsers.module.css';
 import { Plus, MapPin, Send, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
 import AddFEAppUserModal from '../../Components/FEUsers/AddFEAppUserModal/AddFEAppUserModal';
+import AssignSiteModal from '../../Components/FEUsers/AssignSiteModal/AssignSiteModal';
 
 
 const FEUsers = () => {
@@ -13,13 +14,30 @@ const FEUsers = () => {
     { id: 5, code: '1021', name: 'Amit Kumar', email: 'amit@gmail.com', username: 'AMIT1021', lastLogin: '20 Jan 2026', site: 'Chandpole', status: 'Active' },
     { id: 6, code: '1022', name: 'Rahul Singh', email: 'rahul@gmail.com', username: 'RAHUL1022', lastLogin: 'Not Logged In', site: 'No site assigned', status: 'Inactive' },
   ]);
+  // 2. Assign Site Modal ke liye nayi states
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [selectedUserForSite, setSelectedUserForSite] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Active');
   const [siteFilter, setSiteFilter] = useState('');
-  
+
   // Modal visibility handle karne ke liye state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Mock available sites (Baad mein API se replace kar sakte hain)
+  const availableSites = [
+    { id: 1, name: 'Chandpole' },
+    { id: 2, name: 'Jaipur' },
+    { id: 3, name: 'Pali' },
+    { id: 4, name: 'Kota' },
+    { id: 5, name: 'Ajmer' }
+  ];
+
+  // 3. Map Icon Click Handler
+  const handleOpenAssignModal = (user) => {
+    setSelectedUserForSite(user);
+    setIsAssignModalOpen(true);
+  };
 
   const toggleStatus = (id) => {
     setUserList(prevList =>
@@ -121,12 +139,10 @@ const FEUsers = () => {
           <table className={style.userTable}>
             <thead>
               <tr>
-                <th>Code</th>
+                <th>Emp Code</th>
                 <th>Employee Name</th>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Last Login</th>
                 <th>Assigned Site</th>
+                <th>Last Login</th>
                 <th>Status</th>
                 <th className={style.textCenter}>Actions</th>
               </tr>
@@ -139,28 +155,47 @@ const FEUsers = () => {
                     <div className={style.nameText}>{user.name}</div>
                     <div className={style.emailText}>{user.email}</div>
                   </td>
-                  <td className={style.dimText}>{user.username}</td>
-                  <td className={style.passwordCell}>••••••</td>
-                  <td className={style.dimText}>{user.lastLogin}</td>
+                 
                   <td>
                     <span className={user.site === 'No site assigned' ? style.sitePending : style.siteBadge}>
                       {user.site}
                     </span>
                   </td>
+                     <td className={style.dimText}>{user.lastLogin}</td>
                   <td>
                     <span className={user.status === 'Active' ? style.statusActive : style.statusInactive}>
                       {user.status}
                     </span>
                   </td>
-                  <td className={style.actions}>
-                    <button
-                      onClick={() => toggleStatus(user.id)}
-                      className={`${style.actionBtn} ${user.status === 'Active' ? style.btnDeactivate : style.btnActivate}`}
-                    >
-                      {user.status === 'Active' ? <PowerOff size={16} /> : <Power size={16} />}
-                    </button>
-                    <button className={style.actionBtn} title="Assign Site"><MapPin size={16} /></button>
-                    <button className={style.actionBtn} title="Resend Login Credentials"><Send size={16} /></button>
+                  {/* Table Body Section snippet */}
+                  <td className={style.actionsCell}>
+                    <div className={style.actionButtonsGroup}>
+                      {/* Status Toggle */}
+                      <button
+                        onClick={() => toggleStatus(user.id)}
+                        className={`${style.actionBtn} ${user.status === 'Active' ? style.btnDeactivate : style.btnActivate}`}
+                        title={user.status === 'Active' ? 'Deactivate' : 'Activate'}
+                      >
+                        {user.status === 'Active' ? <PowerOff size={16} /> : <Power size={16} />}
+                      </button>
+
+                      {/* Assign Site */}
+                      <button
+                        className={style.actionBtn}
+                        title="Assign Site"
+                        onClick={() => handleOpenAssignModal(user)}
+                      >
+                        <MapPin size={16} />
+                      </button>
+
+                      {/* Send Credentials
+                      <button
+                        className={style.actionBtn}
+                        title="Resend Credentials"
+                      >
+                        <Send size={16} />
+                      </button> */}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -170,8 +205,8 @@ const FEUsers = () => {
       </div>
 
       {/* Fab Button par Click Event add kiya */}
-      <button 
-        className={style.fab} 
+      <button
+        className={style.fab}
         title="Create New User"
         onClick={() => setIsModalOpen(true)}
       >
@@ -180,9 +215,26 @@ const FEUsers = () => {
 
       {/* Modal Component Yahan Rakha Hai */}
       <AddFEAppUserModal
-        showCanvas={isModalOpen} 
-        setShowCanvas={() => setIsModalOpen(false)} 
+        showCanvas={isModalOpen}
+        setShowCanvas={() => setIsModalOpen(false)}
+
       />
+      {/* 2. Assign Site Modal (Conditionally Rendered) */}
+      {isAssignModalOpen && (
+        <AssignSiteModal
+          user={selectedUserForSite}
+          availableSites={availableSites}
+          onClose={() => setIsAssignModalOpen(false)}
+          onAssign={(userId, site) => {
+            setUserList(prevList =>
+              prevList.map(user =>
+                user.id === userId ? { ...user, site: site } : user
+              )
+            );
+            setIsAssignModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 };
