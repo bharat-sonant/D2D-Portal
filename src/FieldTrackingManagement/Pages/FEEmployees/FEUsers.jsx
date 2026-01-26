@@ -148,7 +148,7 @@ const FEUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user) => (
+              {filteredUsers&&filteredUsers.map((user) => (
                 <tr key={user.id}>
                   <td><span className={style.codeBadge}>{user.code}</span></td>
                   <td>
