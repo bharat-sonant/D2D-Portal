@@ -1,6 +1,6 @@
 import { useState,useMemo, useEffect } from "react";
 import styles from "./FEAssignments.module.css";
-import {Search} from "lucide-react";
+import {Search,Plus,Eye} from "lucide-react";
 import AssignTask from "../../Components/FEAssignments/AssignTask/AssignTask";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
@@ -92,7 +92,7 @@ const FEAssignments = () => {
                 {loading ? (
                   <tr>
                     <td colSpan="6" className={styles.loadingCell}>
-                      <WevoisLoader height={'60vh'}/>
+                      <WevoisLoader height={"60vh"} />
                     </td>
                   </tr>
                 ) : filteredUsers.length === 0 ? (
@@ -134,11 +134,11 @@ const FEAssignments = () => {
                         {user.contact || "N/A"}
                       </td>
                       <td style={{ padding: "15px 20px" }}>
-                        <span >
-                          {user.site || "N/A"}
-                        </span>
+                        <span>{user.site || "N/A"}</span>
                       </td>
-                      <td style={{ padding: "15px 20px",verticalAlign:"top" }}>
+                      <td
+                        style={{ padding: "15px 20px", verticalAlign: "top" }}
+                      >
                         <div>
                           <div>Total Tasks : {user.tasks}</div>
                           <div style={{ color: "grey" }}>
@@ -154,10 +154,27 @@ const FEAssignments = () => {
                           {user.status}
                         </span>
                       </td>
-                      
+
                       <td style={{ padding: "15px 20px", textAlign: "center" }}>
-                        <div className={styles.actionsContainer} style={{cursor:'pointer'}} onClick={()=>setAssignTaskWindow({status:true,data:user})}>
-                          Assign Task 
+                        <div className="d-flex gap-2 justify-content-center">
+                          <button
+                            className={styles.assignTaskBtn}
+                            onClick={() =>
+                              setAssignTaskWindow({ status: true, data: user })
+                            }
+                            title="Assign Task"
+                          >
+                            <Plus size={16} />
+                          </button>
+                          <button
+                            className={styles.assignTaskBtn}
+                            onClick={() =>
+                              setAssignTaskWindow({ status: true, data: user })
+                            }
+                            title="Assign Task"
+                          >
+                            <Eye size={16} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -167,10 +184,11 @@ const FEAssignments = () => {
             </table>
           </div>
         </div>
-        <AssignTask 
-        isOpen={assignTaskWindow.status}
-        onClose={() => setAssignTaskWindow({status:false,data:null})}
-        data={assignTaskWindow.data}/>
+        <AssignTask
+          isOpen={assignTaskWindow.status}
+          onClose={() => setAssignTaskWindow({ status: false, data: null })}
+          data={assignTaskWindow.data}
+        />
       </div>
     );
 };
