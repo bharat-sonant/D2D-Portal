@@ -16,6 +16,7 @@ const FETasks = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState('active')
   const [editTaskId, setEditTaskId] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,6 +32,7 @@ const FETasks = () => {
     id: task.id,
     taskName: task.taskName ?? task.task_name,
     description: task.description,
+    status: task.status,
   });
 
   const handleSaveTask = async (taskData) => {
@@ -92,6 +94,7 @@ const FETasks = () => {
 
     setTaskName(task.taskName);
     setDescription(task.description);
+    setStatus(task.status)
 
     setOpenCanvas(true);
   };
@@ -165,6 +168,8 @@ const FETasks = () => {
           setIsEdit={setIsEdit}
           setEditIndex={setEditTaskId}
           onSave={handleSaveTask}
+          status={status}
+          setStatus={setStatus}
         />
       )}
     </>

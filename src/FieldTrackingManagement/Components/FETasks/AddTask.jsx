@@ -4,7 +4,7 @@ import ErrorMessage from '../../../components/ErrorMessage/ErrorMessage';
 import modalStyles from '../../../assets/css/popup.module.css'
 import { ClipboardList, X } from 'lucide-react';
 
-const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCanvas, isEdit,setIsEdit,setEditIndex, onSave}) => {
+const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCanvas, isEdit,setIsEdit,setEditIndex, onSave, status, setStatus}) => {
   
   const [taskError, setTaskError] = useState("");
   const [desError, setDesError] = useState("");
@@ -39,7 +39,8 @@ const validate = () => {
 
     onSave({
       taskName,
-      description
+      description,
+      status
     });
     resetForm();
   }
@@ -49,6 +50,7 @@ const validate = () => {
     setIsEdit(false);
     setTaskName("");
     setDescription("");
+    setStatus('active')
     setOpenCanvas(false);
   }
 
@@ -101,6 +103,19 @@ const validate = () => {
             <ErrorMessage message={desError}/>
             )}
           </div>
+        </div>
+
+        <div className={styles.formGroupCheckbox}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              checked={status === 'active'}
+              onChange={(e) =>
+                setStatus(e.target.checked ? 'active' : 'inactive')
+              }
+            />
+            <span className={styles.checkboxText}>Active</span>
+          </label>
         </div>
 
         <div className={styles.footer}>

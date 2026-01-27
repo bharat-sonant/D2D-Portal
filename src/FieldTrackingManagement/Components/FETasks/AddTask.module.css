@@ -82,6 +82,32 @@
   border-color: #4f46e5;
 }
 
+.formGroupCheckbox {
+  margin-top: 12px;
+  margin-left: 20px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkboxText {
+  user-select: none;
+}
+
+
 .footer {
   padding: 16px 20px;
   display: flex;
