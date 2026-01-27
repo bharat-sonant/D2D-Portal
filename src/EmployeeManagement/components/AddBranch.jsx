@@ -32,8 +32,6 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     const inputRef = useRef(null);
     const autocompleteInstance = useRef(null);
 
-    // Native logic follows
-
     // Initialize native Google Places Autocomplete
     useEffect(() => {
         if (showCanvas && window.google && window.google.maps && window.google.maps.places && inputRef.current) {
@@ -65,13 +63,11 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     useEffect(() => {
         if (showCanvas && initialData) {
             setForm({
-                id: initialData.id,
                 name: initialData.name || "",
                 code: initialData.code || "",
                 address: initialData.address || "",
-                lat: initialData.lat || "",
-                lng: initialData.lng || "",
-                created_at: initialData.created_at || new Date().toISOString()
+                lat: initialData.lat ? initialData.lat.toString() : "",
+                lng: initialData.lng ? initialData.lng.toString() : "",
             });
         } else if (showCanvas && !initialData) {
             // Reset form for Add Mode
@@ -103,8 +99,17 @@ const AddBranch = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     };
 
     const handleSave = () => {
+        // Only send allowed fields for backend
+        const payload = {
+            name: form.name,
+            code: form.code,
+            address: form.address,
+            lat: form.lat ? parseFloat(form.lat) : undefined,
+            lng: form.lng ? parseFloat(form.lng) : undefined,
+        };
+
         validateBranchDetail({
-            form,
+            form: payload,
             setNameError,
             setCodeError,
             setAddressError,

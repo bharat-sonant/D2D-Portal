@@ -1,5 +1,6 @@
-import * as BranchService from "./BranchService";
-import * as common from "../../common/common";
+import api from "../../api/api";
+// import * as BranchService from "./BranchService"; // Old service, no longer needed
+// import * as common from "../../common/common"; // Old utilities, commented out
 
 /**
  * Action to fetch branches and update state
@@ -7,8 +8,11 @@ import * as common from "../../common/common";
 export const getBranchesAction = async (setBranches, setLoading) => {
     if (setLoading) setLoading(true);
     try {
-        const response = await BranchService.getBranches();
-        if (response && response.status === 'success') {
+        // Old code:
+        // const response = await BranchService.getBranches();
+        const response = await api.get('branches'); // Updated for new NestJS backend
+        console.log('response', response);
+        if (response.success) {
             setBranches(response.data || []);
         } else {
             console.error('Error fetching branches:', response?.message || 'Unknown error');
@@ -27,11 +31,19 @@ export const getBranchesAction = async (setBranches, setLoading) => {
  */
 export const saveBranchAction = async (branchData, onSuccess, onError) => {
     try {
-        const response = await BranchService.saveBranch(branchData);
-        if (response && response.status === 'success') {
+        let response;
+        if (branchData.id) {
+            // Update existing branch
+            response = await api.patch(`branches/${branchData.id}`, branchData);
+        } else {
+            // Create new branch
+            response = await api.post('branches/create', branchData);
+        }
+
+        if (response && response.success) {
             if (onSuccess) onSuccess(response.message);
         } else {
-            const msg = response?.message || 'Failed to save branch (No details)';
+            const msg = response?.message || 'Failed to save branch';
             if (onError) onError(msg);
         }
     } catch (error) {
@@ -44,8 +56,10 @@ export const saveBranchAction = async (branchData, onSuccess, onError) => {
  */
 export const deleteBranchAction = async (branchId, onSuccess, onError) => {
     try {
-        const response = await BranchService.deleteBranch(branchId);
-        if (response && response.status === 'success') {
+        // Old code:
+        // const response = await BranchService.deleteBranch(branchId);
+        const response = await api.delete(`branches/${branchId}`);
+        if (response && response.success) {
             if (onSuccess) onSuccess(response.message);
         } else {
             const msg = response?.message || 'Failed to delete branch';
@@ -96,7 +110,6 @@ export const validateBranchDetail = ({
             },
             (err) => {
                 setLoading(false);
-                // Simple error handling, could be expanded
                 if (onError) onError(err);
             }
         );
