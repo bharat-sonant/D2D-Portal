@@ -9,6 +9,7 @@ import {
   updateTaskAction,
 } from "../../Actions/FETasks/FETasksAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
+import { Edit } from "lucide-react";
 
 const FETasks = () => {
   const [openCanvas, setOpenCanvas] = useState(false);
@@ -146,7 +147,7 @@ const FETasks = () => {
                       className={style.editBtn}
                       onClick={() => handleEdit(task)}
                     >
-                      Update
+                      <Edit color="black" size={18}/>
                     </button>
                   </td>
                 </tr>
