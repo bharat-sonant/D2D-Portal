@@ -1,11 +1,171 @@
-import React from 'react'
+import { useState,useMemo } from "react";
+import styles from "./FEAssignments.module.css";
+import {Search} from "lucide-react";
+import AssignTask from "../../Components/FEAssignments/AssignTask/AssignTask";
+
+const users = [
+  {name:'Anil Sharma',code:'EMP002',contact:'8954842222',site:'Sikar',status:'In Progress',estimatedTime:'1 Hour',tasks:3,estimatedTime:'1 Hour',site:'Sikar'},
+  {name:'Prashant Meena',code:'EMP001',contact:'9876543210',site:'Jaipur',status:'In Progress',estimatedTime:'2 Hours',tasks:5,estimatedTime:'2 Hours',site:'Jaipur'},
+];
+const sites = [
+  { value: '', label: 'All Sites' },
+  { value: 'Sikar', label: 'Sikar' },
+  { value: 'Jaipur', label: 'Jaipur' },
+];
 
 const FEAssignments = () => {
-  return (
-    <div>
-        Field Executive Assignments Page
-    </div>
-  )
-}
+    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedSite, setSelectedSite] = useState("");
+    const [assignTaskWindow,setAssignTaskWindow]=useState({status:false,data:null});
+    const filteredUsers = useMemo(() => {
+      return users.filter((user) => {
+        const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             user.code.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSite = selectedSite === "" || user.site === selectedSite;
+        return matchesSearch && matchesSite;
+      });
+    }, [searchTerm, selectedSite]);
+    
+    return (
+      <div className={styles.employeesContainer}>
+        <div className={styles.background}>
+          <div className={`${styles.gradientOrb} ${styles.orb1}`} />
+          <div className={`${styles.gradientOrb} ${styles.orb2}`} />
+          <div className={`${styles.gradientOrb} ${styles.orb3}`} />
+          <div className={styles.gridOverlay} />
+        </div>
 
-export default FEAssignments
+        <div className={styles.contentWrapper}>
+          <div className={styles.headerRow}>
+            <div>
+              <h2 className={styles.pageTitle}>Field Task Assignments</h2>
+              <p className={styles.pageSubtitle}>
+                Manage task(s) for field executives
+              </p>
+            </div>
+            <div className={styles.searchActions}>
+              <select
+                value={selectedSite}
+                onChange={(e) => setSelectedSite(e.target.value)}
+                className={styles.siteSelect}
+              >
+                {sites.map((site) => (
+                  <option key={site.value} value={site.value}>
+                    {site.label}
+                  </option>
+                ))}
+              </select>
+              <div className={styles.searchWrapper}>
+                <Search size={18} className={styles.searchIcon} />
+                <input
+                  placeholder="Search employees..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={styles.searchInput}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.tableContainer}>
+            <table className={styles.employeesTable}>
+              <thead>
+                <tr className={styles.tableHeader}>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Site</th>
+                  <th>Assigned Work</th>
+                  <th>Task Status</th>
+
+                  <th style={{ textAlign: "center" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className={styles.loadingCell}>
+                      <div class="spinner-border" role="status"></div>
+                    </td>
+                  </tr>
+                ) : filteredUsers.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        padding: "40px",
+                        textAlign: "center",
+                        color: "var(--textMuted)",
+                      }}
+                    >
+                      No field executives found.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <tr key={user.code} className={styles.tableRow}>
+                      <td style={{ padding: "15px 20px", width: "25%" }}>
+                        <div className={styles.employeeInfo}>
+                          <div className={styles.avatar}>
+                            {user.name?.charAt(0) || "U"}
+                          </div>
+                          <div>
+                            <div className={styles.employeeName}>
+                              {user.name}
+                            </div>
+                            <div
+                              className={styles.employeeEmail}
+                              style={{ color: "grey" }}
+                            >
+                              {user.code}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      {/* <td className={styles.cellText}>{user.employee_code}</td> */}
+                      <td className={styles.cellText}>
+                        {user.contact || "N/A"}
+                      </td>
+                      <td style={{ padding: "15px 20px" }}>
+                        <span >
+                          {user.site || "N/A"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "15px 20px",verticalAlign:"top" }}>
+                        <div>
+                          <div>Total Tasks : {user.tasks}</div>
+                          <div style={{ color: "grey" }}>
+                            Estimated Time : {user.estimatedTime}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: "15px 20px" }}>
+                        <span
+                          className={`${styles.statusBadge} ${user.status ? styles.statusActive : styles.statusInactive}`}
+                        >
+                          {user.status}
+                        </span>
+                      </td>
+                      
+                      <td style={{ padding: "15px 20px", textAlign: "center" }}>
+                        <div className={styles.actionsContainer} style={{cursor:'pointer'}} onClick={()=>setAssignTaskWindow({status:true,data:user})}>
+                          Assign Task 
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <AssignTask 
+        isOpen={assignTaskWindow.status}
+        onClose={() => setAssignTaskWindow({status:false,data:null})}
+        data={assignTaskWindow.data}/>
+      </div>
+    );
+};
+
+export default FEAssignments;
