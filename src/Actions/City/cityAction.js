@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import * as common from "../../common/common";
 import * as cityService from "../../services/CityService/cityServices"
+import api from "../../api/api";
 
 
 export const saveCityAction = async (form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError) => {
@@ -59,6 +60,8 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
 export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading,setSelectedWard) => {
     setLoading(true)
     const response = await cityService.getCityData();
+    // const response = await api.get('sites')
+    // if(response.success){
     if (response.status === 'success') {
         let currentSelected = response.data?.find(item => item?.city_id === selectedCity?.city_id);
         setSelectedCity(currentSelected || response.data[0]);
