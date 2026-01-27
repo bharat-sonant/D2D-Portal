@@ -20,19 +20,19 @@ const FE_Dashboard = () => {
 
   const userStats = { total: 32, active: 26, inactive: 6 };
 
-  const activeSites = [
-    "Sector 21 – Noida",
-    "DLF Phase 3 – Gurgaon",
-    "Indira Nagar – Lucknow",
-    "Andheri East – Mumbai",
-    "Whitefield – Bengaluru",
-    "HSR Layout – Bengaluru",
-    "Salt Lake – Kolkata",
-    "Banjara Hills – Hyderabad",
-    "Powai – Mumbai",
-    "Viman Nagar – Pune",
-    "Navrangpura – Ahmedabad",
-    "Alkapuri – Vadodara",
+  const siteUserStats = [
+    { site: "Sector 21 – Noida", users: 4 },
+    { site: "DLF Phase 3 – Gurgaon", users: 3 },
+    { site: "Indira Nagar – Lucknow", users: 2 },
+    { site: "Andheri East – Mumbai", users: 5 },
+    { site: "Whitefield – Bengaluru", users: 4 },
+    { site: "HSR Layout – Bengaluru", users: 3 },
+    { site: "Salt Lake – Kolkata", users: 2 },
+    { site: "Banjara Hills – Hyderabad", users: 3 },
+    { site: "Powai – Mumbai", users: 1 },
+    { site: "Viman Nagar – Pune", users: 2 },
+    { site: "Navrangpura – Ahmedabad", users: 2 },
+    { site: "Alkapuri – Vadodara", users: 1 },
   ];
 
   const workingSitesCount = 4;
@@ -59,13 +59,6 @@ const FE_Dashboard = () => {
     { day: "Fri", completed: 21, assigned: 25 },
     { day: "Sat", completed: 8, assigned: 12 },
     { day: "Sun", completed: 5, assigned: 8 },
-  ];
-
-  const sitePerformance = [
-    { site: "Noida", efficiency: 92 },
-    { site: "Gurgaon", efficiency: 88 },
-    { site: "Lucknow", efficiency: 85 },
-    { site: "Mumbai", efficiency: 78 },
   ];
 
   const monthlyTrend = [
@@ -96,49 +89,6 @@ const FE_Dashboard = () => {
     <div className={styles.dashboard}>
       {/* TOP GRID */}
       <div className={styles.topGrid}>
-        {/* Task Distribution */}
-        <div className={styles.card}>
-          <h3>Task Distribution</h3>
-          <div className={styles.taskDistributionWrapper}>
-            {/* Pie Chart */}
-            <ResponsiveContainer width="60%" height={200}>
-              <PieChart>
-                <Pie
-                  data={taskDistribution}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={2}
-                >
-                  <Label
-                    value={taskStats.total}
-                    position="center"
-                    className={styles.pieCenterValue}
-                  />
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-
-            {/* Side Counts */}
-            <div className={styles.taskLegend}>
-              {taskDistribution.map((item) => (
-                <div key={item.name} className={styles.legendItem}>
-                  <span
-                    className={styles.legendColor}
-                    style={{ backgroundColor: item.fill }}
-                  />
-                  <div>
-                    <p className={styles.legendLabel}>{item.name}</p>
-                    <strong className={styles.legendValue}>{item.value}</strong>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Users */}
         <div className={styles.card}>
           <h3>Users Overview</h3>
@@ -183,6 +133,49 @@ const FE_Dashboard = () => {
           </div>
         </div>
 
+        {/* Task Distribution */}
+        <div className={styles.card}>
+          <h3>Task Distribution</h3>
+          <div className={styles.taskDistributionWrapper}>
+            {/* Pie Chart */}
+            <ResponsiveContainer width="60%" height={200}>
+              <PieChart>
+                <Pie
+                  data={taskDistribution}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                >
+                  <Label
+                    value={taskStats.total}
+                    position="center"
+                    className={styles.pieCenterValue}
+                  />
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* Side Counts */}
+            <div className={styles.taskLegend}>
+              {taskDistribution.map((item) => (
+                <div key={item.name} className={styles.legendItem}>
+                  <span
+                    className={styles.legendColor}
+                    style={{ backgroundColor: item.fill }}
+                  />
+                  <div>
+                    <p className={styles.legendLabel}>{item.name}</p>
+                    <strong className={styles.legendValue}>{item.value}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
       {/* Working Sites KPI */}
       <div className={styles.highlightCard}>
         <div className={styles.highlightValue}>{workingSitesCount}</div>
@@ -191,24 +184,32 @@ const FE_Dashboard = () => {
 
       {/* Accessible Sites */}
       <div className={styles.card}>
-        <h3>Total Sites : {`${activeSites.length}`}</h3>
+        <h3>Total Sites : {siteUserStats.length}</h3>
 
         <div className={styles.siteListBox}>
-          {activeSites.length === 0 ? (
+          {siteUserStats.length === 0 ? (
             <p className={styles.emptyText}>No sites assigned</p>
           ) : (
             <ul className={styles.siteList}>
-              {activeSites.map((site, index) => (
+              {siteUserStats.map((item, index) => (
                 <li key={index} className={styles.siteItem}>
-                  <span className={styles.siteDot} />
-                  {site}
+                  <div className={styles.siteLeft}>
+                    <span className={styles.siteDot} />
+                    <span>{item.site}</span>
+                  </div>
+
+                  <div className={styles.siteUsers}
+                   data-tooltip={`${item.users} Users`}
+                  >
+                    {item.users}
+                  </div>
                 </li>
               ))}
             </ul>
           )}
         </div>
       </div>
-      </div>
+    </div>
 
       {/* MIDDLE */}
      <div className={styles.midGrid}>
