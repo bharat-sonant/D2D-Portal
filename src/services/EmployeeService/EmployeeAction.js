@@ -11,7 +11,7 @@ export const getEmployeesAction = async (setEmployees, setLoading) => {
         if (response.status === 'success') {
             setEmployees(response.data);
         } else {
-            console.error("Error fetching employees:", response.message);
+            // console.error("Error fetching employees:", response.message);
         }
     } catch (error) {
         console.error("Exception in getEmployeesAction:", error);
