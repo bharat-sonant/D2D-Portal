@@ -3,6 +3,7 @@ import * as common from "../../common/common";
 import axios from 'axios';
 import * as emailTemplate from '../../common/emailHTMLTemplates/MailTemplates'
 import dayjs from 'dayjs';
+import api from '../../api/api';
 
 export const validateUserDetail = (form, onEdit, editData, setNameError, setEmailError, setUserTypeError, setEmpCodeError, setLoading, loadUsers, resetStateValues) => {
   let isValid = true;
@@ -263,16 +264,13 @@ export const handleCityAccessToggle = async (
       userId: userId,
       assignedBy:localStorage.getItem('name'),
     };
-    const response = await axios.post( 
-      'https://d2d-backend-922o.onrender.com/site-assignment/assignsite',
-      payload
-    );
+    const response = await api.post('site-assignment/assignsite',payload);
     const apiData = response.data;
-    if (apiData?.data?.id) {
+    if (apiData?.id) {
       setSelectedCities(prev => [
         ...prev,
         {
-          id: apiData.data.id,
+          id: apiData?.id,
           city_id,
         },
       ]);
@@ -291,11 +289,7 @@ async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
   try {
     const recordToRemove = selectedCities.find(c => c.city_id === city_id);
     if (!recordToRemove?.id) return;  
-    const response = await axios.delete(
-      'https://d2d-backend-922o.onrender.com/site-assignment/unassignsite',
-      {
-        data: { id: Number(recordToRemove.id) },
-      }
+    const response = await api.delete('site-assignment/unassignsite',{data: { id: Number(recordToRemove.id) },}
     );
     setSelectedCities(prev =>
       prev.filter(c => c.city_id !== city_id)
@@ -308,19 +302,14 @@ async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
 }
 
 export const handleGetCity = async (userId, setSelectedCities) => {
-  try {
-    const resp = await userServices.fetchUserCityAccess(userId);
-    if (resp?.status === 'success') {
-      setSelectedCities(resp.data.map(item => ({
-        id: item.id,
-        city_id: item.city_id
-      }))
-      );
-    } else {
+   try {
+      const response = await api.get('site-assignment/getassignedsites',{params: {userId}});
+      setSelectedCities([]);
+      if (response.status === 200) {
+        setSelectedCities(response.data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch permissions', error);
       setSelectedCities([]);
     }
-  } catch (error) {
-    console.error('handleGetCity error:', error);
-    setSelectedCities([]);
-  }
 }

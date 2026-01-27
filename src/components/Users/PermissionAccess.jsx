@@ -6,7 +6,8 @@ import dayjs from 'dayjs';
 const PermissonAccess = (props) => {
 
   const pages = [
-    { pageName: "User",pageNumber:1,Module: ["Can Access User Page","Can Add User","Can Give Permissions"]},
+    {pageName: "User",pageNumber:1,Module: ["Can Access User Page","Can Add User","Can Give Permissions"]},
+     {pageName: "Field Executive",pageNumber:2,Module: ["Can Access Field Tracking Section"]},
   ];
   const [activeTab, setActiveTab] = useState(1);
   const [ModuleList, setModuleList] = useState([]);
@@ -46,11 +47,10 @@ const PermissonAccess = (props) => {
     [value.replace(/\s+/g, "")]: checked,
   }));
    let permissionDetail ={
-     user_id:props.selectedUser.id,
-     access_page:value.replace(/\s+/g, ""),
-     access_control:checked,
-    created_by: localStorage.getItem('name'),
-    created_at: dayjs().format('YYYY-MM-DD HH:mm:ss')
+     userId:props.selectedUser.id,
+     pageName:value.replace(/\s+/g, ""),
+     accessControl:checked,
+     assignedBy: localStorage.getItem('name'), 
    }
     action.savePagesPermnissionAction(permissionDetail)
 };
@@ -67,7 +67,6 @@ const permission = pages.flatMap(page =>
 );
 
 action.saveSuperAdminPermissionsAction(permission,getUserPermissions)
-
 
  }
 
