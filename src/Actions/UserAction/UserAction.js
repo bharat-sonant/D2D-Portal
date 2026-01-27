@@ -304,10 +304,8 @@ async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
 export const handleGetCity = async (userId, setSelectedCities) => {
    try {
       const response = await api.get('site-assignment/getassignedsites',{params: {userId}});
-      setSelectedCities([]);
-      if (response.status === 200) {
-        setSelectedCities(response.data.data);
-      }
+        setSelectedCities([]);
+        setSelectedCities(response.data);
     } catch (error) {
       console.error('Failed to fetch permissions', error);
       setSelectedCities([]);
