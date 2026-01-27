@@ -18,7 +18,6 @@ export const getallTasks = async(setTasks, setLoading) => {
   try{
     setLoading(true)
     const response = await api.get('tasks');
-    console.log('response',response)
     if(response.success){
       setTasks(response?.data?.tasks)
     }

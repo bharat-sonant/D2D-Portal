@@ -71,10 +71,15 @@ const validate = () => {
           </button>
         </div>
 
-        <div className={styles.body}>
-          <div className={styles.formGroup}>
-            <label>Task Name</label>
-            <input
+        <div className={`${modalStyles.modalBody}`}>
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>Task Name</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <ClipboardList size={18} />
+              </div>
+              <input
+              className={modalStyles.input}
               type="text"
               placeholder="Enter task name"
               value={taskName}
@@ -83,14 +88,20 @@ const validate = () => {
                 setTaskError("")
               }}
             />
+            </div>
             {taskError && ( 
               <ErrorMessage message={taskError}/>
             )}
           </div>
 
-          <div className={styles.formGroup}>
-            <label>Description</label>
+          <div className={modalStyles.inputGroup}>
+            <label className={modalStyles.label}>Description</label>
+            <div className={modalStyles.inputWrapper}>
+              <div className={modalStyles.inputIcon}>
+                <ClipboardList size={18} />
+              </div>
             <textarea
+              className={modalStyles.input}
               placeholder="Enter task description"
               rows={5}
               value={description}
@@ -99,6 +110,7 @@ const validate = () => {
                 setDesError("");
               }}
             />
+            </div>
             {desError && (
             <ErrorMessage message={desError}/>
             )}
@@ -118,11 +130,11 @@ const validate = () => {
           </label>
         </div>
 
-        <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={handleClose}>
+        <div className={modalStyles.modalFooter}>
+          {/* <button className={styles.cancelBtn} onClick={handleClose}>
             Cancel
-          </button>
-          <button className={styles.saveBtn} onClick={handleSave}>
+          </button> */}
+          <button className={modalStyles.submitBtn} onClick={handleSave}>
             {isEdit ? 'Update Task' : "Save Task"}
           </button>
         </div>
