@@ -1,7 +1,8 @@
-import { useState,useMemo } from "react";
+import { useState,useMemo, useEffect } from "react";
 import styles from "./FEAssignments.module.css";
 import {Search} from "lucide-react";
 import AssignTask from "../../Components/FEAssignments/AssignTask/AssignTask";
+import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
 const users = [
   {name:'Anil Sharma',code:'EMP002',contact:'8954842222',site:'Sikar',status:'In Progress',estimatedTime:'1 Hour',tasks:3,estimatedTime:'1 Hour',site:'Sikar'},
@@ -14,7 +15,7 @@ const sites = [
 ];
 
 const FEAssignments = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedSite, setSelectedSite] = useState("");
     const [assignTaskWindow,setAssignTaskWindow]=useState({status:false,data:null});
@@ -26,9 +27,15 @@ const FEAssignments = () => {
         return matchesSearch && matchesSite;
       });
     }, [searchTerm, selectedSite]);
+    useEffect(() => { 
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000); // Simulate a 1 second loading time
+      return () => clearTimeout(timer);
+    }, []);
     
     return (
-      <div className={styles.employeesContainer}>
+      <div className={`${styles.employeesContainer} mt-0`}>
         <div className={styles.background}>
           <div className={`${styles.gradientOrb} ${styles.orb1}`} />
           <div className={`${styles.gradientOrb} ${styles.orb2}`} />
@@ -85,7 +92,7 @@ const FEAssignments = () => {
                 {loading ? (
                   <tr>
                     <td colSpan="6" className={styles.loadingCell}>
-                      <div class="spinner-border" role="status"></div>
+                      <WevoisLoader height={'60vh'}/>
                     </td>
                   </tr>
                 ) : filteredUsers.length === 0 ? (
