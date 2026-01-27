@@ -14,8 +14,6 @@ const AddTask = ({
   setIsEdit,
   setEditIndex,
   onSave,
-  status,
-  setStatus,
 }) => {
   const [taskError, setTaskError] = useState("");
   const [desError, setDesError] = useState("");
@@ -51,7 +49,6 @@ const AddTask = ({
     onSave({
       taskName,
       description,
-      status,
     });
     resetForm();
   };
@@ -61,7 +58,6 @@ const AddTask = ({
     setIsEdit(false);
     setTaskName("");
     setDescription("");
-    setStatus("active");
     setOpenCanvas(false);
   };
 
@@ -130,19 +126,6 @@ const AddTask = ({
               </div>
               {desError && <ErrorMessage message={desError} />}
             </div>
-          </div>
-
-          <div className={styles.formGroupCheckbox}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={status === "active"}
-                onChange={(e) =>
-                  setStatus(e.target.checked ? "active" : "inactive")
-                }
-              />
-              <span className={styles.checkboxText}>Active</span>
-            </label>
           </div>
 
           <div className={modalStyles.modalFooter}>

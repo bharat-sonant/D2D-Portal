@@ -102,6 +102,26 @@ const FETasks = () => {
     setOpenCanvas(true);
   };
 
+  const handleStatusToggle = async(task) => {
+    console.log('task',task)
+    const newStatus = task.status === 'active' ? 'inactive' : 'active';
+
+    console.log('newstatus',newStatus)
+
+    setTasks((prev) => 
+    prev.map((t) => t.id === task.id ? {...t, status : newStatus} : t));
+
+    try{
+      await updateTaskAction(task.id, {status : newStatus});
+    }catch(error){
+      setTasks((prev) =>
+      prev.map((t) =>
+        t.id === task.id ? { ...t, status: task.status } : t
+      )
+    );
+  }
+};
+
   return (
     <>
       <div className={GlobalStyles.floatingDiv}>
@@ -119,6 +139,7 @@ const FETasks = () => {
               <th className={style.th1}>S. No</th>
               <th className={style.th2}>Task Name</th>
               <th className={style.th3}>Description</th>
+              <th className={style.th4}>Status</th>
               <th className={style.th4}>Action</th>
             </tr>
           </thead>
@@ -147,6 +168,16 @@ const FETasks = () => {
                   <td className={style.th2}>{task.taskName}</td>
                   <td className={style.th3}>{task.description}</td>
                   <td className={style.th4}>
+                    <label className={style.switch}>
+                      <input
+                        type="checkbox"
+                        checked={task.status === 'active'}
+                        onChange={() => handleStatusToggle(task)}
+                      />
+                      <span className={style.slider}></span>
+                    </label>
+                  </td>
+                  <td className={style.th4}>
                     <button
                       className={style.editBtn}
                       onClick={() => handleEdit(task)}
@@ -172,8 +203,6 @@ const FETasks = () => {
           setIsEdit={setIsEdit}
           setEditIndex={setEditTaskId}
           onSave={handleSaveTask}
-          status={status}
-          setStatus={setStatus}
         />
       )}
     </>
