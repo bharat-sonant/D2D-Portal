@@ -1,11 +1,22 @@
-import React, { useState } from 'react'
-import styles from './AddTask.module.css'
-import ErrorMessage from '../../../components/ErrorMessage/ErrorMessage';
-import modalStyles from '../../../assets/css/popup.module.css'
-import { ClipboardList, ReceiptText, X } from 'lucide-react';
+import { useState } from "react";
+import styles from "./AddTask.module.css";
+import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
+import modalStyles from "../../../assets/css/popup.module.css";
+import { ClipboardList, ReceiptText, X } from "lucide-react";
 
-const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCanvas, isEdit,setIsEdit,setEditIndex, onSave, status, setStatus}) => {
-  
+const AddTask = ({
+  taskName,
+  setTaskName,
+  description,
+  setDescription,
+  setOpenCanvas,
+  isEdit,
+  setIsEdit,
+  setEditIndex,
+  onSave,
+  status,
+  setStatus,
+}) => {
   const [taskError, setTaskError] = useState("");
   const [desError, setDesError] = useState("");
 
@@ -14,25 +25,25 @@ const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCan
     resetForm();
   };
 
-const validate = () => {
-  let isValid = true;
+  const validate = () => {
+    let isValid = true;
 
-  if (!taskName.trim()) {
-    setTaskError("Task name is required");
-    isValid = false;
-  } else {
-    setTaskError("");
-  }
+    if (!taskName.trim()) {
+      setTaskError("Task name is required");
+      isValid = false;
+    } else {
+      setTaskError("");
+    }
 
-  if (!description.trim()) {
-    setDesError("Description is required");
-    isValid = false;
-  } else {
-    setDesError("");
-  }
+    if (!description.trim()) {
+      setDesError("Description is required");
+      isValid = false;
+    } else {
+      setDesError("");
+    }
 
-  return isValid;
-};
+    return isValid;
+  };
 
   const handleSave = () => {
     if (!validate()) return;
@@ -40,19 +51,19 @@ const validate = () => {
     onSave({
       taskName,
       description,
-      status
+      status,
     });
     resetForm();
-  }
+  };
 
   const resetForm = () => {
-    setEditIndex(null)
+    setEditIndex(null);
     setIsEdit(false);
     setTaskName("");
     setDescription("");
-    setStatus('active')
+    setStatus("active");
     setOpenCanvas(false);
-  }
+  };
 
   return (
     <div className={modalStyles.overlay} aria-modal="true" role="dialog">
@@ -60,11 +71,11 @@ const validate = () => {
         <div className={modalStyles.modalHeader}>
           <div className={modalStyles.headerLeft}>
             <div className={modalStyles.iconWrapper}>
-              <ClipboardList className="map-icon" /> 
+              <ClipboardList className="map-icon" />
             </div>
             <div className={modalStyles.headerTextRight}>
               <h2 className={modalStyles.modalTitle}>
-                {isEdit ? 'Update Task' : 'Add New Task'}
+                {isEdit ? "Update Task" : "Add New Task"}
               </h2>
             </div>
           </div>
@@ -73,76 +84,79 @@ const validate = () => {
           </button>
         </div>
 
-        <div className={`${modalStyles.modalBody}`}>
-          <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>Task Name</label>
-            <div className={modalStyles.inputWrapper}>
-              <div className={modalStyles.inputIcon}>
-                <ClipboardList size={18} />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // 🚫 prevent page reload
+            handleSave(); // ✅ save/update
+          }}
+        >
+          <div className={`${modalStyles.modalBody}`}>
+            <div className={modalStyles.inputGroup}>
+              <label className={modalStyles.label}>Task Name</label>
+              <div className={modalStyles.inputWrapper}>
+                <div className={modalStyles.inputIcon}>
+                  <ClipboardList size={18} />
+                </div>
+                <input
+                  className={modalStyles.input}
+                  type="text"
+                  placeholder="Enter task name"
+                  value={taskName}
+                  onChange={(e) => {
+                    setTaskName(e.target.value);
+                    setTaskError("");
+                  }}
+                />
               </div>
+              {taskError && <ErrorMessage message={taskError} />}
+            </div>
+
+            <div className={modalStyles.inputGroup}>
+              <label className={modalStyles.label}>Description</label>
+              <div className={modalStyles.inputWrapper}>
+                <div className={modalStyles.inputIcon}>
+                  <ReceiptText size={18} />
+                </div>
+                <textarea
+                  className={modalStyles.input}
+                  placeholder="Enter task description"
+                  rows={5}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    setDesError("");
+                  }}
+                />
+              </div>
+              {desError && <ErrorMessage message={desError} />}
+            </div>
+          </div>
+
+          <div className={styles.formGroupCheckbox}>
+            <label className={styles.checkboxLabel}>
               <input
-              className={modalStyles.input}
-              type="text"
-              placeholder="Enter task name"
-              value={taskName}
-              onChange={(e) => {
-                setTaskName(e.target.value)
-                setTaskError("")
-              }}
-            />
-            </div>
-            {taskError && ( 
-              <ErrorMessage message={taskError}/>
-            )}
+                type="checkbox"
+                checked={status === "active"}
+                onChange={(e) =>
+                  setStatus(e.target.checked ? "active" : "inactive")
+                }
+              />
+              <span className={styles.checkboxText}>Active</span>
+            </label>
           </div>
 
-          <div className={modalStyles.inputGroup}>
-            <label className={modalStyles.label}>Description</label>
-            <div className={modalStyles.inputWrapper}>
-              <div className={modalStyles.inputIcon}>
-                <ReceiptText size={18} />
-              </div>
-            <textarea
-              className={modalStyles.input}
-              placeholder="Enter task description"
-              rows={5}
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value)
-                setDesError("");
-              }}
-            />
-            </div>
-            {desError && (
-            <ErrorMessage message={desError}/>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.formGroupCheckbox}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={status === 'active'}
-              onChange={(e) =>
-                setStatus(e.target.checked ? 'active' : 'inactive')
-              }
-            />
-            <span className={styles.checkboxText}>Active</span>
-          </label>
-        </div>
-
-        <div className={modalStyles.modalFooter}>
-          {/* <button className={styles.cancelBtn} onClick={handleClose}>
+          <div className={modalStyles.modalFooter}>
+            {/* <button className={styles.cancelBtn} onClick={handleClose}>
             Cancel
           </button> */}
-          <button className={modalStyles.submitBtn} onClick={handleSave}>
-            {isEdit ? 'Update Task' : "Save Task"}
-          </button>
-        </div>
+            <button className={modalStyles.submitBtn} onClick={handleSave}>
+              {isEdit ? "Update Task" : "Save Task"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddTask
+export default AddTask;

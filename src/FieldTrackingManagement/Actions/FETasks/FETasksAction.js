@@ -5,11 +5,11 @@ export const saveTaskAction = async(taskData) => {
   try{
     const response = await api.post('/tasks/create', taskData)
     if(response.success){
-      common.setAlertMessage('Task Added Successfully');
+      common.setAlertMessage("success",'Task Added Successfully');
     }
     return response.data;
   }catch(error){
-    common.setAlertMessage("Task was not added, please try again !");
+    common.setAlertMessage("error","Task was not added, please try again !");
     throw error;
   }
 }
@@ -32,11 +32,11 @@ export const updateTaskAction = async(id, payload) => {
   try{
     const response = await api.patch(`/tasks/${id}`, payload);
     if(response.success){
-      common.setAlertMessage("Task Updated successfully");
+      common.setAlertMessage("success","Task Updated successfully");
     }
     return response.data;
   }catch(error){
-    common.setAlertMessage("Task modification failed, Please try again");
+    common.setAlertMessage("error","Task modification failed, Please try again");
     throw error;
   }
 }
