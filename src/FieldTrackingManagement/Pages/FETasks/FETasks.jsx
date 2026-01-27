@@ -222,6 +222,8 @@ const FETasks = () => {
             selectedTask?.status === 'active' ? 'Deactivate' : 'Activate'
           }
           iconType={selectedTask?.status === 'active' ? 'warning' : 'success'}
+          warningText='This task will be deactivated for all users'
+          successText='This task will be activated for all users'
           onCancel={() => {
             setIsAlertOpen(false);
             setSelectedTask(null);

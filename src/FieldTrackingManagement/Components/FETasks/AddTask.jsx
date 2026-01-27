@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./AddTask.module.css";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
 import modalStyles from "../../../assets/css/popup.module.css";
@@ -17,6 +17,11 @@ const AddTask = ({
 }) => {
   const [taskError, setTaskError] = useState("");
   const [desError, setDesError] = useState("");
+  const taskNameRef = useRef(null);
+
+  useEffect(() => {
+    taskNameRef.current?.focus();
+  }, []);
 
   const handleClose = () => {
     setOpenCanvas(false);
@@ -95,6 +100,7 @@ const AddTask = ({
                 </div>
                 <input
                   className={modalStyles.input}
+                  ref={taskNameRef}
                   type="text"
                   placeholder="Enter task name"
                   value={taskName}
