@@ -11,6 +11,7 @@ import {
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import { Edit } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
+import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
 
 const FETasks = () => {
   const tableRef = useRef(null);
@@ -22,6 +23,8 @@ const FETasks = () => {
   const [status, setStatus] = useState('active')
   const [editTaskId, setEditTaskId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     getallTasks(setTasks, setLoading);
@@ -172,7 +175,10 @@ const FETasks = () => {
                       <input
                         type="checkbox"
                         checked={task.status === 'active'}
-                        onChange={() => handleStatusToggle(task)}
+                       onChange={() => {
+                        setSelectedTask(task);
+                        setIsAlertOpen(true);
+                      }}
                       />
                       <span className={style.slider}></span>
                     </label>
@@ -205,6 +211,27 @@ const FETasks = () => {
           onSave={handleSaveTask}
         />
       )}
+
+        <GlobalAlertModal
+          show={isAlertOpen}
+          title="Confirmation Status Update"
+          message={`Do you really want to ${
+            selectedTask?.status === 'active' ? 'deactivate' : 'activate'
+          } this task?`}
+          buttonText={
+            selectedTask?.status === 'active' ? 'Deactivate' : 'Activate'
+          }
+          iconType={selectedTask?.status === 'active' ? 'warning' : 'success'}
+          onCancel={() => {
+            setIsAlertOpen(false);
+            setSelectedTask(null);
+          }}
+          onConfirm={() => {
+            handleStatusToggle(selectedTask);
+            setIsAlertOpen(false);
+            setSelectedTask(null);
+          }}
+        />
     </>
   );
 };
