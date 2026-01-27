@@ -11,7 +11,7 @@ export const getBranchesAction = async (setBranches, setLoading) => {
         // Old code:
         // const response = await BranchService.getBranches();
         const response = await api.get('branches'); // Updated for new NestJS backend
-        console.log('response', response);
+        // console.log('response', response);
         if (response.success) {
             setBranches(response.data || []);
         } else {
