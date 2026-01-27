@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from './AddTask.module.css'
 import ErrorMessage from '../../../components/ErrorMessage/ErrorMessage';
 import modalStyles from '../../../assets/css/popup.module.css'
-import { ClipboardList, X } from 'lucide-react';
+import { ClipboardList, ReceiptText, X } from 'lucide-react';
 
 const AddTask = ({taskName, setTaskName, description, setDescription, setOpenCanvas, isEdit,setIsEdit,setEditIndex, onSave, status, setStatus}) => {
   
@@ -58,7 +58,8 @@ const validate = () => {
     <div className={modalStyles.overlay} aria-modal="true" role="dialog">
       <div className={modalStyles.modal}>
         <div className={modalStyles.modalHeader}>
-          <div className={modalStyles.iconWrapper}>
+          <div className={modalStyles.headerLeft}>
+            <div className={modalStyles.iconWrapper}>
               <ClipboardList className="map-icon" /> 
             </div>
             <div className={modalStyles.headerTextRight}>
@@ -66,6 +67,7 @@ const validate = () => {
                 {isEdit ? 'Update Task' : 'Add New Task'}
               </h2>
             </div>
+          </div>
           <button className={modalStyles.closeBtn} onClick={handleClose}>
             <X size={20} />
           </button>
@@ -98,7 +100,7 @@ const validate = () => {
             <label className={modalStyles.label}>Description</label>
             <div className={modalStyles.inputWrapper}>
               <div className={modalStyles.inputIcon}>
-                <ClipboardList size={18} />
+                <ReceiptText size={18} />
               </div>
             <textarea
               className={modalStyles.input}

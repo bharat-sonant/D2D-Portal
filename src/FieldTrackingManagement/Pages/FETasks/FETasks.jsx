@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GlobalStyles from "../../../assets/css/globleStyles.module.css";
 import AddTask from "../../Components/FETasks/AddTask";
 import style from "./FETasks.module.css";
-import notFoundImage from "../../../assets/images/userNotFound.png";
+import noData from '../../../assets/images/icons/noData.gif';
 import {
   getallTasks,
   saveTaskAction,
@@ -10,8 +10,10 @@ import {
 } from "../../Actions/FETasks/FETasksAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import { Edit } from "lucide-react";
+import NoResult from "../../../components/NoResultFound/NoResult";
 
 const FETasks = () => {
+  const tableRef = useRef(null);
   const [openCanvas, setOpenCanvas] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -108,41 +110,43 @@ const FETasks = () => {
         </button>
       </div>
 
-      {/* Tasks Table */}
-      <div className={style.container}>
-        <div className={style.tableWrapper}>
+      <div
+        ref={tableRef}
+        className={`${style.tableContainer}`}>
           <table className={style.table}>
           <thead>
             <tr>
-              <th>S. No</th>
-              <th>Task Name</th>
-              <th>Description</th>
-              <th>Action</th>
+              <th className={style.th1}>S. No</th>
+              <th className={style.th2}>Task Name</th>
+              <th className={style.th3}>Description</th>
+              <th className={style.th4}>Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan="4" className={style.loaderCell}>
-                  <WevoisLoader title="loading tasks" />
+                  <WevoisLoader title="loading tasks..." />
                 </td>
               </tr>
             ) : tasks.length === 0 ? (
               <tr>
                 <td colSpan="4" className={style.emptyCell}>
-                  <div className={style.emptyContent}>
-                    <img src={notFoundImage} alt="No tasks" />
-                    <p>No tasks added yet</p>
-                  </div>
+                  <NoResult
+                    title="No data available"
+                    // query={searchTerm}
+                    gif={noData}
+                    // height="calc(100vh - 280px)"
+                  />
                 </td>
               </tr>
             ) : (
               tasks.map((task, index) => (
                 <tr key={task.id}>
-                  <td>{index + 1}</td>
-                  <td>{task.taskName}</td>
-                  <td>{task.description}</td>
-                  <td className={style.actionCol}>
+                  <td className={style.th1}>{index + 1}</td>
+                  <td className={style.th2}>{task.taskName}</td>
+                  <td className={style.th3}>{task.description}</td>
+                  <td className={style.th4}>
                     <button
                       className={style.editBtn}
                       onClick={() => handleEdit(task)}
@@ -155,7 +159,6 @@ const FETasks = () => {
             )}
           </tbody>
         </table>
-        </div>
       </div>
 
       {openCanvas && (
