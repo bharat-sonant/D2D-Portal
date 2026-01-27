@@ -1,23 +1,21 @@
+import { useState } from "react";
 import styles from "./FE_Dashboard.module.css";
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
-  Cell,
   AreaChart,
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Label,
 } from "recharts";
 
 const FE_Dashboard = () => {
+  const [viewMode, setViewMode] = useState("weekly"); // "weekly" | "monthly"
   const taskStats = { total:25, active: 18, inactive: 7 };
 
   const userStats = { total: 32, active: 26, inactive: 6 };
@@ -37,7 +35,7 @@ const FE_Dashboard = () => {
     "Alkapuri – Vadodara",
   ];
 
-  const workingSitesCount = activeSites.length;
+  const workingSitesCount = 4;
 
   const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
 
@@ -193,7 +191,7 @@ const FE_Dashboard = () => {
 
       {/* Accessible Sites */}
       <div className={styles.card}>
-        <h3>Accessible Sites</h3>
+        <h3>Total Sites : {`${activeSites.length}`}</h3>
 
         <div className={styles.siteListBox}>
           {activeSites.length === 0 ? (
@@ -213,32 +211,57 @@ const FE_Dashboard = () => {
       </div>
 
       {/* MIDDLE */}
-      <div className={styles.midGrid}>
+     <div className={styles.midGrid}>
         <div className={styles.card}>
-          <h3>Weekly Progress</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={weeklyProgress}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip content={<CustomTooltip />} />
-              <Area dataKey="completed" />
-              <Area dataKey="assigned" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+          {/* Header with Toggle */}
+          <div className={styles.cardHeader}>
+            <h3>
+              {viewMode === "weekly" ? "Weekly Progress" : "Monthly Trend"}
+            </h3>
 
-        <div className={styles.card}>
-          <h3>Monthly Trend</h3>
+            <div className={styles.toggle}>
+              <button
+                className={`${styles.toggleBtn} ${
+                  viewMode === "weekly" ? styles.activeToggle : ""
+                }`}
+                onClick={() => setViewMode("weekly")}
+              >
+                Weekly
+              </button>
+
+              <button
+                className={`${styles.toggleBtn} ${
+                  viewMode === "monthly" ? styles.activeToggle : ""
+                }`}
+                onClick={() => setViewMode("monthly")}
+              >
+                Monthly
+              </button>
+            </div>
+          </div>
+
+          {/* Chart */}
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={monthlyTrend}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip content={<CustomTooltip />} />
-              <Line dataKey="tasks" />
-            </LineChart>
+            {viewMode === "weekly" ? (
+              <AreaChart data={weeklyProgress}>
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Area dataKey="completed" />
+                <Area dataKey="assigned" />
+              </AreaChart>
+            ) : (
+              <LineChart data={monthlyTrend}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Line dataKey="tasks" />
+              </LineChart>
+            )}
           </ResponsiveContainer>
         </div>
       </div>
+
 
       {/* BOTTOM */}
       <div className={styles.card}>
