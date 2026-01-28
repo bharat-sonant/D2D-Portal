@@ -1,24 +1,24 @@
-import { getAvailableCityData, getCityData } from "../services/CityService/cityServices";
+import { getAvailableCityData } from "../services/CityService/cityServices";
 import { images } from '../assets/css/imagePath'; 
 import { getDataByColumnName } from "../services/supabaseServices";
 import * as sbs from "../services/supabaseServices"
 
-export const getCityList = async (setList,type='all', setLoading) => {
-    try{
-        setLoading(true)
-        const response = await getCityData();
-    if (response.status === 'success') {
-        let list = type==='active'?response?.data?.filter(city=>city?.status==='active'):response?.data;
-        setList(list);
-    } else {
-        setList([]);
-    }
-    }catch(error){
-        setList([]);
-    }finally{
-        setLoading(false)
-    }
-}
+// export const getCityList = async (setList,type='all', setLoading) => {
+//     try{
+//         setLoading(true)
+//         const response = await getCityData();
+//     if (response.status === 'success') {
+//         let list = type==='active'?response?.data?.filter(city=>city?.status==='active'):response?.data;
+//         setList(list);
+//     } else {
+//         setList([]);
+//     }
+//     }catch(error){
+//         setList([]);
+//     }finally{
+//         setLoading(false)
+//     }
+// }
 
 export const getAvailableCityList = async (setList,type='all', setLoading, userId) => {
     try{

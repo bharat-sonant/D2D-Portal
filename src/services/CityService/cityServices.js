@@ -17,27 +17,27 @@ export const saveCityData = async (cityData,logoFile,cityId) => {
     });
 };
 
-export const getCityData=async()=>{
-    const result = await sbs.getData('Cities');
-    if(result.success){
+// export const getCityData=async()=>{
+//     const result = await sbs.getData('Cities');
+//     if(result.success){
 
-      const updatedCityList = result.data.map(city => ({
-          ...city,
-        logoUrl:`${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
-          }));
+//       const updatedCityList = result.data.map(city => ({
+//           ...city,
+//         logoUrl:`${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
+//           }));
 
-         const sortedData = [...updatedCityList].sort((a, b) => {
-     if (a.status !== b.status) {
-       return a.status === "active" ? -1 : 1;
-     }
-     return a.city_name.localeCompare(b.city_name);
-   });
+//          const sortedData = [...updatedCityList].sort((a, b) => {
+//      if (a.status !== b.status) {
+//        return a.status === "active" ? -1 : 1;
+//      }
+//      return a.city_name.localeCompare(b.city_name);
+//    });
 
-  return { status: 'success', message: 'City data fetched successfully', data: sortedData };
-    }else{
-       return { status: 'error', message: result.error };
-    } 
-}
+//   return { status: 'success', message: 'City data fetched successfully', data: sortedData };
+//     }else{
+//        return { status: 'error', message: result.error };
+//     } 
+// }
 
 export const getAvailableCityData = async(userId) => {
   const accessResp = await sbs.getDataByColumnName('UserCityAccess', 'user_id', userId)
