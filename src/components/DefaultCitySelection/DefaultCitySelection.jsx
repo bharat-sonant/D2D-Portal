@@ -68,10 +68,10 @@ const DefaultCitySelection = ({ onClose }) => {
               </div>
               <div className={modalStyles.headerTextRight}>
                 <h2 className={modalStyles.modalTitle}>
-                  {defaultCityExist ? "Select City" : "Set your default city"}
+                  {defaultCityExist ? "Select Site" : "Set your default site"}
                 </h2>
                 <p className={modalStyles.modalSubtitle}>
-                  Choose your preferred city location
+                  Choose your preferred site location
                 </p>
               </div>
             </div>
@@ -85,7 +85,7 @@ const DefaultCitySelection = ({ onClose }) => {
               <Search size={18} className={modalStyles.searchIcon} />
               <input
                 type="text"
-                placeholder="Search cities..."
+                placeholder="Search sites..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={modalStyles.searchInput}
@@ -96,10 +96,10 @@ const DefaultCitySelection = ({ onClose }) => {
           {/* Body */}
           <div className={`${modalStyles.modalBody} ${styles.modalBody}`}>
             {loading ? (
-              <WevoisLoader title={"loading cities"} height="250px" />
+              <WevoisLoader title={"loading sites"} height="250px" />
             ) : filteredCities.length === 0 ? (
               <NoResult
-                title="No Cities Found"
+                title="No Sites Found"
                 query={searchQuery}
                 gif={cityNotFound}
               />
@@ -163,7 +163,7 @@ const DefaultCitySelection = ({ onClose }) => {
                 ) : (
                   <>
                     <Check size={18} style={{ marginRight: "6px" }} />
-                    Change City
+                    Change Site
                   </>
                 )}
               </button>
