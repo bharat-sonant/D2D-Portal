@@ -2,23 +2,23 @@ import api from "../../api/api";
 import { supabase } from "../../createClient";
 import * as sbs from "../supabaseServices"
 
-export const saveCityData = async (cityData,logoFile,cityId) => {
-        if(!cityData || !cityData?.site_name){
-          throw new Error('Invalid parameters');
-        }
-          const fileName = `${cityData.site_code}.png`;
-          const filePath = fileName;
+export const saveCityData = async (cityData, logoFile, cityId) => {
+  if (!cityData || !cityData?.site_name) {
+    throw new Error("Invalid parameters");
+  }
+  const fileName = `${cityData.site_code}.png`;
+  const filePath = fileName;
 
-        if (logoFile) {
-          await sbs.uploadAttachment(logoFile,`CityLogo`,filePath);
-        }
+  if (logoFile) {
+    await sbs.uploadAttachment(logoFile, `CityLogo`, filePath);
+  }
 
-        const response = !cityId 
-        ? await api.post('sites/create',cityData) 
-        : await sbs.updateData('Cities','city_id',cityId,cityData);
+  const response = !cityId
+    ? await api.post("sites/create", cityData)
+    : await sbs.updateData("Cities", "city_id", cityId, cityData);
 
-        return response;
-    }
+  return response;
+};
   
 
 // export const getCityData=async()=>{

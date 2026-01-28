@@ -5,56 +5,69 @@ import api from "../../api/api";
 import * as sbs from '../../services/supabaseServices'
 
 
-export const saveCityAction = async (form, logo, props, setLoading, setCityError, setCityCodeError, resetStateValues, setLogoError) => {
-    let isValid = true;
-    setCityError("");
-    setCityCodeError("");
-    if (!form?.city_code?.trim()) {
-        setCityCodeError("Site code is required");
-        isValid = false;
-    }
-    if (!form?.city_name?.trim()) {
-        setCityError("Site name is required");
-        isValid = false;
-    }
-    if (!logo && !props?.onEdit && !props?.onEdit?.logo_image) {
-        setLogoError("Site logo is required");
-        isValid = false;
-    }
-    if (isValid) {
-        setLoading(true);
-        let loggedUserName = localStorage.getItem("name");
-        let cityDetail = {
-            site_code: form?.city_code?.trim(),
-            site_name: form?.city_name?.trim(),
-            status: form?.status,
-            created_by: loggedUserName
-        }
+export const saveCityAction = async (
+  form,
+  logo,
+  props,
+  setLoading,
+  setCityError,
+  setCityCodeError,
+  resetStateValues,
+  setLogoError,
+) => {
+  let isValid = true;
+  setCityError("");
+  setCityCodeError("");
+  if (!form?.city_code?.trim()) {
+    setCityCodeError("Site code is required");
+    isValid = false;
+  }
+  if (!form?.city_name?.trim()) {
+    setCityError("Site name is required");
+    isValid = false;
+  }
+  if (!logo && !props?.onEdit && !props?.onEdit?.logo_image) {
+    setLogoError("Site logo is required");
+    isValid = false;
+  }
+  if (isValid) {
+    setLoading(true);
+    let loggedUserName = localStorage.getItem("name");
+    let cityDetail = {
+      site_code: form?.city_code?.trim(),
+      site_name: form?.city_name?.trim(),
+      status: form?.status,
+      created_by: loggedUserName,
+    };
 
-        try {
-            await cityService.saveCityData(cityDetail, logo, props?.onEdit?.city_id);
-            resetStateValues();
-            props.loadCities();
-            common.setAlertMessage("success", !props?.onEdit ? "Site added successfully" : "Site updated successfully");
-        } catch (err) {
-            console.log('error in action',err)
-            setLoading(false);
+    try {
+      await cityService.saveCityData(cityDetail, logo, props?.onEdit?.city_id);
+      resetStateValues();
+      props.loadCities();
+      common.setAlertMessage(
+        "success",
+        !props?.onEdit
+          ? "Site added successfully"
+          : "Site updated successfully",
+      );
+    } catch (err) {
+      setLoading(false);
 
-            const message = err?.message || "Something went wrong";
+      const message = err?.message || "Something went wrong";
 
-            if (message.includes("Site code")) {
-                setCityCodeError(message);
-                return;
-            }
+      if (message.includes("Site code")) {
+        setCityCodeError(message);
+        return;
+      }
 
-            if (message.includes("Site name")) {
-                setCityError(message);
-                return;
-            }
-            common.setAlertMessage("error", message);
-        }
+      if (message.includes("Site name")) {
+        setCityError(message);
+        return;
+      }
+      common.setAlertMessage("error", message);
     }
-}
+  }
+};
 
 export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading,setSelectedWard) => {
     setLoading(true)
