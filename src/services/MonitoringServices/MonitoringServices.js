@@ -1,10 +1,4 @@
-import dayjs from 'dayjs';
 import * as sbs from '../supabaseServices';
-import * as db from '../dbServices'
-
-const year = dayjs().format('YYYY');
-const month = dayjs().format('MMMM');
-const date = dayjs().format('YYYY-MM-DD');
 
 const normalize = (value = '') =>
   value.toString().replace(/_/g, ' ').trim();

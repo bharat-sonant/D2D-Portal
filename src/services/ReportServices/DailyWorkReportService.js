@@ -1,6 +1,4 @@
-import dayjs from 'dayjs';
 import * as sbs from '../supabaseServices';
-import * as db from '../dbServices'
 import axios from 'axios';
 
 const MONTH_NAMES = [
@@ -280,11 +278,11 @@ export const saveDailyWorkReportToSupabase = async (date, data, city_id, ward_id
 
     let response = await sbs.getDataByColumns('DailyWorkAssignment', { date, city_id, ward_id });
     if (response?.data.length == 0) {
-      const result = sbs.saveData("DailyWorkAssignment", payload);
+      sbs.saveData("DailyWorkAssignment", payload);
     }
     else{
       let id=response.data[0]["id"];
-      const result =sbs.updateData("DailyWorkAssignment","id",id,payload);
+      sbs.updateData("DailyWorkAssignment","id",id,payload);
     }
   }
 }

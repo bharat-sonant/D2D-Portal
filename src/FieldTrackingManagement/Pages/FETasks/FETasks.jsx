@@ -106,10 +106,7 @@ const FETasks = () => {
   };
 
   const handleStatusToggle = async(task) => {
-    console.log('task',task)
     const newStatus = task.status === 'active' ? 'inactive' : 'active';
-
-    console.log('newstatus',newStatus)
 
     setTasks((prev) => 
     prev.map((t) => t.id === task.id ? {...t, status : newStatus} : t));
