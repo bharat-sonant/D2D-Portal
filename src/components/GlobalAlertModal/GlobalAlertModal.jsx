@@ -32,7 +32,6 @@ const GlobalAlertModal = ({
   const isSuccess = iconType === "success";
 
   const Icon = iconType === "warning" ? AlertTriangle : Check;
-  console.log("msf", message);
 
   return (
     <div className={styles.overlay}>

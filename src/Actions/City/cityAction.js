@@ -91,22 +91,31 @@ export const getCityList = async (setSelectedCity, setCityList, selectedCity, se
     }
 }
 
-export const changeCityStatusAction = async (newStatus, selectedCity, setToggle, loadCities, setStatusConfirmation) => {
+export const changeCityStatusAction = async (
+  newStatus,
+  selectedCity,
+  setToggle,
+  loadCities,
+  setStatusConfirmation,
+) => {
+  if (!selectedCity) return;
+  try {
+    const status = newStatus ? "active" : "inactive";
+    // await cityService.updateCityStatus(selectedCity?.city_id, newStatus);
+    await api.patch(`sites/${selectedCity?.city_id}`, { status: status });
+    setToggle(newStatus);
+    setStatusConfirmation({ status: false, data: null, setToggle: () => {} });
+    loadCities();
+    common.setAlertMessage(
+      "success",
+      `Site status ${newStatus ? "active" : "inactive"} successfully.`,
+    );
+  } catch (error) {
+    console.error(error);
+    common.setAlertMessage("error", error);
+  }
+};
 
-    if (!selectedCity) return;
-    try {
-
-        await cityService.updateCityStatus(selectedCity?.city_id, newStatus);
-        setToggle(newStatus);
-        setStatusConfirmation({ status: false, data: null, setToggle: () => { } })
-        loadCities()
-        common.setAlertMessage("success", `Site status ${newStatus ? 'active' : 'inactive'} successfully.`);
-    }
-    catch (error) {
-        console.error(error);
-        common.setAlertMessage("error", error);
-    }
-}
 export const filterCityAction = (cityList, searchTerm, setSelectedCity, selectedCity) => {
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {

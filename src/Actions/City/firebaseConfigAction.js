@@ -1,3 +1,4 @@
+import api from "../../api/api";
 import * as common from "../../common/common";
 import { saveCityFirebaseConfig } from "../../services/CityService/firebaseConfigService";
 
@@ -13,15 +14,21 @@ export const saveFirebaseConfigAction = async (cityId, dbPath, setLoader, onSucc
         common.setAlertMessage("error", "City ID is missing!");
         return;
     }
-
+    const payload ={
+        firebase_db_path : dbPath,
+    }
     setLoader(true);
     try {
-        await saveCityFirebaseConfig(cityId, dbPath);
+        // await saveCityFirebaseConfig(cityId, dbPath);
+        await api.patch(`sites/${cityId}`,payload)
         common.setAlertMessage("success", "Firebase configuration saved successfully!");
         if (onSuccess) onSuccess();
     } catch (error) {
-        console.error("Error in saveFirebaseConfigAction:", error);
-        common.setAlertMessage("error", error || "Something went wrong while saving configuration!");
+    const message =
+      error?.message ||
+      error?.response?.data?.message ||
+      "Something went wrong while saving configuration!";
+        common.setAlertMessage("error", message);
     } finally {
         setLoader(false);
     }

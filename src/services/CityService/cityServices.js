@@ -6,6 +6,8 @@ export const saveCityData = async (cityData, logoFile, cityId) => {
   if (!cityData || !cityData?.site_name) {
     throw new Error("Invalid parameters");
   }
+  const isEdit = !!cityId;
+
   const fileName = `${cityData.site_code}.png`;
   const filePath = fileName;
 
@@ -13,9 +15,20 @@ export const saveCityData = async (cityData, logoFile, cityId) => {
     await sbs.uploadAttachment(logoFile, `CityLogo`, filePath);
   }
 
+  const apiPayload = isEdit ? {
+    site_name: cityData.site_name,
+    status: cityData.status,
+    firebase_db_path: cityData.firebase_db_path, 
+  }: {
+    site_code: cityData.site_code,
+    site_name: cityData.site_name,
+    status: cityData.status,
+    created_by: cityData.created_by,
+  }
   const response = !cityId
-    ? await api.post("sites/create", cityData)
-    : await sbs.updateData("Cities", "city_id", cityId, cityData);
+    ? await api.post("sites/create", apiPayload)
+    // : await sbs.updateData("Cities", "city_id", cityId, cityData);
+    : await api.patch(`sites/${cityId}`,apiPayload)
 
   return response;
 };
