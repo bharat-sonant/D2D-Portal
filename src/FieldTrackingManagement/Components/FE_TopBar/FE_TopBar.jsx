@@ -57,7 +57,7 @@ const FE_TopBar = () => {
 
     {
       id: "Employees",
-      label: "Users",
+      label: "Field Executives",
       icon: Users,
       // color: "#5b21b6", 
       path: "/field-executive/users",

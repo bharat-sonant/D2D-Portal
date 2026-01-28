@@ -1,14 +1,15 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import styles from './AssignSiteModal.module.css';
 import { X, User, Check, Fingerprint, MapPinned } from 'lucide-react';
 
-const AssignSiteModal = ({ user, managerSites, onClose, onAssign }) => {
-  // Static sites functionality for demonstration
-  const availableSites = managerSites || ["Chandpole Hub", "Jaipur Main", "Kota Station", "Pali Office","Ajmer","Udaipur Center","Jodhpur Point"];
+const AssignSiteModal = ({ user, availableSites, onClose, onAssign }) => {
+  // selectedSite mein ab hum pura site object ya siteName store karenge
+  // user.site agar string hai toh use match karne ke liye handle kar rahe hain
   const [selectedSite, setSelectedSite] = useState(user?.site || null);
 
   const handleSave = () => {
     if (selectedSite) {
+      // Backend par hum siteName bhej rahe hain (aapki parent logic ke according)
       onAssign(user.id, selectedSite);
       onClose();
     }
@@ -19,7 +20,6 @@ const AssignSiteModal = ({ user, managerSites, onClose, onAssign }) => {
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContainer}>
-        {/* Close Button as per image */}
         <button className={styles.closeBtn} onClick={onClose}>
           <X size={20} />
         </button>
@@ -34,7 +34,6 @@ const AssignSiteModal = ({ user, managerSites, onClose, onAssign }) => {
           </div>
         </div>
 
-        {/* User Info in One Row */}
         <div className={styles.infoRow}>
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Field Executive Name</label>
@@ -52,26 +51,33 @@ const AssignSiteModal = ({ user, managerSites, onClose, onAssign }) => {
           </div>
         </div>
 
-        {/* Site Selection Area */}
         <div className={styles.selectionArea}>
-          <label className={styles.label}>Choose Site</label>
+          <label className={styles.label}>Choose Available Site</label>
           <div className={styles.siteList}>
-            {availableSites.map((site, index) => (
-              <div 
-                key={index}
-                className={`${styles.siteCard} ${selectedSite === site ? styles.activeCard : ''}`}
-                onClick={() => setSelectedSite(site)}
-              >
-                <span style={{fontSize: '0.9rem', color: '#475569'}}>{site}</span>
-                <div className={styles.radio}>
-                  {selectedSite === site && <Check size={12} color="white" strokeWidth={4} />}
+            {availableSites && availableSites.length > 0 ? (
+              availableSites.map((site) => (
+                <div 
+                  key={site.siteId} 
+                  className={`${styles.siteCard} ${selectedSite === site.siteName ? styles.activeCard : ''}`}
+                  onClick={() => setSelectedSite(site.siteName)}
+                >
+                  <div className={styles.siteInfoWrapper}>
+                    <span className={styles.siteNameText}>{site.siteName}</span>
+                   
+                  </div>
+                  <div className={styles.radio}>
+                    {selectedSite === site.siteName && (
+                      <Check size={12} color="white" strokeWidth={4} />
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className={styles.noData}>No sites available for allocation.</div>
+            )}
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className={styles.footer}>
           <button className={styles.cancelBtn} onClick={onClose}>Cancel</button>
           <button 

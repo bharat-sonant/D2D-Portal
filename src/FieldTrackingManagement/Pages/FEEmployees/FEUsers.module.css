@@ -243,6 +243,7 @@
 .nameText {
     font-weight: 600;
     color: #1e293b;
+    text-transform: capitalize;
 }
 
 .emailText {

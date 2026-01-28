@@ -1,241 +1,284 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import style from './FEUsers.module.css';
 import { Plus, MapPin, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
 import AddFEAppUserModal from '../../Components/FEUsers/AddFEAppUserModal/AddFEAppUserModal';
 import AssignSiteModal from '../../Components/FEUsers/AssignSiteModal/AssignSiteModal';
+import * as action from '../../Actions/FEUsers/FEUsers_Action';
+import WevoisLoader from '../../../components/Common/Loader/WevoisLoader';
+import GlobalAlertModal from '../../../components/GlobalAlertModal/GlobalAlertModal';
 
 
 const FEUsers = () => {
-  const [userList, setUserList] = useState([
-    { id: 1, code: '10002', name: 'KESHAV', email: 'KESHAV@GMAIL.COM', username: 'KESHAV10002', lastLogin: '24 Jan 2026', site: 'Chandpole', status: 'Active' },
-    { id: 2, code: '1002', name: 'Khushwant Sharma', email: 'N/A', username: 'KHUSH1002', lastLogin: 'Not Logged In', site: 'No site assigned', status: 'Inactive' },
-    { id: 3, code: '909', name: 'KISHAN', email: 'KISHAN@GMAIL.COM', username: 'KISHAN909', lastLogin: '22 Jan 2026', site: 'Chandpole', status: 'Active' },
-    { id: 4, code: '1020', name: 'Nishant', email: 'nishant@gmail.com', username: 'NISH1020', lastLogin: '23 Jan 2026', site: 'Pali', status: 'Active' },
-    { id: 5, code: '1021', name: 'Amit Kumar', email: 'amit@gmail.com', username: 'AMIT1021', lastLogin: '20 Jan 2026', site: 'Chandpole', status: 'Active' },
-    { id: 6, code: '1022', name: 'Rahul Singh', email: 'rahul@gmail.com', username: 'RAHUL1022', lastLogin: 'Not Logged In', site: 'No site assigned', status: 'Inactive' },
-  ]);
-  // 2. Assign Site Modal ke liye nayi states
+  const [userList, setUserList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [availableSites, setAvailableSites] = useState([]);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedUserForSite, setSelectedUserForSite] = useState(null);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Active');
   const [siteFilter, setSiteFilter] = useState('');
-
-  // Modal visibility handle karne ke liye state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock available sites (Baad mein API se replace kar sakte hain)
-  const availableSites = [
-    { id: 1, name: 'Chandpole' },
-    { id: 2, name: 'Jaipur' },
-    { id: 3, name: 'Pali' },
-    { id: 4, name: 'Kota' },
-    { id: 5, name: 'Ajmer' }
-  ];
+  const [alertConfig, setAlertConfig] = useState({
+    show: false,
+    type: 'warning', // 'warning' for Deactivate, 'success' for Activate
+    user: null
+  });
 
-  // 3. Map Icon Click Handler
+  useEffect(() => {
+    action.getFEUsersList(setUserList, setIsLoading);
+    action.getAllowedSites(setAvailableSites);
+  }, []);
+
+  const handleAddUserSuccess = (newUser) => {
+    setUserList(prev => [newUser, ...prev]);
+  };
+
   const handleOpenAssignModal = (user) => {
     setSelectedUserForSite(user);
     setIsAssignModalOpen(true);
   };
 
-  const toggleStatus = (id) => {
-    setUserList(prevList =>
-      prevList.map(user =>
-        user.id === id ? { ...user, status: user.status === 'Active' ? 'Inactive' : 'Active' } : user
-      )
-    );
+  // ✅ New API Integrated Toggle Logic
+  const handleToggleStatus = (empCode, currentStatus) => {
+    // Action call jo backend API hit karega aur local state (setUserList) ko update karega
+    action.updateFEUserStatus(empCode, currentStatus, setUserList);
+  };
+  // Jab User Toggle Button par click karega
+  const handleToggleClick = (user) => {
+    const isCurrentlyActive = user.status === 'Active';
+
+    setAlertConfig({
+      show: true,
+      type: isCurrentlyActive ? 'warning' : 'success',
+      user: user
+    });
+  };
+  const confirmToggleStatus = () => {
+    const { user } = alertConfig;
+    if (user) {
+      action.updateFEUserStatus(user.code, user.status, setUserList);
+    }
+    setAlertConfig({ ...alertConfig, show: false });
   };
 
+  const uniqueSitesFromList = useMemo(() => {
+    if (!userList) return [];
+    const sites = userList
+      .map(user => user.site)
+      .filter(site => site && site !== 'No site assigned');
+    return [...new Set(sites)].sort();
+  }, [userList]);
+
   const filteredUsers = useMemo(() => {
-    return userList.filter(user => {
-      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.code.includes(searchTerm);
+    if (!userList) return [];
+    const result = userList.filter(user => {
+      const name = user.name || '';
+      const code = String(user.code || '');
+      const site = user.site || 'No site assigned';
+
+      const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || code.includes(searchTerm);
       const matchesStatus = statusFilter === '' || user.status === statusFilter;
-      const matchesSite = siteFilter === '' || user.site.toLowerCase() === siteFilter.toLowerCase();
+      const matchesSite = siteFilter === '' || site.toLowerCase() === siteFilter.toLowerCase();
+
       return matchesSearch && matchesStatus && matchesSite;
     });
+    return result.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
   }, [userList, searchTerm, statusFilter, siteFilter]);
 
   return (
-    <div className={style.container}>
-      <div className={style.stickyTopSection}>
-        <div className={style.header}>
-          <div className={style.titleSection}>
-            <h1>Field Executive Users</h1>
-            <p>Manage app access and site assignments for executives</p>
+    <>
+      {isLoading ? (
+        <WevoisLoader title="Loading users..." height="calc(100vh - 64px)" />
+      ) : (
+        <div className={style.container}>
+          <div className={style.stickyTopSection}>
+            <div className={style.header}>
+              <div className={style.titleSection}>
+                <h1>Field Executives</h1>
+                <p>Manage app access and site assignments for executives</p>
+              </div>
+            </div>
+
+            {/* Summary Cards */}
+            <div className={style.summaryWrapper}>
+              <div className={style.statCard}>
+                <Users size={22} className={style.iconBlue} />
+                <div className={style.statInfo}>
+                  <span className={style.statValue}>{userList.length}</span>
+                  <label className={style.statLabel}>Total Users</label>
+                </div>
+              </div>
+              <div className={style.statCard}>
+                <ShieldCheck size={22} className={style.iconGreen} />
+                <div className={style.statInfo}>
+                  <span className={style.statValue}>{userList.filter(u => u.status === 'Active').length}</span>
+                  <label className={style.statLabel}>Active Users</label>
+                </div>
+              </div>
+              <div className={style.statCard}>
+                <UserMinus size={22} className={style.iconRed} />
+                <div className={style.statInfo}>
+                  <span className={style.statValue}>{userList.filter(u => u.status === 'InActive').length}</span>
+                  <label className={style.statLabel}>Inactive Users</label>
+                </div>
+              </div>
+              <div className={style.statCard}>
+                <MapPinned size={22} className={style.iconOrange} />
+                <div className={style.statInfo}>
+                  <span className={style.statValue}>{userList.filter(u => u.site && u.site !== 'No site assigned').length}</span>
+                  <label className={style.statLabel}>Site Assigned</label>
+                </div>
+              </div>
+            </div>
+
+            <div className={style.tableControls}>
+              <div className={style.leftGroup}>
+                <div className={style.selectWrapper}>
+                  <select className={style.customSelect} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                    <option value="">All status</option>
+                    <option value="Active">Active</option>
+                    <option value="InActive">InActive</option>
+                  </select>
+                  <ChevronDown size={14} className={style.selectIcon} />
+                </div>
+
+                <div className={style.selectWrapper}>
+                  <select className={style.customSelect} value={siteFilter} onChange={(e) => setSiteFilter(e.target.value)}>
+                    <option value="">All Sites</option>
+                    {uniqueSitesFromList.map((siteName, index) => (
+                      <option key={index} value={siteName}>{siteName}</option>
+                    ))}
+                    <option value="No site assigned">Unassigned</option>
+                  </select>
+                  <ChevronDown size={14} className={style.selectIcon} />
+                </div>
+              </div>
+
+              <div className={style.rightGroup}>
+                <div className={style.searchWrapper}>
+                  <Search size={16} className={style.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search employee by name or code..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+
+          <div className={style.tableContainer}>
+            <div className={style.tableScrollArea}>
+              <table className={style.userTable}>
+                <thead>
+                  <tr>
+                    <th>Emp Code</th>
+                    <th>Employee Name</th>
+                    <th>Assigned Site</th>
+                    <th>Last Login</th>
+                    <th>Status</th>
+                    <th className={style.textCenter}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user) => (
+                      <tr key={user.id}>
+                        <td><span className={style.codeBadge}>{user.code}</span></td>
+                        <td>
+                          <div className={style.nameText}>{user.name}</div>
+                          <div className={style.emailText}>{user.email}</div>
+                        </td>
+                        <td>
+                          <span className={(!user.site || user.site === 'No site assigned') ? style.sitePending : style.siteBadge}>
+                            {user.site || 'No site assigned'}
+                          </span>
+                        </td>
+                        <td className={style.dimText}>{user.lastLogin || 'N/A'}</td>
+                        <td>
+                          <span className={user.status === 'Active' ? style.statusActive : style.statusInactive}>
+                            {user.status}
+                          </span>
+                        </td>
+                        <td className={style.actionsCell}>
+                          <div className={style.actionButtonsGroup}>
+                            {/* ✅ Updated Toggle Button */}
+                            <button
+                              onClick={() => handleToggleClick(user)} // Direct calling instead of previous toggle
+                              className={`${style.actionBtn} ${user.status === 'Active' ? style.btnDeactivate : style.btnActivate}`}
+                            >
+                              {user.status === 'Active' ? <PowerOff size={16} /> : <Power size={16} />}
+                            </button>
+
+                            <button
+                              className={style.actionBtn}
+                              title="Assign Site"
+                              onClick={() => handleOpenAssignModal(user)}
+                            >
+                              <MapPin size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <button className={style.fab} onClick={() => setIsModalOpen(true)}>
+            <Plus size={28} />
+          </button>
+
+          <AddFEAppUserModal
+            showCanvas={isModalOpen}
+            setShowCanvas={() => setIsModalOpen(false)}
+            onSuccess={handleAddUserSuccess}
+            availableSites={availableSites}
+          />
+         <GlobalAlertModal
+  show={alertConfig.show}
+  iconType={alertConfig.type}
+  title={alertConfig.type === 'success' ? 'Activate Executive' : 'Deactivate Executive'}
+  message={
+    <span>
+      Are you sure you want to {alertConfig.type === 'success' ? 'enable' : 'disable'} access for{' '}
+      <strong style={{ textTransform: 'capitalize', color: 'inherit' }}>
+        {alertConfig.user?.name?.toLowerCase()}
+      </strong>?
+    </span>
+  }
+  userName={alertConfig.user?.name}
+  warningText="Deactivating will immediately revoke the executive's access to the mobile application and sync services."
+  successText="Activating will restore the executive's ability to log in and perform field operations."
+  buttonText={alertConfig.type === 'success' ? 'Confirm Activation' : 'Confirm Deactivation'}
+  onCancel={() => setAlertConfig({ ...alertConfig, show: false })}
+  onConfirm={confirmToggleStatus}
+/>
+          {isAssignModalOpen && (
+            <AssignSiteModal
+              user={selectedUserForSite}
+              availableSites={availableSites}
+              onClose={() => setIsAssignModalOpen(false)}
+              onAssign={(userId, site) => {
+                setUserList(prevList =>
+                  prevList.map(user =>
+                    user.id === userId ? { ...user, site: site } : user
+                  )
+                );
+                setIsAssignModalOpen(false);
+              }}
+            />
+          )}
         </div>
-
-        {/* Summary Cards */}
-        <div className={style.summaryWrapper}>
-          <div className={style.statCard}>
-            <Users size={22} className={style.iconBlue} />
-            <div className={style.statInfo}>
-              <span className={style.statValue}>{userList.length}</span>
-              <label className={style.statLabel}>Total Users</label>
-            </div>
-          </div>
-          <div className={style.statCard}>
-            <ShieldCheck size={22} className={style.iconGreen} />
-            <div className={style.statInfo}>
-              <span className={style.statValue}>{userList.filter(u => u.status === 'Active').length}</span>
-              <label className={style.statLabel}>Active Users</label>
-            </div>
-          </div>
-          <div className={style.statCard}>
-            <UserMinus size={22} className={style.iconRed} />
-            <div className={style.statInfo}>
-              <span className={style.statValue}>{userList.filter(u => u.status === 'Inactive').length}</span>
-              <label className={style.statLabel}>Inactive Users</label>
-            </div>
-          </div>
-          <div className={style.statCard}>
-            <MapPinned size={22} className={style.iconOrange} />
-            <div className={style.statInfo}>
-              <span className={style.statValue}>{userList.filter(u => u.site !== 'No site assigned').length}</span>
-              <label className={style.statLabel}>Site Assigned</label>
-            </div>
-          </div>
-        </div>
-
-        <div className={style.tableControls}>
-          <div className={style.leftGroup}>
-            <div className={style.selectWrapper}>
-              <select className={style.customSelect} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                <option value="">All status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <ChevronDown size={14} className={style.selectIcon} />
-            </div>
-
-            <div className={style.selectWrapper}>
-              <select className={style.customSelect} value={siteFilter} onChange={(e) => setSiteFilter(e.target.value)}>
-                <option value="">All Sites</option>
-                <option value="Chandpole">Chandpole</option>
-                <option value="Pali">Pali</option>
-                <option value="No site assigned">Unassigned</option>
-              </select>
-              <ChevronDown size={14} className={style.selectIcon} />
-            </div>
-          </div>
-
-          <div className={style.rightGroup}>
-            <div className={style.searchWrapper}>
-              <Search size={16} className={style.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search employee by name or code..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={style.tableContainer}>
-        <div className={style.tableScrollArea}>
-          <table className={style.userTable}>
-            <thead>
-              <tr>
-                <th>Emp Code</th>
-                <th>Employee Name</th>
-                <th>Assigned Site</th>
-                <th>Last Login</th>
-                <th>Status</th>
-                <th className={style.textCenter}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers&&filteredUsers.map((user) => (
-                <tr key={user.id}>
-                  <td><span className={style.codeBadge}>{user.code}</span></td>
-                  <td>
-                    <div className={style.nameText}>{user.name}</div>
-                    <div className={style.emailText}>{user.email}</div>
-                  </td>
-                 
-                  <td>
-                    <span className={user.site === 'No site assigned' ? style.sitePending : style.siteBadge}>
-                      {user.site}
-                    </span>
-                  </td>
-                     <td className={style.dimText}>{user.lastLogin}</td>
-                  <td>
-                    <span className={user.status === 'Active' ? style.statusActive : style.statusInactive}>
-                      {user.status}
-                    </span>
-                  </td>
-                  {/* Table Body Section snippet */}
-                  <td className={style.actionsCell}>
-                    <div className={style.actionButtonsGroup}>
-                      {/* Status Toggle */}
-                      <button
-                        onClick={() => toggleStatus(user.id)}
-                        className={`${style.actionBtn} ${user.status === 'Active' ? style.btnDeactivate : style.btnActivate}`}
-                        title={user.status === 'Active' ? 'Deactivate' : 'Activate'}
-                      >
-                        {user.status === 'Active' ? <PowerOff size={16} /> : <Power size={16} />}
-                      </button>
-
-                      {/* Assign Site */}
-                      <button
-                        className={style.actionBtn}
-                        title="Assign Site"
-                        onClick={() => handleOpenAssignModal(user)}
-                      >
-                        <MapPin size={16} />
-                      </button>
-
-                      {/* Send Credentials
-                      <button
-                        className={style.actionBtn}
-                        title="Resend Credentials"
-                      >
-                        <Send size={16} />
-                      </button> */}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Fab Button par Click Event add kiya */}
-      <button
-        className={style.fab}
-        title="Create New User"
-        onClick={() => setIsModalOpen(true)}
-      >
-        <Plus size={28} />
-      </button>
-
-      {/* Modal Component Yahan Rakha Hai */}
-      <AddFEAppUserModal
-        showCanvas={isModalOpen}
-        setShowCanvas={() => setIsModalOpen(false)}
-
-      />
-      {/* 2. Assign Site Modal (Conditionally Rendered) */}
-      {isAssignModalOpen && (
-        <AssignSiteModal
-          user={selectedUserForSite}
-          availableSites={availableSites}
-          onClose={() => setIsAssignModalOpen(false)}
-          onAssign={(userId, site) => {
-            setUserList(prevList =>
-              prevList.map(user =>
-                user.id === userId ? { ...user, site: site } : user
-              )
-            );
-            setIsAssignModalOpen(false);
-          }}
-        />
       )}
-    </div>
+    </>
   );
 };
 

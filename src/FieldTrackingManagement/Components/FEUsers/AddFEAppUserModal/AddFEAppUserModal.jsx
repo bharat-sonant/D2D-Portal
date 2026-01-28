@@ -1,19 +1,40 @@
-import  { useState } from "react";
+import { useState } from "react";
 import styles from "./AddFEAppUserModal.module.css";
 import { X, Contact, Search, User, Mail, Check, UserPlus, Loader2 } from "lucide-react";
+import * as action from '../../../Actions/FEUsers/FEUsers_Action';
 
-const AddFEAppUserModal = ({ showCanvas, setShowCanvas }) => {
+const AddFEAppUserModal = ({ showCanvas, setShowCanvas, onSuccess }) => {
     const [empCode, setEmpCode] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(false); // Sirf fetch ke liye
+    const [isSaving, setIsSaving] = useState(false);     // Save button ke liye
     const [isFetched, setIsFetched] = useState(false);
+    const [empData, setEmpData] = useState({ name: "", email: "" });
 
     const handleFetch = () => {
-        if (!empCode) return;
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            setIsFetched(true);
-        }, 800);
+        // Fetch action call - yahan setIsFetching pass kiya hai
+        action.fetchEmpDetail(empCode, setEmpData, setIsFetching, setIsFetched);
+    };
+
+    const handleSave = () => {
+        // Save action call - yahan isSaving pass kiya hai
+        action.createFEAppUser(
+            empCode, 
+            empData, 
+            setIsSaving, // Alag loader state bhej rahe hain
+            () => {
+                handleClose(); 
+            },
+            onSuccess
+        );
+    };
+
+    const handleClose = () => {
+        setShowCanvas(false);
+        setEmpData({ name: "", email: "" });
+        setEmpCode("");
+        setIsFetched(false);
+        setIsSaving(false);
+        setIsFetching(false);
     };
 
     if (!showCanvas) return null;
@@ -32,7 +53,7 @@ const AddFEAppUserModal = ({ showCanvas, setShowCanvas }) => {
                             <p className={styles.subtitle}>Setup mobile application credentials</p>
                         </div>
                     </div>
-                    <button className={styles.closeButton} onClick={() => setShowCanvas(false)}>
+                    <button className={styles.closeButton} onClick={handleClose}>
                         <X size={18} />
                     </button>
                 </div>
@@ -44,17 +65,26 @@ const AddFEAppUserModal = ({ showCanvas, setShowCanvas }) => {
                         <div className={styles.searchContainer}>
                             <div className={styles.inputWrapper}>
                                 <Contact className={styles.inputIcon} size={18} />
-                                <input 
-                                    type="text" 
-                                    placeholder="e.g. 1001" 
+                                <input
+                                    type="text"
+                                    placeholder="e.g. 1001"
                                     className={styles.mainInput}
                                     value={empCode}
                                     onChange={(e) => setEmpCode(e.target.value)}
+                                    disabled={isFetching || isSaving}
                                 />
                             </div>
-                            <button className={styles.fetchButton} onClick={handleFetch} disabled={isLoading}>
-                                {isLoading ? <Loader2 className={styles.spinner} size={16} /> : <Search size={16} />}
-                                {isLoading ? "Fetching..." : "Fetch"}
+                            <button 
+                                className={styles.fetchButton} 
+                                onClick={handleFetch} 
+                                disabled={isFetching || !empCode || isSaving}
+                            >
+                                {isFetching ? (
+                                    <Loader2 className={styles.spinner} size={16} />
+                                ) : (
+                                    <Search size={16} />
+                                )}
+                                {isFetching ? "Fetching..." : "Fetch"}
                             </button>
                         </div>
                     </div>
@@ -69,25 +99,51 @@ const AddFEAppUserModal = ({ showCanvas, setShowCanvas }) => {
                                 <label className={styles.fieldLabel}>Employee Name</label>
                                 <div className={styles.inputWrapper}>
                                     <User className={styles.inputIcon} size={18} />
-                                    <input type="text" readOnly className={styles.readOnlyField} value={isFetched ? "Ramesh Kumar" : ""} placeholder="---" />
+                                    <input 
+                                        type="text" 
+                                        readOnly 
+                                        className={`${styles.readOnlyField} ${styles.nameField}`}  
+                                        value={isFetched ? empData.name : ""} 
+                                        placeholder="---" 
+                                    />
                                 </div>
                             </div>
                             <div className={styles.inputGroup}>
                                 <label className={styles.fieldLabel}>Email Address</label>
                                 <div className={styles.inputWrapper}>
                                     <Mail className={styles.inputIcon} size={18} />
-                                    <input type="text" readOnly className={styles.readOnlyField} value={isFetched ? "ramesh@company.com" : ""} placeholder="---" />
+                                    <input 
+                                        type="text" 
+                                        readOnly 
+                                        className={styles.readOnlyField} 
+                                        value={isFetched ? empData.email : ""} 
+                                        placeholder="---" 
+                                    />
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <div className={styles.footer}>
-                    <button className={styles.cancelBtn} onClick={() => setShowCanvas(false)}>Cancel</button>
-                    <button className={styles.saveBtn} disabled={!isFetched}>
-                        <Check size={18} /> Save Access
+                    <button 
+                        className={styles.cancelBtn} 
+                        onClick={handleClose}
+                        disabled={isSaving}
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        className={styles.saveBtn} 
+                        disabled={!isFetched || isSaving} 
+                        onClick={handleSave}
+                    >
+                        {isSaving ? (
+                            <Loader2 className={styles.spinner} size={18} />
+                        ) : (
+                            <Check size={18} />
+                        )}
+                        {isSaving ? "Saving..." : "Save Access"}
                     </button>
                 </div>
             </div>
