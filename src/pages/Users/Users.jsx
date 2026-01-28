@@ -12,6 +12,7 @@ import Calendar from "../../components/Users/calendar";
 import PermissonAccess from "../../components/Users/PermissionAccess";
 import { usePermissions } from "../../context/PermissionContext";
 import UserLoginHistory from "../../components/Users/UserLogInHistory";
+import SiteAssignmentAlert from "../../components/Users/siteAlertPopup";
 
 const User = () => {
   const { permissionGranted } = usePermissions();
@@ -25,6 +26,8 @@ const User = () => {
   const [loading, setLoading] = useState(false);
   const [cityList, setCityList] = useState([]);
   const [activeInactiveUserList, setActiveInactiveUserList] = useState([]);
+ const [assignedSiteList,SetAssignedSiteList] = useState(true);
+  const [siteAlertPopup,setSiteAlertPopup]=useState(false)
   const loadUsers = async () => {
     await userAction.fetchUserData(
       setSelectedUser,
@@ -170,7 +173,7 @@ const User = () => {
           </div>
 
           <div className={styles.userInnerRight}>
-            <UserCityAccess cityList={cityList} selectedUser={selectedUser} />
+            <UserCityAccess cityList={cityList} selectedUser={selectedUser} SetAssignedSiteList={SetAssignedSiteList}/>
             <div className={``} style={{ display: "flex", flexFlow: "column" }}>
               {selectedUser !== null && (
                 <Calendar
@@ -180,7 +183,7 @@ const User = () => {
               )}
               {selectedUser !== null &&
                 permissionGranted?.CanGivePermissions === true && (
-                  <PermissonAccess selectedUser={selectedUser} />
+                  <PermissonAccess selectedUser={selectedUser} assignedSiteList={assignedSiteList} setSiteAlertPopup={setSiteAlertPopup} />
                 )}
             </div>
           </div>
@@ -197,6 +200,7 @@ const User = () => {
       />
 
       {confirmUser && (
+        
         <UserStatusDialog
           showModal={showModal}
           setShowModal={setShowModal}
@@ -206,6 +210,9 @@ const User = () => {
           handleStatusToggle={handleStatusToggle}
           selectedUser={selectedUser}
         />
+      )}
+      {siteAlertPopup&&(
+<SiteAssignmentAlert setSiteAlertPopup={setSiteAlertPopup}/>
       )}
       <UserLoginHistory
         userId={selectedUser?.id}

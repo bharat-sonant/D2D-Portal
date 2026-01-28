@@ -252,12 +252,13 @@ export const handleCityAccessToggle = async (
   city_id,
   isCurrentlySelected,
   setSelectedCities,
-  selectedCities
+  selectedCities,
+  SetAssignedSiteList
 ) => {
 
   try {
     if (isCurrentlySelected) {
-      removeSiteAccess(setSelectedCities,city_id,selectedCities)
+      removeSiteAccess(setSelectedCities,city_id,selectedCities,SetAssignedSiteList)
      }else{
       const payload = {
       cityId: city_id,
@@ -274,6 +275,13 @@ export const handleCityAccessToggle = async (
           city_id,
         },
       ]);
+      SetAssignedSiteList(prev=>[
+         ...prev,
+        {
+          id: apiData?.id,
+          city_id,
+        },
+      ])
     }
     common.setAlertMessage('success', apiData.message || 'Site assigned successfully.');
      }
@@ -285,27 +293,30 @@ export const handleCityAccessToggle = async (
 };
 
 
-async function removeSiteAccess(setSelectedCities,city_id,selectedCities){
+async function removeSiteAccess(setSelectedCities,city_id,selectedCities,SetAssignedSiteList){
   try {
     const recordToRemove = selectedCities.find(c => c.city_id === city_id);
     if (!recordToRemove?.id) return;  
-    const response = await api.delete('site-assignment/unassignsite',{data: { id: Number(recordToRemove.id) },}
-    );
+    const response = await api.delete('site-assignment/unassignsite',{data: { id: Number(recordToRemove.id) },});
     setSelectedCities(prev =>
       prev.filter(c => c.city_id !== city_id)
     );
-    common.setAlertMessage('success',response.data?.message || 'Site unassigned successfully.');
+    SetAssignedSiteList(prev =>
+      prev.filter(c => c.city_id !== city_id))
+    common.setAlertMessage('success',response?.message || 'Site unassigned successfully.');
   } catch (err) {
     console.error(err.response?.data?.message)
     common.setAlertMessage('error','Failed to update site access');
   }
 }
 
-export const handleGetCity = async (userId, setSelectedCities) => {
+export const handleGetCity = async (userId, setSelectedCities,SetAssignedSiteList) => {
    try {
       const response = await api.get('site-assignment/getassignedsites',{params: {userId}});
+     
         setSelectedCities([]);
         setSelectedCities(response.data);
+        SetAssignedSiteList(response.data)
     } catch (error) {
       console.error('Failed to fetch permissions', error);
       setSelectedCities([]);

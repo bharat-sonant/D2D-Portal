@@ -40,8 +40,13 @@ const PermissonAccess = (props) => {
     
   };
 
-  const handleAttendanceCheckboxChange = ({ target }) => {
+  const handlePermissionCheckboxChange = ({ target }) => {
   const { value, checked } = target;
+   if(checked===true&&value==='Can Access Field Tracking Section'&&props.assignedSiteList.length===0){
+     props.setSiteAlertPopup(true)
+       return;
+   }
+ 
   setPermissions((prev) => ({
     ...prev,
     [value.replace(/\s+/g, "")]: checked,
@@ -112,7 +117,7 @@ action.saveSuperAdminPermissionsAction(permission,getUserPermissions)
                       }  ${props.selectedUser.is_superadmin ? styles.disabled : ""}`}
                        onClick={() => {
             if (props.selectedUser.is_superadmin) return; // 🔒 hard block
-            handleAttendanceCheckboxChange({
+            handlePermissionCheckboxChange({
               target: {
                 value: moduleName,
                  checked: !permissions[moduleName.replace(/\s+/g, "")],

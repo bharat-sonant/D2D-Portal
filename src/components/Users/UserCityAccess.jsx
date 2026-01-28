@@ -15,7 +15,7 @@ const UserCityAccess = (props) => {
   const [isSearching, setIsSearching] = useState(false);
   useEffect(() => {
     if (props.selectedUser?.id) {
-      userAction.handleGetCity(props.selectedUser.id, setSelectedCities);
+      userAction.handleGetCity(props.selectedUser.id, setSelectedCities,props.SetAssignedSiteList);
     } else {
       setSelectedCities([]);
     }
@@ -34,12 +34,14 @@ const UserCityAccess = (props) => {
       city_id,
       isCurrentlySelected,
       setSelectedCities,
-      selectedCities
+      selectedCities,
+      props.SetAssignedSiteList
     );
   };
   const filteredCityList = props.cityList?.filter((item) =>
     item.city_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   return (
     <div className={style.Detailscard}>
       <div className={style.card_header}>

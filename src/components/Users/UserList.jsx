@@ -106,6 +106,7 @@ const handleSearch = (e) => {
     const btn = dropdown.querySelector('[data-bs-toggle="dropdown"]');
     if (btn) btn.click(); // 🔥 bootstrap dropdown close
   };
+  console.log(filteredUsersList)
   return (
     <div className={`dropdown ${GlobalStyles.dropDown}`}>
       <button
