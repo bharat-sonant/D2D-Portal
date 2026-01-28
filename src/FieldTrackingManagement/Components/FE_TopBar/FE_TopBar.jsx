@@ -36,7 +36,7 @@ const FE_TopBar = () => {
       id: "Dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
-      color: "#1e40af", // Deep Blue
+      // color: "#1e40af", 
       path: "/field-executive/dashboard",
     },
 
@@ -44,14 +44,14 @@ const FE_TopBar = () => {
       id: "Tasks",
       label: "Tasks",
       icon: ClipboardList,
-      color: "#0f766e", // Deep Teal
+      // color: "#0f766e", 
       path: "/field-executive/tasks",
     },
     {
       id: "Assignments",
       label: "Assignments",
       icon: ClipboardCheck,
-      color: "#075985", // Strong Cyan-Blue
+      // color: "#075985",
       path: "/field-executive/assignments",
     },
 
@@ -59,7 +59,7 @@ const FE_TopBar = () => {
       id: "Employees",
       label: "Users",
       icon: Users,
-      color: "#5b21b6", // Deep Purple
+      // color: "#5b21b6", 
       path: "/field-executive/users",
     },
 
@@ -67,7 +67,7 @@ const FE_TopBar = () => {
       id: "Tracking",
       label: "Tracking",
       icon: MapPin,
-      color: "#166534", // Forest Green
+      // color: "#166534", 
       path: "/field-executive/tracking",
     },
 
@@ -75,14 +75,14 @@ const FE_TopBar = () => {
       id: "Reports",
       label: "Report",
       icon: FileText,
-      color: "#9a3412", // Burnt Orange
+      // color: "#9a3412", 
       path: "/field-executive/reports",
     },
     {
       id: "Analysis",
       label: "Analysis",
       icon: BarChart3,
-      color: "#7f1d1d", // Deep Red
+      // color: "#7f1d1d", 
       path: "/field-executive/analysis",
     },
   ];
@@ -162,7 +162,7 @@ const FE_TopBar = () => {
                 >
                   {item.label}
                 </span>
-                {isActive && <div className={styles.activeIndicator} />}
+                {/* {isActive && <div className={styles.activeIndicator} />} */}
               </Link>
             );
           })}

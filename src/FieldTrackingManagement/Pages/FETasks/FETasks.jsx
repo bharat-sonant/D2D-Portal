@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import GlobalStyles from "../../../assets/css/globleStyles.module.css";
+import GlobalStyles from "../../../assets/css/globalStyles.module.css";
 import AddTask from "../../Components/FETasks/AddTask";
 import style from "./FETasks.module.css";
-import noData from '../../../assets/images/icons/noData.gif';
+import noData from "../../../assets/images/icons/noData.gif";
 import {
   getallTasks,
   saveTaskAction,
   updateTaskAction,
 } from "../../Actions/FETasks/FETasksAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
-import { Edit } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
 import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
-
+import Toggle from "../../../components/Common/GlobalToggle/Toggle";
 const FETasks = () => {
   const tableRef = useRef(null);
   const [openCanvas, setOpenCanvas] = useState(false);
@@ -20,7 +20,7 @@ const FETasks = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState('active')
+  const [status, setStatus] = useState("active");
   const [editTaskId, setEditTaskId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -100,99 +100,117 @@ const FETasks = () => {
 
     setTaskName(task.taskName);
     setDescription(task.description);
-    setStatus(task.status)
+    setStatus(task.status);
 
     setOpenCanvas(true);
   };
 
-  const handleStatusToggle = async(task) => {
-    const newStatus = task.status === 'active' ? 'inactive' : 'active';
+  const handleStatusToggle = async (task) => {
+    const newStatus = task.status === "active" ? "inactive" : "active";
 
-    setTasks((prev) => 
-    prev.map((t) => t.id === task.id ? {...t, status : newStatus} : t));
-
-    try{
-      await updateTaskAction(task.id, {status : newStatus});
-    }catch(error){
-      setTasks((prev) =>
-      prev.map((t) =>
-        t.id === task.id ? { ...t, status: task.status } : t
-      )
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t)),
     );
-  }
-};
 
+    try {
+      await updateTaskAction(task.id, { status: newStatus });
+    } catch (error) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === task.id ? { ...t, status: task.status } : t)),
+      );
+    }
+  };
+  console.log("takss", tasks);
   return (
     <>
-      <div className={GlobalStyles.floatingDiv}>
-        <button className={GlobalStyles.floatingBtn} onClick={handleOpenModal}>
-          +
-        </button>
+      {/* Background */}
+      <div className={GlobalStyles.background}>
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb1}`} />
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb2}`} />
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb3}`} />
+        <div className={GlobalStyles.gridOverlay} />
       </div>
 
-      <div
-        ref={tableRef}
-        className={`${style.tableContainer}`}>
+      {/* Particles */}
+      <div className={GlobalStyles.particles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={GlobalStyles.particle}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+      <div className={style.FETaskContainer}>
+        <div className={style.FETaskHeader}>
+          <div className={style.pageTitle}>
+            <span>📝</span>
+            Task Management</div>
+          <button className={GlobalStyles.btnTheme} onClick={handleOpenModal}>
+            + Add New Task
+          </button>
+        </div>
+
+        <div ref={tableRef} className={`${style.tableContainer}`}>
           <table className={style.table}>
-          <thead>
-            <tr>
-              <th className={style.th1}>S. No</th>
-              <th className={style.th2}>Task Name</th>
-              <th className={style.th3}>Description</th>
-              <th className={style.th4}>Status</th>
-              <th className={style.th4}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+            <thead>
               <tr>
-                <td colSpan="4" className={style.loaderCell}>
-                  <WevoisLoader title="loading tasks..." />
-                </td>
+                <th className={style.th1}>S. No</th>
+                <th className={style.th2}>Task Name</th>
+                <th className={style.th3}>Description</th>
+                <th className={`text-end ${style.th4}`}>Status</th>
               </tr>
-            ) : tasks.length === 0 ? (
-              <tr>
-                <td colSpan="4" className={style.emptyCell}>
+            </thead>
+            <tbody>
+              {loading ? (
+                <td colSpan="5" className={style.loaderCell}>
+                  <WevoisLoader
+                    height="calc(100vh - 225px)"
+                    title="loading tasks..."
+                  />
+                </td>
+              ) : tasks.length === 0 ? (
+                <td colSpan="5" className={style.emptyCell}>
                   <NoResult
                     title="No data available"
                     // query={searchTerm}
                     gif={noData}
-                    // height="calc(100vh - 280px)"
+                    height="calc(100vh - 225px)"
                   />
                 </td>
-              </tr>
-            ) : (
-              tasks.map((task, index) => (
-                <tr key={task.id}>
-                  <td className={style.th1}>{index + 1}</td>
-                  <td className={style.th2}>{task.taskName}</td>
-                  <td className={style.th3}>{task.description}</td>
-                  <td className={style.th4}>
-                    <label className={style.switch}>
-                      <input
-                        type="checkbox"
-                        checked={task.status === 'active'}
-                       onChange={() => {
-                        setSelectedTask(task);
-                        setIsAlertOpen(true);
-                      }}
+              ) : (
+                tasks.map((task, index) => (
+                  <tr key={task.id}>
+                    <td className={style.th1}>
+                      <div
+                        className={`${style.snNumber}`}
+                        onClick={() => handleEdit(task)}
+                      >
+                        <span>{index + 1}</span>
+                        <Edit2 className={style.editIcon} size={16} />
+                      </div>
+                    </td>
+                    <td className={style.th2}>{task.taskName}</td>
+                    <td className={style.th3}>{task.description}</td>
+                    <td className={`text-end ${style.th4}`}>
+                      <Toggle
+                        checked={task.status === "active"}
+                        onChange={() => {
+                          setSelectedTask(task);
+                          setIsAlertOpen(true);
+                        }}
                       />
-                      <span className={style.slider}></span>
-                    </label>
-                  </td>
-                  <td className={style.th4}>
-                    <button
-                      className={style.editBtn}
-                      onClick={() => handleEdit(task)}
-                    >
-                      <Edit color="black" size={18}/>
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {openCanvas && (
@@ -209,28 +227,28 @@ const FETasks = () => {
         />
       )}
 
-        <GlobalAlertModal
-          show={isAlertOpen}
-          title="Confirmation Status Update"
-          message={`Do you really want to ${
-            selectedTask?.status === 'active' ? 'deactivate' : 'activate'
-          } this task?`}
-          buttonText={
-            selectedTask?.status === 'active' ? 'Deactivate' : 'Activate'
-          }
-          iconType={selectedTask?.status === 'active' ? 'warning' : 'success'}
-          warningText='This task will be deactivated for all users'
-          successText='This task will be activated for all users'
-          onCancel={() => {
-            setIsAlertOpen(false);
-            setSelectedTask(null);
-          }}
-          onConfirm={() => {
-            handleStatusToggle(selectedTask);
-            setIsAlertOpen(false);
-            setSelectedTask(null);
-          }}
-        />
+      <GlobalAlertModal
+        show={isAlertOpen}
+        title="Confirmation Status Update"
+        message={`Do you really want to ${
+          selectedTask?.status === "active" ? "deactivate" : "activate"
+        } this task?`}
+        buttonText={
+          selectedTask?.status === "active" ? "Deactivate" : "Yes, Activate"
+        }
+        iconType={selectedTask?.status === "active" ? "warning" : "success"}
+        warningText="This task will be deactivated for all users"
+        successText="This task will be activated for all users"
+        onCancel={() => {
+          setIsAlertOpen(false);
+          setSelectedTask(null);
+        }}
+        onConfirm={() => {
+          handleStatusToggle(selectedTask);
+          setIsAlertOpen(false);
+          setSelectedTask(null);
+        }}
+      />
     </>
   );
 };

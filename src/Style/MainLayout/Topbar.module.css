@@ -11,7 +11,7 @@
   right: 0;
   width: 100%;
   border-bottom: 1px solid var(--borderColor);
-  z-index: 14;
+  z-index: 9;
 }
 
 .headerLeft {
@@ -84,18 +84,24 @@
 
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
   animation: navFadeIn 0.5s ease backwards;
   text-decoration: none;
   &:hover {
-    background: #667eea0d;
-    .menuIcon svg{
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.1) 0%,
+      rgba(139, 92, 246, 0.1) 100%
+    );
+
+    transform: translateY(-2px);
+    .menuIcon svg {
       color: var(--themeColor);
     }
-    .menuLabel{
+    .menuLabel {
       color: var(--themeColor);
     }
   }
@@ -104,16 +110,14 @@
 /* .menuItemActive {
   background: #667eea0d;
 } */
- .menuItemActive {
-  background: linear-gradient(
-    120deg,
-    rgba(102, 126, 234, 0.12),
-    rgba(118, 75, 162, 0.12),
-    rgba(79, 172, 254, 0.12)
-  );
+.menuItemActive {
+  background: var(--gradientTheme);
   background-size: 300% 300%;
   box-shadow: 0 8px 32px #00000014;
   animation: lightGradientMove 6s ease infinite;
+  &:hover{
+      background: var(--gradientTheme);
+  }
 }
 
 @keyframes lightGradientMove {
@@ -128,9 +132,6 @@
   }
 }
 
-.menuItemActive .navIcon {
-  color: var(--menu-color) !important;
-}
 .menuIcon {
   /* width: 32px; */
   width: 24px;
@@ -149,7 +150,10 @@
   width: 18px;
   color: var(--regularColor);
 }
-
+.menuItemActive .navIcon {
+  /* color: var(--menu-color) !important; */
+  color: var(--white) !important;
+}
 .activeIndicator {
   position: absolute;
   bottom: 0;
@@ -168,7 +172,9 @@
   text-decoration: none;
 }
 .menuLabelActive {
-  color: var(--menu-color) !important;
+  /* color: var(--menu-color) !important; */
+  color: var(--white) !important;
+
   font-weight: 600;
 }
 .headerRight {

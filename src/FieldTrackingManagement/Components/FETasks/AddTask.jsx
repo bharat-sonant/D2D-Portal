@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import styles from "./AddTask.module.css";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
 import modalStyles from "../../../assets/css/popup.module.css";
 import { ClipboardList, ReceiptText, X } from "lucide-react";
@@ -115,7 +114,7 @@ const AddTask = ({
 
             <div className={modalStyles.inputGroup}>
               <label className={modalStyles.label}>Description</label>
-              <div className={modalStyles.inputWrapper}>
+              <div className={`${modalStyles.inputWrapper} ${modalStyles.textareaWrapper}`}>
                 <div className={modalStyles.inputIcon}>
                   <ReceiptText size={18} />
                 </div>
@@ -139,7 +138,7 @@ const AddTask = ({
             Cancel
           </button> */}
             <button className={modalStyles.submitBtn} onClick={handleSave}>
-              {isEdit ? "Update Task" : "Save Task"}
+              {isEdit ? "Update Task" : "Add Task"}
             </button>
           </div>
         </form>

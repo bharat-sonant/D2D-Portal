@@ -245,6 +245,7 @@
   background: #ef44440d;
   border-radius: 6px;
   border: 1px solid #ef444433;
+      width: 100%;
 }
 
 .successText {
@@ -255,6 +256,7 @@
   background: linear-gradient(135deg, #10b98114, #10b98108);
   border-radius: 6px;
   border: 1px solid #10b98140;
+      width: 100%;
 }
 
 /* Actions */
