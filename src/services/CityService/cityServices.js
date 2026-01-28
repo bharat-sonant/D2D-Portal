@@ -1,19 +1,13 @@
 import api from "../../api/api";
 import { supabase } from "../../createClient";
 import * as sbs from "../supabaseServices"
+import * as common from '../../common/common'
 
 export const saveCityData = async (cityData, logoFile, cityId) => {
   if (!cityData || !cityData?.site_name) {
     throw new Error("Invalid parameters");
   }
   const isEdit = !!cityId;
-
-  const fileName = `${cityData.site_code}.png`;
-  const filePath = fileName;
-
-  if (logoFile) {
-    await sbs.uploadAttachment(logoFile, `CityLogo`, filePath);
-  }
 
   const apiPayload = isEdit ? {
     site_name: cityData.site_name,
@@ -29,6 +23,25 @@ export const saveCityData = async (cityData, logoFile, cityId) => {
     ? await api.post("sites/create", apiPayload)
     // : await sbs.updateData("Cities", "city_id", cityId, cityData);
     : await api.patch(`sites/${cityId}`,apiPayload)
+
+  if (logoFile) {
+    const fileName = `${cityData.site_code}.png`;
+
+    const formData = new FormData();
+    formData.append("file", logoFile);          // 👈 actual file
+    formData.append("bucket", "CityLogo");
+    formData.append("path", fileName);
+
+    // await sbs.uploadAttachment(logoFile, `CityLogo`, filePath);
+    try {
+      await api.post("files/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (uploadError) {
+      console.error("Logo upload failed:", uploadError);
+      common.setAlertMessage('error',uploadError || "filed to upload the logo !")
+    }
+  }
 
   return response;
 };

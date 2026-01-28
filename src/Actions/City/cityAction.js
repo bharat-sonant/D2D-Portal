@@ -111,8 +111,10 @@ export const changeCityStatusAction = async (
       `Site status ${newStatus ? "active" : "inactive"} successfully.`,
     );
   } catch (error) {
-    console.error(error);
-    common.setAlertMessage("error", error);
+    const message =
+      error?.message || "Failed to update site status. Please try again.";
+
+    common.setAlertMessage("error", message);
   }
 };
 
