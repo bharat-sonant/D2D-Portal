@@ -25,10 +25,9 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
         setLoading(true);
         let loggedUserName = localStorage.getItem("name");
         let cityDetail = {
-            city_code: form?.city_code?.trim(),
-            city_name: form?.city_name?.trim(),
+            site_code: form?.city_code?.trim(),
+            site_name: form?.city_name?.trim(),
             status: form?.status,
-            created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
             created_by: loggedUserName
         }
 
@@ -38,22 +37,21 @@ export const saveCityAction = async (form, logo, props, setLoading, setCityError
             props.loadCities();
             common.setAlertMessage("success", !props?.onEdit ? "Site added successfully" : "Site updated successfully");
         } catch (err) {
+            console.log('error in action',err)
             setLoading(false);
-            if (err?.code === "23505") {
-                if (err?.details?.includes("city_code")) {
-                    setCityCodeError("Site code already exists!");
-                    return;
-                }
-                if (err?.details?.includes("city_name")) {
-                    setCityError("Site name already exists!");
-                    return;
-                }
-                else {
-                    common.setAlertMessage("error", "Duplicate value exists!");
-                }
-            } else {
-                common.setAlertMessage("error", "Something went wrong!");
+
+            const message = err?.message || "Something went wrong";
+
+            if (message.includes("Site code")) {
+                setCityCodeError(message);
+                return;
             }
+
+            if (message.includes("Site name")) {
+                setCityError(message);
+                return;
+            }
+            common.setAlertMessage("error", message);
         }
     }
 }

@@ -14,7 +14,6 @@ const AddCity = (props) => {
     city_code: "",
     city_name: "",
     status: "active",
-    created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
 
   const [loading, setLoading] = useState(false);
