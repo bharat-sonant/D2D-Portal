@@ -147,9 +147,13 @@ const FETasks = () => {
       </div>
       <div className={style.FETaskContainer}>
         <div className={style.FETaskHeader}>
-          <div className={style.pageTitle}>
-            <span>📝</span>
-            Task Management</div>
+          <div className={style.headerLeft}>
+            <span className={style.headerIcon}>📝</span>
+            <div className={style.pageTitle}>
+              Task Management
+              <p>Manage task(s) for field executives</p>
+            </div>
+          </div>
           <button className={GlobalStyles.btnTheme} onClick={handleOpenModal}>
             + Add New Task
           </button>
