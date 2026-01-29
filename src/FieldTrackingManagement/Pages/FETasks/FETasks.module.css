@@ -188,6 +188,9 @@ background-color: #f1f8ff;
   padding: 14px 18px;
   border-bottom: 1px solid var(--borderColor);
   font-family: var(--fontGraphikMedium);
+  &:hover button{
+color: var(--textDanger);
+  }
 }
 
 .descHeader button {
