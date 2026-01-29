@@ -145,15 +145,15 @@ const Login = () => {
     if (defaultCityId) {
       const resp = await getDataByColumnName(
         "Sites",
-        "city_id",
+        "site_id",
         defaultCityId,
       );
       if (resp?.success) {
-        const city_name = resp?.data?.[0]?.city_name || "";
+        const siteName = resp?.data?.[0]?.site_name || "";
         setCityContext({
-          city: city_name,
+          city: siteName,
           cityId: defaultCityId,
-          cityLogo: createCityLogoUrl(resp?.data?.[0]?.city_code),
+          cityLogo: createCityLogoUrl(resp?.data?.[0]?.site_code),
         });
       }
     }
