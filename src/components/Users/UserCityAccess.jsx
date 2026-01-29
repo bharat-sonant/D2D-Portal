@@ -8,7 +8,6 @@ import NoResult from "../NoResultFound/NoResult";
 import GlobalCheckbox from "../Common/GlobalCheckbox/GlobalCheckbox";
 
 const UserCityAccess = (props) => {
-    console.log("props", props);
   const [selectedCities, setSelectedCities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,8 +40,6 @@ const UserCityAccess = (props) => {
   const filteredCityList = props.cityList?.filter((item) =>
     item.site_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  console.log('sele',selectedCities)
 
   return (
     <div className={style.Detailscard}>

@@ -360,7 +360,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
         >
           <WardMapCanvas
             wardId={activeWardId}
-            selectedCity={selectedCity.city_id}
+            selectedCity={selectedCity.site_id}
            setIsWardBoundaryMapPopupOpen={setIsWardBoundaryMapPopupOpen}
   setIsWardLinePopOpen={setIsWardLinePopOpen}
 

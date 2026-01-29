@@ -266,7 +266,6 @@ export const getSelectWardBoundaryAndLine = async (
   setSelectedDate
  
 ) => {
-
   if(previoisMapList.length>0 || date !==null){
         let  boundaryData =[]
   const latestBoundary = await sbs.getLatestDate(wardId)
