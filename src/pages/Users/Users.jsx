@@ -26,14 +26,14 @@ const User = () => {
   const [loading, setLoading] = useState(false);
   const [cityList, setCityList] = useState([]);
   const [activeInactiveUserList, setActiveInactiveUserList] = useState([]);
- const [assignedSiteList,SetAssignedSiteList] = useState(true);
-  const [siteAlertPopup,setSiteAlertPopup]=useState(false)
+  const [assignedSiteList, SetAssignedSiteList] = useState(true);
+  const [siteAlertPopup, setSiteAlertPopup] = useState(false);
   const loadUsers = async () => {
     await userAction.fetchUserData(
       setSelectedUser,
       setUsers,
       setLoading,
-      setActiveInactiveUserList
+      setActiveInactiveUserList,
     );
   };
 
@@ -61,7 +61,7 @@ const User = () => {
       setUsers,
       setActiveInactiveUserList,
       setSelectedUser,
-      setConfirmUser
+      setConfirmUser,
     );
   };
 
@@ -173,7 +173,11 @@ const User = () => {
           </div>
 
           <div className={styles.userInnerRight}>
-            <UserCityAccess cityList={cityList} selectedUser={selectedUser} SetAssignedSiteList={SetAssignedSiteList}/>
+            <UserCityAccess
+              cityList={cityList}
+              selectedUser={selectedUser}
+              SetAssignedSiteList={SetAssignedSiteList}
+            />
             <div className={``} style={{ display: "flex", flexFlow: "column" }}>
               {selectedUser !== null && (
                 <Calendar
@@ -183,7 +187,11 @@ const User = () => {
               )}
               {selectedUser !== null &&
                 permissionGranted?.CanGivePermissions === true && (
-                  <PermissonAccess selectedUser={selectedUser} assignedSiteList={assignedSiteList} setSiteAlertPopup={setSiteAlertPopup} />
+                  <PermissonAccess
+                    selectedUser={selectedUser}
+                    assignedSiteList={assignedSiteList}
+                    setSiteAlertPopup={setSiteAlertPopup}
+                  />
                 )}
             </div>
           </div>
@@ -200,7 +208,6 @@ const User = () => {
       />
 
       {confirmUser && (
-        
         <UserStatusDialog
           showModal={showModal}
           setShowModal={setShowModal}
@@ -211,8 +218,8 @@ const User = () => {
           selectedUser={selectedUser}
         />
       )}
-      {siteAlertPopup&&(
-<SiteAssignmentAlert setSiteAlertPopup={setSiteAlertPopup}/>
+      {siteAlertPopup && (
+        <SiteAssignmentAlert setSiteAlertPopup={setSiteAlertPopup} />
       )}
       <UserLoginHistory
         userId={selectedUser?.id}

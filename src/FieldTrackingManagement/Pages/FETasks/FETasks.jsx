@@ -25,7 +25,8 @@ const FETasks = () => {
   const [loading, setLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-
+  const [openDesc, setOpenDesc] = useState(false);
+  const [descContent, setDescContent] = useState("");
   useEffect(() => {
     getallTasks(setTasks, setLoading);
   }, []);
@@ -163,9 +164,13 @@ const FETasks = () => {
             <thead>
               <tr>
                 <th className={style.th1}>S. No</th>
-                <th className={style.th2}>Task Name</th>
+                <th className={style.th2} style={{ width: "20%" }}>
+                  Task Name
+                </th>
                 <th className={style.th3}>Description</th>
-                <th className={`text-end ${style.th4}`}>Status</th>
+                <th className={`text-end ${style.th4}`} style={{ width: "5%" }}>
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -198,7 +203,22 @@ const FETasks = () => {
                       </div>
                     </td>
                     <td className={style.th2}>{task.taskName}</td>
-                    <td className={style.th3}>{task.description}</td>
+                    <td className={style.th3}>
+                      <div
+                        className={style.descCell}
+                        ref={(el) => {
+                          if (el && el.scrollWidth > el.clientWidth) {
+                            el.classList.add(style.isEllipsis);
+                          }
+                        }}
+                        onClick={() => {
+                          setDescContent(task.description);
+                          setOpenDesc(true);
+                        }}
+                      >
+                        {task.description}
+                      </div>
+                    </td>
                     <td className={`text-end ${style.th4}`}>
                       <Toggle
                         checked={task.status === "active"}
@@ -229,7 +249,18 @@ const FETasks = () => {
           onSave={handleSaveTask}
         />
       )}
+      {openDesc && (
+        <div className={style.descOverlay}>
+          <div className={style.descModal}>
+            <div className={style.descHeader}>
+              <span>Description</span>
+              <button onClick={() => setOpenDesc(false)}>✕</button>
+            </div>
 
+            <div className={style.descBody}>{descContent}</div>
+          </div>
+        </div>
+      )}
       <GlobalAlertModal
         show={isAlertOpen}
         title="Confirmation Status Update"
