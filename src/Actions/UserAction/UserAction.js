@@ -47,22 +47,17 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
     let email = form.email?.toLowerCase();
     let encrptMail = common.encryptValue(email);
     let hashCode = common.generateHash(email);
-
     const createdBy = localStorage.getItem("name");
     let userDetail = {
-      // username: form.username,
-      hash_email: hashCode,
-      is_superadmin: false,
+      email:email,
+      isSuperadmin: false,
       name: form?.name,
-      email: encrptMail,
       status: "active",
-      created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      created_by: createdBy,
-      password: encrptpassword,
-      user_type: form?.user_type,
-      ...(form?.user_type === 'internal' && { emp_code: form?.emp_code }),
+      createdBy: createdBy,
+      userType: form?.user_type,
+      ...(form?.user_type === 'internal' && { empCode: form?.emp_code }),
     };
-    if (onEdit) {
+    if (onEdit){
       let updatedDetail = {
         // username: form?.username,
         hash_email: hashCode,
@@ -82,27 +77,27 @@ export const validateUserDetail = (form, onEdit, editData, setNameError, setEmai
 };
 
 export const handleSaveUser = async (userDetail, email, password, loginURL, setEmailError, setEmpCodeError, resetStateValues, loadUsers, setLoading) => {
-  const response = await userServices.saveUserData(userDetail);
-  if (response?.status === 'success') {
+ 
+ try{
+   const response = await api.post('users/createuser',userDetail);
+    if (response?.success) { 
     await sendLoginCredentialsToEmploye(email, password, loginURL)
     resetStateValues();
     loadUsers();
     common.setAlertMessage("success", "User created successfully");
-  } else {
+  } 
+ }catch (err) {
     setLoading(false);
-    const errMsg = response?.message?.details || "";
-    if (response.message?.code === "23505") {
-      if (errMsg?.includes("email") || errMsg?.includes("hash_email")) {
+      const message = err?.message || "Something went wrong";
+      if (message?.includes("Email")) {
         setEmailError("Email already exists!");
-      } else if (errMsg?.includes("emp_code")) {
+      } else if (message?.includes("Employee code")) {
         setEmpCodeError("Employee Code already exists!");
       } else {
         common.setAlertMessage("error", "Duplicate value exists!");
       }
-    } else {
-      common.setAlertMessage("error", "Something went wrong!");
-    }
-  }
+     }
+ 
 };
 
 const sendLoginCredentialsToEmploye = async (email, password, loginURL) => {
@@ -164,9 +159,6 @@ export const updateStatus = async (user, setUsers, setActiveInactiveUserList, se
   let response = await userServices.updateUserStatus(user.id, {
     status: newStatus,
   });
-
-
-
   if (response.status === "success") {
     setUsers((prev) => {
       const updatedList = prev.filter((u) => u.id !== user.id);
