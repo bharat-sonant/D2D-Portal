@@ -54,7 +54,15 @@ export const saveCityAction = async (
       setLoading(false);
 
       const message = err?.message || "Something went wrong";
-
+      console.log('msg',message)
+      if (
+        message.includes("Site code") &&
+        message.includes("Site name")
+    ) {
+        setCityCodeError("Site code already exists");
+        setCityError("Site name already exists");
+        return;
+    }
       if (message.includes("Site code")) {
         setCityCodeError(message);
         return;
