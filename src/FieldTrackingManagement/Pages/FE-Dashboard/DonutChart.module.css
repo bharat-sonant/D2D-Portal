@@ -1,0 +1,91 @@
+.card {
+  background: var(--bg-white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text-dark);
+}
+
+.donutCard {
+  grid-column: span 4;
+}
+
+.donutContainer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.donutChart {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.donutSvg {
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.donutCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donutNumber {
+  font-size: 24px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.donutLabel {
+  font-size: 9px;
+  color: var(--regularColor);
+}
+
+.donutLegend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.legendItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.legendLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 4px;
+}
+
+.legendLabel {
+  font-size: 0.875rem;
+  color: var(--text-medium);
+}
+
+.legendValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+}

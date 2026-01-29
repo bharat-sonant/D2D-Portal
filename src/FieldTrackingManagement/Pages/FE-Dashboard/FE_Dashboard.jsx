@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./FE_Dashboard.module.css";
+
 import {
   LineChart,
   Line,
@@ -13,12 +14,36 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
-
+import { ClipboardList, MapPin, Users, CheckCircle } from "lucide-react";
+import DonutChart from "./DonutChart";
 const FE_Dashboard = () => {
   const [viewMode, setViewMode] = useState("weekly"); // "weekly" | "monthly"
-  const taskStats = { total:25, active: 18, inactive: 7 };
+  const taskStats = { total: 25, active: 18, inactive: 7 };
 
-  const userStats = { total: 32, active: 26, inactive: 6 };
+  const userStats = [
+    { label: "Active", value: 26, color: "var(--themeColor" },
+    { label: "Inactive", value: 6, color: "var(--whitefa)" },
+  ];
+  const stats = [
+    { label: "Total Users", value: "32", color: "purple", icon: "users" },
+    { label: "Active Tasks", value: "25", color: "cyan", icon: "tasks" },
+    { label: "Completed Task", value: "186", color: "green", icon: "check" },
+    { label: "Active Sites", value: "12", color: "orange", icon: "location" },
+  ];
+  const getIcon = (type) => {
+    switch (type) {
+      case "users":
+        return <Users size={28} strokeWidth={2} />;
+      case "tasks":
+        return <ClipboardList size={28} strokeWidth={2} />;
+      case "check":
+        return <CheckCircle size={28} strokeWidth={2} />;
+      case "location":
+        return <MapPin size={28} strokeWidth={2} />;
+      default:
+        return null;
+    }
+  };
 
   const siteUserStats = [
     { site: "Sector 21 – Noida", users: 4 },
@@ -37,7 +62,13 @@ const FE_Dashboard = () => {
 
   const workingSitesCount = 4;
 
-  const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
+ const workload = [
+  { name: "Rohit Sharma", hours: 52, initials: "RS" },
+  { name: "Amit Verma", hours: 48, initials: "AV" },
+  { name: "Neha Singh", hours: 45, initials: "NS" },
+];
+
+const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
 
   const totalAssignedHours = 186;
 
@@ -47,9 +78,9 @@ const FE_Dashboard = () => {
   ];
 
   const userDistribution = [
-    {name: 'Active', value: userStats.active, fill: '#06b6d4'},
+    { name: "Active", value: userStats.active, fill: "#06b6d4" },
     { name: "Inactive", value: userStats.inactive, fill: "#64748b" },
-  ]
+  ];
 
   const weeklyProgress = [
     { day: "Mon", completed: 12, assigned: 18 },
@@ -77,7 +108,10 @@ const FE_Dashboard = () => {
         <p className={styles.tooltipTitle}>{label}</p>
         {payload.map((p, i) => (
           <p key={i} className={styles.tooltipItem} style={{ color: p.color }}>
-            <span className={styles.tooltipDot} style={{ background: p.color }} />
+            <span
+              className={styles.tooltipDot}
+              style={{ background: p.color }}
+            />
             {p.name}: <strong>{p.value}</strong>
           </p>
         ))}
@@ -87,199 +121,221 @@ const FE_Dashboard = () => {
 
   return (
     <div className={styles.dashboard}>
-      {/* TOP GRID */}
-      <div className={styles.topGrid}>
-        {/* Users */}
-        <div className={styles.card}>
-          <h3>Users Overview</h3>
+      {/* Stat Cards */}
+      <div className={styles.statRow}>
+        {stats.map((stat, index) => (
+          <div key={index} className={` ${styles.statCard}`}>
+            <div className={styles.statContent}>
+              <div className={styles.statInfo}>
+                <div className={styles.value}>{stat.value}</div>
+                <p>{stat.label}</p>
+              </div>
 
-          <div className={styles.taskDistributionWrapper}>
-            {/* Pie Chart */}
-            <ResponsiveContainer width="60%" height={200}>
-              <PieChart>
-                <Pie
-                  data={userDistribution}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={2}
-                >
-                  <Label
-                    value={userStats.total}
-                    position="center"
-                    className={styles.pieCenterValue}
-                  />
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
+              <div
+                className={`${styles.statIcon} ${
+                  styles[
+                    `statIcon${stat.color.charAt(0).toUpperCase() + stat.color.slice(1)}`
+                  ]
+                }`}
+              >
+                {getIcon(stat.icon)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-            {/* Side Counts */}
-            <div className={styles.taskLegend}>
-              {userDistribution.map((item) => (
-                <div key={item.name} className={styles.legendItem}>
-                  <span
-                    className={styles.legendColor}
-                    style={{ backgroundColor: item.fill }}
-                  />
-                  <div>
-                    <p className={styles.legendLabel}>{item.name}</p>
-                    <strong className={styles.legendValue}>{item.value}</strong>
+      {/* chart GRID */}
+      <div className={styles.chartGrid}>
+        <div className={styles.chartGridLeft}>
+          {/* Users */}
+          <div className={`${styles.card} ${styles.donutCard}`}>
+            <div className={`${styles.cardHeader}`}>
+              <h2 className={styles.cardTitle}>Users Overview</h2>
+            </div>
+            <div className={styles.donutContainer}>
+              <DonutChart data={userStats} total={32} />
+              <div className={styles.donutLegend}>
+                {userStats.map((item, index) => (
+                  <div key={index} className={styles.legendItem}>
+                    <div className={styles.legendLeft}>
+                      <span
+                        className={styles.legendColor}
+                        style={{ background: item.color }}
+                      />
+                      <span className={styles.legendLabel}>{item.label}</span>
+                    </div>
+
+                    <span className={styles.legendValue}>{item.value}</span>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Task Distribution */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div className={styles.cardTitle}>Task Distribution</div>
+            </div>
+            <div className={styles.donutContainer}>
+              <DonutChart data={userStats} total={25} />
+              <div className={styles.donutLegend}>
+                {taskDistribution.map((item) => (
+                  <div key={item.name} className={styles.legendItem}>
+                    <div className={styles.legendLeft}>
+                      <span
+                        className={styles.legendColor}
+                        style={{ backgroundColor: item.fill }}
+                      />
+                      <span className={styles.legendLabel}>{item.name}</span>
+                    </div>
+
+                    <span className={styles.legendValue}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Task Distribution */}
-        <div className={styles.card}>
-          <h3>Task Distribution</h3>
-          <div className={styles.taskDistributionWrapper}>
-            {/* Pie Chart */}
-            <ResponsiveContainer width="60%" height={200}>
-              <PieChart>
-                <Pie
-                  data={taskDistribution}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={2}
-                >
-                  <Label
-                    value={taskStats.total}
-                    position="center"
-                    className={styles.pieCenterValue}
-                  />
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
+        <div className={styles.chartGridRight}>
+          <div className={styles.graphBG}>
+            {/* Header with Toggle */}
+            <div className={styles.cardHeader}>
+              <div className={styles.cardTitle}>
+                {viewMode === "weekly" ? "Weekly Progress" : "Monthly Trend"}
+              </div>
 
-            {/* Side Counts */}
-            <div className={styles.taskLegend}>
-              {taskDistribution.map((item) => (
-                <div key={item.name} className={styles.legendItem}>
-                  <span
-                    className={styles.legendColor}
-                    style={{ backgroundColor: item.fill }}
-                  />
-                  <div>
-                    <p className={styles.legendLabel}>{item.name}</p>
-                    <strong className={styles.legendValue}>{item.value}</strong>
-                  </div>
-                </div>
-              ))}
+              <div className={styles.toggle}>
+                <button
+                  className={`${styles.toggleBtn} ${
+                    viewMode === "weekly" ? styles.activeToggle : ""
+                  }`}
+                  onClick={() => setViewMode("weekly")}
+                >
+                  Weekly
+                </button>
+
+                <button
+                  className={`${styles.toggleBtn} ${
+                    viewMode === "monthly" ? styles.activeToggle : ""
+                  }`}
+                  onClick={() => setViewMode("monthly")}
+                >
+                  Monthly
+                </button>
+              </div>
+            </div>
+
+            {/* Chart */}
+            <div className={`${styles.graphBody}`}>
+              <ResponsiveContainer width="100%" height={250}>
+                {viewMode === "weekly" ? (
+                  <AreaChart data={weeklyProgress}>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area dataKey="completed" />
+                    <Area dataKey="assigned" />
+                  </AreaChart>
+                ) : (
+                  <LineChart data={monthlyTrend}>
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line dataKey="tasks" />
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
             </div>
           </div>
+          <div className={styles.chartGridInner}>
+            {/* Accessible Sites */}
+              <div className={`${styles.card} ${styles.sitesListCard}`}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardTitle}>
+                    Total Sites : {siteUserStats.length}
+                  </div>
+                </div>
+                <div className={styles.sitesList}>
+                  {siteUserStats.map((site, index) => (
+                    <div key={index} className={styles.siteItem}>
+                      <div className={styles.siteItemLeft}>
+                        <span className={styles.siteDot} />
+                        <span className={styles.siteName}>{site.site}</span>
+                      </div>
+
+                      <span className={styles.siteCount}>{site.users}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+{/* Unassigned Users & Workload */}
+<div className={`${styles.card} ${styles.workloadCard}`}>
+  <div className={`${styles.cardHeader} `}>
+  <h2 className={styles.cardTitle}>Unassigned Users & Workload</h2>
+  </div>
+
+  <div className={styles.workloadList}>
+    {workload.map((person, index) => (
+      <div key={index} className={styles.workloadItem}>
+        <div className={styles.workloadLeft}>
+          <div className={styles.workloadAvatar}>
+            {person.initials}
+          </div>
+          <span className={styles.workloadName}>
+            {person.name}
+          </span>
         </div>
 
-      {/* Working Sites KPI */}
-      <div className={styles.highlightCard}>
-        <div className={styles.highlightValue}>{workingSitesCount}</div>
-        <div className={styles.highlightLabel}>Working Sites</div>
-      </div>
-
-      {/* Accessible Sites */}
-      <div className={styles.card}>
-        <h3>Total Sites : {siteUserStats.length}</h3>
-
-        <div className={styles.siteListBox}>
-          {siteUserStats.length === 0 ? (
-            <p className={styles.emptyText}>No sites assigned</p>
-          ) : (
-            <ul className={styles.siteList}>
-              {siteUserStats.map((item, index) => (
-                <li key={index} className={styles.siteItem}>
-                  <div className={styles.siteLeft}>
-                    <span className={styles.siteDot} />
-                    <span>{item.site}</span>
-                  </div>
-
-                  <div className={styles.siteUsers}
-                   data-tooltip={`${item.users} Users`}
-                  >
-                    {item.users}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className={styles.workloadHours}>
+          {person.hours} hrs
         </div>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
+      
+          </div>
+        </div>
+      </div>
 
       {/* MIDDLE */}
-     <div className={styles.midGrid}>
-        <div className={styles.card}>
-          {/* Header with Toggle */}
-          <div className={styles.cardHeader}>
-            <h3>
-              {viewMode === "weekly" ? "Weekly Progress" : "Monthly Trend"}
-            </h3>
+      <div className={styles.midGrid}>
+        {/* Accessible Sites */}
+        {/* <div className={styles.card}>
+          <h3>Total Sites : {siteUserStats.length}</h3>
 
-            <div className={styles.toggle}>
-              <button
-                className={`${styles.toggleBtn} ${
-                  viewMode === "weekly" ? styles.activeToggle : ""
-                }`}
-                onClick={() => setViewMode("weekly")}
-              >
-                Weekly
-              </button>
-
-              <button
-                className={`${styles.toggleBtn} ${
-                  viewMode === "monthly" ? styles.activeToggle : ""
-                }`}
-                onClick={() => setViewMode("monthly")}
-              >
-                Monthly
-              </button>
-            </div>
-          </div>
-
-          {/* Chart */}
-          <ResponsiveContainer width="100%" height={250}>
-            {viewMode === "weekly" ? (
-              <AreaChart data={weeklyProgress}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Area dataKey="completed" />
-                <Area dataKey="assigned" />
-              </AreaChart>
+          <div className={styles.siteListBox}>
+            {siteUserStats.length === 0 ? (
+              <p className={styles.emptyText}>No sites assigned</p>
             ) : (
-              <LineChart data={monthlyTrend}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Line dataKey="tasks" />
-              </LineChart>
+              <ul className={styles.siteList}>
+                {siteUserStats.map((item, index) => (
+                  <li key={index} className={styles.siteItem}>
+                    <div className={styles.siteLeft}>
+                      <span className={styles.siteDot} />
+                      <span>{item.site}</span>
+                    </div>
+
+                    <div
+                      className={styles.siteUsers}
+                      data-tooltip={`${item.users} Users`}
+                    >
+                      {item.users}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-
-      {/* BOTTOM */}
-      <div className={styles.card}>
-        <h3>Unassigned Users & Workload</h3>
-        <div className={styles.bottomGrid}>
-          <ul className={styles.userList}>
-            {unassignedUsers.map((u, i) => (
-              <li key={i}>{u}</li>
-            ))}
-          </ul>
-
-          <div className={styles.highlightCard}>
-            <div className={styles.highlightLabel}>Total Assigned Work :</div>
-            <div className={styles.highlightValue}>{totalAssignedHours} hrs</div>
           </div>
-        </div>
+        </div> */}
       </div>
+
+    
+
     </div>
   );
 };
