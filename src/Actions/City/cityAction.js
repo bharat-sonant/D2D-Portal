@@ -126,14 +126,15 @@ export const changeCityStatusAction = async (
 };
 
 export const filterCityAction = (cityList, searchTerm, setSelectedCity, selectedCity) => {
+    console.log('citylist',selectedCity)
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
-        let currentSelected = cityList?.find(item => item?.city_id === selectedCity?.city_id);
+        let currentSelected = cityList?.find(item => item?.site_id === selectedCity?.site_id);
         setSelectedCity(currentSelected || cityList[0] || null);
         return cityList;
     }
-    let list = cityList?.filter((item) => item?.city_name?.trim().toLowerCase().includes(term));
-    let currentSelected = list?.find(item => item?.city_id === selectedCity?.city_id);
+    let list = cityList?.filter((item) => item?.site_name?.trim().toLowerCase().includes(term));
+    let currentSelected = list?.find(item => item?.site_id === selectedCity?.site_id);
 
     setSelectedCity(currentSelected || list[0] || null);
 
