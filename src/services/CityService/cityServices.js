@@ -78,22 +78,22 @@ export const getAvailableCityData = async(userId) => {
 
   const cityIds = accessResp?.data?.map(item => item.city_id)
 
-  const {data, error} = await supabase.from("Sites").select("city_id , city_name, status, city_code").in("city_id", cityIds);
+  const {data, error} = await supabase.from("Sites").select("site_id , site_name, status, site_code").in("site_id", cityIds);
 
   if (error) {
     return { status: 'error', message: error.message };
   }
 
-  const updatedCityList = data.map(city => ({
-    ...city,
-    logoUrl : `${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
+  const updatedCityList = data.map(site => ({
+    ...site,
+    logoUrl : `${sbs.storageUrl}/CityLogo/${site.site_code}.png?v=${Date.now()}`
   }));
 
   const sortedData = [...updatedCityList].sort((a,b)=> {
     if(a.status !== b.status){
       return a.status === "active" ? -1 : 1;
     }
-    return a.city_name.localeCompare(b.city_name);
+    return a.site_name.localeCompare(b.site_name);
   })
 
   return {
@@ -103,14 +103,14 @@ export const getAvailableCityData = async(userId) => {
   };
 }
 
-export const updateCityStatus=async(city_id,status)=>{
+export const updateCityStatus=async(siteId,status)=>{
     return new Promise(async(resolve,reject)=>{
         
-        if (!city_id) {
+        if (!siteId) {
             return reject('Invalid parameters');
         }
         status = status || status==='active'?'active':'inactive';
-        const response = await sbs.updateData('Sites','city_id',city_id,{status});
+        const response = await sbs.updateData('Sites','site_id',siteId,{status});
         return !response?.success? reject(response?.error):resolve(response);
     })
 }

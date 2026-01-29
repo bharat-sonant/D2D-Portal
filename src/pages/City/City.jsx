@@ -228,7 +228,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
                 <div className={TaskStyles.cityLeft}>
                   <LogoImage image={selectedCity?.logoUrl} />
                   <span className={TaskStyles.userName}>
-                    {selectedCity?.city_code || "N/A"}
+                    {selectedCity?.site_code || "N/A"}
                     <p>Manage permissions, site access and more</p>
                   </span>
                 </div>

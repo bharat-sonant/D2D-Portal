@@ -51,7 +51,7 @@ const AddWard = (props) => {
   const handleSave = async () => {
     saveWardAction(
       form,
-      props.selectedCity?.city_id,
+      props.selectedCity?.site_id,
       props.editWard?.wardId,
       setLoading,
       setWardNumberError,

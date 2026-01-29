@@ -28,13 +28,12 @@ const DefaultCitySelection = ({ onClose }) => {
     getAvailableCityList(setCityList, "active", setLoading, userId);
   }, []);
 
-  const handleSubmit = async (city) => {
+  const handleSubmit = async (site) => {
     if (saving) return;
     setSaving(true);
-
     try {
-      const res = await getCityFirebaseConfig(city?.city_id);
-      await changeDefaultCityAction(city, setDefault, setCityContext, onClose);
+      const res = await getCityFirebaseConfig(site?.site_id);
+      await changeDefaultCityAction(site, setDefault, setCityContext, onClose);
     } catch (err) {
       console.error("Error fetching firebase config:", err);
     } finally {
@@ -44,7 +43,7 @@ const DefaultCitySelection = ({ onClose }) => {
 
   useMemo(() => {
     if (cityList?.length > 0 && city) {
-      let detail = cityList.find((item) => item?.city_name === city);
+      let detail = cityList.find((item) => item?.site_name === city);
       setSelectedCity(detail);
     }
   }, [cityList, city]);
@@ -53,7 +52,7 @@ const DefaultCitySelection = ({ onClose }) => {
     if (!searchQuery.trim()) return cityList;
 
     return cityList.filter((c) =>
-      c.city_name.toLowerCase().includes(searchQuery.toLowerCase())
+      c.site_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [cityList, searchQuery]);
   return (
@@ -105,23 +104,22 @@ const DefaultCitySelection = ({ onClose }) => {
               />
             ) : (
               <div className={styles.cityRow}>
-                {filteredCities.map((city) => (
+                {filteredCities.map((site) => (
                   <div
-                    key={city.city_id}
+                    key={site.site_id}
                     className={`${styles.cityCard} ${
-                      selectedCity?.city_id === city?.city_id
+                      selectedCity?.site_id === site?.site_id
                         ? styles.selected
                         : ""
                     }`}
-                    onClick={() => setSelectedCity(city)}
+                    onClick={() => setSelectedCity(site)}
                   >
                     {/* <div className={styles.logoWrapper}> */}
-                    <LogoImage image={city?.logoUrl} />
+                    <LogoImage image={site?.logoUrl} />
                     {/* </div> */}
 
-                    <div className={styles.cityName}>{city.city_name}</div>
-
-                    {selectedCity?.city_id === city?.city_id && (
+                    <div className={styles.cityName}>{site.site_name}</div>
+                    {selectedCity?.site_id === site?.site_id && (
                       <div
                         className={styles.checkMark}
                         style={{ "--bg-color": city.color }}
@@ -144,11 +142,11 @@ const DefaultCitySelection = ({ onClose }) => {
                 onClick={async () => {
                   try {
                     const res = await getCityFirebaseConfig(
-                      selectedCity?.city_id
+                      selectedCity?.site_id
                     );
                     setCityContext({
-                      city: selectedCity?.city_name,
-                      cityId: selectedCity?.city_id,
+                      city: selectedCity?.site_name,
+                      cityId: selectedCity?.site_id,
                       cityLogo: selectedCity?.logoUrl,
                     });
 

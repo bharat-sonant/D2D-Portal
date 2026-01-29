@@ -90,7 +90,7 @@ const CitySettings = ({
             <div className={style.cityCardLeft}>
               <LogoImage image={selectedCity?.logoUrl} />
               <div className={style.cityName}>
-                {selectedCity?.city_name || "N/A"}
+                {selectedCity?.site_name || "N/A"}
               </div>
             </div>
             <div className={style.cityCardRight}>
@@ -112,7 +112,7 @@ const CitySettings = ({
               <button
                 className={style.editIcon}
                 onClick={onClickEdit}
-                title="Edit City"
+                title="Edit Site"
               >
                 <Edit2 size={14} />
               </button>

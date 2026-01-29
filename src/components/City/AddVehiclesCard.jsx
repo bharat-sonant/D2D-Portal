@@ -28,7 +28,7 @@ const AddVehiclesCard = (props) => {
       action.getVehicles(
         setVehicleList,
         setLoading,
-        props.selectedCity.city_id
+        props.selectedCity.site_id
       );
     }
   };

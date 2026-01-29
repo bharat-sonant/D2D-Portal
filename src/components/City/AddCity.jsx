@@ -11,8 +11,8 @@ import GlobalSpinnerLoader from "../Common/Loader/GlobalSpinnerLoader";
 
 const AddCity = (props) => {
   const initialForm = {
-    city_code: "",
-    city_name: "",
+    siteCode: "",
+    siteName: "",
     status: "active",
   };
 
@@ -39,12 +39,12 @@ const AddCity = (props) => {
   }, [form, logo, loading]);
 
   const handleChange = (e) => {
-    if (e.target.name === "city_code") {
+    if (e.target.name === "site_code") {
       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
       if (cityCodeError) setCityCodeError("");
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
-      if (e.target.name === "city_name" && cityError) setCityError("");
+      if (e.target.name === "site_name" && cityError) setCityError("");
     }
   };
   const handleSave = async () => {
@@ -146,10 +146,11 @@ const AddCity = (props) => {
     setLogoPreview("");
     props?.setOnEdit(false);
   };
+
   useMemo(() => {
     setForm((pre) => ({
-      city_code: props?.onEdit?.city_code || "",
-      city_name: props?.onEdit?.city_name || "",
+      siteCode: props?.onEdit?.site_code || "",
+      siteName: props?.onEdit?.site_name || "",
       status: props?.onEdit?.status || "active",
       created_at: dayjs(props?.onEdit?.created_at).isValid()
         ? dayjs(props?.onEdit?.created_at).format("YYYY-MM-DD HH:mm:ss")
@@ -157,6 +158,7 @@ const AddCity = (props) => {
     }));
     setLogoPreview(props?.onEdit?.logoUrl || "");
   }, [props?.onEdit]);
+
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -179,6 +181,7 @@ const AddCity = (props) => {
       handleLogoChange({ target: { files: [file] } });
     }
   };
+  
   return (
     <div className={modalStyles.overlay} aria-modal="true" role="dialog">
       <div className={`${modalStyles.modal} ${styles.modal}`}>
@@ -211,7 +214,7 @@ const AddCity = (props) => {
 
         {/* Modal Body */}
         <div className={modalStyles.modalBody}>
-          {/* City Code */}
+          {/* Site Code */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>Site Code</label>
             <div className={modalStyles.inputWrapper}>
@@ -222,8 +225,8 @@ const AddCity = (props) => {
                 className={modalStyles.input}
                 type="text"
                 placeholder="Enter site code"
-                name="city_code"
-                value={form.city_code}
+                name="site_code"
+                value={form.siteCode}
                 onChange={handleChange}
                 disabled={Boolean(
                   props?.onEdit && Object.keys(props?.onEdit).length
@@ -233,7 +236,7 @@ const AddCity = (props) => {
             {cityCodeError && <ErrorMessage message={cityCodeError} />}
           </div>
 
-          {/* City Name */}
+          {/* Site Name */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>Site Name</label>
             <div className={modalStyles.inputWrapper}>
@@ -244,15 +247,15 @@ const AddCity = (props) => {
                 className={modalStyles.input}
                 type="text"
                 placeholder="Enter site name"
-                name="city_name"
-                value={form.city_name}
+                name="site_name"
+                value={form.siteName}
                 onChange={handleChange}
               />
             </div>
             {cityError && <ErrorMessage message={cityError} />}
           </div>
 
-          {/* City Logo */}
+          {/* Site Logo */}
           <div className={modalStyles.inputGroup}>
             <label className={modalStyles.label}>Upload Site Logo</label>
             <div className={styles.uploadWrapper}>
@@ -260,7 +263,7 @@ const AddCity = (props) => {
               <input
                 type="file"
                 accept="image/png, image/svg+xml"
-                id="cityLogoInput"
+                id="siteLogoInput"
                 className={styles.fileInput}
                 onChange={handleLogoChange}
               />
@@ -271,14 +274,14 @@ const AddCity = (props) => {
                   <div className={styles.previewBox}>
                     <img
                       src={logoPreview}
-                      alt="City Logo"
+                      alt="Site Logo"
                       className={styles.previewImg}
                     />
                   </div>
                 )}
                 {/* upload box */}
                 <label
-                  htmlFor="cityLogoInput"
+                  htmlFor="SiteLogoInput"
                   className={`${styles.uploadArea} 
         ${dragActive ? styles.uploadAreaActive : ""} 
         ${logoPreview ? styles.uploadAreaSuccess : ""}`}
@@ -304,7 +307,7 @@ const AddCity = (props) => {
                       className={styles.uploadSuccess}
                       onClick={(e) => {
                         e.preventDefault();
-                        document.getElementById("cityLogoInput").click();
+                        document.getElementById("siteLogoInput").click();
                       }}
                       title="Change File"
                     >
