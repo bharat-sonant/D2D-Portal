@@ -120,7 +120,6 @@ const FETasks = () => {
       );
     }
   };
-  console.log("takss", tasks);
   return (
     <>
       {/* Background */}

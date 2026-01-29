@@ -13,7 +13,6 @@ const AddWard = (props) => {
     display_name: "",
   };
 
-  console.log("props", props);
 
   const [loading, setLoading] = useState(false);
   const [wardNumberError, setWardNumberError] = useState("");

@@ -18,7 +18,6 @@ export const saveCityAction = async (
   let isValid = true;
   setCityError("");
   setCityCodeError("");
-  console.log('form',form)
   if (!form?.siteCode?.trim()) {
     setCityCodeError("Site code is required");
     isValid = false;

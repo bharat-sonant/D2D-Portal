@@ -2,7 +2,6 @@ import {setUserDefaultCity} from '../../services/UserServices/UserServices';
 import * as common from "../../common/common";
 
 export const changeDefaultCityAction=async(selectedCity,setAsDefault,setCityContext,onClose)=>{
-        {console.log('selectedCity',selectedCity)}
         try{
             if (setAsDefault && selectedCity?.site_id) {
                 const userId = localStorage.getItem('userId');
