@@ -12,7 +12,7 @@ export const saveCityFirebaseConfig = async (city_id, firebaseConfig) => {
         }
 
         try {
-            const response = await sbs.updateData('Cities', 'city_id', city_id, { firebase_db_path: firebaseConfig });
+            const response = await sbs.updateData('Sites', 'city_id', city_id, { firebase_db_path: firebaseConfig });
             if (!response?.success) {
                 return reject(response?.error || 'Failed to save Firebase configuration');
             }
@@ -29,7 +29,7 @@ export const saveCityFirebaseConfig = async (city_id, firebaseConfig) => {
  */
 export const getCityFirebaseConfig = async (city_id) => {
     try {
-        const result = await sbs.getDataByColumnName('Cities', 'city_id', city_id);
+        const result = await sbs.getDataByColumnName('Sites', 'city_id', city_id);
         if (result.success && result.data?.length > 0) {
             return { status: 'success', data: result.data[0].firebase_db_path };
         } else {

@@ -78,7 +78,7 @@ export const getAvailableCityData = async(userId) => {
 
   const cityIds = accessResp?.data?.map(item => item.city_id)
 
-  const {data, error} = await supabase.from("Cities").select("city_id , city_name, status, city_code").in("city_id", cityIds);
+  const {data, error} = await supabase.from("Sites").select("city_id , city_name, status, city_code").in("city_id", cityIds);
 
   if (error) {
     return { status: 'error', message: error.message };
@@ -110,7 +110,7 @@ export const updateCityStatus=async(city_id,status)=>{
             return reject('Invalid parameters');
         }
         status = status || status==='active'?'active':'inactive';
-        const response = await sbs.updateData('Cities','city_id',city_id,{status});
+        const response = await sbs.updateData('Sites','city_id',city_id,{status});
         return !response?.success? reject(response?.error):resolve(response);
     })
 }

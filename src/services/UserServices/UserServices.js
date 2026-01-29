@@ -40,7 +40,7 @@ export const updateUserStatus = async (userId, userDetail) => {
 }
 
 export const getCities = async () => {
-  const result = await sbs.getData('Cities');
+  const result = await sbs.getData('Sites');
   if (result.success) {
     const activeCities = result.data.filter(
       city => city.status === 'active'

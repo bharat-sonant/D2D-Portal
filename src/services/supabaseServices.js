@@ -230,7 +230,7 @@ export const subscribeUserPermissions = ({
 };
 
 export const getFirebase_db_url = async(city_id) => {
-  const result = await getDataByColumnName('Cities','city_id',city_id);
+  const result = await getDataByColumnName('Sites','city_id',city_id);
   if(!result.success){
     return {status : 'error', message : result?.error}
   }

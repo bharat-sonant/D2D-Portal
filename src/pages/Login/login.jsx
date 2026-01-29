@@ -144,7 +144,7 @@ const Login = () => {
   const fetchCityName = async (defaultCityId) => {
     if (defaultCityId) {
       const resp = await getDataByColumnName(
-        "Cities",
+        "Sites",
         "city_id",
         defaultCityId,
       );

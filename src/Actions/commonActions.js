@@ -41,7 +41,7 @@ export const getCityLogoUrl=async(cityId,setLogoUrl)=>{
         return images?.wevoisLogo;
     }
     let logoUrl = images?.wevoisLogo
-    const resp = await getDataByColumnName("Cities", "city_id",cityId );
+    const resp = await getDataByColumnName("Sites", "city_id",cityId );
     if(resp?.success){
         logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.city_code}.png?v=${Date.now()}`;
     }
