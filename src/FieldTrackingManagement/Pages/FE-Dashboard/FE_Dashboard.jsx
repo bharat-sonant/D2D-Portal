@@ -62,13 +62,13 @@ const FE_Dashboard = () => {
 
   const workingSitesCount = 4;
 
- const workload = [
-  { name: "Rohit Sharma", hours: 52, initials: "RS" },
-  { name: "Amit Verma", hours: 48, initials: "AV" },
-  { name: "Neha Singh", hours: 45, initials: "NS" },
-];
+  const workload = [
+    { name: "Rohit Sharma", hours: 52, initials: "RS" },
+    { name: "Amit Verma", hours: 48, initials: "AV" },
+    { name: "Neha Singh", hours: 45, initials: "NS" },
+  ];
 
-const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
+  const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
 
   const totalAssignedHours = 186;
 
@@ -118,10 +118,10 @@ const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
       </div>
     );
   };
-const totalWorkloadHours = workload.reduce(
-  (sum, person) => sum + person.hours,
-  0
-);
+  const totalWorkloadHours = workload.reduce(
+    (sum, person) => sum + person.hours,
+    0,
+  );
   return (
     <div className={styles.dashboard}>
       {/* Stat Cards */}
@@ -239,8 +239,20 @@ const totalWorkloadHours = workload.reduce(
                     <XAxis dataKey="day" />
                     <YAxis />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area dataKey="completed" />
-                    <Area dataKey="assigned" />
+                    <Area
+                      dataKey="completed"
+                      stroke="var(--themeColor)"
+                      fill="var(--themeColor)"
+                      fillOpacity={0.25}
+                      strokeWidth={2}
+                    />
+                    <Area
+                      dataKey="assigned"
+                      stroke="#94a3b8"
+                      fill="#94a3b8"
+                      fillOpacity={0.15}
+                      strokeWidth={2}
+                    />
                   </AreaChart>
                 ) : (
                   <LineChart data={monthlyTrend}>
@@ -255,56 +267,53 @@ const totalWorkloadHours = workload.reduce(
           </div>
           <div className={styles.chartGridInner}>
             {/* Accessible Sites */}
-              <div className={`${styles.card} ${styles.sitesListCard}`}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardTitle}>
-                    Total Sites
-                  </div>
-                  <p>
-                    {siteUserStats.length}
-                  </p>
-                </div>
-                <div className={styles.sitesList}>
-                  {siteUserStats.map((site, index) => (
-                    <div key={index} className={styles.siteItem}>
-                      <div className={styles.siteItemLeft}>
-                        <span className={styles.siteDot} />
-                        <span className={styles.siteName}>{site.site}</span>
-                      </div>
-
-                      <span className={styles.siteCount}>{site.users}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className={`${styles.card} ${styles.sitesListCard}`}>
+              <div className={styles.cardHeader}>
+                <div className={styles.cardTitle}>Total Sites</div>
+                <p>{siteUserStats.length}</p>
               </div>
-{/* Unassigned Users & Workload */}
-<div className={`${styles.card} ${styles.workloadCard}`}>
-  <div className={`${styles.cardHeader} `}>
-  <h2 className={styles.cardTitle}>Unassigned Users & Workload</h2>
-  <p>  {totalWorkloadHours} <span className={styles.unit}>hrs</span></p>
-  </div>
+              <div className={styles.sitesList}>
+                {siteUserStats.map((site, index) => (
+                  <div key={index} className={styles.siteItem}>
+                    <div className={styles.siteItemLeft}>
+                      <span className={styles.siteDot} />
+                      <span className={styles.siteName}>{site.site}</span>
+                    </div>
 
-  <div className={styles.workloadList}>
-    {workload.map((person, index) => (
-      <div key={index} className={styles.workloadItem}>
-        <div className={styles.workloadLeft}>
-          <div className={styles.workloadAvatar}>
-            {person.initials}
-          </div>
-          <span className={styles.workloadName}>
-            {person.name}
-          </span>
-        </div>
+                    <span className={styles.siteCount}>{site.users}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Unassigned Users & Workload */}
+            <div className={`${styles.card} ${styles.workloadCard}`}>
+              <div className={`${styles.cardHeader} `}>
+                <h2 className={styles.cardTitle}>
+                  Unassigned Users & Workload
+                </h2>
+                <p>
+                  {" "}
+                  {totalWorkloadHours} <span className={styles.unit}>hrs</span>
+                </p>
+              </div>
 
-        <div className={styles.workloadHours}>
-          {person.hours} <span> hrs</span>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+              <div className={styles.workloadList}>
+                {workload.map((person, index) => (
+                  <div key={index} className={styles.workloadItem}>
+                    <div className={styles.workloadLeft}>
+                      <div className={styles.workloadAvatar}>
+                        {person.initials}
+                      </div>
+                      <span className={styles.workloadName}>{person.name}</span>
+                    </div>
 
-      
+                    <div className={styles.workloadHours}>
+                      {person.hours} <span> hrs</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -340,9 +349,6 @@ const totalWorkloadHours = workload.reduce(
           </div>
         </div> */}
       </div>
-
-    
-
     </div>
   );
 };
