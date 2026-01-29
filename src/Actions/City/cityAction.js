@@ -126,7 +126,6 @@ export const changeCityStatusAction = async (
 };
 
 export const filterCityAction = (cityList, searchTerm, setSelectedCity, selectedCity) => {
-    console.log('citylist',selectedCity)
     const term = searchTerm?.trim().toLowerCase();
     if (!term) {
         let currentSelected = cityList?.find(item => item?.site_id === selectedCity?.site_id);
