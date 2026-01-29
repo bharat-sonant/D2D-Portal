@@ -47,10 +47,10 @@ export const getCities = async () => {
     );
 
     const sortedData = activeCities.sort((a, b) =>
-      a.city_name.localeCompare(b.city_name)
+      a.site_name.localeCompare(b.site_name)
     );
 
-    return { status: 'success', message: 'City data fetched successfully', data: sortedData };
+    return { status: 'success', message: 'Site data fetched successfully', data: sortedData };
   } else {
     return { status: 'error', message: result.error };
   };

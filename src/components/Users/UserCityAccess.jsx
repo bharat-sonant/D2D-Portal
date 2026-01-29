@@ -8,7 +8,7 @@ import NoResult from "../NoResultFound/NoResult";
 import GlobalCheckbox from "../Common/GlobalCheckbox/GlobalCheckbox";
 
 const UserCityAccess = (props) => {
-  //   console.log("props", props);
+    console.log("props", props);
   const [selectedCities, setSelectedCities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,17 +21,17 @@ const UserCityAccess = (props) => {
     }
   }, [props.selectedUser?.id]);
 
-  const handleCheckboxChange = async (city_id) => {
+  const handleCheckboxChange = async (siteId) => {
     if (!props.selectedUser?.id) {
       return;
     }
     const isCurrentlySelected = selectedCities.some(
-      (c) => c.city_id === city_id
+      (c) => c.city_id === siteId
     );
 
     await userAction.handleCityAccessToggle(
       props.selectedUser?.id,
-      city_id,
+      siteId,
       isCurrentlySelected,
       setSelectedCities,
       selectedCities,
@@ -39,8 +39,10 @@ const UserCityAccess = (props) => {
     );
   };
   const filteredCityList = props.cityList?.filter((item) =>
-    item.city_name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.site_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log('sele',selectedCities)
 
   return (
     <div className={style.Detailscard}>
@@ -100,11 +102,11 @@ const UserCityAccess = (props) => {
             {filteredCityList.map((item, index) => (
               <li key={index} className={style.list_item}>
                 <GlobalCheckbox
-                  label={item.city_name}
+                  label={item.site_name}
                   checked={selectedCities.some(
-                    (c) => c.city_id === item.city_id
+                    (c) => c.city_id === item.site_id
                   )}
-                  onChange={() => handleCheckboxChange(item.city_id)}
+                  onChange={() => handleCheckboxChange(item.site_id)}
                   disabled={loading}
                   align="right"
                   fullWidth
