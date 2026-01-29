@@ -70,8 +70,8 @@ export const saveCityAction = async (
 };
 
 export const getCityList = async (setSelectedCity, setCityList, selectedCity, setWardList, setLoading,setSelectedWard) => {
-    setLoading(true)
-    // const response = await cityService.getCityData();
+    try{
+         setLoading(true)
     const response = await api.get('sites')
     if(response.success){
         const updatedCityList = response.data?.map(city => ({
@@ -89,6 +89,13 @@ export const getCityList = async (setSelectedCity, setCityList, selectedCity, se
         setCityList([]);
         setLoading(false)
     }
+    }catch(err){
+    console.log(err.message);
+    }
+    finally {
+        setLoading(false)
+    }
+  
 }
 
 export const changeCityStatusAction = async (
