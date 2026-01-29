@@ -110,7 +110,7 @@ export const changeCityStatusAction = async (
   try {
     const status = newStatus ? "active" : "inactive";
     // await cityService.updateCityStatus(selectedCity?.city_id, newStatus);
-    await api.patch(`sites/${selectedCity?.city_id}`, { status: status });
+    await api.patch(`sites/${selectedCity?.site_id}`, { status: status });
     setToggle(newStatus);
     setStatusConfirmation({ status: false, data: null, setToggle: () => {} });
     loadCities();

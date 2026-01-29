@@ -82,8 +82,8 @@ const [SelectedDate,setSelectedDate] = useState([]);
   }, []);
 
   useEffect(() => {
-    if (activeTab === "users" && selectedCity?.city_id) {
-      getUsersByCity(selectedCity.city_id, setUsersInCity, setLoadingUsers);
+    if (activeTab === "users" && selectedCity?.site_id) {
+      getUsersByCity(selectedCity.site_id, setUsersInCity, setLoadingUsers);
     }
   }, [activeTab, selectedCity]);
 
@@ -109,7 +109,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
 
   const handleSaveFirebaseConfig = async (dbPath, setLoader) => {
     await saveFirebaseConfigAction(
-      selectedCity.city_id || selectedCity.CityId,
+      selectedCity.site_id,
       dbPath, // Pass string directly
       setLoader,
       () => {
@@ -336,7 +336,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
                     : globalAlert.warningName
                 }
               >
-                {selectedCity?.city_name}
+                {selectedCity?.site_name}
               </strong>{" "}
               site?
             </>

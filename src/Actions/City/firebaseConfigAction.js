@@ -9,8 +9,8 @@ import { saveCityFirebaseConfig } from "../../services/CityService/firebaseConfi
  * @param {Function} setLoader - Function to set loading state.
  * @param {Function} onSuccess - Callback function on successful save.
  */
-export const saveFirebaseConfigAction = async (cityId, dbPath, setLoader, onSuccess) => {
-    if (!cityId) {
+export const saveFirebaseConfigAction = async (siteId, dbPath, setLoader, onSuccess) => {
+    if (!siteId) {
         common.setAlertMessage("error", "City ID is missing!");
         return;
     }
@@ -19,8 +19,8 @@ export const saveFirebaseConfigAction = async (cityId, dbPath, setLoader, onSucc
     }
     setLoader(true);
     try {
-        // await saveCityFirebaseConfig(cityId, dbPath);
-        await api.patch(`sites/${cityId}`,payload)
+        // await saveCityFirebaseConfig(siteId, dbPath);
+        await api.patch(`sites/${siteId}`,payload)
         common.setAlertMessage("success", "Firebase configuration saved successfully!");
         if (onSuccess) onSuccess();
     } catch (error) {
