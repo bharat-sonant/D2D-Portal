@@ -74,14 +74,14 @@ export const getCityList = async (setSelectedCity, setCityList, selectedCity, se
          setLoading(true)
     const response = await api.get('sites')
     if(response.success){
-        const updatedCityList = response.data?.map(city => ({
-            ...city,
-            logoUrl : `${sbs.storageUrl}/CityLogo/${city.city_code}.png?v=${Date.now()}`
+        const updatedCityList = response.data?.map(site => ({
+            ...site,
+            logoUrl : `${sbs.storageUrl}/CityLogo/${site.site_code}.png?v=${Date.now()}`
         }))
     // if (response.status === 'success') {
-        let currentSelected = updatedCityList?.find(item => item?.city_id === selectedCity?.city_id);
+        let currentSelected = updatedCityList?.find(item => item?.site_id === selectedCity?.site_id);
         setSelectedCity(currentSelected || updatedCityList[0]);
-        getwardList(updatedCityList[0]?.city_id, setWardList,setSelectedWard)
+        getwardList(updatedCityList[0]?.site_id, setWardList,setSelectedWard)
         setCityList(updatedCityList);
         setLoading(false)
     } else {

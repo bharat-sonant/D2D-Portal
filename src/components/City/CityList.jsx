@@ -79,12 +79,12 @@ const CityList = (props) => {
           ${props.selectedCity ? GlobalStyles.active : ""}`}
         >
           {props.selectedCity
-            ? `${props.selectedCity.city_name}${
-                props.selectedCity.city_id
-                  ? ` (${props.selectedCity.city_id})`
+            ? `${props.selectedCity.site_name}${
+                props.selectedCity.site_id
+                  ? ` (${props.selectedCity.site_id})`
                   : ""
               }`
-            : "Select City"}
+            : "Select Site"}
         </div>
         <img
           src={images.iconDown}
@@ -115,29 +115,29 @@ const CityList = (props) => {
           <div className={`${styles.userListTitle}`}></div>
           <div className={styles.userScroll}>
             {props.loading ? (
-              <WevoisLoader title="Loading city data..." />
+              <WevoisLoader title="Loading site data..." />
             ) : filteredCityList?.length > 0 ? (
-              filteredCityList.map((city, i) => (
-                <li className={GlobalStyles.dropdownLi} key={city.city_id || i}>
+              filteredCityList.map((site, i) => (
+                <li className={GlobalStyles.dropdownLi} key={site.site_id || i}>
                   <div
                     className={`dropdown-item ${GlobalStyles.desktopRow} ${
-                      props?.selectedCity?.city_id === city.city_id
+                      props?.selectedCity?.site_id === site.site_id
                         ? GlobalStyles.desktopRowSelected
                         : ""
                     }`}
                     onClick={() => {
-                      props?.setSelectedCity(city);
+                      props?.setSelectedCity(site);
                       closeDropdown();
                       getwardList(
-                        city.city_id,
+                        site.site_id,
                         props.setWardList,
                         props.setSelectedWard
                       );
                     }}
                   >
-                    <div className={styles.leftSection}>{city.city_name}</div>
+                    <div className={styles.leftSection}>{site.site_name}</div>
                     <div className={styles.userMeta}>
-                      {city.status === "inactive" && (
+                      {site.status === "inactive" && (
                         <span className={styles.redDot}></span>
                       )}
                     </div>

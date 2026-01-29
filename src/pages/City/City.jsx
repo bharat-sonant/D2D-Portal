@@ -171,6 +171,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
       mapRef.current.fitBounds(bounds);
     }
   };
+
   return (
     <>
       <div className={`${GlobalStyles.floatingDiv}`}>
