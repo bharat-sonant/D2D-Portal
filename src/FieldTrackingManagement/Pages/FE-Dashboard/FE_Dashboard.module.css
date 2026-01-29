@@ -8,8 +8,8 @@
 /* Page */
 .dashboard {
   padding: 10px;
-  background: #f9fafb; /* light gray */
-  font-family: Inter, system-ui, sans-serif;
+    z-index: 1;
+    position: relative;
 }
 
 /* Stat Cards */
@@ -22,6 +22,7 @@
   border-radius: 6px;
 
   overflow: hidden;
+
 }
 .statCard {
   width: calc(100% / 4);
@@ -105,7 +106,7 @@
 }
 
 .statCard:hover .statIcon {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.2) rotate(5deg);
 }
 
 .statIconPurple {
@@ -177,6 +178,7 @@
   margin-bottom: 12px;
   p{
     margin-right: 10px;
+    font-family: var(--fontGraphikMedium);
   }
   span{
     font-size: 11px;
@@ -236,7 +238,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  background: #6366f10a;
+  background: var(--whitefa);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
@@ -259,13 +261,13 @@
 
 .legendLabel {
   font-size: 11px;
-  color: var(--regularColor);
+  color: var(--black);
   font-family: var(--fontGraphik);
 }
 
 .legendValue {
   font-size: 15px;
-  color: var(--black);
+  color: var(--regularColor);
   font-family: var(--fontGraphikMedium);
 }
 
@@ -275,7 +277,7 @@
   gap: 10px;
 }
 .graphBG {
-  width: 600px;
+  width: 700px;
   background: var(--white);
   border-radius: 6px;
   padding: 16px;
@@ -288,6 +290,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  width: 100%;
   margin-top: -30px;
   font-size: 11px;
   font-family: var(--fontGraphik);
@@ -314,6 +317,9 @@
   height: 355px;
   overflow-x: hidden;
   overflow-y: auto;
+      background: var(--whitefa);
+    border-radius: 6px;
+    padding: 8px;
 }
 
 .siteItem {
@@ -353,7 +359,7 @@
 
 .siteCount {
   font-size: 15px;
-  font-family: var(--fontGraphikSemibold);
+  font-family: var(--fontGraphik);
   color: var(--regularColor);
 }
 /********** Unassignerd workload **********/
@@ -433,7 +439,7 @@
 
 .workloadHours {
   font-size: 15px;
-  font-family: var(--fontGraphikSemibold);
+  font-family: var(--fontGraphik);
   background: var(--regularColor);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
