@@ -39,12 +39,13 @@ const AddCity = (props) => {
   }, [form, logo, loading]);
 
   const handleChange = (e) => {
-    if (e.target.name === "site_code") {
+    if (e.target.name === "siteCode") {
       setForm({ ...form, [e.target.name]: e.target.value.toUpperCase() });
+      console.log('citycodeerror',cityCodeError)
       if (cityCodeError) setCityCodeError("");
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
-      if (e.target.name === "site_name" && cityError) setCityError("");
+      if (e.target.name === "siteName" && cityError) setCityError("");
     }
   };
   const handleSave = async () => {
@@ -147,7 +148,8 @@ const AddCity = (props) => {
     props?.setOnEdit(false);
   };
 
-  useMemo(() => {
+  useEffect(() => {
+    if (!props?.onEdit) return;
     setForm((pre) => ({
       siteCode: props?.onEdit?.site_code || "",
       siteName: props?.onEdit?.site_name || "",
@@ -181,7 +183,7 @@ const AddCity = (props) => {
       handleLogoChange({ target: { files: [file] } });
     }
   };
-  
+
   return (
     <div className={modalStyles.overlay} aria-modal="true" role="dialog">
       <div className={`${modalStyles.modal} ${styles.modal}`}>
@@ -225,7 +227,7 @@ const AddCity = (props) => {
                 className={modalStyles.input}
                 type="text"
                 placeholder="Enter site code"
-                name="site_code"
+                name="siteCode"
                 value={form.siteCode}
                 onChange={handleChange}
                 disabled={Boolean(
@@ -247,7 +249,7 @@ const AddCity = (props) => {
                 className={modalStyles.input}
                 type="text"
                 placeholder="Enter site name"
-                name="site_name"
+                name="siteName"
                 value={form.siteName}
                 onChange={handleChange}
               />
@@ -281,7 +283,7 @@ const AddCity = (props) => {
                 )}
                 {/* upload box */}
                 <label
-                  htmlFor="SiteLogoInput"
+                  htmlFor="siteLogoInput"
                   className={`${styles.uploadArea} 
         ${dragActive ? styles.uploadAreaActive : ""} 
         ${logoPreview ? styles.uploadAreaSuccess : ""}`}

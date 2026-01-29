@@ -18,11 +18,12 @@ export const saveCityAction = async (
   let isValid = true;
   setCityError("");
   setCityCodeError("");
-  if (!form?.city_code?.trim()) {
+  console.log('form',form)
+  if (!form?.siteCode?.trim()) {
     setCityCodeError("Site code is required");
     isValid = false;
   }
-  if (!form?.city_name?.trim()) {
+  if (!form?.siteName?.trim()) {
     setCityError("Site name is required");
     isValid = false;
   }
@@ -34,14 +35,14 @@ export const saveCityAction = async (
     setLoading(true);
     let loggedUserName = localStorage.getItem("name");
     let cityDetail = {
-      site_code: form?.city_code?.trim(),
-      site_name: form?.city_name?.trim(),
+      site_code: form?.siteCode?.trim(),
+      site_name: form?.siteName?.trim(),
       status: form?.status,
       created_by: loggedUserName,
     };
 
     try {
-      await cityService.saveCityData(cityDetail, logo, props?.onEdit?.city_id);
+      await cityService.saveCityData(cityDetail, logo, props?.onEdit?.site_id);
       resetStateValues();
       props.loadCities();
       common.setAlertMessage(
