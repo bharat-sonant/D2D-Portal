@@ -53,6 +53,7 @@ const AddTask = ({
     onSave({
       taskName,
       description,
+      status : 'active'
     });
     resetForm();
   };
