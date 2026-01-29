@@ -102,7 +102,7 @@ action.saveSuperAdminPermissionsAction(permission,getUserPermissions)
               {ModuleList.map((moduleName, index) => (
                 <div
                   key={index}
-                  className={`${styles.toggleRow} ${styles.permissionCard}`}
+                  className={`${styles.toggleRow} ${styles.permissionCard} w-100`}
                 >
                   <div className={styles.toggleLeft}>
                     <div className={styles.toggleText}>{moduleName}</div>
