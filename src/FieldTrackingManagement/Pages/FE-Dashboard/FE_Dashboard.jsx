@@ -29,7 +29,8 @@ const FE_Dashboard = () => {
     { label: "Total Users", value: "32", color: "purple", icon: "users" },
     { label: "Active Tasks", value: "25", color: "cyan", icon: "tasks" },
     { label: "Completed Task", value: "186", color: "green", icon: "check" },
-    { label: "Active Sites", value: "12", color: "orange", icon: "location" },
+    { label: "Active Sites", value: "12", color: "purple", icon: "location" },
+    { label: "Inactive Sites", value: "02", color: "orange", icon: "location" },
   ];
   const getIcon = (type) => {
     switch (type) {
