@@ -175,6 +175,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  p{
+    margin-right: 10px;
+  }
+  span{
+    font-size: 11px;
+    color: var(--regularColor);
+    font-family: var(--fontGraphik);
+  }
 }
 .cardTitle {
   font-size: 15px;
@@ -312,8 +320,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-     padding: 10px 10px;
-  background: var(--whitefa);
+  padding: 6px 10px;
   border-radius: 4px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -330,8 +337,8 @@
 }
 
 .siteDot {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--themeColor);
   box-shadow: 0 0 0 3px #dcf3ff;
@@ -360,13 +367,16 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  max-height: 360px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .workloadItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-     padding: 7px 10px;
+  padding: 7px 10px;
   background: var(--whitefa);
   border-radius: 6px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -402,8 +412,8 @@
 }
 
 .workloadAvatar {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 6px;
   background: var(--white);
   border: 1px solid var(--borderColor);
@@ -428,6 +438,10 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  span {
+    font-family: var(--fontGraphik);
+    font-size: 11px;
+  }
 }
 
 /*****  Weekly Progress Graph Tooltip and Toggle *********/
@@ -491,22 +505,24 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-@media (max-width: 767.98px){
-  .statRow{
+@media (max-width: 767.98px) {
+  .statRow {
     overflow: auto;
   }
-  .statCard{
+  .statCard {
     flex: 0 0 200px;
   }
-  .chartGrid, .chartGridRight, .chartGridInner{
+  .chartGrid,
+  .chartGridRight,
+  .chartGridInner {
     flex-flow: column;
   }
-  .chartGridLeft{
+  .chartGridLeft {
     width: 100%;
   }
-  .graphBG, .sitesListCard, .workloadCard{
+  .graphBG,
+  .sitesListCard,
+  .workloadCard {
     width: 100%;
   }
-
 }

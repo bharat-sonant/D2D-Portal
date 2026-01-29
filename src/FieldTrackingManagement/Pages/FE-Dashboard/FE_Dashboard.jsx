@@ -118,7 +118,10 @@ const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
       </div>
     );
   };
-
+const totalWorkloadHours = workload.reduce(
+  (sum, person) => sum + person.hours,
+  0
+);
   return (
     <div className={styles.dashboard}>
       {/* Stat Cards */}
@@ -255,8 +258,11 @@ const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
               <div className={`${styles.card} ${styles.sitesListCard}`}>
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitle}>
-                    Total Sites : {siteUserStats.length}
+                    Total Sites
                   </div>
+                  <p>
+                    {siteUserStats.length}
+                  </p>
                 </div>
                 <div className={styles.sitesList}>
                   {siteUserStats.map((site, index) => (
@@ -275,6 +281,7 @@ const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
 <div className={`${styles.card} ${styles.workloadCard}`}>
   <div className={`${styles.cardHeader} `}>
   <h2 className={styles.cardTitle}>Unassigned Users & Workload</h2>
+  <p>  {totalWorkloadHours} <span className={styles.unit}>hrs</span></p>
   </div>
 
   <div className={styles.workloadList}>
@@ -290,7 +297,7 @@ const unassignedUsers = ["Rohit Sharma", "Amit Verma", "Neha Singh"];
         </div>
 
         <div className={styles.workloadHours}>
-          {person.hours} hrs
+          {person.hours} <span> hrs</span>
         </div>
       </div>
     ))}
