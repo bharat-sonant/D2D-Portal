@@ -249,7 +249,7 @@ export const loadCityData = async (setCityList) => {
 
 export const handleCityAccessToggle = async (
   userId,
-  city_id,
+  siteId,
   isCurrentlySelected,
   setSelectedCities,
   selectedCities,
@@ -258,10 +258,10 @@ export const handleCityAccessToggle = async (
 
   try {
     if (isCurrentlySelected) {
-      removeSiteAccess(setSelectedCities,city_id,selectedCities,SetAssignedSiteList)
+      removeSiteAccess(setSelectedCities,siteId,selectedCities,SetAssignedSiteList)
      }else{
       const payload = {
-      cityId: city_id,
+      cityId: siteId,
       userId: userId,
       assignedBy:localStorage.getItem('name'),
     };
@@ -272,14 +272,14 @@ export const handleCityAccessToggle = async (
         ...prev,
         {
           id: apiData?.id,
-          city_id,
+          city_id: siteId,
         },
       ]);
       SetAssignedSiteList(prev=>[
          ...prev,
         {
           id: apiData?.id,
-          city_id,
+          city_id: siteId,
         },
       ])
     }
@@ -293,16 +293,18 @@ export const handleCityAccessToggle = async (
 };
 
 
-async function removeSiteAccess(setSelectedCities,city_id,selectedCities,SetAssignedSiteList){
+async function removeSiteAccess(setSelectedCities,siteId,selectedCities,SetAssignedSiteList){
   try {
-    const recordToRemove = selectedCities.find(c => c.city_id === city_id);
+    const recordToRemove = selectedCities.find(c => c.city_id === siteId);
+
     if (!recordToRemove?.id) return;  
+
     const response = await api.delete('site-assignment/unassignsite',{data: { id: Number(recordToRemove.id) },});
     setSelectedCities(prev =>
-      prev.filter(c => c.city_id !== city_id)
+      prev.filter(c => c.city_id !== siteId)
     );
     SetAssignedSiteList(prev =>
-      prev.filter(c => c.city_id !== city_id))
+      prev.filter(c => c.city_id !== siteId))
     common.setAlertMessage('success',response?.message || 'Site unassigned successfully.');
   } catch (err) {
     console.error(err.response?.data?.message)
@@ -313,7 +315,6 @@ async function removeSiteAccess(setSelectedCities,city_id,selectedCities,SetAssi
 export const handleGetCity = async (userId, setSelectedCities,SetAssignedSiteList) => {
    try {
       const response = await api.get('site-assignment/getassignedsites',{params: {userId}});
-     
         setSelectedCities([]);
         setSelectedCities(response.data);
         SetAssignedSiteList(response.data)

@@ -36,17 +36,19 @@ export const getAvailableCityList = async (setList,type='all', setLoading, userI
         setLoading(false)
     }
 }
-export const getCityLogoUrl=async(cityId,setLogoUrl)=>{
-    if(!cityId){
+
+export const getCityLogoUrl=async(siteId,setLogoUrl)=>{
+    if(!siteId){
         return images?.wevoisLogo;
     }
     let logoUrl = images?.wevoisLogo
-    const resp = await getDataByColumnName("Sites", "city_id",cityId );
+    const resp = await getDataByColumnName("Sites", "site_id",siteId );
     if(resp?.success){
-        logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.city_code}.png?v=${Date.now()}`;
+        logoUrl = `${sbs.storageUrl}/CityLogo/${resp?.data?.[0]?.site_code}.png?v=${Date.now()}`;
     }
     setLogoUrl(logoUrl);
 }
-export const createCityLogoUrl=(city_code)=>{
-    return `${sbs.storageUrl}/CityLogo/${city_code}.png?v=${Date.now()}`;
+
+export const createCityLogoUrl=(siteCode)=>{
+    return `${sbs.storageUrl}/CityLogo/${siteCode}.png?v=${Date.now()}`;
 }
