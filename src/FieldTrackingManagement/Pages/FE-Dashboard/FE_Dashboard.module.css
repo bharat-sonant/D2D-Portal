@@ -8,6 +8,8 @@
 /* Page */
 .dashboard {
   padding: 10px;
+    z-index: 1;
+    position: relative;
 }
 
 /* Stat Cards */
@@ -20,6 +22,7 @@
   border-radius: 6px;
 
   overflow: hidden;
+
 }
 .statCard {
   width: calc(100% / 4);

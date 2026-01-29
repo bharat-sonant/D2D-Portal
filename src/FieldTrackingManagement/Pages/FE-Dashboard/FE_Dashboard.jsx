@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./FE_Dashboard.module.css";
+import GlobalStyles from "../../../assets/css/globalStyles.module.css";
 
 import {
   LineChart,
@@ -123,7 +124,31 @@ const FE_Dashboard = () => {
     0,
   );
   return (
+    <>
+          {/* Background */}
+      <div className={GlobalStyles.background}>
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb1}`} />
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb2}`} />
+        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb3}`} />
+        <div className={GlobalStyles.gridOverlay} />
+      </div>
+
+      {/* Particles */}
+      <div className={GlobalStyles.particles}>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className={GlobalStyles.particle}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
     <div className={styles.dashboard}>
+
       {/* Stat Cards */}
       <div className={styles.statRow}>
         {stats.map((stat, index) => (
@@ -350,6 +375,7 @@ const FE_Dashboard = () => {
         </div> */}
       </div>
     </div>
+    </>
   );
 };
 
