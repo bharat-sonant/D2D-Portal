@@ -24,10 +24,19 @@ const FEUsers = () => {
     user: null
   });
 
-  useEffect(() => {
-    action.getFEUsersList(setUserList, setIsLoading);
-    action.getAllowedSites(setAvailableSites);
-  }, []);
+useEffect(() => {
+    const initializeData = async () => {
+        setIsLoading(true);
+        // Step 1: Pehle sites fetch karo aur result lo
+        const sites = await action.getAllowedSites(setAvailableSites); 
+        
+        // Step 2: Sites chahe empty ho ya nahi, list fetch karo
+        // ManagerId and CreatedBy logic backend handle kar lega
+        await action.getFEUsersList(setUserList, setIsLoading, sites);
+    };
+
+    initializeData();
+}, []);
 
   const handleAddUserSuccess = (newUser) => {
     setUserList(prev => [newUser, ...prev]);
@@ -61,13 +70,28 @@ const FEUsers = () => {
     setAlertConfig({ ...alertConfig, show: false });
   };
 
-  const uniqueSitesFromList = useMemo(() => {
-    if (!userList) return [];
-    const sites = userList
-      .map(user => user.site)
-      .filter(site => site && site !== 'No site assigned');
-    return [...new Set(sites)].sort();
-  }, [userList]);
+const uniqueSitesFromList = useMemo(() => {
+  if (!userList || userList.length === 0) return [];
+
+  // 1. Saari assigned sites nikal lo
+  const assignedSites = userList
+    .map(user => user.site)
+    .filter(site => site && site !== 'No site assigned');
+  
+  const uniqueAssigned = [...new Set(assignedSites)].sort();
+
+  // 2. Check karo kya list mein koi unassigned user hai
+  const hasUnassignedUsers = userList.some(user => 
+    !user.site || user.site === 'No site assigned'
+  );
+
+  // 3. Agar unassigned users hain, toh "No site assigned" ko array mein add kar do
+  if (hasUnassignedUsers) {
+    uniqueAssigned.push("No site assigned");
+  }
+
+  return uniqueAssigned;
+}, [userList]);
 
   const filteredUsers = useMemo(() => {
     if (!userList) return [];
@@ -142,16 +166,21 @@ const FEUsers = () => {
                   <ChevronDown size={14} className={style.selectIcon} />
                 </div>
 
-                <div className={style.selectWrapper}>
-                  <select className={style.customSelect} value={siteFilter} onChange={(e) => setSiteFilter(e.target.value)}>
-                    <option value="">All Sites</option>
-                    {uniqueSitesFromList.map((siteName, index) => (
-                      <option key={index} value={siteName}>{siteName}</option>
-                    ))}
-                    <option value="No site assigned">Unassigned</option>
-                  </select>
-                  <ChevronDown size={14} className={style.selectIcon} />
-                </div>
+             <div className={style.selectWrapper}>
+  <select 
+    className={style.customSelect} 
+    value={siteFilter} 
+    onChange={(e) => setSiteFilter(e.target.value)}
+  >
+    <option value="">All Sites</option>
+    {uniqueSitesFromList.map((siteName, index) => (
+      <option key={index} value={siteName}>
+        {siteName === 'No site assigned' ? 'Unassigned' : siteName}
+      </option>
+    ))}
+  </select>
+  <ChevronDown size={14} className={style.selectIcon} />
+</div>
               </div>
 
               <div className={style.rightGroup}>
@@ -242,37 +271,41 @@ const FEUsers = () => {
             onSuccess={handleAddUserSuccess}
             availableSites={availableSites}
           />
-         <GlobalAlertModal
-  show={alertConfig.show}
-  iconType={alertConfig.type}
-  title={alertConfig.type === 'success' ? 'Activate Executive' : 'Deactivate Executive'}
-  message={
-    <span>
-      Are you sure you want to {alertConfig.type === 'success' ? 'enable' : 'disable'} access for{' '}
-      <strong style={{ textTransform: 'capitalize', color: 'inherit' }}>
-        {alertConfig.user?.name?.toLowerCase()}
-      </strong>?
-    </span>
-  }
-  userName={alertConfig.user?.name}
-  warningText="Deactivating will immediately revoke the executive's access to the mobile application and sync services."
-  successText="Activating will restore the executive's ability to log in and perform field operations."
-  buttonText={alertConfig.type === 'success' ? 'Confirm Activation' : 'Confirm Deactivation'}
-  onCancel={() => setAlertConfig({ ...alertConfig, show: false })}
-  onConfirm={confirmToggleStatus}
-/>
+          <GlobalAlertModal
+            show={alertConfig.show}
+            iconType={alertConfig.type}
+            title={alertConfig.type === 'success' ? 'Activate Executive' : 'Deactivate Executive'}
+            message={
+              <span>
+                Are you sure you want to {alertConfig.type === 'success' ? 'enable' : 'disable'} access for{' '}
+                <strong style={{ textTransform: 'capitalize', color: 'inherit' }}>
+                  {alertConfig.user?.name?.toLowerCase()}
+                </strong>?
+              </span>
+            }
+            userName={alertConfig.user?.name}
+            warningText="Deactivating will immediately revoke the executive's access to the mobile application and sync services."
+            successText="Activating will restore the executive's ability to log in and perform field operations."
+            buttonText={alertConfig.type === 'success' ? 'Confirm Activation' : 'Confirm Deactivation'}
+            onCancel={() => setAlertConfig({ ...alertConfig, show: false })}
+            onConfirm={confirmToggleStatus}
+          />
           {isAssignModalOpen && (
             <AssignSiteModal
               user={selectedUserForSite}
               availableSites={availableSites}
               onClose={() => setIsAssignModalOpen(false)}
-              onAssign={(userId, site) => {
-                setUserList(prevList =>
-                  prevList.map(user =>
-                    user.id === userId ? { ...user, site: site } : user
-                  )
-                );
-                setIsAssignModalOpen(false);
+              // FEUsers.jsx mein AssignSiteModal ka onAssign prop
+              onAssign={(empCode, siteObj) => {
+                const dto = {
+                  employeeCode: empCode,
+                  siteId: siteObj.siteId,        // Backend requirement
+                  assignedBy: localStorage.getItem('userId') || "N/A",   // Current logged-in user context se le sakte hain
+                  siteName: siteObj.siteName
+                };
+      
+                action.assignSiteToUser(dto, setUserList);
+                setIsAssignModalOpen(false); // Modal band karne ke liye
               }}
             />
           )}

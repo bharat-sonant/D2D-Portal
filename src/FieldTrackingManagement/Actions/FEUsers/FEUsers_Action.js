@@ -88,53 +88,75 @@ export const createFEAppUser = async (empCode, empData, setIsLoading, closeModal
     }
 };
 
-// feUsersActions.js mein ye change karein
-export const getFEUsersList = async (setFEUsersList, setIsLoading) => {
+// 1️⃣ FE Users List fetching with Filtering logic
+export const getFEUsersList = async (setFEUsersList, setIsLoading, allowedSitesData) => {
     try {
         setIsLoading(true);
-        const response = await api.get(`/fe-users/fe-users-list`);
-        console.log('response', response);
+
+        // Allowed sites object array se sirf IDs ka array banana
+        const allowedSiteIds = Array.isArray(allowedSitesData)
+            ? allowedSitesData.map(s => s.siteId)
+            : [];
+
+        // 🔄 Change: GET ki jagah POST use kar rahe hain filtering ke liye
+        const response = await api.post(`/fe-users/fe-users-list`, {
+            managerId: localStorage.getItem('userId') || "",
+            allowedSites: allowedSiteIds // [91, 93, 78, ...]
+        });
+
+
         if (response.status === 'success') {
-            // Backend keys ko frontend keys ke saath map kar rahe hain
             const mappedData = response.data.map(user => ({
-                id: user.employeeCode, // Unique ID ke liye code use kar sakte hain
+                id: user.employeeCode,
                 code: user.employeeCode,
                 name: user.employeeName,
                 email: user.email,
                 site: user.assignedSite === '-' ? 'No site assigned' : user.assignedSite,
-                lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Not Logged In',
-                status: user.status === "ACTIVE" ? 'Active' : 'InActive' // DB case sensitivity handle karne ke liye
+                lastLogin: user.lastLogin
+                    ? new Date(user.lastLogin).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    : 'Not Logged In',
+                status: user.status === "ACTIVE" ? 'Active' : 'InActive'
             }));
             setFEUsersList(mappedData);
-        } else {
-            common.setAlertMessage("error", response.message || "Failed to fetch list");
         }
     } catch (error) {
-        common.setAlertMessage("error", "Server error while fetching FE Users list!");
+        // console.error("List Fetch Error:", error);
+        // common.setAlertMessage("error", "Server error while fetching FE Users list!");
+        setIsLoading(false);
     } finally {
         setIsLoading(false);
     }
 };
 
+// 2️⃣ Allowed Sites Fetching (Existing is mostly fine, just adding safety)
 export const getAllowedSites = async (setAllowedSites) => {
     try {
-        let response = await api.post(`/fe-users/allowed-sites`, { "managerId": localStorage.getItem('userId') || "" });
-        if (response.status === 'success') {
-            setAllowedSites(response.data);
-        }
-        else {
+        let response = await api.post(`/fe-users/allowed-sites`, {
+            "managerId": localStorage.getItem('userId') || ""
+        });
+
+        if (response.status === 'success' && Array.isArray(response.data)) {
+            // Status check is already done by backend usually, but adding for safety
+            const activeSites = response.data.filter(site => site.status === 'active');
+            setAllowedSites(activeSites);
+
+            // Note: Iske baad hi getFEUsersList call honi chahiye with this data
+            return activeSites;
+        } else {
             setAllowedSites([]);
+            return [];
         }
     } catch (error) {
+        console.error("Fetch Sites Error:", error);
         setAllowedSites([]);
-        common.setAlertMessage("error", "Failed to fetch allowed sites !");
+        return [];
     }
 };
 export const updateFEUserStatus = async (employeeCode, currentStatus, setUserList) => {
     try {
         // Backend 'ACTIVE'/'INACTIVE' expect kar raha hai
         const newStatus = currentStatus === 'Active' ? 'InActive' : 'Active';
-        const apiStatus =  newStatus.toUpperCase(); 
+        const apiStatus = newStatus.toUpperCase();
 
         // API Call (Backend changeFEStatus method ko hit karega)
         let response = await api.patch(`/fe-users/change-status`, {
@@ -146,17 +168,51 @@ export const updateFEUserStatus = async (employeeCode, currentStatus, setUserLis
             // ✅ Local state update (Locally update in list)
             setUserList(prevList =>
                 prevList.map(user =>
-                    user.code === employeeCode 
-                        ? { ...user, status: newStatus } 
+                    user.code === employeeCode
+                        ? { ...user, status: newStatus }
                         : user
                 )
             );
-            
+
             common.setAlertMessage("success", response.message || `User status updated!`);
         } else {
             common.setAlertMessage("error", response.message || "Failed to update status");
         }
     } catch (error) {
         common.setAlertMessage("error", "Server error while updating status");
+    }
+};
+
+
+export const assignSiteToUser = async (dto, setUserList) => {
+    try {
+
+        // API Call to your backend endpoint
+        // DTO contains: { employeeCode, cityId, assignedBy, siteName }
+        let response = await api.post(`/fe-users/assign-site`, {
+            employeeCode: dto.employeeCode,
+            siteId: dto.siteId,
+            assignedBy: dto.assignedBy || 'N/A'
+        });
+
+        if (response.status === 'success') {
+            // ✅ Local state update: hum cityId nahi, balki siteName update karenge UI ke liye
+            setUserList(prevList =>
+                prevList.map(user =>
+                    user.code === dto.employeeCode
+                        ? { ...user, site: dto.siteName }
+                        : user
+                )
+            );
+
+            common.setAlertMessage("success", response.message || "Site assigned successfully!");
+            return true;
+        } else {
+            common.setAlertMessage("error", response.message || "Failed to assign site");
+            return false;
+        }
+    } catch (error) {
+        common.setAlertMessage("error", "Server error while assigning site");
+        return false;
     }
 };
