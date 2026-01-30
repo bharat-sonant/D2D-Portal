@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './assignTask.module.css';
 import { Trash2, Plus, X } from 'lucide-react'; // Optional: using lucide for clean icons
-const defaultTaskList = [
-    { id: 1, name: 'Site Inspection',  },
-    { id: 2, name: 'Equipment Repair',  },
-    { id: 3, name: 'Client Meeting',  }
-];
+import { getallTasks } from '../../../Actions/FETasks/FETasksAction';
+import WevoisLoader from '../../../../components/Common/Loader/WevoisLoader';
+// const defaultTaskList = [
+//     { id: 1, name: 'Site Inspection',  },
+//     { id: 2, name: 'Equipment Repair',  },
+//     { id: 3, name: 'Client Meeting',  }
+// ];
 
 const AssignTask = ({ isOpen, onClose, data }) => {
   const [tasks, setTasks] = useState([]);
@@ -16,7 +18,13 @@ const AssignTask = ({ isOpen, onClose, data }) => {
     time: '',
     description: ''
   });
+  const [defaultTaskList, setDefaultTaskList] = useState([]);
   const isFormValid = formData.name && formData.type && formData.time;
+  const [taskLoading, setTasksLoading] = useState(false);
+
+  useEffect(()=> {
+    getallTasks(setDefaultTaskList, setTasksLoading)
+  },[])
 
   const handleAddTask = () => {
     if (!isFormValid) return;
@@ -26,6 +34,8 @@ const AssignTask = ({ isOpen, onClose, data }) => {
   const removeTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
+
+  const hasTasks = defaultTaskList && defaultTaskList?.length > 0;
 
   return (
     <div className={`${styles.drawerOverlay} ${isOpen ? styles.open : ""}`}>
@@ -42,23 +52,33 @@ const AssignTask = ({ isOpen, onClose, data }) => {
             <X size={20} />
           </button>
         </div>
-
         {/* Section 1: Task Creation */}
         <section className={styles.creationSection}>
           <div className={styles.formGroup}>
             <label>Task</label>
             <select
               value={formData.name}
+              disabled={taskLoading}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
             >
-              <option >Select Task</option>
-              {defaultTaskList.map((task) => (
-                <option key={task.name} value={task.name}>
-                  {task.name}
-                </option>
-              ))}
+              {taskLoading ? (
+                <option value="">Loading tasks...</option>
+              ) : (
+                <>
+                  <option value="">
+                    {hasTasks ? "Select Task" : "No tasks available"}
+                  </option>
+
+                  {hasTasks &&
+                    defaultTaskList?.map((task) => (
+                      <option key={task.id} value={task.taskName}>
+                        {task.taskName}
+                      </option>
+                    ))}
+                </>
+              )}
             </select>
           </div>
 
