@@ -8,13 +8,14 @@ const AssignTask = ({ isOpen, onClose, data }) => {
   const [tasks, setTasks] = useState([]);
   const [selectedUnit,setSelectUnit] = useState('minutes');
   const [formData, setFormData] = useState({
-    name: '',
+    taskId: '',
+    taskName: '',
     type: 'GENERAL',
     time: '',
     description: ''
   });
   const [defaultTaskList, setDefaultTaskList] = useState([]);
-  const isFormValid = formData.name && formData.type && formData.time;
+  const isFormValid = formData.taskId && formData.taskName && formData.type && Number(formData.time) > 0;
   const [taskLoading, setTasksLoading] = useState(false);
 
   useEffect(()=> {
@@ -37,18 +38,19 @@ const AssignTask = ({ isOpen, onClose, data }) => {
     const estimationInMinutes = getTimeInMinutes();
 
     const payload ={
-      task_name: formData.name,
+      task_name: formData.taskName,
       task_type: formData.type,
       estimation: estimationInMinutes,
       assigned_by: "d12395bf-aad8-4f3b-9716-fe6a6831b484",
-      task_id: 12,
+      task_id: formData.taskId,
       employee_code: "101",
       ...(formData.description && {
         description: formData.description.trim(),
       }),
     }
-
-    await assignTaskAction(payload);
+    const result = await assignTaskAction(payload);
+    if (!result.success) return;
+    
     setTasks([
     ...tasks,
     {
@@ -58,12 +60,22 @@ const AssignTask = ({ isOpen, onClose, data }) => {
       time: estimationInMinutes, // store normalized value
     },
   ]);
-    setFormData({ name: '', type: 'GENERAL', time: '', description: '' });
+    setFormData({ taskId: '',taskName: '', type: 'GENERAL', time: '', description: '' });
   };
 
   const removeTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
+
+  const handleChange = (e) => {
+    const selectedId = e.target.value;
+    const selectedTask = defaultTaskList?.find((t) => String(t.id) === String(selectedId));
+    setFormData({
+      ...formData,
+      taskId: selectedTask?.id || '', 
+      taskName: selectedTask?.taskName || '',
+    })
+  }
 
   const hasTasks = defaultTaskList && defaultTaskList?.length > 0;
 
@@ -87,11 +99,9 @@ const AssignTask = ({ isOpen, onClose, data }) => {
           <div className={styles.formGroup}>
             <label>Task</label>
             <select
-              value={formData.name}
-              disabled={taskLoading}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              value={formData.taskId}
+              disabled={taskLoading || !hasTasks}
+              onChange={handleChange}
             >
               {taskLoading ? (
                 <option value="">Loading tasks...</option>
@@ -103,7 +113,7 @@ const AssignTask = ({ isOpen, onClose, data }) => {
 
                   {hasTasks &&
                     defaultTaskList?.map((task) => (
-                      <option key={task.id} value={task.taskName}>
+                      <option key={task.id} value={task.id}>
                         {task.taskName}
                       </option>
                     ))}
@@ -139,12 +149,14 @@ const AssignTask = ({ isOpen, onClose, data }) => {
                 />
                 <div className={styles.timeUnitToggle}>
                   <button
+                    type="button"
                     className={`${styles.unitBtn} ${selectedUnit === 'minutes' ? styles.active : ''}`}
                     onClick={() => setSelectUnit('minutes')}
                   >
                     Minutes
                   </button>
                   <button
+                    type="button"
                     className={`${styles.unitBtn} ${selectedUnit === 'hours' ? styles.active : ''}`}
                     onClick={() => setSelectUnit('hours')}
                   >
