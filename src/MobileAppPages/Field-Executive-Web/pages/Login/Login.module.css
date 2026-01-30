@@ -74,9 +74,11 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0fdf4;
 }
-
+.userName{
+  text-transform: capitalize;
+}
 .logo {
-  width: 95%;
+  width: 100%;
   height: auto;
 }
 

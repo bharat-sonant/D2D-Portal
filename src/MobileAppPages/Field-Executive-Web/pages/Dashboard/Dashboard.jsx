@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Plus, CheckCircle2, ClipboardList, ChevronRight, LayoutGrid, Building2, ClipboardCheck, Clock, X, LogOut } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import TaskMonitoring from '../../Components/Dashboard/TaskMonitoring/TaskMonitoring';
-import KpiTaskExecutionForm from '../../Components/Dashboard/KpiTaskExecutionForm/KpiTaskExecutionForm';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [showAddOptions, setShowAddOptions] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    // LocalStorage se string data nikal kar parse karein
+    const storedUser = localStorage.getItem("fe_user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const tasks = [
     { id: 1, title: 'Network Maintenance - Zone A', type: 'Priority Task', time: '09:30 AM' },
@@ -35,22 +44,32 @@ const Dashboard = () => {
         <div className={styles.headerSection}>
           <div className={styles.topBar}>
             <div className={styles.userInfo}>
-              <div className={styles.avatar}>A</div>
+              <div className={styles.avatar}>
+                {user?.employeeName ? user.employeeName.charAt(0).toUpperCase() : 'U'}
+              </div>
               <div className={styles.userMeta}>
                 <div className={styles.textContainer}>
                   <p className={styles.greeting}>Good Morning</p>
-                  <h2 className={styles.userName}>Admin Professional</h2>
+                  <h2 className={styles.userName}>
+                    {user?.employeeName || "Executive"}
+                  </h2>
                 </div>
                 {/* DateChip only for Today Tab */}
 
                 <div className={styles.dateChip}>
                   <Building2 size={14} />
-                  <span>JAIPUR</span>
+                  <span style={{ textTransform: 'uppercase' }}>
+                    {user?.site?.siteName || "No Site"}
+                  </span>
                 </div>
 
               </div>
             </div>
-            <button className={styles.logoutInlineBtn}><LogOut size={12} /> Logout</button>
+            <button className={styles.logoutInlineBtn} onClick={() => {
+              localStorage.removeItem("isLoggedIn");
+              localStorage.removeItem("fe_user");
+              navigate('/fe-WebView/login');
+            }}><LogOut size={12} /> Logout</button>
           </div>
 
           <div className={styles.tabSwitcher}>
