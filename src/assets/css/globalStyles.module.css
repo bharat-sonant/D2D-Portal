@@ -23,7 +23,7 @@
 .orb1 {
   width: 600px;
   height: 600px;
-  background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
+  background: linear-gradient(135deg, #d1d7f5 0%, #e6f4ff 100%);
   top: -200px;
   left: -200px;
 }
@@ -31,7 +31,7 @@
 .orb2 {
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
+  background: linear-gradient(135deg, #f0d0f4 0%, #abeaae 100%);
   bottom: -150px;
   right: -150px;
   animation-delay: 8s;
@@ -40,7 +40,7 @@
 .orb3 {
   width: 450px;
   height: 450px;
-  background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
+  background: linear-gradient(135deg, #ddedfc 0%, #fffbd6 100%);
   top: 50%;
   right: 20%;
   animation-delay: 16s;
