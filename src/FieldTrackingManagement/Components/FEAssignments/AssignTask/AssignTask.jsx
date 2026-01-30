@@ -2,19 +2,14 @@ import { useEffect, useState } from 'react';
 import styles from './assignTask.module.css';
 import { Trash2, Plus, X } from 'lucide-react'; // Optional: using lucide for clean icons
 import { getallTasks } from '../../../Actions/FETasks/FETasksAction';
-import WevoisLoader from '../../../../components/Common/Loader/WevoisLoader';
-// const defaultTaskList = [
-//     { id: 1, name: 'Site Inspection',  },
-//     { id: 2, name: 'Equipment Repair',  },
-//     { id: 3, name: 'Client Meeting',  }
-// ];
+import { assignTaskAction } from '../../../Actions/FEAssignTasks/FEAssignTasks';
 
 const AssignTask = ({ isOpen, onClose, data }) => {
   const [tasks, setTasks] = useState([]);
   const [selectedUnit,setSelectUnit] = useState('minutes');
   const [formData, setFormData] = useState({
     name: '',
-    type: 'General',
+    type: 'GENERAL',
     time: '',
     description: ''
   });
@@ -26,11 +21,47 @@ const AssignTask = ({ isOpen, onClose, data }) => {
     getallTasks(setDefaultTaskList, setTasksLoading)
   },[])
 
-  const handleAddTask = () => {
-    if (!isFormValid) return;
-    setTasks([...tasks, { ...formData, id: Date.now(),unit:selectedUnit }]);
-    setFormData({ name: '', type: 'General', time: '', description: '' });
+  const getTimeInMinutes = () => {
+    const time = Number(formData.time);
+
+    if (selectedUnit === 'hours') {
+      return time * 60;
+    }
+
+    return time; // already minutes
   };
+
+
+  const handleAddTask = async() => {
+    if (!isFormValid) return;
+    const estimationInMinutes = getTimeInMinutes();
+
+    const payload ={
+      task_name: formData.name,
+      task_type: formData.type,
+      estimation: estimationInMinutes,
+      assigned_by: "d12395bf-aad8-4f3b-9716-fe6a6831b484",
+      task_id: 12,
+      employee_code: "101",
+      ...(formData.description && {
+        description: formData.description.trim(),
+      }),
+    }
+
+    const result = await assignTaskAction(payload);
+    console.log('result on page',result)
+    setTasks([
+    ...tasks,
+    {
+      ...formData,
+      id: Date.now(),
+      unit: selectedUnit,
+      time: estimationInMinutes, // store normalized value
+    },
+  ]);
+    setFormData({ name: '', type: 'GENERAL', time: '', description: '' });
+  };
+
   const removeTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
@@ -91,8 +122,8 @@ const AssignTask = ({ isOpen, onClose, data }) => {
                   setFormData({ ...formData, type: e.target.value })
                 }
               >
-                <option value="General">General</option>
-                <option value="Urgent">Urgent</option>
+                <option value="GENERAL">General</option>
+                <option value="URGENT">Urgent</option>
               </select>
             </div>
            <div className={styles.formGroup}>
