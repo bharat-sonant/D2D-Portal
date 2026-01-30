@@ -27,6 +27,8 @@ const FETasks = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [openDesc, setOpenDesc] = useState(false);
   const [descContent, setDescContent] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
   useEffect(() => {
     getallTasks(setTasks, setLoading);
   }, []);
@@ -121,6 +123,13 @@ const FETasks = () => {
       );
     }
   };
+
+  const filterTasks = tasks?.filter((task) => {
+    if(statusFilter === 'all') return true;
+    return task?.status === statusFilter;
+  })
+
+
   return (
     <>
       {/* Background */}
@@ -154,9 +163,19 @@ const FETasks = () => {
               <p>Manage task(s) for field executives</p>
             </div>
           </div>
+          <div>
+          <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value='all'>All</option>
+            <option value='active'>Active</option>
+            <option value='inactive'>Inactive</option>
+          </select>
           <button className={GlobalStyles.btnTheme} onClick={handleOpenModal}>
             + Add New Task
           </button>
+          </div>
         </div>
 
         <div ref={tableRef} className={`${style.tableContainer}`}>
@@ -181,7 +200,7 @@ const FETasks = () => {
                     title="loading tasks..."
                   />
                 </td>
-              ) : tasks.length === 0 ? (
+              ) : filterTasks.length === 0 ? (
                 <td colSpan="5" className={style.emptyCell}>
                   <NoResult
                     title="No data available"
@@ -191,7 +210,7 @@ const FETasks = () => {
                   />
                 </td>
               ) : (
-                tasks.map((task, index) => (
+                filterTasks.map((task, index) => (
                   <tr key={task.id}>
                     <td className={style.th1}>
                       <div
