@@ -282,7 +282,9 @@ const FETasks = () => {
       )}
       <GlobalAlertModal
         show={isAlertOpen}
-        title="Confirmation Status Update"
+        // title="Confirmation Status Update"
+        title={selectedTask?.status === "active" ? "Deactivate Task" : "Ativate Task"}
+
         message={`Do you really want to ${
           selectedTask?.status === "active" ? "deactivate" : "activate"
         } this task?`}
