@@ -118,28 +118,28 @@ const DailyWorkReport = () => {
       <div key={index}>{item}</div>
     ));
   };
-useEffect(() => {
-  const el = tableRef.current;
-  if (!el) return;
+  useEffect(() => {
+    const el = tableRef.current;
+    if (!el) return;
 
-  const HIDE_THRESHOLD = 100; // px
-  const SHOW_THRESHOLD = 40;  // hysteresis to avoid flicker
+    const HIDE_THRESHOLD = 100; // px
+    const SHOW_THRESHOLD = 40; // hysteresis to avoid flicker
 
-  const handleTableScroll = () => {
-    const scrollTop = el.scrollTop;
+    const handleTableScroll = () => {
+      const scrollTop = el.scrollTop;
 
-    if (scrollTop > HIDE_THRESHOLD && !hideTopBar) {
-      setHideTopBar(true);
-    }
+      if (scrollTop > HIDE_THRESHOLD && !hideTopBar) {
+        setHideTopBar(true);
+      }
 
-    if (scrollTop < SHOW_THRESHOLD && hideTopBar) {
-      setHideTopBar(false);
-    }
-  };
+      if (scrollTop < SHOW_THRESHOLD && hideTopBar) {
+        setHideTopBar(false);
+      }
+    };
 
-  el.addEventListener("scroll", handleTableScroll);
-  return () => el.removeEventListener("scroll", handleTableScroll);
-}, [hideTopBar]);
+    el.addEventListener("scroll", handleTableScroll);
+    return () => el.removeEventListener("scroll", handleTableScroll);
+  }, [hideTopBar]);
 
   // ----------------------------
   // SORT FUNCTIONS
@@ -213,7 +213,7 @@ useEffect(() => {
           <thead>
             <tr>
               <th
-                className={`text-start ${style.parentHeader} `}
+                className={`text-start  ${style.parentHeader} `}
                 style={{ width: "10%" }}
               >
                 #
@@ -239,7 +239,11 @@ useEffect(() => {
               ></th>
             </tr>
             <tr>
-              <th className={`${style.th1} ${style.parentHeader1}`}>Ward</th>
+              <th
+                className={`${style.borderRight} ${style.th1} ${style.parentHeader1}`}
+              >
+                Ward
+              </th>
               <th className={style.th2}>Duty On </th>
               <th className={style.th3}>Ward Reach </th>
               <th className={`${style.th4}`}>Duty Off</th>
@@ -265,7 +269,9 @@ useEffect(() => {
                 const row = reportByWardId[String(ward.ward_id)];
                 return (
                   <tr key={ward.ward_id}>
-                    <td className={style.th1}>{ward.ward_display_name}</td>
+                    <td className={`${style.borderRight} ${style.th1}`}>
+                      {ward.ward_display_name}
+                    </td>
                     <td className={`${style.th2}`}>
                       {row?.duty_on_time || "-"}
                     </td>
@@ -281,7 +287,11 @@ useEffect(() => {
                     </td>
                     <td className={`${style.th5}`}>
                       <span
-                      // className={` ${style.vehicleNumber}`}
+                        className={
+                          row?.vehicle && renderMultiLine(row.vehicle) !== "-"
+                            ? style.vehicleNumber
+                            : ""
+                        }
                       >
                         {renderMultiLine(row?.vehicle) || "-"}
                       </span>

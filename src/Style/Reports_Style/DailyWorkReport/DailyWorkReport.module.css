@@ -119,7 +119,9 @@
   background: var(--white);
   table-layout: fixed;
 }
-
+.borderRight{
+  border-right: 1px solid var(--borderColor);
+}
 .table th {
   background: #f4f3f8;
   white-space: nowrap;
@@ -247,10 +249,11 @@
 }
 
 .vehicleNumber {
-  padding: 6px 8px;
+  padding: 3px 8px;
   background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
   color: var(--black);
   border-radius: 4px;
+  display: inline-block;
 }
 
 .tripBG {
