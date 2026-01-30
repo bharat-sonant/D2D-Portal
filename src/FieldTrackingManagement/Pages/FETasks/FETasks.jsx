@@ -28,7 +28,31 @@ const FETasks = () => {
   const [openDesc, setOpenDesc] = useState(false);
   const [descContent, setDescContent] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [compactFab, setCompactFab] = useState(false);
 
+  useEffect(() => {
+    const el = tableRef.current;
+    if (!el) return;
+
+    let lastScrollTop = 0;
+
+    const onScroll = () => {
+      const currentScroll = el.scrollTop;
+
+      if (currentScroll > lastScrollTop && currentScroll > 20) {
+        // scrolling down
+        setCompactFab(true);
+      } else if (currentScroll < lastScrollTop) {
+        // scrolling up
+        setCompactFab(false);
+      }
+
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    };
+
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
   useEffect(() => {
     getallTasks(setTasks, setLoading);
   }, []);
@@ -125,13 +149,21 @@ const FETasks = () => {
   };
 
   const filterTasks = tasks?.filter((task) => {
-    if(statusFilter === 'all') return true;
+    if (statusFilter === "all") return true;
     return task?.status === statusFilter;
-  })
-
+  });
 
   return (
     <>
+      <button
+        className={`${GlobalStyles.btnTheme} ${style.addbtn} ${
+          compactFab ? style.compactFab : ""
+        }`}
+        onClick={handleOpenModal}
+      >
+        <span className={style.plusIcon}>+</span>
+        {!compactFab && <span className={style.fabText}>Add New Task</span>}
+      </button>
       {/* Background */}
       <div className={GlobalStyles.background}>
         <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb1}`} />
@@ -164,20 +196,47 @@ const FETasks = () => {
             </div>
           </div>
           <div>
-          <select
+            {/* <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value='all'>All</option>
             <option value='active'>Active</option>
             <option value='inactive'>Inactive</option>
-          </select>
-          <button className={GlobalStyles.btnTheme} onClick={handleOpenModal}>
-            + Add New Task
-          </button>
+          </select> */}
+
+            <div className={style.headerRight}>
+              <div className={style.toggle}>
+                <button
+                  className={`${style.toggleBtn} ${
+                    statusFilter === "all" ? style.activeToggle : ""
+                  }`}
+                  onClick={() => setStatusFilter("all")}
+                >
+                  All Task
+                </button>
+
+                <button
+                  className={`${style.toggleBtn} ${
+                    statusFilter === "active" ? style.activeToggle : ""
+                  }`}
+                  onClick={() => setStatusFilter("active")}
+                >
+                  Active
+                </button>
+
+                <button
+                  className={`${style.toggleBtn} ${
+                    statusFilter === "inactive" ? style.activeToggle : ""
+                  }`}
+                  onClick={() => setStatusFilter("inactive")}
+                >
+                  Inactive
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
         <div ref={tableRef} className={`${style.tableContainer}`}>
           <table className={style.table}>
             <thead>
@@ -283,8 +342,9 @@ const FETasks = () => {
       <GlobalAlertModal
         show={isAlertOpen}
         // title="Confirmation Status Update"
-        title={selectedTask?.status === "active" ? "Deactivate Task" : "Ativate Task"}
-
+        title={
+          selectedTask?.status === "active" ? "Deactivate Task" : "Ativate Task"
+        }
         message={`Do you really want to ${
           selectedTask?.status === "active" ? "deactivate" : "activate"
         } this task?`}
