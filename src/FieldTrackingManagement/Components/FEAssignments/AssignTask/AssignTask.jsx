@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './assignTask.module.css';
 import { Trash2, Plus, X } from 'lucide-react'; // Optional: using lucide for clean icons
 import { getallTasks } from '../../../Actions/FETasks/FETasksAction';
-import { assignTaskAction } from '../../../Actions/FEAssignTasks/FEAssignTasks';
+import { assignTaskAction, getuserSites } from '../../../Actions/FEAssignTasks/FEAssignTasks';
 
 const AssignTask = ({ isOpen, onClose, data }) => {
   const [tasks, setTasks] = useState([]);

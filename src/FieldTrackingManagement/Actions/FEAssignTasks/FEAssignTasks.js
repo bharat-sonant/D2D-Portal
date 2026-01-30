@@ -17,3 +17,24 @@ try{
   return { success: false };
 }
 }
+
+export const getuserSites = async(userId, setSites, setSitesLoading) => {
+  try{
+    setSitesLoading(true)
+    const response = await api.get(`/site-assignment/getassignedsites`,
+      {
+        params: { userId }, 
+      }
+    );
+    if(response.success){
+      setSites(response?.data)
+    }else{
+      setSites([])
+    }
+  }catch(err){
+    console.log('error in getting sites of user',err)
+    setSites([])
+  }finally{
+    setSitesLoading(false)
+  }
+}

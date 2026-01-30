@@ -3,20 +3,20 @@ import styles from "./FEAssignments.module.css";
 import {Search,Plus,Eye} from "lucide-react";
 import AssignTask from "../../Components/FEAssignments/AssignTask/AssignTask";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
+import { getuserSites } from "../../Actions/FEAssignTasks/FEAssignTasks";
 
 const users = [
   {name:'Anil Sharma',code:'EMP002',contact:'8954842222',site:'Sikar',status:'In Progress',estimatedTime:'1 Hour',tasks:3,estimatedTime:'1 Hour',site:'Sikar'},
   {name:'Prashant Meena',code:'EMP001',contact:'9876543210',site:'Jaipur',status:'In Progress',estimatedTime:'2 Hours',tasks:5,estimatedTime:'2 Hours',site:'Jaipur'},
 ];
-const sites = [
-  { value: '', label: 'All Sites' },
-  { value: 'Sikar', label: 'Sikar' },
-  { value: 'Jaipur', label: 'Jaipur' },
-];
 
 const FEAssignments = () => {
+    const userId = localStorage.getItem('userId');
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [sites, setSites] = useState([]);
+    const [sitesLoading, setSitesLoading] = useState(true);
+    const [sitesError, setSitesError] = useState(null);
     const [selectedSite, setSelectedSite] = useState("");
     const [assignTaskWindow,setAssignTaskWindow]=useState({status:false,data:null});
     const filteredUsers = useMemo(() => {
@@ -27,12 +27,17 @@ const FEAssignments = () => {
         return matchesSearch && matchesSite;
       });
     }, [searchTerm, selectedSite]);
+
     useEffect(() => { 
       const timer = setTimeout(() => {
         setLoading(false);
       }, 1000); // Simulate a 1 second loading time
       return () => clearTimeout(timer);
     }, []);
+
+    useEffect(()=>{
+       getuserSites(userId, setSites, setSitesLoading)
+    },[])
     
     return (
       <div className={`${styles.employeesContainer} mt-0`}>
@@ -56,13 +61,26 @@ const FEAssignments = () => {
                 value={selectedSite}
                 onChange={(e) => setSelectedSite(e.target.value)}
                 className={styles.siteSelect}
+                disabled={sitesLoading || sites.length === 0}
               >
-                {sites.map((site) => (
-                  <option key={site.value} value={site.value}>
-                    {site.label}
-                  </option>
-                ))}
-              </select>
+                 {sitesLoading && (
+                    <option value="">Loading sites...</option>
+                  )}
+                  {!sitesLoading && sites.length === 0 && (
+                  <option value="">No sites assigned</option>
+                )}
+                {!sitesLoading && sites.length > 0 && (
+                    <>
+                      <option value="">All Sites</option>
+                      {sites.map((site) => (
+                        <option key={site.site_id} value={site.site_id}>
+                          {site.site_name}
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+
               <div className={styles.searchWrapper}>
                 <Search size={18} className={styles.searchIcon} />
                 <input
