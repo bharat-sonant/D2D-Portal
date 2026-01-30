@@ -48,8 +48,7 @@ const AssignTask = ({ isOpen, onClose, data }) => {
       }),
     }
 
-    const result = await assignTaskAction(payload);
-    console.log('result on page',result)
+    await assignTaskAction(payload);
     setTasks([
     ...tasks,
     {
