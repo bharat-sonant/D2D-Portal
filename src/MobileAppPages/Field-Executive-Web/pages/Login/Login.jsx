@@ -164,7 +164,7 @@ const Login = () => {
             <span>Secure Enterprise Access</span>
           </div> */}
           <p className={styles.copyText}>
-            © 2026 Wevios Labs Pvt. Ltd. All rights reserved.
+            © 2026 WeVOIS Labs Pvt. Ltd. All rights reserved.
           </p>
         </div>
       </div>

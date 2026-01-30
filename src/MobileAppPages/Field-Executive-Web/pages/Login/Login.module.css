@@ -307,7 +307,14 @@
   border-radius: 50%;
   filter: blur(110px);
   opacity: 0.45;
-
+background:
+    radial-gradient(
+      circle at top,
+      #b9e8f2 0%,
+      #dff5fb 35%,
+      #f5fbfd 60%,
+      #ffffff 100%
+    );
   animation:
     dashboardFloat 25s ease-in-out infinite,
     colorShift 40s ease-in-out infinite;
