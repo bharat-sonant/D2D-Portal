@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import GlobalStyles from "../../../assets/css/globalStyles.module.css";
+import modalStyles from "../../../assets/css/popup.module.css";
 import AddTask from "../../Components/FETasks/AddTask";
 import style from "./FETasks.module.css";
 import noData from "../../../assets/images/icons/noData.gif";
@@ -9,7 +10,7 @@ import {
   updateTaskAction,
 } from "../../Actions/FETasks/FETasksAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
-import { Edit2 } from "lucide-react";
+import { Edit2, ClipboardList, X } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
 import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
 import Toggle from "../../../components/Common/GlobalToggle/Toggle";
@@ -329,13 +330,29 @@ const FETasks = () => {
       )}
       {openDesc && (
         <div className={style.descOverlay}>
-          <div className={style.descModal}>
-            <div className={style.descHeader}>
-              <span>Description</span>
-              <button onClick={() => setOpenDesc(false)}>✕</button>
+          <div className={`${modalStyles.modal} `}>
+            {/* Header */}
+            <div className={modalStyles.modalHeader}>
+              <div className={modalStyles.headerLeft}>
+                <div className={modalStyles.iconWrapper}>
+                  <ClipboardList className="map-icon" />
+                </div>
+                <div className={modalStyles.headerTextRight}>
+                  <h2 className={modalStyles.modalTitle}>Description</h2>
+                  <p className={modalStyles.modalSubtitle}>
+                    View the complete details of this task
+                  </p>
+                </div>
+              </div>
+              <button
+                className={modalStyles.closeBtn}
+                onClick={() => setOpenDesc(false)}
+              >
+                <X size={20} />
+              </button>
             </div>
 
-            <div className={style.descBody}>{descContent}</div>
+            <div className={`${modalStyles.modalBody}`}>{descContent}</div>
           </div>
         </div>
       )}
