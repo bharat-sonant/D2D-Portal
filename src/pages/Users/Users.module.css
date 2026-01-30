@@ -92,7 +92,7 @@
 }
 
 .userStatusCard {
-  width: 100%;
+    width: 810px;
   background: var(--white);
   border-radius: 6px;
   padding: 14px 16px;
