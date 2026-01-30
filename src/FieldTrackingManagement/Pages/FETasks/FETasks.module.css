@@ -207,28 +207,7 @@ background-color: #f1f8ff;
   z-index: 999;
 }
 
-/* Modal */
-.descModal {
-  background: var(--white);
-  max-width: 500px;
-  width: 90%;
-  border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  animation: scaleIn 0.2s ease;
-}
 
-/* Header */
-.descHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--borderColor);
-  font-family: var(--fontGraphikMedium);
-  &:hover button{
-color: var(--textDanger);
-  }
-}
 
 .descHeader button {
   background: none;
