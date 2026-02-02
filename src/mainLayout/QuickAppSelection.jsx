@@ -347,6 +347,7 @@ import {
   LockKeyhole,
   LogOut,
   Fuel,
+  ChevronRight,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePermissions } from "../context/PermissionContext";
@@ -354,13 +355,37 @@ import { usePermissions } from "../context/PermissionContext";
 const appsList = [
   { id: 1, name: "D2D Monitoring", icon: Eye, color: "#667eea" },
   { id: 2, name: "Dustbin Management", icon: Trash2, color: "#f56565" },
-  { id: 3, name: "Attendance Management",icon: CalendarCheck,color: "#48bb78"},
-  { id: 4, name: "Field Tracking",icon: MapPin,color: "#ecc94b",path: "/field-executive/dashboard",permissionKey:"CanAccessFieldTrackingSection"},
+  {
+    id: 3,
+    name: "Attendance Management",
+    icon: CalendarCheck,
+    color: "#48bb78",
+  },
+  {
+    id: 4,
+    name: "Field Tracking",
+    icon: MapPin,
+    color: "#ecc94b",
+    path: "/field-executive/dashboard",
+    permissionKey: "CanAccessFieldTrackingSection",
+  },
   { id: 5, name: "Survey Management", icon: ClipboardList, color: "#38b2ac" },
   { id: 6, name: "UCC Management", icon: Building, color: "#9f7aea" },
   { id: 7, name: "IEC Management", icon: Info, color: "#ed64a6" },
-  { id: 8,name: "Fuel Management",icon: Fuel,color: "#f6ad55",path: "/fuel/add_fuel_entries",},
-  { id: 9,name: "Administrators",icon: LayoutDashboard,color: "#4a5568",path: "/Dashboard"},
+  {
+    id: 8,
+    name: "Fuel Management",
+    icon: Fuel,
+    color: "#f6ad55",
+    path: "/fuel/add_fuel_entries",
+  },
+  {
+    id: 9,
+    name: "Administrators",
+    icon: LayoutDashboard,
+    color: "#4a5568",
+    path: "/Dashboard",
+  },
 ];
 
 const managementOptions = [
@@ -384,20 +409,19 @@ const QuickAppSelection = ({
   const location = useLocation();
 
   const [activePath, setActivePath] = useState("");
-    const { permissionGranted } = usePermissions();
+  const { permissionGranted } = usePermissions();
   // ✅ Set active app based on current route
   useEffect(() => {
     setActivePath(location.pathname);
   }, [location.pathname]);
 
   const visibleApps = useMemo(
-  () =>
-    appsList.filter(
-      (app) => !app.permissionKey || permissionGranted?.[app.permissionKey]
-    ),
-  [appsList,permissionGranted]
-);
-
+    () =>
+      appsList.filter(
+        (app) => !app.permissionKey || permissionGranted?.[app.permissionKey],
+      ),
+    [appsList, permissionGranted],
+  );
 
   const handleAppClick = (path) => {
     if (path) {
@@ -409,8 +433,6 @@ const QuickAppSelection = ({
 
   if (!showQuickAppSelect) return null;
 
-  
-
   return (
     <div
       className={`${styles.overlay2} ${isDropdown ? styles.dropdownOverlay : ""}`}
@@ -420,14 +442,13 @@ const QuickAppSelection = ({
         className={`${styles.modal} ${styles.modalApp}`}
         onClick={(e) => e.stopPropagation()}
       >
-                  {/* Floating Orbs */}
-          <div className={styles.floatingOrbs}>
-            <span className={`${styles.orb} ${styles.orbOne}`} />
-            <span className={`${styles.orb} ${styles.orbTwo}`} />
-            <span className={`${styles.orb} ${styles.orbThree}`} />
-          </div>
+        {/* Floating Orbs */}
+        <div className={styles.floatingOrbs}>
+          <span className={`${styles.orb} ${styles.orbOne}`} />
+          <span className={`${styles.orb} ${styles.orbTwo}`} />
+          <span className={`${styles.orb} ${styles.orbThree}`} />
+        </div>
         <div className={`${styles.modalBodyApp} ${styles.modalBody}`}>
-
           {/* Monitoring Apps */}
           <div className={styles.sectionHeader}>
             <h6 className={styles.sectionTitle}>
@@ -445,7 +466,7 @@ const QuickAppSelection = ({
                   activePath === app.path ? styles.activeCard : ""
                 }`}
                 onClick={() => handleAppClick(app.path)}
-                >
+              >
                 <div
                   className={styles.userTypeIcon}
                   style={{ background: `${app.color}15`, color: app.color }}
@@ -506,7 +527,10 @@ const QuickAppSelection = ({
                 <div className={`${styles.userTypeIcon} ${styles.iconBlue}`}>
                   <LockKeyhole size={16} />
                 </div>
-                <span className={styles.userTypeLabel2}>Change Password</span>
+                <span className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}>
+                  Change Password
+                  <ChevronRight size={14} />
+                </span>
               </div>
 
               <div
@@ -519,7 +543,9 @@ const QuickAppSelection = ({
                 <div className={`${styles.userTypeIcon} ${styles.iconRed}`}>
                   <LogOut size={16} />
                 </div>
-                <span className={styles.userTypeLabel2}>Logout</span>
+                <span className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}>
+                  Logout <ChevronRight size={14}  />
+                </span>
               </div>
             </div>
           </div>
