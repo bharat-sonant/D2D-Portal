@@ -1,7 +1,7 @@
 import styles from "./globalOffcanvas.module.css";
 import { X } from "lucide-react";
 
-const GlobalOffcanvas = ({ open, onClose, title, children, width = "45%" }) => {
+const GlobalOffcanvas = ({ open, onClose, title, children, width = "500px" }) => {
   return (
     <>
       {/* Backdrop */}
@@ -13,7 +13,7 @@ const GlobalOffcanvas = ({ open, onClose, title, children, width = "45%" }) => {
       {/* Panel */}
       <div
         className={`${styles.offcanvas} ${open ? styles.open : ""}`}
-        // style={{ width }}
+        style={{ width }}
       >
         {/* Header */}
         <div className={styles.OffcanvasHeader}>

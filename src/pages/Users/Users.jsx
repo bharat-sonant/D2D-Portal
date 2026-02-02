@@ -13,6 +13,7 @@ import PermissonAccess from "../../components/Users/PermissionAccess";
 import { usePermissions } from "../../context/PermissionContext";
 import UserLoginHistory from "../../components/Users/UserLogInHistory";
 import SiteAssignmentAlert from "../../components/Users/siteAlertPopup";
+import GlobalOffcanvas from "../../components/Common/globalOffcanvas/globalOffcanvas";
 
 const User = () => {
   const { permissionGranted } = usePermissions();
@@ -221,12 +222,23 @@ const User = () => {
       {siteAlertPopup && (
         <SiteAssignmentAlert setSiteAlertPopup={setSiteAlertPopup} />
       )}
-      <UserLoginHistory
+      {/* <UserLoginHistory
         userId={selectedUser?.id}
         userName={selectedUser?.name}
         open={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
-      />
+      /> */}
+      <GlobalOffcanvas
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title={selectedUser?.name || "Login History"}
+        width="375px"
+      >
+        <UserLoginHistory
+          userId={selectedUser?.id}
+          userName={selectedUser?.name}
+        />
+      </GlobalOffcanvas>
     </>
   );
 };

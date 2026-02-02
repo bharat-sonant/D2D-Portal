@@ -527,7 +527,9 @@ const QuickAppSelection = ({
                 <div className={`${styles.userTypeIcon} ${styles.iconBlue}`}>
                   <LockKeyhole size={16} />
                 </div>
-                <span className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}>
+                <span
+                  className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}
+                >
                   Change Password
                   <ChevronRight size={14} />
                 </span>
@@ -543,8 +545,10 @@ const QuickAppSelection = ({
                 <div className={`${styles.userTypeIcon} ${styles.iconRed}`}>
                   <LogOut size={16} />
                 </div>
-                <span className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}>
-                  Logout <ChevronRight size={14}  />
+                <span
+                  className={`${styles.userTypeIcon2} ${styles.userTypeLabel2}`}
+                >
+                  Logout <ChevronRight size={14} />
                 </span>
               </div>
             </div>
