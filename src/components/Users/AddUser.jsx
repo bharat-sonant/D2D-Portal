@@ -145,7 +145,7 @@ const AddUser = (props) => {
                       border:
                         form?.user_type === type.value
                           ? `2px solid ${type.color}`
-                          : "2px solid transparent",
+                          : "2px solid #0000000a",
                     }}
                   >
                     <Shield size={20} style={{ color: type.color }} />

@@ -132,6 +132,8 @@ max-height: calc(100vh - 90px);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
+    width: 140px;
+    height: 95px;
 }
 
 .userTypeCard:hover {
@@ -455,8 +457,7 @@ top: 16px;
 }
 /* ================= User Type ================= */
 .userTypeGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
   gap: 12px;
   margin-top: 10px;
 }
