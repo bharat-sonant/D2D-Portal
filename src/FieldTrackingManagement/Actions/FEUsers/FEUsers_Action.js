@@ -15,8 +15,8 @@ export const fetchEmpDetail = async (empId, setEmpData, setIsLoading, setIsFetch
         if (response.status === 'success') {
             // Saara data yahin set ho raha hai
             setEmpData({
-                name: response.data.name || "---",
-                email: response.data.email || "---"
+                name: response.data.name || "",
+                email: response.data.email || ""
             });
             setIsFetched(true);
         } else {
@@ -43,6 +43,19 @@ const generateRandomPassword = () => {
 // Action: Create FE App User and Update Locally
 export const createFEAppUser = async (empCode, empData, setIsLoading, closeModal, updateListLocally) => {
     try {
+        if (!empData?.name && !empData?.email) {
+            common.setAlertMessage("error", "Employee name and email are missing!");
+            setIsLoading(false);
+            return;
+        } else if (!empData?.name) {
+            common.setAlertMessage("error", "Employee name is missing. cannot provide access.");
+            setIsLoading(false);
+            return;
+        } else if (!empData?.email) {
+            common.setAlertMessage("error", "Employee email is missing. cannot provide access.");
+            setIsLoading(false);
+            return;
+        }
         setIsLoading(true);
         const password = generateRandomPassword(); // Aapka existing utility function
         const mailTemplate = await getFEAppLoginCredentialMailContent();
