@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
 import WardList from '../../components/Monitoring/WardList';
-import { getDutySummaryAction, getWardBoundryAction, getWardDailyWorkSummaryAction, getWardList } from '../../Actions/Monitoring/WardAction';
+import { getWardListAction } from '../../Actions/Monitoring/wardListSectionAction';
+import { getWardDashboardDataAction } from '../../Actions/Monitoring/wardDashboardSectionAction';
 import { useCity } from '../../context/CityContext';
 import WardMonitoringPanel from '../../components/Monitoring/WardMonitoringPanel';
+import WevoisLoader from '../../components/Common/Loader/WevoisLoader';
 import dayjs from 'dayjs';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import monStyles from '../../components/Monitoring/WardMonitoring.module.css';
@@ -13,11 +15,9 @@ const Monitoring = () => {
   const [selectedWard, setSelectedWard] = useState(null);
   const [wardList, setWardList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { cityId, city } = useCity();
+  const { cityId } = useCity();
   const [dutySummary, setDutySummary] = useState(null);
   const [dutyLoading, setDutyLoading] = useState(false);
-  const year = dayjs().format('YYYY');
-  const month = dayjs().format('MMMM');
   const date = dayjs().format('YYYY-MM-DD');
   const mapRef = useRef(null);
   const [wardBoundaryGeoJsonData, setWardBoundaryGeoJsonData] = useState(null);
@@ -26,46 +26,95 @@ const Monitoring = () => {
   const [hasPositioned, setHasPositioned] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [showZoneSummary, setShowZoneSummary] = useState(false);
+  const [isWardSwitchLoading, setIsWardSwitchLoading] = useState(false);
+  const [hasDashboardResponse, setHasDashboardResponse] = useState(false);
+  const requestIdRef = useRef(0);
+  const getNow = () =>
+    typeof performance !== 'undefined' ? performance.now() : Date.now();
 
-  const loadWards = async () => {
-    getWardList(setSelectedWard, setWardList, selectedWard, setLoading, cityId);
-  };
-
-  useEffect(() => {
-    loadWards();
-  }, [cityId]);
-
-  useEffect(() => {
-    setWardBoundaryGeoJsonData(null);
-    setWardLineGeoJsonData(null);
-    fetchDutyIntime();
-    fetchWardBoundry();
-  }, [selectedWard?.id, cityId]);
-
-  useEffect(() => {
+  const resetMapState = () => {
     setHasPositioned(false);
     setMapLoaded(false);
     if (mapRef.current) {
       mapRef.current = null;
     }
-  }, [selectedWard?.id]);
-
-
-  const fetchWardBoundry = async () => {
-    if (!selectedWard) return;
-    await getWardBoundryAction(cityId, selectedWard?.id, setWardBoundaryGeoJsonData, setWardLineGeoJsonData, setBoundryLoading);
   };
 
-  const fetchDutyIntime = async () => {
-    if (!selectedWard) return;
+  const fetchWardDashboard = async (ward) => {
+    if (!ward || !cityId) return;
+
+    const totalStart = getNow();
+    const currentRequestId = ++requestIdRef.current;
+    setIsWardSwitchLoading(true);
     setDutyLoading(true);
-    const result = await getWardDailyWorkSummaryAction(date, selectedWard, cityId, setDutyLoading);
-    if (result) {
-      setDutySummary(result);
-    } else {
-      setDutySummary(null);
+    setBoundryLoading(true);
+    setHasDashboardResponse(false);
+    setWardBoundaryGeoJsonData(null);
+    setWardLineGeoJsonData(null);
+    resetMapState();
+
+    try {
+      const result = await getWardDashboardDataAction({ date, ward, cityId });
+      if (currentRequestId !== requestIdRef.current) return;
+
+      setDutySummary(result.dutySummary || null);
+      setWardBoundaryGeoJsonData(result.wardBoundaryGeoJsonData || null);
+      setWardLineGeoJsonData(result.wardLineGeoJsonData || null);
+    } finally {
+      if (currentRequestId === requestIdRef.current) {
+        setDutyLoading(false);
+        setBoundryLoading(false);
+        setHasDashboardResponse(true);
+        setIsWardSwitchLoading(false);
+        console.log(
+          `[timing] Monitoring.fetchWardDashboard ward=${ward?.id} took ${(getNow() - totalStart).toFixed(1)}ms`
+        );
+      }
     }
   };
+
+  const handleWardSelect = async (ward) => {
+    if (!ward || isWardSwitchLoading) return;
+    if (selectedWard?.id === ward.id) return;
+
+    setSelectedWard(ward);
+    await fetchWardDashboard(ward);
+  };
+
+  useEffect(() => {
+    if (!cityId) return;
+
+    let isMounted = true;
+
+    const initializePage = async () => {
+      setLoading(true);
+      setSelectedWard(null);
+      setWardList([]);
+      setDutySummary(null);
+      setWardBoundaryGeoJsonData(null);
+      setWardLineGeoJsonData(null);
+      setHasDashboardResponse(false);
+      resetMapState();
+
+      const response = await getWardListAction(cityId);
+      if (!isMounted) return;
+
+      setWardList(response.wardList);
+      setSelectedWard(response.selectedWard);
+      setLoading(false);
+
+      if (response.selectedWard) {
+        await fetchWardDashboard(response.selectedWard);
+      }
+    };
+
+    initializePage();
+
+    return () => {
+      isMounted = false;
+      requestIdRef.current += 1;
+    };
+  }, [cityId]);
 
   return (
     <>
@@ -86,15 +135,19 @@ const Monitoring = () => {
             <WardList
               wardList={wardList}
               selectedWard={selectedWard}
-              setSelectedWard={setSelectedWard}
+              onWardSelect={handleWardSelect}
               loading={loading}
+              interactionLocked={isWardSwitchLoading}
             />
           </div>
           {/* 🟢 ZONE PROGRESS SUMMARY */}
           <div className={monStyles.zoneSummaryContainer}>
             <div
               className={monStyles.zoneSummaryHeader}
-              onClick={() => setShowZoneSummary(!showZoneSummary)}
+              onClick={() => {
+                if (isWardSwitchLoading) return;
+                setShowZoneSummary(!showZoneSummary);
+              }}
             >
               <span>Zone Progress Summary</span>
               {showZoneSummary ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
@@ -136,21 +189,40 @@ const Monitoring = () => {
         </div>
 
         <div className={`${TaskStyles.employeeRight}`} style={{ width: 'calc(100% - 300px)' }}>
-          <WardMonitoringPanel
-            selectedWard={selectedWard}
-            mapRef={mapRef}
-            dutySummary={dutySummary}
-            dutyLoading={dutyLoading}
-            wardBoundaryGeoJsonData={wardBoundaryGeoJsonData}
-            boundryLoading={boundryLoading}
-            wardLineGeoJsonData={wardLineGeoJsonData}
-            mapLoaded={mapLoaded}
-            setMapLoaded={setMapLoaded}
-            hasPositioned={hasPositioned}
-            setHasPositioned={setHasPositioned}
-          />
+          {!selectedWard ? (
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#64748b', fontWeight: 600 }}>Ward not found</span>
+            </div>
+          ) : !hasDashboardResponse || dutyLoading || boundryLoading ? (
+            <WevoisLoader title="Fetching monitoring data..." />
+          ) : (
+            <WardMonitoringPanel
+              selectedWard={selectedWard}
+              mapRef={mapRef}
+              dutySummary={dutySummary}
+              dutyLoading={dutyLoading}
+              wardBoundaryGeoJsonData={wardBoundaryGeoJsonData}
+              boundryLoading={boundryLoading}
+              wardLineGeoJsonData={wardLineGeoJsonData}
+              mapLoaded={mapLoaded}
+              setMapLoaded={setMapLoaded}
+              hasPositioned={hasPositioned}
+              setHasPositioned={setHasPositioned}
+            />
+          )}
         </div>
       </div>
+      {isWardSwitchLoading && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'transparent',
+            zIndex: 9999,
+            pointerEvents: 'all',
+          }}
+        />
+      )}
     </>
   );
 };

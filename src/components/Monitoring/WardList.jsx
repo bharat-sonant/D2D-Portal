@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import styles from '../../assets/css/City/CityList.module.css';
 import { images } from '../../assets/css/imagePath';
-import { debounce } from 'lodash';
-import { filterWardAction } from '../../Actions/Monitoring/WardAction';
+import { filterWardAction } from '../../Actions/Monitoring/wardListSectionAction';
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const WardList = (props) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredWardList, setFilteredWardList] = useState(props?.wardList || []);
-
-    useEffect(() => {
-        setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard));
-    }, [props?.wardList, searchTerm]);
+    const searchTerm = '';
+    const filteredWardList = filterWardAction(props?.wardList || [], searchTerm);
 
     return (
         <div className={`dropdown ${GlobalStyles.dropDown}`}>
@@ -48,8 +43,13 @@ const WardList = (props) => {
 
                                                     ? "#3fb2f114"
                                                     : "transparent",
+                                            cursor: props?.interactionLocked ? "not-allowed" : "pointer",
+                                            opacity: props?.interactionLocked ? 0.6 : 1,
                                         }}
-                                        onClick={() => props?.setSelectedWard(ward)}
+                                        onClick={() => {
+                                            if (props?.interactionLocked) return;
+                                            props?.onWardSelect?.(ward);
+                                        }}
                                     >
                                         <div
                                             className={`${GlobalStyles.userInfo}`}
@@ -62,7 +62,7 @@ const WardList = (props) => {
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: '8px' }}>
                                                 <span className={`${styles.employeeName}`} style={{ whiteSpace: 'normal', wordBreak: 'break-word', flex: 1, color: '#1e293b' }}>
-                                                    Zone {ward.display_name}
+                                                 {ward.display_name}
                                                 </span>
                                                 <span style={{
                                                     fontSize: '11px',

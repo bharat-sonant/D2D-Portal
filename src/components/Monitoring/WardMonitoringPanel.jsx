@@ -1,7 +1,7 @@
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TextField } from '@mui/material';
-import { Settings, Phone, Star, ClipboardList, Clock, TrendingUp, CalendarDays, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
+import { Settings, SquareKanban, Star, ClipboardList, Clock, TrendingUp, CalendarDays, Eye, EyeOff, ChevronUp, ChevronDown } from "lucide-react";
 import WevoisLoader from "../Common/Loader/WevoisLoader";
 import styles from "../../assets/css/City/CityList.module.css";
 import monStyles from "./WardMonitoring.module.css";
@@ -109,14 +109,14 @@ const WardMonitoringPanel = ({
               <span
                 className={monStyles.customDateText}
                 style={{
-                  color: !dateStrip.some(d => d.format('YYYY-MM-DD') === selectedDate) ? '#3fb2f1' : '#1e293b'
+                  color: !dateStrip.some(d => d.format('YYYY-MM-DD') === selectedDate) ? '#3fb2f1' : '#64748b'
                 }}
               >
                 {dateStrip.some(d => d.format('YYYY-MM-DD') === selectedDate)
                   ? "Custom Date"
                   : dayjs(selectedDate).format('DD MMM YYYY')}
               </span>
-              <CalendarDays className={monStyles.customDateIcon} size={18} />
+              <CalendarDays className={monStyles.customDateIcon} style={{color:!dateStrip.some(d => d.format('YYYY-MM-DD') === selectedDate)?"#3fb2f1":"#64748b"}} size={18} />
             </div>
 
             <div className={monStyles.muiDatePickerHidden}>
@@ -163,8 +163,8 @@ const WardMonitoringPanel = ({
         <div className={monStyles.mapSection}>
           <GoogleMap
             key={selectedWard?.id}
-            center={fallbackCenter}
-            zoom={fallbackZoom}
+            defaultCenter={fallbackCenter}
+            defaultZoom={fallbackZoom}
             onLoad={(map) => {
               mapRef.current = map;
               setHasPositioned(false);
@@ -202,7 +202,7 @@ const WardMonitoringPanel = ({
         {/* RIGHT PART: DETAILS */}
         <div className={monStyles.detailsSection}>
           <div className={monStyles.sectionTitle}>
-            <ClipboardList size={20} /> Ward Metrics
+            <ClipboardList color='#3fb2f1' size={20} /> Ward Status
           </div>
 
           <div className={monStyles.metricsGrid}>
@@ -261,7 +261,7 @@ const WardMonitoringPanel = ({
           </div>
 
           <div className={monStyles.sectionTitle} style={{ marginTop: '20px' }}>
-            <TrendingUp size={20} /> Distance & Time
+            <TrendingUp color='#3fb2f1' size={20} /> Distance & Time
           </div>
           <div className={monStyles.metricsGrid}>
             <div className={monStyles.metricCard}>
@@ -283,7 +283,7 @@ const WardMonitoringPanel = ({
           </div>
 
           <div className={monStyles.sectionTitle} style={{ marginTop: '20px' }}>
-            <Phone size={20} /> Work Details
+            <SquareKanban color='#3fb2f1' size={20} /> Worker Details
           </div>
 
           <div className={monStyles.staffContainer}>
