@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import GlobalStyles from '../../assets/css/globleStyles.module.css';
 import styles from '../../assets/css/City/CityList.module.css';
 import { images } from '../../assets/css/imagePath';
@@ -7,11 +7,11 @@ import { filterWardAction } from '../../Actions/Monitoring/WardAction';
 import WevoisLoader from '../Common/Loader/WevoisLoader';
 
 const WardList = (props) => {
-    const [searchTerm, setSearchTerm] = useState('')
+    const [searchTerm, setSearchTerm] = useState('');
     const [filteredWardList, setFilteredWardList] = useState(props?.wardList || []);
 
     useEffect(() => {
-        setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard))
+        setFilteredWardList(filterWardAction(props?.wardList, searchTerm, props?.setSelectedWard, props?.selectedWard));
     }, [props?.wardList, searchTerm]);
 
     return (
@@ -24,12 +24,13 @@ const WardList = (props) => {
                     className={`dropdown-menu ${GlobalStyles.dropdownMenu} ${GlobalStyles.dropdownDesktop} ${styles.pageDropdown}`}
                     style={{
                         display: "block",
+                        width: "300px"
                     }}
                     aria-labelledby="drop downMenuButton"
                 >
-                    
+
                     <div className={`${styles.userListTitle}`}>Select Ward</div>
-                    <div className={`${styles.userScroll}`} style={{marginTop:'10px'}}>
+                    <div className={`${styles.userScroll}`} style={{ marginTop: '10px' }}>
                         {props.loading ? (
                             <WevoisLoader title="Loading ward data..." />
                         ) : filteredWardList?.length > 0 ? (
@@ -59,9 +60,23 @@ const WardList = (props) => {
                                                         : "#000000",
                                             }}
                                         >
-                                            <span className={`${styles.employeeName}`}>
-                                                {ward.display_name}
-                                            </span>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: '8px' }}>
+                                                <span className={`${styles.employeeName}`} style={{ whiteSpace: 'normal', wordBreak: 'break-word', flex: 1, color: '#1e293b' }}>
+                                                    Zone {ward.display_name}
+                                                </span>
+                                                <span style={{
+                                                    fontSize: '11px',
+                                                    fontWeight: '700',
+                                                    color: '#3fb2f1',
+                                                    background: '#f0f7ff',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '4px',
+                                                    border: '1px solid #3fb2f1',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    75%
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -81,7 +96,7 @@ const WardList = (props) => {
                 </ul>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default WardList
+export default WardList;

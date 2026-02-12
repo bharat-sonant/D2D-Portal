@@ -1,0 +1,450 @@
+@import "../../assets/css/variable.css";
+@import "../../assets/css/fonts.css";
+
+.monitoringContainer {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    background-color: #f4f7fa;
+    width: 100%;
+}
+
+.topHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 0 20px;
+    height: 70px;
+    border-bottom: 1px solid #e0e6ed;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.dateStrip {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.dateItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    min-width: 85px;
+    height: 46px; 
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.dateItem:hover {
+    border-color: #3fb2f1;
+    background: #f8faff;
+}
+
+.dateItem.active {
+    background: #f0f7ff;
+    border: 1px solid #3fb2f1;
+    box-shadow: 0 10px 25px rgba(63, 178, 241, 0.15);
+}
+
+.dayLabel {
+    font-size: 9px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.dateItem.active .dayLabel {
+    color: #3fb2f1;
+}
+
+.dateLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.dateItem.active .dateLabel {
+    color: #3fb2f1;
+}
+
+.settingsIcon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.settingsIcon:hover {
+    opacity: 1;
+}
+
+.mainBody {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.mapSection {
+    flex: 1;
+    position: relative;
+    border-right: 1px solid #e0e6ed;
+}
+
+.detailsSection {
+    width: 450px;
+    background: white;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.sectionTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.metricCard {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metricLabel {
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metricValue {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.staffContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.staffCard {
+    display: flex;
+    gap: 16px;
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.staffImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #eff6ff;
+}
+
+.staffInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.staffName {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.staffContact {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ratingBox {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.star {
+    color: #f59e0b;
+    font-size: 14px;
+}
+
+.remarkSection {
+    margin-top: 24px;
+}
+
+.remarkArea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    min-height: 80px;
+    font-size: 13px;
+    color: #1e293b;
+    resize: none;
+}
+
+.remarkArea:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.secondaryStats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.customDateContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.customDateDisplay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+    height: 46px;
+    min-width: 170px;
+}
+
+.customDateDisplay:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.customDateText {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.customDateIcon {
+    color: #1e293b;
+}
+
+.muiDatePickerHidden {
+    display: none;
+}
+
+/* 🟢 SETTINGS SLIDER (DRAWER) */
+.settingsSlider {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out;
+}
+
+.settingsSlider.open {
+    transform: translateX(0);
+}
+
+.sliderOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+}
+
+.sliderHeader {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sliderTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.closeBtn {
+    cursor: pointer;
+    font-size: 24px;
+    color: #64748b;
+}
+
+.sliderBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.optionRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.optionRow:hover {
+    background: #f8fafc;
+}
+
+.optionText {
+    font-size: 14px;
+    color: #334155;
+    font-weight: 500;
+}
+
+.eyeIcon {
+    color: #3fb2f1; /* Changed from green to theme blue */
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.eyeIcon:hover {
+    transform: scale(1.1);
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.checkbox.checked {
+    background: #3fb2f1;
+    border-color: #3fb2f1;
+}
+
+/* 🟢 ZONE PROGRESS SUMMARY (Left Sidebar) */
+.zoneSummaryContainer {
+    border-top: 1px solid #e2e8f0;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.zoneSummaryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.zoneSummaryHeader:hover {
+    background: #e2e8f0;
+}
+
+.zoneSummaryBody {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.zoneItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.zoneLabel {
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.zoneValue {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.heroItem {
+    grid-column: span 2;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 🟢 SLIDER ICONS */
+.eyeIconLucide {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.eyeIconLucide.active {
+    color: #3fb2f1; /* Changed from green to theme blue */
+}
+
+.eyeIconLucide.inactive {
+    color: #94a3b8;
+}
