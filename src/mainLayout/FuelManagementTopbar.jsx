@@ -89,7 +89,7 @@ const FuelManagementTopbar = () => {
                     </div>
                 </div>
 
-                <div className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""}`}>
+                {/* <div className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""}`}>
                     {menuItems.map((item, index) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -115,7 +115,7 @@ const FuelManagementTopbar = () => {
                             </Link>
                         );
                     })}
-                </div>
+                </div> */}
 
                 <div className={styles.headerRight}>
                     <button
