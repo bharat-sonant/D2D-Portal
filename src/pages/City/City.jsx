@@ -26,7 +26,10 @@ import WardSetting from "../../components/City/WardSetting";
 import GlobalOffcanvas from "../../components/Common/globalOffcanvas/globalOffcanvas";
 import WardMapCanvas from "../../components/City/WardMapCanvas";
 import { useRef } from "react";
-import { saveWardBoundaryGeojsonInDb, saveWardMapData, uploadWardBoundaryJson, uploadWardMapJson } from "../../Actions/City/wardMapAction";
+import {
+  saveWardBoundaryGeojsonInDb,
+  saveWardMapData,
+} from "../../Actions/City/wardMapAction";
 
 const TABS = [
   { key: "city", label: "Site Details", icon: Building2 },
@@ -35,7 +38,7 @@ const TABS = [
   { key: "users", label: "Users In Site", icon: Users },
 ];
 
-const City = (props) => {
+const City = () => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [openAddWardPopUp, setOpenAddWardPopUp] = useState(false);
   const [cityList, setCityList] = useState([]);
@@ -60,12 +63,12 @@ const City = (props) => {
     useState(false);
   const [isWardLinePopupOpen, setIsWardLinePopOpen] = useState(false);
   const [wardBoundaryGeoJsonData, setWardBoundaryGeoJsonData] = useState(null);
-const [wardMapGeoJsonData, setWardMapGeoJsonData] = useState(null);
-const [ PreviousMapList,setPreviousMapList] = useState([]);
-const [SelectedDate,setSelectedDate] = useState([]);
+  const [wardMapGeoJsonData, setWardMapGeoJsonData] = useState(null);
+  const [PreviousMapList, setPreviousMapList] = useState([]);
+  const [SelectedDate, setSelectedDate] = useState([]);
 
   const [HoldArray, setHoldArray] = useState([]);
-    const mapRef = useRef(null);
+  const mapRef = useRef(null);
   const loadCities = async () => {
     getCityList(
       setSelectedCity,
@@ -127,26 +130,7 @@ const [SelectedDate,setSelectedDate] = useState([]);
     lat: 26.901875,
     lng: 75.738869,
   };
-   const handleGeoJsonUpload = async (event) => {
-    const file = event.target.files[0];
-    uploadWardBoundaryJson(
-      file,
-      setWardBoundaryGeoJsonData,
-      props.setIsWardBoundaryMapPopupOpen,
-      setHoldArray,
-    );
-  };
-
-  function handleWardGeoJsonUpload(event) {
-    const file = event.target.files[0];
-    uploadWardMapJson(
-      file,
-      setWardMapGeoJsonData,
-      props.setIsWardLinePopOpen,
-      setHoldArray,
-    );
-  }
-    const fitToBoundsForBoundaryAndLines = () => {
+  const fitToBoundsForBoundaryAndLines = () => {
     if (!mapRef.current) return;
 
     const bounds = new window.google.maps.LatLngBounds();
@@ -361,12 +345,11 @@ const [SelectedDate,setSelectedDate] = useState([]);
           <WardMapCanvas
             wardId={activeWardId}
             selectedCity={selectedCity.site_id}
-           setIsWardBoundaryMapPopupOpen={setIsWardBoundaryMapPopupOpen}
-  setIsWardLinePopOpen={setIsWardLinePopOpen}
-
-  setWardBoundaryGeoJsonData={setWardBoundaryGeoJsonData}
-  setWardMapGeoJsonData={setWardMapGeoJsonData}
-  setHoldArray={setHoldArray}
+            setIsWardBoundaryMapPopupOpen={setIsWardBoundaryMapPopupOpen}
+            setIsWardLinePopOpen={setIsWardLinePopOpen}
+            setWardBoundaryGeoJsonData={setWardBoundaryGeoJsonData}
+            setWardMapGeoJsonData={setWardMapGeoJsonData}
+            setHoldArray={setHoldArray}
           />
         </GlobalOffcanvas>
       )}
@@ -459,11 +442,11 @@ const [SelectedDate,setSelectedDate] = useState([]);
                   }}
                   onClick={() =>
                     saveWardBoundaryGeojsonInDb(
-                      props.wardId,
-                      props.selectedCity,
+                      activeWardId,
+                      selectedCity?.site_id,
                       HoldArray,
                       setHoldArray,
-                      props.setIsWardBoundaryMapPopupOpen,
+                      setIsWardBoundaryMapPopupOpen,
                     )
                   }
                 >
@@ -570,11 +553,11 @@ const [SelectedDate,setSelectedDate] = useState([]);
                   }}
                   onClick={() =>
                     saveWardMapData(
-                      props.wardId,
-                      props.selectedCity,
+                      activeWardId,
+                      selectedCity?.site_id,
                       HoldArray,
                       setHoldArray,
-                      props.setIsWardLinePopOpen,
+                      setIsWardLinePopOpen,
                       setPreviousMapList,
                       setSelectedDate,
                     )

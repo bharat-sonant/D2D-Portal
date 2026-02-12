@@ -78,11 +78,12 @@ export const getWardBoundryAction = async(cityId, wardId, setWardBoundaryGeoJson
 
     if(latestBoundary?.data){
       boundryData = await sbs.getGeoJsonFromStorage(`city_${cityId}/WardBoundaries/ward_${wardId}/${latestBoundary?.data}`)
-
+      console.log(`city_${cityId}/WardHouseLine/ward_${wardId}/${latestBoundary?.data}`)
       linesData = await sbs.getGeoJsonFromStorage(
       `city_${cityId}/WardHouseLine/ward_${wardId}/${latestBoundary?.data}`
     );
     }
+    console.log('boundryData',boundryData)
     //ward boundry -> polygon
     if(boundryData?.points && Array.isArray(boundryData?.points)){
       const polygonPath = boundryData?.points?.map(([lat,lng]) => ({

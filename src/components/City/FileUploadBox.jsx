@@ -44,10 +44,17 @@ export const FileUploadBox = ({ id, label, onChange }) => {
     const ext = file.name.split(".").pop().toLowerCase();
     if (ext !== "json") {
       alert("Only .json files are allowed");
+      if (typeof e.target.value === "string") {
+        e.target.value = "";
+      }
       return;
     }
 
     onChange(e); // tumhara existing popup + confirmation yahin se trigger hoga
+    // Allow selecting the same file again after closing preview.
+    if (typeof e.target.value === "string") {
+      e.target.value = "";
+    }
   };
 
   const handleDrag = (e) => {

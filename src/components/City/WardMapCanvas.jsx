@@ -7,22 +7,33 @@ import { useEffect, useRef, useState } from "react";
 import {
   getPrevousMapList,
   getSelectWardBoundaryAndLine,
-  saveGeoJsonData,
-  saveWardBoundaryGeojsonInDb,
-  saveWardMapData,
   uploadWardBoundaryJson,
   uploadWardMapJson,
 } from "../../Actions/City/wardMapAction";
 
 const WardMapCanvas = (props) => {
   const mapRef = useRef(null);
-  const handleCloseSettings = () => props.setOpenCanvas(false);
   const [wardMapGeoJsonData, setWardMapGeoJsonData] = useState(null);
   const [wardBoundaryGeoJsonData, setWardBoundaryGeoJsonData] = useState(null);
 
   const [previoisMapList, setPreviousMapList] = useState([]);
   const [HoldArray, setHoldArray] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+
+  const syncWardBoundaryGeoJsonData = (data) => {
+    setWardBoundaryGeoJsonData(data);
+    props.setWardBoundaryGeoJsonData?.(data);
+  };
+
+  const syncWardMapGeoJsonData = (data) => {
+    setWardMapGeoJsonData(data);
+    props.setWardMapGeoJsonData?.(data);
+  };
+
+  const syncHoldArray = (data) => {
+    setHoldArray(data);
+    props.setHoldArray?.(data);
+  };
 
   const mapContainerStyle = {
     width: "100%",
@@ -68,8 +79,8 @@ const WardMapCanvas = (props) => {
       props.wardId,
       props.selectedCity,
       null,
-      setWardBoundaryGeoJsonData,
-      setWardMapGeoJsonData,
+      syncWardBoundaryGeoJsonData,
+      syncWardMapGeoJsonData,
       previoisMapList,
       setSelectedDate,
     );
@@ -98,9 +109,9 @@ const WardMapCanvas = (props) => {
     const file = event.target.files[0];
     uploadWardBoundaryJson(
       file,
-      setWardBoundaryGeoJsonData,
+      syncWardBoundaryGeoJsonData,
       props.setIsWardBoundaryMapPopupOpen,
-      setHoldArray,
+      syncHoldArray,
     );
   };
 
@@ -108,9 +119,9 @@ const WardMapCanvas = (props) => {
     const file = event.target.files[0];
     uploadWardMapJson(
       file,
-      setWardMapGeoJsonData,
+      syncWardMapGeoJsonData,
       props.setIsWardLinePopOpen,
-      setHoldArray,
+      syncHoldArray,
     );
   }
 
@@ -205,8 +216,8 @@ const WardMapCanvas = (props) => {
                       props.wardId,
                       props.selectedCity,
                       item.map_updated_at,
-                      setWardBoundaryGeoJsonData,
-                      setWardMapGeoJsonData,
+                      syncWardBoundaryGeoJsonData,
+                      syncWardMapGeoJsonData,
                       [],
                       setSelectedDate,
                     );
