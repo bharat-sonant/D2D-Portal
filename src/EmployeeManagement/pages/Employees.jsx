@@ -1,20 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import empStyles from "./Employees.module.css";
-import {
-    Search,
-    Plus,
-    Edit2,
-    Trash2,
-    Loader2,
-} from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Loader2, RefreshCcw } from "lucide-react";
 import AddEmployee from "../components/AddEmployee";
-import {
-    getEmployeesAction,
-    deleteEmployeeAction,
-} from "../../services/EmployeeService/EmployeeAction";
+import { deleteEmployeeAction } from "../../services/EmployeeService/EmployeeAction";
 import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 import * as common from "../../common/common";
+import { migrateEmployeesToSupabase } from "../Service/EmployeeService";
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
@@ -24,15 +16,10 @@ const Employees = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
-    const fetchEmployees = () => {
-        getEmployeesAction(setEmployees, setLoading);
+    const handleMigration = async () => {
+        await migrateEmployeesToSupabase()
     };
-
-    useEffect(() => {
-        fetchEmployees();
-    }, []);
 
     const handleEdit = (emp) => {
         setEmployeeToEdit(emp);
@@ -46,18 +33,15 @@ const Employees = () => {
 
     const confirmDelete = () => {
         if (!employeeToDelete) return;
-        setIsDeleting(true);
         deleteEmployeeAction(
             employeeToDelete.id,
             (msg) => {
-                setIsDeleting(false);
                 setShowDeleteModal(false);
                 setEmployeeToDelete(null);
                 common.setAlertMessage("success", msg || "Employee deleted successfully");
-                fetchEmployees();
+                // fetchEmployees();
             },
             (err) => {
-                setIsDeleting(false);
                 setShowDeleteModal(false);
                 setEmployeeToDelete(null);
                 common.setAlertMessage("error", err || "Failed to delete employee");
@@ -84,10 +68,6 @@ const Employees = () => {
 
             <div className={empStyles.contentWrapper}>
                 <div className={empStyles.headerRow}>
-                    <div>
-                        <h2 className={empStyles.pageTitle}>Employees Management</h2>
-                        <p className={empStyles.pageSubtitle}>Manage and monitor all company staff members</p>
-                    </div>
                     <div className={empStyles.searchActions}>
                         <div className={empStyles.searchWrapper}>
                             <Search size={18} className={empStyles.searchIcon} />
@@ -98,7 +78,13 @@ const Employees = () => {
                                 className={empStyles.searchInput}
                             />
                         </div>
+
                     </div>
+                    <div onClick={handleMigration} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }} >
+                        <RefreshCcw size={20} xlinkTitle="Fetch employees" />
+                        <span>Sync Data</span>
+                    </div>
+
                 </div>
 
                 <div className={empStyles.tableContainer}>
@@ -196,10 +182,10 @@ const Employees = () => {
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
                 employeeToEdit={employeeToEdit}
-                onRefresh={(msg) => {
-                    fetchEmployees();
-                    if (msg) common.setAlertMessage("success", msg);
-                }}
+            // onRefresh={(msg) => {
+            //     fetchEmployees();
+            //     if (msg) common.setAlertMessage("success", msg);
+            // }}
             />
 
             {showDeleteModal && (
