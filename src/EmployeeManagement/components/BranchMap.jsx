@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import styles from './BranchMap.module.css';
 
@@ -35,11 +35,17 @@ const BranchMap = ({ branchData, selectedBranch, setSelectedBranch, mapRef, setC
         height: '100%',
     };
 
+    useEffect(() => {
+        if (mapRef && center) {
+            mapRef.panTo(center);
+            mapRef.setZoom(13);
+        }
+    }, [center, mapRef]);
+
     const handleMarkerClick = (marker) => {
         if (mapRef) {
-            setCenter({ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) });
-            mapRef.panTo({ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) });
-            mapRef.setZoom(12);
+            const newCenter = { lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) };
+            setCenter(newCenter);
         }
         setSelectedBranch(marker.id);
     };

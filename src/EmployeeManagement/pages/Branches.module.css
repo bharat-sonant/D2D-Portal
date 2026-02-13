@@ -41,9 +41,9 @@
 .mainLayout {
     display: flex;
     gap: 24px;
-    height: calc(100vh - 180px);
+    /* height: calc(100vh - 180px); */
     /* Adjust based on header */
-    min-height: 600px;
+    /* min-height: 600px; */
 }
 
 /* Column 1: Branch List Sidebar */
@@ -352,7 +352,7 @@
 
 /* Map area */
 .mapCard {
-    height: 300px;
+    height: 750px;
     border-radius: 16px;
     overflow: hidden;
     position: relative;

@@ -104,6 +104,17 @@ const Branches = () => {
             (w.branch?.toLowerCase() === selectedBranch?.name?.toLowerCase()))
     );
 
+    const handleWardClick = (ward) => {
+        setSelectedWardId(ward.ward_id || ward.id);
+        // Find the branch this ward belongs to for centering
+        const wardBranch = branches.find(b =>
+            b && (b.id === ward.branch_id || b.name?.toLowerCase() === ward.branch?.toLowerCase())
+        );
+        if (wardBranch && wardBranch.lat && wardBranch.lng) {
+            setCenter({ lat: parseFloat(wardBranch.lat), lng: parseFloat(wardBranch.lng) });
+        }
+    };
+
     const selectedWard = wards.find(w => w && (w.id === selectedWardId || w.ward_id === selectedWardId));
 
     const filteredBranches = branches.filter(branch => {
@@ -309,7 +320,7 @@ const Branches = () => {
                                         <div
                                             key={ward.id || ward.ward_id}
                                             className={`${branchStyles.wardItem} ${selectedWardId === (ward.ward_id || ward.id) ? branchStyles.wardItemActive : ""}`}
-                                            onClick={() => setSelectedWardId(ward.ward_id || ward.id)}
+                                            onClick={() => handleWardClick(ward)}
                                         >
                                             <div style={{ fontWeight: '600' }}>Ward {ward.ward_id || ward.id}</div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -400,7 +411,7 @@ const Branches = () => {
                         <div className={branchStyles.card} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', opacity: 0.6 }}>
                             <Navigation size={48} color="#cbd5e1" />
                             <p style={{ marginTop: '16px' }}>Select a ward from the list to see specific details</p>
-                            <div style={{ width: '100%', height: '300px', marginTop: '24px', borderRadius: '16px', overflow: 'hidden' }}>
+                            <div style={{ width: '100%', height: '800px', marginTop: '24px', borderRadius: '16px', overflow: 'hidden' }}>
                                 {isLoaded && (
                                     <BranchMap
                                         branchData={branches}
