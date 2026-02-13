@@ -29,8 +29,6 @@ const Monitoring = () => {
   const [isWardSwitchLoading, setIsWardSwitchLoading] = useState(false);
   const [hasDashboardResponse, setHasDashboardResponse] = useState(false);
   const requestIdRef = useRef(0);
-  const getNow = () =>
-    typeof performance !== 'undefined' ? performance.now() : Date.now();
 
   const resetMapState = () => {
     setHasPositioned(false);
@@ -43,7 +41,6 @@ const Monitoring = () => {
   const fetchWardDashboard = async (ward) => {
     if (!ward || !cityId) return;
 
-    const totalStart = getNow();
     const currentRequestId = ++requestIdRef.current;
     setIsWardSwitchLoading(true);
     setDutyLoading(true);
@@ -66,9 +63,6 @@ const Monitoring = () => {
         setBoundryLoading(false);
         setHasDashboardResponse(true);
         setIsWardSwitchLoading(false);
-        console.log(
-          `[timing] Monitoring.fetchWardDashboard ward=${ward?.id} took ${(getNow() - totalStart).toFixed(1)}ms`
-        );
       }
     }
   };

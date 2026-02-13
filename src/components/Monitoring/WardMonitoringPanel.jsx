@@ -135,14 +135,12 @@ const WardMonitoringPanel = ({
                     }
                   }}
                   slots={{
-                    textField: (params) => (
-                      <TextField
-                        {...params}
-                        style={{ display: 'none' }}
-                      />
-                    ),
+                    textField: TextField,
                   }}
                   slotProps={{
+                    textField: {
+                      style: { display: 'none' },
+                    },
                     popper: {
                       anchorEl: datePickerRef.current,
                     },
