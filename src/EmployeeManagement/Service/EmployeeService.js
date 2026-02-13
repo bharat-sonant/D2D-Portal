@@ -42,7 +42,7 @@ export const migrateEmployeesToSupabase = () => {
     return new Promise(async (resolve) => {
         try {
             const employeesResponse = await fetchEmployeesFromFirebase();
-        
+
             if (employeesResponse.status === 'fail') {
                 resolve(setResponse('fail', 'Employees data not found in Firebase...', {}));
                 return;
@@ -90,13 +90,10 @@ export const getEmployeesFromSupabase = () => {
                     id: emp.id,
                     name: general.name || null,
                     empCode: general.empCode || null,
-                    dateOfBirth: general.dateOfBirth || null,
-                    dateOfJoining: general.dateOfJoining || null,
-                    fatherName: general.fatherName || null,
                     gender: general.gender || null,
                     mobile: general.mobile || null,
                     status: general.status || null,
-                    email: general.email || null
+                    email: general.email || null,
                 };
             });
 
@@ -106,5 +103,11 @@ export const getEmployeesFromSupabase = () => {
             console.error("Error fetching employees from Supabase:", error.message);
             resolve(setResponse('fail', 'Error fetching employees from Supabase', error.message));
         }
+    });
+};
+
+export const getEmployeeDetails = () => {
+    return new Promise((resolve) => {
+        
     });
 };
