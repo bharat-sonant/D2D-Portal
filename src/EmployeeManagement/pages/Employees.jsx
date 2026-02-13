@@ -8,6 +8,10 @@ import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModa
 import * as common from "../../common/common";
 import { migrateEmployeesToSupabase } from "../Service/EmployeeService";
 
+import { getEmployeeListAction } from "../Service/EmployeeAction";
+import EmployeeDetailsSidebar from "../components/EmployeeDetailsSidebar";
+import WevoisLoader from "../../components/Common/Loader/WevoisLoader";
+
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,9 +20,20 @@ const Employees = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState(null);
+    const [showDetailsSidebar, setShowDetailsSidebar] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+    const fetchEmployees = async () => {
+        await getEmployeeListAction(setEmployees, setLoading);
+    };
+
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
 
     const handleMigration = async () => {
-        await migrateEmployeesToSupabase()
+        await migrateEmployeesToSupabase();
+        fetchEmployees();
     };
 
     const handleEdit = (emp) => {
@@ -39,7 +54,7 @@ const Employees = () => {
                 setShowDeleteModal(false);
                 setEmployeeToDelete(null);
                 common.setAlertMessage("success", msg || "Employee deleted successfully");
-                // fetchEmployees();
+                fetchEmployees();
             },
             (err) => {
                 setShowDeleteModal(false);
@@ -91,72 +106,65 @@ const Employees = () => {
                     <table className={empStyles.employeesTable}>
                         <thead>
                             <tr className={empStyles.tableHeader}>
+                                <th style={{ width: "50px", textAlign: "center" }}>#</th>
                                 <th>Employee</th>
                                 <th>Code</th>
-                                <th>Contact</th>
-                                <th>Branch</th>
+                                <th>Gender</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
                                 <th>Status</th>
-                                <th style={{ textAlign: "center" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className={empStyles.loadingCell}>
-                                        <Loader2
-                                            className="animate-spin"
-                                            size={32}
-                                            style={{ margin: "auto", color: "var(--themeColor)" }}
-                                        />
+                                    <td colSpan="7" className={empStyles.loadingCell}>
+                                        <WevoisLoader title="Loading Employees..." />
                                     </td>
                                 </tr>
                             ) : filteredEmployees.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
+                                    <td colSpan="7" style={{ padding: "40px", textAlign: "center", color: "var(--textMuted)" }}>
                                         No employees found.
                                     </td>
                                 </tr>
                             ) : (
-                                filteredEmployees.map((emp) => (
-                                    <tr key={emp.id} className={empStyles.tableRow}>
+                                filteredEmployees.map((emp, index) => (
+                                    <tr
+                                        key={emp.id}
+                                        className={empStyles.tableRow}
+                                        onClick={() => {
+                                            setSelectedEmployee(emp);
+                                            setShowDetailsSidebar(true);
+                                        }}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <td className={empStyles.cellText} style={{ textAlign: "center", fontWeight: "bold", color: "#64748b" }}>
+                                            {index + 1}
+                                        </td>
                                         <td style={{ padding: "15px 20px" }}>
                                             <div className={empStyles.employeeInfo}>
                                                 <div className={empStyles.avatar}>
-                                                    {emp.employee_name?.charAt(0) || "U"}
+                                                    {emp.image_url ? (
+                                                        <img src={emp.image_url} alt="" className={empStyles.avatarImg} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                                                    ) : (
+                                                        emp.employee_name?.charAt(0) || "U"
+                                                    )}
                                                 </div>
                                                 <div>
-                                                    <div className={empStyles.employeeName}>{emp.employee_name}</div>
-                                                    <div className={empStyles.employeeEmail}>{emp.email || "N/A"}</div>
+                                                    <div className={empStyles.employeeName}>{emp.name}</div>
+                                                    <div className={empStyles.employeeEmail}>{emp.desig_id || "N/A"}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className={empStyles.cellText}>{emp.employee_code}</td>
-                                        <td className={empStyles.cellText}>{emp.phone_number || "N/A"}</td>
-                                        <td style={{ padding: "15px 20px" }}>
-                                            <span className={empStyles.branchBadge}>{emp.branch_id || "N/A"}</span>
-                                        </td>
+                                        <td className={empStyles.cellText}>{emp.empCode}</td>
+                                        <td className={empStyles.cellText}>{emp.gender || "N/A"}</td>
+                                        <td className={empStyles.cellText}>{emp.mobile || "N/A"}</td>
+                                        <td className={empStyles.cellText}>{emp.email || "N/A"}</td>
                                         <td style={{ padding: "15px 20px" }}>
                                             <span className={`${empStyles.statusBadge} ${emp.status ? empStyles.statusActive : empStyles.statusInactive}`}>
                                                 {emp.status ? "Active" : "Inactive"}
                                             </span>
-                                        </td>
-                                        <td style={{ padding: "15px 20px", textAlign: "center" }}>
-                                            <div className={empStyles.actionsContainer}>
-                                                <button
-                                                    onClick={() => handleEdit(emp)}
-                                                    className={empStyles.actionBtn}
-                                                    title="Edit Employee"
-                                                >
-                                                    <Edit2 size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(emp)}
-                                                    className={empStyles.deleteBtn}
-                                                    title="Delete Employee"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -182,10 +190,10 @@ const Employees = () => {
                 showCanvas={showAddModal}
                 setShowCanvas={setShowAddModal}
                 employeeToEdit={employeeToEdit}
-            // onRefresh={(msg) => {
-            //     fetchEmployees();
-            //     if (msg) common.setAlertMessage("success", msg);
-            // }}
+                onRefresh={(msg) => {
+                    fetchEmployees();
+                    if (msg) common.setAlertMessage("success", msg);
+                }}
             />
 
             {showDeleteModal && (
@@ -212,6 +220,20 @@ const Employees = () => {
                     onConfirm={confirmDelete}
                 />
             )}
+
+            <EmployeeDetailsSidebar
+                isOpen={showDetailsSidebar}
+                onClose={() => setShowDetailsSidebar(false)}
+                employee={selectedEmployee}
+                onEdit={(emp) => {
+                    setShowDetailsSidebar(false);
+                    handleEdit(emp);
+                }}
+                onDelete={(emp) => {
+                    setShowDetailsSidebar(false);
+                    handleDelete(emp);
+                }}
+            />
 
         </div>
     );
