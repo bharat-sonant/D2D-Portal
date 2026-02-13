@@ -191,6 +191,7 @@
 
 
 
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -201,6 +202,9 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
+import { NavLink, Outlet } from "react-router-dom";
+import Vehicle from "../Vehicle/Vehicle";
+import SyncData from "../SyncData/SyncData";
 
 const companies = ["TATA", "Mahindra", "Leyland"];
 
@@ -297,218 +301,445 @@ const fleetKmLoss = fleetExpectedKM - totalKM;
 const fleetFuelLossRupees = fleetKmLoss * costPerKmFleet;
 
 export default function FuelEntries() {
+  const [activeTab, setActiveTab] = useState("Dashboard");
+
   return (
-    <div className="container-fluid bg-light min-vh-100 py-4">
-      <div className="container">
-        <h2 className="fw-bold mb-1">Fleet Intelligence Dashboard</h2>
-        <p className="text-muted mb-4">
-          Real-time performance, efficiency & financial impact overview
-        </p>
-
-        {/* CRITICAL KPI ROW */}
-        <div className="row g-4 mb-4">
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body">
-                <small className="text-muted">Total Fuel Filled</small>
-                <h3 className="fw-bold">{totalLiters.toFixed(0)} L</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body">
-                <small className="text-muted">Total Running KM</small>
-                <h3 className="fw-bold">{totalKM.toFixed(0)}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body">
-                <small className="text-muted">Total Fuel Amount</small>
-                <h3 className="fw-bold">₹{totalAmount.toFixed(0)}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body">
-                <small className="text-muted">Fleet Avg</small>
-                <h3 className="fw-bold">{fleetAvg.toFixed(2)} km/l</h3>
-                <small>
-                  Last Month: {lastMonthAvg} | {improvement}%
-                </small>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body">
-                <small className="text-muted">Expected Fleet KM</small>
-                <h3 className="fw-bold">{fleetExpectedKM.toFixed(0)}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm bg-danger text-white h-100">
-              <div className="card-body">
-                <small>Total KM Loss</small>
-                <h3>{fleetKmLoss.toFixed(0)}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 shadow-sm bg-dark text-white h-100">
-              <div className="card-body">
-                <small>Total Fuel Loss</small>
-                <h3>₹{fleetFuelLossRupees.toFixed(0)}</h3>
-              </div>
-            </div>
-          </div>
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      {/* Sidebar */}
+      <div
+        style={{
+          width: "250px",
+          minHeight: "100vh",
+          background: "linear-gradient(180deg, #1e293b 0%, #334155 100%)",
+          padding: "0",
+          boxShadow: "2px 0 10px rgba(0,0,0,0.1)",
+          position: "fixed",
+          left: 0,
+          top: 0,
+          zIndex: 1000,
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: "25px 20px",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(0,0,0,0.2)",
+          }}
+        >
+          <h4
+            style={{
+              color: "#fff",
+              margin: 0,
+              fontSize: "20px",
+              fontWeight: "600",
+              letterSpacing: "0.5px",
+            }}
+          >
+            ⛽ Fuel Panel
+          </h4>
+          <p
+            style={{
+              color: "rgba(255,255,255,0.6)",
+              margin: "5px 0 0 0",
+              fontSize: "12px",
+            }}
+          >
+            Fleet Management System
+          </p>
         </div>
 
-        {/* PERFORMANCE SNAPSHOT */}
-        <div className="row g-4 mb-4">
-          <div className="col-lg-3 col-md-6">
-            <div className="card shadow-sm border-0 h-100">
-              <div className="card-body">
-                <small className="text-muted">Vehicles Below 6 km/l</small>
-                <h4 className="text-danger fw-bold">
-                  {belowTarget.length}
-                </h4>
-              </div>
-            </div>
-          </div>
+        {/* Navigation */}
+        <ul style={{ listStyle: "none", padding: "15px 0", margin: 0 }}>
+          <li>
+            <button
+              onClick={() => setActiveTab("Dashboard")}
+              style={{
+                width: "100%",
+                padding: "14px 20px",
+                background:
+                  activeTab === "Dashboard"
+                    ? "rgba(59, 130, 246, 0.2)"
+                    : "transparent",
+                color: activeTab === "Dashboard" ? "#60a5fa" : "#cbd5e1",
+                border: "none",
+                borderLeft:
+                  activeTab === "Dashboard" ? "4px solid #3b82f6" : "4px solid transparent",
+                textAlign: "left",
+                cursor: "pointer",
+                fontSize: "15px",
+                fontWeight: activeTab === "Dashboard" ? "600" : "500",
+                transition: "all 0.3s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== "Dashboard") {
+                  e.target.style.background = "rgba(255,255,255,0.05)";
+                  e.target.style.color = "#fff";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "Dashboard") {
+                  e.target.style.background = "transparent";
+                  e.target.style.color = "#cbd5e1";
+                }
+              }}
+            >
+              <span>📊</span> Dashboard
+            </button>
+          </li>
 
-          <div className="col-lg-3 col-md-6">
-            <div className="card shadow-sm border-0 h-100">
-              <div className="card-body">
-                <small className="text-muted">Worst Performer</small>
-                <h6>{worstVehicle.vehicle}</h6>
-                <strong className="text-danger">
-                  {worstVehicle.average.toFixed(2)} km/l
-                </strong>
-              </div>
-            </div>
-          </div>
+          <li>
+            <button
+              onClick={() => setActiveTab("Vehicle")}
+              style={{
+                width: "100%",
+                padding: "14px 20px",
+                background:
+                  activeTab === "Vehicle"
+                    ? "rgba(59, 130, 246, 0.2)"
+                    : "transparent",
+                color: activeTab === "Vehicle" ? "#60a5fa" : "#cbd5e1",
+                border: "none",
+                borderLeft:
+                  activeTab === "Vehicle" ? "4px solid #3b82f6" : "4px solid transparent",
+                textAlign: "left",
+                cursor: "pointer",
+                fontSize: "15px",
+                fontWeight: activeTab === "Vehicle" ? "600" : "500",
+                transition: "all 0.3s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== "Vehicle") {
+                  e.target.style.background = "rgba(255,255,255,0.05)";
+                  e.target.style.color = "#fff";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "Vehicle") {
+                  e.target.style.background = "transparent";
+                  e.target.style.color = "#cbd5e1";
+                }
+              }}
+            >
+              <span>🚛</span> Vehicle
+            </button>
+          </li>
 
-          <div className="col-lg-3 col-md-6">
-            <div className="card shadow-sm border-0 h-100">
-              <div className="card-body">
-                <small className="text-muted">Best Performer</small>
-                <h6>{bestVehicle.vehicle}</h6>
-                <strong className="text-success">
-                  {bestVehicle.average.toFixed(2)} km/l
-                </strong>
-              </div>
-            </div>
-          </div>
+          <li>
+            <button
+              onClick={() => setActiveTab("Sync Data")}
+              style={{
+                width: "100%",
+                padding: "14px 20px",
+                background:
+                  activeTab === "Sync Data"
+                    ? "rgba(59, 130, 246, 0.2)"
+                    : "transparent",
+                color: activeTab === "Sync Data" ? "#60a5fa" : "#cbd5e1",
+                border: "none",
+                borderLeft:
+                  activeTab === "Sync Data" ? "4px solid #3b82f6" : "4px solid transparent",
+                textAlign: "left",
+                cursor: "pointer",
+                fontSize: "15px",
+                fontWeight: activeTab === "Sync Data" ? "600" : "500",
+                transition: "all 0.3s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== "Sync Data") {
+                  e.target.style.background = "rgba(255,255,255,0.05)";
+                  e.target.style.color = "#fff";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "Sync Data") {
+                  e.target.style.background = "transparent";
+                  e.target.style.color = "#cbd5e1";
+                }
+              }}
+            >
+              <span>🔄</span> Sync Data
+            </button>
+          </li>
+        </ul>
 
-          <div className="col-lg-3 col-md-6">
-            <div className="card shadow-sm border-0 h-100">
-              <div className="card-body">
-                <small className="text-muted">Cost Per KM</small>
-                <h4 className="fw-bold">
-                  ₹{costPerKmFleet.toFixed(2)}
-                </h4>
-              </div>
-            </div>
-          </div>
+        {/* Footer Info */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            padding: "20px",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(0,0,0,0.2)",
+          }}
+        >
+          <p
+            style={{
+              color: "rgba(255,255,255,0.5)",
+              margin: 0,
+              fontSize: "11px",
+              textAlign: "center",
+            }}
+          >
+            © 2024 Fleet Management
+          </p>
         </div>
+      </div>
 
-        {/* COMPANY TABLE */}
-        <div className="card shadow-sm border-0 mb-4">
-          <div className="card-body">
-            <h5 className="fw-semibold mb-3">Company Performance</h5>
-            <div className="table-responsive">
-              <table className="table align-middle table-hover">
-                <thead className="table-light">
-                  <tr>
-                    <th>Company</th>
-                    <th>Fuel</th>
-                    <th>KM</th>
-                    <th>Target</th>
-                    <th>Actual</th>
-                    <th>Expected KM</th>
-                    <th>KM Loss</th>
-                    <th>₹ Loss</th>
-                    <th>Efficiency</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {companyStats.map((c) => (
-                    <tr key={c.company}>
-                      <td className="fw-semibold">{c.company}</td>
-                      <td>{c.totalLiters}</td>
-                      <td>{c.totalKM}</td>
-                      <td>{c.targetAvg}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            c.actualAvg < c.targetAvg
-                              ? "bg-danger"
-                              : "bg-success"
-                          }`}
-                        >
-                          {c.actualAvg.toFixed(2)}
-                        </span>
-                      </td>
-                      <td>{c.expectedKM.toFixed(0)}</td>
-                      <td className="text-danger">
-                        {c.kmLoss.toFixed(0)}
-                      </td>
-                      <td className="text-danger fw-bold">
-                        ₹{c.fuelLoss.toFixed(0)}
-                      </td>
-                      <td>
-                        <strong
-                          className={
-                            c.efficiency < 80
-                              ? "text-danger"
-                              : "text-success"
-                          }
-                        >
-                          {c.efficiency}%
-                        </strong>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      {/* Main Content Area */}
+      <div
+        style={{
+          marginLeft: "250px",
+          flex: 1,
+          background: "#f8fafc",
+          minHeight: "100vh",
+        }}
+      >
+        {activeTab === "Dashboard" && (
+          <div style={{ padding: "30px" }}>
+            <div className="container-fluid">
+              <div style={{ marginBottom: "30px" }}>
+                <h2 className="fw-bold mb-1" style={{ color: "#1e293b" }}>
+                  Fleet Intelligence Dashboard
+                </h2>
+                <p className="text-muted mb-4">
+                  Real-time performance, efficiency & financial impact overview
+                </p>
+              </div>
+
+              {/* CRITICAL KPI ROW */}
+              <div className="row g-4 mb-4">
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Total Fuel Filled</small>
+                      <h3 className="fw-bold">{totalLiters.toFixed(0)} L</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Total Running KM</small>
+                      <h3 className="fw-bold">{totalKM.toFixed(0)}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Total Fuel Amount</small>
+                      <h3 className="fw-bold">₹{totalAmount.toFixed(0)}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Fleet Avg</small>
+                      <h3 className="fw-bold">{fleetAvg.toFixed(2)} km/l</h3>
+                      <small>
+                        Last Month: {lastMonthAvg} | {improvement}%
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Expected Fleet KM</small>
+                      <h3 className="fw-bold">{fleetExpectedKM.toFixed(0)}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm bg-danger text-white h-100">
+                    <div className="card-body">
+                      <small>Total KM Loss</small>
+                      <h3>{fleetKmLoss.toFixed(0)}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card border-0 shadow-sm bg-dark text-white h-100">
+                    <div className="card-body">
+                      <small>Total Fuel Loss</small>
+                      <h3>₹{fleetFuelLossRupees.toFixed(0)}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* PERFORMANCE SNAPSHOT */}
+              <div className="row g-4 mb-4">
+                <div className="col-lg-3 col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Vehicles Below 6 km/l</small>
+                      <h4 className="text-danger fw-bold">
+                        {belowTarget.length}
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Worst Performer</small>
+                      <h6>{worstVehicle.vehicle}</h6>
+                      <strong className="text-danger">
+                        {worstVehicle.average.toFixed(2)} km/l
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Best Performer</small>
+                      <h6>{bestVehicle.vehicle}</h6>
+                      <strong className="text-success">
+                        {bestVehicle.average.toFixed(2)} km/l
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-3 col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body">
+                      <small className="text-muted">Cost Per KM</small>
+                      <h4 className="fw-bold">₹{costPerKmFleet.toFixed(2)}</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* COMPANY TABLE */}
+              <div className="card shadow-sm border-0 mb-4">
+                <div className="card-body">
+                  <h5 className="fw-semibold mb-3">Company Performance</h5>
+                  <div className="table-responsive">
+                    <table className="table align-middle table-hover">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Company</th>
+                          <th>Fuel</th>
+                          <th>KM</th>
+                          <th>Target</th>
+                          <th>Actual</th>
+                          <th>Expected KM</th>
+                          <th>KM Loss</th>
+                          <th>₹ Loss</th>
+                          <th>Efficiency</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {companyStats.map((c) => (
+                          <tr key={c.company}>
+                            <td className="fw-semibold">{c.company}</td>
+                            <td>{c.totalLiters}</td>
+                            <td>{c.totalKM}</td>
+                            <td>{c.targetAvg}</td>
+                            <td>
+                              <span
+                                className={`badge ${
+                                  c.actualAvg < c.targetAvg
+                                    ? "bg-danger"
+                                    : "bg-success"
+                                }`}
+                              >
+                                {c.actualAvg.toFixed(2)}
+                              </span>
+                            </td>
+                            <td>{c.expectedKM.toFixed(0)}</td>
+                            <td className="text-danger">
+                              {c.kmLoss.toFixed(0)}
+                            </td>
+                            <td className="text-danger fw-bold">
+                              ₹{c.fuelLoss.toFixed(0)}
+                            </td>
+                            <td>
+                              <strong
+                                className={
+                                  c.efficiency < 80
+                                    ? "text-danger"
+                                    : "text-success"
+                                }
+                              >
+                                {c.efficiency}%
+                              </strong>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* CHART */}
+              <div className="card shadow-sm border-0">
+                <div className="card-body">
+                  <h5 className="fw-semibold mb-3">
+                    Vehicle Mileage Distribution
+                  </h5>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <BarChart data={enrichedVehicles}>
+                      <XAxis dataKey="vehicle" hide />
+                      <YAxis />
+                      <Tooltip formatter={(value) => value.toFixed(2)} />
+                      <ReferenceLine y={6} stroke="red" strokeDasharray="3 3" />
+                      <ReferenceLine
+                        y={10}
+                        stroke="green"
+                        strokeDasharray="3 3"
+                      />
+                      <Bar dataKey="average">
+                        {enrichedVehicles.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.average < 6 ? "#dc3545" : "#198754"}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* CHART */}
-        <div className="card shadow-sm border-0">
-          <div className="card-body">
-            <h5 className="fw-semibold mb-3">Vehicle Mileage Distribution</h5>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={enrichedVehicles}>
-                <XAxis dataKey="vehicle" hide />
-                <YAxis />
-                <Tooltip formatter={(value) => value.toFixed(2)} />
-                <ReferenceLine y={6} stroke="red" strokeDasharray="3 3" />
-                <ReferenceLine y={10} stroke="green" strokeDasharray="3 3" />
-                <Bar dataKey="average">
-                  {enrichedVehicles.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.average < 6 ? "#dc3545" : "#198754"}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+        {activeTab === "Vehicle" && (
+          <div style={{ padding: "30px" }}>
+            <Vehicle />
           </div>
-        </div>
+        )}
+
+        {activeTab === "Sync Data" && (
+          <div style={{ padding: "30px" }}>
+            <SyncData />
+          </div>
+        )}
       </div>
     </div>
   );

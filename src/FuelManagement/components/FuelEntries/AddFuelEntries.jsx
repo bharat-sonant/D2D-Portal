@@ -9,7 +9,7 @@ const AddFuelEntries = ({
   form,
   setForm,
   onAddEntry,
-   isEdit,
+  isEdit,
   editingId,
   setIsEdit,
   setEditingId,
@@ -25,7 +25,7 @@ const AddFuelEntries = ({
   const meterImageRef = useRef(null);
   const slipImageRef = useRef(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (isEdit) {
       const entry = entries.find((e) => e.id === editingId);
       if (entry) {
@@ -69,7 +69,7 @@ const AddFuelEntries = ({
     if (!form.quantity) newErrors.quantity = "Quantity is required";
     if (!form.amount) newErrors.amount = "Amount is required";
     if (!form.payMethod) newErrors.payMethod = "Payment method is required";
-    if(!form.remark) newErrors.remark = "Please Enter Remark"
+    if (!form.remark) newErrors.remark = "Please Enter Remark"
     if (!isEdit && !meterFile) newErrors.meterImage = "Meter image required";
     if (!isEdit && !slipFile) newErrors.slipImage = "Slip image required";
 
@@ -81,11 +81,11 @@ const AddFuelEntries = ({
         prev.map((item) =>
           item.id === editingId
             ? {
-                ...item,
-                ...form,
-                meterImage: meterPreview || item.meterImage,
-                slipImage: slipPreview || item.slipImage,
-              }
+              ...item,
+              ...form,
+              meterImage: meterPreview || item.meterImage,
+              slipImage: slipPreview || item.slipImage,
+            }
             : item
         )
       );
@@ -105,41 +105,41 @@ const AddFuelEntries = ({
   };
 
   const resetForm = () => {
-  // Reset text fields
-  setForm({
-    vehicle: "",
-    fuelType: "",
-    date: "",
-    meterReading: "",
-    fuelVehicle: "",
-    petrolPump: "",
-    quantity: "",
-    amount: "",
-    payMethod: "",
-    remark: ""
-  });
+    // Reset text fields
+    setForm({
+      vehicle: "",
+      fuelType: "",
+      date: "",
+      meterReading: "",
+      fuelVehicle: "",
+      petrolPump: "",
+      quantity: "",
+      amount: "",
+      payMethod: "",
+      remark: ""
+    });
 
-  // Reset errors
-  setErrors({});
+    // Reset errors
+    setErrors({});
 
-  setMeterPreview(null);
-  setSlipPreview(null);
+    setMeterPreview(null);
+    setSlipPreview(null);
 
-  // Reset image files
-  setMeterFile(null);
-  setSlipFile(null);
+    // Reset image files
+    setMeterFile(null);
+    setSlipFile(null);
 
-  // Reset file input values (VERY IMPORTANT)
-  if (meterImageRef.current) meterImageRef.current.value = "";
-  if (slipImageRef.current) slipImageRef.current.value = "";
-};
+    // Reset file input values (VERY IMPORTANT)
+    if (meterImageRef.current) meterImageRef.current.value = "";
+    if (slipImageRef.current) slipImageRef.current.value = "";
+  };
 
-const handleback = () => {
-  setIsEdit(false);
-  setEditingId(false)
-  setShowCanvas(false);
-  resetForm();
-}
+  const handleback = () => {
+    setIsEdit(false);
+    setEditingId(false)
+    setShowCanvas(false);
+    resetForm();
+  }
 
 
   return (
@@ -152,9 +152,9 @@ const handleback = () => {
         >
           ←
         </button>
-      <h2 className={styles.title}>
-        {isEdit ? "Edit Fuel Entry" : "Add Fuel Entry"}
-      </h2>
+        <h2 className={styles.title}>
+          {isEdit ? "Edit Fuel Entry" : "Add Fuel Entry"}
+        </h2>
 
       </div>
 
@@ -202,42 +202,42 @@ const handleback = () => {
               </select>
             </div>
 
-           <div className={styles.row}>
-            {/* Date */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>
-                Date
-                {errors.date && (
-                  <span className={styles.errorText}> · {errors.date}</span>
-                )}
-              </label>
+            <div className={styles.row}>
+              {/* Date */}
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Date
+                  {errors.date && (
+                    <span className={styles.errorText}> · {errors.date}</span>
+                  )}
+                </label>
 
-              <input
-                type="date"
-                className={`${styles.input} ${errors.date ? styles.errorInput : ""}`}
-                value={form.date}
-                onChange={(e) => handleChange("date", e.target.value)}
-              />
-            </div>
+                <input
+                  type="date"
+                  className={`${styles.input} ${errors.date ? styles.errorInput : ""}`}
+                  value={form.date}
+                  onChange={(e) => handleChange("date", e.target.value)}
+                />
+              </div>
 
-            {/* Meter Reading */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Meter Reading
-                {errors.meterReading && (
-                <span className={styles.errorText}>
-                  {" "}
-                  · {errors.meterReading}
-                </span>
-              )}
-              </label>
-              <input
-                type="number"
-                className={`${styles.input} ${errors.meterReading ? styles.errorInput : ""}`}
-                value={form.meterReading}
-                onChange={(e) => handleChange("meterReading", e.target.value)}
-              />
+              {/* Meter Reading */}
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>Meter Reading
+                  {errors.meterReading && (
+                    <span className={styles.errorText}>
+                      {" "}
+                      · {errors.meterReading}
+                    </span>
+                  )}
+                </label>
+                <input
+                  type="number"
+                  className={`${styles.input} ${errors.meterReading ? styles.errorInput : ""}`}
+                  value={form.meterReading}
+                  onChange={(e) => handleChange("meterReading", e.target.value)}
+                />
+              </div>
             </div>
-           </div>
 
             {/* Fuel Vehicle */}
             <div className={styles.fieldGroup}>
@@ -353,13 +353,13 @@ const handleback = () => {
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Remark
                 {errors.remark && (
-                <span className={styles.errorText}>
-                  {" "}
-                  · {errors.remark}
-                </span>
-              )}
+                  <span className={styles.errorText}>
+                    {" "}
+                    · {errors.remark}
+                  </span>
+                )}
               </label>
-              
+
               <textarea
                 type="text"
                 className={`${styles.input} ${errors.remark ? styles.errorInput : ""}`}
@@ -451,8 +451,8 @@ const handleback = () => {
 
               {/* Save */}
               <button className={styles.saveDetailsButton} onClick={handleSubmit}>
-  {isEdit ? "Update Entry" : "Save Details"}
-</button>
+                {isEdit ? "Update Entry" : "Save Details"}
+              </button>
 
             </div>
           </div>
