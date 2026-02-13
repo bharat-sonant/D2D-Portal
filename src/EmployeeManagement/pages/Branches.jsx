@@ -42,12 +42,30 @@ const Branches = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filterTab, setFilterTab] = useState("All");
 
+    const STATIC_BRANCHES = [
+        { id: 'sb1', name: 'Jaipur Center', code: 'JPR-001', address: 'Malviya Nagar, Jaipur', lat: 26.8549, lng: 75.8243 },
+        { id: 'sb2', name: 'North Chirawa', code: 'CHW-015', address: 'Station Road, Chirawa', lat: 28.2427, lng: 75.6420 },
+        { id: 'sb3', name: 'Sikar Hub', code: 'SKR-042', address: 'Nawalgarh Road, Sikar', lat: 27.6094, lng: 75.1398 },
+    ];
+
+    const STATIC_WARDS = [
+        { id: 'sw1', ward_id: '101', branch_id: 'sb1', branch: 'Jaipur Center' },
+        { id: 'sw2', ward_id: '102', branch_id: 'sb1', branch: 'Jaipur Center' },
+        { id: 'sw3', ward_id: '201', branch_id: 'sb2', branch: 'North Chirawa' },
+        { id: 'sw4', ward_id: '301', branch_id: 'sb3', branch: 'Sikar Hub' },
+    ];
+
+    const STATIC_VEHICLES = [
+        { id: 'v1', vehicles_No: 'RJ14 TR 1234', type: 'Truck', assigned_to: 'Anand' },
+        { id: 'v2', vehicles_No: 'RJ14 TR 5678', type: 'Pickup', assigned_to: 'Panchu' },
+        { id: 'v3', vehicles_No: 'RJ14 TR 9012', type: 'Truck', assigned_to: 'Vikram' },
+    ];
+
     const fetchBranches = () => {
         getBranchesAction((data) => {
-            setBranches(data);
+            setBranches([...STATIC_BRANCHES, ...data]);
             if (data.length > 0 && !selectedBranchId) {
                 // Optionally auto-select first
-                // setSelectedBranchId(data[0].id);
             }
         }, setLoading);
     };
@@ -55,14 +73,18 @@ const Branches = () => {
     const fetchWards = async () => {
         const response = await getAllWards();
         if (response.status === "success") {
-            setWards(response.data || []);
+            setWards([...STATIC_WARDS, ...(response.data || [])]);
+        } else {
+            setWards(STATIC_WARDS);
         }
     };
 
     const fetchVehicles = async () => {
         const response = await getVehicleData();
         if (response.status === "success") {
-            setVehicles(response.data || []);
+            setVehicles([...STATIC_VEHICLES, ...(response.data || [])]);
+        } else {
+            setVehicles(STATIC_VEHICLES);
         }
     };
 
@@ -72,7 +94,16 @@ const Branches = () => {
         fetchVehicles();
     }, []);
 
+
     const selectedBranch = branches.find(b => b && b.id === selectedBranchId);
+
+    // Filter wards based on selected branch
+    // Note: We'll match ward.branch_id or ward.branch with selectedBranchId or selectedBranch.name
+    const branchWards = wards.filter(w =>
+        w && ((w.branch_id === selectedBranchId) ||
+            (w.branch?.toLowerCase() === selectedBranch?.name?.toLowerCase()))
+    );
+
     const selectedWard = wards.find(w => w && (w.id === selectedWardId || w.ward_id === selectedWardId));
 
     const filteredBranches = branches.filter(branch => {
@@ -193,22 +224,34 @@ const Branches = () => {
 
                     <div className={`${branchStyles.branchList} ${branchStyles.customScrollbar}`}>
                         <div style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', padding: '10px 10px 5px' }}>REGISTERED BRANCHES ({filteredBranches.length})</div>
-                        {filteredBranches.map(branch => (
-                            <div
-                                key={branch.id}
-                                className={`${branchStyles.branchCard} ${selectedBranchId === branch.id ? branchStyles.branchCardActive : ""}`}
-                                onClick={() => handleBranchClick(branch)}
-                            >
-                                <div className={branchStyles.branchIcon}>
-                                    <Building2 size={18} />
-                                </div>
-                                <div className={branchStyles.branchInfo}>
-                                    <div className={branchStyles.branchName}>{branch.name}</div>
-                                    <div className={branchStyles.branchCode}>{branch.code}</div>
-                                </div>
-                                <ChevronRight size={14} color="#94a3b8" />
+
+                        {loading ? (
+                            <div style={{ padding: '40px 0', textAlign: 'center', opacity: 0.5 }}>
+                                <Loader2 className="animate-spin" size={24} style={{ margin: 'auto' }} />
+                                <div style={{ marginTop: '10px', fontSize: '12px' }}>Loading branches...</div>
                             </div>
-                        ))}
+                        ) : filteredBranches.length === 0 ? (
+                            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+                                No branches found.
+                            </div>
+                        ) : (
+                            filteredBranches.map(branch => (
+                                <div
+                                    key={branch.id}
+                                    className={`${branchStyles.branchCard} ${selectedBranchId === branch.id ? branchStyles.branchCardActive : ""}`}
+                                    onClick={() => handleBranchClick(branch)}
+                                >
+                                    <div className={branchStyles.branchIcon}>
+                                        <Building2 size={18} />
+                                    </div>
+                                    <div className={branchStyles.branchInfo}>
+                                        <div className={branchStyles.branchName}>{branch.name}</div>
+                                        <div className={branchStyles.branchCode}>{branch.code}</div>
+                                    </div>
+                                    <ChevronRight size={14} color="#94a3b8" />
+                                </div>
+                            ))
+                        )}
                     </div>
 
                     <button className={branchStyles.fab} onClick={() => { setBranchToEdit(null); setShowAddModal(true); }}>
@@ -259,19 +302,23 @@ const Branches = () => {
                                     <div style={{ fontWeight: '700', fontSize: '14px' }}>Ward List</div>
                                     <ChevronRight size={16} />
                                 </div>
-                                {wards.filter(w => w).slice(0, 5).map(ward => (
-                                    <div
-                                        key={ward.id || ward.ward_id}
-                                        className={`${branchStyles.wardItem} ${selectedWardId === (ward.ward_id || ward.id) ? branchStyles.wardItemActive : ""}`}
-                                        onClick={() => setSelectedWardId(ward.ward_id || ward.id)}
-                                    >
-                                        <div style={{ fontWeight: '600' }}>Ward {ward.ward_id || ward.id}</div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ fontSize: '11px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '10px' }}>+3.4</span>
-                                            <ChevronRight size={14} color="#94a3b8" />
+                                {branchWards.length === 0 ? (
+                                    <div style={{ fontSize: '12px', color: '#94a3b8', padding: '10px 0' }}>No wards found for this branch.</div>
+                                ) : (
+                                    branchWards.slice(0, 10).map(ward => (
+                                        <div
+                                            key={ward.id || ward.ward_id}
+                                            className={`${branchStyles.wardItem} ${selectedWardId === (ward.ward_id || ward.id) ? branchStyles.wardItemActive : ""}`}
+                                            onClick={() => setSelectedWardId(ward.ward_id || ward.id)}
+                                        >
+                                            <div style={{ fontWeight: '600' }}>Ward {ward.ward_id || ward.id}</div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <span style={{ fontSize: '11px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '10px' }}>+3.4</span>
+                                                <ChevronRight size={14} color="#94a3b8" />
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
                         </>
                     ) : (
