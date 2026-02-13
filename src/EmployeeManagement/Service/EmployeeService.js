@@ -23,6 +23,7 @@ const fetchEmployeesFromFirebase = () => {
             }
 
             const employeeList = Object.entries(employees).map(([firebase_id, emp]) => ({
+                id: firebase_id,
                 general_details: emp.GeneralDetails || null,
                 bank_details: emp.BankDetails || null,
                 address_details: emp.AddressDetails || null,
@@ -41,7 +42,7 @@ export const migrateEmployeesToSupabase = () => {
     return new Promise(async (resolve) => {
         try {
             const employeesResponse = await fetchEmployeesFromFirebase();
-            console.log(employeesResponse)
+        
             if (employeesResponse.status === 'fail') {
                 resolve(setResponse('fail', 'Employees data not found in Firebase...', {}));
                 return;
