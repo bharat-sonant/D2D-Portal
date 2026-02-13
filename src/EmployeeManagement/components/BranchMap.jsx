@@ -51,7 +51,9 @@ const BranchMap = ({ branchData, selectedBranch, setSelectedBranch, mapRef, setC
                     mapContainerStyle={mapContainerStyle}
                     zoom={5}
                     center={center}
-                    onLoad={(map) => setMapRef(map)}
+                    onLoad={(map) => {
+                        if (typeof setMapRef === 'function') setMapRef(map);
+                    }}
                     options={{
                         styles: mapStyles,
                         mapTypeControl: false,
@@ -62,7 +64,7 @@ const BranchMap = ({ branchData, selectedBranch, setSelectedBranch, mapRef, setC
                         scaleControl: false,
                     }}
                 >
-                    {branchData.filter(b => b.lat && b.lng).map((marker) => (
+                    {branchData.filter(b => b && b.lat && b.lng).map((marker) => (
                         <Marker
                             key={marker.id}
                             position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
