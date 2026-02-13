@@ -22,7 +22,7 @@ const fetchEmployeesFromFirebase = () => {
                 return;
             }
 
-            const employeeList = Object.entries(employees).map(([emp]) => ({
+            const employeeList = Object.entries(employees).map(([firebase_id, emp]) => ({
                 general_details: emp.GeneralDetails || null,
                 bank_details: emp.BankDetails || null,
                 address_details: emp.AddressDetails || null,
@@ -41,6 +41,7 @@ export const migrateEmployeesToSupabase = () => {
     return new Promise(async (resolve) => {
         try {
             const employeesResponse = await fetchEmployeesFromFirebase();
+            console.log(employeesResponse)
             if (employeesResponse.status === 'fail') {
                 resolve(setResponse('fail', 'Employees data not found in Firebase...', {}));
                 return;
@@ -51,7 +52,7 @@ export const migrateEmployeesToSupabase = () => {
                 return;
             };
 
-            const result = await supabase.upsertByConflictKeys("Employees", employeesResponse.data.employeeList, "firebase_id");
+            const result = await supabase.upsertByConflictKeys("Employees", employeesResponse.data.employeeList, "id");
 
             if (!result.success) {
                 resolve(setResponse('fail', 'Error while saving data into Supabase.', result.message));
@@ -86,7 +87,6 @@ export const getEmployeesFromSupabase = () => {
 
                 return {
                     id: emp.id,
-                    firebase_id: emp.firebase_id || null,
                     name: general.name || null,
                     empCode: general.empCode || null,
                     dateOfBirth: general.dateOfBirth || null,
