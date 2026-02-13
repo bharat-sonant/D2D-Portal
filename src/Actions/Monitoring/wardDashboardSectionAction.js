@@ -1,3 +1,4 @@
+import { getWardDailySummary } from "../../services/RealtimeMonitoring/realtimeMonitoringServices";
 import { DailyWorkReportDataFromFirebase } from "../../services/ReportServices/DailyWorkReportService";
 import * as sbs from "../../services/supabaseServices";
 
@@ -108,3 +109,14 @@ export const getWardDashboardDataAction = async ({ date, ward, cityId }) => {
     };
   }
 };
+export const fetchWardDailySummaryAction=async(cityId,wardList,date)=>{
+  try{
+    let list = wardList?.map(ward=>({name:ward?.name,id:ward?.id}));
+    let resp = await getWardDailySummary(list,date,cityId);
+    console.log(resp)
+
+  }catch(error){
+    console.log(error);
+  }
+  
+}

@@ -150,7 +150,8 @@ export const upsertByConflictKeys = async (tableName,data,conflictKeys) => {
     .upsert(data, {
       onConflict: conflictKeys,
       ignoreDuplicates: false,
-    });
+    }).select()
+    .single();
 
   if (error) {
     console.error("Upsert failed:", error);
@@ -284,6 +285,35 @@ export const getGeoJsonFromStorage = async (filePath) => {
   }
 
   return await res.json();
+};
+export const upsertBulkData = async (tableName, dataArray, conflictKeys) => {
+  if (!tableName || !dataArray?.length || !conflictKeys) {
+    return {
+      success: false,
+      message: "Missing required parameters",
+    };
+  }
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .upsert(dataArray, {
+      onConflict: conflictKeys,
+      ignoreDuplicates: false,
+    })
+    .select();
+
+  if (error) {
+    console.error("Bulk upsert failed:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+
+  return {
+    success: true,
+    data,
+  };
 };
 
 

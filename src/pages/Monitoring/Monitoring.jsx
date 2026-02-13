@@ -3,7 +3,7 @@ import GlobalStyles from "../../assets/css/globleStyles.module.css";
 import TaskStyles from "../../MobileAppPages/Tasks/Styles/TaskList/TaskList.module.css";
 import WardList from '../../components/Monitoring/WardList';
 import { getWardListAction } from '../../Actions/Monitoring/wardListSectionAction';
-import { getWardDashboardDataAction } from '../../Actions/Monitoring/wardDashboardSectionAction';
+import { fetchWardDailySummaryAction, getWardDashboardDataAction } from '../../Actions/Monitoring/wardDashboardSectionAction';
 import { useCity } from '../../context/CityContext';
 import WardMonitoringPanel from '../../components/Monitoring/WardMonitoringPanel';
 import WevoisLoader from '../../components/Common/Loader/WevoisLoader';
@@ -109,6 +109,30 @@ const Monitoring = () => {
       requestIdRef.current += 1;
     };
   }, [cityId]);
+  
+  useEffect(() => {
+  if (!cityId || !wardList?.length || !date) return;
+
+  let intervalId;
+  const today = dayjs().format("YYYY-MM-DD");
+  const isToday = date === today;
+
+  // Initial fetch
+  fetchWardDailySummaryAction(cityId, wardList, date);
+
+  if (isToday) {
+    intervalId = setInterval(() => {
+      fetchWardDailySummaryAction(cityId, wardList, date);
+    }, 60000); // 1 minute
+  }
+
+  return () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  };
+
+}, [cityId,wardList, date]);
 
   return (
     <>

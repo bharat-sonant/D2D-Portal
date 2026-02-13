@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Filter, CalendarDays } from 'lucide-react';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { TextField } from '@mui/material';
+// import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// import { TextField } from '@mui/material';
 
 import styles from './TaskMonitoring.module.css';
 import dayjs from 'dayjs';
@@ -68,7 +68,7 @@ const TaskMonitoring = () => {
               </div>
 
               <div className={styles.datePickerContainer}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     value={selectedDate}
                     open={openDatePicker}
@@ -103,7 +103,7 @@ const TaskMonitoring = () => {
                       },
                     }}
                   />
-                </LocalizationProvider>
+                </LocalizationProvider> */}
               </div>
             </div>
           </div>
