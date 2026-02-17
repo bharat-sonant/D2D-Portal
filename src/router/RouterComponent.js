@@ -8,7 +8,6 @@ import StartAssignment from "../MobileAppPages/DailyAssignments/StartAssignment/
 import Penalty from "../MobileAppPages/PenaltyManagement/Pages/PenaltyList/Penalty";
 import WorkMonitoring from "../MobileAppPages/Monitoring/Pages/WorkMonitoring/WorkMonitoring";
 import LocationTracker from "../NavigatorPages/LocationTracker/locationTracker";
-import Settings from "../MobileAppPages/Settings/Pages/Settings";
 import AssignmentSummary from "../MobileAppPages/DailyAssignments/AssignmentSummary/Pages/AssignmentSummary/AssignmentSummary";
 import DutyOn from "../MobileAppPages/DutyOn/pages/DutyOn/DutyOn";
 import DutyOff from "../MobileAppPages/DutyOff/pages/DutyOff/DutyOff";
@@ -197,7 +196,7 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
-        <Route
+        {/* <Route
           path="/Settings"
           element={
             <ProtectedRouter>
@@ -205,7 +204,7 @@ const RouterComponent = () => {
               <Settings />
             </ProtectedRouter>
           }
-        />
+        /> */}
 
         <Route
           path="/AssignmentSummary"
