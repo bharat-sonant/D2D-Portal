@@ -6,7 +6,7 @@ import {
   Building2,
   FileText,
   Eye,
-  Settings,
+  // Settings,
   LockKeyhole,
   Frown,
   Ellipsis,
