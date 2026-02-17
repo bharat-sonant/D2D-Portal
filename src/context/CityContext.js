@@ -5,7 +5,7 @@ import { connectFirebase } from "../firebase/firebaseService";
 const CityContext = createContext();
 
 const DEFAULT_CITY = {
-  city : localStorage.getItem("city") || "DevTest",
+  city: localStorage.getItem("city") || "DevTest",
   cityId: localStorage.getItem("cityId") || "74",
   cityLogo: localStorage.getItem("logoUrl") || "",
 }
@@ -13,13 +13,13 @@ const DEFAULT_CITY = {
 export const CityProvider = ({ children }) => {
   const [cityState, setCityState] = useState(DEFAULT_CITY);
 
-  const setCityContext = ({city, cityId, cityLogo = ""}) => {
-    if(!city || !cityId) return;
-    setCityState({city, cityId, cityLogo})
+  const setCityContext = ({ city, cityId, cityLogo = "" }) => {
+    if (!city || !cityId) return;
+    setCityState({ city, cityId, cityLogo })
   }
 
   useEffect(() => {
-    const {city, cityId, cityLogo} = cityState;
+    const { city, cityId, cityLogo } = cityState;
 
     localStorage.setItem("city", city);
     localStorage.setItem("cityId", cityId);
@@ -30,7 +30,7 @@ export const CityProvider = ({ children }) => {
     connectFirebase(firebaseConfig, city);
 
     // Update browser title
-    document.title = `D2D : ${city}`;
+    // document.title = `D2D : ${city}`;
 
   }, [cityState]);
 
