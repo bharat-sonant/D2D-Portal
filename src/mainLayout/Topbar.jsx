@@ -129,13 +129,13 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       color: "var(--themeColor)",
       path: "/monitoring",
     },
-    {
-      id: "Settings",
-      label: "Settings",
-      icon: Settings,
-      color: "var(--themeColor)",
-      path: "/settings",
-    },
+    // {
+    //   id: "Settings",
+    //   label: "Settings",
+    //   icon: Settings,
+    //   color: "var(--themeColor)",
+    //   path: "/settings",
+    // },
   ];
   useEffect(() => {
     if (storedName) {
