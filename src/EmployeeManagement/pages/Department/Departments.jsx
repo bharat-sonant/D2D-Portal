@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import deptStyles from "../../Styles/Department/Department.module.css";
-import { getDepartmentsAction, deleteDepartmentAction } from "../../../services/DepartmentService/DepartmentAction";
-import * as common from "../../../common/common";
+import { getDepartmentsAction } from "../../../services/DepartmentService/DepartmentAction";
 import DepartmentList from "../../components/Department/DepartmentList";
 import DesignationList from "../../components/Designation/DesignationList";
 
@@ -16,13 +15,10 @@ const Departments = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [selectedDept, setSelectedDept] = useState(null);
     const [showAddDesignation, setShowAddDesignation] = useState(false);
-
     const [designationsByDept, setDesignationsByDept] = useState({});
     const [designationToEdit, setDesignationToEdit] = useState(null);
     const designationListRef = useRef(null);
 
-
-    // Fetch Departments on Mount
     useEffect(() => {
         fetchDepartments();
     }, []);
@@ -45,34 +41,24 @@ const Departments = () => {
         }
     }, []);
 
-
-    // when selected department changes, scroll designation list to top
     useEffect(() => {
         if (designationListRef.current) designationListRef.current.scrollTop = 0;
     }, [selectedDept]);
-
-    // Filter departments when search query or departments change
 
     const fetchDepartments = () => {
         getDepartmentsAction(setDepartments, setLoading);
     };
 
-
-
-    // Handle Modal Close
     const handleCloseModal = () => {
         setShowAddModal(false);
-        setDeptToEdit(null); // Reset edit state
+        setDeptToEdit(null);
     };
-
-
 
     const handleEditDesignation = (e, des) => {
         e.stopPropagation();
         setDesignationToEdit(des);
         setShowAddDesignation(true);
     };
-
 
     const handleDeleteDesignation = (e, des) => {
         e.stopPropagation();
@@ -90,13 +76,11 @@ const Departments = () => {
     return (
         <>
             <div className={deptStyles.background}>
-                {/* Reusing existing background if needed, or simplified */}
                 <div className={`${deptStyles.gradientOrb} ${deptStyles.orb1}`} />
                 <div className={`${deptStyles.gradientOrb} ${deptStyles.orb2}`} />
                 <div className={deptStyles.gridOverlay} />
             </div>
 
-            {/* Left Sidebar */}
             <DepartmentList
                 setDeptToDelete={setDeptToDelete}
                 setDeptToEdit={setDeptToEdit}
@@ -115,9 +99,9 @@ const Departments = () => {
                 deptToDelete={deptToDelete}
                 showDeleteModal={showDeleteModal}
                 setIsDeleting={setIsDeleting}
+                isDeleting={isDeleting}
             />
 
-            {/* Right Content Area */}
             <DesignationList
                 selectedDept={selectedDept}
                 designationsByDept={designationsByDept}
@@ -129,8 +113,6 @@ const Departments = () => {
                 showAddDesignation={showAddDesignation}
                 designationToEdit={designationToEdit}
             />
-
-
         </>
     );
 };
