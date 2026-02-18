@@ -27,6 +27,8 @@ import {
   Battery,
   BatteryMedium,
   Cpu,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import dayjs from "dayjs";
 import { useCity } from "../../context/CityContext";
@@ -38,6 +40,14 @@ import Chetan from "../../assets/images/Chetan.jpeg";
 // import Mritunjay from "../../assets/images/mrityunjay.jpeg";
 
 const Realtime = () => {
+  const remarkTopicOptions = [
+    "Performance Issue",
+    "Route Observation",
+    "Safety Alert",
+    "Vehicle Issue",
+    "Team Coordination",
+    "Other",
+  ];
   const { cityId } = useCity();
   const [selectedWard, setSelectedWard] = useState(null);
   const [wardList, setWardList] = useState([]);
@@ -47,7 +57,9 @@ const Realtime = () => {
   );
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null); // 'app' or 'vehicle'
-  const [remark, setRemark] = useState("");
+  const [remarks, setRemarks] = useState([]);
+  const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
+  const [editingRemarkId, setEditingRemarkId] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
 
@@ -141,6 +153,46 @@ const Realtime = () => {
     }, 800);
   };
 
+  const openNewRemarkModal = () => {
+    setEditingRemarkId(null);
+    setRemarkForm({ topic: "", description: "" });
+    setShowRemarkModal(true);
+  };
+
+  const openEditRemarkModal = (item) => {
+    setEditingRemarkId(item.id);
+    setRemarkForm({ topic: item.topic, description: item.description });
+    setShowRemarkModal(true);
+  };
+
+  const closeRemarkModal = () => {
+    setShowRemarkModal(false);
+    setEditingRemarkId(null);
+    setRemarkForm({ topic: "", description: "" });
+  };
+
+  const handleRemarkSubmit = () => {
+    const topic = remarkForm.topic.trim();
+    const description = remarkForm.description.trim();
+    if (!topic || !description) return;
+
+    if (editingRemarkId) {
+      setRemarks((prev) =>
+        prev.map((item) =>
+          item.id === editingRemarkId ? { ...item, topic, description } : item,
+        ),
+      );
+    } else {
+      setRemarks((prev) => [{ id: Date.now(), topic, description }, ...prev]);
+    }
+
+    closeRemarkModal();
+  };
+
+  const deleteRemark = (id) => {
+    setRemarks((prev) => prev.filter((item) => item.id !== id));
+  };
+
   if (loading) return <WevoisLoader title="Initializing AI Assistant..." />;
 
   const mapContainerStyle = { width: "100%", height: "100%" };
@@ -202,33 +254,7 @@ const Realtime = () => {
           </div>
         ) : (
           <>
-            {/* Timing Grid at Top - 100% Width */}
-            <div className={styles.timingGrid}>
-              <TimingCell
-                variant="horizontal"
-                icon={<ShieldCheck size={20} color="#22c55e" />}
-                value={wardData.dutyOn}
-                label="Duty Initiated"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<MapPin size={20} color="#3b82f6" />}
-                value={wardData.reachOn}
-                label="Ward Reach"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<TrendingUp size={20} color="#8b5cf6" />}
-                value={wardData.lastLineTime}
-                label="Last Point"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<PowerOffIcon size={20} color="#f43f5e" />}
-                value={wardData.dutyOff}
-                label="Duty Release"
-              />
-            </div>
+       
 
             {/* Main Split Layout */}
             <div className={styles.layoutSplit}>
@@ -286,49 +312,115 @@ const Realtime = () => {
                 </div>
 
                 <div className={styles.glassCard}>
-                  <div
-                    className={styles.remarksBox}
-                    onClick={() => setShowRemarkModal(true)}
-                  >
-                    <div className={styles.remarksHeader}>
-                      <Info size={16} color="var(--themeColor)" />
-                      <span className={styles.remarksLabel}>
-                        LIVE FIELD INSIGHTS
-                      </span>
+                  <div className={styles.remarksHeadRow}>
+                    <div className={styles.remarksHeadLeft}>
+                      <Plus size={16} color="var(--themeColor)" />
+                      <span className={styles.remarksHeadTitle}>REMARK TITLE</span>
                     </div>
-                    <div className={styles.remarkText}>
-                      {remark || "Tap to add field observations..."}
-                    </div>
+                    <button
+                      type="button"
+                      className={styles.addRemarkBtn}
+                      onClick={openNewRemarkModal}
+                    >
+                      Add New
+                    </button>
                   </div>
+
+                  {remarks.length === 0 ? (
+                    <div className={styles.remarkEmpty}>
+                      No query yet. Click Add Query to create one.
+                    </div>
+                  ) : (
+                    <div className={styles.remarkList}>
+                      {remarks.map((item) => (
+                        <div key={item.id} className={styles.remarkItemCard}>
+                          <div className={styles.remarkItemTopic}>{item.topic}</div>
+                          <div className={styles.remarkItemDescription}>
+                            {item.description}
+                          </div>
+                          <div className={styles.remarkItemActions}>
+                            <button
+                              type="button"
+                              className={styles.remarkActionBtn}
+                              onClick={() => openEditRemarkModal(item)}
+                            >
+                              <Pencil size={13} />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`}
+                              onClick={() => deleteRemark(item.id)}
+                            >
+                              <Trash2 size={13} />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className={styles.dataRight}>
+                     {/* Timing Grid at Top - 100% Width */}
+            <div className={styles.timingGrid}>
+              <TimingCell
+                variant="horizontal"
+                icon={<ShieldCheck size={20} color="#22c55e" />}
+                value={wardData.dutyOn}
+                label="Duty Initiated"
+              />
+              <TimingCell
+                variant="horizontal"
+                icon={<MapPin size={20} color="#3b82f6" />}
+                value={wardData.reachOn}
+                label="Ward Reach"
+              />
+              <TimingCell
+                variant="horizontal"
+                icon={<TrendingUp size={20} color="#8b5cf6" />}
+                value={wardData.lastLineTime}
+                label="Last Point"
+              />
+              <TimingCell
+                variant="horizontal"
+                icon={<PowerOffIcon size={20} color="#f43f5e" />}
+                value={wardData.dutyOff}
+                label="Duty Release"
+              />
+            </div>
                 <div
                   className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
                 >
                   <div className={styles.cardHeading}>
-                    <h3>Zone Details</h3>
-                    <MapIcon size={16} color="var(--themeColor)" />
+                    <h3>Intelligent Analytics</h3>
+                    <Clock size={16} color="var(--themeColor)" />
                   </div>
                   <div className={styles.statsFourAcross}>
                     <StatItem
-                      label="Total Segments"
-                      value={wardData.zones.total}
+                      label="Time Performance"
+                      value={wardData.timeStats.total}
+                      icon={<Clock size={12} />}
+                      layout="iconLeft"
                     />
                     <StatItem
-                      label="Success Nodes"
-                      value={wardData.zones.completed}
-                      color="var(--textSuccess)"
+                      label="Active Zone Time"
+                      value={wardData.timeStats.inZone}
+                      icon={<Clock size={12} />}
+                      layout="iconLeft"
                     />
                     <StatItem
-                      label="Active Channels"
-                      value={wardData.zones.active}
-                      color="var(--themeColor)"
+                      label="Kilometer Metrics"
+                      value={wardData.kmStats.total}
+                      icon={<Zap size={12} />}
+                      layout="iconLeft"
                     />
                     <StatItem
-                      label="Idle Segments"
-                      value={wardData.zones.inactive}
-                      color="var(--gray)"
+                      label="Zone Coverage"
+                      value={wardData.kmStats.inZone}
+                      icon={<Zap size={12} />}
+                      layout="iconLeft"
                     />
                   </div>
                 </div>
@@ -344,29 +436,28 @@ const Realtime = () => {
 
                     <div className={styles.glassCard}>
                       <div className={styles.cardHeading}>
-                        <h3>Intelligent Analytics</h3>
-                        <Clock size={16} color="var(--themeColor)" />
+                        <h3>Zone Details</h3>
+                        <MapIcon size={16} color="var(--themeColor)" />
                       </div>
                       <div className={styles.statsTwoColWrap}>
                         <StatItem
-                          label="Time Performance"
-                          value={wardData.timeStats.total}
-                          icon={<Clock size={12} />}
+                          label="Total Segments"
+                          value={wardData.zones.total}
                         />
                         <StatItem
-                          label="Active Zone Time"
-                          value={wardData.timeStats.inZone}
-                          icon={<Clock size={12} />}
+                          label="Success Nodes"
+                          value={wardData.zones.completed}
+                          color="var(--textSuccess)"
                         />
                         <StatItem
-                          label="Kilometer Metrics"
-                          value={wardData.kmStats.total}
-                          icon={<Zap size={12} />}
+                          label="Active Channels"
+                          value={wardData.zones.active}
+                          color="var(--themeColor)"
                         />
                         <StatItem
-                          label="Zone Coverage"
-                          value={wardData.kmStats.inZone}
-                          icon={<Zap size={12} />}
+                          label="Idle Segments"
+                          value={wardData.zones.inactive}
+                          color="var(--gray)"
                         />
                       </div>
                     </div>
@@ -435,7 +526,7 @@ const Realtime = () => {
           className={styles.modalOverlay}
           onClick={() => {
             setActiveStatusModal(null);
-            setShowRemarkModal(false);
+            closeRemarkModal();
           }}
         >
           <div
@@ -448,13 +539,15 @@ const Realtime = () => {
                   ? "Terminal Activity"
                   : activeStatusModal === "vehicle"
                     ? "Logistics Diagnostic"
-                    : "Field Intelligence Entry"}
+                    : editingRemarkId
+                      ? "Edit Field Query"
+                      : "Add Field Query"}
               </h3>
               <button
                 className={styles.modalCloseBtn}
                 onClick={() => {
                   setActiveStatusModal(null);
-                  setShowRemarkModal(false);
+                  closeRemarkModal();
                 }}
               >
                 <X size={20} />
@@ -511,19 +604,40 @@ const Realtime = () => {
                 />
               </div>
             ) : (
-              <textarea
-                className={styles.remarkTextarea}
-                placeholder="Type field insights for the command center..."
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-              />
+              <div className={styles.remarkFormWrap}>
+                <select
+                  className={styles.remarkSelect}
+                  value={remarkForm.topic}
+                  onChange={(e) =>
+                    setRemarkForm((prev) => ({ ...prev, topic: e.target.value }))
+                  }
+                >
+                  <option value="">Select Remark Topic</option>
+                  {remarkTopicOptions.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <textarea
+                  className={styles.remarkTextarea}
+                  placeholder="Remark Description"
+                  value={remarkForm.description}
+                  onChange={(e) =>
+                    setRemarkForm((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+              </div>
             )}
             {showRemarkModal && (
               <button
                 className={styles.modalSubmitBtn}
-                onClick={() => setShowRemarkModal(false)}
+                onClick={handleRemarkSubmit}
               >
-                Submit to Command Center
+                {editingRemarkId ? "Update Query" : "Submit Query"}
               </button>
             )}
           </div>
@@ -615,15 +729,24 @@ const PerformanceGrid = ({ data }) => (
   </div>
 );
 
-const StatItem = ({ label, value, color, icon }) => (
-  <div className={styles.miniStatItem}>
-    <div className={styles.miniStatHeader}>
-      {icon && <div style={{ color: "var(--themeColor)" }}>{icon}</div>}
-      <span className={styles.miniStatLabel}>{label}</span>
+const StatItem = ({ label, value, color, icon, layout }) => (
+  <div
+    className={`${styles.miniStatItem} ${layout === "iconLeft" ? styles.miniStatItemIconLeft : ""}`}
+  >
+    {layout === "iconLeft" && icon && (
+      <div className={styles.miniStatLeadIcon}>{icon}</div>
+    )}
+    <div className={styles.miniStatContent}>
+      <div className={styles.miniStatHeader}>
+        {layout !== "iconLeft" && icon && (
+          <div style={{ color: "var(--themeColor)" }}>{icon}</div>
+        )}
+        <span className={styles.miniStatLabel}>{label}</span>
+      </div>
+      <span className={styles.miniStatValue} style={{ color }}>
+        {value}
+      </span>
     </div>
-    <span className={styles.miniStatValue} style={{ color }}>
-      {value}
-    </span>
   </div>
 );
 

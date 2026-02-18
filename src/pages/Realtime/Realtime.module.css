@@ -309,7 +309,7 @@
 
 /* Right Map Column - Fixed 450px */
 .mapColumn {
-  width: 450px;
+  width: 550px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -391,8 +391,8 @@
 }
 
 .timingContent span {
-  font-size: 16px;
-  font-family: var(--fontGraphikBold);
+    font-size: 15px;
+    font-family: var(--fontGraphikMedium);
   color: var(--black);
 }
 
@@ -466,6 +466,8 @@
 
 .statsFourAcross .miniStatItem {
   flex: 1 1 calc(25% - 6px);
+  flex-direction: row;
+  align-items: center;
 }
 
 .miniStatItem {
@@ -477,6 +479,26 @@
   background: #fafbfc;
   border: 1px solid #f1f5f9;
   flex: 0 0 calc(50% - 4px);
+  min-width: 0;
+}
+
+.miniStatItemIconLeft {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.miniStatLeadIcon {
+  color: var(--themeColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.miniStatContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   min-width: 0;
 }
 
@@ -939,6 +961,150 @@ display: flex;
   font-size: 13px;
   color: var(--regularColor);
   font-style: italic;
+}
+
+.remarksHeadRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.remarksHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remarksHeadTitle {
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  color: var(--gray);
+  letter-spacing: 0.6px;
+}
+
+.addRemarkBtn,
+.addAnotherBtn {
+  border: 1px solid var(--themeColor);
+  background: #fff;
+  color: var(--themeColor);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.addRemarkBtn:hover,
+.addAnotherBtn:hover {
+  background: var(--themeColor);
+  color: #fff;
+}
+
+.remarkEmpty {
+  border: 1px dashed #dbe3ec;
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--gray);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+}
+
+.remarkList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.remarkItemCard {
+  border: 1px solid #e9eef4;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fbfcfe;
+}
+
+.remarkItemTopic {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  margin-bottom: 4px;
+}
+
+.remarkItemDescription {
+  font-size: 12px;
+  color: var(--gray);
+  line-height: 1.45;
+}
+
+.remarkItemActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.remarkActionBtn {
+  border: 1px solid #dbe3ec;
+  background: #fff;
+  color: var(--gray);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.remarkActionBtn:hover {
+  border-color: var(--themeColor);
+  color: var(--themeColor);
+}
+
+.deleteActionBtn:hover {
+  border-color: var(--textDanger);
+  color: var(--textDanger);
+}
+
+.remarkFooterRow {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.remarkFormWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.remarkInput {
+  width: 100%;
+  border: 1px solid #eef2f6;
+  background: #fcfcfd;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  outline: none;
+}
+
+.remarkSelect {
+  width: 100%;
+  border: 1px solid #eef2f6;
+  background: #fcfcfd;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  outline: none;
 }
 
 /* Modals Refined */
