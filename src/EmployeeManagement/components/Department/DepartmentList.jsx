@@ -91,7 +91,7 @@ const DepartmentList = (props) => {
                 showCanvas={props.showAddModal}
                 setShowCanvas={() => props.setShowAddModal(false)}
                 initialData={selectedDepartment}
-
+                onSuccess={props.refreshDepartments}
             />
             <GlobalAlertModal
                 show={showDeleteModal}

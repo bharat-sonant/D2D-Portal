@@ -25,6 +25,7 @@ const Departments = () => {
                 setShowAddModal={setShowAddModal}
                 showAddModal={showAddModal}
                 departmentData={departmentData}
+                refreshDepartments={() => getDepartments(setDepartmentData)}
             />
 
             <DesignationList
