@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     height: 100vh;
-    padding-top: 60px; /* Adjust based on navbar height */
+    padding-top: 64px; /* reserve space for fixed topbar (60px) */
     overflow: hidden;
     background: #f8fafc;
 }
@@ -60,7 +60,7 @@
 }
 
 .sidebarHeader {
-    padding: 20px;
+    padding: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -94,7 +94,7 @@
 }
 
 .searchContainer {
-    padding: 15px 20px;
+    padding: 10px 14px;
     border-bottom: 1px solid #f1f5f9;
 }
 
@@ -126,17 +126,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px 0;
+    padding: 24px 0;
 }
 
 .departmentCard {
     background: white;
     border: 1px solid transparent;
     border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 8px;
+    padding: 10px;
+    margin-bottom: 6px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.16s;
     position: relative;
 }
 
@@ -231,11 +231,20 @@
     flex: 1;
     position: relative;
     z-index: 2;
-    padding: 40px;
+    padding: 18px;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
     background: rgba(255,255,255,0.4);
+}
+
+.detailsPanel {
+    width: 100%;
+    max-width: 920px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(250,250,255,0.6));
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
 }
 
 .emptyState, .detailsPlaceholder {
@@ -245,11 +254,96 @@
 
 .emptyState h3, .detailsPlaceholder h2 {
     font-family: var(--fontGraphikBold);
-    font-size: 24px;
+    font-size: 20px;
     color: #1e293b;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .placeholderText {
     opacity: 0.7;
+}
+
+/* Designation area */
+.designationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.designationHeader h3 {
+    margin: 0;
+    font-family: var(--fontGraphikBold);
+    color: #0f172a;
+    font-size: 18px;
+}
+
+.addDesignationBtn {
+    background: #eef2ff;
+    color: #3730a3;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+
+.addDesignationBtn:hover {
+    background: #3730a3;
+    color: white;
+}
+
+.designationList {
+    width: 100%;
+    max-width: 760px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.designationCard {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: all 0.12s ease;
+    box-shadow: 0 2px 8px rgba(2,6,23,0.03);
+}
+
+.designationCard:hover {
+    background: #fbfdff;
+    border-color: #e6eefc;
+    transform: translateY(-2px);
+}
+
+.designationName {
+    font-family: var(--fontGraphikMedium);
+    color: #111827;
+    font-size: 14px;
+}
+
+.designationActions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.16s ease;
+}
+
+.designationCard:hover .designationActions {
+    opacity: 1;
+}
+
+.noDesignation {
+    padding: 18px;
+    color: #64748b;
+    background: #ffffffcc;
+    border-radius: 8px;
 }
