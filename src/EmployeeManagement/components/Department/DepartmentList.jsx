@@ -3,6 +3,8 @@ import deptStyles from "../../Styles/Department/Department.module.css";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
 import AddDepartment from "./AddDepartment";
+import { deleteDepartment } from "../../Action/Department/DepartmentAction";
+import * as common from "../../../common/common";
 import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 
@@ -26,6 +28,19 @@ const DepartmentList = (props) => {
         e.stopPropagation();
         setSelectedDepartment(dept);
         setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!selectedDepartment?.id) return;
+        const success = await deleteDepartment(selectedDepartment.id);
+        if (success) {
+            common.setAlertMessage("success", "Department deleted successfully");
+            props.refreshDepartments && props.refreshDepartments();
+        } else {
+            common.setAlertMessage("error", "Unable to delete department. Try again.");
+        }
+        setShowDeleteModal(false);
+        setSelectedDepartment(null);
     };
 
     return (
@@ -110,7 +125,7 @@ const DepartmentList = (props) => {
                 iconType="warning"
                 warningText="Design preview only. No action will be performed."
                 onCancel={() => setShowDeleteModal(false)}
-                onConfirm={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
             />
         </>
     );
