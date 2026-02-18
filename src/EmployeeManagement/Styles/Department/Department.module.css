@@ -2,7 +2,8 @@
     position: relative;
     display: flex;
     height: 100vh;
-    padding-top: 64px; /* reserve space for fixed topbar (60px) */
+    padding-top: 64px;
+    /* reserve space for fixed topbar (60px) */
     overflow: hidden;
     background: #f8fafc;
 }
@@ -54,8 +55,8 @@
     border-right: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+    height: calc(100vh - 65px);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
     flex-shrink: 0;
 }
 
@@ -194,7 +195,8 @@
     opacity: 1;
 }
 
-.actionBtn, .deleteBtn {
+.actionBtn,
+.deleteBtn {
     background: white;
     border: 1px solid #e2e8f0;
     width: 28px;
@@ -235,24 +237,27 @@
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    background: rgba(255,255,255,0.4);
+    background: rgba(255, 255, 255, 0.4);
+    width: 600px
 }
 
 .detailsPanel {
     width: 100%;
     max-width: 920px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(250,250,255,0.6));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(250, 250, 255, 0.6));
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
 }
 
-.emptyState, .detailsPlaceholder {
+.emptyState,
+.detailsPlaceholder {
     text-align: center;
     color: #64748b;
 }
 
-.emptyState h3, .detailsPlaceholder h2 {
+.emptyState h3,
+.detailsPlaceholder h2 {
     font-family: var(--fontGraphikBold);
     font-size: 20px;
     color: #1e293b;
@@ -280,11 +285,10 @@
 }
 
 .addDesignationBtn {
-    background: #eef2ff;
+    background: #cad2ec;
     color: #3730a3;
     border: none;
     padding: 6px 10px;
-    border-radius: 10px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -293,7 +297,7 @@
 }
 
 .addDesignationBtn:hover {
-    background: #3730a3;
+    background: #1594dd;
     color: white;
 }
 
@@ -315,7 +319,7 @@
     align-items: center;
     border: 1px solid transparent;
     transition: all 0.12s ease;
-    box-shadow: 0 2px 8px rgba(2,6,23,0.03);
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.03);
 }
 
 .designationCard:hover {
