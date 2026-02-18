@@ -52,6 +52,24 @@ export const updateDepartment = async (departmentId, departmentData, callback) =
     }
 };
 
+export const deleteDepartment = async (departmentId, callback) => {
+    try {
+        const response = await api.delete(`/department/${departmentId}`);
+        console.log("Delete Department Response:", response);
+        if (response && response.success) {
+            if (typeof callback === "function") callback(true);
+            return true;
+        } else {
+            if (typeof callback === "function") callback(false);
+            return false;
+        }
+    } catch (error) {
+        console.error("Error deleting department:", error);
+        if (typeof callback === "function") callback(false);
+        return false;
+    }
+};
+
 export const getInitialDepartmentForm = () => ({
     name: "",
     code: "",
