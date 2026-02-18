@@ -425,10 +425,15 @@
 .glassCard {
   background: #fff;
   border-radius: 6px;
-  border: 1px solid var(--borderColor);
   padding: 20px;
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.glassCard:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
 }
 
 .cardHeading {
@@ -467,14 +472,10 @@
   flex-wrap: wrap;
   gap: 8px;
 }
-.wardSummary .wardSummaryStats{
-        background: #fafafa;
-    border-radius: 6px;
-}
+
 .wardSummaryStats {
   display: flex;
   flex-wrap: wrap;
- 
 }
 
 .statsFourAcross {
@@ -488,10 +489,29 @@
   flex-direction: row;
   align-items: center;
 }
-.wardSummary .miniStatItem{
-    background: transparent;
-    border-radius: 0px;
-    /* border: 0px solid transparent; */
+.wardSummary {
+  background: #fff;
+}
+
+.wardSummary .wardSummaryStats,
+.wardSummary .statsTwoColWrap {
+  gap: 0;
+  border-top: 1px solid #e8ecf2;
+  border-left: 1px solid #e8ecf2;
+  border-radius: 4px;
+  overflow: hidden;
+      background: #fafafa;
+}
+
+.wardSummary .miniStatItem {
+  background: transparent;
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid #e8ecf2;
+  border-bottom: 1px solid #e8ecf2;
+  box-sizing: border-box;
+  flex: 0 0 50%;
+  padding: 12px 10px;
 }
 .miniStatItem {
   display: flex;
@@ -503,6 +523,13 @@
   border: 1px solid #f1f5f9;
   flex: 0 0 calc(50% - 4px);
   min-width: 0;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.miniStatItem:hover {
+  border-color: #dbe5ef;
+  background: #fff;
+  transform: translateY(-1px);
 }
 
 .miniStatItemIconLeft {
@@ -626,16 +653,16 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: var(--whitefa);
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
   transition: all 0.2s;
   position: relative;
   margin-bottom: 5px;
+  border: 1px solid transparent;
 }
 
 .enhancedProfile:hover {
-  border-color: var(--themeColor);
+  border: 1px solid var(--themeColor);
   box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
 }
 
@@ -737,9 +764,9 @@ display: flex;
   font-size: 11px;
   font-family: var(--fontGraphikBold);
   text-transform: uppercase;
-  border: 1px solid var(--borderColor);
+  /* border: 1px solid var(--borderColor); */
   letter-spacing: 0.5px;
-  margin-top: 8px;
+  /* margin-top: 8px; */
 }
 
 .vehicleBar svg {
@@ -750,7 +777,7 @@ display: flex;
 .sidebar {
   width: 260px;
   background: #fff;
-  border: 1px solid var(--borderColor);
+  /* border: 1px solid var(--borderColor); */
   display: flex;
   flex-direction: column;
   border-radius: 6px;
@@ -763,9 +790,47 @@ display: flex;
 }
 
 .sidebarHeader h3 {
-  font-size: 14px;
-  font-family: var(--fontGraphikBold);
+font-size: 15px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
   margin: 0;
+}
+
+.sidebarHeaderTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sidebarSubText {
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 6px;
+  font-family: var(--fontGraphik);
+}
+
+.sidebarRefreshBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: var(--themeColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebarRefreshBtn:hover {
+  border-color: var(--themeColor);
+  background: #fff;
+}
+
+.spinIcon {
+  animation: spin 0.8s linear infinite;
 }
 
 .wardItems {
@@ -774,98 +839,92 @@ display: flex;
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .wardRow {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid transparent;
+  border: 1px solid #eef2f7;
+  background: #fbfcfd;
 }
 
 .wardRow:hover {
-  background: #f8fafc;
+  border-color: rgba(40, 152, 202, 0.3);
+  background: #fff;
 }
 
 .wardRowActive {
   background: #f0f7ff;
-  border-color: rgba(40, 152, 202, 0.2);
+  border-color: rgba(40, 152, 202, 0.35);
 }
 
-.wardIdBox {
-  width: 28px;
-  height: 28px;
-  background: #f1f5f9;
-  border-radius: 4px;
+.wardRowHead {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-family: var(--fontGraphikBold);
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wardNameWrap {
+  min-width: 0;
+}
+
+.wardPrimaryName {
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wardSecondaryName {
+  font-size: 10px;
   color: var(--gray);
+  margin-top: 2px;
 }
 
-.wardRowActive .wardIdBox {
-  background: var(--themeColor);
-  color: #fff;
-}
-
-/* Rich Progress Bars */
-.progressBarContainer {
-  flex: 1;
-  height: 12px;
-  background: #f1f5f9;
-  border-radius: 4px;
+.progressChip {
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  z-index: 0;
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  color: var(--themeColor);
+  background: #eaf4ff;
+  border: 1px solid #d2e9ff;
+  border-radius: 999px;
+  padding: 2px 8px;
 }
 
-.progressBarFill {
-  height: 100%;
-  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-  border-radius: 4px;
-  transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-}
-
-.progressBarFill::after {
+.progressChip::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--progressWidth, 0%);
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(52, 211, 153, 0.18));
+  z-index: -1;
+  transition: width 0.45s ease;
 }
 
 .progressText {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  font-family: var(--fontGraphikBold);
-  color: var(--black);
-  z-index: 2;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Map Footer */
@@ -948,7 +1007,7 @@ display: flex;
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  font-family: var(--fontGraphikBold);
+  font-family: var(--fontGraphik);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -1004,10 +1063,9 @@ display: flex;
 }
 
 .remarksHeadTitle {
-  font-size: 10px;
-  font-family: var(--fontGraphikBold);
-  color: var(--gray);
-  letter-spacing: 0.6px;
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+color: var(--black);
 }
 
 .addRemarkBtn,
@@ -1133,6 +1191,60 @@ display: flex;
   outline: none;
 }
 
+.wardRow,
+.statusLine,
+.timingCellHorizontal,
+.timingCellBadge,
+.sidebarRefreshBtn,
+.modalCloseBtn,
+.modalSubmitBtn,
+.addRemarkBtn,
+.addAnotherBtn,
+.remarkItemCard,
+.remarkActionBtn {
+  transition: all 0.2s ease;
+}
+
+.wardRow:hover,
+.statusLine:hover,
+.timingCellHorizontal:hover,
+.timingCellBadge:hover,
+.remarkItemCard:hover {
+  transform: translateY(-1px);
+}
+
+.timingGrid,
+.dataRight > .fullWidthZoneCard,
+.leftColumn > .glassCard,
+.centerColumn > .glassCard,
+.mapColumn > .glassCard {
+  animation: pageFadeIn 0.35s ease both;
+}
+
+.leftColumn > .glassCard:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.leftColumn > .glassCard:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.centerColumn > .glassCard:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Modals Refined */
 .modalOverlay {
   position: fixed;
@@ -1244,33 +1356,43 @@ display: flex;
 }
 
 /* Mobile Engine */
-@media (max-width: 1200px) {
-  .dashboardGrid {
-    flex-direction: column;
+@media (min-width: 1600px) {
+  .sidebar {
+    width: 280px;
   }
 
-  .dashboardGrid > div:first-child {
-    width: 100%;
+  .leftColumn {
+    width: 380px;
+  }
+
+  .mapColumn {
+    width: 560px;
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .leftColumn {
+    width: 320px;
+  }
+
+  .mapColumn {
+    width: 420px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
   .realtimePage {
-    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 60px);
+    overflow: auto;
   }
 
   .sidebar {
     display: none;
-  }
-
-  .mainContent {
-    padding: 8px;
-  }
-
-  .headerWrapper {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
   }
 
   .mobileWardSelector {
@@ -1278,6 +1400,76 @@ display: flex;
     width: 100%;
   }
 
+  .layoutSplit {
+    flex-direction: column;
+  }
+
+  .leftColumn,
+  .dataRight,
+  .centerColumn,
+  .mapColumn {
+    width: 100%;
+  }
+
+  .dataRightBottom {
+    flex-direction: column;
+  }
+
+  .timingGrid {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .timingCellHorizontal {
+    flex: 0 0 50%;
+    border-right: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .statsFourAcross .miniStatItem {
+    flex-basis: calc(50% - 4px);
+  }
+
+  .mapCard {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 767px) {
+  .realtimePage {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 60px);
+    overflow: auto;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mainContent {
+    padding: 0;
+  }
+
+  .mobileWardSelector {
+    display: block;
+    width: 100%;
+  }
+
+  .layoutSplit {
+    flex-direction: column;
+  }
+
+  .leftColumn,
+  .dataRight,
+  .centerColumn,
+  .mapColumn {
+    width: 100%;
+  }
+
+  .dataRightBottom,
   .statusRow {
     flex-direction: column;
   }
@@ -1287,54 +1479,49 @@ display: flex;
     gap: 6px;
   }
 
+  .timingCellHorizontal {
+    flex-basis: 100%;
+    border-right: 0;
+  }
+
   .profilePair {
-    display: flex;
     flex-direction: column;
   }
 
-  .miniStatItem {
-    flex-basis: 100%;
-  }
-}
-
-@media (max-width: 1200px) {
+  .miniStatItem,
+  .wardSummary .miniStatItem,
   .statsFourAcross .miniStatItem {
-    flex-basis: calc(50% - 4px);
-  }
-}
-
-@media (max-width: 1400px) {
-  .layoutSplit {
-    flex-wrap: wrap;
-  }
-
-  .leftColumn {
-    width: 360px;
-  }
-
-  .mapColumn {
-    width: 100%;
+    flex-basis: 100%;
   }
 
   .mapCard {
-    min-height: 340px;
+    min-height: 300px;
   }
 }
 
-@media (max-width: 1024px) {
-  .layoutSplit {
-    flex-direction: column;
+@media (prefers-reduced-motion: reduce) {
+  .timingGrid,
+  .dataRight > .fullWidthZoneCard,
+  .leftColumn > .glassCard,
+  .centerColumn > .glassCard,
+  .mapColumn > .glassCard {
+    animation: none !important;
   }
 
-  .leftColumn,
-  .centerColumn,
-  .mapColumn {
-    width: 100%;
-  }
-
-  .leftColumn,
-  .centerColumn {
-    overflow: visible;
+  .glassCard,
+  .wardRow,
+  .statusLine,
+  .miniStatItem,
+  .timingCellHorizontal,
+  .timingCellBadge,
+  .sidebarRefreshBtn,
+  .modalCloseBtn,
+  .modalSubmitBtn,
+  .addRemarkBtn,
+  .addAnotherBtn,
+  .remarkItemCard,
+  .remarkActionBtn {
+    transition: none !important;
   }
 }
 

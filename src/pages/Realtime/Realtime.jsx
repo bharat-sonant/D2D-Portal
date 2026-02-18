@@ -153,6 +153,9 @@ const Realtime = () => {
     }, 800);
   };
 
+  const getZoneLabel = (ward) =>
+    ward?.name || ward?.zoneName || ward?.wardName || `Zone ${ward?.id}`;
+
   const openNewRemarkModal = () => {
     setEditingRemarkId(null);
     setRemarkForm({ topic: "", description: "" });
@@ -193,7 +196,7 @@ const Realtime = () => {
     setRemarks((prev) => prev.filter((item) => item.id !== id));
   };
 
-  if (loading) return <WevoisLoader title="Initializing AI Assistant..." />;
+  if (loading) return <WevoisLoader title="Initializing Data..." />;
 
   const mapContainerStyle = { width: "100%", height: "100%" };
   const center = { lat: 26.9124, lng: 75.7873 };
@@ -203,11 +206,22 @@ const Realtime = () => {
       {/* High-Density Optimized Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h3>Zone Registry</h3>
-          <div
-            style={{ fontSize: "11px", color: "var(--gray)", marginTop: "4px" }}
-          >
-            Monitoring {wardList.length} Active Nodes
+          <div className={styles.sidebarHeaderTop}>
+            <div className={styles.sidebarSubText}>
+              <h3>Zone Summary</h3>
+              Last Update: {lastRefreshed}
+            </div>
+            <button
+              type="button"
+              className={styles.sidebarRefreshBtn}
+              onClick={handleRefresh}
+              title="Refresh zones"
+            >
+              <RefreshCw
+                size={14}
+                className={refreshing ? styles.spinIcon : ""}
+              />
+            </button>
           </div>
         </div>
         <div className={styles.wardItems}>
@@ -217,13 +231,18 @@ const Realtime = () => {
               className={`${styles.wardRow} ${selectedWard?.id === ward.id ? styles.wardRowActive : ""}`}
               onClick={() => handleWardSelect(ward)}
             >
-              <div className={styles.wardIdBox}>{ward.id}</div>
-              <div className={styles.progressBarContainer}>
-                <div className={styles.progressText}>{ward.progress}%</div>
+              <div className={styles.wardRowHead}>
+                <div className={styles.wardNameWrap}>
+                  <div className={styles.wardPrimaryName}>
+                    {getZoneLabel(ward)}
+                  </div>
+                </div>
                 <div
-                  className={styles.progressBarFill}
-                  style={{ width: `${ward.progress}%` }}
-                ></div>
+                  className={styles.progressChip}
+                  style={{ "--progressWidth": `${ward.progress}%` }}
+                >
+                  {ward.progress}%
+                </div>
               </div>
             </div>
           ))}
@@ -240,7 +259,7 @@ const Realtime = () => {
           >
             {wardList.map((ward) => (
               <option key={ward.id} value={ward.id}>
-                Zone {ward.id} ({ward.progress}%)
+                {getZoneLabel(ward)} ({ward.progress}%)
               </option>
             ))}
           </select>
@@ -316,7 +335,7 @@ const Realtime = () => {
                     <div className={styles.remarksHeadLeft}>
                       <Plus size={16} color="var(--themeColor)" />
                       <span className={styles.remarksHeadTitle}>
-                        REMARK TITLE
+                        Remark
                       </span>
                     </div>
                     <button
@@ -324,7 +343,7 @@ const Realtime = () => {
                       className={styles.addRemarkBtn}
                       onClick={openNewRemarkModal}
                     >
-                      Add New
+                      Add
                     </button>
                   </div>
 
@@ -373,7 +392,7 @@ const Realtime = () => {
                     variant="horizontal"
                     icon={<ShieldCheck size={20} color="#22c55e" />}
                     value={wardData.dutyOn}
-                    label="Duty Initiated"
+                    label="Duty On"
                   />
                   <TimingCell
                     variant="horizontal"
@@ -391,7 +410,7 @@ const Realtime = () => {
                     variant="horizontal"
                     icon={<PowerOffIcon size={20} color="#f43f5e" />}
                     value={wardData.dutyOff}
-                    label="Duty Release"
+                    label="Duty Off"
                   />
                 </div>
                 <div
@@ -403,7 +422,7 @@ const Realtime = () => {
                   </div>
                   <div className={styles.statsFourAcross}>
                     <StatItem
-                      label="Time Performance"
+                      label="Total Time"
                       value={wardData.timeStats.total}
                       icon={<Clock size={12} />}
                       layout="iconLeft"
@@ -440,7 +459,9 @@ const Realtime = () => {
                       <PerformanceGrid data={wardData} />
                     </div>
 
-                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
+                    <div
+                      className={`${styles.glassCard} ${styles.wardSummary}`}
+                    >
                       <div className={styles.cardHeading}>
                         <h3>Zone Details</h3>
                         <MapIcon size={16} color="var(--themeColor)" />
@@ -771,7 +792,7 @@ const EnhancedProfile = ({ profile, role, isOnline }) => (
       <div className={styles.enhancedAvatarBox}>
         <img src={Chetan} title="" alt="" />
         <UserIcon size={32} color="#94a3b8" />
-        {isOnline && <div className={styles.onlineIndicator}></div>}
+        {/* {isOnline && <div className={styles.onlineIndicator}></div>} */}
       </div>
       <div className={styles.enhancedProfileInfo}>
         <span className={styles.enhancedRoleTag}>{role}</span>
@@ -831,7 +852,7 @@ const ModalRow = ({ label, value, color, icon }) => (
 );
 
 const PowerOffIcon = ({ size, color }) => (
-  <div style={{ transform: "rotate(180deg)", display: "flex" }}>
+  <div style={{  display: "flex" }}>
     <ShieldCheck size={size} color={color} />
   </div>
 );
