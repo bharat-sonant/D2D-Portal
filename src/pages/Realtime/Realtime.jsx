@@ -277,7 +277,7 @@ const Realtime = () => {
 
                   <div className={styles.vehicleBar}>
                     <Truck size={14} />
-                    <span>Vehicle: {wardData.vehicleNumber}</span>
+                    <span>{wardData.vehicleNumber}</span>
                   </div>
                 </div>
 
@@ -440,7 +440,7 @@ const Realtime = () => {
                       <PerformanceGrid data={wardData} />
                     </div>
 
-                    <div className={`${styles.glassCard} `}>
+                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
                       <div className={styles.cardHeading}>
                         <h3>Zone Details</h3>
                         <MapIcon size={16} color="var(--themeColor)" />
@@ -451,7 +451,7 @@ const Realtime = () => {
                           value={wardData.zones.total}
                         />
                         <StatItem
-                          label="Completed Zone"
+                          label="Comp. Zone"
                           value={wardData.zones.completed}
                           color="var(--textSuccess)"
                         />

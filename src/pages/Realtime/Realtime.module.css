@@ -930,9 +930,18 @@ display: flex;
 
 .mapFooter {
   position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
+  top: 8px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+    justify-content: space-between;
+}
+
+.mapStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
@@ -943,12 +952,6 @@ display: flex;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.mapStat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 /* Remarks Refined */
