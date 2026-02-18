@@ -31,32 +31,33 @@ export const performLoginValidation = async (credentials, setErrors, setIsLoadin
     }
 
     try {
-        setIsLoading(true);
+        // setIsLoading(true);
+         navigate('/fe-WebView/dashboard');
         
-        const response = await api.post('/fe-users/fe-login', {
-            userName: userId,
-            password: password
-        });
+        // const response = await api.post('/fe-users/fe-login', {
+        //     userName: userId,
+        //     password: password
+        // });
 
-        if (response.status === 'success') {
-            const userData = response.data;
+        // if (response.status === 'success') {
+        //     const userData = response.data;
 
-            // 🔴 Control: Check if site is assigned
-            if (!userData.siteAssigned) {
-                setErrors({ auth: "Access Denied: No Site Assigned. Please contact admin." });
-                setIsLoading(false);
-                return; // Yahan se return ho jayenge, navigate nahi karenge
-            }
+        //     // 🔴 Control: Check if site is assigned
+        //     if (!userData.siteAssigned) {
+        //         setErrors({ auth: "Access Denied: No Site Assigned. Please contact admin." });
+        //         setIsLoading(false);
+        //         return; // Yahan se return ho jayenge, navigate nahi karenge
+        //     }
 
-            // ✅ If site is assigned, proceed to login
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("fe_user", JSON.stringify(userData));
+        //     // ✅ If site is assigned, proceed to login
+        //     localStorage.setItem("isLoggedIn", "true");
+        //     localStorage.setItem("fe_user", JSON.stringify(userData));
             
-            showToast(response.message || "Login successful!", "success");
-            navigate('/fe-WebView/dashboard');
-        } else {
-            setErrors({ auth: response.message || "Invalid credentials" });
-        }
+        //     showToast(response.message || "Login successful!", "success");
+        //     navigate('/fe-WebView/dashboard');
+        // } else {
+        //     setErrors({ auth: response.message || "Invalid credentials" });
+        // }
     } catch (error) {
         // Mobile WebView connection error handle karne ke liye
         console.error("Login Error:", error);

@@ -11,7 +11,8 @@ import {
   Frown,
   Ellipsis,
   X,
-  Menu
+  Menu,
+  Zap
 } from "lucide-react";
 import styles from "../Style/MainLayout/Topbar.module.css";
 import { images } from "../assets/css/imagePath";
@@ -129,6 +130,13 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
       color: "var(--themeColor)",
       path: "/monitoring",
     },
+    {
+      id: "Realtime",
+      label: "Realtime",
+      icon: Zap,
+      color: "var(--themeColor)",
+      path: "/realtime",
+    },
     // {
     //   id: "Settings",
     //   label: "Settings",
@@ -200,8 +208,9 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
 
         {/* DESKTOP + MOBILE MENU */}
         <div
-          className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
-            }`}
+          className={`${styles.desktopMenu} ${
+            showMobileMenu ? styles.mobileMenuOpen : ""
+          }`}
         >
           {menuItems
             .filter((item) => {
@@ -216,8 +225,9 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                 <Link
                   key={item.id}
                   to={item.path}
-                  className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
-                    }`}
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.menuItemActive : ""
+                  }`}
                   style={{
                     animationDelay: `${index * 0.1}s`,
                     "--menu-color": item.color,
@@ -225,15 +235,17 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
                   onClick={() => setShowMobileMenu(false)}
                 >
                   <div
-                    className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
-                      }`}
+                    className={`${styles.menuIcon} ${
+                      isActive ? styles.menuIconActive : ""
+                    }`}
                   >
                     <Icon className={styles.navIcon} size={20} />
                   </div>
 
                   <span
-                    className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
-                      }`}
+                    className={`${styles.menuLabel} ${
+                      isActive ? styles.menuLabelActive : ""
+                    }`}
                   >
                     {item.label}
                   </span>
@@ -261,9 +273,7 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
               onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
               style={{ cursor: "pointer" }}
             >
-              <button
-                className={`btn ${styles.userDropdownBtn}`}
-              >
+              <button className={`btn ${styles.userDropdownBtn}`}>
                 <span className={styles.userBG}>
                   {firstchar}
                   {secondchar}

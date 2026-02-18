@@ -23,6 +23,7 @@ import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
+import Realtime from "../pages/Realtime/Realtime";
 
 // Employee section pages
 import EmployeeDashboard from "../EmployeeManagement/pages/EmployeeDashboard";
@@ -251,7 +252,15 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
-
+       <Route
+          path="/realtime"
+          element={
+            <ProtectedRouter>
+              <MainLayout />
+              <Realtime />
+            </ProtectedRouter>
+          }
+        />
 
         <Route
           path="/user"
