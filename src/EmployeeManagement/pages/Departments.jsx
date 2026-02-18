@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import deptStyles from "./Departments.module.css";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import WevoisLoader from "../../components/Common/Loader/WevoisLoader";
 import AddDepartment from "../components/AddDepartment";
+import AddDesignation from "../components/AddDesignation";
 import { getDepartmentsAction, deleteDepartmentAction } from "../../services/DepartmentService/DepartmentAction";
 import * as common from "../../common/common";
 import NoResult from "../../components/NoResultFound/NoResult";
@@ -20,11 +21,41 @@ const Departments = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDept, setSelectedDept] = useState(null);
+    const [designationsByDept, setDesignationsByDept] = useState({});
+    const [showAddDesignation, setShowAddDesignation] = useState(false);
+    const [designationToEdit, setDesignationToEdit] = useState(null);
 
     // Fetch Departments on Mount
     useEffect(() => {
         fetchDepartments();
     }, []);
+
+    // When departments load, select first by default
+    useEffect(() => {
+        if (departments && departments.length > 0 && !selectedDept) {
+            setSelectedDept(departments[0]);
+        }
+        if (departments && departments.length === 0) {
+            setSelectedDept(null);
+        }
+    }, [departments]);
+
+    // Load designations from localStorage
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem('designations') || '{}');
+            setDesignationsByDept(saved || {});
+        } catch (e) {
+            setDesignationsByDept({});
+        }
+    }, []);
+
+    const designationListRef = useRef(null);
+
+    // when selected department changes, scroll designation list to top
+    useEffect(() => {
+        if (designationListRef.current) designationListRef.current.scrollTop = 0;
+    }, [selectedDept]);
 
     // Filter departments when search query or departments change
     useEffect(() => {
@@ -83,6 +114,50 @@ const Departments = () => {
     const handleCloseModal = () => {
         setShowAddModal(false);
         setDeptToEdit(null); // Reset edit state
+    };
+
+    const handleAddDesignationClick = () => {
+        setDesignationToEdit(null);
+        setShowAddDesignation(true);
+    };
+
+    const handleEditDesignation = (e, des) => {
+        e.stopPropagation();
+        setDesignationToEdit(des);
+        setShowAddDesignation(true);
+    };
+
+    const handleSaveDesignation = (designation) => {
+        if (!selectedDept) return;
+        const deptId = selectedDept.id;
+        setDesignationsByDept(prev => {
+            const list = prev[deptId] ? [...prev[deptId]] : [];
+            let updated;
+            if (designation.id) {
+                updated = list.map(d => d.id === designation.id ? designation : d);
+            } else {
+                const newItem = { ...designation, id: Date.now().toString() };
+                updated = [newItem, ...list];
+            }
+            const newState = { ...prev, [deptId]: updated };
+            localStorage.setItem('designations', JSON.stringify(newState));
+            return newState;
+        });
+        setShowAddDesignation(false);
+        setDesignationToEdit(null);
+    };
+
+    const handleDeleteDesignation = (e, des) => {
+        e.stopPropagation();
+        if (!selectedDept) return;
+        const deptId = selectedDept.id;
+        setDesignationsByDept(prev => {
+            const list = prev[deptId] ? [...prev[deptId]] : [];
+            const updated = list.filter(d => d.id !== des.id);
+            const newState = { ...prev, [deptId]: updated };
+            localStorage.setItem('designations', JSON.stringify(newState));
+            return newState;
+        });
     };
 
     return (
@@ -161,18 +236,51 @@ const Departments = () => {
                 </div>
             </div>
 
-            {/* Right Content Area (Placeholder for now) */}
+            {/* Right Content Area */}
             <div className={deptStyles.mainContent}>
                 {selectedDept ? (
-                    <div className={deptStyles.detailsPlaceholder}>
-                        <h2>{selectedDept.name}</h2>
-                        <p>Department Code: {selectedDept.code}</p>
-                        <p className={deptStyles.placeholderText}>Select an option to view details</p>
+                    <div style={{ width: '100%' }}>
+                        <div className={deptStyles.designationHeader}>
+                            <div>
+                                <h2 style={{ margin: 0 }}>{selectedDept.name}</h2>
+                                <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>Department Code: {selectedDept.code}</p>
+                            </div>
+                            <div>
+                                <button className={deptStyles.addDesignationBtn} onClick={handleAddDesignationClick} title="Add Designation">
+                                    <Plus size={14} />&nbsp;Add Designation
+                                </button>
+                            </div>
+                        </div>
+
+                        <div ref={designationListRef} className={deptStyles.designationList}>
+                            {((designationsByDept[selectedDept.id] || []).length > 0) ? (
+                                (designationsByDept[selectedDept.id] || []).map((des) => (
+                                    <div key={des.id} className={deptStyles.designationCard}>
+                                        <div>
+                                            <div className={deptStyles.designationName}>{des.name}</div>
+                                            {des.code && <div className={deptStyles.cardCode} style={{ marginTop: 6 }}>{des.code}</div>}
+                                        </div>
+                                        <div className={deptStyles.designationActions}>
+                                            <button onClick={(e) => handleEditDesignation(e, des)} className={deptStyles.actionBtn} title="Edit">
+                                                <Edit2 size={14} />
+                                            </button>
+                                            <button onClick={(e) => handleDeleteDesignation(e, des)} className={deptStyles.deleteBtn} title="Delete">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className={deptStyles.noDesignation}>
+                                    <NoResult label="No Designations Found" />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <div className={deptStyles.emptyState}>
-                        <h3>Select a Department</h3>
-                        <p>Choose a department from the sidebar to view details</p>
+                        <h3>No Departments</h3>
+                        <p>There are no departments to show. Click the + button to add one.</p>
                     </div>
                 )}
             </div>
@@ -185,6 +293,13 @@ const Departments = () => {
                     if (msg) common.setAlertMessage("success", msg);
                 }}
                 initialData={deptToEdit}
+            />
+
+            <AddDesignation
+                showCanvas={showAddDesignation}
+                setShowCanvas={(val) => setShowAddDesignation(val)}
+                onSave={handleSaveDesignation}
+                initialData={designationToEdit}
             />
 
             {showDeleteModal && (
