@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import modalStyles from "../../../assets/css/popup.module.css";
 import { X, GitBranch, Check, Building2, Settings } from "lucide-react";
-import {
-    getInitialDepartmentForm,
-    getDepartmentFormFromData,
-    handleDepartmentFormChange,
-    submitDepartmentForm,
-} from "../../Action/Department/DepartmentAction";
+import { getInitialDepartmentForm,getDepartmentFormFromData,handleDepartmentFormChange,submitDepartmentForm,} from "../../Action/Department/DepartmentAction";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
 
 const AddDepartment = ({ showCanvas, setShowCanvas, initialData, onSuccess }) => {
