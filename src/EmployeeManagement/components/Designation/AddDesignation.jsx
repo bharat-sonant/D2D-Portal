@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import modalStyles from "../../assets/css/popup.module.css";
+import modalStyles from "../../../assets/css/popup.module.css";
 import { X, Check, Loader2, Briefcase } from "lucide-react";
 
 const AddDesignation = ({ showCanvas, setShowCanvas, onSave, initialData }) => {

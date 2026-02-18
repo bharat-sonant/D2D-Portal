@@ -29,7 +29,7 @@ import Realtime from "../pages/Realtime/Realtime";
 import EmployeeDashboard from "../EmployeeManagement/pages/EmployeeDashboard";
 import Employees from "../EmployeeManagement/pages/Employees";
 import Branches from "../EmployeeManagement/pages/Branches";
-import Departments from "../EmployeeManagement/pages/Departments";
+import Departments from "../EmployeeManagement/pages/Department/Departments";
 import OfficeDashboard from "../MobileAppPages/MyOffice/Pages/Dashboard/Dashboard";
 import FuelManagementLayout from "../mainLayout/FuelManagementLayout";
 import FieldEmployees from "../FuelManagement/pages/FieldEmployees";

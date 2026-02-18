@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import modalStyles from "../../assets/css/popup.module.css";
+import modalStyles from "../../../assets/css/popup.module.css";
 import {
     X,
     GitBranch,
@@ -26,10 +26,10 @@ import {
     Globe,
     BookOpen
 } from "lucide-react";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
-import { validateDepartmentDetail } from "../../services/DepartmentService/DepartmentAction";
-import { getBranchesAction } from "../../services/BranchService/BranchAction";
-import * as common from "../../common/common";
+import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
+import { validateDepartmentDetail } from "../../../services/DepartmentService/DepartmentAction";
+import { getBranchesAction } from "../../../services/BranchService/BranchAction";
+import * as common from "../../../common/common";
 
 const AddDepartment = ({ showCanvas, setShowCanvas, onRefresh, initialData }) => {
     const [form, setForm] = useState({
