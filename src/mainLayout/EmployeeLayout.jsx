@@ -5,7 +5,7 @@ const EmployeeLayout = ({ children }) => {
     return (
         <>
             <EmployeeTopbar />
-            <div style={{ paddingTop: "60px" }}>
+            <div>
                 {children}
             </div>
         </>

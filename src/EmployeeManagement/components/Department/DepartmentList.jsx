@@ -1,63 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import deptStyles from "../../Styles/Department/Department.module.css";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
-import WevoisLoader from '../../../components/Common/Loader/WevoisLoader';
 import AddDepartment from "./AddDepartment";
-import * as common from '../../../common/common';
 import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
-import { deleteDepartmentAction } from "../../../services/DepartmentService/DepartmentAction";
 
 const DepartmentList = (props) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-    useEffect(() => {
-        if (!props.departments) return;
-        const filtered = props.departments.filter(dept =>
-            dept.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            dept.code.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        props.setFilteredDepartments(filtered);
-    }, [searchQuery, props.departments]);
+    const departments = [
+        { id: 1, name: "Human Resources", code: "HR-01" },
+        { id: 2, name: "Finance", code: "FIN-01" },
+        { id: 3, name: "Engineering", code: "ENG-01" }
+    ];
+
+    const filteredDepartments = departments.filter((dept) =>
+        dept.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        dept.code.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleEdit = (e, dept) => {
         e.stopPropagation();
-        props.setDeptToEdit(dept);
-        props.setShowAddModal(true);
+        setSelectedDepartment(dept);
+        setShowEditModal(true);
     };
 
-    const handleDeleteClick = (e, dept) => {
+    const handleDelete = (e, dept) => {
         e.stopPropagation();
-        props.setDeptToDelete(dept);
-        props.setShowDeleteModal(true);
-    };
-
-    const handleCancelDelete = () => {
-        props.setShowDeleteModal(false);
-        props.setDeptToDelete(null);
-    };
-
-    const confirmDelete = async () => {
-        if (!props.deptToDelete) return;
-
-        props.setIsDeleting(true);
-        await deleteDepartmentAction(
-            props.deptToDelete.id,
-            (msg) => {
-                props.setIsDeleting(false);
-                props.setShowDeleteModal(false);
-                props.setDeptToDelete(null);
-                common.setAlertMessage("success", "Department deleted successfully");
-                props.fetchDepartments();
-            },
-            (err) => {
-                props.setIsDeleting(false);
-                props.setShowDeleteModal(false);
-                props.setDeptToDelete(null);
-                common.setAlertMessage("error", err || "Failed to delete department");
-            }
-        );
+        setSelectedDepartment(dept);
+        setShowDeleteModal(true);
     };
 
     return (
@@ -85,17 +60,9 @@ const DepartmentList = (props) => {
                 </div>
 
                 <div className={deptStyles.departmentList}>
-                    {props.loading ? (
-                        <div className={deptStyles.loaderWrapper}>
-                            <WevoisLoader title="Loading Departments..." />
-                        </div>
-                    ) : props.filteredDepartments.length > 0 ? (
-                        props.filteredDepartments.map((dept) => (
-                            <div
-                                key={dept.id}
-                                className={`${deptStyles.departmentCard} ${props.selectedDept?.id === dept.id ? deptStyles.activeCard : ''}`}
-                                onClick={() => props.setSelectedDept(dept)}
-                            >
+                    {filteredDepartments.length > 0 ? (
+                        filteredDepartments.map((dept) => (
+                            <div key={dept.id} className={deptStyles.departmentCard}>
                                 <div className={deptStyles.cardContent}>
                                     <div className={deptStyles.cardHeader}>
                                         <h3 className={deptStyles.cardTitle}>{dept.name}</h3>
@@ -110,7 +77,7 @@ const DepartmentList = (props) => {
                                             <Edit2 size={14} />
                                         </button>
                                         <button
-                                            onClick={(e) => handleDeleteClick(e, dept)}
+                                            onClick={(e) => handleDelete(e, dept)}
                                             className={deptStyles.deleteBtn}
                                             title="Delete"
                                         >
@@ -129,39 +96,31 @@ const DepartmentList = (props) => {
             </div>
             <AddDepartment
                 showCanvas={props.showAddModal}
-                setShowCanvas={props.handleCloseModal}
-                onRefresh={(msg) => {
-                    props.fetchDepartments();
-                    if (msg) common.setAlertMessage("success", msg);
-                }}
-                initialData={props.deptToEdit}
+                setShowCanvas={() => props.setShowAddModal(false)}
+                initialData={selectedDepartment}
+
             />
-
-
-            {props.showDeleteModal && (
-                <GlobalAlertModal
-                    show={props.showDeleteModal}
-                    title="Confirm Deletion"
-                    message={
-                        <>
-                            Are you sure you want to delete department{" "}
-                            <strong className={globalAlertStyles.warningName}>
-                                {props.deptToDelete?.name}
-                            </strong>
-                            ?
-                        </>
-                    }
-                    buttonText={props.isDeleting ? "Deleting..." : "Yes, Delete"}
-                    buttonGradient="linear-gradient(135deg, #dc2626 0%, #991b1b 100%)"
-                    iconType="warning"
-                    warningText="This action cannot be undone and will remove all associated data."
-                    onCancel={handleCancelDelete}
-                    onConfirm={confirmDelete}
-                    disabled={props.isDeleting}
-                />
-            )}
+            <GlobalAlertModal
+                show={showDeleteModal}
+                title="Delete Department"
+                message={
+                    <>
+                        Are you sure you want to delete{" "}
+                        <strong className={globalAlertStyles.warningName}>
+                            {selectedDepartment?.name}
+                        </strong>
+                        ?
+                    </>
+                }
+                buttonText="Delete"
+                buttonGradient="linear-gradient(135deg, #dc2626 0%, #991b1b 100%)"
+                iconType="warning"
+                warningText="Design preview only. No action will be performed."
+                onCancel={() => setShowDeleteModal(false)}
+                onConfirm={() => setShowDeleteModal(false)}
+            />
         </>
-    )
-}
+    );
+};
 
-export default DepartmentList
+export default DepartmentList;

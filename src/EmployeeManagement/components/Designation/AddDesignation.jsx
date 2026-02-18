@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import modalStyles from "../../../assets/css/popup.module.css";
-import { X, Check, Loader2, Briefcase } from "lucide-react";
+import { X, Check, Briefcase } from "lucide-react";
 
-const AddDesignation = ({ showCanvas, setShowCanvas, onSave, initialData }) => {
+const AddDesignation = ({ showCanvas, setShowCanvas, initialData }) => {
     const [form, setForm] = useState({ name: "" });
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (showCanvas) {
             if (initialData) setForm({ name: initialData.name || "" });
             else setForm({ name: "" });
         }
-        if (!showCanvas) setLoading(false);
     }, [showCanvas, initialData]);
 
     if (!showCanvas) return null;
@@ -19,16 +17,6 @@ const AddDesignation = ({ showCanvas, setShowCanvas, onSave, initialData }) => {
     const handleChange = (e) => {
         const { value } = e.target;
         setForm({ name: value });
-    };
-
-    const handleSave = () => {
-        if (!form.name || form.name.trim() === "") return;
-        setLoading(true);
-        setTimeout(() => {
-            const payload = { ...initialData, name: form.name.trim() };
-            setLoading(false);
-            if (onSave) onSave(payload);
-        }, 200);
     };
 
     return (
@@ -41,10 +29,10 @@ const AddDesignation = ({ showCanvas, setShowCanvas, onSave, initialData }) => {
                         </div>
                         <div className={modalStyles.headerTextRight}>
                             <h2 className={modalStyles.modalTitle}>{initialData ? "Edit Designation" : "Add Designation"}</h2>
-                            <p className={modalStyles.modalSubtitle}>{initialData ? "Update designation details." : "Create a new designation for this department."}</p>
+                            <p className={modalStyles.modalSubtitle}>{initialData ? "Design preview for edit modal." : "Design preview for add modal."}</p>
                         </div>
                     </div>
-                    <button className={modalStyles.closeBtn} onClick={() => setShowCanvas(false)} disabled={loading}>
+                    <button className={modalStyles.closeBtn} onClick={() => setShowCanvas(false)}>
                         <X size={20} />
                     </button>
                 </div>
@@ -61,9 +49,9 @@ const AddDesignation = ({ showCanvas, setShowCanvas, onSave, initialData }) => {
                 </div>
 
                 <div className={modalStyles.modalFooter}>
-                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)} disabled={loading}>Cancel</button>
-                    <button className={modalStyles.submitBtn} onClick={handleSave} disabled={loading || !form.name.trim()}>
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />} {initialData ? "Update" : "Add"}
+                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)}>Cancel</button>
+                    <button className={modalStyles.submitBtn} onClick={() => setShowCanvas(false)} disabled={!form.name.trim()}>
+                        <Check size={16} /> {initialData ? "Update" : "Add"}
                     </button>
                 </div>
             </div>

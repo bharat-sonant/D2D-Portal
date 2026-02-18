@@ -1,92 +1,97 @@
-import NoResult from "../../../components/NoResultFound/NoResult";
+import { useState } from "react";
 import deptStyles from "../../Styles/Department/Department.module.css";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import AddDesignation from "./AddDesignation";
+import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
+import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 
 const DesignationList = (props) => {
+    const [showEditDesignation, setShowEditDesignation] = useState(false);
+    const [showDeleteDesignation, setShowDeleteDesignation] = useState(false);
+    const [selectedDesignation, setSelectedDesignation] = useState(null);
 
-    const handleAddDesignationClick = () => {
-        props.setDesignationToEdit(null);
-        props.setShowAddDesignation(true);
+    const designationItems = [
+        { id: 1, name: "HR Manager", code: "HR-MGR" },
+        { id: 2, name: "Senior Recruiter", code: "HR-SR" },
+        { id: 3, name: "Payroll Executive", code: "HR-PAY" }
+    ];
+
+    const openEdit = (item) => {
+        setSelectedDesignation(item);
+        setShowEditDesignation(true);
     };
 
-    const handleSaveDesignation = (designation) => {
-        if (!props.selectedDept) return;
-        const deptId = props.selectedDept.id;
-        props.setDesignationsByDept(prev => {
-            const list = prev[deptId] ? [...prev[deptId]] : [];
-            let updated;
-            if (designation.id) {
-                updated = list.map(d => d.id === designation.id ? designation : d);
-            } else {
-                const newItem = { ...designation, id: Date.now().toString() };
-                updated = [newItem, ...list];
-            }
-            const newState = { ...prev, [deptId]: updated };
-            localStorage.setItem('designations', JSON.stringify(newState));
-            return newState;
-        });
-        props.setShowAddDesignation(false);
-        props.setDesignationToEdit(null);
+    const openDelete = (item) => {
+        setSelectedDesignation(item);
+        setShowDeleteDesignation(true);
     };
 
     return (
         <>
             <div className={deptStyles.mainContent}>
-                {props.selectedDept ? (
-                    <div style={{ width: '100%' }}>
-                        <div className={deptStyles.designationHeader}>
-                            <div>
-                                <h2 style={{ margin: 0 }}>{props.selectedDept.name}</h2>
-                                <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>Department Code: {props.selectedDept.code}</p>
-                            </div>
-                            <div>
-                                <button className={deptStyles.addDesignationBtn} onClick={handleAddDesignationClick} title="Add Designation">
-                                    <Plus size={14} />&nbsp;Add Designation
-                                </button>
-                            </div>
+                <div style={{ width: "100%" }}>
+                    <div className={deptStyles.designationHeader}>
+                        <div>
+                            <h5 style={{ margin: 0 }}>Designation</h5>
                         </div>
+                        <div>
+                            <button
+                                className={deptStyles.addDesignationBtn}
+                                title="Add Designation"
+                                onClick={() => props.setShowAddDesignation(true)}
+                            >
+                                <Plus size={14} />
+                            </button>
+                        </div>
+                    </div>
 
-                        <div ref={props.designationListRef} className={deptStyles.designationList}>
-                            {((props.designationsByDept[props.selectedDept.id] || []).length > 0) ? (
-                                (props.designationsByDept[props.selectedDept.id] || []).map((des) => (
-                                    <div key={des.id} className={deptStyles.designationCard}>
-                                        <div>
-                                            <div className={deptStyles.designationName}>{des.name}</div>
-                                            {des.code && <div className={deptStyles.cardCode} style={{ marginTop: 6 }}>{des.code}</div>}
-                                        </div>
-                                        <div className={deptStyles.designationActions}>
-                                            <button onClick={(e) => props.handleEditDesignation(e, des)} className={deptStyles.actionBtn} title="Edit">
-                                                <Edit2 size={14} />
-                                            </button>
-                                            <button onClick={(e) => props.handleDeleteDesignation(e, des)} className={deptStyles.deleteBtn} title="Delete">
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
+                    <div className={deptStyles.designationList}>
+                        {designationItems.map((item) => (
+                            <div key={item.id} className={deptStyles.designationCard}>
+                                <div>
+                                    <div className={deptStyles.designationName}>{item.name}</div>
+                                    <div className={deptStyles.cardCode} style={{ marginTop: 6 }}>
+                                        {item.code}
                                     </div>
-                                ))
-                            ) : (
-                                <div className={deptStyles.noDesignation}>
-                                    <NoResult label="No Designations Found" />
                                 </div>
-                            )}
-                        </div>
+                                <div className={deptStyles.designationActions}>
+                                    <button className={deptStyles.actionBtn} title="Edit" onClick={() => openEdit(item)}>
+                                        <Edit2 size={14} />
+                                    </button>
+                                    <button className={deptStyles.deleteBtn} title="Delete" onClick={() => openDelete(item)}>
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ) : (
-                    <div className={deptStyles.emptyState}>
-                        <h3>No Designation Found in this department.</h3>
-                        <p>There are no designation to show. Click the + button to add one.</p>
-                    </div>
-                )}
+                </div>
             </div>
             <AddDesignation
-                showCanvas={props.showAddDesignation}
-                setShowCanvas={(val) => props.setShowAddDesignation(val)}
-                onSave={handleSaveDesignation}
-                initialData={props.designationToEdit}
+                showCanvas={showEditDesignation}
+                setShowCanvas={setShowEditDesignation}
+                initialData={selectedDesignation}
+            />
+            <GlobalAlertModal
+                show={showDeleteDesignation}
+                title="Delete Designation"
+                message={
+                    <>
+                        Are you sure you want to delete{" "}
+                        <strong className={globalAlertStyles.warningName}>
+                            {selectedDesignation?.name}
+                        </strong>
+                        ?
+                    </>
+                }
+                buttonText="Delete"
+                iconType="warning"
+                warningText="Design preview only. No action will be performed."
+                onCancel={() => setShowDeleteDesignation(false)}
+                onConfirm={() => setShowDeleteDesignation(false)}
             />
         </>
-    )
-}
+    );
+};
 
-export default DesignationList
+export default DesignationList;
