@@ -653,16 +653,16 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: var(--whitefa);
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
   transition: all 0.2s;
   position: relative;
   margin-bottom: 5px;
+  border: 1px solid transparent;
 }
 
 .enhancedProfile:hover {
-  border-color: var(--themeColor);
+  border: 1px solid var(--themeColor);
   box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
 }
 
@@ -764,7 +764,7 @@ display: flex;
   font-size: 11px;
   font-family: var(--fontGraphikBold);
   text-transform: uppercase;
-  border: 1px solid var(--borderColor);
+  /* border: 1px solid var(--borderColor); */
   letter-spacing: 0.5px;
   /* margin-top: 8px; */
 }
@@ -1356,33 +1356,43 @@ color: var(--black);
 }
 
 /* Mobile Engine */
-@media (max-width: 1200px) {
-  .dashboardGrid {
-    flex-direction: column;
+@media (min-width: 1600px) {
+  .sidebar {
+    width: 280px;
   }
 
-  .dashboardGrid > div:first-child {
-    width: 100%;
+  .leftColumn {
+    width: 380px;
+  }
+
+  .mapColumn {
+    width: 560px;
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .leftColumn {
+    width: 320px;
+  }
+
+  .mapColumn {
+    width: 420px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
   .realtimePage {
-    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 60px);
+    overflow: auto;
   }
 
   .sidebar {
     display: none;
-  }
-
-  .mainContent {
-    padding: 8px;
-  }
-
-  .headerWrapper {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
   }
 
   .mobileWardSelector {
@@ -1390,6 +1400,76 @@ color: var(--black);
     width: 100%;
   }
 
+  .layoutSplit {
+    flex-direction: column;
+  }
+
+  .leftColumn,
+  .dataRight,
+  .centerColumn,
+  .mapColumn {
+    width: 100%;
+  }
+
+  .dataRightBottom {
+    flex-direction: column;
+  }
+
+  .timingGrid {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .timingCellHorizontal {
+    flex: 0 0 50%;
+    border-right: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .statsFourAcross .miniStatItem {
+    flex-basis: calc(50% - 4px);
+  }
+
+  .mapCard {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 767px) {
+  .realtimePage {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 60px);
+    overflow: auto;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mainContent {
+    padding: 0;
+  }
+
+  .mobileWardSelector {
+    display: block;
+    width: 100%;
+  }
+
+  .layoutSplit {
+    flex-direction: column;
+  }
+
+  .leftColumn,
+  .dataRight,
+  .centerColumn,
+  .mapColumn {
+    width: 100%;
+  }
+
+  .dataRightBottom,
   .statusRow {
     flex-direction: column;
   }
@@ -1399,58 +1479,23 @@ color: var(--black);
     gap: 6px;
   }
 
+  .timingCellHorizontal {
+    flex-basis: 100%;
+    border-right: 0;
+  }
+
   .profilePair {
-    display: flex;
     flex-direction: column;
   }
 
-  .miniStatItem {
-    flex-basis: 100%;
-  }
-
-  .wardSummary .miniStatItem {
-    flex-basis: 100%;
-  }
-}
-
-@media (max-width: 1200px) {
+  .miniStatItem,
+  .wardSummary .miniStatItem,
   .statsFourAcross .miniStatItem {
-    flex-basis: calc(50% - 4px);
-  }
-}
-
-@media (max-width: 1400px) {
-  .layoutSplit {
-    flex-wrap: wrap;
-  }
-
-  .leftColumn {
-    width: 360px;
-  }
-
-  .mapColumn {
-    width: 100%;
+    flex-basis: 100%;
   }
 
   .mapCard {
-    min-height: 340px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .layoutSplit {
-    flex-direction: column;
-  }
-
-  .leftColumn,
-  .centerColumn,
-  .mapColumn {
-    width: 100%;
-  }
-
-  .leftColumn,
-  .centerColumn {
-    overflow: visible;
+    min-height: 300px;
   }
 }
 

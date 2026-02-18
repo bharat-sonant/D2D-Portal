@@ -852,7 +852,7 @@ const ModalRow = ({ label, value, color, icon }) => (
 );
 
 const PowerOffIcon = ({ size, color }) => (
-  <div style={{ transform: "rotate(180deg)", display: "flex" }}>
+  <div style={{  display: "flex" }}>
     <ShieldCheck size={size} color={color} />
   </div>
 );
