@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import deptStyles from "../../Styles/Department/Department.module.css";
 import DepartmentList from "../../components/Department/DepartmentList";
 import DesignationList from "../../components/Designation/DesignationList";
+import { getDepartments } from "../../Action/Department/DepartmentAction";
 
 const Departments = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showAddDesignation, setShowAddDesignation] = useState(false);
+    const [departmentData, setDepartmentData] = useState([]);
+
+    useEffect(() => {
+        getDepartments(setDepartmentData)
+    }, []);
 
     return (
         <div style={{ display: 'flex', position: 'absolute', top: '65px' }}>
@@ -18,6 +24,7 @@ const Departments = () => {
             <DepartmentList
                 setShowAddModal={setShowAddModal}
                 showAddModal={showAddModal}
+                departmentData={departmentData}
             />
 
             <DesignationList

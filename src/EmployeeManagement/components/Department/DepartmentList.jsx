@@ -8,17 +8,10 @@ import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertM
 
 const DepartmentList = (props) => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-    const departments = [
-        { id: 1, name: "Human Resources", code: "HR-01" },
-        { id: 2, name: "Finance", code: "FIN-01" },
-        { id: 3, name: "Engineering", code: "ENG-01" }
-    ];
-
-    const filteredDepartments = departments.filter((dept) =>
+    const filteredDepartments = props.departmentData.filter((dept) =>
         dept.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         dept.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -26,7 +19,7 @@ const DepartmentList = (props) => {
     const handleEdit = (e, dept) => {
         e.stopPropagation();
         setSelectedDepartment(dept);
-        setShowEditModal(true);
+        props.setShowAddModal(true);
     };
 
     const handleDelete = (e, dept) => {
