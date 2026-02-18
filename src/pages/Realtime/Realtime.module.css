@@ -206,10 +206,13 @@
   align-items: center;
   gap: 4px;
 }
-
-.statusUnifiedCard {
-  gap: 8px;
+.cardBody{
+    background-color: #fafafa;
+    border-radius: 6px;
 }
+/* .statusUnifiedCard {
+  gap: 8px;
+} */
 
 .statusLine {
   border: 1px solid #edf2f7;
@@ -464,11 +467,14 @@
   flex-wrap: wrap;
   gap: 8px;
 }
-
+.wardSummary .wardSummaryStats{
+        background: #fafafa;
+    border-radius: 6px;
+}
 .wardSummaryStats {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+ 
 }
 
 .statsFourAcross {
@@ -482,7 +488,11 @@
   flex-direction: row;
   align-items: center;
 }
-
+.wardSummary .miniStatItem{
+    background: transparent;
+    border-radius: 0px;
+    /* border: 0px solid transparent; */
+}
 .miniStatItem {
   display: flex;
   justify-content: space-between;

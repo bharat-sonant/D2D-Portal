@@ -254,8 +254,6 @@ const Realtime = () => {
           </div>
         ) : (
           <>
-       
-
             {/* Main Split Layout */}
             <div className={styles.layoutSplit}>
               {/* Left Column - 400px Fixed */}
@@ -290,32 +288,36 @@ const Realtime = () => {
                     <h3>Live Status Board</h3>
                     <Activity size={18} color="var(--themeColor)" />
                   </div>
-                  <StatusLine
-                    label="Vehicle Status"
-                    value={wardData.vehicleStatus}
-                    icon={<Truck size={16} />}
-                    color="var(--textDanger)"
-                    onClick={() => setActiveStatusModal("vehicle")}
-                  />
-                  <StatusLine
-                    label="Trip Execution"
-                    value={`${wardData.trips} Trips`}
-                    icon={<TrendingUp size={16} />}
-                  />
-                  <StatusLine
-                    label="App Status"
-                    value={wardData.appStatus}
-                    icon={<Zap size={16} />}
-                    color="var(--textSuccess)"
-                    onClick={() => setActiveStatusModal("app")}
-                  />
+                  <div className={styles.cardBody}>
+                    <StatusLine
+                      label="Vehicle Status"
+                      value={wardData.vehicleStatus}
+                      icon={<Truck size={16} />}
+                      color="var(--textDanger)"
+                      onClick={() => setActiveStatusModal("vehicle")}
+                    />
+                    <StatusLine
+                      label="Trip Execution"
+                      value={`${wardData.trips} Trips`}
+                      icon={<TrendingUp size={16} />}
+                    />
+                    <StatusLine
+                      label="App Status"
+                      value={wardData.appStatus}
+                      icon={<Zap size={16} />}
+                      color="var(--textSuccess)"
+                      onClick={() => setActiveStatusModal("app")}
+                    />
+                  </div>
                 </div>
 
                 <div className={styles.glassCard}>
                   <div className={styles.remarksHeadRow}>
                     <div className={styles.remarksHeadLeft}>
                       <Plus size={16} color="var(--themeColor)" />
-                      <span className={styles.remarksHeadTitle}>REMARK TITLE</span>
+                      <span className={styles.remarksHeadTitle}>
+                        REMARK TITLE
+                      </span>
                     </div>
                     <button
                       type="button"
@@ -334,7 +336,9 @@ const Realtime = () => {
                     <div className={styles.remarkList}>
                       {remarks.map((item) => (
                         <div key={item.id} className={styles.remarkItemCard}>
-                          <div className={styles.remarkItemTopic}>{item.topic}</div>
+                          <div className={styles.remarkItemTopic}>
+                            {item.topic}
+                          </div>
                           <div className={styles.remarkItemDescription}>
                             {item.description}
                           </div>
@@ -363,33 +367,33 @@ const Realtime = () => {
                 </div>
               </div>
               <div className={styles.dataRight}>
-                     {/* Timing Grid at Top - 100% Width */}
-            <div className={styles.timingGrid}>
-              <TimingCell
-                variant="horizontal"
-                icon={<ShieldCheck size={20} color="#22c55e" />}
-                value={wardData.dutyOn}
-                label="Duty Initiated"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<MapPin size={20} color="#3b82f6" />}
-                value={wardData.reachOn}
-                label="Ward Reach"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<TrendingUp size={20} color="#8b5cf6" />}
-                value={wardData.lastLineTime}
-                label="Last Point"
-              />
-              <TimingCell
-                variant="horizontal"
-                icon={<PowerOffIcon size={20} color="#f43f5e" />}
-                value={wardData.dutyOff}
-                label="Duty Release"
-              />
-            </div>
+                {/* Timing Grid at Top - 100% Width */}
+                <div className={styles.timingGrid}>
+                  <TimingCell
+                    variant="horizontal"
+                    icon={<ShieldCheck size={20} color="#22c55e" />}
+                    value={wardData.dutyOn}
+                    label="Duty Initiated"
+                  />
+                  <TimingCell
+                    variant="horizontal"
+                    icon={<MapPin size={20} color="#3b82f6" />}
+                    value={wardData.reachOn}
+                    label="Ward Reach"
+                  />
+                  <TimingCell
+                    variant="horizontal"
+                    icon={<TrendingUp size={20} color="#8b5cf6" />}
+                    value={wardData.lastLineTime}
+                    label="Last Point"
+                  />
+                  <TimingCell
+                    variant="horizontal"
+                    icon={<PowerOffIcon size={20} color="#f43f5e" />}
+                    value={wardData.dutyOff}
+                    label="Duty Release"
+                  />
+                </div>
                 <div
                   className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
                 >
@@ -426,7 +430,9 @@ const Realtime = () => {
                 </div>
                 <div className={styles.dataRightBottom}>
                   <div className={styles.centerColumn}>
-                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
+                    <div
+                      className={`${styles.glassCard} ${styles.wardSummary}`}
+                    >
                       <div className={styles.cardHeading}>
                         <h3>Ward Summary</h3>
                         <TrendingUp size={16} color="var(--themeColor)" />
@@ -614,7 +620,10 @@ const Realtime = () => {
                   className={styles.remarkSelect}
                   value={remarkForm.topic}
                   onChange={(e) =>
-                    setRemarkForm((prev) => ({ ...prev, topic: e.target.value }))
+                    setRemarkForm((prev) => ({
+                      ...prev,
+                      topic: e.target.value,
+                    }))
                   }
                 >
                   <option value="">Select Remark Topic</option>
