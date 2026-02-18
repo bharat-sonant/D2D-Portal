@@ -303,7 +303,7 @@ const Realtime = () => {
                     icon={<TrendingUp size={16} />}
                   />
                   <StatusLine
-                    label="Sync Activity"
+                    label="App Status"
                     value={wardData.appStatus}
                     icon={<Zap size={16} />}
                     color="var(--textSuccess)"
@@ -328,7 +328,7 @@ const Realtime = () => {
 
                   {remarks.length === 0 ? (
                     <div className={styles.remarkEmpty}>
-                      No query yet. Click Add Query to create one.
+                      No query yet. Click Add New to create one.
                     </div>
                   ) : (
                     <div className={styles.remarkList}>
@@ -426,7 +426,7 @@ const Realtime = () => {
                 </div>
                 <div className={styles.dataRightBottom}>
                   <div className={styles.centerColumn}>
-                    <div className={styles.glassCard}>
+                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
                       <div className={styles.cardHeading}>
                         <h3>Ward Summary</h3>
                         <TrendingUp size={16} color="var(--themeColor)" />
@@ -434,30 +434,35 @@ const Realtime = () => {
                       <PerformanceGrid data={wardData} />
                     </div>
 
-                    <div className={styles.glassCard}>
+                    <div className={`${styles.glassCard} `}>
                       <div className={styles.cardHeading}>
                         <h3>Zone Details</h3>
                         <MapIcon size={16} color="var(--themeColor)" />
                       </div>
                       <div className={styles.statsTwoColWrap}>
                         <StatItem
-                          label="Total Segments"
+                          label="Total Zone"
                           value={wardData.zones.total}
                         />
                         <StatItem
-                          label="Success Nodes"
+                          label="Completed Zone"
                           value={wardData.zones.completed}
                           color="var(--textSuccess)"
                         />
                         <StatItem
-                          label="Active Channels"
+                          label="Active Zone"
                           value={wardData.zones.active}
                           color="var(--themeColor)"
                         />
                         <StatItem
-                          label="Idle Segments"
+                          label="Inactive Zone"
                           value={wardData.zones.inactive}
                           color="var(--gray)"
+                        />
+                        <StatItem
+                          label="Stop Zone"
+                          value={wardData.zones.inactive}
+                          color="var(--textDanger)"
                         />
                       </div>
                     </div>
@@ -699,7 +704,7 @@ const TimingCell = ({ icon, label, value, variant = "vertical" }) => (
 );
 
 const PerformanceGrid = ({ data }) => (
-  <div className={styles.statsTwoColWrap}>
+  <div className={styles.wardSummaryStats}>
     <StatItem label="Total Lines" value={data.lines.total} />
     <StatItem
       label="Total Halt"

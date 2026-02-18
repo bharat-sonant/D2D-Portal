@@ -412,6 +412,13 @@
     display: flex;
     gap: 10px;
 }
+.wardSummary .miniStatContent{
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row;
+    width: 100%;
+    align-items: center;
+}
 .glassCard {
   background: #fff;
   border-radius: 6px;
@@ -453,6 +460,12 @@
 }
 
 .statsTwoColWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wardSummaryStats {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
