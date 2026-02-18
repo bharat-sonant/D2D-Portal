@@ -201,7 +201,7 @@
 /* Update the child headers to sit below parent headers */
 
 .table thead tr:nth-child(2) th {
-  top: 43px;
+  top: 42px;
   /* Adjust based on your parent header height */
   z-index: 2;
 }

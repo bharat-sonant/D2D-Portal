@@ -4,7 +4,7 @@
   display: flex;
   gap: 12px;
   margin-top: 60px;
-  padding: 12px;
+  padding: 9px;
   min-height: calc(100vh - 60px);
   width: 100%;
   box-sizing: border-box;

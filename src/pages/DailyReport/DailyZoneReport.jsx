@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
+import { LayoutGrid, List } from "lucide-react";
 import QuickDateSelection from "../../components/Common/QuickDateSelection/QuickDateSelection";
 import CustomDatePicker from "../../components/CustomDatePicker/CustomDatePicker";
 import { images } from "../../assets/css/imagePath";
@@ -336,6 +337,7 @@ const rows = [
 const DailyZoneReport = () => {
   const todayDate = dayjs().format("YYYY-MM-DD");
   const [date, setDate] = useState(todayDate);
+  const [viewMode, setViewMode] = useState("list");
   const [hideTopBar, setHideTopBar] = useState(false);
   const tableRef = useRef(null);
   const headCase = { textTransform: "capitalize" };
@@ -343,6 +345,11 @@ const DailyZoneReport = () => {
     const num = Number(String(val).replace("%", "").trim());
     if (Number.isNaN(num)) return 0;
     return Math.max(0, Math.min(100, num));
+  };
+  const getToneClass = (value) => {
+    if (value >= 90) return localStyles.toneGood;
+    if (value >= 70) return localStyles.toneWarn;
+    return localStyles.toneRisk;
   };
   const toTitleCase = (text) =>
     String(text || "-")
@@ -383,6 +390,24 @@ const DailyZoneReport = () => {
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
 
         <div className={style.rightButtons}>
+          <div className={localStyles.viewSwitch}>
+            <button
+              type="button"
+              className={`${localStyles.viewBtn} ${viewMode === "list" ? localStyles.viewBtnActive : ""}`}
+              onClick={() => setViewMode("list")}
+            >
+              <List size={14} />
+              List
+            </button>
+            <button
+              type="button"
+              className={`${localStyles.viewBtn} ${viewMode === "grid" ? localStyles.viewBtnActive : ""}`}
+              onClick={() => setViewMode("grid")}
+            >
+              <LayoutGrid size={14} />
+              Grid
+            </button>
+          </div>
           <button className={style.exportBtn}>
             <img
               src={images.iconExcel}
@@ -399,124 +424,212 @@ const DailyZoneReport = () => {
         ref={tableRef}
         className={`${style.tableContainer} ${localStyles.tableContainer} ${hideTopBar ? style.tableContainerFull : ""}`}
       >
-        <table
-          className={`${style.table} ${localStyles.table}`}
-          style={{ width: "max-content", minWidth: "1710px", tableLayout: "fixed" }}
-        >
-          <colgroup>
-            <col style={{ width: "155px" }} />
-            <col style={{ width: "85px" }} />
-            <col style={{ width: "105px" }} />
-            <col style={{ width: "85px" }} />
-            <col style={{ width: "100px" }} />
-            <col style={{ width: "125px" }} />
-            <col style={{ width: "135px" }} />
-            <col style={{ width: "225px" }} />
-            <col style={{ width: "210px" }} />
-            <col style={{ width: "165px" }} />
-            <col style={{ width: "95px" }} />
-            <col style={{ width: "120px" }} />
-            <col style={{ width: "130px" }} />
-            <col style={{ width: "90px" }} />
-            <col style={{ width: "100px" }} />
-            <col style={{ width: "270px" }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <th
-                className={`${style.parentHeader} ${style.parentHeader1}`}
-                style={headCase}
-              >
-                Zone
-              </th>
-              <th className={style.parentHeader} colSpan={5} style={headCase}>
-                Timing Details
-              </th>
-              <th className={style.parentHeader} colSpan={4} style={headCase}>
-                Person / Vehicle Details
-              </th>
-              <th className={style.parentHeader} colSpan={5} style={headCase}>
-                Performance Details
-              </th>
-              <th className={style.parentHeader} style={headCase}></th>
-            </tr>
-            <tr>
-              <th
-                className={`${style.th1} ${style.parentHeader1} ${style.borderRight}`}
-                style={headCase}
-              >
-                Ward
-              </th>
-              <th className={style.th2} style={headCase}>Duty On</th>
-              <th className={style.th3} style={headCase}>Ward Reach</th>
-              <th className={style.th4} style={headCase}>Duty Off</th>
-              <th className={style.th4} style={headCase}>Working Hrs</th>
-              <th className={`${style.th4} ${style.borderRight}`} style={headCase}>
-                Ward Halt Duration
-              </th>
-              <th className={style.th5} style={headCase}>Vehicle</th>
-              <th className={style.th6} style={headCase}>Driver</th>
-              <th className={style.th7} style={headCase}>Helper</th>
-              <th className={`${style.th8} ${style.borderRight}`} style={headCase}>
-                Second Helper
-              </th>
-              <th className={style.th3} style={headCase}>Trip Count</th>
-              <th className={style.th3} style={headCase}>Work %</th>
-              <th className={style.th3} style={headCase}>Actual Work %</th>
-              <th className={style.th3} style={headCase}>Run KM</th>
-              <th className={`${style.th3} ${style.borderRight}`} style={headCase}>
-                Zone Run KM
-              </th>
-              <th className={style.th3} style={headCase}>Remark</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => (
-              <tr key={`${row.ward}-${index}`}>
-                <td className={`${style.th1} ${style.borderRight}`}>{row.ward}</td>
-                <td className={style.th2}>{row.dutyOn}</td>
-                <td className={style.th3}>{row.wardReach}</td>
-                <td className={style.th4}>{row.dutyOff}</td>
-                <td className={style.th4}>{row.workingHrs}</td>
-                <td className={`${style.th4} ${style.borderRight}`}>
-                  {row.wardHaltDuration}
-                </td>
-                <td className={style.th5}><div className={style.vehicleNumber}>{row.vehicle}</div></td>
-                <td className={style.th6}>{toTitleCase(row.driver)}</td>
-                <td className={style.th7}>{toTitleCase(row.helper)}</td>
-                <td className={`${style.th8} ${style.borderRight}`}>
-                  {toTitleCase(row.secondHelper)}
-                </td>
-                <td className={`text-center ${style.th3}`}><div className={style.tripBG}>{row.tripCount}</div></td>
-                <td className={`text-end ${style.th3}`}>
-                  <div className={localStyles.pieWrap}>
-                    <div
-                      className={`${localStyles.pieProgress} ${localStyles.piePrimary}`}
-                      style={{ "--p": parsePercent(row.workPercentage) }}
-                    >
-                      <span>{row.workPercentage}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className={`text-end ${style.th3}`}>
-                  <div className={localStyles.pieWrap}>
-                    <div
-                      className={`${localStyles.pieProgress} ${localStyles.pieAlt}`}
-                      style={{ "--p": parsePercent(row.actualWorkPercentage) }}
-                    >
-                      <span>{row.actualWorkPercentage}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className={`text-end ${style.th3}`}>{row.runKM}</td>
-                <td className={`text-end ${style.th3} ${style.borderRight}`}>
-                  {row.zoneRunKM}
-                </td>
-                <td className={style.remark}>{row.remark}</td>
+        {viewMode === "list" ? (
+          <table
+            className={`${style.table} ${localStyles.table}`}
+            style={{ width: "max-content", minWidth: "1710px", tableLayout: "fixed" }}
+          >
+            <colgroup>
+              <col style={{ width: "155px" }} />
+              <col style={{ width: "85px" }} />
+              <col style={{ width: "105px" }} />
+              <col style={{ width: "85px" }} />
+              <col style={{ width: "100px" }} />
+              <col style={{ width: "125px" }} />
+              <col style={{ width: "135px" }} />
+              <col style={{ width: "225px" }} />
+              <col style={{ width: "210px" }} />
+              <col style={{ width: "165px" }} />
+              <col style={{ width: "95px" }} />
+              <col style={{ width: "120px" }} />
+              <col style={{ width: "130px" }} />
+              <col style={{ width: "90px" }} />
+              <col style={{ width: "100px" }} />
+              <col style={{ width: "270px" }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <th
+                  className={`${style.parentHeader} ${style.parentHeader1}`}
+                  style={headCase}
+                >
+                  Zone
+                </th>
+                <th className={style.parentHeader} colSpan={5} style={headCase}>
+                  Timing Details
+                </th>
+                <th className={style.parentHeader} colSpan={4} style={headCase}>
+                  Person / Vehicle Details
+                </th>
+                <th className={style.parentHeader} colSpan={5} style={headCase}>
+                  Performance Details
+                </th>
+                <th className={style.parentHeader} style={headCase}></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+              <tr>
+                <th
+                  className={`${style.th1} ${style.parentHeader1} ${style.borderRight}`}
+                  style={headCase}
+                >
+                  Ward
+                </th>
+                <th className={style.th2} style={headCase}>Duty On</th>
+                <th className={style.th3} style={headCase}>Ward Reach</th>
+                <th className={style.th4} style={headCase}>Duty Off</th>
+                <th className={style.th4} style={headCase}>Working Hrs</th>
+                <th className={`${style.th4} ${style.borderRight}`} style={headCase}>
+                  Ward Halt Duration
+                </th>
+                <th className={style.th5} style={headCase}>Vehicle</th>
+                <th className={style.th6} style={headCase}>Driver</th>
+                <th className={style.th7} style={headCase}>Helper</th>
+                <th className={`${style.th8} ${style.borderRight}`} style={headCase}>
+                  Second Helper
+                </th>
+                <th className={style.th3} style={headCase}>Trip Count</th>
+                <th className={style.th3} style={headCase}>Work %</th>
+                <th className={style.th3} style={headCase}>Actual Work %</th>
+                <th className={style.th3} style={headCase}>Run KM</th>
+                <th className={`${style.th3} ${style.borderRight}`} style={headCase}>
+                  Zone Run KM
+                </th>
+                <th className={style.th3} style={headCase}>Remark</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, index) => (
+                <tr key={`${row.ward}-${index}`}>
+                  <td className={`${style.th1} ${style.borderRight}`}>{row.ward}</td>
+                  <td className={style.th2}>{row.dutyOn}</td>
+                  <td className={style.th3}>{row.wardReach}</td>
+                  <td className={style.th4}>{row.dutyOff}</td>
+                  <td className={style.th4}>{row.workingHrs}</td>
+                  <td className={`${style.th4} ${style.borderRight}`}>
+                    {row.wardHaltDuration}
+                  </td>
+                  <td className={style.th5}><div className={style.vehicleNumber}>{row.vehicle}</div></td>
+                  <td className={style.th6}>{toTitleCase(row.driver)}</td>
+                  <td className={style.th7}>{toTitleCase(row.helper)}</td>
+                  <td className={`${style.th8} ${style.borderRight}`}>
+                    {toTitleCase(row.secondHelper)}
+                  </td>
+                  <td className={`text-center ${style.th3}`}><div className={style.tripBG}>{row.tripCount}</div></td>
+                  <td className={`text-end ${style.th3}`}>
+                    <div className={localStyles.pieWrap}>
+                      <div
+                        className={`${localStyles.pieProgress} ${localStyles.piePrimary}`}
+                        style={{ "--p": parsePercent(row.workPercentage) }}
+                      >
+                        <span>{row.workPercentage}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={`text-end ${style.th3}`}>
+                    <div className={localStyles.pieWrap}>
+                      <div
+                        className={`${localStyles.pieProgress} ${localStyles.pieAlt}`}
+                        style={{ "--p": parsePercent(row.actualWorkPercentage) }}
+                      >
+                        <span>{row.actualWorkPercentage}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={`text-end ${style.th3}`}>{row.runKM}</td>
+                  <td className={`text-end ${style.th3} ${style.borderRight}`}>
+                    {row.zoneRunKM}
+                  </td>
+                  <td className={style.remark}>{row.remark}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className={localStyles.gridViewWrap}>
+            {rows.map((row, index) => {
+              const workVal = parsePercent(row.workPercentage);
+              const actualVal = parsePercent(row.actualWorkPercentage);
+              return (
+                <article
+                  key={`${row.ward}-${index}`}
+                  className={`${localStyles.zoneCard} ${getToneClass(actualVal)}`}
+                >
+                  <div className={localStyles.zoneCardHead}>
+                    <div className={localStyles.zoneCardTitleWrap}>
+                      <h4>{row.ward}</h4>
+                      <div className={localStyles.metaChips}>
+                        <span className={localStyles.vehicleChip}>{row.vehicle}</span>
+                        <span className={localStyles.dutyChip}>Duty On {row.dutyOn}</span>
+                      </div>
+                    </div>
+                    <div className={localStyles.tripWrap}>
+                      <div className={style.tripBG}>{row.tripCount}</div>
+                      <span>Trips</span>
+                    </div>
+                  </div>
+
+                  <div className={localStyles.kpiRow}>
+                    <div className={localStyles.kpiItem}>
+                      <div
+                        className={`${localStyles.pieProgress} ${localStyles.piePrimary}`}
+                        style={{ "--p": workVal }}
+                      >
+                        <span>{row.workPercentage}</span>
+                      </div>
+                      <label>Work %</label>
+                    </div>
+
+                    <div className={localStyles.kpiItem}>
+                      <div
+                        className={`${localStyles.pieProgress} ${localStyles.pieAlt}`}
+                        style={{ "--p": actualVal }}
+                      >
+                        <span>{row.actualWorkPercentage}</span>
+                      </div>
+                      <label>Actual Work %</label>
+                    </div>
+
+                    <div className={localStyles.kmItem}>
+                      <label>Run KM</label>
+                      <strong>{row.runKM}</strong>
+                    </div>
+
+                    <div className={localStyles.kmItem}>
+                      <label>Zone Run KM</label>
+                      <strong>{row.zoneRunKM}</strong>
+                    </div>
+                  </div>
+
+                  <div className={localStyles.timeStrip}>
+                    <div className={localStyles.timeCell}><label>Ward Reach</label><span>{row.wardReach}</span></div>
+                    <div className={localStyles.timeCell}><label>Duty Off</label><span>{row.dutyOff}</span></div>
+                    <div className={localStyles.timeCell}><label>Working</label><span>{row.workingHrs}</span></div>
+                    <div className={localStyles.timeCell}><label>Ward Halt</label><span>{row.wardHaltDuration}</span></div>
+                  </div>
+
+                  <div className={localStyles.personWrap}>
+                    <div className={localStyles.personItem}>
+                      <label>Driver</label>
+                      <p>{toTitleCase(row.driver)}</p>
+                    </div>
+                    <div className={localStyles.personItem}>
+                      <label>Helper</label>
+                      <p>{toTitleCase(row.helper)}</p>
+                    </div>
+                    <div className={localStyles.personItem}>
+                      <label>Second Helper</label>
+                      <p>{toTitleCase(row.secondHelper)}</p>
+                    </div>
+                  </div>
+
+                  <div className={localStyles.zoneCardRemark}>
+                    <label>Remark</label>
+                    <p>{row.remark}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );
