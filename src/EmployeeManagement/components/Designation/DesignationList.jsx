@@ -6,7 +6,6 @@ import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertMo
 import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 
 const DesignationList = (props) => {
-    const [showEditDesignation, setShowEditDesignation] = useState(false);
     const [showDeleteDesignation, setShowDeleteDesignation] = useState(false);
     const [selectedDesignation, setSelectedDesignation] = useState(null);
 
@@ -18,7 +17,7 @@ const DesignationList = (props) => {
 
     const openEdit = (item) => {
         setSelectedDesignation(item);
-        setShowEditDesignation(true);
+        props.setShowAddDesignation(true);
     };
 
     const openDelete = (item) => {
@@ -68,10 +67,11 @@ const DesignationList = (props) => {
                 </div>
             </div>
             <AddDesignation
-                showCanvas={showEditDesignation}
-                setShowCanvas={setShowEditDesignation}
+                showCanvas={props.showAddDesignation}
+                setShowCanvas={props.setShowAddDesignation}
                 initialData={selectedDesignation}
             />
+
             <GlobalAlertModal
                 show={showDeleteDesignation}
                 title="Delete Designation"

@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import modalStyles from "../../../assets/css/popup.module.css";
-import { X, Check, Briefcase } from "lucide-react";
+import { X, Briefcase } from "lucide-react";
 
-const AddDesignation = ({ showCanvas, setShowCanvas, initialData }) => {
+const AddDesignation = (props) => {
     const [form, setForm] = useState({ name: "" });
 
-    useEffect(() => {
-        if (showCanvas) {
-            if (initialData) setForm({ name: initialData.name || "" });
-            else setForm({ name: "" });
-        }
-    }, [showCanvas, initialData]);
-
-    if (!showCanvas) return null;
+    if (!props.showCanvas) return null;
 
     const handleChange = (e) => {
         const { value } = e.target;
@@ -28,11 +21,11 @@ const AddDesignation = ({ showCanvas, setShowCanvas, initialData }) => {
                             <Briefcase size={22} />
                         </div>
                         <div className={modalStyles.headerTextRight}>
-                            <h2 className={modalStyles.modalTitle}>{initialData ? "Edit Designation" : "Add Designation"}</h2>
-                            <p className={modalStyles.modalSubtitle}>{initialData ? "Design preview for edit modal." : "Design preview for add modal."}</p>
+                            <h2 className={modalStyles.modalTitle}>Add Designation</h2>
+                            {/* <p className={modalStyles.modalSubtitle}>{initialData ? "Design preview for edit modal." : "Design preview for add modal."}</p> */}
                         </div>
                     </div>
-                    <button className={modalStyles.closeBtn} onClick={() => setShowCanvas(false)}>
+                    <button className={modalStyles.closeBtn} onClick={() => props.setShowCanvas(false)}>
                         <X size={20} />
                     </button>
                 </div>
@@ -49,9 +42,9 @@ const AddDesignation = ({ showCanvas, setShowCanvas, initialData }) => {
                 </div>
 
                 <div className={modalStyles.modalFooter}>
-                    <button className={modalStyles.cancelBtn} onClick={() => setShowCanvas(false)}>Cancel</button>
-                    <button className={modalStyles.submitBtn} onClick={() => setShowCanvas(false)} disabled={!form.name.trim()}>
-                        <Check size={16} /> {initialData ? "Update" : "Add"}
+                    <button className={modalStyles.cancelBtn} onClick={() => props.setShowCanvas(false)}>Cancel</button>
+                    <button className={modalStyles.submitBtn} onClick={() => props.setShowCanvas(false)} disabled={!form.name.trim()}>
+                        Submit
                     </button>
                 </div>
             </div>
