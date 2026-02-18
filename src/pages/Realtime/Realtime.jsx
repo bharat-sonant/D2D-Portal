@@ -72,7 +72,7 @@ const Realtime = () => {
   const [wardData, setWardData] = useState({
     vehicleStatus: "Dumping Yard out",
     trips: 2,
-    appStatus: "OPENED",
+    appStatus: "Opened",
     dutyOn: "8:37 AM",
     reachOn: "9:17 AM",
     lastLineTime: "14:02",
@@ -200,6 +200,14 @@ const Realtime = () => {
 
   const mapContainerStyle = { width: "100%", height: "100%" };
   const center = { lat: 26.9124, lng: 75.7873 };
+  const zoneGraphMax = Math.max(
+    wardData.zones.total,
+    wardData.zones.completed,
+    wardData.zones.active,
+    wardData.zones.inactive,
+    wardData.zones.stop || 0,
+    1,
+  );
 
   return (
     <div className={styles.realtimePage}>
@@ -417,7 +425,7 @@ const Realtime = () => {
                   className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
                 >
                   <div className={styles.cardHeading}>
-                    <h3>Intelligent Analytics</h3>
+                    <h3>Ward Analytics</h3>
                     <Clock size={16} color="var(--themeColor)" />
                   </div>
                   <div className={styles.statsFourAcross}>
@@ -470,26 +478,36 @@ const Realtime = () => {
                         <StatItem
                           label="Total Zone"
                           value={wardData.zones.total}
+                          graphPercent={(wardData.zones.total / zoneGraphMax) * 100}
+                          graphStyle="dots"
                         />
                         <StatItem
                           label="Comp. Zone"
                           value={wardData.zones.completed}
                           color="var(--textSuccess)"
+                          graphPercent={(wardData.zones.completed / zoneGraphMax) * 100}
+                          graphStyle="dots"
                         />
                         <StatItem
                           label="Active Zone"
                           value={wardData.zones.active}
                           color="var(--themeColor)"
+                          graphPercent={(wardData.zones.active / zoneGraphMax) * 100}
+                          graphStyle="dots"
                         />
                         <StatItem
                           label="Inactive Zone"
                           value={wardData.zones.inactive}
                           color="var(--gray)"
+                          graphPercent={(wardData.zones.inactive / zoneGraphMax) * 100}
+                          graphStyle="dots"
                         />
                         <StatItem
                           label="Stop Zone"
-                          value={wardData.zones.inactive}
+                          value={wardData.zones.stop}
                           color="var(--textDanger)"
+                          graphPercent={((wardData.zones.stop || 0) / zoneGraphMax) * 100}
+                          graphStyle="dots"
                         />
                       </div>
                     </div>
@@ -733,38 +751,62 @@ const TimingCell = ({ icon, label, value, variant = "vertical" }) => (
   </div>
 );
 
-const PerformanceGrid = ({ data }) => (
-  <div className={styles.wardSummaryStats}>
-    <StatItem label="Total Lines" value={data.lines.total} />
-    <StatItem
-      label="Total Halt"
-      value={data.halt.total}
-      color="var(--textDanger)"
-    />
-    <StatItem
-      label="Completed"
-      value={data.lines.completed}
-      color="var(--textSuccess)"
-    />
-    <StatItem
-      label="Curr Halt"
-      value={data.halt.current}
-      color="var(--textSuccess)"
-    />
-    <StatItem
-      label="Skipped"
-      value={data.lines.skipped}
-      color="var(--textDanger)"
-    />
-    <StatItem
-      label="Curr Line"
-      value={data.lines.current}
-      color="var(--themeColor)"
-    />
-  </div>
-);
+const PerformanceGrid = ({ data }) => {
+  const items = [
+    {
+      label: "Total Lines",
+      value: data.lines.total,
+    },
+    {
+      label: "Total Halt",
+      value: data.halt.total,
+      color: "var(--textDanger)",
+    },
+    {
+      label: "Completed",
+      value: data.lines.completed,
+      color: "var(--textSuccess)",
+    },
+    {
+      label: "Curr Halt",
+      value: data.halt.current,
+      color: "var(--textSuccess)",
+    },
+    {
+      label: "Skipped",
+      value: data.lines.skipped,
+      color: "var(--textDanger)",
+    },
+    {
+      label: "Curr Line",
+      value: data.lines.current,
+      color: "var(--themeColor)",
+    },
+  ];
 
-const StatItem = ({ label, value, color, icon, layout }) => (
+  return (
+    <div className={styles.wardSummaryStats}>
+      {items.map((item) => (
+        <StatItem
+          key={item.label}
+          label={item.label}
+          value={item.value}
+          color={item.color}
+        />
+      ))}
+    </div>
+  );
+};
+
+const StatItem = ({
+  label,
+  value,
+  color,
+  icon,
+  layout,
+  graphPercent,
+  graphStyle = "bar",
+}) => (
   <div
     className={`${styles.miniStatItem} ${layout === "iconLeft" ? styles.miniStatItemIconLeft : ""}`}
   >
@@ -772,15 +814,42 @@ const StatItem = ({ label, value, color, icon, layout }) => (
       <div className={styles.miniStatLeadIcon}>{icon}</div>
     )}
     <div className={styles.miniStatContent}>
-      <div className={styles.miniStatHeader}>
-        {layout !== "iconLeft" && icon && (
-          <div style={{ color: "var(--themeColor)" }}>{icon}</div>
-        )}
-        <span className={styles.miniStatLabel}>{label}</span>
+      <div className={styles.miniStatTop}>
+        <div className={styles.miniStatHeader}>
+          {layout !== "iconLeft" && icon && (
+            <div style={{ color: "var(--themeColor)" }}>{icon}</div>
+          )}
+          <span className={styles.miniStatLabel}>{label}</span>
+        </div>
+        <span className={styles.miniStatValue} style={{ color }}>
+          {value}
+        </span>
       </div>
-      <span className={styles.miniStatValue} style={{ color }}>
-        {value}
-      </span>
+      {typeof graphPercent === "number" &&
+        (graphStyle === "dots" ? (
+          <div className={styles.miniStatDotGraph}>
+            {Array.from({ length: 10 }).map((_, idx) => {
+              const active = idx < Math.max(Math.round(graphPercent / 10), graphPercent > 0 ? 1 : 0);
+              return (
+                <span
+                  key={idx}
+                  className={`${styles.miniStatDot} ${active ? styles.miniStatDotActive : ""}`}
+                  style={active ? { background: color || "var(--themeColor)" } : undefined}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <div className={styles.miniStatGraphTrack}>
+            <div
+              className={styles.miniStatGraphFill}
+              style={{
+                width: `${graphPercent}%`,
+                background: color || "var(--themeColor)",
+              }}
+            />
+          </div>
+        ))}
     </div>
   </div>
 );
