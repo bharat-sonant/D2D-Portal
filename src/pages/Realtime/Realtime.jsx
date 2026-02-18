@@ -155,6 +155,42 @@ const Realtime = () => {
 
   const getZoneLabel = (ward) =>
     ward?.name || ward?.zoneName || ward?.wardName || `Zone ${ward?.id}`;
+  const getProgressStyle = (progress = 0) => {
+    if (progress < 30) {
+      return {
+        "--progressWidth": `${progress}%`,
+        "--progressFill": "rgba(239, 68, 68, 0.16)",
+        "--progressText": "#c24141",
+        "--progressBg": "#fff6f6",
+        "--progressBorder": "#ffd7d7",
+      };
+    }
+    if (progress < 50) {
+      return {
+        "--progressWidth": `${progress}%`,
+        "--progressFill": "rgba(249, 115, 22, 0.16)",
+        "--progressText": "#c35a1f",
+        "--progressBg": "#fff9f2",
+        "--progressBorder": "#ffe1c3",
+      };
+    }
+    if (progress < 70) {
+      return {
+        "--progressWidth": `${progress}%`,
+        "--progressFill": "rgba(245, 158, 11, 0.15)",
+        "--progressText": "#a87413",
+        "--progressBg": "#fffdf4",
+        "--progressBorder": "#fcebb8",
+      };
+    }
+    return {
+      "--progressWidth": `${progress}%`,
+      "--progressFill": "rgba(34, 197, 94, 0.15)",
+      "--progressText": "#228f50",
+      "--progressBg": "#f5fdf8",
+      "--progressBorder": "#ccefd9",
+    };
+  };
 
   const openNewRemarkModal = () => {
     setEditingRemarkId(null);
@@ -247,7 +283,7 @@ const Realtime = () => {
                 </div>
                 <div
                   className={styles.progressChip}
-                  style={{ "--progressWidth": `${ward.progress}%` }}
+                  style={getProgressStyle(ward.progress)}
                 >
                   {ward.progress}%
                 </div>
@@ -293,12 +329,12 @@ const Realtime = () => {
 
                   <EnhancedProfile
                     profile={wardData.profiles.driver}
-                    role="Primary Pilot"
+                    role="Captain"
                     isOnline
                   />
                   <EnhancedProfile
                     profile={wardData.profiles.helper}
-                    role="Duty Helper"
+                    role="Pilot"
                     isOnline={false}
                   />
 

@@ -219,7 +219,7 @@
   background: #fafbfc;
   border-radius: 6px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 15px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -227,8 +227,9 @@
 }
 
 .statusLine:hover {
-  border-color: var(--themeColor);
-  background: #fff;
+     border: 1px solid rgba(40, 152, 202, 0.35);
+    box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
+    background: #f0f7ff;
 }
 
 .statusLineLeft {
@@ -707,8 +708,9 @@
 }
 
 .enhancedProfile:hover {
-  border: 1px solid var(--themeColor);
+  border: 1px solid rgba(40, 152, 202, 0.35);
   box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
+       background: #f0f7ff;
 }
 
 .enhancedAvatarSection {
@@ -851,7 +853,6 @@ font-size: 15px;
 .sidebarSubText {
   font-size: 11px;
   color: var(--gray);
-  margin-top: 6px;
   font-family: var(--fontGraphik);
 }
 
@@ -942,10 +943,10 @@ font-size: 15px;
   z-index: 0;
   font-size: 10px;
   font-family: var(--fontGraphikBold);
-  color: var(--themeColor);
-  background: #eaf4ff;
-  border: 1px solid #d2e9ff;
-  border-radius: 999px;
+  color: var(--progressText, var(--themeColor));
+  background: var(--progressBg, #eaf4ff);
+  border: 1px solid var(--progressBorder, #d2e9ff);
+  border-radius: 30px;
   padding: 2px 8px;
 }
 
@@ -956,7 +957,7 @@ font-size: 15px;
   top: 0;
   bottom: 0;
   width: var(--progressWidth, 0%);
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(52, 211, 153, 0.18));
+  background: var(--progressFill, rgba(16, 185, 129, 0.18));
   z-index: -1;
   transition: width 0.45s ease;
 }
@@ -1137,7 +1138,7 @@ color: var(--black);
 .remarkEmpty {
   border: 1px dashed #dbe3ec;
   border-radius: 6px;
-  padding: 12px;
+  padding: 30px 16px;
   color: var(--gray);
   font-size: 12px;
   font-family: var(--fontGraphik);
