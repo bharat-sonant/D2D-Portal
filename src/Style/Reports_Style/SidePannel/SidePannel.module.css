@@ -113,3 +113,16 @@
     width: auto;
   }
 }
+
+.forceDesktop {
+  flex-direction: column !important;
+  gap: 0 !important;
+  overflow-x: hidden !important;
+  justify-content: flex-start !important;
+  height: calc(100vh - 80px) !important;
+}
+
+.forceDesktop .menuItem {
+  width: 100% !important;
+  white-space: normal !important;
+}

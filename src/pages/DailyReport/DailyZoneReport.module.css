@@ -1,0 +1,156 @@
+.topBar {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  border: 1px solid #e7edf6;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.tableContainer {
+  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+  border: 1px solid #e6ebf2;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+}
+
+.table {
+  background: #ffffff;
+  table-layout: fixed !important;
+}
+
+.table th,
+.table td {
+  width: auto !important;
+}
+
+.table colgroup col:first-child {
+  width: 155px !important;
+}
+
+.table tr > th:first-child,
+.table tr > td:first-child {
+  width: 155px !important;
+  min-width: 155px !important;
+  max-width: 155px !important;
+}
+
+.table thead tr:nth-child(1) th {
+  background: #f9fbff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e5ecf6 !important;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+.table thead tr:nth-child(2) th {
+  background: #f2f5fb !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #dfe7f2 !important;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: #fcfdff;
+}
+
+.table tbody tr:hover td {
+  background: #f6f9ff;
+}
+
+.table thead th {
+  text-transform: capitalize !important;
+  white-space: nowrap !important;
+}
+
+.table tbody td {
+  white-space: nowrap;
+}
+
+.table tbody td:last-child {
+  white-space: normal;
+}
+
+.metricWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.metricBar {
+  width: 50px;
+  height: 3px;
+  background: #e6ecf3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.metricFill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59f00, #f08c00);
+  border-radius: inherit;
+}
+
+.metricFillAlt {
+  height: 100%;
+  background: linear-gradient(90deg, #20c997, #12b886);
+  border-radius: inherit;
+}
+
+.metricValue {
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: #1e293b;
+}
+
+.pieWrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pieProgress {
+  --size: 34px;
+  --thickness: 2px;
+  --track: #e6ecf3;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(farthest-side, #fff calc(100% - var(--thickness)), transparent 0),
+    conic-gradient(var(--ring-color) calc(var(--p) * 1%), var(--track) 0);
+}
+
+.piePrimary {
+  --ring-color: #f08c00;
+}
+
+.pieAlt {
+  --ring-color: #12b886;
+}
+
+.pieProgress span {
+  font-size: 9px;
+  font-family: var(--fontGraphikSemibold);
+  color: #1e293b;
+  line-height: 1;
+}
+.vehicleNumber{
+  padding: 3px 8px;
+    background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+    color: var(--black);
+    border-radius: 4px;
+    display: inline-block;
+}
+.tripBG {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  /* background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%); */
+  background: var(--gradientTheme);
+}

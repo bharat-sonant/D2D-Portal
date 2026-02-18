@@ -6,7 +6,7 @@ const THEME_KEY = "sidepanel-theme";
 const THEME_TIME_KEY = "sidepanel-theme-time";
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
-const SidePannel = ({ selectedReport, setSelectedReport }) => {
+const SidePannel = ({ selectedReport, setSelectedReport, forceDesktop = false }) => {
   const [theme, setTheme] = useState("dark");
 
   const menuItems = [
@@ -14,10 +14,10 @@ const SidePannel = ({ selectedReport, setSelectedReport }) => {
       label: "Zone",
       icon: File,
     },
-    {
-      label: "Binlifting",
-      icon: Trash2,
-    },
+    // {
+    //   label: "Binlifting",
+    //   icon: Trash2,
+    // },
   ];
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const SidePannel = ({ selectedReport, setSelectedReport }) => {
   }, []);
 
   return (
-    <div className={`${style.menuList} ${style[theme]}`}>
+    <div className={`${style.menuList} ${style[theme]} ${forceDesktop ? style.forceDesktop : ""}`}>
       {menuItems.map(({label, icon : Icon}) => (
         <div
           key={label}

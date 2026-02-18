@@ -24,6 +24,7 @@ import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
 import Realtime from "../pages/Realtime/Realtime";
+import DailyReport from "../pages/DailyReport/DailyReport";
 
 // Employee section pages
 import EmployeeDashboard from "../EmployeeManagement/pages/EmployeeDashboard";
@@ -230,6 +231,10 @@ const RouterComponent = () => {
         <Route
           path="/reports"
           element={<ProtectedRouter><MainLayout /><Reports />   </ProtectedRouter>}
+        />
+        <Route
+          path="/daily-report"
+          element={<ProtectedRouter><MainLayout /><DailyReport /></ProtectedRouter>}
         />
 
 
