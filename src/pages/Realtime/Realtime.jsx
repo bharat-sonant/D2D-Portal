@@ -3,8 +3,7 @@ import styles from "./Realtime.module.css";
 import {
   Activity,
   Truck,
-  MapPin,
-  CheckCircle,
+  Check,
   AlertCircle,
   Clock,
   Zap,
@@ -57,16 +56,26 @@ const Realtime = () => {
   );
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null); // 'app' or 'vehicle'
+  const [showVehicleModal, setShowVehicleModal] = useState(false);
   const [remarks, setRemarks] = useState([]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
+  const [showTopicDropdown, setShowTopicDropdown] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
 
   // Map States
   const mapRef = useRef(null);
+  const remarkTopicDropdownRef = useRef(null);
   const [wardLineData, setWardLineData] = useState([]);
   const [wardBoundaryData, setWardBoundaryData] = useState([]);
+  const [vehicleIssueRows, setVehicleIssueRows] = useState([
+    { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
+    { id: 2, vehicleNo: "COMP-6402", selected: false, reason: "" },
+    { id: 3, vehicleNo: "COMP-9812", selected: false, reason: "" },
+    { id: 4, vehicleNo: "LEY-AT-4323", selected: false, reason: "" },
+    { id: 5, vehicleNo: "LEY-AT-4384", selected: false, reason: "" },
+  ]);
 
   // Exact Data from Image for Premium Presentation
   const [wardData, setWardData] = useState({
@@ -76,6 +85,7 @@ const Realtime = () => {
     dutyOn: "8:37 AM",
     reachOn: "9:17 AM",
     lastLineTime: "14:02",
+    finalPointReached: false,
     dutyOff: "---",
     lines: { total: 206, completed: 61, skipped: 0, current: 168 },
     halt: { total: "1:25", current: "0:00" },
@@ -130,6 +140,22 @@ const Realtime = () => {
       );
     }
   }, [selectedWard, cityId]);
+
+  useEffect(() => {
+    if (!showTopicDropdown) return;
+    const handleOutsideClick = (event) => {
+      if (
+        remarkTopicDropdownRef.current &&
+        !remarkTopicDropdownRef.current.contains(event.target)
+      ) {
+        setShowTopicDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showTopicDropdown]);
 
   const fitToBounds = useCallback(() => {
     if (!mapRef.current) return;
@@ -195,19 +221,47 @@ const Realtime = () => {
   const openNewRemarkModal = () => {
     setEditingRemarkId(null);
     setRemarkForm({ topic: "", description: "" });
+    setShowTopicDropdown(false);
     setShowRemarkModal(true);
   };
 
   const openEditRemarkModal = (item) => {
     setEditingRemarkId(item.id);
     setRemarkForm({ topic: item.topic, description: item.description });
+    setShowTopicDropdown(false);
     setShowRemarkModal(true);
   };
 
   const closeRemarkModal = () => {
     setShowRemarkModal(false);
     setEditingRemarkId(null);
+    setShowTopicDropdown(false);
     setRemarkForm({ topic: "", description: "" });
+  };
+
+  const handleRemarkTopicSelect = (topic) => {
+    setRemarkForm((prev) => ({ ...prev, topic }));
+    setShowTopicDropdown(false);
+  };
+
+  const openVehicleModal = () => {
+    setShowVehicleModal(true);
+  };
+
+  const closeAllModals = () => {
+    setActiveStatusModal(null);
+    setShowVehicleModal(false);
+    closeRemarkModal();
+  };
+
+  const updateVehicleIssueRow = (id, field, value) => {
+    setVehicleIssueRows((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
+    );
+  };
+
+  const submitVehicleIssues = () => {
+    setShowVehicleModal(false);
   };
 
   const handleRemarkSubmit = () => {
@@ -244,6 +298,40 @@ const Realtime = () => {
     wardData.zones.stop || 0,
     1,
   );
+  const currentShiftCompleted =
+    Boolean(wardData.dutyOff) && wardData.dutyOff !== "---";
+  const activeConnectorIndex = currentShiftCompleted
+    ? -1
+    : wardData.finalPointReached
+      ? 2
+      : 1;
+  const currentShiftEvents = [
+    {
+      key: "dutyOn",
+      label: "Duty On",
+      time: wardData.dutyOn || "--:--",
+      status: "completed",
+    },
+    {
+      key: "reachOn",
+      label: "Reached",
+      time: wardData.reachOn || "--:--",
+      status: wardData.reachOn ? "completed" : "pending",
+    },
+    {
+      key: "workStatus",
+      label: currentShiftCompleted ? "Last Point" : "Working",
+      time: currentShiftCompleted ? wardData.lastLineTime || "--:--" : "Live",
+      status: currentShiftCompleted ? "completed" : "active",
+      isLive: !currentShiftCompleted,
+    },
+    {
+      key: "dutyOff",
+      label: "Off",
+      time: currentShiftCompleted ? wardData.dutyOff : "--:--",
+      status: currentShiftCompleted ? "completed" : "pending",
+    },
+  ];
 
   return (
     <div className={styles.realtimePage}>
@@ -338,10 +426,21 @@ const Realtime = () => {
                     isOnline={false}
                   />
 
-                  <div className={styles.vehicleBar}>
-                    <Truck size={14} />
-                    <span>{wardData.vehicleNumber}</span>
-                  </div>
+                  <button
+                    type="button"
+                    className={`${styles.vehicleBar} ${styles.vehicleBarInteractive}`}
+                    onClick={openVehicleModal}
+                    title="Open vehicle details"
+                  >
+                    <div className={styles.vehicleBarMain}>
+                      <Truck size={14} />
+                      <span>{wardData.vehicleNumber}</span>
+                    </div>
+                    <div className={styles.vehicleBarHint}>
+                      {/* <span>View details</span> */}
+                      <ChevronRight className={styles.vehicleBarNext} size={14} />
+                    </div>
+                  </button>
                 </div>
 
                 <div
@@ -378,9 +477,7 @@ const Realtime = () => {
                   <div className={styles.remarksHeadRow}>
                     <div className={styles.remarksHeadLeft}>
                       <Plus size={16} color="var(--themeColor)" />
-                      <span className={styles.remarksHeadTitle}>
-                        Remark
-                      </span>
+                      <span className={styles.remarksHeadTitle}>Remark</span>
                     </div>
                     <button
                       type="button"
@@ -430,33 +527,6 @@ const Realtime = () => {
                 </div>
               </div>
               <div className={styles.dataRight}>
-                {/* Timing Grid at Top - 100% Width */}
-                <div className={styles.timingGrid}>
-                  <TimingCell
-                    variant="horizontal"
-                    icon={<ShieldCheck size={20} color="#22c55e" />}
-                    value={wardData.dutyOn}
-                    label="Duty On"
-                  />
-                  <TimingCell
-                    variant="horizontal"
-                    icon={<MapPin size={20} color="#3b82f6" />}
-                    value={wardData.reachOn}
-                    label="Ward Reach"
-                  />
-                  <TimingCell
-                    variant="horizontal"
-                    icon={<TrendingUp size={20} color="#8b5cf6" />}
-                    value={wardData.lastLineTime}
-                    label="Last Point"
-                  />
-                  <TimingCell
-                    variant="horizontal"
-                    icon={<PowerOffIcon size={20} color="#f43f5e" />}
-                    value={wardData.dutyOff}
-                    label="Duty Off"
-                  />
-                </div>
                 <div
                   className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
                 >
@@ -514,35 +584,45 @@ const Realtime = () => {
                         <StatItem
                           label="Total Zone"
                           value={wardData.zones.total}
-                          graphPercent={(wardData.zones.total / zoneGraphMax) * 100}
+                          graphPercent={
+                            (wardData.zones.total / zoneGraphMax) * 100
+                          }
                           graphStyle="dots"
                         />
                         <StatItem
                           label="Comp. Zone"
                           value={wardData.zones.completed}
                           color="var(--textSuccess)"
-                          graphPercent={(wardData.zones.completed / zoneGraphMax) * 100}
+                          graphPercent={
+                            (wardData.zones.completed / zoneGraphMax) * 100
+                          }
                           graphStyle="dots"
                         />
                         <StatItem
                           label="Active Zone"
                           value={wardData.zones.active}
                           color="var(--themeColor)"
-                          graphPercent={(wardData.zones.active / zoneGraphMax) * 100}
+                          graphPercent={
+                            (wardData.zones.active / zoneGraphMax) * 100
+                          }
                           graphStyle="dots"
                         />
                         <StatItem
                           label="Inactive Zone"
                           value={wardData.zones.inactive}
                           color="var(--gray)"
-                          graphPercent={(wardData.zones.inactive / zoneGraphMax) * 100}
+                          graphPercent={
+                            (wardData.zones.inactive / zoneGraphMax) * 100
+                          }
                           graphStyle="dots"
                         />
                         <StatItem
                           label="Stop Zone"
                           value={wardData.zones.stop}
                           color="var(--textDanger)"
-                          graphPercent={((wardData.zones.stop || 0) / zoneGraphMax) * 100}
+                          graphPercent={
+                            ((wardData.zones.stop || 0) / zoneGraphMax) * 100
+                          }
                           graphStyle="dots"
                         />
                       </div>
@@ -597,6 +677,29 @@ const Realtime = () => {
                           </span>
                         </div>
                       </div>
+                      <div className={styles.mapQuickActions}>
+                        <button
+                          type="button"
+                          className={styles.mapQuickBtn}
+                          title="Path View"
+                        >
+                          <MapIcon size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.mapQuickBtn} ${styles.mapQuickBtnPrimary}`}
+                          title="Live Location"
+                        >
+                          <Navigation size={18} />
+                        </button>
+                      </div>
+                    </div>
+                    {/* Timing Grid at Top - 100% Width */}
+                    <div className={styles.timingGrid}>
+                      <ShiftTimeline
+                        events={currentShiftEvents}
+                        activeConnectorIndex={activeConnectorIndex}
+                      />
                     </div>
                   </div>
                 </div>
@@ -607,21 +710,22 @@ const Realtime = () => {
       </div>
 
       {/* Context-Aware Interactive Modals */}
-      {(activeStatusModal || showRemarkModal) && (
+      {(activeStatusModal || showRemarkModal || showVehicleModal) && (
         <div
           className={styles.modalOverlay}
-          onClick={() => {
-            setActiveStatusModal(null);
-            closeRemarkModal();
-          }}
+          onClick={closeAllModals}
         >
           <div
-            className={styles.modalContent}
+            className={`${styles.modalContent} ${
+              showVehicleModal ? styles.vehicleIssueModal : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.modalHeader}>
               <h3>
-                {activeStatusModal === "app"
+                {showVehicleModal
+                  ? "Vehicle Assignment Desk"
+                  : activeStatusModal === "app"
                   ? "Terminal Activity"
                   : activeStatusModal === "vehicle"
                     ? "Logistics Diagnostic"
@@ -631,16 +735,68 @@ const Realtime = () => {
               </h3>
               <button
                 className={styles.modalCloseBtn}
-                onClick={() => {
-                  setActiveStatusModal(null);
-                  closeRemarkModal();
-                }}
+                onClick={closeAllModals}
               >
                 <X size={20} />
               </button>
             </div>
 
-            {activeStatusModal === "app" ? (
+            {showVehicleModal ? (
+              <div className={styles.vehicleIssueWrap}>
+                <div className={styles.vehicleIssueHead}>
+                  <span className={styles.vehicleIssueTitle}>
+                    Not Assigned Vehicle
+                  </span>
+                  <span className={styles.vehicleIssueCount}>
+                    {vehicleIssueRows.length}
+                  </span>
+                </div>
+                <div className={styles.vehicleIssueTableHead}>
+                  <span>Vehicle No.</span>
+                  <span>Reason</span>
+                </div>
+                <div className={styles.vehicleIssueList}>
+                  {vehicleIssueRows.map((item) => (
+                    <div key={item.id} className={styles.vehicleIssueRow}>
+                      <div className={styles.vehicleIssueNoCol}>
+                        <div className={styles.vehicleIssueNo}>
+                          {item.vehicleNo}
+                        </div>
+                        <label className={styles.vehicleIssueCheck}>
+                          <input
+                            type="checkbox"
+                            checked={item.selected}
+                            onChange={(e) =>
+                              updateVehicleIssueRow(
+                                item.id,
+                                "selected",
+                                e.target.checked,
+                              )
+                            }
+                          />
+                          <span>Issue Found</span>
+                        </label>
+                      </div>
+                      <textarea
+                        className={styles.vehicleIssueReason}
+                        placeholder="Write reason..."
+                        value={item.reason}
+                        onChange={(e) =>
+                          updateVehicleIssueRow(item.id, "reason", e.target.value)
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className={styles.modalSubmitBtn}
+                  onClick={submitVehicleIssues}
+                >
+                  Submit
+                </button>
+              </div>
+            ) : activeStatusModal === "app" ? (
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <ModalRow
                   label="Uptime Status"
@@ -691,23 +847,50 @@ const Realtime = () => {
               </div>
             ) : (
               <div className={styles.remarkFormWrap}>
-                <select
-                  className={styles.remarkSelect}
-                  value={remarkForm.topic}
-                  onChange={(e) =>
-                    setRemarkForm((prev) => ({
-                      ...prev,
-                      topic: e.target.value,
-                    }))
-                  }
+                <div
+                  className={styles.customDropdownWrap}
+                  ref={remarkTopicDropdownRef}
                 >
-                  <option value="">Select Remark Topic</option>
-                  {remarkTopicOptions.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+                  <button
+                    type="button"
+                    className={`${styles.customDropdownToggle} ${
+                      showTopicDropdown ? styles.customDropdownToggleOpen : ""
+                    }`}
+                    onClick={() => setShowTopicDropdown((prev) => !prev)}
+                  >
+                    <span
+                      className={`${styles.customDropdownText} ${
+                        !remarkForm.topic ? styles.customDropdownPlaceholder : ""
+                      }`}
+                    >
+                      {remarkForm.topic || "Select Remark Topic"}
+                    </span>
+                    <ChevronRight
+                      size={16}
+                      className={`${styles.customDropdownCaret} ${
+                        showTopicDropdown ? styles.customDropdownCaretOpen : ""
+                      }`}
+                    />
+                  </button>
+                  {showTopicDropdown && (
+                    <div className={styles.customDropdownMenu}>
+                      {remarkTopicOptions.map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          className={`${styles.customDropdownItem} ${
+                            remarkForm.topic === item
+                              ? styles.customDropdownItemActive
+                              : ""
+                          }`}
+                          onClick={() => handleRemarkTopicSelect(item)}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <textarea
                   className={styles.remarkTextarea}
                   placeholder="Remark Description"
@@ -747,43 +930,91 @@ const StatusLine = ({ label, value, icon, color, onClick }) => (
       <div style={{ color: "var(--themeColor)", display: "flex" }}>{icon}</div>
       <span className={styles.statusLabel}>{label}</span>
     </div>
-    <span className={styles.statusValue} style={{ color }}>
-      {value}
-    </span>
+    <div className={styles.statusLineRight}>
+      <span className={styles.statusValue} style={{ color }}>
+        {value}
+      </span>
+      {onClick ? (
+        <span className={styles.statusClickIndicator}>
+          <ChevronRight size={14} />
+        </span>
+      ) : null}
+    </div>
   </button>
 );
 
-const TimingCell = ({ icon, label, value, variant = "vertical" }) => (
-  <div
-    className={
-      variant === "horizontal"
-        ? styles.timingCellHorizontal
-        : variant === "badge"
-          ? styles.timingCellBadge
-          : styles.timingCell
-    }
-  >
-    {variant === "horizontal" ? (
-      <>
-        <div className={styles.timingContent}>
-          <span>{value}</span>
-          <label>{label}</label>
-        </div>
-        <div className={styles.timingIconBox}>{icon}</div>
-      </>
-    ) : variant === "badge" ? (
-      <>
-        <div className={styles.badgeIconBox}>{icon}</div>
-        <label>{label}</label>
-        <span>{value}</span>
-      </>
-    ) : (
-      <>
-        {icon}
-        <label>{label}</label>
-        <span>{value}</span>
-      </>
-    )}
+const ShiftTimeline = ({ events, activeConnectorIndex = -1 }) => (
+  <div className={styles.shiftTimelineCard}>
+    <div className={styles.shiftTimelineTrack}>
+      {events.map((event, index) => {
+        const isCompleted = event.status === "completed";
+        const isActive = event.status === "active";
+        const isPending = event.status === "pending";
+
+        return (
+          <React.Fragment key={event.key}>
+            <div className={styles.shiftEvent}>
+              <div
+                className={`${styles.shiftEventLabel} ${
+                  isActive ? styles.shiftEventLabelActive : ""
+                }`}
+              >
+                {event.label}
+              </div>
+              <div
+                className={`${styles.shiftEventIconWrap} ${
+                  isCompleted
+                    ? styles.shiftEventIconCompleted
+                    : isActive
+                      ? styles.shiftEventIconActive
+                      : styles.shiftEventIconPending
+                }`}
+              >
+                {isCompleted ? (
+                  <Check size={14} />
+                ) : isActive ? (
+                  <Clock size={14} />
+                ) : (
+                  <AlertCircle size={14} />
+                )}
+              </div>
+              <div
+                className={`${styles.shiftEventTime} ${
+                  isPending ? styles.shiftEventTimePending : ""
+                } ${event.isLive ? styles.shiftEventTimeLive : ""}`}
+              >
+                {event.time}
+              </div>
+            </div>
+            {index < events.length - 1 && (
+              (() => {
+                const isAllCompleted = activeConnectorIndex < 0;
+                const connectorIndex = index;
+                const resolvedConnectorState = isAllCompleted
+                  ? "completed"
+                  : connectorIndex < activeConnectorIndex
+                    ? "completed"
+                    : connectorIndex === activeConnectorIndex
+                      ? "active"
+                      : "pending";
+
+                return (
+                  <div
+                    className={`${styles.shiftEventConnector} ${
+                      resolvedConnectorState === "completed"
+                        ? styles.shiftEventConnectorCompleted
+                        : resolvedConnectorState === "active"
+                          ? styles.shiftEventConnectorActive
+                          : styles.shiftEventConnectorPending
+                    }`}
+                  />
+                );
+              })()
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
   </div>
 );
 
@@ -865,12 +1096,21 @@ const StatItem = ({
         (graphStyle === "dots" ? (
           <div className={styles.miniStatDotGraph}>
             {Array.from({ length: 10 }).map((_, idx) => {
-              const active = idx < Math.max(Math.round(graphPercent / 10), graphPercent > 0 ? 1 : 0);
+              const active =
+                idx <
+                Math.max(
+                  Math.round(graphPercent / 10),
+                  graphPercent > 0 ? 1 : 0,
+                );
               return (
                 <span
                   key={idx}
                   className={`${styles.miniStatDot} ${active ? styles.miniStatDotActive : ""}`}
-                  style={active ? { background: color || "var(--themeColor)" } : undefined}
+                  style={
+                    active
+                      ? { background: color || "var(--themeColor)" }
+                      : undefined
+                  }
                 />
               );
             })}
@@ -953,12 +1193,6 @@ const ModalRow = ({ label, value, color, icon }) => (
     <span className={styles.modalRowValue} style={{ color }}>
       {value}
     </span>
-  </div>
-);
-
-const PowerOffIcon = ({ size, color }) => (
-  <div style={{  display: "flex" }}>
-    <ShieldCheck size={size} color={color} />
   </div>
 );
 

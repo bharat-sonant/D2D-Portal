@@ -493,7 +493,7 @@ const DailyZoneReport = () => {
                 <th className={`${style.th3} ${style.borderRight}`} style={headCase}>
                   Zone Run KM
                 </th>
-                <th className={style.th3} style={headCase}>Remark</th>
+                <th className={`text-start ${style.th3}`} style={headCase}>Remark</th>
               </tr>
             </thead>
             <tbody>
