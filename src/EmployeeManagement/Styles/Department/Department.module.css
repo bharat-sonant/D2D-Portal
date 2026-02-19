@@ -50,7 +50,7 @@
 .sidebar {
     position: relative;
     z-index: 2;
-    width: 320px;
+    width: 380px;
     background: #ffffff;
     border-right: 1px solid #e2e8f0;
     display: flex;
@@ -173,6 +173,7 @@
     font-size: 14px;
     color: #334155;
     margin: 0;
+    word-break: break-word;
 }
 
 .cardCode {
