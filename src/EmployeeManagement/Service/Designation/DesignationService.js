@@ -5,7 +5,6 @@ export const getDepartments = () => {
     return new Promise(async (resolve) => {
         try {
             const response = await api.get("/department");
-            console.log(response)
             if (response.success) {
                 resolve(common.setResponse('success', 'Department data fetched successfully.', response.data));
             } else {

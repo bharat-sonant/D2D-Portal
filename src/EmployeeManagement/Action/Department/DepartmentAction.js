@@ -72,8 +72,6 @@ export const submitDepartmentForm = async (form, initialData, setErrors, setForm
     const newErrors = validateDepartmentForm(form);
     if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
-        const first = newErrors[Object.keys(newErrors)[0]];
-        common.setAlertMessage("error", first);
         setLoader(false);
         return;
     }
