@@ -7,6 +7,7 @@ import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertM
 import NoResult from "../../../components/NoResultFound/NoResult";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import * as action from "../../Action/Designation/DesignationAction";
+ 
 
 const DesignationList = (props) => {
     const [showDeleteDesignation, setShowDeleteDesignation] = useState(false);
