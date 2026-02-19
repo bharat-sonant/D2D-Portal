@@ -5,9 +5,10 @@
 }
 
 .tableContainer {
-  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
-  border: 1px solid #e6ebf2;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    background: transparent;
+    border: 0px solid #e6ebf2;
+    box-shadow: none;
+    padding: 0px;
 }
 
 .table {
@@ -157,36 +158,345 @@
 
 .viewSwitch {
   display: inline-flex;
+  position: relative;
   border: 1px solid #d8e2ee;
   border-radius: 6px;
-  overflow: hidden;
+  overflow: clip;
   background: #fff;
+  padding: 4px;
+  isolation: isolate;
+}
+
+.viewAndSearch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.wardSearchWrap {
+  position: relative;
+}
+
+.wardSearchTrigger {
+  height: 38px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--regularColor);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.wardSearchTrigger:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 45%, var(--borderColor));
+  color: var(--themeColor);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--themeColor) 14%, transparent);
+}
+
+.wardSearchCount {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.wardSearchPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 350px;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+  padding: 10px;
+  transform-origin: right top;
+  transform: translateX(18px) scaleX(0.66);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+  z-index: 20;
+}
+
+.wardSearchPanelOpen {
+  transform: translateX(0) scaleX(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wardSearchTop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wardSearchInputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  padding: 0 8px;
+  height: 36px;
+  color: var(--gray);
+}
+
+.wardSearchInputWrap:focus-within {
+  border-color: color-mix(in srgb, var(--themeColor) 55%, var(--borderColor));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--themeColor) 14%, transparent);
+  background: var(--white);
+}
+
+.wardSearchInputWrap input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+}
+
+.wardInputClearBtn {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--themeColor) 10%, var(--white));
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.wardInputClearBtn:hover {
+  background: color-mix(in srgb, var(--themeColor) 18%, var(--white));
+}
+
+.wardApplyBtn {
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  cursor: pointer;
+}
+
+.wardCloseBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  color: var(--gray);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.wardQuickActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.wardQuickBtn {
+  border: 1px solid color-mix(in srgb, var(--themeColor) 24%, var(--borderColor));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--regularColor);
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wardQuickBtn:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 40%, var(--borderColor));
+  color: var(--themeColor);
+}
+
+.wardQuickBtnActive {
+  background: color-mix(in srgb, var(--themeColor) 11%, var(--white));
+  color: var(--themeColorDark);
+  border-color: color-mix(in srgb, var(--themeColor) 54%, var(--borderColor));
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--themeColor) 15%, transparent);
+}
+
+.wardListWrap {
+  margin-top: 8px;
+  border: 1px solid var(--borderColor);
+  border-radius: 8px;
+  background: var(--white);
+  max-height: 260px;
+  overflow: auto;
+}
+
+.wardSearchFooter {
+  margin-top: 10px;
+}
+
+.wardOptionRow {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--borderColor) 85%, var(--white));
+  background: transparent;
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  cursor: pointer;
+}
+
+.wardOptionRow:last-child {
+  border-bottom: 0;
+}
+
+.wardOptionRow:hover {
+  background: color-mix(in srgb, var(--themeColor) 6%, var(--white));
+}
+
+.wardOptionRowActive {
+  background: color-mix(in srgb, var(--themeColor) 11%, var(--white));
+}
+
+.wardSelectIndicator {
+  width: 18px;
+  height: 18px;
+  border: 1px solid color-mix(in srgb, var(--themeColor) 35%, var(--borderColor));
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--themeColor);
+}
+
+.wardEmptyState {
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--regularColor);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.wardEmptyState svg {
+  color: var(--themeColor);
+  opacity: 0.8;
+}
+
+.wardEmptyState strong {
+  color: var(--black);
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.wardEmptyState span {
+  color: var(--gray);
+  font-size: 11px;
+  max-width: 220px;
+  line-height: 1.35;
+}
+
+.wardSearchFooter .wardApplyBtn {
+  width: 100%;
+  height: 38px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.viewSwitch::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 4px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--themeColor) 16%, #ffffff) 0%,
+    color-mix(in srgb, var(--themeColor) 9%, #ffffff) 100%
+  );
+  z-index: 0;
+}
+
+.viewSwitchGrid::before {
+  transform: translateX(100%);
 }
 
 .viewBtn {
+  position: relative;
+  z-index: 1;
   border: 0;
   background: transparent;
   color: #475569;
-  height: 36px;
-  padding: 0 10px;
+  height: 30px;
+  min-width: 58px;
+  padding: 0 12px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-size: 12px;
   font-family: var(--fontGraphikMedium);
   cursor: pointer;
+  border-radius: 4px;
+  transition: color 220ms ease;
+}
+
+.viewBtn svg {
+  transition: transform 240ms ease, opacity 240ms ease;
 }
 
 .viewBtnActive {
-  background: #eaf2ff;
-  color: #2563eb;
+  background: transparent;
+  color: var(--themeColorDark);
+}
+
+.viewBtnActive svg {
+  transform: scale(1.06);
+}
+
+.viewBtn:not(.viewBtnActive):hover {
+  color: var(--themeColor);
 }
 
 .gridViewWrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  padding: 14px;
+  gap: 10px;
   align-content: flex-start;
 }
 
@@ -269,7 +579,7 @@
   width: fit-content;
   padding: 4px 9px;
   border: 1px solid #dce8f6;
-  border-radius: 999px;
+  border-radius: 4px;
   background: #f6f9ff;
   color: #334155;
   font-size: 11px;
@@ -280,7 +590,7 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 9px;
-  border-radius: 999px;
+  border-radius: 4px;
   background: #eef6ff;
   color: #1d4ed8;
   border: 1px solid #cfe3ff;
@@ -305,10 +615,6 @@
   display: flex;
   align-items: stretch;
   gap: 8px;
-  border: 1px solid #e5edf9;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #f9fbff 0%, #f4f8ff 100%);
-  padding: 8px;
 }
 
 .kpiItem {
@@ -436,6 +742,14 @@
 }
 
 @media (max-width: 900px) {
+  .viewAndSearch {
+    gap: 6px;
+  }
+
+  .wardSearchPanel {
+    width: 320px;
+  }
+
   .zoneCard {
     width: 100%;
     min-width: 0;
@@ -464,6 +778,16 @@
 }
 
 @media (max-width: 640px) {
+  .viewAndSearch {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .wardSearchPanel {
+    width: calc(100vw - 24px);
+    right: -6px;
+  }
+
   .timeCell {
     flex: 1 1 calc(50% - 4px);
   }

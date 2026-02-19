@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
-import { LayoutGrid, List } from "lucide-react";
+import { Check, LayoutGrid, List, Search, SearchX, X } from "lucide-react";
 import QuickDateSelection from "../../components/Common/QuickDateSelection/QuickDateSelection";
 import CustomDatePicker from "../../components/CustomDatePicker/CustomDatePicker";
 import { images } from "../../assets/css/imagePath";
@@ -339,7 +339,13 @@ const DailyZoneReport = () => {
   const [date, setDate] = useState(todayDate);
   const [viewMode, setViewMode] = useState("list");
   const [hideTopBar, setHideTopBar] = useState(false);
+  const [isWardSearchOpen, setIsWardSearchOpen] = useState(false);
+  const [wardSearchTerm, setWardSearchTerm] = useState("");
+  const [draftWardSelection, setDraftWardSelection] = useState([]);
+  const [appliedWardSelection, setAppliedWardSelection] = useState([]);
+  const [activeQuickRangeKeys, setActiveQuickRangeKeys] = useState([]);
   const tableRef = useRef(null);
+  const wardSearchRef = useRef(null);
   const headCase = { textTransform: "capitalize" };
   const parsePercent = (val) => {
     const num = Number(String(val).replace("%", "").trim());
@@ -355,6 +361,46 @@ const DailyZoneReport = () => {
     String(text || "-")
       .toLowerCase()
       .replace(/\b\w/g, (ch) => ch.toUpperCase());
+  const allWardOptions = Array.from(new Set(rows.map((item) => item.ward)));
+  const filteredWardOptions = allWardOptions.filter((ward) =>
+    ward.toLowerCase().includes(wardSearchTerm.trim().toLowerCase()),
+  );
+  const wardNumberSet = Array.from(
+    new Set(
+      allWardOptions
+        .map((ward) => Number.parseInt(String(ward).replace(/\D/g, ""), 10))
+        .filter((num) => Number.isFinite(num)),
+    ),
+  ).sort((a, b) => a - b);
+  const wardRangeOptions = [];
+  const maxWardNumber = wardNumberSet[wardNumberSet.length - 1] || 0;
+  for (let start = 1; start <= maxWardNumber; start += 10) {
+    const end = start + 9;
+    const wardsInRange = allWardOptions.filter((ward) => {
+      const wardNumber = Number.parseInt(String(ward).replace(/\D/g, ""), 10);
+      return Number.isFinite(wardNumber) && wardNumber >= start && wardNumber <= end;
+    });
+    if (wardsInRange.length > 0) {
+      wardRangeOptions.push({
+        key: `${start}-${end}`,
+        label: `Zone ${start}-${Math.min(end, wardNumberSet[wardNumberSet.length - 1] || end)}`,
+        wards: wardsInRange,
+      });
+    }
+  }
+  const activeWardSelection =
+    appliedWardSelection.length > 0 ? appliedWardSelection : allWardOptions;
+  const previewWardSelection =
+    draftWardSelection.length > 0
+      ? draftWardSelection
+      : wardSearchTerm.trim()
+        ? filteredWardOptions
+        : activeWardSelection;
+  const displayedRows = rows.filter((row) =>
+    (isWardSearchOpen ? previewWardSelection : activeWardSelection).includes(
+      row.ward,
+    ),
+  );
 
   useEffect(() => {
     const el = tableRef.current;
@@ -379,6 +425,57 @@ const DailyZoneReport = () => {
     return () => el.removeEventListener("scroll", handleTableScroll);
   }, [hideTopBar]);
 
+  useEffect(() => {
+    if (!isWardSearchOpen) return;
+    const handleOutsideClick = (event) => {
+      if (wardSearchRef.current && !wardSearchRef.current.contains(event.target)) {
+        setIsWardSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isWardSearchOpen]);
+
+  const toggleWardInDraft = (ward) => {
+    setDraftWardSelection((prev) =>
+      prev.includes(ward) ? prev.filter((item) => item !== ward) : [...prev, ward],
+    );
+  };
+
+  const applyWardSelection = () => {
+    const resolvedSelection =
+      draftWardSelection.length > 0
+        ? draftWardSelection
+        : wardSearchTerm.trim()
+          ? filteredWardOptions
+          : [];
+    setAppliedWardSelection(resolvedSelection);
+    setIsWardSearchOpen(false);
+  };
+
+  const handleWardSearchOpen = () => {
+    setDraftWardSelection(appliedWardSelection);
+    setActiveQuickRangeKeys([]);
+    setIsWardSearchOpen(true);
+  };
+
+  const handleWardSearchClose = () => {
+    setIsWardSearchOpen(false);
+  };
+
+  const selectWardRange = (range) => {
+    const isAlreadyActive = activeQuickRangeKeys.includes(range.key);
+    setActiveQuickRangeKeys((prev) =>
+      isAlreadyActive ? prev.filter((key) => key !== range.key) : [...prev, range.key],
+    );
+    setDraftWardSelection((prev) => {
+      if (isAlreadyActive) {
+        return prev.filter((ward) => !range.wards.includes(ward));
+      }
+      return Array.from(new Set([...prev, ...range.wards]));
+    });
+  };
+
   return (
     <>
       <div
@@ -390,23 +487,142 @@ const DailyZoneReport = () => {
         <CustomDatePicker value={date} onChange={(val) => setDate(val)} />
 
         <div className={style.rightButtons}>
-          <div className={localStyles.viewSwitch}>
-            <button
-              type="button"
-              className={`${localStyles.viewBtn} ${viewMode === "list" ? localStyles.viewBtnActive : ""}`}
-              onClick={() => setViewMode("list")}
+              <div className={localStyles.wardSearchWrap} ref={wardSearchRef}>
+              <button
+                type="button"
+                className={localStyles.wardSearchTrigger}
+                onClick={handleWardSearchOpen}
+              >
+                <Search size={14} />
+                <span>Search...</span>
+                {appliedWardSelection.length > 0 && (
+                  <span className={localStyles.wardSearchCount}>
+                    {appliedWardSelection.length}
+                  </span>
+                )}
+              </button>
+
+              <div
+                className={`${localStyles.wardSearchPanel} ${
+                  isWardSearchOpen ? localStyles.wardSearchPanelOpen : ""
+                }`}
+              >
+                <div className={localStyles.wardSearchTop}>
+                  <div className={localStyles.wardSearchInputWrap}>
+                    <Search size={14} />
+                    <input
+                      type="text"
+                      placeholder="Search Zone..."
+                      value={wardSearchTerm}
+                      onChange={(e) => {
+                        setWardSearchTerm(e.target.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") applyWardSelection();
+                      }}
+                    />
+                    {wardSearchTerm ? (
+                      <button
+                        type="button"
+                        className={localStyles.wardInputClearBtn}
+                        onClick={() => setWardSearchTerm("")}
+                        title="Clear search"
+                      >
+                        <X size={12} />
+                      </button>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    className={localStyles.wardCloseBtn}
+                    onClick={handleWardSearchClose}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+
+                <div className={localStyles.wardQuickActions}>
+                  {wardRangeOptions.map((range) => (
+                    <button
+                      key={range.key}
+                      type="button"
+                      className={`${localStyles.wardQuickBtn} ${
+                        activeQuickRangeKeys.includes(range.key)
+                          ? localStyles.wardQuickBtnActive
+                          : ""
+                      }`}
+                      onClick={() => selectWardRange(range)}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className={localStyles.wardListWrap}>
+                  {filteredWardOptions.length === 0 ? (
+                    <div className={localStyles.wardEmptyState}>
+                      <SearchX size={18} />
+                      <strong>No ward found</strong>
+                      <span>Try another keyword or clear the search.</span>
+                    </div>
+                  ) : (
+                    filteredWardOptions.map((ward) => {
+                      const isSelected = draftWardSelection.includes(ward);
+                      return (
+                        <button
+                          key={ward}
+                          type="button"
+                          className={`${localStyles.wardOptionRow} ${
+                            isSelected ? localStyles.wardOptionRowActive : ""
+                          }`}
+                          onClick={() => toggleWardInDraft(ward)}
+                        >
+                          <span>{ward}</span>
+                          <span className={localStyles.wardSelectIndicator}>
+                            {isSelected ? <Check size={13} /> : null}
+                          </span>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+
+                <div className={localStyles.wardSearchFooter}>
+                  <button
+                    type="button"
+                    className={localStyles.wardApplyBtn}
+                    onClick={applyWardSelection}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          <div className={localStyles.viewAndSearch}>
+            <div
+              className={`${localStyles.viewSwitch} ${
+                viewMode === "grid" ? localStyles.viewSwitchGrid : ""
+              }`}
             >
-              <List size={14} />
-              List
-            </button>
-            <button
-              type="button"
-              className={`${localStyles.viewBtn} ${viewMode === "grid" ? localStyles.viewBtnActive : ""}`}
-              onClick={() => setViewMode("grid")}
-            >
-              <LayoutGrid size={14} />
-              Grid
-            </button>
+              <button
+                type="button"
+                className={`${localStyles.viewBtn} ${viewMode === "list" ? localStyles.viewBtnActive : ""}`}
+                onClick={() => setViewMode("list")}
+              >
+                <List size={14} />
+                List
+              </button>
+              <button
+                type="button"
+                className={`${localStyles.viewBtn} ${viewMode === "grid" ? localStyles.viewBtnActive : ""}`}
+                onClick={() => setViewMode("grid")}
+              >
+                <LayoutGrid size={14} />
+                Grid
+              </button>
+            </div>
+
+        
           </div>
           <button className={style.exportBtn}>
             <img
@@ -497,7 +713,7 @@ const DailyZoneReport = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {displayedRows.map((row, index) => (
                 <tr key={`${row.ward}-${index}`}>
                   <td className={`${style.th1} ${style.borderRight}`}>{row.ward}</td>
                   <td className={style.th2}>{row.dutyOn}</td>
@@ -545,7 +761,7 @@ const DailyZoneReport = () => {
           </table>
         ) : (
           <div className={localStyles.gridViewWrap}>
-            {rows.map((row, index) => {
+            {displayedRows.map((row, index) => {
               const workVal = parsePercent(row.workPercentage);
               const actualVal = parsePercent(row.actualWorkPercentage);
               return (
