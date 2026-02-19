@@ -1,79 +1,9 @@
-import api from "../../../api/api";
 import * as common from "../../../common/common";
-
-export const getDepartments = async (setDepartmentData) => {
-    try {
-        const response = await api.get("/department");
-        if (response.success) {
-            setDepartmentData(response.data);
-        } else {
-            setDepartmentData([]);
-        }
-
-    } catch (error) {
-        console.error("Error fetching departments:", error);
-        return [];
-    }
-};
-
-export const addDepartment = async (departmentData, callback) => {
-    try {
-        const response = await api.post("/department", departmentData);
-        console.log("Add Department Response:", response);
-        if (response && response.success) {
-            if (typeof callback === "function") callback(response.data);
-            return response.data;
-        } else {
-            if (typeof callback === "function") callback(null);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error adding department:", error);
-        if (typeof callback === "function") callback(null);
-        return null;
-    }
-};
-
-export const updateDepartment = async (departmentId, departmentData, callback) => {
-    try {
-        const response = await api.patch(`/department/${departmentId}`, departmentData);
-        console.log("Update Department Response:", response);
-        if (response && response.success) {
-            if (typeof callback === "function") callback(response.data);
-            return response.data;
-        } else {
-            if (typeof callback === "function") callback(null);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error updating department:", error);
-        if (typeof callback === "function") callback(null);
-        return null;
-    }
-};
-
-export const deleteDepartment = async (departmentId, callback) => {
-    try {
-        const response = await api.delete(`/department/${departmentId}`);
-        console.log("Delete Department Response:", response);
-        if (response && response.success) {
-            if (typeof callback === "function") callback(true);
-            return true;
-        } else {
-            if (typeof callback === "function") callback(false);
-            return false;
-        }
-    } catch (error) {
-        console.error("Error deleting department:", error);
-        if (typeof callback === "function") callback(false);
-        return false;
-    }
-};
+import * as service from "../../Service/Designation/DesignationService";
 
 export const getInitialDepartmentForm = () => ({
     name: "",
     code: "",
-    branch_id: "",
 });
 
 export const getDepartmentFormFromData = (initialData) => {
@@ -82,7 +12,7 @@ export const getDepartmentFormFromData = (initialData) => {
         id: initialData.id,
         name: initialData.name || "",
         code: initialData.code || "",
-        branch_id: initialData.branch_id || "",
+        branch_id: initialData.branch_id ? String(initialData.branch_id) : "",
     };
 };
 
@@ -92,9 +22,44 @@ export const handleDepartmentFormChange = (e, setForm, setErrors) => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
 };
 
+export const handleDepartmentCodeInputChange = (value, setForm, setErrors) => {
+    handleDepartmentFormChange({ target: { name: "code", value: value.toUpperCase() } }, setForm, setErrors);
+};
+
+export const initializeDepartmentForm = (showCanvas, initialData, setForm, setErrors, setLoader) => {
+    if (!showCanvas) return;
+    setForm(getDepartmentFormFromData(initialData));
+    setErrors({});
+    if (setLoader) setLoader(false);
+};
+
+export const getFilteredDepartments = (departmentData = [], searchQuery = "") => {
+    const normalizedQuery = searchQuery.toLowerCase();
+    return departmentData.filter((dept) =>
+        dept.name.toLowerCase().includes(normalizedQuery) ||
+        dept.code.toLowerCase().includes(normalizedQuery)
+    );
+};
+
+export const openDepartmentAddModal = (setSelectedDepartment, setShowAddModal) => {
+    setSelectedDepartment(null);
+    setShowAddModal(true);
+};
+
+export const openDepartmentEditModal = (e, dept, setSelectedDepartment, setShowAddModal) => {
+    e.stopPropagation();
+    setSelectedDepartment(dept);
+    setShowAddModal(true);
+};
+
+export const openDepartmentDeleteModal = (e, dept, setSelectedDepartment, setShowDeleteModal) => {
+    e.stopPropagation();
+    setSelectedDepartment(dept);
+    setShowDeleteModal(true);
+};
+
 export const validateDepartmentForm = (form) => {
     const newErrors = {};
-    if (!form.branch_id) newErrors.branch_id = "Branch is required";
     if (!form.name) newErrors.name = "Department name is required";
     else if (!/^[A-Za-z0-9 &]+$/.test(form.name)) newErrors.name = "Invalid characters in name";
     if (!form.code) newErrors.code = "Department code is required";
@@ -102,50 +67,100 @@ export const validateDepartmentForm = (form) => {
     return newErrors;
 };
 
-export const submitDepartmentForm = async ({
-    form,
-    initialData,
-    setErrors,
-    setForm,
-    setShowCanvas,
-    onSuccess,
-}) => {
+export const submitDepartmentForm = async (form, initialData, setErrors, setForm, setShowCanvas, setLoader, onSuccess) => {
     const newErrors = validateDepartmentForm(form);
     if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         const first = newErrors[Object.keys(newErrors)[0]];
         common.setAlertMessage("error", first);
+        setLoader(false);
         return;
     }
+    setLoader(true);
 
     const payload = {
         name: form.name,
         code: form.code,
-        branch_id: form.branch_id,
-        icon: form.icon,
     };
 
-    if (initialData && initialData.id) {
-        const result = await updateDepartment(initialData.id, payload);
-        if (result) {
-            setForm(getInitialDepartmentForm());
-            setErrors({});
-            setShowCanvas(false);
-            if (typeof onSuccess === "function") onSuccess(result);
-            common.setAlertMessage("success", "Department updated successfully");
+    try {
+        if (initialData && initialData.id) {
+            const result = await service.updateDepartment(initialData.id, payload);
+            if (result?.status === "success") {
+                const responseData = Array.isArray(result.data) ? result.data[0] : result.data;
+                const updatedDepartment = {
+                    ...(initialData || {}),
+                    ...(responseData || {}),
+                    id: responseData?.id || initialData.id,
+                    name: responseData?.name || payload.name,
+                    code: responseData?.code || payload.code,
+                };
+                setForm(getInitialDepartmentForm());
+                setErrors({});
+                setShowCanvas(false);
+                common.setAlertMessage("success", "Department updated successfully");
+                onSuccess && onSuccess(updatedDepartment, "edit");
+            } else {
+                setErrors((prev) => ({
+                    ...prev,
+                    name: result?.message || "Unable to update department. Try again.",
+                }));
+            }
         } else {
-            common.setAlertMessage("error", "Unable to update department. Try again.");
+            const result = await service.saveDepartment(payload);
+            if (result?.status === "success") {
+                const responseData = Array.isArray(result.data) ? result.data[0] : result.data;
+                const savedDepartment = {
+                    ...(responseData || {}),
+                    id: responseData?.id,
+                    name: responseData?.name || payload.name,
+                    code: responseData?.code || payload.code,
+                };
+                setForm(getInitialDepartmentForm());
+                setErrors({});
+                setShowCanvas(false);
+                common.setAlertMessage("success", "Department added successfully");
+                onSuccess && onSuccess(savedDepartment, "add");
+            } else {
+                setErrors((prev) => ({
+                    ...prev,
+                    name: result?.message || "Unable to add department. Try again.",
+                }));
+            }
         }
-    } else {
-        const result = await addDepartment(payload);
-        if (result) {
-            setForm(getInitialDepartmentForm());
-            setErrors({});
-            setShowCanvas(false);
-            if (typeof onSuccess === "function") onSuccess(result);
-            common.setAlertMessage("success", "Department added successfully");
-        } else {
-            common.setAlertMessage("error", "Unable to save department. Try again.");
-        }
+    } finally {
+        setLoader(false);
     }
+};
+
+export const deleteDepartmentData = async (selectedDepartment, setShowDeleteModal, setSelectedDepartment, onSuccess) => {
+    if (!selectedDepartment?.id) return;
+    const response = await service.deleteDepartment(selectedDepartment.id);
+    if (response.status === 'success') {
+        common.setAlertMessage("success", "Department deleted successfully");
+        onSuccess && onSuccess(selectedDepartment.id);
+    } else {
+        common.setAlertMessage("error", response.message);
+    }
+    setShowDeleteModal(false);
+    setSelectedDepartment(null);
+}
+
+export const getAllDepartmentData = (setDepartmentData, setLoading) => {
+    if (setLoading) setLoading(true);
+    try {
+        service.getDepartments().then((resp) => {
+            console.log(resp)
+            if (resp.status === 'success') {
+                setDepartmentData(resp.data)
+            } else {
+                setDepartmentData([])
+            };
+        }).finally(() => {
+            if (setLoading) setLoading(false);
+        });
+    } catch (error) {
+        console.log(error)
+        if (setLoading) setLoading(false);
+    };
 };

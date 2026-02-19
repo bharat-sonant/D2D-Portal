@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import modalStyles from "../../../assets/css/popup.module.css";
 import { X, Briefcase, Loader2 } from "lucide-react";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
-import { validateDesignationDetail } from "../../Action/Designation/DesignationAction";
+import {
+    handleDesignationNameChange,
+    initializeDesignationForm,
+    validateDesignationDetail,
+} from "../../Action/Designation/DesignationAction";
 
 const AddDesignation = (props) => {
     const [form, setForm] = useState({ name: "" });
@@ -10,26 +14,26 @@ const AddDesignation = (props) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (props.showCanvas) {
-            if (props.initialData) {
-                setForm({ name: props.initialData.name || "" });
-            } else {
-                setForm({ name: "" });
-            }
-            setNameError("");
-        }
+        initializeDesignationForm(props.showCanvas, props.initialData, setForm, setNameError, setLoading);
     }, [props.showCanvas, props.initialData]);
 
     if (!props.showCanvas) return null;
 
     const handleChange = (e) => {
-        const { value } = e.target;
-        setForm({ name: value });
-        if (nameError) setNameError("");
+        handleDesignationNameChange(e.target.value, setForm, setNameError);
     };
 
     const handleSave = () => {
-        validateDesignationDetail(form, props.initialData?.id, setNameError, setLoading, props.departmentId, setForm, props.setShowCanvas);
+        validateDesignationDetail(
+            form,
+            props.initialData?.id || props.initialData?.designation_id,
+            setNameError,
+            setLoading,
+            props.departmentId,
+            setForm,
+            props.setShowCanvas,
+            props.onSuccess
+        );
     };
 
     return (
@@ -64,8 +68,16 @@ const AddDesignation = (props) => {
                 <div className={modalStyles.modalFooter}>
                     <button className={modalStyles.cancelBtn} onClick={() => props.setShowCanvas(false)} disabled={loading}>Cancel</button>
                     <button className={modalStyles.submitBtn} onClick={handleSave} disabled={loading}>
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : null}
-                        {loading ? " Saving..." : " Submit"}
+                        {loading ? (
+                            <>
+                                <Loader2 size={18} className={modalStyles.spinningIcon} />
+                                {"Please wait.."}
+                            </>
+                        ) : (
+                            <>
+                                {props.initialData ? "Update" : "Save"}
+                            </>
+                        )}
                     </button>
                 </div>
             </div>

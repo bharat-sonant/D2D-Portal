@@ -25,18 +25,21 @@ const DesignationList = (props) => {
         }
     }, [props.departmentId]);
 
-    const openEdit = (item) => {
-        setSelectedDesignation(item);
-        props.setShowAddDesignation(true);
-    };
-
-    const openDelete = (item) => {
-        setSelectedDesignation(item);
-        setShowDeleteDesignation(true);
-    };
-
     const deleteDesignation = () => {
-        action.handleDesignationDelete(selectedDesignation, props.departmentId, setIsDeleting, setShowDeleteDesignation,)
+        action.handleDesignationDelete(
+            selectedDesignation,
+            props.departmentId,
+            setIsDeleting,
+            setShowDeleteDesignation,
+            (deletedId) => {
+                setDesignationItems((prev) => action.removeDesignationFromList(prev, deletedId));
+                setSelectedDesignation(null);
+            }
+        )
+    };
+
+    const handleDesignationSuccess = (designationItem, mode) => {
+        setDesignationItems((prev) => action.upsertDesignationInList(prev, designationItem, mode));
     };
 
     return (
@@ -51,10 +54,7 @@ const DesignationList = (props) => {
                             <button
                                 className={deptStyles.addDesignationBtn}
                                 title="Add Designation"
-                                onClick={() => {
-                                    setSelectedDesignation(null);
-                                    props.setShowAddDesignation(true);
-                                }}
+                                onClick={() => action.openDesignationAddModal(setSelectedDesignation, props.setShowAddDesignation)}
                             >
                                 <Plus size={14} />
                             </button>
@@ -76,10 +76,10 @@ const DesignationList = (props) => {
                                         )}
                                     </div>
                                     <div className={deptStyles.designationActions}>
-                                        <button className={deptStyles.actionBtn} title="Edit" onClick={() => openEdit(item)}>
+                                        <button className={deptStyles.actionBtn} title="Edit" onClick={() => action.openDesignationEditModal(item, setSelectedDesignation, props.setShowAddDesignation)}>
                                             <Edit2 size={14} />
                                         </button>
-                                        <button className={deptStyles.deleteBtn} title="Delete" onClick={() => openDelete(item)}>
+                                        <button className={deptStyles.deleteBtn} title="Delete" onClick={() => action.openDesignationDeleteModal(item, setSelectedDesignation, setShowDeleteDesignation)}>
                                             <Trash2 size={14} />
                                         </button>
                                     </div>
@@ -96,6 +96,7 @@ const DesignationList = (props) => {
                 setShowCanvas={props.setShowAddDesignation}
                 initialData={selectedDesignation}
                 departmentId={props.departmentId}
+                onSuccess={handleDesignationSuccess}
             />
 
             <GlobalAlertModal

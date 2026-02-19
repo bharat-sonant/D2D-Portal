@@ -3,44 +3,25 @@ import deptStyles from "../../Styles/Department/Department.module.css";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import NoResult from "../../../components/NoResultFound/NoResult";
 import AddDepartment from "./AddDepartment";
-import { deleteDepartment } from "../../Action/Department/DepartmentAction";
-import * as common from "../../../common/common";
+import * as action from "../../Action/Department/DepartmentAction";
 import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
+import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
 const DepartmentList = (props) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-    const filteredDepartments = props.departmentData.filter((dept) =>
-        dept.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        dept.code.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const handleEdit = (e, dept) => {
-        e.stopPropagation();
-        setSelectedDepartment(dept);
-        props.setShowAddModal(true);
-    };
-
-    const handleDelete = (e, dept) => {
-        e.stopPropagation();
-        setSelectedDepartment(dept);
-        setShowDeleteModal(true);
-    };
+    const filteredDepartments = action.getFilteredDepartments(props.departmentData, searchQuery);
 
     const confirmDelete = async () => {
-        if (!selectedDepartment?.id) return;
-        const success = await deleteDepartment(selectedDepartment.id);
-        if (success) {
-            common.setAlertMessage("success", "Department deleted successfully");
-            props.refreshDepartments && props.refreshDepartments();
-        } else {
-            common.setAlertMessage("error", "Unable to delete department. Try again.");
-        }
-        setShowDeleteModal(false);
-        setSelectedDepartment(null);
+        action.deleteDepartmentData(
+            selectedDepartment,
+            setShowDeleteModal,
+            setSelectedDepartment,
+            props.onDepartmentDelete
+        );
     };
 
     return (
@@ -50,7 +31,7 @@ const DepartmentList = (props) => {
                     <h2 className={deptStyles.sidebarTitle}>Departments</h2>
                     <button
                         className={deptStyles.addBtn}
-                        onClick={() => props.setShowAddModal(true)}
+                        onClick={() => action.openDepartmentAddModal(setSelectedDepartment, props.setShowAddModal)}
                         title="Add Department"
                     >
                         <Plus size={20} />
@@ -68,40 +49,43 @@ const DepartmentList = (props) => {
                 </div>
 
                 <div className={deptStyles.departmentList}>
-                    {filteredDepartments.length > 0 ? (
+                    {props.loading ? (
+                        <WevoisLoader title="Loading Departments..." />
+                    ) : filteredDepartments.length > 0 ? (
                         filteredDepartments.map((dept) => {
                             const isSelected = String(props.selectedDepartmentId) === String(dept.id);
 
                             return (
-                            <div
-                                key={dept.id}
-                                className={`${deptStyles.departmentCard} ${isSelected ? deptStyles.activeCard : ""}`}
-                                onClick={() => props.handleSelectDepartment(dept)}
-                            >
-                                <div className={deptStyles.cardContent}>
-                                    <div className={deptStyles.cardHeader}>
-                                        <h3 className={deptStyles.cardTitle}>{dept.name}</h3>
-                                        <span className={deptStyles.cardCode}>{dept.code}</span>
-                                    </div>
-                                    <div className={deptStyles.cardActions}>
-                                        <button
-                                            onClick={(e) => handleEdit(e, dept)}
-                                            className={deptStyles.actionBtn}
-                                            title="Edit"
-                                        >
-                                            <Edit2 size={14} />
-                                        </button>
-                                        <button
-                                            onClick={(e) => handleDelete(e, dept)}
-                                            className={deptStyles.deleteBtn}
-                                            title="Delete"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
+                                <div
+                                    key={dept.id}
+                                    className={`${deptStyles.departmentCard} ${isSelected ? deptStyles.activeCard : ""}`}
+                                    onClick={() => props.handleSelectDepartment(dept)}
+                                >
+                                    <div className={deptStyles.cardContent}>
+                                        <div className={deptStyles.cardHeader}>
+                                            <h3 className={deptStyles.cardTitle}>{dept.name}</h3>
+                                            <span className={deptStyles.cardCode}>{dept.code}</span>
+                                        </div>
+                                        <div className={deptStyles.cardActions}>
+                                            <button
+                                                onClick={(e) => action.openDepartmentEditModal(e, dept, setSelectedDepartment, props.setShowAddModal)}
+                                                className={deptStyles.actionBtn}
+                                                title="Edit"
+                                            >
+                                                <Edit2 size={14} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => action.openDepartmentDeleteModal(e, dept, setSelectedDepartment, setShowDeleteModal)}
+                                                className={deptStyles.deleteBtn}
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )})
+                            )
+                        })
                     ) : (
                         <div className={deptStyles.noResult}>
                             <NoResult label="No Departments Found" />
@@ -113,6 +97,7 @@ const DepartmentList = (props) => {
                 showCanvas={props.showAddModal}
                 setShowCanvas={() => props.setShowAddModal(false)}
                 initialData={selectedDepartment}
+                onSuccess={props.onDepartmentSuccess}
             />
             <GlobalAlertModal
                 show={showDeleteModal}
