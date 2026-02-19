@@ -111,12 +111,15 @@ const DesignationList = (props) => {
                         ?
                     </>
                 }
-                buttonText="Delete"
+                buttonText={isDeleting ? "Please wait..." : "Delete"}
                 iconType="warning"
                 warningText="This action cannot be undone."
-                onCancel={() => setShowDeleteDesignation(false)}
+                onCancel={() => {
+                    if (!isDeleting) setShowDeleteDesignation(false);
+                }}
                 onConfirm={deleteDesignation}
                 disabled={isDeleting}
+                isLoading={isDeleting}
             />
         </>
     );

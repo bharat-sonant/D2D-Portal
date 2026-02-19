@@ -295,6 +295,23 @@
   flex: 1;
 }
 
+.actionBtn:disabled,
+.closeBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.loadingContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
 /* Activate Button */
 .activateBtn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -358,6 +375,15 @@
   }
   75% {
     transform: rotate(5deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

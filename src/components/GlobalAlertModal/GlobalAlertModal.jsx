@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, X } from "lucide-react";
+import { AlertTriangle, Check, Loader2, X } from "lucide-react";
 import styles from "./GlobalAlertModal.module.css";
 import { useEffect } from "react";
 
@@ -12,6 +12,8 @@ const GlobalAlertModal = ({
   buttonText,
   buttonGradient,
   iconType = "warning", // warning | success
+  disabled = false,
+  isLoading = false,
   onCancel,
   onConfirm,
 }) => {
@@ -71,7 +73,7 @@ const GlobalAlertModal = ({
       </div>
 
       <div className={styles.modal}>
-        <button className={styles.closeBtn} onClick={onCancel}>
+        <button className={styles.closeBtn} onClick={onCancel} disabled={disabled || isLoading}>
           <X size={18} />
         </button>
         <div className={styles.iconWrapper}>
@@ -124,8 +126,16 @@ const GlobalAlertModal = ({
               isSuccess ? styles.activateBtn : styles.deactivateBtn
             }`}
             onClick={onConfirm}
+            disabled={disabled || isLoading}
           >
-            {buttonText}
+            {isLoading ? (
+              <span className={styles.loadingContent}>
+                <Loader2 size={16} className={styles.spin} />
+                Please wait...
+              </span>
+            ) : (
+              buttonText
+            )}
           </button>
         </div>
       </div>

@@ -12,16 +12,22 @@ const DepartmentList = (props) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const filteredDepartments = action.getFilteredDepartments(props.departmentData, searchQuery);
 
     const confirmDelete = async () => {
-        action.deleteDepartmentData(
-            selectedDepartment,
-            setShowDeleteModal,
-            setSelectedDepartment,
-            props.onDepartmentDelete
-        );
+        setIsDeleting(true);
+        try {
+            await action.deleteDepartmentData(
+                selectedDepartment,
+                setShowDeleteModal,
+                setSelectedDepartment,
+                props.onDepartmentDelete
+            );
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -111,12 +117,16 @@ const DepartmentList = (props) => {
                         ?
                     </>
                 }
-                buttonText="Delete"
+                buttonText={isDeleting ? "Please wait..." : "Delete"}
                 buttonGradient="linear-gradient(135deg, #dc2626 0%, #991b1b 100%)"
                 iconType="warning"
                 warningText="Design preview only. No action will be performed."
-                onCancel={() => setShowDeleteModal(false)}
+                onCancel={() => {
+                    if (!isDeleting) setShowDeleteModal(false);
+                }}
                 onConfirm={confirmDelete}
+                disabled={isDeleting}
+                isLoading={isDeleting}
             />
         </>
     );
