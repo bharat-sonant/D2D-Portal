@@ -47,7 +47,7 @@ const AddDepartment = ({ showCanvas, setShowCanvas, initialData, onSuccess }) =>
                         <label className={modalStyles.label}>Department Name</label>
                         <div className={modalStyles.inputWrapper}>
                             <div className={modalStyles.inputIcon}><GitBranch size={18} /></div>
-                            <input className={modalStyles.input} name="name" placeholder="e.g. Engineering, Sales" value={form.name} onChange={(e) => handleDepartmentFormChange(e, setForm, setErrors)} />
+                            <input className={modalStyles.input} name="name" placeholder="e.g. Engineering, Sales" value={form.name} onChange={(e) => handleDepartmentFormChange(e, setForm, setErrors)} maxLength={50} />
                         </div>
                         {errors.name && <ErrorMessage message={errors.name} />}
                     </div>

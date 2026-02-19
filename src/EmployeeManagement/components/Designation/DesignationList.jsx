@@ -14,6 +14,8 @@ const DesignationList = (props) => {
     const [designationItems, setDesignationItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
+    // Sort alphabetically by name
+    const sortedDesignations = [...designationItems].sort((a, b) => a.name.localeCompare(b.name));
 
     const loadDesignations = () => {
         action.getDesignationByDepartment(props.departmentId, setDesignationItems, setLoading);
@@ -64,8 +66,8 @@ const DesignationList = (props) => {
                     <div className={deptStyles.designationList}>
                         {loading ? (
                             <WevoisLoader title="Loading Designations..." />
-                        ) : designationItems.length > 0 ? (
-                            designationItems.map((item) => (
+                        ) : sortedDesignations.length > 0 ? (
+                            sortedDesignations.map((item) => (
                                 <div key={item.id || item.designation_id} className={deptStyles.designationCard}>
                                     <div>
                                         <div className={deptStyles.designationName}>{item.name}</div>

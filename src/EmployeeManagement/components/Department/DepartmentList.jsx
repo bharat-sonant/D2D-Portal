@@ -15,6 +15,8 @@ const DepartmentList = (props) => {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const filteredDepartments = action.getFilteredDepartments(props.departmentData, searchQuery);
+    // Sort alphabetically by name
+    const sortedDepartments = [...filteredDepartments].sort((a, b) => a.name.localeCompare(b.name));
 
     const confirmDelete = async () => {
         setIsDeleting(true);
@@ -58,7 +60,7 @@ const DepartmentList = (props) => {
                     {props.loading ? (
                         <WevoisLoader title="Loading Departments..." />
                     ) : filteredDepartments.length > 0 ? (
-                        filteredDepartments.map((dept) => {
+                        sortedDepartments.map((dept) => {
                             const isSelected = String(props.selectedDepartmentId) === String(dept.id);
 
                             return (

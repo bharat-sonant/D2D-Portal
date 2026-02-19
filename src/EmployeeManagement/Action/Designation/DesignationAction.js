@@ -84,6 +84,9 @@ export const validateDesignationDetail = (form, designationId, setNameError, set
                     setForm({ name: '' });
                     setLoading(false);
                     setShowCanvas(false);
+                    import("../../../common/common").then(common => {
+                        common.setAlertMessage("success", "Designation updated successfully");
+                    });
                     onSuccess && onSuccess(updatedItem, "edit");
                 } else {
                     setLoading(false);
@@ -103,6 +106,9 @@ export const validateDesignationDetail = (form, designationId, setNameError, set
                     setForm({ name: '' });
                     setLoading(false);
                     setShowCanvas(false);
+                    import("../../../common/common").then(common => {
+                        common.setAlertMessage("success", "Designation added successfully");
+                    });
                     onSuccess && onSuccess(savedItem, "add");
                 } else {
                     setLoading(false);
@@ -133,6 +139,9 @@ export const handleDesignationDelete = (selectedDesignation, departmentId, setIs
         if (resp.status === 'success') {
             setIsDeleting(false);
             setShowDeleteDesignation(false);
+            import("../../../common/common").then(common => {
+                common.setAlertMessage("success", "Designation deleted successfully");
+            });
             onSuccess && onSuccess(designationId);
         } else {
             setIsDeleting(false);

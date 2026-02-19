@@ -61,6 +61,7 @@ export const openDepartmentDeleteModal = (e, dept, setSelectedDepartment, setSho
 export const validateDepartmentForm = (form) => {
     const newErrors = {};
     if (!form.name) newErrors.name = "Department name is required";
+    else if (form.name.length > 50) newErrors.name = "Department name must be 50 characters or less";
     else if (!/^[A-Za-z0-9 &]+$/.test(form.name)) newErrors.name = "Invalid characters in name";
     if (!form.code) newErrors.code = "Department code is required";
     else if (!/^[A-Z0-9-]+$/.test(form.code)) newErrors.code = "Code must be uppercase letters, numbers and hyphens";
