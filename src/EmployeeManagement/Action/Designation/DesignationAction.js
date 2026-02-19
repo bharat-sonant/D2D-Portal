@@ -1,49 +1,6 @@
-import api from "../../../api/api";
-import * as common from "../../../common/common";
+import * as service from '../../Service/Department/DepartmentService';
 
-export const saveDesignationAction = async (designationData, departmentId = '12', onSuccess, onError) => {
-    try {
-        const response = await api.post(`/designation/department/${departmentId}`, designationData);
-        if (response && response.success) {
-            if (onSuccess) onSuccess(response.message || "Designation saved successfully");
-        } else {
-            const msg = response?.message || "Failed to save designation";
-            if (onError) onError(msg);
-        }
-    } catch (error) {
-        if (onError) onError(error.message || "An unexpected error occurred during save");
-    }
-};
-
-export const updateDesignationAction = async (designationId, designationData, departmentId = '12', onSuccess, onError) => {
-    try {
-        const response = await api.patch(`/designation/department/${departmentId}/${designationId}`, designationData);
-        if (response && response.success) {
-            if (onSuccess) onSuccess(response.message || "Designation updated successfully");
-        } else {
-            const msg = response?.message || "Failed to update designation";
-            if (onError) onError(msg);
-        }
-    } catch (error) {
-        if (onError) onError(error.message || "An unexpected error occurred during update");
-    }
-};
-
-export const deleteDesignationAction = async (designationId, departmentId = '12', onSuccess, onError) => {
-    try {
-        const response = await api.delete(`/designation/department/${departmentId}/${designationId}`);
-        if (response && response.success) {
-            if (onSuccess) onSuccess(response.message || "Designation deleted successfully");
-        } else {
-            const msg = response?.message || "Failed to delete designation";
-            if (onError) onError(msg);
-        }
-    } catch (error) {
-        if (onError) onError(error.message || "An unexpected error occurred during delete");
-    }
-};
-
-export const validateDesignationDetail = ({ form, designationId, setNameError, setLoading, departmentId = 12, onSuccess, onError }) => {
+export const validateDesignationDetail = (form, designationId, setNameError, setLoading, departmentId, setForm, setShowCanvas) => {
     let isValid = true;
     setNameError("");
 
@@ -62,59 +19,55 @@ export const validateDesignationDetail = ({ form, designationId, setNameError, s
 
     if (isValid) {
         setLoading(true);
-        const payload = { name: trimmedName };
-        const successHandler = (msg) => {
-            setLoading(false);
-            if (onSuccess) onSuccess(msg);
-        };
-        const errorHandler = (err) => {
-            setLoading(false);
-            if (onError) onError(err);
-            else setNameError(err);
-        };
+        const payload = { name: trimmedName }
 
         if (designationId) {
-            updateDesignationAction(designationId, payload, departmentId, successHandler, errorHandler);
+            service.updateDesignationAction(designationId, payload, departmentId, setNameError).then((response) => {
+                if (response.status === 'success') {
+                    setForm({ name: '' });
+                    setLoading(false);
+                    setShowCanvas(false);
+                } else {
+                    setLoading(false);
+                    setNameError(response.messsage);
+                };
+            });
         } else {
-            saveDesignationAction(payload, departmentId, successHandler, errorHandler);
-        }
+            service.saveDesignationAction(payload, departmentId, setNameError).then((response) => {
+                if (response.status === 'success') {
+                    setForm({ name: '' });
+                    setLoading(false);
+                    setShowCanvas(false);
+                } else {
+                    setLoading(false);
+                    setNameError(response.message);
+                };
+            });
+        };
     };
 };
 
-export const getDesignationByDepartmentAction = async (departmentId = 12, setDesignationList, setLoading) => {
-    if (setLoading) setLoading(true);
-    try {
-        const response = await api.get(`/designation/department/${departmentId}`);
-        const list = Array.isArray(response?.data) ? response.data : Array.isArray(response?.data?.designations) ? response.data.designations : [];
-        setDesignationList(list);
-    } catch (error) {
-        setDesignationList([]);
-    } finally {
-        if (setLoading) setLoading(false);
-    }
+export const getDesignationByDepartment = (departmentId, setDesignationItems, setLoading) => {
+    service.getDesignationByDepartmentAction(departmentId).then((response) => {
+        if (response.status === 'success') {
+            setDesignationItems(response.data);
+            setLoading(false);
+        } else {
+            setDesignationItems([]);
+            setLoading(false);
+        };
+    });
 };
 
-export const handleDesignationDelete = ({ selectedDesignation, departmentId = 12, setIsDeleting, setShowDeleteDesignation, onSuccessRefresh }) => {
-    const designationId = selectedDesignation?.id || null
-
-    if (!designationId) {
-        common.setAlertMessage("error", "Designation ID not found");
-        return;
-    }
-
+export const handleDesignationDelete = (selectedDesignation, departmentId, setIsDeleting, setShowDeleteDesignation) => {
     setIsDeleting(true);
-    deleteDesignationAction(
-        designationId,
-        departmentId,
-        (msg) => {
+
+    service.deleteDesignationAction(selectedDesignation?.id, departmentId).then((resp) => {
+        if (resp.status === 'success') {
             setIsDeleting(false);
             setShowDeleteDesignation(false);
-            common.setAlertMessage("success", msg || "Designation deleted successfully");
-            if (typeof onSuccessRefresh === "function") onSuccessRefresh();
-        },
-        (err) => {
+        } else {
             setIsDeleting(false);
-            common.setAlertMessage("error", err || "Failed to delete designation");
         }
-    );
+    })
 };

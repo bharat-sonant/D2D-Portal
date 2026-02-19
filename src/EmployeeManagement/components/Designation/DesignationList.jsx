@@ -6,23 +6,24 @@ import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertMo
 import globalAlertStyles from "../../../components/GlobalAlertModal/GlobalAlertModal.module.css";
 import NoResult from "../../../components/NoResultFound/NoResult";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
-import { getDesignationByDepartmentAction, handleDesignationDelete } from "../../Action/Designation/DesignationAction";
+import * as action from "../../Action/Designation/DesignationAction";
 
 const DesignationList = (props) => {
     const [showDeleteDesignation, setShowDeleteDesignation] = useState(false);
     const [selectedDesignation, setSelectedDesignation] = useState(null);
     const [designationItems, setDesignationItems] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
-    const departmentId = 12;
 
     const loadDesignations = () => {
-        getDesignationByDepartmentAction(departmentId, setDesignationItems, setLoading);
+        action.getDesignationByDepartment(props.departmentId, setDesignationItems, setLoading);
     };
 
     useEffect(() => {
-        loadDesignations();
-    }, []);
+        if (props.departmentId) {
+            loadDesignations();
+        }
+    }, [props.departmentId]);
 
     const openEdit = (item) => {
         setSelectedDesignation(item);
@@ -32,6 +33,10 @@ const DesignationList = (props) => {
     const openDelete = (item) => {
         setSelectedDesignation(item);
         setShowDeleteDesignation(true);
+    };
+
+    const deleteDesignation = () => {
+        action.handleDesignationDelete(selectedDesignation, props.departmentId, setIsDeleting, setShowDeleteDesignation,)
     };
 
     return (
@@ -90,7 +95,7 @@ const DesignationList = (props) => {
                 showCanvas={props.showAddDesignation}
                 setShowCanvas={props.setShowAddDesignation}
                 initialData={selectedDesignation}
-                onSaveSuccess={loadDesignations}
+                departmentId={props.departmentId}
             />
 
             <GlobalAlertModal
@@ -109,15 +114,7 @@ const DesignationList = (props) => {
                 iconType="warning"
                 warningText="This action cannot be undone."
                 onCancel={() => setShowDeleteDesignation(false)}
-                onConfirm={() =>
-                    handleDesignationDelete({
-                        selectedDesignation,
-                        departmentId,
-                        setIsDeleting,
-                        setShowDeleteDesignation,
-                        onSuccessRefresh: loadDesignations,
-                    })
-                }
+                onConfirm={deleteDesignation}
                 disabled={isDeleting}
             />
         </>

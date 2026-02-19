@@ -69,8 +69,15 @@ const DepartmentList = (props) => {
 
                 <div className={deptStyles.departmentList}>
                     {filteredDepartments.length > 0 ? (
-                        filteredDepartments.map((dept) => (
-                            <div key={dept.id} className={deptStyles.departmentCard}>
+                        filteredDepartments.map((dept) => {
+                            const isSelected = String(props.selectedDepartmentId) === String(dept.id);
+
+                            return (
+                            <div
+                                key={dept.id}
+                                className={`${deptStyles.departmentCard} ${isSelected ? deptStyles.activeCard : ""}`}
+                                onClick={() => props.handleSelectDepartment(dept)}
+                            >
                                 <div className={deptStyles.cardContent}>
                                     <div className={deptStyles.cardHeader}>
                                         <h3 className={deptStyles.cardTitle}>{dept.name}</h3>
@@ -94,7 +101,7 @@ const DepartmentList = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        ))
+                        )})
                     ) : (
                         <div className={deptStyles.noResult}>
                             <NoResult label="No Departments Found" />
@@ -106,7 +113,6 @@ const DepartmentList = (props) => {
                 showCanvas={props.showAddModal}
                 setShowCanvas={() => props.setShowAddModal(false)}
                 initialData={selectedDepartment}
-                onSuccess={props.refreshDepartments}
             />
             <GlobalAlertModal
                 show={showDeleteModal}

@@ -3,7 +3,6 @@ import modalStyles from "../../../assets/css/popup.module.css";
 import { X, Briefcase, Loader2 } from "lucide-react";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
 import { validateDesignationDetail } from "../../Action/Designation/DesignationAction";
-import * as common from "../../../common/common";
 
 const AddDesignation = (props) => {
     const [form, setForm] = useState({ name: "" });
@@ -30,22 +29,7 @@ const AddDesignation = (props) => {
     };
 
     const handleSave = () => {
-        const designationId = props.initialData?.id || null
-        validateDesignationDetail({
-            form,
-            designationId,
-            setNameError,
-            setLoading,
-            departmentId: 12,
-            onSuccess: (msg) => {
-                common.setAlertMessage("success", msg || (designationId ? "Designation updated successfully" : "Designation saved successfully"));
-                props.setShowCanvas(false);
-                if (props.onSaveSuccess) props.onSaveSuccess();
-            },
-            onError: (err) => {
-                common.setAlertMessage("error", err || "Failed to save designation");
-            }
-        });
+        validateDesignationDetail(form, props.initialData?.id, setNameError, setLoading, props.departmentId, setForm, props.setShowCanvas);
     };
 
     return (

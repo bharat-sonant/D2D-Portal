@@ -8,10 +8,15 @@ const Departments = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showAddDesignation, setShowAddDesignation] = useState(false);
     const [departmentData, setDepartmentData] = useState([]);
+    const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
 
     useEffect(() => {
         getDepartments(setDepartmentData)
     }, []);
+
+    const handleSelectDepartment = (item) => {
+        setSelectedDepartmentId(item.id);
+    }
 
     return (
         <div style={{ display: 'flex', position: 'absolute', top: '65px' }}>
@@ -25,13 +30,17 @@ const Departments = () => {
                 setShowAddModal={setShowAddModal}
                 showAddModal={showAddModal}
                 departmentData={departmentData}
-                refreshDepartments={() => getDepartments(setDepartmentData)}
+                handleSelectDepartment={handleSelectDepartment}
+                selectedDepartmentId={selectedDepartmentId}
+            // refreshDepartments={() => getDepartments(setDepartmentData)}
             />
-
-            <DesignationList
-                setShowAddDesignation={setShowAddDesignation}
-                showAddDesignation={showAddDesignation}
-            />
+            {selectedDepartmentId && (
+                <DesignationList
+                    setShowAddDesignation={setShowAddDesignation}
+                    showAddDesignation={showAddDesignation}
+                    departmentId={selectedDepartmentId}
+                />
+            )}
         </div>
     );
 };
