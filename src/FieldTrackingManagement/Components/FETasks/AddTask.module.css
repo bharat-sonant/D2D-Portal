@@ -1,4 +1,4 @@
-@keyframes slideUp {
+/* @keyframes slideUp {
   from {
     transform: translateY(40px);
     opacity: 0;
@@ -40,4 +40,4 @@
 
 .checkboxText {
   user-select: none;
-}
+} */

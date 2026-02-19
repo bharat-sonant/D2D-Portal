@@ -1,211 +1,211 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Users,
-  MapPin,
-  FileText,
-  ClipboardList,
-  BarChart3,
-  Menu,
-  X,
-  ClipboardCheck
-} from "lucide-react";
+// import React, { useEffect, useState } from "react";
+// import { Link, useLocation, useNavigate } from "react-router-dom";
+// import {
+//   LayoutDashboard,
+//   Users,
+//   MapPin,
+//   FileText,
+//   ClipboardList,
+//   BarChart3,
+//   Menu,
+//   X,
+//   ClipboardCheck
+// } from "lucide-react";
 
-import styles from "../../../Style/MainLayout/Topbar.module.css";
-import { images } from "../../../assets/css/imagePath";
-import LogoImage from "../../../components/Common/Image/LogoImage";
-import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
-import ChangePassword from "../../../components/ChangePassword/changePassword";
-import { useCity } from "../../../context/CityContext";
+// import styles from "../../../Style/MainLayout/Topbar.module.css";
+// import { images } from "../../../assets/css/imagePath";
+// import LogoImage from "../../../components/Common/Image/LogoImage";
+// import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
+// import ChangePassword from "../../../components/ChangePassword/changePassword";
+// import { useCity } from "../../../context/CityContext";
 
-const FE_TopBar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+// const FE_TopBar = () => {
+//   const location = useLocation();
+//   const navigate = useNavigate();
 
-  const storedName = localStorage.getItem("name") || "Field Executive";
- const { setCityContext, city, cityId, cityLogo } = useCity();
-  const [firstChar, setFirstChar] = useState("");
-  const [secondChar, setSecondChar] = useState("");
-  const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
-  const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+//   const storedName = localStorage.getItem("name") || "Field Executive";
+//  const { setCityContext, city, cityId, cityLogo } = useCity();
+//   const [firstChar, setFirstChar] = useState("");
+//   const [secondChar, setSecondChar] = useState("");
+//   const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
+//   const [showChangePassword, setShowChangePassword] = useState(false);
+//   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const menuItems = [
-    {
-      id: "Dashboard",
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      // color: "#1e40af", 
-      path: "/field-executive/dashboard",
-    },
+//   const menuItems = [
+//     {
+//       id: "Dashboard",
+//       label: "Dashboard",
+//       icon: LayoutDashboard,
+//       // color: "#1e40af", 
+//       path: "/field-executive/dashboard",
+//     },
 
-    {
-      id: "Tasks",
-      label: "Tasks",
-      icon: ClipboardList,
-      // color: "#0f766e", 
-      path: "/field-executive/tasks",
-    },
-    {
-      id: "Assignments",
-      label: "Assignments",
-      icon: ClipboardCheck,
-      // color: "#075985",
-      path: "/field-executive/assignments",
-    },
+//     {
+//       id: "Tasks",
+//       label: "Tasks",
+//       icon: ClipboardList,
+//       // color: "#0f766e", 
+//       path: "/field-executive/tasks",
+//     },
+//     {
+//       id: "Assignments",
+//       label: "Assignments",
+//       icon: ClipboardCheck,
+//       // color: "#075985",
+//       path: "/field-executive/assignments",
+//     },
 
-    {
-      id: "Employees",
-      label: "Field Executives",
-      icon: Users,
-      // color: "#5b21b6", 
-      path: "/field-executive/users",
-    },
+//     {
+//       id: "Employees",
+//       label: "Field Executives",
+//       icon: Users,
+//       // color: "#5b21b6", 
+//       path: "/field-executive/users",
+//     },
 
-    {
-      id: "Tracking",
-      label: "Tracking",
-      icon: MapPin,
-      // color: "#166534", 
-      path: "/field-executive/tracking",
-    },
+//     {
+//       id: "Tracking",
+//       label: "Tracking",
+//       icon: MapPin,
+//       // color: "#166534", 
+//       path: "/field-executive/tracking",
+//     },
 
-    {
-      id: "Reports",
-      label: "Report",
-      icon: FileText,
-      // color: "#9a3412", 
-      path: "/field-executive/reports",
-    },
-    {
-      id: "Analysis",
-      label: "Analysis",
-      icon: BarChart3,
-      // color: "#7f1d1d", 
-      path: "/field-executive/analysis",
-    },
-  ];
+//     {
+//       id: "Reports",
+//       label: "Report",
+//       icon: FileText,
+//       // color: "#9a3412", 
+//       path: "/field-executive/reports",
+//     },
+//     {
+//       id: "Analysis",
+//       label: "Analysis",
+//       icon: BarChart3,
+//       // color: "#7f1d1d", 
+//       path: "/field-executive/analysis",
+//     },
+//   ];
 
 
 
-  useEffect(() => {
-    if (storedName) {
-      const parts = storedName.split(" ");
-      setFirstChar(parts[0]?.charAt(0).toUpperCase() || "");
-      setSecondChar(parts[1]?.charAt(0).toUpperCase() || "");
-    }
-  }, [storedName]);
+//   useEffect(() => {
+//     if (storedName) {
+//       const parts = storedName.split(" ");
+//       setFirstChar(parts[0]?.charAt(0).toUpperCase() || "");
+//       setSecondChar(parts[1]?.charAt(0).toUpperCase() || "");
+//     }
+//   }, [storedName]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLogin");
-    localStorage.removeItem("loginDate");
-    localStorage.removeItem("name");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("city");
-    localStorage.removeItem("cityId");
-    localStorage.removeItem("defaultCity");
-    localStorage.removeItem("logoUrl");
+//   const handleLogout = () => {
+//     localStorage.removeItem("isLogin");
+//     localStorage.removeItem("loginDate");
+//     localStorage.removeItem("name");
+//     localStorage.removeItem("userId");
+//     localStorage.removeItem("city");
+//     localStorage.removeItem("cityId");
+//     localStorage.removeItem("defaultCity");
+//     localStorage.removeItem("logoUrl");
 
-    setCityContext({
-      city: "",
-      cityId: "",
-      cityLogo: "",
-    });
-    navigate("/");
-  };
+//     setCityContext({
+//       city: "",
+//       cityId: "",
+//       cityLogo: "",
+//     });
+//     navigate("/");
+//   };
 
-  return (
-    <>
-      {/* TOP BAR */}
-      <div className={styles.header}>
-        {/* LEFT */}
-        <div className={styles.headerLeft}>
-          <div className={styles.companyLogo}>
-            <LogoImage image={images?.wevoisLogo} />
-            <div className={styles.logoText} style={{ cursor: "default" }}>
-              Field Executive
-            </div>
-          </div>
-        </div>
+//   return (
+//     <>
+//       {/* TOP BAR */}
+//       <div className={styles.header}>
+//         {/* LEFT */}
+//         <div className={styles.headerLeft}>
+//           <div className={styles.companyLogo}>
+//             <LogoImage image={images?.wevoisLogo} />
+//             <div className={styles.logoText} style={{ cursor: "default" }}>
+//               Field Executive
+//             </div>
+//           </div>
+//         </div>
 
-        {/* CENTER MENU */}
-        <div
-          className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
-            }`}
-        >
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+//         {/* CENTER MENU */}
+//         <div
+//           className={`${styles.desktopMenu} ${showMobileMenu ? styles.mobileMenuOpen : ""
+//             }`}
+//         >
+//           {menuItems.map((item, index) => {
+//             const Icon = item.icon;
+//             const isActive = location.pathname === item.path;
 
-            return (
-              <Link
-                key={item.id}
-                to={item.path}
-                className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
-                  }`}
-                onClick={() => setShowMobileMenu(false)}
-                style={{
-                  animationDelay: `${index * 0.08}s`,
-                  "--menu-color": item.color,
-                }}
-              >
-                <div
-                  className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
-                    }`}
-                >
-                  <Icon className={styles.navIcon} size={20} />
-                </div>
-                <span
-                  className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
-                    }`}
-                >
-                  {item.label}
-                </span>
-                {/* {isActive && <div className={styles.activeIndicator} />} */}
-              </Link>
-            );
-          })}
-        </div>
+//             return (
+//               <Link
+//                 key={item.id}
+//                 to={item.path}
+//                 className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ""
+//                   }`}
+//                 onClick={() => setShowMobileMenu(false)}
+//                 style={{
+//                   animationDelay: `${index * 0.08}s`,
+//                   "--menu-color": item.color,
+//                 }}
+//               >
+//                 <div
+//                   className={`${styles.menuIcon} ${isActive ? styles.menuIconActive : ""
+//                     }`}
+//                 >
+//                   <Icon className={styles.navIcon} size={20} />
+//                 </div>
+//                 <span
+//                   className={`${styles.menuLabel} ${isActive ? styles.menuLabelActive : ""
+//                     }`}
+//                 >
+//                   {item.label}
+//                 </span>
+//                 {/* {isActive && <div className={styles.activeIndicator} />} */}
+//               </Link>
+//             );
+//           })}
+//         </div>
 
-        {/* RIGHT */}
-        <div className={styles.headerRight}>
-          <button
-            className={styles.hamburger}
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-          >
-            {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
-          </button>
+//         {/* RIGHT */}
+//         <div className={styles.headerRight}>
+//           <button
+//             className={styles.hamburger}
+//             onClick={() => setShowMobileMenu(!showMobileMenu)}
+//           >
+//             {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
+//           </button>
 
-          <div
-            className={styles.userBadge}
-            onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
-            style={{ cursor: "pointer" }}
-          >
-            <button className={`btn ${styles.userDropdownBtn}`}>
-              <span className={styles.userBG}>
-                {firstChar}
-                {secondChar}
-              </span>
-              <span className={styles.userName}>{storedName}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <ChangePassword
-        showChangePassword={showChangePassword}
-        setShowChangePassword={setShowChangePassword}
-      />
-      <QuickAppSelection
-        showQuickAppSelect={showQuickAppSelect}
-        onClose={() => setShowQuickAppSelect(false)}
-        isDropdown={true}
-        onChangePassword={() => setShowChangePassword(true)}
-        onLogout={handleLogout}
-      />
+//           <div
+//             className={styles.userBadge}
+//             onClick={() => setShowQuickAppSelect(!showQuickAppSelect)}
+//             style={{ cursor: "pointer" }}
+//           >
+//             <button className={`btn ${styles.userDropdownBtn}`}>
+//               <span className={styles.userBG}>
+//                 {firstChar}
+//                 {secondChar}
+//               </span>
+//               <span className={styles.userName}>{storedName}</span>
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//       <ChangePassword
+//         showChangePassword={showChangePassword}
+//         setShowChangePassword={setShowChangePassword}
+//       />
+//       <QuickAppSelection
+//         showQuickAppSelect={showQuickAppSelect}
+//         onClose={() => setShowQuickAppSelect(false)}
+//         isDropdown={true}
+//         onChangePassword={() => setShowChangePassword(true)}
+//         onLogout={handleLogout}
+//       />
 
-    </>
-  );
-};
+//     </>
+//   );
+// };
 
-export default FE_TopBar;
+// export default FE_TopBar;

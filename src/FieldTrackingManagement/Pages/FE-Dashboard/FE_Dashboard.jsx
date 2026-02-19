@@ -1,63 +1,63 @@
-import { useState } from "react";
-import styles from "./FE_Dashboard.module.css";
-import GlobalStyles from "../../../assets/css/globalStyles.module.css";
-
-import {
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from "recharts";
-import { ClipboardList, MapPin, Users, CheckCircle } from "lucide-react";
-import DonutChart from "./DonutChart";
-const FE_Dashboard = () => {
-  const [viewMode, setViewMode] = useState("weekly"); // "weekly" | "monthly"
-  const taskStats = { total: 25, active: 18, inactive: 7 };
-
-  const userStats = [
-    { label: "Active", value: 26, color: "var(--themeColor" },
-    { label: "Inactive", value: 6, color: "var(--whitefa)" },
-  ];
-  const stats = [
-    { label: "Total Users", value: "32", color: "purple", icon: "users" },
-    { label: "Active Tasks", value: "25", color: "cyan", icon: "tasks" },
-    { label: "Completed Task", value: "186", color: "green", icon: "check" },
-    { label: "Active Sites", value: "12", color: "purple", icon: "location" },
-    { label: "Inactive Sites", value: "02", color: "orange", icon: "location" },
-  ];
-  const getIcon = (type) => {
-    switch (type) {
-      case "users":
-        return <Users size={28} strokeWidth={2} />;
-      case "tasks":
-        return <ClipboardList size={28} strokeWidth={2} />;
-      case "check":
-        return <CheckCircle size={28} strokeWidth={2} />;
-      case "location":
-        return <MapPin size={28} strokeWidth={2} />;
-      default:
-        return null;
-    }
-  };
-
-  const siteUserStats = [
-    { site: "Sector 21 – Noida", users: 4 },
-    { site: "DLF Phase 3 – Gurgaon", users: 3 },
-    { site: "Indira Nagar – Lucknow", users: 2 },
-    { site: "Andheri East – Mumbai", users: 5 },
-    { site: "Whitefield – Bengaluru", users: 4 },
-    { site: "HSR Layout – Bengaluru", users: 3 },
-    { site: "Salt Lake – Kolkata", users: 2 },
-    { site: "Banjara Hills – Hyderabad", users: 3 },
-    { site: "Powai – Mumbai", users: 1 },
-    { site: "Viman Nagar – Pune", users: 2 },
+// import { useState } from "react";
+// import styles from "./FE_Dashboard.module.css";
+// import GlobalStyles from "../../../assets/css/globalStyles.module.css";
+//
+// import {
+//   LineChart,
+//   Line,
+//   PieChart,
+//   Pie,
+//   AreaChart,
+//   Area,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   ResponsiveContainer,
+//   Label,
+// } from "recharts";
+// import { ClipboardList, MapPin, Users, CheckCircle } from "lucide-react";
+// import DonutChart from "./DonutChart";
+// const FE_Dashboard = () => {
+//   const [viewMode, setViewMode] = useState("weekly"); // "weekly" | "monthly"
+//   const taskStats = { total: 25, active: 18, inactive: 7 };
+//
+//   const userStats = [
+//     { label: "Active", value: 26, color: "var(--themeColor" },
+//     { label: "Inactive", value: 6, color: "var(--whitefa)" },
+//   ];
+//   const stats = [
+//     { label: "Total Users", value: "32", color: "purple", icon: "users" },
+//     { label: "Active Tasks", value: "25", color: "cyan", icon: "tasks" },
+//     { label: "Completed Task", value: "186", color: "green", icon: "check" },
+//     { label: "Active Sites", value: "12", color: "purple", icon: "location" },
+//     { label: "Inactive Sites", value: "02", color: "orange", icon: "location" },
+//   ];
+//   const getIcon = (type) => {
+//     switch (type) {
+//       case "users":
+//         return <Users size={28} strokeWidth={2} />;
+//       case "tasks":
+//         return <ClipboardList size={28} strokeWidth={2} />;
+//       case "check":
+//         return <CheckCircle size={28} strokeWidth={2} />;
+//       case "location":
+//         return <MapPin size={28} strokeWidth={2} />;
+//       default:
+//         return null;
+//     }
+//   };
+//
+//   const siteUserStats = [
+//     { site: "Sector 21 – Noida", users: 4 },
+//     { site: "DLF Phase 3 – Gurgaon", users: 3 },
+//     { site: "Indira Nagar – Lucknow", users: 2 },
+//     { site: "Andheri East – Mumbai", users: 5 },
+//     { site: "Whitefield – Bengaluru", users: 4 },
+//     { site: "HSR Layout – Bengaluru", users: 3 },
+//     { site: "Salt Lake – Kolkata", users: 2 },
+//     { site: "Banjara Hills – Hyderabad", users: 3 },
+//     { site: "Powai – Mumbai", users: 1 },
+//     { site: "Viman Nagar – Pune", users: 2 },
     { site: "Navrangpura – Ahmedabad", users: 2 },
     { site: "Alkapuri – Vadodara", users: 1 },
   ];

@@ -1,63 +1,63 @@
-import { useState, useMemo, useEffect } from 'react';
-import style from './FEUsers.module.css';
-import { Plus, MapPin, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
-import AddFEAppUserModal from '../../Components/FEUsers/AddFEAppUserModal/AddFEAppUserModal';
-import AssignSiteModal from '../../Components/FEUsers/AssignSiteModal/AssignSiteModal';
-import * as action from '../../Actions/FEUsers/FEUsers_Action';
-import WevoisLoader from '../../../components/Common/Loader/WevoisLoader';
-import GlobalAlertModal from '../../../components/GlobalAlertModal/GlobalAlertModal';
-
-
-const FEUsers = () => {
-  const [userList, setUserList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [availableSites, setAvailableSites] = useState([]);
-  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-  const [selectedUserForSite, setSelectedUserForSite] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('Active');
-  const [siteFilter, setSiteFilter] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({
-    show: false,
-    type: 'warning', // 'warning' for Deactivate, 'success' for Activate
-    user: null
-  });
-
-useEffect(() => {
-    const initializeData = async () => {
-        setIsLoading(true);
-        // Step 1: Pehle sites fetch karo aur result lo
-        const sites = await action.getAllowedSites(setAvailableSites); 
-        
-        // Step 2: Sites chahe empty ho ya nahi, list fetch karo
-        // ManagerId and CreatedBy logic backend handle kar lega
-        await action.getFEUsersList(setUserList, setIsLoading, sites);
-    };
-
-    initializeData();
-}, []);
-
-  const handleAddUserSuccess = (newUser) => {
-    setUserList(prev => [newUser, ...prev]);
-  };
-
-  const handleOpenAssignModal = (user) => {
-    setSelectedUserForSite(user);
-    setIsAssignModalOpen(true);
-  };
-
-  // ✅ New API Integrated Toggle Logic
-  const handleToggleStatus = (empCode, currentStatus) => {
-    // Action call jo backend API hit karega aur local state (setUserList) ko update karega
-    action.updateFEUserStatus(empCode, currentStatus, setUserList);
-  };
-  // Jab User Toggle Button par click karega
-  const handleToggleClick = (user) => {
-    const isCurrentlyActive = user.status === 'Active';
-
-    setAlertConfig({
-      show: true,
+// import { useState, useMemo, useEffect } from 'react';
+// import style from './FEUsers.module.css';
+// import { Plus, MapPin, Search, Users, ShieldCheck, MapPinned, Power, PowerOff, UserMinus, ChevronDown } from 'lucide-react';
+// import AddFEAppUserModal from '../../Components/FEUsers/AddFEAppUserModal/AddFEAppUserModal';
+// import AssignSiteModal from '../../Components/FEUsers/AssignSiteModal/AssignSiteModal';
+// import * as action from '../../Actions/FEUsers/FEUsers_Action';
+// import WevoisLoader from '../../../components/Common/Loader/WevoisLoader';
+// import GlobalAlertModal from '../../../components/GlobalAlertModal/GlobalAlertModal';
+//
+// const FEUsers = () => {
+//   const [userList, setUserList] = useState([]);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [availableSites, setAvailableSites] = useState([]);
+//   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+//   const [selectedUserForSite, setSelectedUserForSite] = useState(null);
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [statusFilter, setStatusFilter] = useState('Active');
+//   const [siteFilter, setSiteFilter] = useState('');
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [alertConfig, setAlertConfig] = useState({
+//     show: false,
+//     type: 'warning', // 'warning' for Deactivate, 'success' for Activate
+//     user: null
+//   });
+//
+// useEffect(() => {
+//     const initializeData = async () => {
+//         setIsLoading(true);
+//         // Step 1: Pehle sites fetch karo aur result lo
+//         const sites = await action.getAllowedSites(setAvailableSites); 
+//         
+//         // Step 2: Sites chahe empty ho ya nahi, list fetch karo
+//         // ManagerId and CreatedBy logic backend handle kar lega
+//         await action.getFEUsersList(setUserList, setIsLoading, sites);
+//     };
+//
+//     initializeData();
+// }, []);
+//
+//   const handleAddUserSuccess = (newUser) => {
+//     setUserList(prev => [newUser, ...prev]);
+//   };
+//
+//   const handleOpenAssignModal = (user) => {
+//     setSelectedUserForSite(user);
+//     setIsAssignModalOpen(true);
+//   };
+//
+//   // 
+ New API Integrated Toggle Logic
+//   const handleToggleStatus = (empCode, currentStatus) => {
+//     // Action call jo backend API hit karega aur local state (setUserList) ko update karega
+//     action.updateFEUserStatus(empCode, currentStatus, setUserList);
+//   };
+//   // Jab User Toggle Button par click karega
+//   const handleToggleClick = (user) => {
+//     const isCurrentlyActive = user.status === 'Active';
+//
+//     setAlertConfig({
+//       show: true,
       type: isCurrentlyActive ? 'warning' : 'success',
       user: user
     });

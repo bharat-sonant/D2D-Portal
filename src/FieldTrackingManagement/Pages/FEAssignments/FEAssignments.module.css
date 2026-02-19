@@ -1,4 +1,4 @@
-.employeesContainer {
+/* .employeesContainer {
     position: relative;
     overflow: hidden;
     display: flex;
@@ -307,4 +307,4 @@
 .assignTaskBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
+} */

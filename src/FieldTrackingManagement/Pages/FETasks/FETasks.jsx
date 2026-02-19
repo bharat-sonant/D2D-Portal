@@ -1,62 +1,62 @@
-import React, { useEffect, useRef, useState } from "react";
-import GlobalStyles from "../../../assets/css/globalStyles.module.css";
-import modalStyles from "../../../assets/css/popup.module.css";
-import AddTask from "../../Components/FETasks/AddTask";
-import style from "./FETasks.module.css";
-import noData from "../../../assets/images/icons/noData.gif";
-import {
-  getallTasks,
-  saveTaskAction,
-  updateTaskAction,
-} from "../../Actions/FETasks/FETasksAction";
-import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
-import { Edit2, ClipboardList, X } from "lucide-react";
-import NoResult from "../../../components/NoResultFound/NoResult";
-import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
-import Toggle from "../../../components/Common/GlobalToggle/Toggle";
-const FETasks = () => {
-  const tableRef = useRef(null);
-  const [openCanvas, setOpenCanvas] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [taskName, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("active");
-  const [editTaskId, setEditTaskId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [openDesc, setOpenDesc] = useState(false);
-  const [descContent, setDescContent] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [compactFab, setCompactFab] = useState(false);
-
-  useEffect(() => {
-    const el = tableRef.current;
-    if (!el) return;
-
-    let lastScrollTop = 0;
-
-    const onScroll = () => {
-      const currentScroll = el.scrollTop;
-
-      if (currentScroll > lastScrollTop && currentScroll > 20) {
-        // scrolling down
-        setCompactFab(true);
-      } else if (currentScroll < lastScrollTop) {
-        // scrolling up
-        setCompactFab(false);
-      }
-
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-    };
-
-    el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-  useEffect(() => {
-    getallTasks(setTasks, setLoading);
-  }, []);
+// import React, { useEffect, useRef, useState } from "react";
+// import GlobalStyles from "../../../assets/css/globalStyles.module.css";
+// import modalStyles from "../../../assets/css/popup.module.css";
+// import AddTask from "../../Components/FETasks/AddTask";
+// import style from "./FETasks.module.css";
+// import noData from "../../../assets/images/icons/noData.gif";
+// import {
+//   getallTasks,
+//   saveTaskAction,
+//   updateTaskAction,
+// } from "../../Actions/FETasks/FETasksAction";
+// import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
+// import { Edit2, ClipboardList, X } from "lucide-react";
+// import NoResult from "../../../components/NoResultFound/NoResult";
+// import GlobalAlertModal from "../../../components/GlobalAlertModal/GlobalAlertModal";
+// import Toggle from "../../../components/Common/GlobalToggle/Toggle";
+// const FETasks = () => {
+//   const tableRef = useRef(null);
+//   const [openCanvas, setOpenCanvas] = useState(false);
+//   const [tasks, setTasks] = useState([]);
+//   const [isEdit, setIsEdit] = useState(false);
+//   const [taskName, setTaskName] = useState("");
+//   const [description, setDescription] = useState("");
+//   const [status, setStatus] = useState("active");
+//   const [editTaskId, setEditTaskId] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [isAlertOpen, setIsAlertOpen] = useState(false);
+//   const [selectedTask, setSelectedTask] = useState(null);
+//   const [openDesc, setOpenDesc] = useState(false);
+//   const [descContent, setDescContent] = useState("");
+//   const [statusFilter, setStatusFilter] = useState("all");
+//   const [compactFab, setCompactFab] = useState(false);
+//
+//   useEffect(() => {
+//     const el = tableRef.current;
+//     if (!el) return;
+//
+//     let lastScrollTop = 0;
+//
+//     const onScroll = () => {
+//       const currentScroll = el.scrollTop;
+//
+//       if (currentScroll > lastScrollTop && currentScroll > 20) {
+//         // scrolling down
+//         setCompactFab(true);
+//       } else if (currentScroll < lastScrollTop) {
+//         // scrolling up
+//         setCompactFab(false);
+//       }
+//
+//       lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+//     };
+//
+//     el.addEventListener("scroll", onScroll);
+//     return () => el.removeEventListener("scroll", onScroll);
+//   }, []);
+//   useEffect(() => {
+//     getallTasks(setTasks, setLoading);
+//   }, []);
 
   const handleOpenModal = () => {
     setOpenCanvas(true);
