@@ -58,145 +58,145 @@
 //     getallTasks(setTasks, setLoading);
 //   }, []);
 
-  const handleOpenModal = () => {
-    setOpenCanvas(true);
-  };
+  // const handleOpenModal = () => {
+  //   setOpenCanvas(true);
+  // };
 
-  const normalizeTask = (task) => ({
-    id: task.id,
-    taskName: task.taskName ?? task.task_name,
-    description: task.description,
-    status: task.status,
-  });
+  // const normalizeTask = (task) => ({
+  //   id: task.id,
+  //   taskName: task.taskName ?? task.task_name,
+  //   description: task.description,
+  //   status: task.status,
+  // });
 
-  const handleSaveTask = async (taskData) => {
-    if (isEdit) {
-      // optimistic update
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === editTaskId ? { ...task, ...taskData } : task,
-        ),
-      );
+  // const handleSaveTask = async (taskData) => {
+  //   if (isEdit) {
+  //     // optimistic update
+  //     setTasks((prev) =>
+  //       prev.map((task) =>
+  //         task.id === editTaskId ? { ...task, ...taskData } : task,
+  //       ),
+  //     );
 
-      try {
-        const updated = await updateTaskAction(editTaskId, taskData);
-        const updatedTask = normalizeTask(updated);
+  //     try {
+  //       const updated = await updateTaskAction(editTaskId, taskData);
+  //       const updatedTask = normalizeTask(updated);
 
-        setTasks((prev) =>
-          prev.map((task) => (task.id === editTaskId ? updatedTask : task)),
-        );
-      } catch {
-        // optional rollback (if needed)
-      }
+  //       setTasks((prev) =>
+  //         prev.map((task) => (task.id === editTaskId ? updatedTask : task)),
+  //       );
+  //     } catch {
+  //       // optional rollback (if needed)
+  //     }
 
-      setEditTaskId(null);
-      setIsEdit(false);
-      return;
-    }
+  //     setEditTaskId(null);
+  //     setIsEdit(false);
+  //     return;
+  //   }
 
-    // =====================
-    // ADD TASK (OPTIMISTIC)
-    // =====================
-    const tempId = Date.now();
+  //   // =====================
+  //   // ADD TASK (OPTIMISTIC)
+  //   // =====================
+  //   const tempId = Date.now();
 
-    const tempTask = {
-      id: tempId,
-      ...taskData,
-    };
+  //   const tempTask = {
+  //     id: tempId,
+  //     ...taskData,
+  //   };
 
-    setTasks((prev) => [...prev, tempTask]);
+  //   setTasks((prev) => [...prev, tempTask]);
 
-    try {
-      const created = await saveTaskAction(taskData);
-      const createdTask = normalizeTask(created);
+  //   try {
+  //     const created = await saveTaskAction(taskData);
+  //     const createdTask = normalizeTask(created);
 
-      setTasks((prev) =>
-        prev.map((task) => (task.id === tempId ? createdTask : task)),
-      );
-    } catch {
-      // rollback
-      setTasks((prev) => prev.filter((task) => task.id !== tempId));
-    }
+  //     setTasks((prev) =>
+  //       prev.map((task) => (task.id === tempId ? createdTask : task)),
+  //     );
+  //   } catch {
+  //     // rollback
+  //     setTasks((prev) => prev.filter((task) => task.id !== tempId));
+  //   }
 
-    setEditTaskId(null);
-    setIsEdit(false);
-  };
+  //   setEditTaskId(null);
+  //   setIsEdit(false);
+  // };
 
-  const handleEdit = (task) => {
-    setIsEdit(true);
-    setEditTaskId(task.id);
+  // const handleEdit = (task) => {
+  //   setIsEdit(true);
+  //   setEditTaskId(task.id);
 
-    setTaskName(task.taskName);
-    setDescription(task.description);
-    setStatus(task.status);
+  //   setTaskName(task.taskName);
+  //   setDescription(task.description);
+  //   setStatus(task.status);
 
-    setOpenCanvas(true);
-  };
+  //   setOpenCanvas(true);
+  // };
 
-  const handleStatusToggle = async (task) => {
-    const newStatus = task.status === "active" ? "inactive" : "active";
+  // const handleStatusToggle = async (task) => {
+  //   const newStatus = task.status === "active" ? "inactive" : "active";
 
-    setTasks((prev) =>
-      prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t)),
-    );
+  //   setTasks((prev) =>
+  //     prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t)),
+  //   );
 
-    try {
-      await updateTaskAction(task.id, { status: newStatus });
-    } catch (error) {
-      setTasks((prev) =>
-        prev.map((t) => (t.id === task.id ? { ...t, status: task.status } : t)),
-      );
-    }
-  };
+  //   try {
+  //     await updateTaskAction(task.id, { status: newStatus });
+  //   } catch (error) {
+  //     setTasks((prev) =>
+  //       prev.map((t) => (t.id === task.id ? { ...t, status: task.status } : t)),
+  //     );
+  //   }
+  // };
 
-  const filterTasks = tasks?.filter((task) => {
-    if (statusFilter === "all") return true;
-    return task?.status === statusFilter;
-  });
+  // const filterTasks = tasks?.filter((task) => {
+  //   if (statusFilter === "all") return true;
+  //   return task?.status === statusFilter;
+  // });
 
-  return (
-    <>
-      <button
-        className={`${GlobalStyles.btnTheme} ${style.addbtn} ${
-          compactFab ? style.compactFab : ""
-        }`}
-        onClick={handleOpenModal}
-      >
-        <span className={style.plusIcon}>+</span>
-        {!compactFab && <span className={style.fabText}>Add New Task</span>}
-      </button>
-      {/* Background */}
-      <div className={GlobalStyles.background}>
-        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb1}`} />
-        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb2}`} />
-        <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb3}`} />
-        <div className={GlobalStyles.gridOverlay} />
-      </div>
+  // return (
+  //   <>
+  //     <button
+  //       className={`${GlobalStyles.btnTheme} ${style.addbtn} ${
+  //         compactFab ? style.compactFab : ""
+  //       }`}
+  //       onClick={handleOpenModal}
+  //     >
+  //       <span className={style.plusIcon}>+</span>
+  //       {!compactFab && <span className={style.fabText}>Add New Task</span>}
+  //     </button>
+  //     {/* Background */}
+  //     <div className={GlobalStyles.background}>
+  //       <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb1}`} />
+  //       <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb2}`} />
+  //       <div className={`${GlobalStyles.gradientOrb} ${GlobalStyles.orb3}`} />
+  //       <div className={GlobalStyles.gridOverlay} />
+  //     </div>
 
-      {/* Particles */}
-      <div className={GlobalStyles.particles}>
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className={GlobalStyles.particle}
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
-      </div>
-      <div className={style.FETaskContainer}>
-        <div className={style.FETaskHeader}>
-          <div className={style.headerLeft}>
-            <span className={style.headerIcon}>📝</span>
-            <div className={style.pageTitle}>
-              Task Management
-              <p>Manage task(s) for field executives</p>
-            </div>
-          </div>
-          <div>
+  //     {/* Particles */}
+  //     <div className={GlobalStyles.particles}>
+  //       {[...Array(20)].map((_, i) => (
+  //         <div
+  //           key={i}
+  //           className={GlobalStyles.particle}
+  //           style={{
+  //             left: `${Math.random() * 100}%`,
+  //             animationDelay: `${Math.random() * 5}s`,
+  //             animationDuration: `${5 + Math.random() * 10}s`,
+  //           }}
+  //         />
+  //       ))}
+  //     </div>
+  //     <div className={style.FETaskContainer}>
+  //       <div className={style.FETaskHeader}>
+  //         <div className={style.headerLeft}>
+  //           <span className={style.headerIcon}>📝</span>
+  //           <div className={style.pageTitle}>
+  //             Task Management
+  //             <p>Manage task(s) for field executives</p>
+  //           </div>
+  //         </div>
+  //         <div>
             {/* <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -206,183 +206,183 @@
             <option value='inactive'>Inactive</option>
           </select> */}
 
-            <div className={style.headerRight}>
-              <div className={style.toggle}>
-                <button
-                  className={`${style.toggleBtn} ${
-                    statusFilter === "all" ? style.activeToggle : ""
-                  }`}
-                  onClick={() => setStatusFilter("all")}
-                >
-                  All Task
-                </button>
+      //       <div className={style.headerRight}>
+      //         <div className={style.toggle}>
+      //           <button
+      //             className={`${style.toggleBtn} ${
+      //               statusFilter === "all" ? style.activeToggle : ""
+      //             }`}
+      //             onClick={() => setStatusFilter("all")}
+      //           >
+      //             All Task
+      //           </button>
 
-                <button
-                  className={`${style.toggleBtn} ${
-                    statusFilter === "active" ? style.activeToggle : ""
-                  }`}
-                  onClick={() => setStatusFilter("active")}
-                >
-                  Active
-                </button>
+      //           <button
+      //             className={`${style.toggleBtn} ${
+      //               statusFilter === "active" ? style.activeToggle : ""
+      //             }`}
+      //             onClick={() => setStatusFilter("active")}
+      //           >
+      //             Active
+      //           </button>
 
-                <button
-                  className={`${style.toggleBtn} ${
-                    statusFilter === "inactive" ? style.activeToggle : ""
-                  }`}
-                  onClick={() => setStatusFilter("inactive")}
-                >
-                  Inactive
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div ref={tableRef} className={`${style.tableContainer}`}>
-          <table className={style.table}>
-            <thead>
-              <tr>
-                <th className={style.th1}>S. No</th>
-                <th className={style.th2} style={{ width: "20%" }}>
-                  Task Name
-                </th>
-                <th className={style.th3}>Description</th>
-                <th className={`text-end ${style.th4}`} style={{ width: "5%" }}>
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <td colSpan="5" className={style.loaderCell}>
-                  <WevoisLoader
-                    height="calc(100vh - 225px)"
-                    title="loading tasks..."
-                  />
-                </td>
-              ) : filterTasks.length === 0 ? (
-                <td colSpan="5" className={style.emptyCell}>
-                  <NoResult
-                    title="No data available"
-                    // query={searchTerm}
-                    gif={noData}
-                    height="calc(100vh - 225px)"
-                  />
-                </td>
-              ) : (
-                filterTasks.map((task, index) => (
-                  <tr key={task.id}>
-                    <td className={style.th1}>
-                      <div
-                        className={`${style.snNumber}`}
-                        onClick={() => handleEdit(task)}
-                      >
-                        <span>{index + 1}</span>
-                        <Edit2 className={style.editIcon} size={16} />
-                      </div>
-                    </td>
-                    <td className={style.th2}>{task.taskName}</td>
-                    <td className={style.th3}>
-                      <div
-                        className={style.descCell}
-                        ref={(el) => {
-                          if (el && el.scrollWidth > el.clientWidth) {
-                            el.classList.add(style.isEllipsis);
-                          }
-                        }}
-                        onClick={() => {
-                          setDescContent(task.description);
-                          setOpenDesc(true);
-                        }}
-                      >
-                        {task.description}
-                      </div>
-                    </td>
-                    <td className={`text-end ${style.th4}`}>
-                      <Toggle
-                        checked={task.status === "active"}
-                        onChange={() => {
-                          setSelectedTask(task);
-                          setIsAlertOpen(true);
-                        }}
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      //           <button
+      //             className={`${style.toggleBtn} ${
+      //               statusFilter === "inactive" ? style.activeToggle : ""
+      //             }`}
+      //             onClick={() => setStatusFilter("inactive")}
+      //           >
+      //             Inactive
+      //           </button>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      //   <div ref={tableRef} className={`${style.tableContainer}`}>
+      //     <table className={style.table}>
+      //       <thead>
+      //         <tr>
+      //           <th className={style.th1}>S. No</th>
+      //           <th className={style.th2} style={{ width: "20%" }}>
+      //             Task Name
+      //           </th>
+      //           <th className={style.th3}>Description</th>
+      //           <th className={`text-end ${style.th4}`} style={{ width: "5%" }}>
+      //             Status
+      //           </th>
+      //         </tr>
+      //       </thead>
+      //       <tbody>
+      //         {loading ? (
+      //           <td colSpan="5" className={style.loaderCell}>
+      //             <WevoisLoader
+      //               height="calc(100vh - 225px)"
+      //               title="loading tasks..."
+      //             />
+      //           </td>
+      //         ) : filterTasks.length === 0 ? (
+      //           <td colSpan="5" className={style.emptyCell}>
+      //             <NoResult
+      //               title="No data available"
+      //               // query={searchTerm}
+      //               gif={noData}
+      //               height="calc(100vh - 225px)"
+      //             />
+      //           </td>
+      //         ) : (
+      //           filterTasks.map((task, index) => (
+      //             <tr key={task.id}>
+      //               <td className={style.th1}>
+      //                 <div
+      //                   className={`${style.snNumber}`}
+      //                   onClick={() => handleEdit(task)}
+      //                 >
+      //                   <span>{index + 1}</span>
+      //                   <Edit2 className={style.editIcon} size={16} />
+      //                 </div>
+      //               </td>
+      //               <td className={style.th2}>{task.taskName}</td>
+      //               <td className={style.th3}>
+      //                 <div
+      //                   className={style.descCell}
+      //                   ref={(el) => {
+      //                     if (el && el.scrollWidth > el.clientWidth) {
+      //                       el.classList.add(style.isEllipsis);
+      //                     }
+      //                   }}
+      //                   onClick={() => {
+      //                     setDescContent(task.description);
+      //                     setOpenDesc(true);
+      //                   }}
+      //                 >
+      //                   {task.description}
+      //                 </div>
+      //               </td>
+      //               <td className={`text-end ${style.th4}`}>
+      //                 <Toggle
+      //                   checked={task.status === "active"}
+      //                   onChange={() => {
+      //                     setSelectedTask(task);
+      //                     setIsAlertOpen(true);
+      //                   }}
+      //                 />
+      //               </td>
+      //             </tr>
+      //           ))
+      //         )}
+      //       </tbody>
+      //     </table>
+      //   </div>
+      // </div>
 
-      {openCanvas && (
-        <AddTask
-          taskName={taskName}
-          setTaskName={setTaskName}
-          description={description}
-          setDescription={setDescription}
-          setOpenCanvas={setOpenCanvas}
-          isEdit={isEdit}
-          setIsEdit={setIsEdit}
-          setEditIndex={setEditTaskId}
-          onSave={handleSaveTask}
-        />
-      )}
-      {openDesc && (
-        <div className={style.descOverlay}>
-          <div className={`${modalStyles.modal} `}>
-            {/* Header */}
-            <div className={modalStyles.modalHeader}>
-              <div className={modalStyles.headerLeft}>
-                <div className={modalStyles.iconWrapper}>
-                  <ClipboardList className="map-icon" />
-                </div>
-                <div className={modalStyles.headerTextRight}>
-                  <h2 className={modalStyles.modalTitle}>Description</h2>
-                  <p className={modalStyles.modalSubtitle}>
-                    View the complete details of this task
-                  </p>
-                </div>
-              </div>
-              <button
-                className={modalStyles.closeBtn}
-                onClick={() => setOpenDesc(false)}
-              >
-                <X size={20} />
-              </button>
-            </div>
+      // {openCanvas && (
+      //   <AddTask
+      //     taskName={taskName}
+      //     setTaskName={setTaskName}
+      //     description={description}
+      //     setDescription={setDescription}
+      //     setOpenCanvas={setOpenCanvas}
+      //     isEdit={isEdit}
+      //     setIsEdit={setIsEdit}
+      //     setEditIndex={setEditTaskId}
+      //     onSave={handleSaveTask}
+      //   />
+      // )}
+      // {openDesc && (
+      //   <div className={style.descOverlay}>
+      //     <div className={`${modalStyles.modal} `}>
+      //       {/* Header */}
+      //       <div className={modalStyles.modalHeader}>
+      //         <div className={modalStyles.headerLeft}>
+      //           <div className={modalStyles.iconWrapper}>
+      //             <ClipboardList className="map-icon" />
+      //           </div>
+      //           <div className={modalStyles.headerTextRight}>
+      //             <h2 className={modalStyles.modalTitle}>Description</h2>
+      //             <p className={modalStyles.modalSubtitle}>
+      //               View the complete details of this task
+      //             </p>
+      //           </div>
+      //         </div>
+      //         <button
+      //           className={modalStyles.closeBtn}
+      //           onClick={() => setOpenDesc(false)}
+      //         >
+      //           <X size={20} />
+      //         </button>
+      //       </div>
 
-            <div className={`${modalStyles.modalBody}`}>{descContent}</div>
-          </div>
-        </div>
-      )}
-      <GlobalAlertModal
-        show={isAlertOpen}
+      //       <div className={`${modalStyles.modalBody}`}>{descContent}</div>
+      //     </div>
+      //   </div>
+      // )}
+      // <GlobalAlertModal
+      //   show={isAlertOpen}
         // title="Confirmation Status Update"
-        title={
-          selectedTask?.status === "active" ? "Deactivate Task" : "Ativate Task"
-        }
-        message={`Do you really want to ${
-          selectedTask?.status === "active" ? "deactivate" : "activate"
-        } this task?`}
-        buttonText={
-          selectedTask?.status === "active" ? "Deactivate" : "Yes, Activate"
-        }
-        iconType={selectedTask?.status === "active" ? "warning" : "success"}
-        warningText="This task will be deactivated for all users"
-        successText="This task will be activated for all users"
-        onCancel={() => {
-          setIsAlertOpen(false);
-          setSelectedTask(null);
-        }}
-        onConfirm={() => {
-          handleStatusToggle(selectedTask);
-          setIsAlertOpen(false);
-          setSelectedTask(null);
-        }}
-      />
-    </>
-  );
-};
+        // title={
+        //   selectedTask?.status === "active" ? "Deactivate Task" : "Ativate Task"
+        // }
+        // message={`Do you really want to ${
+        //   selectedTask?.status === "active" ? "deactivate" : "activate"
+        // } this task?`}
+        // buttonText={
+        //   selectedTask?.status === "active" ? "Deactivate" : "Yes, Activate"
+        // }
+        // iconType={selectedTask?.status === "active" ? "warning" : "success"}
+        // warningText="This task will be deactivated for all users"
+        // successText="This task will be activated for all users"
+        // onCancel={() => {
+        //   setIsAlertOpen(false);
+        //   setSelectedTask(null);
+        // }}
+        // onConfirm={() => {
+        //   handleStatusToggle(selectedTask);
+        //   setIsAlertOpen(false);
+        //   setSelectedTask(null);
+        // }}
+//       />
+//     </>
+//   );
+// };
 
-export default FETasks;
+// export default FETasks;
