@@ -149,7 +149,6 @@ export const getAllDepartmentData = (setDepartmentData, setLoading) => {
     if (setLoading) setLoading(true);
     try {
         service.getDepartments().then((resp) => {
-            console.log(resp)
             if (resp.status === 'success') {
                 setDepartmentData(resp.data)
             } else {
