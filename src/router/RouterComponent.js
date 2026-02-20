@@ -46,6 +46,8 @@ import FE_Layout from "../FieldTrackingManagement/Layout/FE_Layout";
 import FEAssignments from "../FieldTrackingManagement/Pages/FEAssignments/FEAssignments";
 import FuelReport from "../FuelManagement/pages/FuelReport/FuelReport";
 import FEUsers from "../FieldTrackingManagement/Pages/FEEmployees/FEUsers";
+import D2DMonitoringLayout from "../mainLayout/D2DMonitoringLayout/D2DMonitoringLayout";
+import D2DMonitoringDashboard from "../D2DMonitoring/Pages/Dashboard/D2DMonitoringDashboard";
 
 
 const RouterComponent = () => {
@@ -104,6 +106,14 @@ const RouterComponent = () => {
         <Route path="/employee/employees" element={<ProtectedRouter><EmployeeLayout><Employees /></EmployeeLayout></ProtectedRouter>} />
         <Route path="/employee/branches" element={<ProtectedRouter><EmployeeLayout><Branches /></EmployeeLayout></ProtectedRouter>} />
         <Route path="/employee/departments" element={<ProtectedRouter><EmployeeLayout><Departments /></EmployeeLayout></ProtectedRouter>} />
+
+        <Route path="/d2dMonitoring/dashboard" element={
+          <ProtectedRouter>
+            <D2DMonitoringLayout>
+              <D2DMonitoringDashboard />
+            </D2DMonitoringLayout>
+          </ProtectedRouter>
+        } />
 
         {/*Fuel Management Section*/}
         <Route
@@ -257,7 +267,7 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
-       <Route
+        <Route
           path="/realtime"
           element={
             <ProtectedRouter>

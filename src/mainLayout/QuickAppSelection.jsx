@@ -353,7 +353,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePermissions } from "../context/PermissionContext";
 
 const appsList = [
-  { id: 1, name: "D2D Monitoring", icon: Eye, color: "#667eea" },
+  { id: 1, name: "D2D Monitoring", icon: Eye, color: "#667eea", path: '/d2dMonitoring/dashboard' },
   // { id: 2, name: "Dustbin Management", icon: Trash2, color: "#f56565" },
   // {
   //   id: 3,
@@ -462,9 +462,8 @@ const QuickAppSelection = ({
             {visibleApps.map((app) => (
               <div
                 key={app.id}
-                className={`${styles.userTypeCard} ${
-                  activePath === app.path ? styles.activeCard : ""
-                }`}
+                className={`${styles.userTypeCard} ${activePath === app.path ? styles.activeCard : ""
+                  }`}
                 onClick={() => handleAppClick(app.path)}
               >
                 <div
@@ -494,9 +493,8 @@ const QuickAppSelection = ({
               {managementOptions.map((opt) => (
                 <div
                   key={opt.id}
-                  className={`${styles.userTypeCard} ${
-                    activePath === opt.path ? styles.activeCard : ""
-                  }`}
+                  className={`${styles.userTypeCard} ${activePath === opt.path ? styles.activeCard : ""
+                    }`}
                   onClick={() => handleAppClick(opt.path)}
                 >
                   <div
