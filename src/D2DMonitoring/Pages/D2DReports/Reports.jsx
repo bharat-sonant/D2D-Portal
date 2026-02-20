@@ -20,7 +20,7 @@ const D2DReports = () => {
   return (
     <>
       <div className={d2dStyle.dashboardHeader}>
-        <h1 className={d2dStyle.dashboardTitle}>Realtime</h1>
+        <h1 className={d2dStyle.dashboardTitle}>Reports</h1>
         <p className={d2dStyle.dashboardSubtitle}>
           Track field activity, monitor team performance, and review live updates.
         </p>

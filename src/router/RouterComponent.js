@@ -48,8 +48,8 @@ import FuelReport from "../FuelManagement/pages/FuelReport/FuelReport";
 import FEUsers from "../FieldTrackingManagement/Pages/FEEmployees/FEUsers";
 import D2DMonitoringLayout from "../mainLayout/D2DMonitoringLayout/D2DMonitoringLayout";
 import D2DMonitoringDashboard from "../D2DMonitoring/Pages/Dashboard/D2DMonitoringDashboard";
-import D2DRealtime from "../D2DMonitoring/Pages/Realtime/D2DRealtime";
 import D2DReports from "../D2DMonitoring/Pages/D2DReports/Reports";
+import D2DRealtime from "../D2DMonitoring/Pages/D2DRealtime/Realtime";
 
 
 const RouterComponent = () => {

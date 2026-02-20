@@ -22,9 +22,9 @@ const D2DMonitoringSidebar = () => {
 
     const menuItems = [
         { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", to: "/d2dMonitoring/dashboard" },
-        { id: "realtime", icon: MapPinHouse, label: "Realtime Design", to: "/d2dMonitoring/realtime" },
+        { id: "realtime", icon: MapPinHouse, label: "Realtime", to: "/d2dMonitoring/realtime" },
         { id: "report", icon: ClipboardMinus, label: "Report", to: "/d2dMonitoring/report" },
-        { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/monitoring" },
+        // { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/monitoring" },
     ];
 
     useEffect(() => {
