@@ -968,6 +968,15 @@
   font-family: var(--fontGraphik);
 }
 
+.enhancedPhoneLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.enhancedPhoneLink:hover {
+  text-decoration: underline;
+}
+
 .enhancedRatingRow {
   display: flex;
   align-items: center;
@@ -1314,7 +1323,7 @@
 .mapQuickBtn {
   width: 38px;
   height: 38px;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid rgba(40, 152, 202, 0.28);
   background: rgba(255, 255, 255, 0.95);
   color: var(--themeColor);

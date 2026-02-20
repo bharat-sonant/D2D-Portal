@@ -1144,7 +1144,12 @@ const EnhancedProfile = ({ profile, role, isOnline }) => (
         <span className={styles.enhancedProfileName}>{profile.name}</span>
         <div className={styles.enhancedProfilePhone}>
           <Phone size={11} />
-          <span>{profile.phone}</span>
+          <a
+            href={`tel:${profile.phone.replace(/[^\d+]/g, "")}`}
+            className={styles.enhancedPhoneLink}
+          >
+            {profile.phone}
+          </a>
         </div>
       </div>
     </div>
