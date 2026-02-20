@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardMinus, LayoutDashboard, Lock, LockOpen, MapPinHouse, Menu, SquareActivity, X } from "lucide-react";
-
-import { NavLink } from "react-router-dom";
+import { ChevronRight, ClipboardMinus, LayoutDashboard, Lock, LockOpen, MapPinHouse, Menu, SquareActivity, X } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
 import LogoImage from '../../assets/images/wevoisLogo.png';
 import styles from "../../assets/css/D2DMonitoring/Sidebar/Sidebar.module.css";
+import ChangePassword from "../../components/ChangePassword/changePassword";
+import QuickAppSelection from "../QuickAppSelection";
+import { useCity } from "../../context/CityContext";
+import { Icon2SquareFill } from "react-bootstrap-icons";
 
 const D2DMonitoringSidebar = () => {
+    const navigate = useNavigate();
+    const { setCityContext } = useCity();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLocked, setIsLocked] = useState(false);
     const [isHoverExpanded, setIsHoverExpanded] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
+    const [showChangePassword, setShowChangePassword] = useState(false);
     const [userName, setUserName] = useState("Admin");
     const effectiveExpanded = isExpanded || (isHoverExpanded && !isLocked);
 
@@ -23,7 +30,7 @@ const D2DMonitoringSidebar = () => {
 
     const menuItems = [
         { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", to: "/d2dMonitoring/dashboard" },
-        { id: "realtime", icon: MapPinHouse, label: "Realtime", to: "/d2dMonitoring/realtime" },
+        { id: "realtime", icon: MapPinHouse, label: "Realtime-Design", to: "/d2dMonitoring/realtime" },
         { id: "report", icon: ClipboardMinus, label: "Report", to: "/d2dMonitoring/report" },
         { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/d2dMonitoring/monitoring" },
     ];
@@ -32,6 +39,24 @@ const D2DMonitoringSidebar = () => {
         const savedName = localStorage.getItem("name");
         if (savedName) setUserName(savedName);
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("loginDate");
+        localStorage.removeItem("name");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("city");
+        localStorage.removeItem("cityId");
+        localStorage.removeItem("defaultCity");
+        localStorage.removeItem("logoUrl");
+
+        setCityContext({
+            city: "",
+            cityId: "",
+            cityLogo: "",
+        });
+        navigate("/");
+    };
 
     useEffect(() => {
         const setSidebarWidth = () => {
@@ -120,17 +145,38 @@ const D2DMonitoringSidebar = () => {
                 </div>
 
                 <div className={styles.footer}>
-                    <div className={styles.profile}>
-                        <div className={styles.avatar}>{getInitial(userName)}</div>
+                    <div
+                        className={styles.quickAccessCard}
+                        onClick={() => setShowQuickAppSelect(true)}
+                        title="Open Quick Apps"
+                        style={{ cursor: "pointer" }}
+                    >
+                        <div className={styles.quickAccessIcon}>
+                            <Icon2SquareFill size={16} />
+                        </div>
                         {effectiveExpanded && (
-                            <div className={styles.userInfo}>
-                                <p className={styles.name}>{userName}</p>
-                                <p className={styles.status}>{rememberedUser?.emailAddress || ""}</p>
+                            <div className={styles.quickAccessInfo}>
+                                <p className={styles.quickAccessTitle}>Quick Apps</p>
+                                <p className={styles.quickAccessHint}>Switch apps and account actions</p>
                             </div>
                         )}
+                        {effectiveExpanded && <ChevronRight size={16} className={styles.quickAccessArrow} />}
                     </div>
                 </div>
             </aside>
+
+            <ChangePassword
+                showChangePassword={showChangePassword}
+                setShowChangePassword={setShowChangePassword}
+            />
+            <QuickAppSelection
+                showQuickAppSelect={showQuickAppSelect}
+                onClose={() => setShowQuickAppSelect(false)}
+                isDropdown={true}
+                dropdownPosition="bottom-left"
+                onChangePassword={() => setShowChangePassword(true)}
+                onLogout={handleLogout}
+            />
         </>
     );
 };

@@ -14,6 +14,20 @@
   align-items: flex-start;
 }
 
+.dropdownOverlayBottomLeft {
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 0 0 80px 90px;
+}
+
+.dropdownOverlayBottomLeft .modalApp::before {
+  top: auto;
+  bottom: -8px;
+  left: 28px;
+  right: auto;
+  transform: rotate(225deg);
+}
+
 /* ================= Modal ================= */
 
 .modal {
@@ -281,6 +295,16 @@
 @media (max-width: 768px) {
   .dropdownOverlay {
     padding: 70px 10px 0 10px;
+  }
+
+  .dropdownOverlayBottomLeft {
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .dropdownOverlayBottomLeft .modalApp::before {
+    display: none;
   }
   .appsGridDropdown {
     grid-template-columns: repeat(2, 1fr);

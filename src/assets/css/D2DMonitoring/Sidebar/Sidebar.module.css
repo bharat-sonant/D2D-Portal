@@ -278,6 +278,63 @@
     gap: 12px;
 }
 
+.quickAccessCard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #dbe4ef;
+    background: #f8fbff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+}
+
+.quickAccessCard:hover {
+    border-color: #b9cce3;
+    background: #eef5ff;
+}
+
+.quickAccessIcon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: var(--fontGraphikSemibold);
+    flex-shrink: 0;
+}
+
+.quickAccessInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.quickAccessTitle {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.2;
+    color: #111827;
+    font-family: var(--fontGraphikMedium);
+}
+
+.quickAccessHint {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: #6b7280;
+    font-family: var(--fontGraphik);
+}
+
+.quickAccessArrow {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
 .avatar {
     width: 40px;
     height: 40px;
@@ -400,6 +457,10 @@
 
     .mobileToggle {
         display: block;
+    }
+
+    .quickAccessCard {
+        justify-content: flex-start;
     }
 }
 

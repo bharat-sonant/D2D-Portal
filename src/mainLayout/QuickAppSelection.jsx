@@ -400,6 +400,7 @@ const managementOptions = [
 
 const QuickAppSelection = ({
   isDropdown,
+  dropdownPosition = "top-right",
   showQuickAppSelect,
   onClose,
   onChangePassword,
@@ -435,7 +436,9 @@ const QuickAppSelection = ({
 
   return (
     <div
-      className={`${styles.overlay2} ${isDropdown ? styles.dropdownOverlay : ""}`}
+      className={`${styles.overlay2} ${isDropdown ? styles.dropdownOverlay : ""} ${
+        isDropdown && dropdownPosition === "bottom-left" ? styles.dropdownOverlayBottomLeft : ""
+      }`}
       onClick={onClose}
     >
       <div
