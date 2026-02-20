@@ -285,15 +285,6 @@ const RouterComponent = () => {
             </ProtectedRouter>
           }
         />
-        <Route
-          path="/realtime"
-          element={
-            <ProtectedRouter>
-              <MainLayout />
-              <Realtime />
-            </ProtectedRouter>
-          }
-        />
 
         <Route
           path="/user"
