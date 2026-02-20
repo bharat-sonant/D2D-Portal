@@ -53,7 +53,7 @@ const Login = () => {
     rememberMefunction();
     let loginStatus = localStorage.getItem("isLogin");
     if (loginStatus === "success") {
-      navigate("/Dashboard");
+      navigate("/d2dMonitoring/dashboard");
     }
   }, []);
 
@@ -114,7 +114,7 @@ const Login = () => {
           localStorage.removeItem("savedEmail");
           localStorage.removeItem("savedPassword");
         }
-        navigate("/Dashboard");
+        navigate("/d2dMonitoring/dashboard");
       });
       const loginDetail = {
         user_id: user?.id,
