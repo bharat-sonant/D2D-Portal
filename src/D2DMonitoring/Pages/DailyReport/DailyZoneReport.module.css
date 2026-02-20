@@ -1,0 +1,798 @@
+.topBar {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
+  border: 1px solid #e7edf6;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.tableContainer {
+    background: transparent;
+    border: 0px solid #e6ebf2;
+    box-shadow: none;
+    padding: 0px;
+}
+
+.table {
+  background: #ffffff;
+  table-layout: fixed !important;
+}
+
+.table th,
+.table td {
+  width: auto !important;
+}
+
+.table colgroup col:first-child {
+  width: 155px !important;
+}
+
+.table tr > th:first-child,
+.table tr > td:first-child {
+  width: 155px !important;
+  min-width: 155px !important;
+  max-width: 155px !important;
+}
+
+.table thead tr:nth-child(1) th {
+  background: #f9fbff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e5ecf6 !important;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+.table thead tr:nth-child(2) th {
+  background: #f2f5fb !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #dfe7f2 !important;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: #fcfdff;
+}
+
+.table tbody tr:hover td {
+  background: #f6f9ff;
+}
+
+.table thead th {
+  text-transform: capitalize !important;
+  white-space: nowrap !important;
+}
+
+.table tbody td {
+  white-space: nowrap;
+}
+
+.table tbody td:last-child {
+  white-space: normal;
+}
+
+.metricWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.metricBar {
+  width: 50px;
+  height: 3px;
+  background: #e6ecf3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.metricFill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59f00, #f08c00);
+  border-radius: inherit;
+}
+
+.metricFillAlt {
+  height: 100%;
+  background: linear-gradient(90deg, #20c997, #12b886);
+  border-radius: inherit;
+}
+
+.metricValue {
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: #1e293b;
+}
+
+.pieWrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pieProgress {
+  --size: 34px;
+  --thickness: 2px;
+  --track: #e6ecf3;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(farthest-side, #fff calc(100% - var(--thickness)), transparent 0),
+    conic-gradient(var(--ring-color) calc(var(--p) * 1%), var(--track) 0);
+}
+
+.piePrimary {
+  --ring-color: #f08c00;
+}
+
+.pieAlt {
+  --ring-color: #12b886;
+}
+
+.pieProgress span {
+  font-size: 9px;
+  font-family: var(--fontGraphikSemibold);
+  color: #1e293b;
+  line-height: 1;
+}
+.vehicleNumber{
+  padding: 3px 8px;
+    background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+    color: var(--black);
+    border-radius: 4px;
+    display: inline-block;
+}
+.tripBG {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  /* background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%); */
+  background: var(--gradientTheme);
+}
+
+.viewSwitch {
+  display: inline-flex;
+  position: relative;
+  border: 1px solid #d8e2ee;
+  border-radius: 6px;
+  overflow: clip;
+  background: #fff;
+  padding: 4px;
+  isolation: isolate;
+}
+
+.viewAndSearch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.wardSearchWrap {
+  position: relative;
+}
+
+.wardSearchTrigger {
+  height: 38px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--regularColor);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.wardSearchTrigger:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 45%, var(--borderColor));
+  color: var(--themeColor);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--themeColor) 14%, transparent);
+}
+
+.wardSearchCount {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.wardSearchPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 350px;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+  padding: 10px;
+  transform-origin: right top;
+  transform: translateX(18px) scaleX(0.66);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+  z-index: 20;
+}
+
+.wardSearchPanelOpen {
+  transform: translateX(0) scaleX(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wardSearchTop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wardSearchInputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  padding: 0 8px;
+  height: 36px;
+  color: var(--gray);
+}
+
+.wardSearchInputWrap:focus-within {
+  border-color: color-mix(in srgb, var(--themeColor) 55%, var(--borderColor));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--themeColor) 14%, transparent);
+  background: var(--white);
+}
+
+.wardSearchInputWrap input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+}
+
+.wardInputClearBtn {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--themeColor) 10%, var(--white));
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.wardInputClearBtn:hover {
+  background: color-mix(in srgb, var(--themeColor) 18%, var(--white));
+}
+
+.wardApplyBtn {
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: var(--gradientTheme);
+  color: var(--white);
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  cursor: pointer;
+}
+
+.wardCloseBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  color: var(--gray);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.wardQuickActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.wardQuickBtn {
+  border: 1px solid color-mix(in srgb, var(--themeColor) 24%, var(--borderColor));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--regularColor);
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wardQuickBtn:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 40%, var(--borderColor));
+  color: var(--themeColor);
+}
+
+.wardQuickBtnActive {
+  background: color-mix(in srgb, var(--themeColor) 11%, var(--white));
+  color: var(--themeColorDark);
+  border-color: color-mix(in srgb, var(--themeColor) 54%, var(--borderColor));
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--themeColor) 15%, transparent);
+}
+
+.wardListWrap {
+  margin-top: 8px;
+  border: 1px solid var(--borderColor);
+  border-radius: 8px;
+  background: var(--white);
+  max-height: 260px;
+  overflow: auto;
+}
+
+.wardSearchFooter {
+  margin-top: 10px;
+}
+
+.wardOptionRow {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--borderColor) 85%, var(--white));
+  background: transparent;
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--black);
+  font-family: var(--fontGraphik);
+  cursor: pointer;
+}
+
+.wardOptionRow:last-child {
+  border-bottom: 0;
+}
+
+.wardOptionRow:hover {
+  background: color-mix(in srgb, var(--themeColor) 6%, var(--white));
+}
+
+.wardOptionRowActive {
+  background: color-mix(in srgb, var(--themeColor) 11%, var(--white));
+}
+
+.wardSelectIndicator {
+  width: 18px;
+  height: 18px;
+  border: 1px solid color-mix(in srgb, var(--themeColor) 35%, var(--borderColor));
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--themeColor);
+}
+
+.wardEmptyState {
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--regularColor);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.wardEmptyState svg {
+  color: var(--themeColor);
+  opacity: 0.8;
+}
+
+.wardEmptyState strong {
+  color: var(--black);
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.wardEmptyState span {
+  color: var(--gray);
+  font-size: 11px;
+  max-width: 220px;
+  line-height: 1.35;
+}
+
+.wardSearchFooter .wardApplyBtn {
+  width: 100%;
+  height: 38px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.viewSwitch::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 4px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--themeColor) 16%, #ffffff) 0%,
+    color-mix(in srgb, var(--themeColor) 9%, #ffffff) 100%
+  );
+  z-index: 0;
+}
+
+.viewSwitchGrid::before {
+  transform: translateX(100%);
+}
+
+.viewBtn {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  color: #475569;
+  height: 30px;
+  min-width: 58px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 220ms ease;
+}
+
+.viewBtn svg {
+  transition: transform 240ms ease, opacity 240ms ease;
+}
+
+.viewBtnActive {
+  background: transparent;
+  color: var(--themeColorDark);
+}
+
+.viewBtnActive svg {
+  transform: scale(1.06);
+}
+
+.viewBtn:not(.viewBtnActive):hover {
+  color: var(--themeColor);
+}
+
+.gridViewWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
+}
+
+.zoneCard {
+  width: calc((100% - 28px) / 3);
+  min-width: 0;
+  border: 1px solid #d9e4f3;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(30, 41, 59, 0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  box-sizing: border-box;
+}
+
+/* .zoneCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #60a5fa, #22d3ee);
+} */
+
+.zoneCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(30, 41, 59, 0.1);
+}
+
+/* .toneGood::before {
+  background: linear-gradient(90deg, #34d399, #10b981);
+}
+
+.toneWarn::before {
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
+.toneRisk::before {
+  background: linear-gradient(90deg, #fb7185, #f43f5e);
+} */
+
+.zoneCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.zoneCardTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.zoneCardHead h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #0f172a;
+  font-family: var(--fontGraphikMedium);
+}
+
+.metaChips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.vehicleChip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  width: fit-content;
+  padding: 4px 9px;
+  border: 1px solid #dce8f6;
+  border-radius: 4px;
+  background: #f6f9ff;
+  color: #334155;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+}
+
+.dutyChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: #eef6ff;
+  color: #1d4ed8;
+  border: 1px solid #cfe3ff;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+}
+
+.tripWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tripWrap span {
+  font-size: 10px;
+  color: #64748b;
+  font-family: var(--fontGraphikMedium);
+}
+
+.kpiRow {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.kpiItem {
+  flex: 1;
+  min-width: 72px;
+  border-radius: 6px;
+  border: 1px solid #e3eaf5;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 7px 6px;
+}
+
+.kpiItem .pieProgress {
+  --size: 36px;
+}
+
+.kpiItem label {
+  font-size: 10px;
+  color: #64748b;
+  text-align: center;
+  font-family: var(--fontGraphikMedium);
+}
+
+.kmItem {
+  flex: 1;
+  min-width: 84px;
+  border: 1px solid #e3eaf5;
+  background: #fff;
+  border-radius: 6px;
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.kmItem label {
+  font-size: 10px;
+  color: #64748b;
+  font-family: var(--fontGraphikMedium);
+}
+
+.kmItem strong {
+  font-size: 14px;
+  color: #0f172a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.timeStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timeCell {
+  flex: 1 1 calc(20% - 7px);
+  min-width: 96px;
+  border: 1px solid #e6edf8;
+  background: linear-gradient(180deg, #fcfdff 0%, #f7faff 100%);
+  border-radius: 6px;
+  padding: 7px 8px;
+}
+
+.timeCell label,
+.personItem label,
+.zoneCardRemark label {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  font-family: var(--fontGraphikMedium);
+}
+
+.timeCell span {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: #0f172a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.personWrap {
+  display: flex;
+  gap: 8px;
+}
+
+.personItem {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #e6edf8;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border-radius: 6px;
+  padding: 7px 8px;
+}
+
+.personItem p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.35;
+  font-family: var(--fontGraphikMedium);
+}
+
+.zoneCardRemark {
+  background: linear-gradient(180deg, #f8fbff 0%, #f3f8ff 100%);
+  border: 1px dashed #cfdeef;
+  border-radius: 6px;
+  padding: 7px 8px;
+}
+
+.zoneCardRemark p {
+  margin: 0;
+  font-size: 12px;
+  color: #334155;
+  line-height: 1.45;
+}
+
+@media (max-width: 1200px) {
+  .zoneCard {
+    width: calc(50% - 6px);
+  }
+}
+
+@media (max-width: 900px) {
+  .viewAndSearch {
+    gap: 6px;
+  }
+
+  .wardSearchPanel {
+    width: 320px;
+  }
+
+  .zoneCard {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .kpiRow {
+    flex-wrap: wrap;
+  }
+
+  .kpiItem,
+  .kmItem {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  .dutyChip {
+    display: none;
+  }
+
+  .personWrap {
+    flex-wrap: wrap;
+  }
+
+  .personItem {
+    flex: 1 1 calc(50% - 4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .viewAndSearch {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .wardSearchPanel {
+    width: calc(100vw - 24px);
+    right: -6px;
+  }
+
+  .timeCell {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  .personItem {
+    flex: 1 1 100%;
+  }
+}

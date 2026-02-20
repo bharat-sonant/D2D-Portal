@@ -50,6 +50,7 @@ import D2DMonitoringDashboard from "../D2DMonitoring/Pages/Dashboard/D2DMonitori
 import D2DReports from "../D2DMonitoring/Pages/D2DReports/Reports";
 import D2DRealtime from "../D2DMonitoring/Pages/D2DRealtime/Realtime";
 import D2DMonitoring from "../D2DMonitoring/Pages/D2DMonitoring/Monitoring";
+import D2DDailyReport from "../D2DMonitoring/Pages/DailyReport/DailyReport";
 
 
 const RouterComponent = () => {
@@ -137,6 +138,14 @@ const RouterComponent = () => {
           <ProtectedRouter>
             <D2DMonitoringLayout>
               <D2DMonitoring />
+            </D2DMonitoringLayout>
+          </ProtectedRouter>
+        } />
+
+        <Route path="/d2dMonitoring/daily-report" element={
+          <ProtectedRouter>
+            <D2DMonitoringLayout>
+              <D2DDailyReport />
             </D2DMonitoringLayout>
           </ProtectedRouter>
         } />

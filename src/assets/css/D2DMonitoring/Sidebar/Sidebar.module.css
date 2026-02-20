@@ -1,8 +1,8 @@
 .sidebar {
     position: fixed;
-    top: 0;
+    top: 60px;
     left: 0;
-    height: 100vh;
+    height: calc(100vh - 60px);
     background: linear-gradient(135deg, #ffffff, #eef2ff);
     border-right: 1px solid #e5e7eb;
     display: flex;
@@ -10,7 +10,7 @@
     transition:
         width 0.4s ease,
         transform 0.3s ease;
-    z-index: 40;
+    z-index: 5;
 }
 
 .expanded {
@@ -111,14 +111,15 @@
 }
 
 .menu {
-    padding: 15px;
+    padding: 10px 8px;
 }
 
 .menuItem {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
+    gap: 4px;
+    padding: 10px 6px;
     border-radius: 12px;
     cursor: pointer;
     justify-content: center;
@@ -128,18 +129,18 @@
     color: inherit;
 }
 
-.menuItem span {
-    font-size: 13px;
+.menuItem .menuLabel {
+    font-size: 9px;
     color: var(--textLight, #5f6b7a);
     font-family: var(--fontGraphik);
 }
 
 .menuItem svg {
-    width: 18px;
+    width: 20px;
     color: var(--textLight, #5f6b7a);
 }
 
-.menuItem:hover span {
+.menuItem:hover .menuLabel {
     color: var(--textBlack, #111827);
 }
 
@@ -151,7 +152,7 @@
     background: #dae9fa;
 }
 
-.menuItem.active span {
+.menuItem.active .menuLabel {
     color: var(--textBlack, #111827);
 }
 
@@ -162,6 +163,7 @@
 /* ---------- TOOLTIP ---------- */
 
 .tooltip {
+    display: none !important;
     position: absolute;
     left: 72px;
     /* collapsed width + gap */
@@ -376,12 +378,19 @@
 
 /* Hide label by default when collapsed (desktop only) */
 .menuLabel {
-    display: none;
+    display: block;
+    font-size: 10px;
+    line-height: 1.15;
+    text-align: center;
+    color: var(--textLight, #5f6b7a);
+    font-family: var(--fontGraphik);
+    max-width: 68px;
+    word-break: break-word;
 }
 
 /* Show label when expanded (desktop) */
 .expanded .menuLabel {
-    display: inline;
+    display: block;
 }
 
 .mobileToggle {
@@ -426,6 +435,8 @@
     .sidebar {
         transform: translateX(-100%);
         width: 260px;
+        top: 60px;
+        height: calc(100vh - 60px);
         transition: transform 0.35s ease;
         z-index: 8;
     }
@@ -440,7 +451,16 @@
     }
 
     .menuItem {
+        flex-direction: row;
         justify-content: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .menuLabel {
+        max-width: none;
+        text-align: left;
+        font-size: 12px;
     }
 
     /* Hide desktop collapse */

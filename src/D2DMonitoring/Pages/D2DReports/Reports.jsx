@@ -3,7 +3,6 @@ import SidePannel from "../../../components/Reports/Sidebar/SidePannel";
 import styles from "../D2DReports/Reports.module.css";
 import DailyWorkReport from "../../../components/Reports/DailyWorkReport/DailyWorkReport";
 import Binlifting from "../../../components/Reports/Binlifting/Binlifting";
-import d2dStyle from '../../../assets/css/D2DMonitoring/Dashboard/D2DMonitoringDashboard.module.css';
 
 const D2DReports = () => {
   const [selectedReport, setSelectedReport] = useState("Zone");
@@ -19,12 +18,6 @@ const D2DReports = () => {
   };
   return (
     <>
-      <div className={d2dStyle.dashboardHeader}>
-        <h1 className={d2dStyle.dashboardTitle}>Reports</h1>
-        <p className={d2dStyle.dashboardSubtitle}>
-          Track field activity, monitor team performance, and review live updates.
-        </p>
-      </div>
       <div className={styles.reportsContainer}>
         {/* Background */}
         <div className={styles.background}>

@@ -36,7 +36,6 @@ import { getSelectWardBoundaryAndLine } from "../../../Actions/City/wardMapActio
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import { GoogleMap, Polygon, Polyline } from "@react-google-maps/api";
 import Chetan from "../../../assets/images/Chetan.jpeg";
-import d2dStyle from '../../../assets/css/D2DMonitoring/Dashboard/D2DMonitoringDashboard.module.css';
 // import Mritunjay from "../../assets/images/mrityunjay.jpeg";
 
 const D2DRealtime = () => {
@@ -336,12 +335,6 @@ const D2DRealtime = () => {
 
   return (
     <>
-      <div className={d2dStyle.dashboardHeader}>
-        <h1 className={d2dStyle.dashboardTitle}>Realtime</h1>
-        <p className={d2dStyle.dashboardSubtitle}>
-          Track field activity, monitor team performance, and review live updates.
-        </p>
-      </div>
       <div className={styles.realtimePage}>
         {/* High-Density Optimized Sidebar */}
         <div className={styles.sidebar}>

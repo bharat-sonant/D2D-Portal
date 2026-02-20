@@ -1,0 +1,138 @@
+.reportsContainer {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 12px;
+  margin-top: 60px;
+  padding: 9px;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gradientOrb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  animation: dashboardFloat 25s ease-in-out infinite;
+}
+
+.orb1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #d1d7f5 0%, #d4c3e6 100%);
+  top: -200px;
+  left: -200px;
+}
+
+.orb2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #f0d0f4 0%, #eaabb3 100%);
+  bottom: -150px;
+  right: -150px;
+  animation-delay: 8s;
+}
+
+.orb3 {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(135deg, #ddedfc 0%, #d6fdff 100%);
+  top: 50%;
+  right: 20%;
+  animation-delay: 16s;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(102, 126, 234, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(102, 126, 234, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  animation: dashboardParticleFloat linear infinite;
+}
+
+.leftSection {
+  width: 84px;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.rightSection {
+  flex: 1;
+  min-width: 0;
+  z-index: 2;
+}
+
+@keyframes dashboardFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes dashboardParticleFloat {
+  from {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-160px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .reportsContainer {
+    padding: 10px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .reportsContainer {
+    flex-flow: row;
+    min-height: calc(100vh - 60px);
+    min-width: 1180px;
+    overflow-x: auto;
+  }
+
+  .leftSection {
+    width: 84px;
+    height: auto;
+  }
+
+  .rightSection {
+    min-width: 1060px;
+  }
+}
