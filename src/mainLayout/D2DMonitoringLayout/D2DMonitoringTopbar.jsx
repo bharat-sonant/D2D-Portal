@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardMinus, LayoutDashboard, Lock, LockOpen, MapPinHouse, Menu, X } from "lucide-react";
+import { ClipboardMinus, LayoutDashboard, Lock, LockOpen, MapPinHouse, Menu, SquareActivity, X } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 import LogoImage from '../../assets/images/wevoisLogo.png';
@@ -25,7 +25,7 @@ const D2DMonitoringSidebar = () => {
         { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", to: "/d2dMonitoring/dashboard" },
         { id: "realtime", icon: MapPinHouse, label: "Realtime", to: "/d2dMonitoring/realtime" },
         { id: "report", icon: ClipboardMinus, label: "Report", to: "/d2dMonitoring/report" },
-        // { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/monitoring" },
+        { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/d2dMonitoring/monitoring" },
     ];
 
     useEffect(() => {

@@ -23,7 +23,6 @@ import { supabase } from "../createClient";
 import { usePermissions } from "../context/PermissionContext";
 import { getUserPagesPermissions } from "../services/UserServices/UserServices";
 import MyOfficeLogin from "../MobileAppPages/MyOffice/Pages/Login/Login";
-import Realtime from "../pages/Realtime/Realtime";
 import DailyReport from "../pages/DailyReport/DailyReport";
 
 // Employee section pages
@@ -50,6 +49,7 @@ import D2DMonitoringLayout from "../mainLayout/D2DMonitoringLayout/D2DMonitoring
 import D2DMonitoringDashboard from "../D2DMonitoring/Pages/Dashboard/D2DMonitoringDashboard";
 import D2DReports from "../D2DMonitoring/Pages/D2DReports/Reports";
 import D2DRealtime from "../D2DMonitoring/Pages/D2DRealtime/Realtime";
+import D2DMonitoring from "../D2DMonitoring/Pages/D2DMonitoring/Monitoring";
 
 
 const RouterComponent = () => {
@@ -129,6 +129,14 @@ const RouterComponent = () => {
           <ProtectedRouter>
             <D2DMonitoringLayout>
               <D2DReports />
+            </D2DMonitoringLayout>
+          </ProtectedRouter>
+        } />
+
+        <Route path="/d2dMonitoring/monitoring" element={
+          <ProtectedRouter>
+            <D2DMonitoringLayout>
+              <D2DMonitoring />
             </D2DMonitoringLayout>
           </ProtectedRouter>
         } />
