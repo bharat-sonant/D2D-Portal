@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronRight, ClipboardMinus, LayoutDashboard, MapPinHouse, Menu, SquareActivity, Store, UserStar, X, } from "lucide-react";
+import { ClipboardMinus, LayoutDashboard, Lock, LockOpen, MapPinHouse, Menu, X } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 import LogoImage from '../../assets/images/wevoisLogo.png';
@@ -7,10 +7,11 @@ import styles from "../../assets/css/D2DMonitoring/Sidebar/Sidebar.module.css";
 
 const D2DMonitoringSidebar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isLocked, setIsLocked] = useState(false);
     const [isHoverExpanded, setIsHoverExpanded] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [userName, setUserName] = useState("Admin");
-    const effectiveExpanded = isExpanded || isHoverExpanded;
+    const effectiveExpanded = isExpanded || (isHoverExpanded && !isLocked);
 
     const rememberedUser = useMemo(() => {
         try {
@@ -64,10 +65,10 @@ const D2DMonitoringSidebar = () => {
                 className={`${styles.sidebar} ${effectiveExpanded ? styles.expanded : styles.collapsed} ${isMobileOpen ? styles.mobileOpen : ""
                     }`}
                 onMouseEnter={() => {
-                    if (window.innerWidth > 768) setIsHoverExpanded(true);
+                    if (window.innerWidth > 768 && !isLocked) setIsHoverExpanded(true);
                 }}
                 onMouseLeave={() => {
-                    if (window.innerWidth > 768) setIsHoverExpanded(false);
+                    if (window.innerWidth > 768 && !isLocked) setIsHoverExpanded(false);
                 }}
             >
                 <div className={styles.header}>
@@ -78,8 +79,19 @@ const D2DMonitoringSidebar = () => {
                         {effectiveExpanded && <span className={styles.brand}>D2D Monitoring</span>}
                     </div>
 
-                    <button className={styles.collapseBtn} onClick={() => setIsExpanded((prev) => !prev)}>
-                        <ChevronRight className={effectiveExpanded ? styles.rotate : ""} size={20} />
+                    <button
+                        className={styles.collapseBtn}
+                        title={isLocked ? "Unlock sidebar" : "Lock sidebar"}
+                        onClick={() => {
+                            if (isLocked) {
+                                setIsLocked(false);
+                                setIsHoverExpanded(false);
+                            } else {
+                                setIsLocked(true);
+                            }
+                        }}
+                    >
+                        {isLocked ? <Lock size={16} /> : <LockOpen size={16} />}
                     </button>
 
                     <button className={styles.mobileClose} onClick={() => setIsMobileOpen(false)}>
