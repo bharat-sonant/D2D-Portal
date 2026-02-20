@@ -1,0 +1,17 @@
+.mainLayout {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.mainContent {
+    margin-left: var(--d2d-sidebar-width, 80px);
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 767.98px) {
+    .mainContent {
+        margin-left: 0;
+        padding-top: 64px;
+    }
+}
+
