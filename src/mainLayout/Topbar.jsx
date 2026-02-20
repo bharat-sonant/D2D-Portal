@@ -137,13 +137,13 @@ const Topbar = ({ customTitle, setShowDefaultCity }) => {
     //   color: "var(--themeColor)",
     //   path: "/realtime",
     // },
-    {
-      id: "DailyReport",
-      label: "Daily Report",
-      icon: FileText,
-      color: "var(--themeColor)",
-      path: "/daily-report",
-    },
+    // {
+    //   id: "DailyReport",
+    //   label: "Daily Report",
+    //   icon: FileText,
+    //   color: "var(--themeColor)",
+    //   path: "/daily-report",
+    // },
     // {
     //   id: "Settings",
     //   label: "Settings",
