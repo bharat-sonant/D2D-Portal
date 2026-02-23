@@ -8,7 +8,7 @@ const D2DMonitoringSidebar = () => {
 
   const menuItems = [
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", to: "/d2dMonitoring/dashboard" },
-    { id: "realtime", icon: MapPinHouse, label: "Realtime", to: "/d2dMonitoring/realtime" },
+    { id: "realtime", icon: MapPinHouse, label: "Realtime Design", to: "/d2dMonitoring/realtime" },
     { id: "report", icon: ClipboardMinus, label: "Report", to: "/d2dMonitoring/report" },
     { id: "monitoring", icon: SquareActivity, label: "Monitoring", to: "/d2dMonitoring/monitoring" },
     { id: "daily-report", icon: FileText, label: "Daily report", to: "/d2dMonitoring/daily-report" },
