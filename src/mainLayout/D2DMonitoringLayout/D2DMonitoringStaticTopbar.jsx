@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Building2, GitBranch, LayoutDashboard, Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FileText, LayoutDashboard, MapPinHouse } from "lucide-react";
+import { useNavigate, NavLink } from "react-router-dom";
 import LogoImage from "../../components/Common/Image/LogoImage";
 import { images } from "../../assets/css/imagePath";
 import styles from "../../Style/MainLayout/Topbar.module.css";
@@ -9,10 +9,8 @@ import QuickAppSelection from "../QuickAppSelection";
 import { useCity } from "../../context/CityContext";
 
 const menuItems = [
-  // { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  // { id: "employees", label: "Employees", icon: Users },
-  // { id: "branch", label: "Branch", icon: Building2 },
-  // { id: "department", label: "Department", icon: GitBranch },
+  { id: "realtime", label: "Realtime Design", icon: MapPinHouse, to: "/d2dMonitoring/realtime" },
+  { id: "daily-report", label: "Daily report", icon: FileText, to: "/d2dMonitoring/daily-report" },
 ];
 
 const D2DMonitoringStaticTopbar = () => {
@@ -72,19 +70,14 @@ const D2DMonitoringStaticTopbar = () => {
           {menuItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div
+              <NavLink
                 key={item.id}
-                className={styles.menuItem}
-                style={{
-                  animationDelay: `${index * 0.08}s`,
-                  cursor: "default",
-                }}
+                to={item.to}
+                className={({ isActive }) => `${styles.verticalMenuItem} ${isActive ? styles.verticalMenuItemActive : ""}`}
               >
-                <div className={styles.menuIcon}>
-                  <Icon className={styles.navIcon} size={20} />
-                </div>
+                <Icon className={styles.navIcon} size={20} />
                 <span className={styles.menuLabel}>{item.label}</span>
-              </div>
+              </NavLink>
             );
           })}
         </div>
