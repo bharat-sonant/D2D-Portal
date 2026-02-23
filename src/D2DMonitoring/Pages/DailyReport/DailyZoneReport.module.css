@@ -19,7 +19,7 @@
 .table th,
 .table td {
   width: auto !important;
-}
+}      
 
 .table colgroup col:first-child {
   width: 155px !important;
