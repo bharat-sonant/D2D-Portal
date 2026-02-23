@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, LayoutDashboard, MapPinHouse } from "lucide-react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import LogoImage from "../../components/Common/Image/LogoImage";
 import { images } from "../../assets/css/imagePath";
 import styles from "../../Style/MainLayout/Topbar.module.css";
@@ -15,6 +15,7 @@ const menuItems = [
 
 const D2DMonitoringStaticTopbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setCityContext } = useCity();
   const [firstchar, setFirsthar] = useState("");
   const [secondchar, setSecondhar] = useState("");
@@ -73,10 +74,26 @@ const D2DMonitoringStaticTopbar = () => {
               <NavLink
                 key={item.id}
                 to={item.to}
-                className={({ isActive }) => `${styles.verticalMenuItem} ${isActive ? styles.verticalMenuItemActive : ""}`}
+                className={({ isActive }) =>
+                  `${styles.menuItem} ${isActive ? styles.menuItemActive : ""}`
+                }
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                }}
               >
-                <Icon className={styles.navIcon} size={20} />
-                <span className={styles.menuLabel}>{item.label}</span>
+                <div
+                  className={`${styles.menuIcon} ${location.pathname === item.to ? styles.menuIconActive : ""
+                    }`}
+                >
+                  <Icon className={styles.navIcon} size={20} />
+                </div>
+
+                <span
+                  className={`${styles.menuLabel} ${location.pathname === item.to ? styles.menuLabelActive : ""
+                    }`}
+                >
+                  {item.label}
+                </span>
               </NavLink>
             );
           })}
