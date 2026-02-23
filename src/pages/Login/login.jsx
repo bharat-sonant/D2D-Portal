@@ -1,29 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  Zap,
-  Car,
-  Leaf,
-  CheckCircle,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Car, Leaf, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-
 import styles from "../Login/login.module.css";
 import { useNavigate } from "react-router-dom";
-import {
-  getDataByColumnName,
-  login,
-  upsertByConflictKeys,
-} from "../../services/supabaseServices";
-import {
-  decryptValue,
-  encryptValue,
-  setAlertMessage,
-} from "../../common/common";
+import { getDataByColumnName, login, upsertByConflictKeys } from "../../services/supabaseServices";
+import { decryptValue, encryptValue, setAlertMessage } from "../../common/common";
 import dayjs from "dayjs";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import { useCity } from "../../context/CityContext";
@@ -46,9 +27,8 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const DESIGN_DURATION = 3 * 24 * 60 * 60 * 1000;
-  // const DESIGN_DURATION = 30 * 1000;
-
   const [activeDesign, setActiveDesign] = useState(1);
+
   useEffect(() => {
     rememberMefunction();
     let loginStatus = localStorage.getItem("isLogin");
@@ -89,17 +69,14 @@ const Login = () => {
     setPasswordError("");
     try {
       setLoading(true);
-      const user = await login(
-        emailId,
-        password,
-        setEmailError,
-        setPasswordError,
-      );
+      const user = await login(emailId, password, setEmailError, setPasswordError);
+
       if (!user) {
         setLoading(false);
         return;
-      }
-      await updateUserLastLogin(user.id); /////////////////
+      };
+
+      await updateUserLastLogin(user.id);
 
       localStorage.setItem("isLogin", "success");
       localStorage.setItem("name", user?.name);
@@ -131,6 +108,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !loading) {
       e.preventDefault();
@@ -141,6 +119,7 @@ const Login = () => {
   const handleRememberMe = () => {
     setRememberMe(!rememberMe);
   };
+
   const fetchCityName = async (defaultCityId) => {
     if (defaultCityId) {
       const resp = await getDataByColumnName(
@@ -159,6 +138,7 @@ const Login = () => {
     }
     return;
   };
+
   useEffect(() => {
     const savedDesign = localStorage.getItem("activeLoginDesign");
     const savedTime = localStorage.getItem("loginDesignTime");
@@ -211,13 +191,13 @@ const Login = () => {
       desc: "Sustainable waste management",
     },
   ];
+
   return (
     <>
       <div className={styles.designWrapper}>
         <div
-          className={`${styles.designScreen} ${
-            activeDesign === 1 ? styles.active : styles.hidden
-          }`}
+          className={`${styles.designScreen} ${activeDesign === 1 ? styles.active : styles.hidden
+            }`}
         >
           {/* Login Design 1 */}
           <div className={styles.container}>
@@ -385,9 +365,8 @@ const Login = () => {
           </div>
         </div>
         <div
-          className={`${styles.designScreen} ${
-            activeDesign === 2 ? styles.active : styles.hidden
-          }`}
+          className={`${styles.designScreen} ${activeDesign === 2 ? styles.active : styles.hidden
+            }`}
         >
           {/* Login Design 2 */}
           <div className={`${styles.loginContainer}`}>
