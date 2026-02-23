@@ -15,19 +15,21 @@ import GlobalCheckbox from "../../components/Common/GlobalCheckbox/GlobalCheckbo
 import { updateUserLastLogin } from "../../services/UserServices/UserServices";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [forgotPassword, setforgetPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [forgotPassword, setforgetPassword] = useState(false);
-  const { setCityContext } = useCity();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [activeDesign, setActiveDesign] = useState(1);
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const DESIGN_DURATION = 3 * 24 * 60 * 60 * 1000;
-  const [activeDesign, setActiveDesign] = useState(1);
+  const navigate = useNavigate();
+  const { setCityContext } = useCity();
+
 
   useEffect(() => {
     rememberMefunction();
