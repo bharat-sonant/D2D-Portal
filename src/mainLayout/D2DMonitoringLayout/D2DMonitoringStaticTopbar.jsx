@@ -57,13 +57,10 @@ const D2DMonitoringStaticTopbar = () => {
 
   return (
     <>
-      <div className={styles.header} style={{ zIndex: 1100 }}>
+      <div className={styles.header} >
         <div className={styles.headerLeft}>
           <div className={styles.companyLogo}>
-            <LogoImage image={images?.wevoisLogo} />
-            <div className={styles.logoText} style={{ cursor: "default" }}>
-              D2D Monitoring
-            </div>
+           
           </div>
         </div>
 

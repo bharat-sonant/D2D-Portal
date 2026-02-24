@@ -4,10 +4,13 @@ import styles from '../../assets/css/D2DMonitoring/MonitoringLayout/MonitoringLa
 
 const D2DMonitoringLayout = ({ children }) => {
   return (
-    <div className="app-container">
-      <D2DMonitoringStaticTopbar />
+    <div className={styles.appContainer}>
+         <div className={styles.containerLeft}>
+         <D2DMonitoringSidebar />
+         </div>
       <main className={styles.mainLayout}>
-        <D2DMonitoringSidebar />
+     
+      <D2DMonitoringStaticTopbar />
         <div className={styles.mainContent}>{children}</div>
       </main>
     </div>
