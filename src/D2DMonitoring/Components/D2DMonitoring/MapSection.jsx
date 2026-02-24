@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { Truck, UsersIcon } from "lucide-react";
 import { GoogleMap, Polygon } from "@react-google-maps/api";
-import ShiftTimeLine from "../ShiftTimeLine/ShiftTimeLine";
+import ShiftStatusSection from "./ShiftStatusSection";
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
 import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
 import ward3Boundary from "../../../assets/Sikar/WardBoundaries/3.json";
@@ -100,9 +100,7 @@ const MapSection = ({ selectedWard }) => {
                     <div className={styles.mapStat}><Truck size={14} color="var(--themeColor)" /> <span>Garage: <b>1</b></span></div>
                 </div>
             </div>
-            <div className={styles.timingGrid}>
-                <ShiftTimeLine events={currentShiftEvents} activeConnectorIndex={1} />
-            </div>
+            <ShiftStatusSection events={currentShiftEvents} activeConnectorIndex={1} />
         </div>
     )
 }

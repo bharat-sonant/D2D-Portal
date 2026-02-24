@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { AlertCircle, Check, Clock } from 'lucide-react';
+import { getWardDutyOnTimeFromDB } from '../../Services/D2DMonitoringDutyIn';
 
 const ShiftTimeLine = ({ events, activeConnectorIndex = -1 }) => {
+    useEffect(() => {
+        getWardDutyOnTimeFromDB();
+    }, [])
     return (
         <div className={styles.shiftTimelineCard}>
             <div className={styles.shiftTimelineTrack}>

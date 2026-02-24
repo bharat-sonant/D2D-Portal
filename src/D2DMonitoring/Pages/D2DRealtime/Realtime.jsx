@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import styles from "./Realtime.module.css";
 import {
   Activity,
@@ -695,13 +696,10 @@ const D2DRealtime = () => {
                           </button>
                         </div>
                       </div>
-                      {/* Timing Grid at Top - 100% Width */}
-                      <div className={styles.timingGrid}>
-                        <ShiftTimeline
-                          events={currentShiftEvents}
-                          activeConnectorIndex={activeConnectorIndex}
-                        />
-                      </div>
+                      <ShiftStatusSection
+                        events={currentShiftEvents}
+                        activeConnectorIndex={activeConnectorIndex}
+                      />
                     </div>
                   </div>
                 </div>
@@ -940,76 +938,6 @@ const StatusLine = ({ label, value, icon, color, onClick }) => (
   </button>
 );
 
-const ShiftTimeline = ({ events, activeConnectorIndex = -1 }) => (
-  <div className={styles.shiftTimelineCard}>
-    <div className={styles.shiftTimelineTrack}>
-      {events.map((event, index) => {
-        const isCompleted = event.status === "completed";
-        const isActive = event.status === "active";
-        const isPending = event.status === "pending";
-
-        return (
-          <React.Fragment key={event.key}>
-            <div className={styles.shiftEvent}>
-              <div
-                className={`${styles.shiftEventLabel} ${isActive ? styles.shiftEventLabelActive : ""
-                  }`}
-              >
-                {event.label}
-              </div>
-              <div
-                className={`${styles.shiftEventIconWrap} ${isCompleted
-                  ? styles.shiftEventIconCompleted
-                  : isActive
-                    ? styles.shiftEventIconActive
-                    : styles.shiftEventIconPending
-                  }`}
-              >
-                {isCompleted ? (
-                  <Check size={14} />
-                ) : isActive ? (
-                  <Clock size={14} />
-                ) : (
-                  <AlertCircle size={14} />
-                )}
-              </div>
-              <div
-                className={`${styles.shiftEventTime} ${isPending ? styles.shiftEventTimePending : ""
-                  } ${event.isLive ? styles.shiftEventTimeLive : ""}`}
-              >
-                {event.time}
-              </div>
-            </div>
-            {index < events.length - 1 && (
-              (() => {
-                const isAllCompleted = activeConnectorIndex < 0;
-                const connectorIndex = index;
-                const resolvedConnectorState = isAllCompleted
-                  ? "completed"
-                  : connectorIndex < activeConnectorIndex
-                    ? "completed"
-                    : connectorIndex === activeConnectorIndex
-                      ? "active"
-                      : "pending";
-
-                return (
-                  <div
-                    className={`${styles.shiftEventConnector} ${resolvedConnectorState === "completed"
-                      ? styles.shiftEventConnectorCompleted
-                      : resolvedConnectorState === "active"
-                        ? styles.shiftEventConnectorActive
-                        : styles.shiftEventConnectorPending
-                      }`}
-                  />
-                );
-              })()
-            )}
-          </React.Fragment>
-        );
-      })}
-    </div>
-  </div>
-);
 
 const PerformanceGrid = ({ data }) => {
   const items = [
