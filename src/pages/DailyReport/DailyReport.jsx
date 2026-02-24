@@ -20,26 +20,7 @@ const DailyReport = () => {
 
   return (
     <div className={styles.reportsContainer}>
-      <div className={styles.background}>
-        <div className={`${styles.gradientOrb} ${styles.orb1}`} />
-        <div className={`${styles.gradientOrb} ${styles.orb2}`} />
-        <div className={`${styles.gradientOrb} ${styles.orb3}`} />
-        <div className={styles.gridOverlay} />
-      </div>
 
-      <div className={styles.particles}>
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className={styles.particle}
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
-      </div>
 
       <div className={styles.leftSection}>
         <SidePannel
