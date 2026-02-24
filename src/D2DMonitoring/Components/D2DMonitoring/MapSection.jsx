@@ -1,12 +1,20 @@
-import { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { Truck, UsersIcon } from "lucide-react";
-import { GoogleMap, Polygon } from "@react-google-maps/api";
+import { GoogleMap, Polyline } from "@react-google-maps/api";
+//ward boundaries for ward 1 to 5
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
 import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
 import ward3Boundary from "../../../assets/Sikar/WardBoundaries/3.json";
 import ward4Boundary from "../../../assets/Sikar/WardBoundaries/4.json";
 import ward5Boundary from "../../../assets/Sikar/WardBoundaries/5.json";
+//ward lines for ward 1 to 5
+import ward1Line from '../../../assets/Sikar/WardLines/1.json';
+import ward2Line from '../../../assets/Sikar/WardLines/2.json';
+import ward3Line from '../../../assets/Sikar/WardLines/3.json';
+import ward4Line from '../../../assets/Sikar/WardLines/4.json';
+import ward5Line from '../../../assets/Sikar/WardLines/5.json';
+import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 
 const wardBoundariesById = {
     1: ward1Boundary,
@@ -16,82 +24,96 @@ const wardBoundariesById = {
     5: ward5Boundary,
 };
 
-const getPolygonPathsFromGeoJson = (geoJson) => {
-    if (!geoJson?.features?.length) return [];
-
-    return geoJson.features.flatMap((feature) => {
-        const geometry = feature?.geometry;
-        if (!geometry) return [];
-
-        if (geometry.type === "Polygon") {
-            return geometry.coordinates.map((ring = []) =>
-                ring.map(([lng, lat]) => ({ lat, lng }))
-            );
-        }
-
-        if (geometry.type === "MultiPolygon") {
-            return geometry.coordinates.flatMap((polygon = []) =>
-                polygon.map((ring = []) => ring.map(([lng, lat]) => ({ lat, lng })))
-            );
-        }
-
-        return [];
-    });
+const wardLinesById = {
+    1: ward1Line,
+    2: ward2Line,
+    3: ward3Line,
+    4: ward4Line,
+    5: ward5Line
 };
 
 const MapSection = ({ selectedWard }) => {
     const mapRef = useRef(null);
-    const mapContainerStyle = { width: "100%", height: "100%" };
-    const center = { lat: 27.625, lng: 75.13 };
-    const selectedWardBoundary = wardBoundariesById[selectedWard?.id];
 
-    const selectedWardPaths = useMemo(
-        () => getPolygonPathsFromGeoJson(selectedWardBoundary),
-        [selectedWardBoundary]
-    );
+    const mapContainerStyle = { width: "100%", height: "100%" };
+    const defaultCenter = { lat: 27.625, lng: 75.13 };
+
+    const selectedWardBoundary = wardBoundariesById[selectedWard?.id];
+    const selectedWardLine = wardLinesById[selectedWard?.id];
+
+    const wardBoundary = useMemo(() => {
+        return action.getBoundaryPathFromWardBoundaryJson(selectedWardBoundary);
+    }, [selectedWardBoundary]);
+
+    // 🟢 Lines (agar custom JSON hai to custom function use karo)
+    const selectedWardLinePaths = useMemo(() => {
+        return action.getLinePathsFromGeoJson(selectedWardLine);
+    }, [selectedWardLine]);
 
     useEffect(() => {
-        if (!mapRef.current || !selectedWardPaths.length || !window.google?.maps) return;
+        const timer = setTimeout(() => {
+            action.mapZoom(mapRef, selectedWardLinePaths, wardBoundary);
+        }, 50);
 
-        const bounds = new window.google.maps.LatLngBounds();
-        selectedWardPaths.forEach((ring) => {
-            ring.forEach((point) => bounds.extend(point));
-        });
-
-        if (!bounds.isEmpty()) {
-            mapRef.current.fitBounds(bounds);
-        }
-    }, [selectedWardPaths]);
+        return () => clearTimeout(timer);
+    }, [wardBoundary, selectedWardLinePaths]);
 
     return (
-        <div className={`${styles.glassCard} ${styles.mapCard}`}>
-            <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={center}
-                zoom={14}
-                onLoad={(map) => (mapRef.current = map)}
-                options={{ disableDefaultUI: true }}
-            >
-                {selectedWardPaths.map((path, index) => (
-                    <Polygon
-                        key={`${selectedWard?.id || "ward"}-${index}`}
-                        paths={path}
-                        options={{
-                            strokeColor: "#000000",
-                            strokeOpacity: 1,
-                            strokeWeight: 2,
-                            fillColor: "#ffffff",
-                            zIndex: 2,
-                        }}
-                    />
-                ))}
-            </GoogleMap>
-            <div className={styles.mapFooter}>
-                <div className={styles.mapStat}><UsersIcon size={14} color="var(--themeColor)" /> <span>Heroes: <b>2</b></span></div>
-                <div className={styles.mapStat}><Truck size={14} color="var(--themeColor)" /> <span>Garage: <b>1</b></span></div>
+        <div className={styles.mapColumn}>
+            <div className={`${styles.glassCard} ${styles.mapCard}`}>
+                <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    defaultCenter={defaultCenter}
+                    defaultZoom={14}
+                    onLoad={(map) => {
+                        mapRef.current = map;
+                    }}
+                    options={{ disableDefaultUI: true }}
+                >
+
+                    {/* Ward Boundary */}
+                    {wardBoundary.length > 0 && (
+                        <Polyline
+                            path={wardBoundary}
+                            options={{
+                                strokeColor: "#000000",
+                                strokeWeight: 3,
+                                strokeOpacity: 1,
+                                zIndex: 2,
+                            }}
+                        />
+                    )}
+
+                    {/* 🟢 Ward Lines */}
+                    {selectedWardLinePaths.map((path, index) => (
+                        <Polyline
+                            key={`${selectedWard?.id}-line-${index}`}
+                            path={path}
+                            options={{
+                                strokeColor: "#00ff62",
+                                strokeOpacity: 1,
+                                strokeWeight: 1.5,
+                                zIndex: 3,
+                            }}
+                        />
+                    ))}
+
+                </GoogleMap>
+
+                <div className={styles.mapFooter}>
+                    <div className={styles.mapStat}>
+                        <UsersIcon size={14} color="var(--themeColor)" />
+                        <span>Heroes: <b>2</b></span>
+                    </div>
+
+                    <div className={styles.mapStat}>
+                        <Truck size={14} color="var(--themeColor)" />
+                        <span>Garage: <b>1</b></span>
+                    </div>
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default MapSection
