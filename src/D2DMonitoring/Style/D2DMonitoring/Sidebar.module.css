@@ -109,7 +109,7 @@
   border-radius: 6px;
   padding: 5px 0px;
   cursor: pointer;
-  color: var(--lightBlack);
+  color: var(--regularColor);
   font-family: var(--fontGraphikMedium);
   position: relative;
   overflow: hidden;
@@ -199,7 +199,7 @@
   border-color: #8fc8f6;
   color: #ffffff;
   box-shadow: 0 4px 13px #2898ca33;
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 
 .menuSvg {
@@ -218,6 +218,10 @@
 .menuLabel {
   font-size: 9px;
   font-family: var(--fontGraphik);
+}
+
+.menuIconActive + .menuLabel {
+  color: var(--black);
 }
 
 .tag {

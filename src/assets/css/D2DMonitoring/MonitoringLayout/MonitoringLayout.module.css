@@ -5,10 +5,10 @@
 .containerLeft{
     width: 80px;
 }
-.mainContent {
+.mainLayout{
     width: calc(100% - 80px);
 }
-.mainLayout{
+.mainContent {
     width: 100%;
 }
 @media (max-width: 767.98px) {
