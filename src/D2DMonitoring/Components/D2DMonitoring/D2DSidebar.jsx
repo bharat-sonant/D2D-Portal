@@ -20,7 +20,7 @@ const menuItems = [
   // { id: "daily-report", label: "Daily Report", icon: FileText, to: "/d2dMonitoring/daily-report", tag: "Doc" },
 ];
 
-const DummySidebar = () => {
+const D2DSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -121,4 +121,4 @@ const DummySidebar = () => {
   );
 };
 
-export default DummySidebar;
+export default D2DSidebar;

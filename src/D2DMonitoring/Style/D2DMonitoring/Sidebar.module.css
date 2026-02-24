@@ -37,7 +37,7 @@
   pointer-events: none;
 }
 
-.brandCard{
+.brandCard {
   border-bottom: 1px solid var(--borderColor);
   padding: 3px 16px;
 }
@@ -107,7 +107,7 @@
   align-items: center;
   gap: 5px;
   border-radius: 6px;
-padding: 5px 0px;
+  padding: 5px 0px;
   cursor: pointer;
   color: var(--lightBlack);
   font-family: var(--fontGraphikMedium);
@@ -116,7 +116,7 @@ padding: 5px 0px;
   transform: translateY(10px);
   opacity: 0;
   animation: menuIn 0.45s ease forwards;
-      flex-flow: column;
+  flex-flow: column;
 }
 
 .menuItem:nth-child(2) {
@@ -139,7 +139,6 @@ padding: 5px 0px;
   background: #ffffff;
   box-shadow: 0 8px 18px #0f172a0f;
 } */
-
 .menuIcon {
   width: 34px;
   height: 34px;
@@ -148,13 +147,72 @@ padding: 5px 0px;
   place-items: center;
   background: #ffffff;
   border: 1px solid #d9e7f6;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform: perspective(1px) translateZ(0);
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease,
+    color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
+}
+
+.menuIcon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #d8ecff;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition-property: transform;
+  transition-duration: 0.5s;
+  transition-timing-function: ease-out;
+  z-index: 0;
+}
+
+.menuIcon > svg {
+  position: relative;
+  z-index: 1;
+  color: currentColor;
+  stroke: currentColor;
+  fill: none;
+}
+
+.menuItem:hover .menuIcon:not(.menuIconActive)::before,
+.menuItem:focus-visible .menuIcon:not(.menuIconActive)::before {
+  transform: scaleY(1);
+  transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+}
+
+.menuItem:hover .menuIcon:not(.menuIconActive),
+.menuItem:focus-visible .menuIcon:not(.menuIconActive) {
+  color: #0d5f99;
+  border-color: #8fc8f6;
+  box-shadow: 0 4px 13px #2898ca33;
 }
 
 .menuIconActive {
-  background: #d8ecff;
+  background: #4778ed;
   border-color: #8fc8f6;
-  color: #0d5f99;
+  color: #ffffff;
   box-shadow: 0 4px 13px #2898ca33;
+  transform: translateY(-1px);
+}
+
+.menuSvg {
+  position: relative;
+  z-index: 1;
+  transition:
+    transform 0.24s ease,
+    stroke-width 0.24s ease,
+    opacity 0.24s ease;
+}
+
+.menuSvgActive {
+  animation: iconFillPop 0.28s ease;
 }
 
 .menuLabel {
@@ -234,6 +292,21 @@ padding: 5px 0px;
 @keyframes menuIn {
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes iconFillPop {
+  0% {
+    transform: scale(0.84);
+    opacity: 0.65;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
     opacity: 1;
   }
 }
