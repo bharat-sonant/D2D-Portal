@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { Truck, UsersIcon } from "lucide-react";
 import { GoogleMap, Polygon } from "@react-google-maps/api";
-import ShiftStatusSection from "./ShiftStatusSection";
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
 import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
 import ward3Boundary from "../../../assets/Sikar/WardBoundaries/3.json";
@@ -64,43 +63,33 @@ const MapSection = ({ selectedWard }) => {
         }
     }, [selectedWardPaths]);
 
-    const currentShiftEvents = [
-        { key: "dutyOn", label: "Duty On", time: "08:00 AM", status: "completed" },
-        { key: "reachOn", label: "Reached", time: "09:00 AM", status: "completed" },
-        { key: "workStatus", label: "Working", time: "Live", status: "active", isLive: true },
-        { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
-    ];
-
     return (
-        <div className={styles.mapColumn}>
-            <div className={`${styles.glassCard} ${styles.mapCard}`}>
-                <GoogleMap
-                    mapContainerStyle={mapContainerStyle}
-                    center={center}
-                    zoom={14}
-                    onLoad={(map) => (mapRef.current = map)}
-                    options={{ disableDefaultUI: true }}
-                >
-                    {selectedWardPaths.map((path, index) => (
-                        <Polygon
-                            key={`${selectedWard?.id || "ward"}-${index}`}
-                            paths={path}
-                            options={{
-                                strokeColor: "#000000",
-                                strokeOpacity: 1,
-                                strokeWeight: 2,
-                                fillColor: "#ffffff",
-                                zIndex: 2,
-                            }}
-                        />
-                    ))}
-                </GoogleMap>
-                <div className={styles.mapFooter}>
-                    <div className={styles.mapStat}><UsersIcon size={14} color="var(--themeColor)" /> <span>Heroes: <b>2</b></span></div>
-                    <div className={styles.mapStat}><Truck size={14} color="var(--themeColor)" /> <span>Garage: <b>1</b></span></div>
-                </div>
+        <div className={`${styles.glassCard} ${styles.mapCard}`}>
+            <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={center}
+                zoom={14}
+                onLoad={(map) => (mapRef.current = map)}
+                options={{ disableDefaultUI: true }}
+            >
+                {selectedWardPaths.map((path, index) => (
+                    <Polygon
+                        key={`${selectedWard?.id || "ward"}-${index}`}
+                        paths={path}
+                        options={{
+                            strokeColor: "#000000",
+                            strokeOpacity: 1,
+                            strokeWeight: 2,
+                            fillColor: "#ffffff",
+                            zIndex: 2,
+                        }}
+                    />
+                ))}
+            </GoogleMap>
+            <div className={styles.mapFooter}>
+                <div className={styles.mapStat}><UsersIcon size={14} color="var(--themeColor)" /> <span>Heroes: <b>2</b></span></div>
+                <div className={styles.mapStat}><Truck size={14} color="var(--themeColor)" /> <span>Garage: <b>1</b></span></div>
             </div>
-            <ShiftStatusSection events={currentShiftEvents} activeConnectorIndex={1} />
         </div>
     )
 }

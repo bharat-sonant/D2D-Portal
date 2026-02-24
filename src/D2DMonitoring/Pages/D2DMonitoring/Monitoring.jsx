@@ -30,6 +30,7 @@ import { GoogleMap, Polygon, Polyline } from "@react-google-maps/api";
 import Chetan from "../../../assets/images/Chetan.jpeg";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
+import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 
 const MonitoringList = () => {
     const remarkTopicOptions = [
@@ -191,6 +192,13 @@ const MonitoringList = () => {
 
     const zoneGraphMax = 74;
 
+    const currentShiftEvents = [
+        { key: "dutyOn", label: "Duty On", time: "08:00 AM", status: "completed" },
+        { key: "reachOn", label: "Reached", time: "09:00 AM", status: "completed" },
+        { key: "workStatus", label: "Working", time: "Live", status: "active", isLive: true },
+        { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
+    ];
+
 
 
     return (
@@ -329,8 +337,14 @@ const MonitoringList = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/*map section */}
-                                <MapSection selectedWard={selectedWard} />
+                                {/*map section with status */}
+                                <div className={styles.mapColumn}>
+                                    <MapSection selectedWard={selectedWard} />
+                                    <ShiftStatusSection
+                                        events={currentShiftEvents}
+                                        activeConnectorIndex={1}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
