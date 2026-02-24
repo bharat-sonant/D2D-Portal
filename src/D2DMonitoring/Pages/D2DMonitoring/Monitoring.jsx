@@ -236,11 +236,11 @@ const MonitoringList = () => {
 
             {/* Main Content */}
             <div className={styles.mainContent}>
-                {dataLoading ? (
+                {/* {dataLoading ? (
                     <div className={styles.loaderContainer}>
                         <WevoisLoader title={`Updating Data for ${selectedWard?.name}...`} />
                     </div>
-                ) : (
+                ) : ( */}
                     <div className={styles.layoutSplit}>
                         {/* Left Column */}
                         <div className={styles.leftColumn}>
@@ -348,7 +348,7 @@ const MonitoringList = () => {
                             </div>
                         </div>
                     </div>
-                )}
+                {/* )} */}
             </div>
 
             {/* Modals */}
