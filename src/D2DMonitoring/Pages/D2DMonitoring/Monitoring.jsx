@@ -69,7 +69,6 @@ const MonitoringList = () => {
     const [editingRemarkId, setEditingRemarkId] = useState(null);
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
     const [showDutyInTime, setShowDutyInTime] = useState('');
-    const [firebaseReady, setFirebaseReady] = useState(false);
 
     // Map States
     const remarkTopicDropdownRef = useRef(null);
@@ -106,25 +105,23 @@ const MonitoringList = () => {
         garageDuty: "0/0",
     });
 
-    // Connect Firebase first, then mark ready
+    // Connect Firebase and fetch duty in time
     useEffect(() => {
-        const staticCity = 'Sikar';
-        const firebaseConfig = getCityFirebaseConfig(staticCity);
-        connectFirebase(firebaseConfig, staticCity);
-        setFirebaseReady(true);
-    }, []);
-
-    // Fetch duty in time only after Firebase is connected
-    useEffect(() => {
-        if (!firebaseReady) return;
-        getDutyInTime(selectedWard.id, setShowDutyInTime);
-    }, [firebaseReady, selectedWard.id]);
+        const initAndFetch = async () => {
+            const staticCity = 'Sikar';
+            const firebaseConfig = getCityFirebaseConfig(staticCity);
+            connectFirebase(firebaseConfig, staticCity);
+            // Fetch duty in time after Firebase is connected
+            getDutyInTime(selectedWard.id, setShowDutyInTime);
+        };
+        initAndFetch();
+    }, [selectedWard.id]);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;
         setDataLoading(true);
         setSelectedWard(ward);
-        setTimeout(() => setDataLoading(false), 500);
+        setDataLoading(false);
     };
 
     const handleRefresh = () => {
@@ -212,12 +209,12 @@ const MonitoringList = () => {
 
     const zoneGraphMax = 74;
 
-    const currentShiftEvents = [
+    const currentShiftEvents = React.useMemo(() => [
         { key: "dutyOn", label: "Duty On", time: showDutyInTime, status: "completed" },
         { key: "reachOn", label: "Reached", time: "09:00 AM", status: "completed" },
         { key: "workStatus", label: "Working", time: "Live", status: "active", isLive: true },
         { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
-    ];
+    ], [showDutyInTime]);
 
 
 
@@ -292,7 +289,7 @@ const MonitoringList = () => {
                             </div>
                         </div>
 
-                   
+
                     </div>
 
                     {/* Right Data Section */}
@@ -319,31 +316,31 @@ const MonitoringList = () => {
                                     </div>
                                     <PerformanceGrid data={wardData} />
                                 </div>
-                         <div className={styles.glassCard}>
-                            <div className={styles.remarksHeadRow}>
-                                <div className={styles.remarksHeadLeft}>
-                                    <Plus size={16} color="var(--themeColor)" />
-                                    <span className={styles.remarksHeadTitle}>Remark</span>
-                                </div>
-                                <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
-                            </div>
-                            {remarks.length === 0 ? (
-                                <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
-                            ) : (
-                                <div className={styles.remarkList}>
-                                    {remarks.map((item) => (
-                                        <div key={item.id} className={styles.remarkItemCard}>
-                                            <div className={styles.remarkItemTopic}>{item.topic}</div>
-                                            <div className={styles.remarkItemDescription}>{item.description}</div>
-                                            <div className={styles.remarkItemActions}>
-                                                <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
-                                                <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
-                                            </div>
+                                <div className={styles.glassCard}>
+                                    <div className={styles.remarksHeadRow}>
+                                        <div className={styles.remarksHeadLeft}>
+                                            <Plus size={16} color="var(--themeColor)" />
+                                            <span className={styles.remarksHeadTitle}>Remark</span>
                                         </div>
-                                    ))}
+                                        <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
+                                    </div>
+                                    {remarks.length === 0 ? (
+                                        <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
+                                    ) : (
+                                        <div className={styles.remarkList}>
+                                            {remarks.map((item) => (
+                                                <div key={item.id} className={styles.remarkItemCard}>
+                                                    <div className={styles.remarkItemTopic}>{item.topic}</div>
+                                                    <div className={styles.remarkItemDescription}>{item.description}</div>
+                                                    <div className={styles.remarkItemActions}>
+                                                        <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
+                                                        <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
                             </div>
                             {/*map section with status */}
                             <div className={styles.mapColumn}>
