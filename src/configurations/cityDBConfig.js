@@ -26,7 +26,8 @@ export const getCityFirebaseConfig = (city) => {
       storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET_Sikar,
       messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID_Sikar,
       appId: process.env.REACT_APP_FIREBASE_APP_ID_Sikar,
-      measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID_Sikar
+      measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID_Sikar,
+      databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL_Sikar,
     };
   }
   if (city === "Reengus") {
