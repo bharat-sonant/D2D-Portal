@@ -86,9 +86,9 @@ const MapSection = ({ selectedWard }) => {
                             key={`${selectedWard?.id}-line-${index}`}
                             path={path}
                             options={{
-                                strokeColor: "#00ff62",
+                                strokeColor: "#79c0f0",
                                 strokeOpacity: 1,
-                                strokeWeight: 1.5,
+                                strokeWeight: 2,
                                 zIndex: 3,
                             }}
                         />
