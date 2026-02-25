@@ -1,8 +1,6 @@
 const toLatLngFromGeo = ([lng, lat]) => ({ lat: Number(lat), lng: Number(lng) });
 const toLatLngFromCustom = ([lat, lng]) => ({ lat: Number(lat), lng: Number(lng) });
-
-const toKey = (point, precision = 6) =>
-    `${Number(point.lat).toFixed(precision)},${Number(point.lng).toFixed(precision)}`;
+const toKey = (point, precision = 6) => `${Number(point.lat).toFixed(precision)},${Number(point.lng).toFixed(precision)}`;
 
 const closePath = (path = []) => {
     if (!path.length) return path;
@@ -54,6 +52,42 @@ export const getLinePathsFromGeoJson = (geoJson) => {
 export const getBoundaryPathFromWardBoundaryJson = (boundaryJson) => {
     if (!boundaryJson) return [];
     return getBoundaryFromCustomBoundaryJson(boundaryJson);
+};
+
+export const isGoogleMapsReady = () => Boolean(window.google?.maps);
+
+export const waitForGoogleMapsReady = (onReady, interval = 100) => {
+    if (isGoogleMapsReady()) {
+        onReady(true);
+        return null;
+    }
+
+    const intervalId = setInterval(() => {
+        if (isGoogleMapsReady()) {
+            onReady(true);
+            clearInterval(intervalId);
+        }
+    }, interval);
+
+    return () => clearInterval(intervalId);
+};
+
+export const getSelectedWardMapData = ({ wardId, wardBoundariesById, wardLinesById }) => {
+    const selectedWardBoundary = wardBoundariesById[wardId];
+    const selectedWardLine = wardLinesById[wardId];
+
+    return {
+        wardBoundary: getBoundaryPathFromWardBoundaryJson(selectedWardBoundary),
+        selectedWardLinePaths: getLinePathsFromGeoJson(selectedWardLine),
+    };
+};
+
+export const scheduleMapZoom = (mapRef, linePaths, boundaryPath, delay = 50) => {
+    const timer = setTimeout(() => {
+        mapZoom(mapRef, linePaths, boundaryPath);
+    }, delay);
+
+    return () => clearTimeout(timer);
 };
 
 export const mapZoom = (mapRef, linePaths, boundaryPath) => {

@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
-import { Truck, UsersIcon } from "lucide-react";
 import { GoogleMap, Polyline } from "@react-google-maps/api";
 //ward boundaries for ward 1 to 5
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
@@ -33,30 +32,29 @@ const wardLinesById = {
 };
 
 const MapSection = ({ selectedWard }) => {
-    const mapRef = useRef(null);
+    const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
 
+    const mapRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
 
-    const selectedWardBoundary = wardBoundariesById[selectedWard?.id];
-    const selectedWardLine = wardLinesById[selectedWard?.id];
-
-    const wardBoundary = useMemo(() => {
-        return action.getBoundaryPathFromWardBoundaryJson(selectedWardBoundary);
-    }, [selectedWardBoundary]);
-
-    // 🟢 Lines (agar custom JSON hai to custom function use karo)
-    const selectedWardLinePaths = useMemo(() => {
-        return action.getLinePathsFromGeoJson(selectedWardLine);
-    }, [selectedWardLine]);
+    const { wardBoundary, selectedWardLinePaths } = action.getSelectedWardMapData({
+        wardId: selectedWard?.id,
+        wardBoundariesById,
+        wardLinesById,
+    });
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            action.mapZoom(mapRef, selectedWardLinePaths, wardBoundary);
-        }, 50);
+        if (isGoogleReady) return;
+        return action.waitForGoogleMapsReady(setIsGoogleReady);
+    }, [isGoogleReady]);
 
-        return () => clearTimeout(timer);
-    }, [wardBoundary, selectedWardLinePaths]);
+    useEffect(() => {
+        if (!isGoogleReady) return;
+        return action.scheduleMapZoom(mapRef, selectedWardLinePaths, wardBoundary);
+    }, [isGoogleReady, wardBoundary, selectedWardLinePaths]);
+
+    if (!isGoogleReady) return null;
 
     return (
         <div className={styles.mapColumn}>
@@ -65,9 +63,7 @@ const MapSection = ({ selectedWard }) => {
                     mapContainerStyle={mapContainerStyle}
                     defaultCenter={defaultCenter}
                     defaultZoom={14}
-                    onLoad={(map) => {
-                        mapRef.current = map;
-                    }}
+                    onLoad={(map) => { mapRef.current = map; }}
                     options={{ disableDefaultUI: true }}
                 >
 
@@ -99,7 +95,7 @@ const MapSection = ({ selectedWard }) => {
                     ))}
 
                 </GoogleMap>
-{/* 
+                {/* 
                 <div className={styles.mapFooter}>
                     <div className={styles.mapStat}>
                         <UsersIcon size={14} color="var(--themeColor)" />
