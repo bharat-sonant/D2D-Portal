@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { getCityFirebaseConfig } from "../configurations/cityDBConfig";
 import { connectFirebase } from "../firebase/firebaseService";
 
@@ -12,6 +13,7 @@ const DEFAULT_CITY = {
 
 export const CityProvider = ({ children }) => {
   const [cityState, setCityState] = useState(DEFAULT_CITY);
+  const location = useLocation();
 
   const setCityContext = ({ city, cityId, cityLogo = "" }) => {
     if (!city || !cityId) return;
@@ -20,19 +22,21 @@ export const CityProvider = ({ children }) => {
 
   useEffect(() => {
     const { city, cityId, cityLogo } = cityState;
+    const isMonitoringRoute = location.pathname === "/d2dMonitoring/monitoring"
+    const firebaseCity = isMonitoringRoute ? "Sikar" : city;
 
     localStorage.setItem("city", city);
     localStorage.setItem("cityId", cityId);
     localStorage.setItem("logoUrl", cityLogo);
 
-    // Initialize Firebase ONCE per city
-    const firebaseConfig = getCityFirebaseConfig(city);
-    connectFirebase(firebaseConfig, city);
+    // Keep Monitoring page pinned to Sikar Firebase.
+    const firebaseConfig = getCityFirebaseConfig(firebaseCity);
+    connectFirebase(firebaseConfig, firebaseCity);
 
     // Update browser title
     // document.title = `D2D : ${city}`;
 
-  }, [cityState]);
+  }, [cityState, location.pathname]);
 
   return (
     <CityContext.Provider value={{

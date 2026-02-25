@@ -33,7 +33,6 @@ import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
-import { getWardDutyOnTimeFromDB } from "../../Services/D2DMonitoringDutyIn";
 import { getDutyInTime } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import StateItem from "../../Components/D2DMonitoring/StateItem";
 
@@ -72,11 +71,6 @@ const MonitoringList = () => {
     const [showDutyInTime, setShowDutyInTime] = useState('');
     const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
 
-    // Map States
-    const remarkTopicDropdownRef = useRef(null);
-    const [wardLineData] = useState([]); // Static empty for now
-    const [wardBoundaryData] = useState([]); // Static empty for now
-
     const [vehicleIssueRows, setVehicleIssueRows] = useState([
         { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
         { id: 2, vehicleNo: "COMP-6402", selected: false, reason: "" },
@@ -107,17 +101,20 @@ const MonitoringList = () => {
         garageDuty: "0/0",
     });
 
-    // Connect Firebase and fetch duty in time
+    // Monitoring page always uses Sikar Firebase
     useEffect(() => {
-        const initAndFetch = async () => {
-            const staticCity = 'Sikar';
-            const firebaseConfig = getCityFirebaseConfig(staticCity);
-            connectFirebase(firebaseConfig, staticCity);
-            // Fetch duty in time after Firebase is connected
-            getDutyInTime(selectedWard.id, setShowDutyInTime);
+        const initFirebase = async () => {
+            const city = "Sikar";
+            const firebaseConfig = getCityFirebaseConfig(city);
+            connectFirebase(firebaseConfig, city);
         };
-        initAndFetch();
-    }, [selectedWard.id]);
+        initFirebase();
+    }, []);
+
+    useEffect(() => {
+        if (!selectedWard?.id) return;
+        getDutyInTime(selectedWard.id, setShowDutyInTime);
+    }, [selectedWard?.id]);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;
@@ -219,7 +216,7 @@ const MonitoringList = () => {
     ], [showDutyInTime]);
 
     const stateItems = [
-        { label: "Total Time",  icon: <Clock size={12} />, layout: "iconLeft" },
+        { label: "Total Time", icon: <Clock size={12} />, layout: "iconLeft" },
         { label: "Active Zone Time", icon: <Clock size={12} />, layout: "iconLeft" },
         { label: "Ward Length", value: `${(selectedWardLengthInMeter / 1000)?.toFixed(2)} km`, icon: <Zap size={12} />, layout: "iconLeft" },
         { label: "Zone Coverage", icon: <Zap size={12} />, layout: "iconLeft" },

@@ -44,7 +44,7 @@ export const connectFirebase = (config, city) => {
         if (registry.has(key)) {
             activeKey = key;
             firebaseReadyResolve?.(); // mark ready (reuse case)
-            console.log(`⚡ Reusing Firebase connection for ${config.cityName}`);
+            // console.log(`⚡ Reusing Firebase connection for ${config.cityName}`);
             return {
                 success: true,
                 message: `Reusing Firebase connection for ${config.cityName}`,
