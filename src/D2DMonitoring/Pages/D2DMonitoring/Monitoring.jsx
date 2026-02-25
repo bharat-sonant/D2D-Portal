@@ -35,6 +35,7 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { getWardDutyOnTimeFromDB } from "../../Services/D2DMonitoringDutyIn";
 import { getDutyInTime } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import StateItem from "../../Components/D2DMonitoring/StateItem";
 
 const MonitoringList = () => {
     const remarkTopicOptions = [
@@ -216,7 +217,12 @@ const MonitoringList = () => {
         { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
     ], [showDutyInTime]);
 
-
+    const stateItems = [
+        { label: "Total Time",  icon: <Clock size={12} />, layout: "iconLeft" },
+        { label: "Active Zone Time", icon: <Clock size={12} />, layout: "iconLeft" },
+        { label: "Ward Length", value: wardData.kmStats.total, icon: <Zap size={12} />, layout: "iconLeft" },
+        { label: "Zone Coverage", icon: <Zap size={12} />, layout: "iconLeft" },
+    ];
 
     return (
         <div className={styles.realtimePage}>
@@ -300,10 +306,7 @@ const MonitoringList = () => {
                                 <Clock size={16} color="var(--themeColor)" />
                             </div>
                             <div className={styles.statsFourAcross}>
-                                <StatItem label="Total Time" value={wardData.timeStats.total} icon={<Clock size={12} />} layout="iconLeft" />
-                                <StatItem label="Active Zone Time" value={wardData.timeStats.inZone} icon={<Clock size={12} />} layout="iconLeft" />
-                                <StatItem label="Kilometer Metrics" value={wardData.kmStats.total} icon={<Zap size={12} />} layout="iconLeft" />
-                                <StatItem label="Zone Coverage" value={wardData.kmStats.inZone} icon={<Zap size={12} />} layout="iconLeft" />
+                                <StateItem items={stateItems} />
                             </div>
                         </div>
 
@@ -449,38 +452,14 @@ const PerformanceGrid = ({ data }) => {
     ];
     return (
         <div className={styles.wardSummaryStats}>
-            {items.map((item) => <StatItem key={item.label} label={item.label} value={item.value} color={item.color} />)}
+            <StateItem items={items} />
         </div>
     );
 };
 
-const StatItem = ({ label, value, color, icon, layout, graphPercent, graphStyle = "bar" }) => (
-    <div className={`${styles.miniStatItem} ${layout === "iconLeft" ? styles.miniStatItemIconLeft : ""}`}>
-        {layout === "iconLeft" && icon && <div className={styles.miniStatLeadIcon}>{icon}</div>}
-        <div className={styles.miniStatContent}>
-            <div className={styles.miniStatTop}>
-                <div className={styles.miniStatHeader}>
-                    {layout !== "iconLeft" && icon && <div style={{ color: "var(--themeColor)" }}>{icon}</div>}
-                    <span className={styles.miniStatLabel}>{label}</span>
-                </div>
-                <span className={styles.miniStatValue} style={{ color }}>{value}</span>
-            </div>
-            {typeof graphPercent === "number" && (
-                graphStyle === "dots" ? (
-                    <div className={styles.miniStatDotGraph}>
-                        {Array.from({ length: 10 }).map((_, idx) => (
-                            <span key={idx} className={`${styles.miniStatDot} ${idx < Math.round(graphPercent / 10) ? styles.miniStatDotActive : ""}`} style={idx < Math.round(graphPercent / 10) ? { background: color || "var(--themeColor)" } : undefined} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className={styles.miniStatGraphTrack}>
-                        <div className={styles.miniStatGraphFill} style={{ width: `${graphPercent}%`, background: color || "var(--themeColor)" }} />
-                    </div>
-                )
-            )}
-        </div>
-    </div>
-);
+// const StatItem = ({ label, value, color, icon, layout, graphPercent, graphStyle = "bar" }) => (
+
+// );
 
 const EnhancedProfile = ({ profile, role, isOnline }) => (
     <div className={styles.enhancedProfile}>
