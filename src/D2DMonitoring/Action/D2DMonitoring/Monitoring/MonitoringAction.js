@@ -7,8 +7,7 @@ export const getDutyInTime = (ward, setShowDutyInTime) => {
         const month = dayjs().format("MMMM");
         const day = dayjs().format("YYYY-MM-DD");
 
-        getWardDutyOnTimeFromDB(year, month, '2025-02-14', ward).then((response) => {
-            console.log("Response: ", response);
+        getWardDutyOnTimeFromDB(year, month, day, ward).then((response) => {
             if (response.status === "Success") {
                 const data = response.data;
                 // If dutyInTime contains multiple records (object), join all values with ", "

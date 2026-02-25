@@ -69,6 +69,7 @@ const MonitoringList = () => {
     const [editingRemarkId, setEditingRemarkId] = useState(null);
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
     const [showDutyInTime, setShowDutyInTime] = useState('');
+    const [firebaseReady, setFirebaseReady] = useState(false);
 
     // Map States
     const remarkTopicDropdownRef = useRef(null);
@@ -105,15 +106,19 @@ const MonitoringList = () => {
         garageDuty: "0/0",
     });
 
+    // Connect Firebase first, then mark ready
     useEffect(() => {
         const staticCity = 'Sikar';
         const firebaseConfig = getCityFirebaseConfig(staticCity);
         connectFirebase(firebaseConfig, staticCity);
+        setFirebaseReady(true);
     }, []);
 
+    // Fetch duty in time only after Firebase is connected
     useEffect(() => {
+        if (!firebaseReady) return;
         getDutyInTime(selectedWard.id, setShowDutyInTime);
-    }, [selectedWard.id]);
+    }, [firebaseReady, selectedWard.id]);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;
