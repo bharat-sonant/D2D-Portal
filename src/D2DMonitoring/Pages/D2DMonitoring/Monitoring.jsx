@@ -33,6 +33,8 @@ import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
+import { getWardDutyOnTimeFromDB } from "../../Services/D2DMonitoringDutyIn";
+import { getDutyInTime } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 
 const MonitoringList = () => {
     const remarkTopicOptions = [
@@ -66,6 +68,7 @@ const MonitoringList = () => {
     const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
     const [editingRemarkId, setEditingRemarkId] = useState(null);
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
+    const [showDutyInTime, setShowDutyInTime] = useState('');
 
     // Map States
     const remarkTopicDropdownRef = useRef(null);
@@ -107,6 +110,10 @@ const MonitoringList = () => {
         const firebaseConfig = getCityFirebaseConfig(staticCity);
         connectFirebase(firebaseConfig, staticCity);
     }, []);
+
+    useEffect(() => {
+        getDutyInTime(selectedWard.id, setShowDutyInTime);
+    }, [selectedWard.id]);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;
@@ -201,7 +208,7 @@ const MonitoringList = () => {
     const zoneGraphMax = 74;
 
     const currentShiftEvents = [
-        { key: "dutyOn", label: "Duty On", time: "08:00 AM", status: "completed" },
+        { key: "dutyOn", label: "Duty On", time: showDutyInTime, status: "completed" },
         { key: "reachOn", label: "Reached", time: "09:00 AM", status: "completed" },
         { key: "workStatus", label: "Working", time: "Live", status: "active", isLive: true },
         { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
@@ -364,6 +371,7 @@ const MonitoringList = () => {
                                 <ShiftStatusSection
                                     events={currentShiftEvents}
                                     activeConnectorIndex={1}
+                                    showDutyInTime={showDutyInTime}
                                 />
                             </div>
                         </div>
