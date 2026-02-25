@@ -31,6 +31,8 @@ import Chetan from "../../../assets/images/Chetan.jpeg";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
+import { connectFirebase } from "../../../firebase/firebaseService";
+import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 
 const MonitoringList = () => {
     const remarkTopicOptions = [
@@ -99,6 +101,12 @@ const MonitoringList = () => {
         heroesOnWork: 89,
         garageDuty: "0/0",
     });
+
+    useEffect(() => {
+        const staticCity = 'Sikar';
+        const firebaseConfig = getCityFirebaseConfig(staticCity);
+        connectFirebase(firebaseConfig, staticCity);
+    }, []);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;

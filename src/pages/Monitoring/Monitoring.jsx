@@ -77,11 +77,7 @@ const Monitoring = () => {
     await fetchWardDashboard(ward);
   };
 
-  useEffect(() => {
-    const staticCity = 'Sikar';
-    const firebaseConfig = getCityFirebaseConfig(staticCity);
-    connectFirebase(firebaseConfig, staticCity);
-  }, []);
+
 
   useEffect(() => {
     if (!cityId) return;
