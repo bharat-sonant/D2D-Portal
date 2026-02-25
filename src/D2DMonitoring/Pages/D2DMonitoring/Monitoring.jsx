@@ -292,31 +292,7 @@ const MonitoringList = () => {
                             </div>
                         </div>
 
-                        <div className={styles.glassCard}>
-                            <div className={styles.remarksHeadRow}>
-                                <div className={styles.remarksHeadLeft}>
-                                    <Plus size={16} color="var(--themeColor)" />
-                                    <span className={styles.remarksHeadTitle}>Remark</span>
-                                </div>
-                                <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
-                            </div>
-                            {remarks.length === 0 ? (
-                                <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
-                            ) : (
-                                <div className={styles.remarkList}>
-                                    {remarks.map((item) => (
-                                        <div key={item.id} className={styles.remarkItemCard}>
-                                            <div className={styles.remarkItemTopic}>{item.topic}</div>
-                                            <div className={styles.remarkItemDescription}>{item.description}</div>
-                                            <div className={styles.remarkItemActions}>
-                                                <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
-                                                <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                   
                     </div>
 
                     {/* Right Data Section */}
@@ -343,32 +319,31 @@ const MonitoringList = () => {
                                     </div>
                                     <PerformanceGrid data={wardData} />
                                 </div>
-                                <div className={`${styles.glassCard} ${styles.wardSummary}`}>
-                                    <div className={styles.cardHeading}>
-                                        <h3>Zone Details</h3>
-                                        <MapIcon size={16} color="var(--themeColor)" />
-                                    </div>
-                                    <div className={styles.statsTwoColWrap}>
-                                        {[
-                                            { label: "Heroes", value: wardData.heroesOnWork, color: "var(--themeColor)", graphPercent: 100 },
-                                            { label: "Garage", value: wardData.garageDuty, color: "var(--themeColor)", graphPercent: 0 },
-                                            { label: "Total Zone", value: wardData.zones.total, graphPercent: (wardData.zones.total / zoneGraphMax) * 100 },
-                                            { label: "Comp. Zone", value: wardData.zones.completed, color: "var(--textSuccess)", graphPercent: (wardData.zones.completed / zoneGraphMax) * 100 },
-                                            { label: "Active Zone", value: wardData.zones.active, color: "var(--themeColor)", graphPercent: (wardData.zones.active / zoneGraphMax) * 100 },
-                                            { label: "Inactive Zone", value: wardData.zones.inactive, color: "var(--gray)", graphPercent: (wardData.zones.inactive / zoneGraphMax) * 100 },
-                                            { label: "Stop Zone", value: wardData.zones.stop, color: "var(--textDanger)", graphPercent: (wardData.zones.stop / zoneGraphMax) * 100 },
-                                        ].map((item) => (
-                                            <StatItem
-                                                key={item.label}
-                                                label={item.label}
-                                                value={item.value}
-                                                color={item.color}
-                                                graphPercent={item.graphPercent}
-                                                graphStyle="dots"
-                                            />
-                                        ))}
-                                    </div>
+                         <div className={styles.glassCard}>
+                            <div className={styles.remarksHeadRow}>
+                                <div className={styles.remarksHeadLeft}>
+                                    <Plus size={16} color="var(--themeColor)" />
+                                    <span className={styles.remarksHeadTitle}>Remark</span>
                                 </div>
+                                <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
+                            </div>
+                            {remarks.length === 0 ? (
+                                <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
+                            ) : (
+                                <div className={styles.remarkList}>
+                                    {remarks.map((item) => (
+                                        <div key={item.id} className={styles.remarkItemCard}>
+                                            <div className={styles.remarkItemTopic}>{item.topic}</div>
+                                            <div className={styles.remarkItemDescription}>{item.description}</div>
+                                            <div className={styles.remarkItemActions}>
+                                                <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
+                                                <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                             </div>
                             {/*map section with status */}
                             <div className={styles.mapColumn}>
