@@ -224,7 +224,7 @@ export const subscribeUserPermissions = ({
       }
     )
     .subscribe((status) => {
-      console.log("📡 Realtime status:", status);
+      // console.log("📡 Realtime status:", status);
     });
 
   return channel;
