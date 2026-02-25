@@ -7,9 +7,19 @@ export const getDutyInTime = (ward, setShowDutyInTime) => {
         const month = dayjs().format("MMMM");
         const day = dayjs().format("YYYY-MM-DD");
 
-        getWardDutyOnTimeFromDB(year, month, day, ward).then((response) => {
+        getWardDutyOnTimeFromDB(year, month, '2025-02-14', ward).then((response) => {
+            console.log("Response: ", response);
             if (response.status === "Success") {
-                setShowDutyInTime(response.data);
+                const data = response.data;
+                // If dutyInTime contains multiple records (object), join all values with ", "
+                if (data && typeof data === "object" && !Array.isArray(data)) {
+                    const values = Object.values(data).filter(Boolean);
+                    setShowDutyInTime(values.length > 0 ? values.join(", ") : "");
+                } else if (Array.isArray(data)) {
+                    setShowDutyInTime(data.filter(Boolean).join(", "));
+                } else {
+                    setShowDutyInTime(data || "");
+                }
             } else {
                 setShowDutyInTime("");
             };
