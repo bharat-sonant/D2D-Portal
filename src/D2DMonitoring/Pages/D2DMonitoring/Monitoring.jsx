@@ -70,6 +70,7 @@ const MonitoringList = () => {
     const [editingRemarkId, setEditingRemarkId] = useState(null);
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
     const [showDutyInTime, setShowDutyInTime] = useState('');
+    const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
 
     // Map States
     const remarkTopicDropdownRef = useRef(null);
@@ -220,7 +221,7 @@ const MonitoringList = () => {
     const stateItems = [
         { label: "Total Time",  icon: <Clock size={12} />, layout: "iconLeft" },
         { label: "Active Zone Time", icon: <Clock size={12} />, layout: "iconLeft" },
-        { label: "Ward Length", value: wardData.kmStats.total, icon: <Zap size={12} />, layout: "iconLeft" },
+        { label: "Ward Length", value: `${(selectedWardLengthInMeter / 1000)?.toFixed(2)} km`, icon: <Zap size={12} />, layout: "iconLeft" },
         { label: "Zone Coverage", icon: <Zap size={12} />, layout: "iconLeft" },
     ];
 
@@ -347,7 +348,10 @@ const MonitoringList = () => {
                             </div>
                             {/*map section with status */}
                             <div className={styles.mapColumn}>
-                                <MapSection selectedWard={selectedWard} />
+                                <MapSection
+                                    selectedWard={selectedWard}
+                                    onWardLengthResolved={setSelectedWardLengthInMeter}
+                                />
                                 <ShiftStatusSection
                                     events={currentShiftEvents}
                                     activeConnectorIndex={1}

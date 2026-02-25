@@ -311,8 +311,8 @@ export const setAlertMessage = (type, message) => {
         type === "error"
           ? "#d32f2f"   // red
           : type === "warn"
-          ? "#ed6c02"   // orange
-          : "#2e7d32",  // green
+            ? "#ed6c02"   // orange
+            : "#2e7d32",  // green
     },
   };
 
@@ -343,7 +343,7 @@ export function generateRandomCode() {
 export function encryptValue(value) {
   return CryptoJS.AES.encrypt(value, secretKey).toString();
 }
-export const generateHash=(input)=> {
+export const generateHash = (input) => {
   return CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
 }
 
@@ -599,6 +599,99 @@ export const getCityDetailsJSON = () => {
     });
   });
 }
+
+function haversineDistanceInMeters(lat1, lon1, lat2, lon2) {
+  const earthRadiusInMeters = 6371000;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  return 2 * earthRadiusInMeters * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function calculatePointsLengthInMeters(points = []) {
+  let total = 0;
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const [lat1, lon1] = points[i];
+    const [lat2, lon2] = points[i + 1];
+
+    if (Number.isFinite(lat1) && Number.isFinite(lon1) && Number.isFinite(lat2) && Number.isFinite(lon2)) {
+      total += haversineDistanceInMeters(lat1, lon1, lat2, lon2);
+    }
+  }
+
+  return total;
+}
+
+function getLinePointSetsFromWardLineData(wardLineData) {
+  if (!wardLineData) return [];
+
+  // Format: { points: [[lat, lng], ...] }
+  if (Array.isArray(wardLineData.points)) {
+    return [wardLineData.points.map(([lat, lng]) => [Number(lat), Number(lng)])];
+  }
+
+  // Format: { "1": { points: [...] }, ... }
+  if (typeof wardLineData === "object" && !Array.isArray(wardLineData)) {
+    const numericKeys = Object.keys(wardLineData).filter((key) => !isNaN(key));
+    if (numericKeys.length > 0) {
+      return numericKeys
+        .map((key) => wardLineData[key]?.points)
+        .filter((points) => Array.isArray(points))
+        .map((points) => points.map(([lat, lng]) => [Number(lat), Number(lng)]));
+    }
+  }
+
+  // GeoJSON FeatureCollection from assets/Sikar/WardLines/*.json
+  if (wardLineData.type === "FeatureCollection" && Array.isArray(wardLineData.features)) {
+    const linePointSets = [];
+
+    wardLineData.features.forEach((feature) => {
+      const geometry = feature?.geometry;
+      if (!geometry) return;
+
+      if (geometry.type === "LineString" && Array.isArray(geometry.coordinates)) {
+        linePointSets.push(
+          geometry.coordinates.map(([lng, lat]) => [Number(lat), Number(lng)])
+        );
+      }
+
+      if (geometry.type === "MultiLineString" && Array.isArray(geometry.coordinates)) {
+        geometry.coordinates.forEach((line) => {
+          if (Array.isArray(line)) {
+            linePointSets.push(line.map(([lng, lat]) => [Number(lat), Number(lng)]));
+          }
+        });
+      }
+    });
+
+    return linePointSets;
+  }
+
+  // GeoJSON LineString
+  if (wardLineData.type === "LineString" && Array.isArray(wardLineData.coordinates)) {
+    return [wardLineData.coordinates.map(([lng, lat]) => [Number(lat), Number(lng)])];
+  }
+
+  return [];
+}
+
+export const calculateWardLineLengthInMeter = (wardLineData) => {
+  const linePointSets = getLinePointSetsFromWardLineData(wardLineData);
+  const totalLength = linePointSets.reduce(
+    (sum, points) => sum + calculatePointsLengthInMeters(points),
+    0
+  );
+  return Math.round(totalLength);
+};
 
 
 

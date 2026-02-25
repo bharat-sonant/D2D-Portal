@@ -1,6 +1,7 @@
 import styles from '../../Pages/D2DRealtime/Realtime.module.css';
 
 const StateItem = ({ items = [] }) => {
+    
     return (
         <>
             {items.map((item) => (

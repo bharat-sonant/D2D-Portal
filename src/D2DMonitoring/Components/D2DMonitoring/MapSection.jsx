@@ -31,14 +31,14 @@ const wardLinesById = {
     5: ward5Line
 };
 
-const MapSection = ({ selectedWard }) => {
+const MapSection = ({ selectedWard, onWardLengthResolved }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
 
     const mapRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
 
-    const { wardBoundary, selectedWardLinePaths } = action.getSelectedWardMapData({
+    const { wardBoundary, selectedWardLinePaths, selectedWardLengthInMeter } = action.getSelectedWardMapData({
         wardId: selectedWard?.id,
         wardBoundariesById,
         wardLinesById,
@@ -53,6 +53,12 @@ const MapSection = ({ selectedWard }) => {
         if (!isGoogleReady) return;
         return action.scheduleMapZoom(mapRef, selectedWardLinePaths, wardBoundary);
     }, [isGoogleReady, wardBoundary, selectedWardLinePaths]);
+
+    useEffect(() => {
+        if (typeof onWardLengthResolved === "function") {
+            onWardLengthResolved(selectedWardLengthInMeter);
+        }
+    }, [onWardLengthResolved, selectedWardLengthInMeter]);
 
     if (!isGoogleReady) return null;
 

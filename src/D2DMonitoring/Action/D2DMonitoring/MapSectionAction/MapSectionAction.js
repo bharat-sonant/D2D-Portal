@@ -1,3 +1,5 @@
+import { calculateWardLineLengthInMeter } from "../../../../common/common";
+
 const toLatLngFromGeo = ([lng, lat]) => ({ lat: Number(lat), lng: Number(lng) });
 const toLatLngFromCustom = ([lat, lng]) => ({ lat: Number(lat), lng: Number(lng) });
 const toKey = (point, precision = 6) => `${Number(point.lat).toFixed(precision)},${Number(point.lng).toFixed(precision)}`;
@@ -75,10 +77,12 @@ export const waitForGoogleMapsReady = (onReady, interval = 100) => {
 export const getSelectedWardMapData = ({ wardId, wardBoundariesById, wardLinesById }) => {
     const selectedWardBoundary = wardBoundariesById[wardId];
     const selectedWardLine = wardLinesById[wardId];
+    const selectedWardLengthInMeter = calculateWardLineLengthInMeter(selectedWardLine);
 
     return {
         wardBoundary: getBoundaryPathFromWardBoundaryJson(selectedWardBoundary),
         selectedWardLinePaths: getLinePathsFromGeoJson(selectedWardLine),
+        selectedWardLengthInMeter,
     };
 };
 
