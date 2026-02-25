@@ -33,7 +33,7 @@ const wardLinesById = {
 
 const MapSection = ({ selectedWard, onWardLengthResolved }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
-
+    
     const mapRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
