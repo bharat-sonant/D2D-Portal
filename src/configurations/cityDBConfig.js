@@ -1,11 +1,11 @@
 export const cityDbConfig = {
-  Reengus : process.env.REACT_APP_FIREBASE_DATABASE_URL_REENGUS,
-  Ajmer : process.env.REACT_APP_FIREBASE_DATABASE_URL_AJMER,
-  Bundi : process.env.REACT_APP_FIREBASE_DATABASE_URL_BUNDI,
+  Reengus: process.env.REACT_APP_FIREBASE_DATABASE_URL_REENGUS,
+  Ajmer: process.env.REACT_APP_FIREBASE_DATABASE_URL_AJMER,
+  Bundi: process.env.REACT_APP_FIREBASE_DATABASE_URL_BUNDI,
+  Sikar: process.env.REACT_APP_FIREBASE_DATABASE_URL_Sikar,
 }
 
 export const getCityFirebaseConfig = (city) => {
-  // ✅ If DevTest, use its own config entirely
   if (city === "DevTest") {
     return {
       apiKey: process.env.REACT_APP_FIREBASE_API_KEY_DEVTEST,
@@ -18,7 +18,18 @@ export const getCityFirebaseConfig = (city) => {
       databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL_DEVTEST,
     };
   }
-  if (city === "Reengus"){
+  if (city === "Sikar") {
+    return {
+      apiKey: process.env.REACT_APP_FIREBASE_API_KEY_Sikar,
+      authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN_Sikar,
+      projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID_Sikar,
+      storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET_Sikar,
+      messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID_Sikar,
+      appId: process.env.REACT_APP_FIREBASE_APP_ID_Sikar,
+      measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID_Sikar
+    };
+  }
+  if (city === "Reengus") {
     return {
       apiKey: process.env.REACT_APP_FIREBASE_API_KEY_REENGUS,
       authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN_REENGUS,
@@ -30,7 +41,7 @@ export const getCityFirebaseConfig = (city) => {
       databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL_REENGUS,
     };
   }
-  
+
   const baseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -41,7 +52,7 @@ export const getCityFirebaseConfig = (city) => {
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
   }
 
-   const dbURL = cityDbConfig[city];
+  const dbURL = cityDbConfig[city];
   return {
     ...baseConfig,
     databaseURL: dbURL || process.env.REACT_APP_FIREBASE_DATABASE_URL_DEVTEST,

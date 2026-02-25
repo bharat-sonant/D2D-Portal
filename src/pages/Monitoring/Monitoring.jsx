@@ -10,6 +10,8 @@ import WevoisLoader from '../../components/Common/Loader/WevoisLoader';
 import dayjs from 'dayjs';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import monStyles from '../../components/Monitoring/WardMonitoring.module.css';
+import { getCityFirebaseConfig } from '../../configurations/cityDBConfig';
+import { connectFirebase } from '../../firebase/firebaseService';
 
 const Monitoring = () => {
   const [selectedWard, setSelectedWard] = useState(null);
@@ -76,6 +78,12 @@ const Monitoring = () => {
   };
 
   useEffect(() => {
+    const staticCity = 'Sikar';
+    const firebaseConfig = getCityFirebaseConfig(staticCity);
+    connectFirebase(firebaseConfig, staticCity);
+  }, []);
+
+  useEffect(() => {
     if (!cityId) return;
 
     let isMounted = true;
@@ -109,30 +117,30 @@ const Monitoring = () => {
       requestIdRef.current += 1;
     };
   }, [cityId]);
-  
+
   useEffect(() => {
-  if (!cityId || !wardList?.length || !date) return;
+    if (!cityId || !wardList?.length || !date) return;
 
-  let intervalId;
-  const today = dayjs().format("YYYY-MM-DD");
-  const isToday = date === today;
+    let intervalId;
+    const today = dayjs().format("YYYY-MM-DD");
+    const isToday = date === today;
 
-  // Initial fetch
-  fetchWardDailySummaryAction(cityId, wardList, date);
+    // Initial fetch
+    fetchWardDailySummaryAction(cityId, wardList, date);
 
-  if (isToday) {
-    intervalId = setInterval(() => {
-      fetchWardDailySummaryAction(cityId, wardList, date);
-    }, 60000); // 1 minute
-  }
-
-  return () => {
-    if (intervalId) {
-      clearInterval(intervalId);
+    if (isToday) {
+      intervalId = setInterval(() => {
+        fetchWardDailySummaryAction(cityId, wardList, date);
+      }, 60000); // 1 minute
     }
-  };
 
-}, [cityId,wardList, date]);
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+
+  }, [cityId, wardList, date]);
 
   return (
     <>
@@ -246,3 +254,4 @@ const Monitoring = () => {
 };
 
 export default Monitoring;
+
