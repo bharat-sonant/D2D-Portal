@@ -9,7 +9,7 @@ import QuickAppSelection from "../QuickAppSelection";
 import { useCity } from "../../context/CityContext";
 
 const menuItems = [
-  { id: "realtime", label: "Realtime Design", icon: MapPinHouse, to: "/d2dMonitoring/realtime" },
+  // { id: "realtime", label: "Realtime Design", icon: MapPinHouse, to: "/d2dMonitoring/realtime" },
   { id: "daily-report", label: "Daily report", icon: FileText, to: "/d2dMonitoring/daily-report" },
 ];
 

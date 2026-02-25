@@ -241,113 +241,126 @@ const MonitoringList = () => {
                         <WevoisLoader title={`Updating Data for ${selectedWard?.name}...`} />
                     </div>
                 ) : ( */}
-                    <div className={styles.layoutSplit}>
-                        {/* Left Column */}
-                        <div className={styles.leftColumn}>
-                            <div className={styles.glassCard}>
-                                <div className={styles.cardHeading}>
-                                    <h3>Heroes on Duty</h3>
-                                    <UsersIcon size={18} color="var(--themeColor)" />
-                                </div>
-                                <EnhancedProfile profile={wardData.profiles.driver} role="Captain" isOnline />
-                                <EnhancedProfile profile={wardData.profiles.helper} role="Pilot" isOnline={false} />
-                                <button type="button" className={styles.vehicleBar} onClick={() => setShowVehicleModal(true)}>
-                                    <div className={styles.vehicleBarMain}>
-                                        <Truck size={14} />
-                                        <span>{wardData.vehicleNumber}</span>
-                                    </div>
-                                    <ChevronRight size={14} />
-                                </button>
+                <div className={styles.layoutSplit}>
+                    {/* Left Column */}
+                    <div className={styles.leftColumn}>
+                        <div className={styles.glassCard}>
+                            <div className={styles.cardHeading}>
+                                <h3>Heroes on Duty</h3>
+                                <UsersIcon size={18} color="var(--themeColor)" />
                             </div>
+                            <EnhancedProfile profile={wardData.profiles.driver} role="Captain" isOnline />
+                            <EnhancedProfile profile={wardData.profiles.helper} role="Pilot" isOnline={false} />
+                            <button type="button" className={styles.vehicleBar} onClick={() => setShowVehicleModal(true)}>
+                                <div className={styles.vehicleBarMain}>
+                                    <Truck size={14} />
+                                    <span>{wardData.vehicleNumber}</span>
+                                </div>
+                                <ChevronRight size={14} />
+                            </button>
+                        </div>
 
-                            <div className={`${styles.glassCard} ${styles.statusUnifiedCard}`}>
-                                <div className={styles.cardHeading}>
-                                    <h3>Live Status Board</h3>
-                                    <Activity size={18} color="var(--themeColor)" />
-                                </div>
-                                <div className={styles.cardBody}>
-                                    <StatusLine label="Vehicle Status" value={wardData.vehicleStatus} icon={<Truck size={16} />} color="var(--textDanger)" onClick={() => setActiveStatusModal("vehicle")} />
-                                    <StatusLine label="Trip Execution" value={`${wardData.trips} Trips`} icon={<TrendingUp size={16} />} />
-                                    <StatusLine label="App Status" value={wardData.appStatus} icon={<Zap size={16} />} color="var(--textSuccess)" onClick={() => setActiveStatusModal("app")} />
-                                </div>
+                        <div className={`${styles.glassCard} ${styles.statusUnifiedCard}`}>
+                            <div className={styles.cardHeading}>
+                                <h3>Live Status Board</h3>
+                                <Activity size={18} color="var(--themeColor)" />
                             </div>
-
-                            <div className={styles.glassCard}>
-                                <div className={styles.remarksHeadRow}>
-                                    <div className={styles.remarksHeadLeft}>
-                                        <Plus size={16} color="var(--themeColor)" />
-                                        <span className={styles.remarksHeadTitle}>Remark</span>
-                                    </div>
-                                    <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
-                                </div>
-                                {remarks.length === 0 ? (
-                                    <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
-                                ) : (
-                                    <div className={styles.remarkList}>
-                                        {remarks.map((item) => (
-                                            <div key={item.id} className={styles.remarkItemCard}>
-                                                <div className={styles.remarkItemTopic}>{item.topic}</div>
-                                                <div className={styles.remarkItemDescription}>{item.description}</div>
-                                                <div className={styles.remarkItemActions}>
-                                                    <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
-                                                    <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                            <div className={styles.cardBody}>
+                                <StatusLine label="Vehicle Status" value={wardData.vehicleStatus} icon={<Truck size={16} />} color="var(--textDanger)" onClick={() => setActiveStatusModal("vehicle")} />
+                                <StatusLine label="Trip Execution" value={`${wardData.trips} Trips`} icon={<TrendingUp size={16} />} />
+                                <StatusLine label="App Status" value={wardData.appStatus} icon={<Zap size={16} />} color="var(--textSuccess)" onClick={() => setActiveStatusModal("app")} />
                             </div>
                         </div>
 
-                        {/* Right Data Section */}
-                        <div className={styles.dataRight}>
-                            <div className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}>
-                                <div className={styles.cardHeading}>
-                                    <h3>Ward Analytics</h3>
-                                    <Clock size={16} color="var(--themeColor)" />
+                        <div className={styles.glassCard}>
+                            <div className={styles.remarksHeadRow}>
+                                <div className={styles.remarksHeadLeft}>
+                                    <Plus size={16} color="var(--themeColor)" />
+                                    <span className={styles.remarksHeadTitle}>Remark</span>
                                 </div>
-                                <div className={styles.statsFourAcross}>
-                                    <StatItem label="Total Time" value={wardData.timeStats.total} icon={<Clock size={12} />} layout="iconLeft" />
-                                    <StatItem label="Active Zone Time" value={wardData.timeStats.inZone} icon={<Clock size={12} />} layout="iconLeft" />
-                                    <StatItem label="Kilometer Metrics" value={wardData.kmStats.total} icon={<Zap size={12} />} layout="iconLeft" />
-                                    <StatItem label="Zone Coverage" value={wardData.kmStats.inZone} icon={<Zap size={12} />} layout="iconLeft" />
+                                <button type="button" className={styles.addRemarkBtn} onClick={openNewRemarkModal}>Add</button>
+                            </div>
+                            {remarks.length === 0 ? (
+                                <div className={styles.remarkEmpty}>No query yet. Click Add New to create one.</div>
+                            ) : (
+                                <div className={styles.remarkList}>
+                                    {remarks.map((item) => (
+                                        <div key={item.id} className={styles.remarkItemCard}>
+                                            <div className={styles.remarkItemTopic}>{item.topic}</div>
+                                            <div className={styles.remarkItemDescription}>{item.description}</div>
+                                            <div className={styles.remarkItemActions}>
+                                                <button type="button" className={styles.remarkActionBtn} onClick={() => openEditRemarkModal(item)}><Pencil size={13} /> Edit</button>
+                                                <button type="button" className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`} onClick={() => deleteRemark(item.id)}><Trash2 size={13} /> Delete</button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right Data Section */}
+                    <div className={styles.dataRight}>
+                        <div className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}>
+                            <div className={styles.cardHeading}>
+                                <h3>Ward Analytics</h3>
+                                <Clock size={16} color="var(--themeColor)" />
+                            </div>
+                            <div className={styles.statsFourAcross}>
+                                <StatItem label="Total Time" value={wardData.timeStats.total} icon={<Clock size={12} />} layout="iconLeft" />
+                                <StatItem label="Active Zone Time" value={wardData.timeStats.inZone} icon={<Clock size={12} />} layout="iconLeft" />
+                                <StatItem label="Kilometer Metrics" value={wardData.kmStats.total} icon={<Zap size={12} />} layout="iconLeft" />
+                                <StatItem label="Zone Coverage" value={wardData.kmStats.inZone} icon={<Zap size={12} />} layout="iconLeft" />
+                            </div>
+                        </div>
+
+                        <div className={styles.dataRightBottom}>
+                            <div className={styles.centerColumn}>
+                                <div className={`${styles.glassCard} ${styles.wardSummary}`}>
+                                    <div className={styles.cardHeading}>
+                                        <h3>Ward Summary</h3>
+                                        <TrendingUp size={16} color="var(--themeColor)" />
+                                    </div>
+                                    <PerformanceGrid data={wardData} />
+                                </div>
+                                <div className={`${styles.glassCard} ${styles.wardSummary}`}>
+                                    <div className={styles.cardHeading}>
+                                        <h3>Zone Details</h3>
+                                        <MapIcon size={16} color="var(--themeColor)" />
+                                    </div>
+                                    <div className={styles.statsTwoColWrap}>
+                                        {[
+                                            { label: "Heroes", value: wardData.heroesOnWork, color: "var(--themeColor)", graphPercent: 100 },
+                                            { label: "Garage", value: wardData.garageDuty, color: "var(--themeColor)", graphPercent: 0 },
+                                            { label: "Total Zone", value: wardData.zones.total, graphPercent: (wardData.zones.total / zoneGraphMax) * 100 },
+                                            { label: "Comp. Zone", value: wardData.zones.completed, color: "var(--textSuccess)", graphPercent: (wardData.zones.completed / zoneGraphMax) * 100 },
+                                            { label: "Active Zone", value: wardData.zones.active, color: "var(--themeColor)", graphPercent: (wardData.zones.active / zoneGraphMax) * 100 },
+                                            { label: "Inactive Zone", value: wardData.zones.inactive, color: "var(--gray)", graphPercent: (wardData.zones.inactive / zoneGraphMax) * 100 },
+                                            { label: "Stop Zone", value: wardData.zones.stop, color: "var(--textDanger)", graphPercent: (wardData.zones.stop / zoneGraphMax) * 100 },
+                                        ].map((item) => (
+                                            <StatItem
+                                                key={item.label}
+                                                label={item.label}
+                                                value={item.value}
+                                                color={item.color}
+                                                graphPercent={item.graphPercent}
+                                                graphStyle="dots"
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-
-                            <div className={styles.dataRightBottom}>
-                                <div className={styles.centerColumn}>
-                                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
-                                        <div className={styles.cardHeading}>
-                                            <h3>Ward Summary</h3>
-                                            <TrendingUp size={16} color="var(--themeColor)" />
-                                        </div>
-                                        <PerformanceGrid data={wardData} />
-                                    </div>
-                                    <div className={`${styles.glassCard} ${styles.wardSummary}`}>
-                                        <div className={styles.cardHeading}>
-                                            <h3>Zone Details</h3>
-                                            <MapIcon size={16} color="var(--themeColor)" />
-                                        </div>
-                                        <div className={styles.statsTwoColWrap}>
-                                            <StatItem label="Total Zone" value={wardData.zones.total} graphPercent={(wardData.zones.total / zoneGraphMax) * 100} graphStyle="dots" />
-                                            <StatItem label="Comp. Zone" value={wardData.zones.completed} color="var(--textSuccess)" graphPercent={(wardData.zones.completed / zoneGraphMax) * 100} graphStyle="dots" />
-                                            <StatItem label="Active Zone" value={wardData.zones.active} color="var(--themeColor)" graphPercent={(wardData.zones.active / zoneGraphMax) * 100} graphStyle="dots" />
-                                            <StatItem label="Inactive Zone" value={wardData.zones.inactive} color="var(--gray)" graphPercent={(wardData.zones.inactive / zoneGraphMax) * 100} graphStyle="dots" />
-                                            <StatItem label="Stop Zone" value={wardData.zones.stop} color="var(--textDanger)" graphPercent={(wardData.zones.stop / zoneGraphMax) * 100} graphStyle="dots" />
-                                        </div>
-                                    </div>
-                                </div>
-                                {/*map section with status */}
-                                <div className={styles.mapColumn}>
-                                    <MapSection selectedWard={selectedWard} />
-                                    <ShiftStatusSection
-                                        events={currentShiftEvents}
-                                        activeConnectorIndex={1}
-                                    />
-                                </div>
+                            {/*map section with status */}
+                            <div className={styles.mapColumn}>
+                                <MapSection selectedWard={selectedWard} />
+                                <ShiftStatusSection
+                                    events={currentShiftEvents}
+                                    activeConnectorIndex={1}
+                                />
                             </div>
                         </div>
                     </div>
+                </div>
                 {/* )} */}
             </div>
 

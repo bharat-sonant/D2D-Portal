@@ -99,7 +99,7 @@ const MapSection = ({ selectedWard }) => {
                     ))}
 
                 </GoogleMap>
-
+{/* 
                 <div className={styles.mapFooter}>
                     <div className={styles.mapStat}>
                         <UsersIcon size={14} color="var(--themeColor)" />
@@ -110,7 +110,7 @@ const MapSection = ({ selectedWard }) => {
                         <Truck size={14} color="var(--themeColor)" />
                         <span>Garage: <b>1</b></span>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );
