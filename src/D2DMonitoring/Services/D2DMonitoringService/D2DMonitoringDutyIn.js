@@ -1,5 +1,5 @@
-import { setResponse } from '../../common/common';
-import * as db from '../../services/dbServices';
+import { setResponse } from '../../../common/common';
+import * as db from '../../../services/dbServices';
 
 export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
     return new Promise((resolve) => {

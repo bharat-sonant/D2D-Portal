@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { GoogleMap, Polyline } from "@react-google-maps/api";
 //ward boundaries for ward 1 to 5
@@ -14,6 +14,7 @@ import ward3Line from '../../../assets/Sikar/WardLines/3.json';
 import ward4Line from '../../../assets/Sikar/WardLines/4.json';
 import ward5Line from '../../../assets/Sikar/WardLines/5.json';
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
+import { getLineColorByStatus } from "../../Action/D2DMonitoring/MapSectionAction/LineStatusAction";
 
 const wardBoundariesById = {
     1: ward1Boundary,
@@ -31,9 +32,16 @@ const wardLinesById = {
     5: ward5Line
 };
 
-const MapSection = ({ selectedWard, onWardLengthResolved }) => {
+const DEFAULT_LINE_STYLE = {
+    strokeColor: "#79c0f0",
+    strokeOpacity: 1,
+    strokeWeight: 2,
+    zIndex: 3,
+};
+
+
+const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {} }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
-    
     const mapRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
@@ -59,6 +67,16 @@ const MapSection = ({ selectedWard, onWardLengthResolved }) => {
             onWardLengthResolved(selectedWardLengthInMeter);
         }
     }, [onWardLengthResolved, selectedWardLengthInMeter]);
+
+    const lineOptionsByIndex = useMemo(() => {
+        return selectedWardLinePaths.map((_, index) => {
+            const lineId = String(index + 1);
+            return {
+                ...DEFAULT_LINE_STYLE,
+                strokeColor: getLineColorByStatus(lineStatusByLine[lineId], DEFAULT_LINE_STYLE),
+            };
+        });
+    }, [selectedWardLinePaths, lineStatusByLine]);
 
     if (!isGoogleReady) return null;
 
@@ -91,12 +109,7 @@ const MapSection = ({ selectedWard, onWardLengthResolved }) => {
                         <Polyline
                             key={`${selectedWard?.id}-line-${index}`}
                             path={path}
-                            options={{
-                                strokeColor: "#79c0f0",
-                                strokeOpacity: 1,
-                                strokeWeight: 2,
-                                zIndex: 3,
-                            }}
+                            options={lineOptionsByIndex[index]}
                         />
                     ))}
 

@@ -35,6 +35,7 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import { getDutyInTime } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import StateItem from "../../Components/D2DMonitoring/StateItem";
+import { wardLineStatus } from "../../Action/D2DMonitoring/MapSectionAction/LineStatusAction";
 
 const MonitoringList = () => {
     const remarkTopicOptions = [
@@ -70,6 +71,7 @@ const MonitoringList = () => {
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
     const [showDutyInTime, setShowDutyInTime] = useState('');
     const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
+    const [lineStatusByLine, setLineStatusByLine] = useState({});
 
     const [vehicleIssueRows, setVehicleIssueRows] = useState([
         { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
@@ -114,6 +116,14 @@ const MonitoringList = () => {
     useEffect(() => {
         if (!selectedWard?.id) return;
         getDutyInTime(selectedWard.id, setShowDutyInTime);
+    }, [selectedWard?.id]);
+
+    useEffect(() => {
+        if (selectedWard?.id) {
+            let isMounted = true;
+            wardLineStatus(selectedWard.id, isMounted, setLineStatusByLine)
+            return () => { isMounted = false; };
+        };
     }, [selectedWard?.id]);
 
     const handleWardSelect = (ward) => {
@@ -348,6 +358,7 @@ const MonitoringList = () => {
                                 <MapSection
                                     selectedWard={selectedWard}
                                     onWardLengthResolved={setSelectedWardLengthInMeter}
+                                    lineStatusByLine={lineStatusByLine}
                                 />
                                 <ShiftStatusSection
                                     events={currentShiftEvents}

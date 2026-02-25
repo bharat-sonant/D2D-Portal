@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { getWardDutyOnTimeFromDB } from "../../../Services/D2DMonitoringDutyIn"
+import { getWardDutyOnTimeFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
 
 export const getDutyInTime = (ward, setShowDutyInTime) => {
     try {
