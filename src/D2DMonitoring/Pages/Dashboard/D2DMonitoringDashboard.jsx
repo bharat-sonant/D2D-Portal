@@ -18,6 +18,7 @@ import iconSunset from "../../../assets/images/icons/iconSunset.png";
 import iconNight from "../../../assets/images/icons/iconNight.png";
 
 const D2DMonitoringDashboard = () => {
+
   const [greeting, setGreeting] = useState("Good Morning");
   const [currentDate, setCurrentDate] = useState("");
   const [userName, setUserName] = useState("User");
@@ -28,10 +29,10 @@ const D2DMonitoringDashboard = () => {
     garageDuty: "0/0",
     zones: { total: 74, completed: 31, active: 29, inactive: 9, stop: 5 },
   };
-
-  useEffect(() => {
+  const updateDateTime = () => {
     const now = new Date();
     const hours = now.getHours();
+
     if (hours < 12) {
       setGreeting("Good Morning");
       setSessionType("morning");
@@ -54,9 +55,15 @@ const D2DMonitoringDashboard = () => {
         year: "numeric",
       })
     );
+  };
+  useEffect(() => {
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
 
     const storedUserName = localStorage.getItem("name");
     if (storedUserName) setUserName(storedUserName);
+
+    return () => clearInterval(interval);
   }, []);
 
   const sessionImages = {
@@ -129,6 +136,7 @@ const D2DMonitoringDashboard = () => {
     <div className={`${style.dashboardPage} ${d2dStyle.dashboardPageRoot}`}>
       <div className={`${style.dashboardLeft} ${d2dStyle.dashboardLeftFull}`}>
         <div className={d2dStyle.dashboardContent}>
+
           <section className={`${d2dStyle.heroCard} ${sessionClassMap[sessionType]}`}>
             <div className={d2dStyle.heroGlowA} />
             <div className={d2dStyle.heroGlowB} />
@@ -144,7 +152,11 @@ const D2DMonitoringDashboard = () => {
             </div>
 
             <div className={d2dStyle.heroVisual}>
-              <img src={sessionImages[sessionType].src} alt={sessionImages[sessionType].alt} className={d2dStyle.heroSessionImage} />
+              <img
+                src={sessionImages[sessionType].src}
+                alt={sessionImages[sessionType].alt}
+                className={d2dStyle.heroSessionImage}
+              />
             </div>
           </section>
 
@@ -164,23 +176,30 @@ const D2DMonitoringDashboard = () => {
                 const Icon = item.icon;
                 return (
                   <article key={item.label} className={d2dStyle.zoneStatItem}>
-                    <div className={d2dStyle.zoneStatIcon} style={{ color: item.accent, background: `${item.accent}1a` }}>
+                    <div
+                      className={d2dStyle.zoneStatIcon}
+                      style={{
+                        color: item.accent,
+                        background: `${item.accent}1a`
+                      }}
+                    >
                       <Icon size={17} />
                     </div>
                     <div className={d2dStyle.zoneStatText}>
                       <p className={d2dStyle.zoneStatLabel}>{item.label}</p>
                       <h4 className={d2dStyle.zoneStatValue}>{item.value}</h4>
-                      {/* <span className={d2dStyle.zoneStatNote}>{item.note}</span> */}
                     </div>
                   </article>
                 );
               })}
             </div>
           </section>
+
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default D2DMonitoringDashboard;
+
