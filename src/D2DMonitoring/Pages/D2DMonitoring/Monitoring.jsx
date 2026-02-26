@@ -1,53 +1,42 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
-import {
-    Activity,
-    Truck,
-    Check,
-    AlertCircle,
-    Clock,
-    Zap,
-    TrendingUp,
-    Users as UsersIcon,
-    Plus,
-    RefreshCw,
-    Star,
-    ChevronRight,
-    User as UserIcon,
-    Phone,
-    ShieldCheck,
-    Navigation,
-    X,
-    Map as MapIcon,
-    Signal,
-    BatteryMedium,
-    Cpu,
-    Pencil,
-    Trash2,
-} from "lucide-react";
+import { Activity, Truck, Clock, Zap, TrendingUp, Users as UsersIcon, Plus, RefreshCw, ChevronRight, User as UserIcon, Phone, ShieldCheck, Navigation, X, Map as MapIcon, Signal, BatteryMedium, Cpu, Pencil, Trash2 } from "lucide-react";
 import dayjs from "dayjs";
-import { GoogleMap, Polygon, Polyline } from "@react-google-maps/api";
 import Chetan from "../../../assets/images/Chetan.jpeg";
-import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
+// import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
-import { getDutyInTime } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import {
+    buildCoverageStateItems,
+    fetchWardLineStatusCacheForToday,
+    fetchSingleWardLineStatusForToday,
+    getCompletedLengthKm,
+    getCurrentWardLineStatus,
+    getDutyInTime,
+    getRemainingLengthKm,
+    getTotalWardLengthKm,
+    getWardLengthMetrics,
+    getZoneCoveragePercent,
+    hasWardStatusCache
+} from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import StateItem from "../../Components/D2DMonitoring/StateItem";
-import { wardLineStatus } from "../../Action/D2DMonitoring/MapSectionAction/LineStatusAction";
+import ward1Line from "../../../assets/Sikar/WardLines/1.json";
+import ward2Line from "../../../assets/Sikar/WardLines/2.json";
+import ward3Line from "../../../assets/Sikar/WardLines/3.json";
+import ward4Line from "../../../assets/Sikar/WardLines/4.json";
+import ward5Line from "../../../assets/Sikar/WardLines/5.json";
+
+const wardLinesById = {
+    1: ward1Line,
+    2: ward2Line,
+    3: ward3Line,
+    4: ward4Line,
+    5: ward5Line,
+};
 
 const MonitoringList = () => {
-    const remarkTopicOptions = [
-        "Performance Issue",
-        "Route Observation",
-        "Safety Alert",
-        "Vehicle Issue",
-        "Team Coordination",
-        "Other",
-    ];
-
-    // ✅ Local Ward Array (Static Data)
     const [wardList] = useState([
         { id: 1, name: "Ward 1", progress: 25 },
         { id: 2, name: "Ward 2", progress: 40 },
@@ -55,15 +44,14 @@ const MonitoringList = () => {
         { id: 4, name: "Ward 4", progress: 80 },
         { id: 5, name: "Ward 5", progress: 95 },
     ]);
+    const remarkTopicOptions = ["Performance Issue", "Route Observation", "Safety Alert", "Vehicle Issue", "Team Coordination", "Other"];
 
     const [selectedWard, setSelectedWard] = useState(wardList[0]);
     const [lastRefreshed, setLastRefreshed] = useState(dayjs().format("DD MMM, hh:mm A"));
     const [refreshing, setRefreshing] = useState(false);
     const [dataLoading, setDataLoading] = useState(false);
-
-    // Modal States
     const [showRemarkModal, setShowRemarkModal] = useState(false);
-    const [activeStatusModal, setActiveStatusModal] = useState(null); // 'app' or 'vehicle'
+    const [activeStatusModal, setActiveStatusModal] = useState(null);
     const [showVehicleModal, setShowVehicleModal] = useState(false);
     const [remarks, setRemarks] = useState([]);
     const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
@@ -71,7 +59,8 @@ const MonitoringList = () => {
     const [showTopicDropdown, setShowTopicDropdown] = useState(false);
     const [showDutyInTime, setShowDutyInTime] = useState('');
     const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
-    const [lineStatusByLine, setLineStatusByLine] = useState({});
+    const [lineStatusByWard, setLineStatusByWard] = useState({});
+    const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
 
     const [vehicleIssueRows, setVehicleIssueRows] = useState([
         { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
@@ -79,7 +68,6 @@ const MonitoringList = () => {
         { id: 3, vehicleNo: "COMP-9812", selected: false, reason: "" },
     ]);
 
-    // Static Data for Premium Presentation
     const [wardData] = useState({
         vehicleStatus: "Dumping Yard out",
         trips: 2,
@@ -119,16 +107,63 @@ const MonitoringList = () => {
     }, [selectedWard?.id]);
 
     useEffect(() => {
-        if (selectedWard?.id) {
-            let isMounted = true;
-            wardLineStatus(selectedWard.id, isMounted, setLineStatusByLine)
+        let isMounted = true;
+        const selectedWardId = selectedWard?.id;
+        if (!selectedWardId) return () => { isMounted = false; };
+
+        if (hasWardStatusCache(lineStatusByWard, selectedWardId)) {
+            setIsWardMetricsLoading(false);
             return () => { isMounted = false; };
+        }
+
+        setIsWardMetricsLoading(true);
+
+        fetchWardLineStatusCacheForToday(wardList).then((nextStatusByWard) => {
+            if (!isMounted) return;
+            if (Object.keys(nextStatusByWard || {}).length > 0) {
+                setLineStatusByWard((prev) => ({ ...prev, ...nextStatusByWard }));
+            }
+            setIsWardMetricsLoading(false);
+        }).catch(() => {
+            if (!isMounted) return;
+            setIsWardMetricsLoading(false);
+        });
+
+        return () => { isMounted = false; };
+    }, [selectedWard?.id, wardList, lineStatusByWard]);
+
+    useEffect(() => {
+        let isMounted = true;
+        const wardId = selectedWard?.id;
+        if (!wardId) return () => { isMounted = false; };
+
+        const pollWardStatus = async () => {
+            try {
+                const latestStatusByLine = await fetchSingleWardLineStatusForToday(wardId);
+                if (!isMounted) return;
+                if (latestStatusByLine && Object.keys(latestStatusByLine).length > 0) {
+                    setLineStatusByWard((prev) => ({ ...prev, [wardId]: latestStatusByLine }));
+                    setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
+                    setIsWardMetricsLoading(false);
+                }
+            } catch (error) {
+                if (!isMounted) return;
+            }
+        };
+
+        pollWardStatus();
+        const intervalId = setInterval(pollWardStatus, 15000);
+
+        return () => {
+            isMounted = false;
+            clearInterval(intervalId);
         };
     }, [selectedWard?.id]);
 
     const handleWardSelect = (ward) => {
         if (selectedWard?.id === ward.id) return;
         setDataLoading(true);
+        setIsWardMetricsLoading(!lineStatusByWard?.[ward.id]);
         setSelectedWard(ward);
         setDataLoading(false);
     };
@@ -216,8 +251,6 @@ const MonitoringList = () => {
         setRemarks((prev) => prev.filter((item) => item.id !== id));
     };
 
-    const zoneGraphMax = 74;
-
     const currentShiftEvents = React.useMemo(() => [
         { key: "dutyOn", label: "Duty On", time: showDutyInTime, status: "completed" },
         { key: "reachOn", label: "Reached", time: "09:00 AM", status: "completed" },
@@ -225,12 +258,32 @@ const MonitoringList = () => {
         { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
     ], [showDutyInTime]);
 
-    const stateItems = [
-        { label: "Total Time", icon: <Clock size={12} />, layout: "iconLeft" },
-        { label: "Active Zone Time", icon: <Clock size={12} />, layout: "iconLeft" },
-        { label: "Ward Length", value: `${(selectedWardLengthInMeter / 1000)?.toFixed(2)} km`, icon: <Zap size={12} />, layout: "iconLeft" },
-        { label: "Zone Coverage", icon: <Zap size={12} />, layout: "iconLeft" },
-    ];
+    const currentWardLineStatus = React.useMemo(() => (
+        getCurrentWardLineStatus(lineStatusByWard, selectedWard?.id)
+    ), [lineStatusByWard, selectedWard?.id]);
+
+    const wardLengthMetrics = React.useMemo(() => {
+        const selectedWardLineGeoJson = wardLinesById[selectedWard?.id];
+        return getWardLengthMetrics(selectedWardLineGeoJson);
+    }, [selectedWard?.id]);
+
+    const completedLengthKm = React.useMemo(() => {
+        return getCompletedLengthKm(currentWardLineStatus, wardLengthMetrics);
+    }, [currentWardLineStatus, wardLengthMetrics]);
+
+    const totalWardLengthKm = React.useMemo(() => {
+        return getTotalWardLengthKm(wardLengthMetrics, selectedWardLengthInMeter);
+    }, [wardLengthMetrics, selectedWardLengthInMeter]);
+
+    const zoneCoveragePercent = React.useMemo(() => {
+        return getZoneCoveragePercent(completedLengthKm, totalWardLengthKm);
+    }, [completedLengthKm, totalWardLengthKm]);
+
+    const remainingLengthKm = React.useMemo(() => (
+        getRemainingLengthKm(totalWardLengthKm, completedLengthKm)
+    ), [totalWardLengthKm, completedLengthKm]);
+
+    const stateItems = buildCoverageStateItems({ isWardMetricsLoading, zoneCoveragePercent, totalWardLengthKm, completedLengthKm, remainingLengthKm });
 
     return (
         <div className={styles.realtimePage}>
@@ -267,13 +320,7 @@ const MonitoringList = () => {
 
             {/* Main Content */}
             <div className={styles.mainContent}>
-                {/* {dataLoading ? (
-                    <div className={styles.loaderContainer}>
-                        <WevoisLoader title={`Updating Data for ${selectedWard?.name}...`} />
-                    </div>
-                ) : ( */}
                 <div className={styles.layoutSplit}>
-                    {/* Left Column */}
                     <div className={styles.leftColumn}>
                         <div className={styles.glassCard}>
                             <div className={styles.cardHeading}>
@@ -305,19 +352,7 @@ const MonitoringList = () => {
 
 
                     </div>
-
-                    {/* Right Data Section */}
                     <div className={styles.dataRight}>
-                        <div className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}>
-                            <div className={styles.cardHeading}>
-                                <h3>Ward Analytics</h3>
-                                <Clock size={16} color="var(--themeColor)" />
-                            </div>
-                            <div className={styles.statsFourAcross}>
-                                <StateItem items={stateItems} />
-                            </div>
-                        </div>
-
                         <div className={styles.dataRightBottom}>
                             <div className={styles.centerColumn}>
                                 <div className={`${styles.glassCard} ${styles.wardSummary}`}>
@@ -353,12 +388,16 @@ const MonitoringList = () => {
                                     )}
                                 </div>
                             </div>
-                            {/*map section with status */}
                             <div className={styles.mapColumn}>
+                                <div className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}>
+                                    <div className={styles.statsFourAcross}>
+                                        <StateItem items={stateItems} />
+                                    </div>
+                                </div>
                                 <MapSection
                                     selectedWard={selectedWard}
                                     onWardLengthResolved={setSelectedWardLengthInMeter}
-                                    lineStatusByLine={lineStatusByLine}
+                                    lineStatusByLine={currentWardLineStatus}
                                 />
                                 <ShiftStatusSection
                                     events={currentShiftEvents}
@@ -369,7 +408,6 @@ const MonitoringList = () => {
                         </div>
                     </div>
                 </div>
-                {/* )} */}
             </div>
 
             {/* Modals */}

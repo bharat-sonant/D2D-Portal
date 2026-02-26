@@ -14,7 +14,7 @@ import ward3Line from '../../../assets/Sikar/WardLines/3.json';
 import ward4Line from '../../../assets/Sikar/WardLines/4.json';
 import ward5Line from '../../../assets/Sikar/WardLines/5.json';
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
-import { getLineColorByStatus } from "../../Action/D2DMonitoring/MapSectionAction/LineStatusAction";
+import { getLineColorByStatus } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 
 const wardBoundariesById = {
     1: ward1Boundary,
