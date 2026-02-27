@@ -15,6 +15,7 @@ import ward2Line from "../../../assets/Sikar/WardLines/2.json";
 import ward3Line from "../../../assets/Sikar/WardLines/3.json";
 import ward4Line from "../../../assets/Sikar/WardLines/4.json";
 import ward5Line from "../../../assets/Sikar/WardLines/5.json";
+import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 
 const wardLinesById = {
     1: ward1Line,
@@ -343,6 +344,8 @@ const MonitoringList = () => {
                     <div className={styles.dataRight}>
                         <div className={styles.dataRightBottom}>
                             <div className={styles.centerColumn}>
+                                
+                            <CompletionDashboard />
                                 <div className={`${styles.glassCard} ${styles.wardSummary}`}>
                                     <div className={styles.cardHeading}>
                                         <h3>Ward Summary</h3>
@@ -481,11 +484,11 @@ const StatusLine = ({ label, value, icon, color, onClick }) => (
 
 const PerformanceGrid = ({ data }) => {
     const items = [
-        { label: "Total Lines", value: data.lines.total },
+        // { label: "Total Lines", value: data.lines.total },
         { label: "Total Halt", value: data.halt.total, color: "var(--textDanger)" },
-        { label: "Completed", value: data.lines.completed, color: "var(--textSuccess)" },
+        // { label: "Completed", value: data.lines.completed, color: "var(--textSuccess)" },
         { label: "Curr Halt", value: data.halt.current, color: "var(--textSuccess)" },
-        { label: "Skipped", value: data.lines.skipped, color: "var(--textDanger)" },
+        // { label: "Skipped", value: data.lines.skipped, color: "var(--textDanger)" },
         { label: "Curr Line", value: data.lines.current, color: "var(--themeColor)" },
     ];
     return (

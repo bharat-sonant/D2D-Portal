@@ -1,6 +1,7 @@
 .realtimePage {
   background-color: #f3f3f9;
-  height: calc(100vh - 90px);
+    height: calc(100vh - 60px);
+
   display: flex;
   font-family: var(--fontGraphik), system-ui;
   overflow: hidden;
@@ -694,6 +695,188 @@
   box-sizing: border-box;
   flex: 0 0 50%;
   padding: 12px 10px;
+}
+
+.completionCard {
+  border: 1px solid #e5eaf4;
+  border-radius: 24px;
+  padding: 20px 18px;
+  background: #f7f9ff;
+}
+
+.completionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.completionLabel {
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8b97b0;
+}
+
+.totalLinesBlock {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.totalLinesLabel {
+  font-size: 12px;
+  color: #97a2b9;
+  font-family: var(--fontGraphikMedium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.totalLinesValue {
+  font-size: 40px;
+  line-height: 0.9;
+  color: #4a64ea;
+  font-family: var(--fontGraphikSemiBold);
+}
+
+.gaugeWrap {
+  position: relative;
+  margin: 18px auto 14px;
+  width: 240px;
+  height: 130px;
+}
+
+.gaugeArc {
+  --completionRate: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 120px 120px 0 0;
+  overflow: hidden;
+  position: relative;
+  background: conic-gradient(from 180deg, #4b64eb 0deg, #4b64eb calc((var(--completionRate) * 1.8) * 1deg), #d8deee calc((var(--completionRate) * 1.8) * 1deg), #d8deee 180deg, transparent 180deg);
+}
+
+.gaugeInner {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 18px;
+  bottom: -98px;
+  border-radius: 106px 106px 0 0;
+  background: #f7f9ff;
+}
+
+.gaugeCenter {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.gaugePercent {
+  font-size: 48px;
+  line-height: 1;
+  color: #4a64ea;
+  font-family: var(--fontGraphikSemiBold);
+}
+
+.gaugeSubText {
+  margin-top: 6px;
+  font-size: 16px;
+  color: #6e7d97;
+  font-family: var(--fontGraphikMedium);
+}
+
+.successBadge {
+  margin: 10px auto 16px;
+  width: fit-content;
+  border: 1px solid #b7ebca;
+  background: #eafaf0;
+  color: #11974b;
+  border-radius: 999px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c76f;
+}
+
+.badgeTick {
+  font-size: 15px;
+}
+
+.completionStatsRow {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e6ebf6;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.completionStatCard {
+  border-radius: 16px;
+  padding: 16px 14px;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.completedCard {
+  background: #edf9f0;
+  border-color: #bce8cb;
+}
+
+.skippedCard {
+  background: #fff1f1;
+  border-color: #f7cccc;
+}
+
+.statCardTitle {
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--fontGraphikSemiBold);
+}
+
+.completedCard .statCardTitle {
+  color: #109651;
+}
+
+.skippedCard .statCardTitle {
+  color: #e34141;
+}
+
+.statCardValue {
+  font-size: 44px;
+  line-height: 1;
+  font-family: var(--fontGraphikSemiBold);
+}
+
+.completedCard .statCardValue {
+  color: #109651;
+}
+
+.skippedCard .statCardValue {
+  color: #e34141;
+}
+
+.statCardMeta {
+  font-size: 14px;
+  color: #8492a8;
+  font-family: var(--fontGraphikMedium);
 }
 
 .miniStatItem {
@@ -1992,7 +2175,7 @@
   }
 
   .mapColumn {
-    width: 560px;
+    width: 750px;
   }
 }
 
@@ -2006,7 +2189,7 @@
   }
 
   .mapColumn {
-    width: 420px;
+    width: 450px;
   }
 }
 
@@ -2119,6 +2302,56 @@
   .wardSummary .miniStatItem,
   .statsFourAcross .miniStatItem {
     flex-basis: 100%;
+  }
+
+  .completionCard {
+    border-radius: 16px;
+    padding: 14px 12px;
+  }
+
+  .totalLinesValue {
+    font-size: 34px;
+  }
+
+  .gaugeWrap {
+    width: 190px;
+    height: 105px;
+  }
+
+  .gaugeInner {
+    left: 14px;
+    right: 14px;
+    top: 14px;
+    bottom: -77px;
+  }
+
+  .gaugePercent {
+    font-size: 40px;
+  }
+
+  .gaugeSubText {
+    font-size: 14px;
+  }
+
+  .successBadge {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .completionStatsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .statCardTitle {
+    font-size: 14px;
+  }
+
+  .statCardValue {
+    font-size: 36px;
+  }
+
+  .statCardMeta {
+    font-size: 13px;
   }
 
   .mapCard {

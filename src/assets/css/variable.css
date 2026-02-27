@@ -4,6 +4,7 @@
   --fontGraphikSemibold: "Graphik-Semibold";
   --fontGraphikMedium: "Graphik-Medium";
   --fontGraphikBold: "Graphik-Bold";
+  --font-family: var(--fontGraphik);
 
   /**** Color Variables ***/
   --darkBlack: #000000;
@@ -39,6 +40,12 @@
 
   --themeColor: #2898ca;
   --themeColorDark: #167ead;
+  --primary-color: var(--themeColor);
+  --success-color: var(--textSuccess);
+  --danger-color: var(--textDanger);
+  --text-color: var(--black);
+  --card-bg: var(--white);
+  --border-radius: 24px;
   /**** Gradient Variables ***/
   /* --gradientTheme: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   --gradientTheme: linear-gradient(135deg, #4f6ef7 0%, #2898ca 100%)

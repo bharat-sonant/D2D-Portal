@@ -1,0 +1,321 @@
+@import "../../assets/css/variable.css";
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family, var(--fontGraphik));
+  color: var(--text-color, var(--black));
+}
+
+.card {
+  background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  width: 100%;
+
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+    font-size: 15px;
+    color: var(--black);
+    font-family: var(--fontGraphikMedium);
+    margin: 0;
+}
+
+.totalBlock {
+  text-align: right;
+}
+
+.totalLabel {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--text-color, var(--black)) 45%, var(--card-bg, var(--white)));
+}
+
+.totalValue {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--primary-color, var(--themeColor));
+  font-family: var(--fontGraphikSemibold);
+}
+
+.gaugeSection {
+  width: 100%;
+  max-width: 190px;
+    margin-left: auto;
+  display: flex;
+  justify-content: center;
+      height: 120px;
+    align-items: center;
+}
+
+.gaugeWrap {
+  position: relative;
+  width: 168px;
+  height: 168px;
+}
+
+.donutSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.baseRing {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 18;
+}
+
+.segmentRing {
+  fill: none;
+  stroke-width: 18;
+  stroke-linecap: butt;
+  transition:
+    stroke-dasharray 900ms ease,
+    stroke-dashoffset 900ms ease,
+    filter 180ms ease;
+  cursor: pointer;
+}
+
+.segmentRing:hover {
+  filter: brightness(1.06);
+}
+
+.segmentCompleted {
+  stroke: var(--success-color, var(--textSuccess));
+}
+
+.segmentPending {
+  stroke: var(--primary-color, var(--themeColor));
+}
+
+.segmentSkipped {
+  stroke: var(--danger-color, var(--textDanger));
+}
+
+.centerData {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.centerPercent {
+  font-size: 18px;
+  line-height: 1;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--primary-color, var(--themeColor));
+}
+
+.centerLabel {
+  margin-top: 4px;
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  color: var(--gray);
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: var(--black);
+  color: var(--white);
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.legendRow {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  color: color-mix(in srgb, var(--text-color, var(--black)) 70%, var(--card-bg, var(--white)));
+  flex-wrap: wrap;
+      flex-flow: column;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: var(--fontGraphik);
+  background-color: var(--whitefa);
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--borderColor);
+    width: 100%;
+    justify-content: space-between;
+    b{
+        font-size: 13px;
+    }
+}
+
+.legendDot {
+  flex: 0 0 auto;
+        padding: 1px 4px;
+    border-radius: 4px;
+    color: var(--white);
+}
+
+.completedDot {
+  background: var(--success-color, var(--textSuccess));
+
+}
+
+.pendingDot {
+  background: var(--primary-color, var(--themeColor));
+}
+
+.skippedDot {
+  background: var(--danger-color, var(--textDanger));
+}
+
+.badge {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 1px solid color-mix(in srgb, var(--success-color, var(--textSuccess)) 35%, var(--card-bg, var(--white)));
+  background: color-mix(in srgb, var(--success-color, var(--textSuccess)) 10%, var(--card-bg, var(--white)));
+  color: color-mix(in srgb, var(--success-color, var(--textSuccess)) 88%, var(--text-color, var(--black)));
+  border-radius: 999px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-family: var(--font-family, var(--fontGraphikMedium));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badgeDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--success-color, var(--textSuccess));
+  flex: 0 0 auto;
+}
+
+.badgeTick {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.bottomCards {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--text-color, var(--black)) 10%, var(--card-bg, var(--white)));
+  padding-top: 18px;
+}
+
+.statCard {
+  flex: 1;
+  border-radius: calc(var(--border-radius, 24px) - 8px);
+  border: 1px solid transparent;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.completedCard {
+  background: color-mix(in srgb, var(--success-color, var(--textSuccess)) 12%, var(--card-bg, var(--white)));
+  border-color: color-mix(in srgb, var(--success-color, var(--textSuccess)) 28%, var(--card-bg, var(--white)));
+  color: color-mix(in srgb, var(--success-color, var(--textSuccess)) 88%, var(--text-color, var(--black)));
+}
+
+.skippedCard {
+  background: color-mix(in srgb, var(--danger-color, var(--textDanger)) 10%, var(--card-bg, var(--white)));
+  border-color: color-mix(in srgb, var(--danger-color, var(--textDanger)) 26%, var(--card-bg, var(--white)));
+  color: color-mix(in srgb, var(--danger-color, var(--textDanger)) 88%, var(--text-color, var(--black)));
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, currentColor 14%, var(--card-bg, var(--white)));
+  font-size: 0.85rem;
+}
+
+.cardTitle {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.95rem;
+  font-family: var(--font-family, var(--fontGraphikSemibold));
+}
+
+.cardValue {
+  margin: 2px 0 0;
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  font-family: var(--font-family, var(--fontGraphikBold));
+  line-height: 1;
+}
+
+.cardSub {
+  margin: 0;
+  font-size: 1rem;
+  color: color-mix(in srgb, currentColor 65%, var(--card-bg, var(--white)));
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .badge {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .bottomCards {
+    flex-direction: column;
+  }
+}
