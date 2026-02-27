@@ -8,19 +8,7 @@ import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
-import {
-    buildCoverageStateItems,
-    fetchWardLineStatusCacheForToday,
-    fetchSingleWardLineStatusForToday,
-    getCompletedLengthKm,
-    getCurrentWardLineStatus,
-    getDutyInTime,
-    getRemainingLengthKm,
-    getTotalWardLengthKm,
-    getWardLengthMetrics,
-    getZoneCoveragePercent,
-    hasWardStatusCache
-} from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import StateItem from "../../Components/D2DMonitoring/StateItem";
 import ward1Line from "../../../assets/Sikar/WardLines/1.json";
 import ward2Line from "../../../assets/Sikar/WardLines/2.json";
@@ -103,7 +91,7 @@ const MonitoringList = () => {
 
     useEffect(() => {
         if (!selectedWard?.id) return;
-        getDutyInTime(selectedWard.id, setShowDutyInTime);
+        action.getDutyInTime(selectedWard.id, setShowDutyInTime);
     }, [selectedWard?.id]);
 
     useEffect(() => {
@@ -111,14 +99,14 @@ const MonitoringList = () => {
         const selectedWardId = selectedWard?.id;
         if (!selectedWardId) return () => { isMounted = false; };
 
-        if (hasWardStatusCache(lineStatusByWard, selectedWardId)) {
+        if (action.hasWardStatusCache(lineStatusByWard, selectedWardId)) {
             setIsWardMetricsLoading(false);
             return () => { isMounted = false; };
         }
 
         setIsWardMetricsLoading(true);
 
-        fetchWardLineStatusCacheForToday(wardList).then((nextStatusByWard) => {
+        action.fetchWardLineStatusCacheForToday(wardList).then((nextStatusByWard) => {
             if (!isMounted) return;
             if (Object.keys(nextStatusByWard || {}).length > 0) {
                 setLineStatusByWard((prev) => ({ ...prev, ...nextStatusByWard }));
@@ -139,7 +127,7 @@ const MonitoringList = () => {
 
         const pollWardStatus = async () => {
             try {
-                const latestStatusByLine = await fetchSingleWardLineStatusForToday(wardId);
+                const latestStatusByLine = await action.fetchSingleWardLineStatusForToday(wardId);
                 if (!isMounted) return;
                 if (latestStatusByLine && Object.keys(latestStatusByLine).length > 0) {
                     setLineStatusByWard((prev) => ({ ...prev, [wardId]: latestStatusByLine }));
@@ -259,31 +247,31 @@ const MonitoringList = () => {
     ], [showDutyInTime]);
 
     const currentWardLineStatus = React.useMemo(() => (
-        getCurrentWardLineStatus(lineStatusByWard, selectedWard?.id)
+        action.getCurrentWardLineStatus(lineStatusByWard, selectedWard?.id)
     ), [lineStatusByWard, selectedWard?.id]);
 
     const wardLengthMetrics = React.useMemo(() => {
         const selectedWardLineGeoJson = wardLinesById[selectedWard?.id];
-        return getWardLengthMetrics(selectedWardLineGeoJson);
+        return action.getWardLengthMetrics(selectedWardLineGeoJson);
     }, [selectedWard?.id]);
 
     const completedLengthKm = React.useMemo(() => {
-        return getCompletedLengthKm(currentWardLineStatus, wardLengthMetrics);
+        return action.getCompletedLengthKm(currentWardLineStatus, wardLengthMetrics);
     }, [currentWardLineStatus, wardLengthMetrics]);
 
     const totalWardLengthKm = React.useMemo(() => {
-        return getTotalWardLengthKm(wardLengthMetrics, selectedWardLengthInMeter);
+        return action.getTotalWardLengthKm(wardLengthMetrics, selectedWardLengthInMeter);
     }, [wardLengthMetrics, selectedWardLengthInMeter]);
 
     const zoneCoveragePercent = React.useMemo(() => {
-        return getZoneCoveragePercent(completedLengthKm, totalWardLengthKm);
+        return action.getZoneCoveragePercent(completedLengthKm, totalWardLengthKm);
     }, [completedLengthKm, totalWardLengthKm]);
 
     const remainingLengthKm = React.useMemo(() => (
-        getRemainingLengthKm(totalWardLengthKm, completedLengthKm)
+        action.getRemainingLengthKm(totalWardLengthKm, completedLengthKm)
     ), [totalWardLengthKm, completedLengthKm]);
 
-    const stateItems = buildCoverageStateItems({ isWardMetricsLoading, zoneCoveragePercent, totalWardLengthKm, completedLengthKm, remainingLengthKm });
+    const stateItems = action.buildCoverageStateItems({ isWardMetricsLoading, zoneCoveragePercent, totalWardLengthKm, completedLengthKm, remainingLengthKm });
 
     return (
         <div className={styles.realtimePage}>
