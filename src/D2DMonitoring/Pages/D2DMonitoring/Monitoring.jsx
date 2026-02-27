@@ -130,7 +130,7 @@ const MonitoringList = () => {
         });
 
         return () => { isMounted = false; };
-    }, [selectedWard?.id, wardList, lineStatusByWard]);
+    }, [selectedWard?.id, wardList]);
 
     useEffect(() => {
         let isMounted = true;
@@ -506,10 +506,6 @@ const PerformanceGrid = ({ data }) => {
         </div>
     );
 };
-
-// const StatItem = ({ label, value, color, icon, layout, graphPercent, graphStyle = "bar" }) => (
-
-// );
 
 const EnhancedProfile = ({ profile, role, isOnline }) => (
     <div className={styles.enhancedProfile}>
