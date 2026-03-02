@@ -46,6 +46,30 @@
   --text-color: var(--black);
   --card-bg: var(--white);
   --border-radius: 24px;
+  --font-primary: var(--fontGraphik);
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #0ea5a4;
+  --bg-modal: #f4f6f8;
+  --bg-card: var(--white);
+  --bg-soft: #eef2f6;
+  --border-light: #dbe2ea;
+  --shadow-soft: 0 18px 44px #0f172a1f;
+  --overlay-dim: #0f172a66;
+  --overlay-blur: blur(2px);
+  --timeline-line: #fca5a5;
+  --node-soft: #ecfeff;
+  --node-border: #14b8a6;
+  --node-danger: #ef4444;
+  --badge-danger-bg: #fee2e2;
+  --badge-warning-bg: #fef3c7;
+  --bar-track: #e2e8f0;
+  --bar-danger: #ef4444;
+  --bar-warning: #f59e0b;
+  --icon-soft-success: #dcfce7;
+  --icon-soft-neutral: #e2e8f0;
   /**** Gradient Variables ***/
   /* --gradientTheme: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   --gradientTheme: linear-gradient(135deg, #4f6ef7 0%, #2898ca 100%)

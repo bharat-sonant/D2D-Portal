@@ -1,0 +1,342 @@
+@import "../../assets/css/variable.css";
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-dim);
+  backdrop-filter: var(--overlay-blur);
+  padding: 24px;
+  z-index: 3000;
+}
+
+.modal {
+  width: 520px;
+  background: var(--bg-modal);
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+  padding: 24px;
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--icon-soft-success);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding-bottom: 8px;
+}
+
+.barOne,
+.barTwo,
+.barThree {
+  width: 4px;
+  border-radius: 999px;
+}
+
+.barOne {
+  height: 10px;
+  background: var(--success);
+}
+
+.barTwo {
+  height: 14px;
+  background: var(--warning);
+}
+
+.barThree {
+  height: 8px;
+  background: var(--danger);
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.closeButton {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.statValue {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.statDanger {
+  color: var(--danger);
+}
+
+.statWarning {
+  color: var(--warning);
+}
+
+.statMuted {
+  color: var(--text-secondary);
+}
+
+.statLabel {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.durationList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.durationRow {
+  display: grid;
+  grid-template-columns: 38px 1fr 42px;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeText {
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.durationTrack {
+  width: 100%;
+  height: 16px;
+  border-radius: 10px;
+  background: var(--bar-track);
+  overflow: hidden;
+}
+
+.durationFill {
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.fillFull {
+  width: 100%;
+}
+
+.fillMedium {
+  width: 82%;
+}
+
+.fillDanger {
+  background: var(--bar-danger);
+}
+
+.fillWarning {
+  background: var(--bar-warning);
+}
+
+.inlineBadge {
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--bg-card);
+}
+
+.durationText {
+  text-align: right;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.breakLogList {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.breakLogList::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  background: var(--timeline-line);
+}
+
+.breakRow {
+  display: flex;
+  gap: 10px;
+}
+
+.node {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  margin-top: 20px;
+  z-index: 1;
+  background: var(--bg-card);
+}
+
+.nodeTeal {
+  border: 2px solid var(--node-border);
+}
+
+.nodeRed {
+  border: 2px solid var(--node-danger);
+  background: var(--node-danger);
+}
+
+.breakCard {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.breakHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.breakTime {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.durationBadge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.badgeDanger {
+  background: var(--badge-danger-bg);
+  color: var(--danger);
+}
+
+.badgeWarning {
+  background: var(--badge-warning-bg);
+  color: var(--warning);
+}
+
+.breakStatus {
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.statusDanger {
+  background: var(--danger);
+}
+
+.statusWarning {
+  background: var(--warning);
+}
+
+.breakAddress {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--text-secondary);
+}

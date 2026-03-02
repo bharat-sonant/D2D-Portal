@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
-import { GoogleMap, Polyline } from "@react-google-maps/api";
+import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 //ward boundaries for ward 1 to 5
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
 import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
@@ -40,7 +40,7 @@ const DEFAULT_LINE_STYLE = {
 };
 
 
-const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {} }) => {
+const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {}, focusLocation = null }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
     const mapRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
@@ -61,6 +61,13 @@ const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {} 
         if (!isGoogleReady) return;
         return action.scheduleMapZoom(mapRef, selectedWardLinePaths, wardBoundary);
     }, [isGoogleReady, wardBoundary, selectedWardLinePaths]);
+
+    useEffect(() => {
+        if (!isGoogleReady || !mapRef.current) return;
+        if (!Number.isFinite(focusLocation?.lat) || !Number.isFinite(focusLocation?.lng)) return;
+        mapRef.current.panTo({ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) });
+        mapRef.current.setZoom(16);
+    }, [isGoogleReady, focusLocation?.id, focusLocation?.lat, focusLocation?.lng]);
 
     useEffect(() => {
         if (typeof onWardLengthResolved === "function") {
@@ -112,6 +119,13 @@ const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {} 
                             options={lineOptionsByIndex[index]}
                         />
                     ))}
+
+                    {Number.isFinite(focusLocation?.lat) && Number.isFinite(focusLocation?.lng) && (
+                        <Marker
+                            position={{ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) }}
+                            title={focusLocation?.title || "Selected location"}
+                        />
+                    )}
 
                 </GoogleMap>
                 {/* 

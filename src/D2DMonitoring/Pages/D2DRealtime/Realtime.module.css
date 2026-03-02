@@ -1468,6 +1468,73 @@
   border-radius: 6px;
 }
 
+.mapFocusCard {
+  padding: 12px 14px;
+  gap: 6px;
+}
+
+.mapFocusHead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.mapFocusIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #e7f0ff;
+  color: #4a7ce8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapFocusText {
+  display: flex;
+  flex-direction: column;
+}
+
+.mapFocusText strong {
+  font-size: 12px;
+  color: #21283c;
+  line-height: 1.1;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.mapFocusText span {
+  font-size: 10px;
+  color: #74809b;
+  font-family: var(--fontGraphikMedium);
+}
+
+.mapFocusAddress {
+  margin: 0;
+  font-size: 11px;
+  color: #65708d;
+  font-family: var(--fontGraphikMedium);
+  line-height: 1.35;
+}
+
+.mapFocusLink {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--themeColorDark);
+  background: #eaf4ff;
+  border: 1px solid #cfe3fa;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-decoration: none;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.mapFocusLink:hover {
+  background: #ddeefe;
+}
+
 .mapFooter {
   position: absolute;
   top: 8px;
