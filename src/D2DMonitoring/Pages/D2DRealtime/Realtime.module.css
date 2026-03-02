@@ -1381,7 +1381,7 @@
   color: var(--progressText, var(--themeColor));
   background: var(--progressBg, #eaf4ff);
   border: 1px solid var(--progressBorder, #d2e9ff);
-  border-radius: 30px;
+  border-radius: 4px;
   padding: 2px 8px;
 }
 
