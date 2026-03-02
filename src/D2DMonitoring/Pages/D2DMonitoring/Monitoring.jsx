@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Activity,
@@ -17,9 +17,6 @@ import {
   X,
   MapPin,
   ExternalLink,
-  Signal,
-  BatteryMedium,
-  Cpu,
   Pencil,
   Trash2,
 } from "lucide-react";
@@ -79,9 +76,11 @@ const MonitoringList = () => {
   const [editingRemarkId, setEditingRemarkId] = useState(null);
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
   const [showDutyInTime, setShowDutyInTime] = useState("");
+  const [appStatusTab, setAppStatusTab] = useState("all");
   const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
   const [lineStatusByWard, setLineStatusByWard] = useState({});
   const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
+  const [phoneClock, setPhoneClock] = useState(new Date());
   const [mapFocus, setMapFocus] = useState({
     id: "curr-halt",
     title: "Current Halt Location",
@@ -120,6 +119,30 @@ const MonitoringList = () => {
     garageDuty: "0/0",
   });
 
+  const appSessionLogs = [
+    { time: "12:52", status: "Opened", duration: "now", tone: "opened" },
+    { time: "12:39", status: "Closed", duration: "13m 3s", tone: "closed" },
+    { time: "12:38", status: "Minimized", duration: "31s", tone: "minimized" },
+    { time: "12:33", status: "Opened", duration: "5m 8s", tone: "opened" },
+    { time: "12:27", status: "Closed", duration: "6m 8s", tone: "closed" },
+    { time: "12:26", status: "Minimized", duration: "35s", tone: "minimized" },
+    { time: "10:55", status: "Opened", duration: "91m 41s", tone: "opened" },
+    { time: "10:54", status: "Closed", duration: "13s", tone: "closed" },
+    { time: "10:54", status: "Minimized", duration: "31s", tone: "minimized" },
+    { time: "10:54", status: "Opened", duration: "-", tone: "opened" },
+  ];
+
+  const appOpenedCount = appSessionLogs.filter((entry) => entry.tone === "opened").length;
+  const appClosedCount = appSessionLogs.filter((entry) => entry.tone === "closed").length;
+  const filteredAppSessionLogs =
+    appStatusTab === "all"
+      ? appSessionLogs
+      : appSessionLogs.filter((entry) =>
+          appStatusTab === "opened" ? entry.tone === "opened" : entry.tone === "closed",
+        );
+  const phoneClockTime = dayjs(phoneClock).format("HH:mm");
+  const phoneClockDate = dayjs(phoneClock).format("DD MMM");
+
   // Monitoring page always uses Sikar Firebase
   useEffect(() => {
     const initFirebase = async () => {
@@ -134,6 +157,13 @@ const MonitoringList = () => {
     if (!selectedWard?.id) return;
     action.getDutyInTime(selectedWard.id, setShowDutyInTime);
   }, [selectedWard?.id]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setPhoneClock(new Date());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -278,6 +308,7 @@ const MonitoringList = () => {
     setShowVehicleModal(false);
     setShowRemarkModal(false);
     setShowTopicDropdown(false);
+    setAppStatusTab("all");
   };
 
   const handleRemarkSubmit = () => {
@@ -559,25 +590,27 @@ const MonitoringList = () => {
       {(activeStatusModal || showRemarkModal || showVehicleModal) && (
         <div className={styles.modalOverlay} onClick={closeAllModals}>
           <div
-            className={`${styles.modalContent} ${showVehicleModal ? styles.vehicleIssueModal : ""}`}
+            className={`${styles.modalContent} ${showVehicleModal ? styles.vehicleIssueModal : ""} ${
+              activeStatusModal === "app" ? styles.appStatusModal : ""
+            } ${activeStatusModal === "app" ? styles.appStatusModalPlain : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className={styles.modalHeader}>
-              <h3>
-                {showVehicleModal
-                  ? "Vehicle Assignment Desk"
-                  : activeStatusModal === "app"
-                    ? "Terminal Activity"
+            {activeStatusModal !== "app" && (
+              <div className={styles.modalHeader}>
+                <h3>
+                  {showVehicleModal
+                    ? "Vehicle Assignment Desk"
                     : activeStatusModal === "vehicle"
                       ? "Logistics Diagnostic"
                       : editingRemarkId
                         ? "Edit Field Query"
                         : "Add Field Query"}
-              </h3>
-              <button className={styles.modalCloseBtn} onClick={closeAllModals}>
-                <X size={20} />
-              </button>
-            </div>
+                </h3>
+                <button className={styles.modalCloseBtn} onClick={closeAllModals}>
+                  <X size={20} />
+                </button>
+              </div>
+            )}
 
             {showVehicleModal ? (
               <div className={styles.vehicleIssueWrap}>
@@ -628,28 +661,97 @@ const MonitoringList = () => {
                 </button>
               </div>
             ) : activeStatusModal === "app" ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <ModalRow
-                  label="Uptime Status"
-                  value={wardData.appStatus}
-                  color="var(--textSuccess)"
-                  icon={<Activity size={16} />}
-                />
-                <ModalRow
-                  label="Signal Strength"
-                  value="Optimal (4G Node 2)"
-                  icon={<Signal size={16} />}
-                />
-                <ModalRow
-                  label="Battery Health"
-                  value="84%"
-                  icon={<BatteryMedium size={16} />}
-                />
-                <ModalRow
-                  label="Sync Latency"
-                  value="0.4ms"
-                  icon={<Cpu size={16} />}
-                />
+              <div className={styles.appStatusWrap}>
+                {/* <div className={styles.appPhoneLabel}>DRIVER&apos;S PHONE</div> */}
+                <div className={styles.appPhoneShell}>
+                  <span className={`${styles.appSideBtn} ${styles.appSideBtnLeft}`} />
+                  <span className={`${styles.appSideBtn} ${styles.appSideBtnRightTop}`} />
+                  <span className={`${styles.appSideBtn} ${styles.appSideBtnRightBottom}`} />
+                  <div className={styles.appPhoneFrame}>
+                    <div className={styles.appPhoneTop}>
+                      <span>{phoneClockTime}</span>
+                      <span className={styles.appPhoneNotch}>
+                        <span className={styles.appNotchSpeaker} />
+                        <span className={styles.appNotchCam} />
+                      </span>
+                      <span className={styles.appPhoneDate}>{phoneClockDate}</span>
+                    </div>
+
+                    <div className={styles.appPanelHeader}>
+                      <div className={styles.appPanelLeft}>
+                        <span className={styles.appPanelIcon}>&#9638;</span>
+                        <div>
+                          <p className={styles.appPanelTitle}>App Status</p>
+                          <p className={styles.appPanelSub}>Today&apos;s full session log</p>
+                        </div>
+                      </div>
+                      <button type="button" className={styles.appPanelClose} onClick={closeAllModals}>
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    <div className={styles.appChipRow}>
+                      <button
+                        type="button"
+                        className={`${styles.appChip} ${appStatusTab === "all" ? styles.appTabActive : ""}`}
+                        onClick={() => setAppStatusTab("all")}
+                      >
+                        All {appSessionLogs.length}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.appChip} ${styles.appChipOpen} ${
+                          appStatusTab === "opened" ? styles.appTabActive : ""
+                        }`}
+                        onClick={() => setAppStatusTab("opened")}
+                      >
+                        Opened {appOpenedCount}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.appChip} ${styles.appChipClosed} ${
+                          appStatusTab === "closed" ? styles.appTabActive : ""
+                        }`}
+                        onClick={() => setAppStatusTab("closed")}
+                      >
+                        Closed {appClosedCount}
+                      </button>
+                    </div>
+
+                    <div className={styles.appLogList}>
+                      {filteredAppSessionLogs.map((entry, index) => (
+                        <div key={`${entry.time}-${index}`} className={styles.appLogRow}>
+                          <span
+                            className={`${styles.appLogDot} ${
+                              entry.tone === "opened"
+                                ? styles.appLogDotOpen
+                                : entry.tone === "closed"
+                                  ? styles.appLogDotClose
+                                  : styles.appLogDotMin
+                            }`}
+                          />
+                          <span className={styles.appLogTime}>{entry.time}</span>
+                          <span
+                            className={`${styles.appLogBadge} ${
+                              entry.tone === "opened"
+                                ? styles.appLogBadgeOpen
+                                : entry.tone === "closed"
+                                  ? styles.appLogBadgeClose
+                                  : styles.appLogBadgeMin
+                            }`}
+                          >
+                            {entry.status}
+                          </span>
+                          <span className={styles.appLogDuration}>{entry.duration}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className={styles.appPanelFooter}>
+                      App opened {appOpenedCount}x · avg 32m 17s · closed {appClosedCount}x · screen off 1x
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : activeStatusModal === "vehicle" ? (
               <div style={{ display: "flex", flexDirection: "column" }}>
@@ -815,3 +917,4 @@ const ModalRow = ({ label, value, color, icon }) => (
 );
 
 export default MonitoringList;
+
