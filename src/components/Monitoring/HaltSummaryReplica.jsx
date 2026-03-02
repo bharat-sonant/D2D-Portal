@@ -13,6 +13,7 @@ const breakLogs = [
     lat: 27.6113,
     lng: 75.1381,
     done: true,
+    durationWidth: "wide",
   },
   {
     id: "break-2",
@@ -24,6 +25,7 @@ const breakLogs = [
     lat: 27.6139,
     lng: 75.1314,
     done: true,
+    durationWidth: "wide",
   },
   {
     id: "break-3",
@@ -35,6 +37,43 @@ const breakLogs = [
     lat: 27.6098,
     lng: 75.1412,
     done: false,
+    durationWidth: "medium",
+  },
+  {
+    id: "break-4",
+    time: "10:33",
+    durationMin: 15,
+    statusLabel: "WORK-STOPPED",
+    statusType: "danger",
+    address: "147, Mohalla Jamidaran, Sikar",
+    lat: 27.6073,
+    lng: 75.1451,
+    done: true,
+    durationWidth: "full",
+  },
+  {
+    id: "break-5",
+    time: "11:06",
+    durationMin: 16,
+    statusLabel: "WORK-STOPPED",
+    statusType: "danger",
+    address: "J48P+H9P, Mohalla Jamidaran, Sikar",
+    lat: 27.6056,
+    lng: 75.1428,
+    done: true,
+    durationWidth: "full",
+  },
+  {
+    id: "break-6",
+    time: "11:25",
+    durationMin: 8,
+    statusLabel: "ONGOING STOP",
+    statusType: "warn",
+    address: "167/11, Mohalla Jamidaran, Sikar",
+    lat: 27.6048,
+    lng: 75.147,
+    done: false,
+    durationWidth: "small",
   },
 ];
 
@@ -192,6 +231,9 @@ const modalMetaByType = {
 const HaltSummaryReplica = ({ onMapFocusChange }) => {
   const [hoveredBlockId, setHoveredBlockId] = useState("");
   const [activeModalType, setActiveModalType] = useState("");
+  const [showAllHalts, setShowAllHalts] = useState(false);
+  const [selectedBreakId, setSelectedBreakId] = useState(breakLogs[0].id);
+  const [modalMapFocus, setModalMapFocus] = useState(defaultFocus);
 
   const hoveredBlock = useMemo(
     () => timelineBlocks.find((item) => item.id === hoveredBlockId),
@@ -206,12 +248,26 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
   const openModal = (type, focusData) => {
     setActiveModalType(type);
+    setShowAllHalts(false);
+    setSelectedBreakId(breakLogs[0].id);
+    if (focusData?.lat && focusData?.lng) {
+      setModalMapFocus(focusData);
+    } else {
+      setModalMapFocus(defaultFocus);
+    }
     if (typeof onMapFocusChange === "function" && focusData) {
       onMapFocusChange(focusData);
     }
   };
 
   const closeModal = () => setActiveModalType("");
+  const hasMoreThanThreeHalts = breakLogs.length > 3;
+  const visibleBreaks = showAllHalts ? breakLogs : breakLogs.slice(0, 3);
+  const selectedBreakForMap = breakLogs.find((item) => item.id === selectedBreakId) || breakLogs[0];
+  const selectedMapEmbedSrc = `https://www.google.com/maps?q=${selectedBreakForMap.lat},${selectedBreakForMap.lng}&z=15&output=embed`;
+  const selectedMapRedirectSrc = `https://www.google.com/maps?q=${selectedBreakForMap.lat},${selectedBreakForMap.lng}`;
+  const modalMapEmbedSrc = `https://www.google.com/maps?q=${modalMapFocus.lat},${modalMapFocus.lng}&z=15&output=embed`;
+  const modalMapRedirectSrc = `https://www.google.com/maps?q=${modalMapFocus.lat},${modalMapFocus.lng}`;
 
   return (
     <>
@@ -225,7 +281,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
         <div className={styles.section}>
           <div className={styles.timelineHead}>
-            <span className={styles.sectionTitle}>WORK TIMELINE</span>
+            <span className={styles.sectionTitle}>TIMELINE</span>
             <span className={styles.timelineRange}>08:00 - NOW</span>
           </div>
           <div className={styles.timelineTrackWrap}>
@@ -271,7 +327,9 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                 <span className={styles.barMarker} style={{ left: "63%" }} />
               </div>
             </div>
-            <span className={styles.metricValueDanger}>1:25</span>
+            <span className={styles.metricValueDanger}>1:25
+             <p className={styles.metricValueLabel}> Hrs</p>
+              </span>
           </button>
 
           <button
@@ -292,7 +350,10 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                 <span className={styles.barMarker} style={{ left: "8%" }} />
               </div>
             </div>
-            <span className={styles.metricValueSuccess}>0:09</span>
+            <span className={styles.metricValueSuccess}>0:09
+              
+             <p className={styles.metricValueLabel}> Min</p>
+            </span>
           </button>
         </div>
 
@@ -323,7 +384,12 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
       {!!activeModalType && (
         <div className={styles.overlay} onClick={closeModal}>
-          <div className={styles.modalCard} onClick={(event) => event.stopPropagation()}>
+          <div
+            className={`${styles.modalCard} ${
+              activeModalType === "currentLine" ? styles.modalCardCompact : ""
+            }`}
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className={styles.modalHeader}>
               <div className={styles.modalHeading}>
                 <span className={`${styles.modalIcon} ${styles[`modalIcon_${modalMetaByType[activeModalType].iconTone}`]}`}>
@@ -350,11 +416,12 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
               </div>
             )}
 
-            {(activeModalType === "timeline" || activeModalType === "totalHalt") && (
-              <>
+            {activeModalType === "timeline" && (
+              <div className={styles.totalHaltModalBody}>
+                <div className={styles.totalHaltLeft}>
                 <h4 className={styles.modalSubTitle}>Halt Duration Chart</h4>
                 <div className={styles.durationList}>
-                  {breakLogs.map((item) => (
+                  {breakLogs.slice(0, 3).map((item) => (
                     <div key={item.id} className={styles.durationRow}>
                       <span className={styles.durationRowLabel}>{item.time}</span>
                       <div className={styles.durationBarTrack}>
@@ -372,8 +439,23 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
                 <h4 className={styles.modalSubTitle}>Break Log</h4>
                 <div className={styles.breakList}>
-                  {breakLogs.map((item) => (
-                    <div key={`${activeModalType}-${item.id}`} className={styles.breakItem}>
+                  {breakLogs.slice(0, 3).map((item) => (
+                    <button
+                      type="button"
+                      key={`${activeModalType}-${item.id}`}
+                      className={styles.breakTimelineItem}
+                      onClick={() =>
+                        setModalMapFocus({
+                          id: item.id,
+                          title: "Halt Location",
+                          subtitle: `${item.time} halt`,
+                          address: item.address,
+                          lat: item.lat,
+                          lng: item.lng,
+                        })
+                      }
+                    >
+                    <div className={styles.breakItem}>
                       <div className={styles.breakTop}>
                         <strong>{item.time}</strong>
                         <span className={styles.breakDurationTag}>{item.durationMin} min</span>
@@ -387,13 +469,169 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                         {item.address}
                       </p>
                     </div>
+                    </button>
                   ))}
                 </div>
-              </>
+                </div>
+                <aside className={styles.totalHaltRight}>
+                  <div className={styles.totalHaltMapCard}>
+                    <div className={styles.totalHaltMapHead}>
+                      <h5>{modalMapFocus.title || "Halt Location"}</h5>
+                      <p>
+                        {modalMapFocus.lat}, {modalMapFocus.lng}
+                      </p>
+                    </div>
+                    <iframe
+                      className={styles.totalHaltMap}
+                      title="Timeline Halt Location"
+                      src={modalMapEmbedSrc}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
+                    />
+                    <a
+                      className={styles.totalHaltMapBtn}
+                      href={modalMapRedirectSrc}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </div>
+                </aside>
+              </div>
+            )}
+
+            {activeModalType === "totalHalt" && (
+              <div className={styles.totalHaltModalBody}>
+                <div className={styles.totalHaltLeft}>
+                  <div className={styles.totalHaltSectionHead}>
+                    <h4 className={styles.modalSubTitle}>Halt Duration Chart</h4>
+                    {/* {hasMoreThanThreeHalts && (
+                      <button
+                        type="button"
+                        className={styles.viewAllBtn}
+                        onClick={() => setShowAllHalts((prev) => !prev)}
+                      >
+                        {showAllHalts ? "View Less" : "View All"}
+                      </button>
+                    )} */}
+                  </div>
+                  <div className={styles.durationList}>
+                    {visibleBreaks.map((item) => (
+                      <button
+                        key={`duration-${item.id}`}
+                        type="button"
+                        className={`${styles.durationRow} ${styles.durationRowBtn}`}
+                        onClick={() => {
+                          setSelectedBreakId(item.id);
+                          setModalMapFocus({
+                            id: item.id,
+                            title: "Halt Location",
+                            subtitle: `${item.time} halt`,
+                            address: item.address,
+                            lat: item.lat,
+                            lng: item.lng,
+                          });
+                        }}
+                      >
+                        <span className={styles.durationRowLabel}>{item.time}</span>
+                        <div className={styles.durationBarTrack}>
+                          <span
+                            className={`${styles.durationBarValue} ${
+                              item.statusType === "warn" ? styles.durationBarWarn : styles.durationBarDanger
+                            } ${styles[`durationWidth_${item.durationWidth}`]}`}
+                          >
+                            {item.durationMin}m
+                          </span>
+                        </div>
+                        <strong>{item.durationMin} min</strong>
+                      </button>
+                    ))}
+                  </div>
+
+                  <h4 className={styles.modalSubTitle}>Break Log</h4>
+                  <div className={styles.breakTimelineWrap}>
+                    <span className={styles.breakTimelineLine} />
+                    <div className={styles.breakList}>
+                      {visibleBreaks.map((item) => (
+                        <button
+                          key={`total-${item.id}`}
+                          type="button"
+                          className={styles.breakTimelineItem}
+                          onClick={() => {
+                            setSelectedBreakId(item.id);
+                            setModalMapFocus({
+                              id: item.id,
+                              title: "Halt Location",
+                              subtitle: `${item.time} halt`,
+                              address: item.address,
+                              lat: item.lat,
+                              lng: item.lng,
+                            });
+                          }}
+                        >
+                          <span
+                            className={`${styles.breakTimelineNode} ${
+                              item.statusType === "warn" ? styles.breakTimelineNodeWarn : styles.breakTimelineNodeInfo
+                            }`}
+                          />
+                          <div className={styles.breakItem}>
+                            <div className={styles.breakTop}>
+                              <strong>{item.time}</strong>
+                              <span className={styles.breakDurationTag}>{item.durationMin} min</span>
+                            </div>
+                            <div className={styles.breakStatus}>
+                              <span
+                                className={`${styles.breakDot} ${
+                                  item.statusType === "warn" ? styles.breakDotWarn : styles.breakDotDanger
+                                }`}
+                              />
+                              {item.statusLabel}
+                            </div>
+                            <p>
+                              <MapPin size={11} />
+                              {item.address}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <aside className={styles.totalHaltRight}>
+                  <div className={styles.totalHaltMapCard}>
+                    <div className={styles.totalHaltMapHead}>
+                      <h5>Halt Location</h5>
+                      <p>
+                        {selectedBreakForMap.lat}, {selectedBreakForMap.lng}
+                      </p>
+                    </div>
+                    <iframe
+                      className={styles.totalHaltMap}
+                      title="Total Halt Location"
+                      src={selectedMapEmbedSrc}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
+                    />
+                    <a
+                      className={styles.totalHaltMapBtn}
+                      href={selectedMapRedirectSrc}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </div>
+                </aside>
+              </div>
             )}
 
             {activeModalType === "currentHalt" && (
-              <>
+              <div className={styles.totalHaltModalBody}>
+                <div className={styles.totalHaltLeft}>
                 <h4 className={styles.modalSubTitle}>Current Stop Info</h4>
                 <div className={styles.currentInfoCard}>
                   <div className={styles.breakTop}>
@@ -410,24 +648,65 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                   </p>
                 </div>
 
-                <h4 className={styles.modalSubTitle}>Today's Break history</h4>
+                <h4 className={styles.modalSubTitle}>Today's Break History</h4>
                 <div className={styles.historyList}>
                   {breakLogs.map((item) => (
-                    <div key={`history-${item.id}`} className={styles.historyRow}>
+                    <button
+                      type="button"
+                      key={`history-${item.id}`}
+                      className={`${styles.historyRow} ${styles.historyRowBtn}`}
+                      onClick={() =>
+                        setModalMapFocus({
+                          id: item.id,
+                          title: "Halt Location",
+                          subtitle: `${item.time} halt`,
+                          address: item.address,
+                          lat: item.lat,
+                          lng: item.lng,
+                        })
+                      }
+                    >
                       <span className={styles.durationRowLabel}>{item.time}</span>
                       <div className={styles.historyBarTrack}>
                         <span
                           className={`${styles.historyBarValue} ${item.done ? styles.historyDone : styles.historyNow}`}
                           style={{ width: item.done ? "96%" : "78%" }}
-                        >
-                          {item.durationMin}m
-                        </span>
+                      >
+                        {item.durationMin}m
+                      </span>
                       </div>
                       <strong>{item.done ? "Done" : "Now"}</strong>
-                    </div>
+                    </button>
                   ))}
                 </div>
-              </>
+                </div>
+                <aside className={styles.totalHaltRight}>
+                  <div className={styles.totalHaltMapCard}>
+                    <div className={styles.totalHaltMapHead}>
+                      <h5>{modalMapFocus.title || "Halt Location"}</h5>
+                      <p>
+                        {modalMapFocus.lat}, {modalMapFocus.lng}
+                      </p>
+                    </div>
+                    <iframe
+                      className={styles.totalHaltMap}
+                      title="Current Halt Location"
+                      src={modalMapEmbedSrc}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
+                    />
+                    <a
+                      className={styles.totalHaltMapBtn}
+                      href={modalMapRedirectSrc}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </div>
+                </aside>
+              </div>
             )}
 
             {activeModalType === "currentLine" && (
@@ -435,7 +714,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                 <div className={styles.statGrid}>
                   <div className={styles.statCard}>
                     <strong className={styles.tone_info}>8</strong>
-                    <span>CURR LINE</span>
+                    <span>CURRENT LINE</span>
                   </div>
                   <div className={styles.statCard}>
                     <strong className={styles.tone_success}>7</strong>
@@ -447,11 +726,11 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                   </div>
                 </div>
 
-                <h4 className={styles.modalSubTitle}>LINE PROGRESS</h4>
+                <h4 className={`${styles.modalSubTitle} ${styles.modalSubTitle2}`}>Line Progress</h4>
                 <div className={styles.lineProgressList}>
                   {lineProgress.map((item) => (
                     <div key={item.label} className={styles.lineProgressRow}>
-                      <span>{item.label}</span>
+                      <span className={styles.durationRowLabel}>{item.label}</span>
                       <div className={styles.lineProgressTrack}>
                         <span
                           className={`${styles.lineProgressValue} ${styles[`line_${item.tone}`]}`}
@@ -460,7 +739,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                           {item.value > 3 ? `${item.value}%` : ""}
                         </span>
                       </div>
-                      <strong>{item.marker === "done" ? "done" : item.marker === "active" ? "now" : "-"}</strong>
+                      <strong>{item.marker === "done" ? "Done" : item.marker === "active" ? "Now" : "-"}</strong>
                     </div>
                   ))}
                 </div>
