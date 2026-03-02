@@ -352,11 +352,11 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
             {(activeModalType === "timeline" || activeModalType === "totalHalt") && (
               <>
-                <h4 className={styles.modalSubTitle}>HALT DURATION CHART</h4>
+                <h4 className={styles.modalSubTitle}>Halt Duration Chart</h4>
                 <div className={styles.durationList}>
                   {breakLogs.map((item) => (
                     <div key={item.id} className={styles.durationRow}>
-                      <span>{item.time}</span>
+                      <span className={styles.durationRowLabel}>{item.time}</span>
                       <div className={styles.durationBarTrack}>
                         <span
                           className={`${styles.durationBarValue} ${item.statusType === "warn" ? styles.durationBarWarn : styles.durationBarDanger}`}
@@ -370,7 +370,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                   ))}
                 </div>
 
-                <h4 className={styles.modalSubTitle}>BREAK LOG</h4>
+                <h4 className={styles.modalSubTitle}>Break Log</h4>
                 <div className={styles.breakList}>
                   {breakLogs.map((item) => (
                     <div key={`${activeModalType}-${item.id}`} className={styles.breakItem}>
@@ -394,7 +394,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
             {activeModalType === "currentHalt" && (
               <>
-                <h4 className={styles.modalSubTitle}>CURRENT STOP INFO</h4>
+                <h4 className={styles.modalSubTitle}>Current Stop Info</h4>
                 <div className={styles.currentInfoCard}>
                   <div className={styles.breakTop}>
                     <strong>09:49</strong>
@@ -410,11 +410,11 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                   </p>
                 </div>
 
-                <h4 className={styles.modalSubTitle}>TODAY&apos;S BREAK HISTORY</h4>
+                <h4 className={styles.modalSubTitle}>Today's Break history</h4>
                 <div className={styles.historyList}>
                   {breakLogs.map((item) => (
                     <div key={`history-${item.id}`} className={styles.historyRow}>
-                      <span>{item.time}</span>
+                      <span className={styles.durationRowLabel}>{item.time}</span>
                       <div className={styles.historyBarTrack}>
                         <span
                           className={`${styles.historyBarValue} ${item.done ? styles.historyDone : styles.historyNow}`}
@@ -423,7 +423,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
                           {item.durationMin}m
                         </span>
                       </div>
-                      <strong>{item.done ? "done" : "now"}</strong>
+                      <strong>{item.done ? "Done" : "Now"}</strong>
                     </div>
                   ))}
                 </div>
