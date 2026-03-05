@@ -917,4 +917,3 @@ const ModalRow = ({ label, value, color, icon }) => (
 );
 
 export default MonitoringList;
-
