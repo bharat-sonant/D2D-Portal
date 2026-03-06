@@ -24,6 +24,7 @@ import {
   Flag,
   Pencil,
   Trash2,
+  UserStar,
 } from "lucide-react";
 import dayjs from "dayjs";
 import Chetan from "../../../assets/images/Chetan.jpeg";
@@ -216,7 +217,7 @@ const MonitoringList = () => {
     kmStats: { total: "16.44 km", inZone: "7.37 km" },
     profiles: {
       driver: { name: "Sanwar Lal", phone: "8875907595", stars: 5 },
-      helper: { name: "Dharamraj(C)", phone: "1237567890", stars: 5 },
+      helper: { name: "Dharamraj", phone: "8058224585", stars: 5 },
     },
     vehicleNumber: "LEY-AT-4602",
     vehicleJourney: {
@@ -346,6 +347,13 @@ const MonitoringList = () => {
     zones: { total: 74, completed: 31, active: 29, inactive: 9, stop: 5 },
     heroesOnWork: 89,
     garageDuty: "0/0",
+    heroesDutyReplica: {
+      dateLabel: dayjs().format("DD MMM, YYYY"),
+      onFieldLabel: "On Field",
+      driver: { lines: 72, field: "3h", rating: 5.0 },
+      helper: { lines: 68, field: "3h", rating: 5.0 },
+      summary: { tripsDone: 2, totalLines: 140, teamRating: 5.0 },
+    },
   });
 
   const appSessionLogs = [
@@ -378,7 +386,6 @@ const MonitoringList = () => {
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
   const vehicleJourneyMeta = getVehicleJourneyMeta(wardData.vehicleStatus);
-  const VehicleJourneyIcon = vehicleJourneyMeta.icon;
   const vehicleJourneyData = wardData.vehicleJourney || {};
   const quickSummary = vehicleJourneyData.quickSummary || {};
   const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
@@ -719,7 +726,7 @@ const MonitoringList = () => {
       <div className={styles.mainContent}>
         <div className={styles.layoutSplit}>
           <div className={styles.leftColumn}>
-            <div className={styles.glassCard}>
+            {/* <div className={styles.glassCard}>
               <div className={styles.cardHeading}>
                 <h3>Heroes on Duty</h3>
                 <UsersIcon size={18} color="var(--themeColor)" />
@@ -745,7 +752,12 @@ const MonitoringList = () => {
                 </div>
                 <ChevronRight size={14} />
               </button>
-            </div>
+            </div> */}
+                
+            <DutyComparisonReplica
+              data={wardData}
+              onVehicleClick={() => setShowVehicleModal(true)}
+            />
 
             <HaltSummaryReplica onMapFocusChange={setMapFocus} />
           </div>
@@ -1378,5 +1390,109 @@ const EnhancedProfile = ({ profile, role, isOnline }) => (
     </div>
   </div>
 );
+
+const DutyComparisonReplica = ({ data, onVehicleClick }) => {
+  const replica = data?.heroesDutyReplica || {};
+  const driver = data?.profiles?.driver || {};
+  const helper = data?.profiles?.helper || {};
+  const vehicleStatus = getVehicleJourneyMeta(data?.vehicleStatus || "");
+
+  return (
+    <div className={`${styles.glassCard} ${styles.heroReplicaCard}`}>
+      <div className={styles.heroReplicaHead}>
+        <div className={styles.heroReplicaTitleWrap}> 
+          <div>
+            <h4>Heroes on Duty</h4>
+          </div>
+        </div>
+        <span className={styles.heroReplicaFieldPill}><UserStar size={14} /></span>
+      </div>
+
+      <div className={styles.heroReplicaCrewGrid}>
+        <div className={styles.coverImg}></div>
+        <div className={styles.heroReplicaCrewCard}>
+          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleCaptain}`}>Captain</span>
+          <div className={styles.heroReplicaAvatarWrap}>
+            <img src={Chetan} alt="Driver" />
+            <span className={styles.heroReplicaOnlineDot} />
+          </div>
+          <h5>{driver.name || "Driver Name"}</h5>
+          <p className={styles.heroReplicaPhone}>
+            <Phone size={11} />
+            <a href={`tel:${String(driver.phone || "").replace(/[^\d+]/g, "")}`}>
+              {driver.phone || "-"}
+            </a>
+          </p>
+          <p className={styles.heroReplicaRating}>5.0 Star</p>
+          <div className={styles.heroReplicaStatsRow}>
+            <div>
+              <strong>5 yrs</strong>
+              <span>Experience</span>
+            </div>
+            <div>
+              <strong>640Km</strong>
+              <span>Dis. Covered</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.heroReplicaCrewCard}>
+          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleHelper}`}>Pilot</span>
+          <div className={styles.heroReplicaAvatarWrap}>
+            <img src={Chetan} alt="Helper" />
+            <span className={styles.heroReplicaOnlineDot} />
+          </div>
+          <h5>{helper.name || "Helper Name"}</h5>
+          <p className={styles.heroReplicaPhone}>
+            <Phone size={11} />
+            <a href={`tel:${String(helper.phone || "").replace(/[^\d+]/g, "")}`}>
+              {helper.phone || "-"}
+            </a>
+          </p>
+          <p className={styles.heroReplicaRating}>5.0 Star</p>
+          <div className={styles.heroReplicaStatsRow}>
+            <div>
+              <strong>1.5 yrs</strong>
+              <span>Experience</span>
+            </div>
+            <div>
+              <strong>180Km</strong>
+              <span>Dis. Covered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className={styles.heroReplicaVehicleRow}
+        onClick={onVehicleClick}
+      >
+        <div className={styles.heroReplicaVehicleLeft}>
+         🚛
+          <div className={styles.vehicleContent}>
+            <strong>{data?.vehicleNumber}</strong>
+          </div>
+        </div>
+        <ChevronRight size={14} />
+      </button>
+
+      {/* <div className={styles.heroReplicaFooter}>
+        <div>
+          <strong>{replica?.summary?.tripsDone ?? data?.trips ?? 0}</strong>
+          <span>Trips Done</span>
+        </div>
+        <div>
+          <strong>{replica?.summary?.totalLines ?? data?.lines?.total ?? 0}</strong>
+          <span>Total Lines</span>
+        </div>
+        <div>
+          <strong>{replica?.summary?.teamRating ?? 5.0}</strong>
+          <span>Team Rating</span>
+        </div>
+      </div> */}
+    </div>
+  );
+};
 
 export default MonitoringList;

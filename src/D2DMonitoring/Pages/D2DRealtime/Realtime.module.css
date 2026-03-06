@@ -1167,6 +1167,306 @@
   text-decoration: underline;
 }
 
+.heroReplicaCard {
+  padding: 0;
+  border: 1px solid var(--borderColor);
+}
+
+.heroReplicaHead {
+  padding: 12px 14px;
+  /* background:
+    radial-gradient(circle at 28% 0%, rgba(250, 204, 21, 0.16), transparent 42%),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--themeColor) 8%, var(--white)) 0%,
+      color-mix(in srgb, var(--textSuccess) 10%, var(--white)) 100%
+    ); */
+  border-bottom: 1px solid  var(--borderColor);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.heroReplicaTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heroReplicaBadgeIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--themeColor) 18%, var(--borderColor));
+  background: color-mix(in srgb, var(--themeColor) 9%, var(--white));
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroReplicaTitleWrap h4 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaTitleWrap p {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+  line-height: 1.2;
+}
+
+.heroReplicaFieldPill {
+    width: 26px;
+    height: 26px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--textSuccess) 13%, var(--white));
+  color: var(--textSuccessDark);
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  justify-content: center;
+}
+
+.heroReplicaCrewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--borderColor);
+  text-align: center;
+  position: relative;
+}
+.coverImg{
+  height: 100px;
+  position: absolute;
+  width: 100%;
+   background: linear-gradient(to bottom, rgb(232 244 252 / 66%) 0%, rgb(221 241 255 / 45%) 40%, rgb(255 255 255 / 50%) 70%, rgb(255 255 255 / 0%) 100%);
+    overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  &:before{
+    content: '';
+    position: absolute;
+    inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, #00000000 1px), linear-gradient(90deg, rgb(255 255 255) 1px, #00000000 1px);
+    background-size: 24px 24px;
+  }
+}
+.heroReplicaCrewCard {
+    padding: 5px 10px 15px;
+      z-index: 2;
+    border-right: 1px solid var(--borderColor);
+
+}
+
+.heroReplicaCrewCard:last-child {
+  border-right: none;
+  z-index: 2;
+}
+
+.heroReplicaRolePill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  min-height: 20px;
+  padding: 0 8px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaRoleCaptain {
+  color: #b7791f;
+  border: 1px solid #f3dda8;
+  background: #fff8e8;
+}
+
+.heroReplicaRoleHelper {
+  color: #7c4ed8;
+  border: 1px solid #e3d8fa;
+  background: #f6f0ff;
+}
+
+.heroReplicaAvatarWrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 6px;
+  margin: 8px auto 0;
+  border: 1px solid var(--borderColor);
+  overflow: hidden;
+  position: relative;
+  background: #f4f7fb;
+}
+
+.heroReplicaAvatarWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroReplicaOnlineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #22c55e;
+  border: 2px solid var(--white);
+  position: absolute;
+  right: 4px;
+      bottom: 4px;
+}
+
+.heroReplicaCrewCard h5 {
+  margin: 8px 0 5px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaPhone {
+  margin: 3px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #64748b;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+}
+
+.heroReplicaPhone a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.heroReplicaPhone a:hover {
+  text-decoration: underline;
+}
+
+.heroReplicaRating {
+  margin: 5px 0 0;
+  text-align: center;
+  color: #d48b16;
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaStatsRow {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.heroReplicaStatsRow > div {
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  padding: 6px 5px;
+  text-align: center;
+}
+
+.heroReplicaStatsRow strong {
+  display: block;
+  font-size: 11px;
+  color: var(--textSuccessDark);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.heroReplicaStatsRow span {
+  display: block;
+  margin-top: 4px;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #60708a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaVehicleRow {
+  margin: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background-color: var(--white);
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--black);
+}
+.heroReplicaVehicleRow:hover{
+background-color: #2898ca10;
+}
+.vehicleContent{
+  text-align: left;
+}
+.heroReplicaVehicleLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heroReplicaVehicleLeft strong {
+  display: block;
+  font-size: 13px;
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1.1;
+}
+
+.heroReplicaVehicleLeft span {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--textSuccessDark);
+  font-family: var(--fontGraphikMedium);
+}
+
+.heroReplicaFooter {
+  border-top: 1px solid var(--borderColor);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.heroReplicaFooter > div {
+  text-align: center;
+  padding: 10px 6px 12px;
+  border-right: 1px solid var(--borderColor);
+}
+
+.heroReplicaFooter > div:last-child {
+  border-right: 0;
+}
+
+.heroReplicaFooter strong {
+  display: block;
+  font-size: 24px;
+  color: var(--themeColorDark);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.heroReplicaFooter span {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #62718a;
+  font-family: var(--fontGraphikSemibold);
+}
+
 .enhancedRatingRow {
   display: flex;
   align-items: center;
