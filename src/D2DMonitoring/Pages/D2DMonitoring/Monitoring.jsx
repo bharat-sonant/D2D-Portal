@@ -10,13 +10,18 @@ import {
   Plus,
   RefreshCw,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   User as UserIcon,
   Phone,
-  ShieldCheck,
-  Navigation,
   X,
   MapPin,
-  ExternalLink,
+  Fuel,
+  Wrench,
+  Trophy,
+  ArrowRight,
+  LogOut,
+  Flag,
   Pencil,
   Trash2,
 } from "lucide-react";
@@ -36,6 +41,7 @@ import ward4Line from "../../../assets/Sikar/WardLines/4.json";
 import ward5Line from "../../../assets/Sikar/WardLines/5.json";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
+import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 
 const wardLinesById = {
   1: ward1Line,
@@ -43,6 +49,104 @@ const wardLinesById = {
   3: ward3Line,
   4: ward4Line,
   5: ward5Line,
+};
+
+const toTitleCase = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const toStatusBadgeImage = (label, bg, fg) =>
+  `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><rect width='72' height='72' rx='12' fill='${bg}'/><text x='36' y='42' text-anchor='middle' font-size='13' font-family='Arial' font-weight='700' fill='${fg}'>${label}</text></svg>`,
+  )}`;
+
+const STATUS_IMAGE_BY_TYPE = {
+  fuel: toStatusBadgeImage("FUEL", "#fff2f4", "#be185d"),
+  dump: toStatusBadgeImage("DUMP", "#fff7ed", "#c2410c"),
+  garage: toStatusBadgeImage("SERV", "#eef2ff", "#3730a3"),
+  ward: toStatusBadgeImage("WARD", "#ecfdf5", "#047857"),
+  transit: vehicleGif,
+};
+
+const getVehicleJourneyMeta = (rawStatus = "") => {
+  const normalizedStatus = String(rawStatus || "")
+    .trim()
+    .toLowerCase();
+
+  if (
+    normalizedStatus.includes("petrol") ||
+    normalizedStatus.includes("fuel") ||
+    normalizedStatus.includes("pump")
+  ) {
+    return {
+      title: toTitleCase(rawStatus || "Petrol Pump Stop"),
+      description: "Stopped for refuelling",
+      icon: Fuel,
+      tone: "warning",
+      imageSrc: STATUS_IMAGE_BY_TYPE.fuel,
+    };
+  }
+
+  if (normalizedStatus.includes("dump")) {
+    return {
+      title: toTitleCase(rawStatus || "Dumping Yard Out"),
+      description: "Vehicle is outside — returning to route",
+      icon: Truck,
+      tone: "danger",
+      imageSrc: STATUS_IMAGE_BY_TYPE.dump,
+    };
+  }
+
+  if (
+    normalizedStatus.includes("garage") ||
+    normalizedStatus.includes("service") ||
+    normalizedStatus.includes("workshop")
+  ) {
+    return {
+      title: toTitleCase(rawStatus || "Garage Stop"),
+      description: "Vehicle is under inspection",
+      icon: Wrench,
+      tone: "neutral",
+      imageSrc: STATUS_IMAGE_BY_TYPE.garage,
+    };
+  }
+
+  if (
+    normalizedStatus.includes("ward") ||
+    normalizedStatus.includes("zone") ||
+    normalizedStatus.includes("line")
+  ) {
+    return {
+      title: toTitleCase(rawStatus || "In Ward"),
+      description: "Collection is active on assigned route",
+      icon: MapPin,
+      tone: "success",
+      imageSrc: STATUS_IMAGE_BY_TYPE.ward,
+    };
+  }
+
+  return {
+    title: toTitleCase(rawStatus || "Vehicle In Transit"),
+    description: "Vehicle is moving on assigned route",
+    icon: Truck,
+    tone: "success",
+    imageSrc: STATUS_IMAGE_BY_TYPE.transit,
+  };
+};
+
+const getJourneyKindMeta = (kind = "") => {
+  const normalized = String(kind || "")
+    .trim()
+    .toLowerCase();
+  if (normalized.includes("fuel")) return { icon: Fuel, tone: "fuel" };
+  if (normalized.includes("depart"))
+    return { icon: ArrowRight, tone: "departed" };
+  if (normalized.includes("exit")) return { icon: LogOut, tone: "exited" };
+  if (normalized.includes("entry") || normalized.includes("enter"))
+    return { icon: MapPin, tone: "entered" };
+  if (normalized.includes("flag")) return { icon: Flag, tone: "checkpoint" };
+  return { icon: MapPin, tone: "entered" };
 };
 
 const MonitoringList = () => {
@@ -77,6 +181,7 @@ const MonitoringList = () => {
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
   const [showDutyInTime, setShowDutyInTime] = useState("");
   const [appStatusTab, setAppStatusTab] = useState("all");
+  const [routeSnapshotView, setRouteSnapshotView] = useState("detail");
   const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
   const [lineStatusByWard, setLineStatusByWard] = useState({});
   const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
@@ -114,6 +219,130 @@ const MonitoringList = () => {
       helper: { name: "Dharamraj(C)", phone: "1237567890", stars: 5 },
     },
     vehicleNumber: "LEY-AT-4602",
+    vehicleJourney: {
+      quickSummary: {
+        fuelStops: 1,
+        wardEntries: 5,
+        inWard: "71m 32s",
+        longestSession: "61m 32s",
+      },
+      routeSnapshot: [
+        {
+          id: "r1",
+          time: "06:23",
+          label: "Entered",
+          duration: "1m",
+          kind: "fuel_stop",
+        },
+        {
+          id: "r2",
+          time: "06:24",
+          label: "Left",
+          duration: "30s",
+          kind: "departed",
+        },
+        {
+          id: "r3",
+          time: "06:24",
+          label: "Entered",
+          duration: "5m 30s",
+          kind: "entered",
+        },
+        {
+          id: "r4",
+          time: "06:30",
+          label: "Exited",
+          duration: "30s",
+          kind: "exited",
+        },
+        {
+          id: "r5",
+          time: "06:30",
+          label: "Entered",
+          duration: "3m 30s",
+          kind: "entered",
+        },
+        {
+          id: "r6",
+          time: "06:34",
+          label: "Exited",
+          duration: "2m 30s",
+          kind: "exited",
+        },
+        {
+          id: "r7",
+          time: "06:36",
+          label: "Entered",
+          duration: "",
+          kind: "entered",
+        },
+      ],
+      eventLog: [
+        {
+          id: "e1",
+          title: "Petrol Pump Entered",
+          description: "Stopped for refuelling",
+          time: "06:23",
+          tag: "Fuel Stop",
+          duration: "1m",
+          kind: "fuel_stop",
+        },
+        {
+          id: "e2",
+          title: "Petrol Pump Left",
+          description: "Refuelling done, heading out",
+          time: "06:24",
+          tag: "Departed",
+          duration: "30s",
+          kind: "departed",
+        },
+        {
+          id: "e3",
+          title: "Ward Entered",
+          description: "Inside ward - collecting",
+          time: "06:24",
+          tag: "In Ward",
+          duration: "5m 30s",
+          kind: "entered",
+        },
+        {
+          id: "e4",
+          title: "Ward Exited",
+          description: "Collection done, moving on",
+          time: "07:38",
+          tag: "Out",
+          duration: "30s",
+          kind: "exited",
+        },
+        {
+          id: "e5",
+          title: "Ward Entered",
+          description: "Inside ward - collecting",
+          time: "07:38",
+          tag: "In Ward",
+          duration: "1m",
+          kind: "entered",
+        },
+        {
+          id: "e6",
+          title: "Ward Exited",
+          description: "Collection done, moving on",
+          time: "07:39",
+          tag: "Out",
+          duration: "30s",
+          kind: "exited",
+        },
+        {
+          id: "e7",
+          title: "Ward Entered",
+          description: "Inside ward - collecting",
+          time: "07:40",
+          tag: "In Ward",
+          duration: "Active now",
+          kind: "entered",
+        },
+      ],
+    },
     zones: { total: 74, completed: 31, active: 29, inactive: 9, stop: 5 },
     heroesOnWork: 89,
     garageDuty: "0/0",
@@ -132,16 +361,58 @@ const MonitoringList = () => {
     { time: "10:54", status: "Opened", duration: "-", tone: "opened" },
   ];
 
-  const appOpenedCount = appSessionLogs.filter((entry) => entry.tone === "opened").length;
-  const appClosedCount = appSessionLogs.filter((entry) => entry.tone === "closed").length;
+  const appOpenedCount = appSessionLogs.filter(
+    (entry) => entry.tone === "opened",
+  ).length;
+  const appClosedCount = appSessionLogs.filter(
+    (entry) => entry.tone === "closed",
+  ).length;
   const filteredAppSessionLogs =
     appStatusTab === "all"
       ? appSessionLogs
       : appSessionLogs.filter((entry) =>
-          appStatusTab === "opened" ? entry.tone === "opened" : entry.tone === "closed",
+          appStatusTab === "opened"
+            ? entry.tone === "opened"
+            : entry.tone === "closed",
         );
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
+  const vehicleJourneyMeta = getVehicleJourneyMeta(wardData.vehicleStatus);
+  const VehicleJourneyIcon = vehicleJourneyMeta.icon;
+  const vehicleJourneyData = wardData.vehicleJourney || {};
+  const quickSummary = vehicleJourneyData.quickSummary || {};
+  const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
+  const eventLog = vehicleJourneyData.eventLog || [];
+  const statusSummaryText = String(wardData.vehicleStatus || "")
+    .toLowerCase()
+    .includes("dump")
+    ? "outside dumping yard"
+    : String(
+        vehicleJourneyMeta.title || wardData.vehicleStatus || "in transit",
+      ).toLowerCase();
+  const summaryText = `Vehicle made ${quickSummary.wardEntries ?? 0} ward entries & ${
+    quickSummary.fuelStops ?? 0
+  } fuel stop · Spent ${quickSummary.inWard || "0m"} inside wards · Longest session ${
+    quickSummary.longestSession || "0m"
+  } · Currently ${statusSummaryText}`;
+  const routeQuickStats = [
+    { key: "fuel", label: "Fuel Stop", value: quickSummary.fuelStops ?? 0, icon: <Fuel size={12} /> },
+    { key: "entries", label: "Ward Entries", value: quickSummary.wardEntries ?? 0, icon: <MapPin size={12} /> },
+    { key: "inward", label: "In Ward", value: quickSummary.inWard || "0m", icon: <Clock size={12} /> },
+    { key: "longest", label: "Longest Stay", value: quickSummary.longestSession || "0m", icon: <Trophy size={12} /> },
+  ];
+  const routeSnapshotRows =
+    eventLog.length > 0
+      ? eventLog
+      : routeSnapshot.map((item) => ({
+          id: item.id,
+          title: item.label,
+          description: "",
+          time: item.time,
+          tag: item.label,
+          duration: item.duration || "-",
+          kind: item.kind,
+        }));
 
   // Monitoring page always uses Sikar Firebase
   useEffect(() => {
@@ -476,40 +747,41 @@ const MonitoringList = () => {
               </button>
             </div>
 
-                <HaltSummaryReplica onMapFocusChange={setMapFocus} />
-         
+            <HaltSummaryReplica onMapFocusChange={setMapFocus} />
           </div>
           <div className={styles.dataRight}>
             <div className={styles.dataRightBottom}>
               <div className={styles.centerColumn}>
                 <CompletionDashboard />
-   <div className={`${styles.glassCard} ${styles.statusUnifiedCard}`}>
-              <div className={styles.cardHeading}>
-                <h3>Live Status Board</h3>
-                <Activity size={18} color="var(--themeColor)" />
-              </div>
-              <div className={styles.cardBody}>
-                <StatusLine
-                  label="Vehicle Status"
-                  value={wardData.vehicleStatus}
-                  icon={<Truck size={16} />}
-                  color="var(--textDanger)"
-                  onClick={() => setActiveStatusModal("vehicle")}
-                />
-                <StatusLine
-                  label="Trip Execution"
-                  value={`${wardData.trips} Trips`}
-                  icon={<TrendingUp size={16} />}
-                />
-                <StatusLine
-                  label="App Status"
-                  value={wardData.appStatus}
-                  icon={<Zap size={16} />}
-                  color="var(--textSuccess)"
-                  onClick={() => setActiveStatusModal("app")}
-                />
-              </div>
-            </div>
+                <div
+                  className={`${styles.glassCard} ${styles.statusUnifiedCard}`}
+                >
+                  <div className={styles.cardHeading}>
+                    <h3>Live Status Board</h3>
+                    <Activity size={18} color="var(--themeColor)" />
+                  </div>
+                  <div className={styles.cardBody}>
+                    <StatusLine
+                      label="Vehicle Status"
+                      value={wardData.vehicleStatus}
+                      icon={<Truck size={16} />}
+                      color="var(--textDanger)"
+                      onClick={() => setActiveStatusModal("vehicle")}
+                    />
+                    <StatusLine
+                      label="Trip Execution"
+                      value={`${wardData.trips} Trips`}
+                      icon={<TrendingUp size={16} />}
+                    />
+                    <StatusLine
+                      label="App Status"
+                      value={wardData.appStatus}
+                      icon={<Zap size={16} />}
+                      color="var(--textSuccess)"
+                      onClick={() => setActiveStatusModal("app")}
+                    />
+                  </div>
+                </div>
                 <div className={styles.glassCard}>
                   <div className={styles.remarksHeadRow}>
                     <div className={styles.remarksHeadLeft}>
@@ -568,7 +840,7 @@ const MonitoringList = () => {
                     <StateItem items={stateItems} />
                   </div>
                 </div>
-             
+
                 <MapSection
                   selectedWard={selectedWard}
                   onWardLengthResolved={setSelectedWardLengthInMeter}
@@ -592,10 +864,14 @@ const MonitoringList = () => {
           <div
             className={`${styles.modalContent} ${showVehicleModal ? styles.vehicleIssueModal : ""} ${
               activeStatusModal === "app" ? styles.appStatusModal : ""
-            } ${activeStatusModal === "app" ? styles.appStatusModalPlain : ""}`}
+            } ${activeStatusModal === "app" ? styles.appStatusModalPlain : ""} ${
+              activeStatusModal === "vehicle"
+                ? styles.vehicleJourneyModalShell
+                : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {activeStatusModal !== "app" && (
+            {activeStatusModal !== "app" && activeStatusModal !== "vehicle" && (
               <div className={styles.modalHeader}>
                 <h3>
                   {showVehicleModal
@@ -606,7 +882,10 @@ const MonitoringList = () => {
                         ? "Edit Field Query"
                         : "Add Field Query"}
                 </h3>
-                <button className={styles.modalCloseBtn} onClick={closeAllModals}>
+                <button
+                  className={styles.modalCloseBtn}
+                  onClick={closeAllModals}
+                >
                   <X size={20} />
                 </button>
               </div>
@@ -664,9 +943,15 @@ const MonitoringList = () => {
               <div className={styles.appStatusWrap}>
                 {/* <div className={styles.appPhoneLabel}>DRIVER&apos;S PHONE</div> */}
                 <div className={styles.appPhoneShell}>
-                  <span className={`${styles.appSideBtn} ${styles.appSideBtnLeft}`} />
-                  <span className={`${styles.appSideBtn} ${styles.appSideBtnRightTop}`} />
-                  <span className={`${styles.appSideBtn} ${styles.appSideBtnRightBottom}`} />
+                  <span
+                    className={`${styles.appSideBtn} ${styles.appSideBtnLeft}`}
+                  />
+                  <span
+                    className={`${styles.appSideBtn} ${styles.appSideBtnRightTop}`}
+                  />
+                  <span
+                    className={`${styles.appSideBtn} ${styles.appSideBtnRightBottom}`}
+                  />
                   <div className={styles.appPhoneFrame}>
                     <div className={styles.appPhoneTop}>
                       <span>{phoneClockTime}</span>
@@ -674,7 +959,9 @@ const MonitoringList = () => {
                         <span className={styles.appNotchSpeaker} />
                         <span className={styles.appNotchCam} />
                       </span>
-                      <span className={styles.appPhoneDate}>{phoneClockDate}</span>
+                      <span className={styles.appPhoneDate}>
+                        {phoneClockDate}
+                      </span>
                     </div>
 
                     <div className={styles.appPanelHeader}>
@@ -682,10 +969,16 @@ const MonitoringList = () => {
                         <span className={styles.appPanelIcon}>&#9638;</span>
                         <div>
                           <p className={styles.appPanelTitle}>App Status</p>
-                          <p className={styles.appPanelSub}>Today&apos;s full session log</p>
+                          <p className={styles.appPanelSub}>
+                            Today&apos;s full session log
+                          </p>
                         </div>
                       </div>
-                      <button type="button" className={styles.appPanelClose} onClick={closeAllModals}>
+                      <button
+                        type="button"
+                        className={styles.appPanelClose}
+                        onClick={closeAllModals}
+                      >
                         <X size={14} />
                       </button>
                     </div>
@@ -720,7 +1013,10 @@ const MonitoringList = () => {
 
                     <div className={styles.appLogList}>
                       {filteredAppSessionLogs.map((entry, index) => (
-                        <div key={`${entry.time}-${index}`} className={styles.appLogRow}>
+                        <div
+                          key={`${entry.time}-${index}`}
+                          className={styles.appLogRow}
+                        >
                           <span
                             className={`${styles.appLogDot} ${
                               entry.tone === "opened"
@@ -730,7 +1026,9 @@ const MonitoringList = () => {
                                   : styles.appLogDotMin
                             }`}
                           />
-                          <span className={styles.appLogTime}>{entry.time}</span>
+                          <span className={styles.appLogTime}>
+                            {entry.time}
+                          </span>
                           <span
                             className={`${styles.appLogBadge} ${
                               entry.tone === "opened"
@@ -742,41 +1040,217 @@ const MonitoringList = () => {
                           >
                             {entry.status}
                           </span>
-                          <span className={styles.appLogDuration}>{entry.duration}</span>
+                          <span className={styles.appLogDuration}>
+                            {entry.duration}
+                          </span>
                         </div>
                       ))}
                     </div>
 
                     <div className={styles.appPanelFooter}>
-                      App opened {appOpenedCount}x · avg 32m 17s · closed {appClosedCount}x · screen off 1x
+                      App opened {appOpenedCount}x · avg 32m 17s · closed{" "}
+                      {appClosedCount}x · screen off 1x
                     </div>
                   </div>
                 </div>
               </div>
             ) : activeStatusModal === "vehicle" ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <ModalRow
-                  label="Logistic Chain"
-                  value={wardData.vehicleStatus}
-                  color="var(--textDanger)"
-                  icon={<Truck size={16} />}
-                />
-                <ModalRow
-                  label="Fleet ID"
-                  value={wardData.vehicleNumber}
-                  icon={<Navigation size={16} />}
-                />
-                <ModalRow
-                  label="Fuel Reserve"
-                  value="65%"
-                  icon={<Zap size={16} />}
-                />
-                <ModalRow
-                  label="Mechanical Integrity"
-                  value="Nominal"
-                  color="var(--textSuccess)"
-                  icon={<ShieldCheck size={16} />}
-                />
+              <div className={styles.vehicleJourneyModal}>
+                <div className={styles.vehicleJourneyHeader}>
+                  <div className={styles.vehicleJourneyHeadingWrap}>
+                    <span className={styles.vehicleJourneyTagIcon}>
+                      <Truck size={14} />
+                    </span>
+                    <div>
+                      <h3 className={styles.vehicleJourneyTitle}>
+                        Vehicle Status
+                      </h3>
+                      <p className={styles.vehicleJourneySubTitle}>
+                        {wardData.vehicleNumber} · Today
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    className={styles.modalCloseBtn}
+                    onClick={closeAllModals}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                <div className={styles.vehicleJourneyBody}>
+                  <div
+                    className={`${styles.vehicleJourneyStatusCard} ${
+                      vehicleJourneyMeta.tone === "danger"
+                        ? styles.vehicleJourneyStatusDanger
+                        : vehicleJourneyMeta.tone === "warning"
+                          ? styles.vehicleJourneyStatusWarning
+                          : vehicleJourneyMeta.tone === "success"
+                            ? styles.vehicleJourneyStatusSuccess
+                            : styles.vehicleJourneyStatusNeutral
+                    }`}
+                  >
+                    <div className={styles.vehicleJourneyStatusCopy}>
+                      <p className={styles.vehicleJourneyStatusLabel}>
+                        Current Status
+                      </p>
+                      <h4 className={styles.vehicleJourneyStatusTitle}>
+                        {vehicleJourneyMeta.title}
+                      </h4>
+                      <p className={styles.vehicleJourneyStatusDesc}>
+                        {vehicleJourneyMeta.description}
+                      </p>
+                    </div>
+                  </div>
+
+            
+          <div className={styles.vehicleJourneyQuickStrip}>
+                      {routeQuickStats.map((chip) => (
+                        <div
+                          key={chip.key}
+                          className={`${styles.vehicleJourneyQuickChip} ${
+                            styles[`vehicleJourneyQuick${chip.key}`]
+                          }`}
+                        >
+                          <span className={styles.vehicleJourneyQuickIcon}>
+                            {chip.icon}
+                          </span>
+                          <strong>{chip.value}</strong>
+                          <span className={styles.vehicleJourneyQuickLabel}>
+                            {chip.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  <div className={styles.vehicleJourneySection}>
+                    <div className={styles.vehicleJourneySectionHead}>
+                      <div className={styles.vehicleJourneySectionTitle}>
+                        Route Snapshot
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.vehicleJourneyViewToggle}
+                        onClick={() =>
+                          setRouteSnapshotView((prev) =>
+                            prev === "detail" ? "compact" : "detail",
+                          )
+                        }
+                        title={
+                          routeSnapshotView === "detail"
+                            ? "Switch to compact view"
+                            : "Switch to detailed view"
+                        }
+                        aria-label={
+                          routeSnapshotView === "detail"
+                            ? "Switch to compact view"
+                            : "Switch to detailed view"
+                        }
+                      >
+                        {routeSnapshotView === "detail" ? (
+                          <ChevronDown size={14} />
+                        ) : (
+                          <ChevronUp size={14} />
+                        )}
+                      </button>
+                    </div>
+
+                    {routeSnapshotView === "detail" ? (
+                      <div className={styles.vehicleJourneyEventList}>
+                        {routeSnapshotRows.map((entry, index) => {
+                          const meta = getJourneyKindMeta(entry.kind);
+                          const EventIcon = meta.icon;
+                          return (
+                            <div
+                              key={entry.id || `${entry.time}-${index}`}
+                              className={styles.vehicleJourneyEventRow}
+                            >
+                              <div className={styles.vehicleJourneyEventAxis}>
+                                <span
+                                  className={`${styles.vehicleJourneyEventDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}
+                                >
+                                  <EventIcon size={12} />
+                                </span>
+                                {index < routeSnapshotRows.length - 1 && (
+                                  <span className={styles.vehicleJourneyEventLine} />
+                                )}
+                              </div>
+                              <div
+                                className={`${styles.vehicleJourneyEventCard} ${styles[`vehicleJourneyEvent${meta.tone}`]}`}
+                              >
+                                <div className={styles.vehicleJourneyEventTop}>
+                                  <h4>{entry.title}</h4>
+                                  <span>{entry.time}</span>
+                                </div>
+                                <p>{entry.description}</p>
+                                <div className={styles.vehicleJourneyEventMeta}>
+                                  <span className={styles.vehicleJourneyEventTag}>
+                                    {entry.tag}
+                                  </span>
+                                  <span
+                                    className={styles.vehicleJourneyEventDuration}
+                                  >
+                                    {entry.duration}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className={styles.vehicleJourneyCompactList}>
+                        {routeSnapshotRows.map((entry, index) => {
+                          const meta = getJourneyKindMeta(entry.kind);
+                          const EventIcon = meta.icon;
+                          const shouldShowMeta =
+                            String(entry.duration || "")
+                              .toLowerCase()
+                              .includes("active") || index === routeSnapshotRows.length - 1;
+                          return (
+                            <div
+                              key={entry.id || `${entry.time}-${index}`}
+                              className={styles.vehicleJourneyCompactRow}
+                            >
+                              <div className={styles.vehicleJourneyCompactAxis}>
+                                <span
+                                  className={`${styles.vehicleJourneyCompactDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}
+                                >
+                                  <EventIcon size={11} />
+                                </span>
+                                {index < routeSnapshotRows.length - 1 && (
+                                  <span className={styles.vehicleJourneyCompactLine} />
+                                )}
+                              </div>
+                              <div className={styles.vehicleJourneyCompactCopy}>
+                                <div className={styles.vehicleJourneyCompactTop}>
+                                  <h4>{entry.title}</h4>
+                                  <span>{entry.time}</span>
+                                </div>
+                                {shouldShowMeta && (
+                                  <div className={styles.vehicleJourneyCompactMeta}>
+                                    <span className={styles.vehicleJourneyCompactMetaTag}>
+                                      {entry.tag}
+                                    </span>
+                                    <span className={styles.vehicleJourneyCompactMetaTime}>
+                                      {entry.duration}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+        
+                  <div className={styles.vehicleJourneySummaryStrip}>
+                    <span className={styles.vehicleJourneySummaryIcon}>
+                      <Trophy size={12} />
+                    </span>
+                    <p>{summaryText}</p>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className={styles.remarkFormWrap}>
@@ -902,17 +1376,6 @@ const EnhancedProfile = ({ profile, role, isOnline }) => (
     <div className={styles.enhancedRatingRow}>
       <span className={styles.ratingText}>5.0</span>
     </div>
-  </div>
-);
-
-const ModalRow = ({ label, value, color, icon }) => (
-  <div className={styles.modalRow}>
-    <div className={styles.modalRowLabel}>
-      {icon} {label}
-    </div>
-    <span className={styles.modalRowValue} style={{ color }}>
-      {value}
-    </span>
   </div>
 );
 
