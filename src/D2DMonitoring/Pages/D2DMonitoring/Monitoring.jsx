@@ -397,11 +397,11 @@ const MonitoringList = () => {
     : String(
         vehicleJourneyMeta.title || wardData.vehicleStatus || "in transit",
       ).toLowerCase();
-  const summaryText = `Vehicle made ${quickSummary.wardEntries ?? 0} ward entries & ${
-    quickSummary.fuelStops ?? 0
-  } fuel stop · Spent ${quickSummary.inWard || "0m"} inside wards · Longest session ${
-    quickSummary.longestSession || "0m"
-  } · Currently ${statusSummaryText}`;
+const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
+  quickSummary.fuelStops ?? 0
+}</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
+  quickSummary.longestSession || "0m"
+}</b> · Currently <b>${statusSummaryText}</b>`;
   const routeQuickStats = [
     { key: "fuel", label: "Fuel Stop", value: quickSummary.fuelStops ?? 0, icon: <Fuel size={12} /> },
     { key: "entries", label: "Ward Entries", value: quickSummary.wardEntries ?? 0, icon: <MapPin size={12} /> },
@@ -1260,7 +1260,7 @@ const MonitoringList = () => {
                     <span className={styles.vehicleJourneySummaryIcon}>
                       <Trophy size={12} />
                     </span>
-                    <p>{summaryText}</p>
+                 <p dangerouslySetInnerHTML={{ __html: summaryText }} />
                   </div>
                 </div>
               </div>
@@ -1427,11 +1427,11 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
           <div className={styles.heroReplicaStatsRow}>
             <div>
               <strong>5 yrs</strong>
-              <span>Experience</span>
+              <span>Exp.</span>
             </div>
             <div>
               <strong>640Km</strong>
-              <span>Dis. Covered</span>
+              <span>Driven</span>
             </div>
           </div>
         </div>
@@ -1453,11 +1453,11 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
           <div className={styles.heroReplicaStatsRow}>
             <div>
               <strong>1.5 yrs</strong>
-              <span>Experience</span>
+              <span>Exp.</span>
             </div>
             <div>
               <strong>180Km</strong>
-              <span>Dis. Covered</span>
+              <span>Driven</span>
             </div>
           </div>
         </div>

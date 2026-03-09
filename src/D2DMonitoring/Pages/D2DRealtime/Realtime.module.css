@@ -2786,7 +2786,7 @@ background-color: #2898ca10;
 
 .vehicleJourneyStatusLabel {
   margin: 0;
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--black) 75%, var(--white));
@@ -2795,7 +2795,7 @@ background-color: #2898ca10;
 
 .vehicleJourneyStatusTitle {
   margin: 4px 0 0;
-  font-size: 19px;
+  font-size: 15px;
   line-height: 1.15;
   color: var(--textDangerDark);
   font-family: var(--fontGraphikBold);
@@ -2803,7 +2803,7 @@ background-color: #2898ca10;
 
 .vehicleJourneyStatusDesc {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.35;
   color: var(--regularColor);
   font-family: var(--fontGraphikMedium);
@@ -3334,7 +3334,7 @@ background-color: #2898ca10;
   font-size: 11px;
   line-height: 1.4;
   color: #1f4f40;
-  font-family: var(--fontGraphikSemibold);
+  font-family: var(--fontGraphikMedium);
 }
 
 .vehicleJourneyTonefuel {
