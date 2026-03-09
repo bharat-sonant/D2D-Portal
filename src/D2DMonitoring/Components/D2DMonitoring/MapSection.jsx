@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
+import { Maximize2, Minimize2 } from "lucide-react";
 //ward boundaries for ward 1 to 5
 import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
 import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
@@ -39,18 +40,48 @@ const DEFAULT_LINE_STYLE = {
     zIndex: 3,
 };
 
+const MAP_FULLSCREEN_GAP = 10;
+const MAP_FULLSCREEN_ANIMATION_MS = 320;
+
+const getViewportFrame = () => ({
+    top: MAP_FULLSCREEN_GAP,
+    left: MAP_FULLSCREEN_GAP,
+    width: Math.max(window.innerWidth - MAP_FULLSCREEN_GAP * 2, 320),
+    height: Math.max(window.innerHeight - MAP_FULLSCREEN_GAP * 2, 220),
+});
+
+const getElementFrame = (element) => {
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    return {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+    };
+};
 
 const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {}, focusLocation = null }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isMapAnimating, setIsMapAnimating] = useState(false);
+    const [fullscreenFrame, setFullscreenFrame] = useState(null);
+    const [mapPlaceholderHeight, setMapPlaceholderHeight] = useState(0);
     const mapRef = useRef(null);
+    const mapSectionRef = useRef(null);
+    const mapAnimationTimerRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
 
-    const { wardBoundary, selectedWardLinePaths, selectedWardLengthInMeter } = action.getSelectedWardMapData({
-        wardId: selectedWard?.id,
-        wardBoundariesById,
-        wardLinesById,
-    });
+    const { wardBoundary, selectedWardLinePaths, selectedWardLengthInMeter } = useMemo(
+        () =>
+            action.getSelectedWardMapData({
+                wardId: selectedWard?.id,
+                wardBoundariesById,
+                wardLinesById,
+            }),
+        [selectedWard?.id],
+    );
 
     useEffect(() => {
         if (isGoogleReady) return;
@@ -75,6 +106,64 @@ const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {},
         }
     }, [onWardLengthResolved, selectedWardLengthInMeter]);
 
+    useEffect(() => {
+        return () => {
+            if (mapAnimationTimerRef.current) {
+                clearTimeout(mapAnimationTimerRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!isFullscreen) return undefined;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isFullscreen]);
+
+    useEffect(() => {
+        if (!isFullscreen) return undefined;
+        const onEscPress = (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                setIsMapAnimating(true);
+                const targetFrame = getElementFrame(mapSectionRef.current);
+                if (targetFrame) {
+                    setFullscreenFrame(targetFrame);
+                }
+                mapAnimationTimerRef.current = setTimeout(() => {
+                    setIsMapAnimating(false);
+                    setIsFullscreen(false);
+                    setFullscreenFrame(null);
+                    setMapPlaceholderHeight(0);
+                }, MAP_FULLSCREEN_ANIMATION_MS);
+            }
+        };
+        window.addEventListener("keydown", onEscPress);
+        return () => window.removeEventListener("keydown", onEscPress);
+    }, [isFullscreen]);
+
+    useEffect(() => {
+        if (!isFullscreen) return undefined;
+        const onWindowResize = () => {
+            setFullscreenFrame(getViewportFrame());
+        };
+        window.addEventListener("resize", onWindowResize);
+        return () => window.removeEventListener("resize", onWindowResize);
+    }, [isFullscreen]);
+
+    useEffect(() => {
+        if (!mapRef.current) return;
+        const resizeMap = () => {
+            if (!window.google?.maps?.event || !mapRef.current) return;
+            window.google.maps.event.trigger(mapRef.current, "resize");
+        };
+        const timer = setTimeout(resizeMap, 90);
+        return () => clearTimeout(timer);
+    }, [isFullscreen, selectedWard?.id]);
+
     const lineOptionsByIndex = useMemo(() => {
         return selectedWardLinePaths.map((_, index) => {
             const lineId = String(index + 1);
@@ -85,11 +174,83 @@ const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {},
         });
     }, [selectedWardLinePaths, lineStatusByLine]);
 
+    const closeMapFullscreen = () => {
+        if (!isFullscreen || isMapAnimating) return;
+        const targetFrame = getElementFrame(mapSectionRef.current);
+        if (!targetFrame) {
+            setIsFullscreen(false);
+            setFullscreenFrame(null);
+            setMapPlaceholderHeight(0);
+            return;
+        }
+        setIsMapAnimating(true);
+        setFullscreenFrame(targetFrame);
+        mapAnimationTimerRef.current = setTimeout(() => {
+            setIsMapAnimating(false);
+            setIsFullscreen(false);
+            setFullscreenFrame(null);
+            setMapPlaceholderHeight(0);
+        }, MAP_FULLSCREEN_ANIMATION_MS);
+    };
+
+    const openMapFullscreen = () => {
+        if (isFullscreen || isMapAnimating) return;
+        const originFrame = getElementFrame(mapSectionRef.current);
+        if (!originFrame) return;
+        setMapPlaceholderHeight(originFrame.height);
+        setFullscreenFrame(originFrame);
+        setIsFullscreen(true);
+        setIsMapAnimating(true);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setFullscreenFrame(getViewportFrame());
+            });
+        });
+        mapAnimationTimerRef.current = setTimeout(() => {
+            setIsMapAnimating(false);
+        }, MAP_FULLSCREEN_ANIMATION_MS);
+    };
+
     if (!isGoogleReady) return null;
 
     return (
-        <div className={styles.mapColumn}>
-            <div className={`${styles.glassCard} ${styles.mapCard}`}>
+        <div
+            ref={mapSectionRef}
+            className={styles.mapSectionShell}
+            style={isFullscreen && mapPlaceholderHeight > 0 ? { minHeight: `${mapPlaceholderHeight}px` } : undefined}
+        >
+            {isFullscreen && (
+                <button
+                    type="button"
+                    className={styles.mapFullscreenBackdrop}
+                    onClick={closeMapFullscreen}
+                    aria-label="Close fullscreen map"
+                />
+            )}
+            <div
+                className={`${styles.glassCard} ${styles.mapCard} ${isFullscreen ? styles.mapCardFullscreen : ""} ${
+                    isMapAnimating ? styles.mapCardTransitioning : ""
+                }`}
+                style={
+                    isFullscreen && fullscreenFrame
+                        ? {
+                            top: `${fullscreenFrame.top}px`,
+                            left: `${fullscreenFrame.left}px`,
+                            width: `${fullscreenFrame.width}px`,
+                            height: `${fullscreenFrame.height}px`,
+                        }
+                        : undefined
+                }
+            >
+                <button
+                    type="button"
+                    className={styles.mapFullscreenBtn}
+                    onClick={isFullscreen ? closeMapFullscreen : openMapFullscreen}
+                    aria-label={isFullscreen ? "Exit fullscreen map" : "Open fullscreen map"}
+                    title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                >
+                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                </button>
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
                     defaultCenter={defaultCenter}

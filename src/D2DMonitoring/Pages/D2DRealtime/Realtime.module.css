@@ -1553,7 +1553,7 @@
 .heroReplicaRolePill {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  border-radius: 4px;
   min-height: 20px;
   padding: 0 8px;
   font-size: 10px;
@@ -1643,12 +1643,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
-}
-
-.heroReplicaStatsRow > div {
   border: 1px solid var(--borderColor);
   border-radius: 6px;
   background: var(--whitefa);
+}
+
+.heroReplicaStatsRow > div {
   padding: 6px 5px;
   text-align: center;
 }
@@ -2046,10 +2046,71 @@ background-color: #2898ca10;
   position: relative;
   border-radius: 6px;
   flex: 1;
+  height: 370px;
   min-height: 370px;
   background-color: var(--white);
   padding: 5px;
   border-radius: 6px;
+}
+
+.mapSectionShell {
+  position: relative;
+}
+
+.mapCardFullscreen {
+  position: fixed;
+  margin: 0;
+  z-index: 1301;
+  min-height: 0;
+  max-width: none;
+}
+
+.mapCardTransitioning {
+  transition:
+    top 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mapFullscreenBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  border: 0;
+  background: rgba(15, 23, 42, 0.36);
+  backdrop-filter: blur(2px);
+  cursor: zoom-out;
+}
+
+.mapFullscreenBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--regularColor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.mapFullscreenBtn:hover {
+  transform: translateY(-1px);
+  background: #fff;
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
 }
 
 .mapFocusCard {
@@ -4008,6 +4069,7 @@ background-color: #2898ca10;
   }
 
   .mapCard {
+    height: 360px;
     min-height: 360px;
   }
 }
@@ -4130,6 +4192,7 @@ background-color: #2898ca10;
   }
 
   .mapCard {
+    height: 300px;
     min-height: 300px;
   }
 
@@ -4179,7 +4242,9 @@ background-color: #2898ca10;
   .addRemarkBtn,
   .addAnotherBtn,
   .remarkItemCard,
-  .remarkActionBtn {
+  .remarkActionBtn,
+  .mapFullscreenBtn,
+  .mapCardTransitioning {
     transition: none !important;
   }
 
