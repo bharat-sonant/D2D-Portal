@@ -1212,7 +1212,7 @@
   margin: 0;
   font-size: 15px;
   color: var(--black);
-  font-family: var(--fontGraphikSemibold);
+  font-family: var(--fontGraphikMedium);
 }
 
 .heroReplicaTitleWrap p {

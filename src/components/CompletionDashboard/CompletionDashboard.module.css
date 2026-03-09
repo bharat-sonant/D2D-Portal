@@ -6,6 +6,7 @@
   justify-content: center;
   font-family: var(--font-family, var(--fontGraphik));
   color: var(--text-color, var(--black));
+    animation: pageFadeIn 0.35s ease both;
 }
 
 .card {
@@ -297,6 +298,17 @@
   margin: 0;
   font-size: 1rem;
   color: color-mix(in srgb, currentColor 65%, var(--card-bg, var(--white)));
+}
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 640px) {
