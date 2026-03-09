@@ -25,6 +25,12 @@ import {
   Pencil,
   Trash2,
   UserStar,
+  Package,
+  CheckCircle2,
+  Navigation,
+  MapPinCheck,
+  MapPinCheckIcon,
+  Map,
 } from "lucide-react";
 import dayjs from "dayjs";
 import Chetan from "../../../assets/images/Chetan.jpeg";
@@ -397,11 +403,26 @@ const MonitoringList = () => {
     : String(
         vehicleJourneyMeta.title || wardData.vehicleStatus || "in transit",
       ).toLowerCase();
-const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
-  quickSummary.fuelStops ?? 0
-}</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
-  quickSummary.longestSession || "0m"
-}</b> · Currently <b>${statusSummaryText}</b>`;
+
+  const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
+    quickSummary.fuelStops ?? 0
+  }</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
+    quickSummary.longestSession || "0m"
+  }</b> · Currently <b>${statusSummaryText}</b>`;
+
+  // Trip Status Logic
+  const tripTotal = wardData.trips || 5; 
+  const tripCompleted = wardData.tripsDone || 2; 
+  const tripActive = (tripTotal > tripCompleted) ? 1 : 0; 
+  
+  const getTripStatusTone = () => {
+    if (tripCompleted === tripTotal) return "toneSuccess";
+    if (tripActive > 0) return "toneWarning";
+    return "toneDanger";
+  };
+
+  const appTone = wardData.appStatus === "Opened" ? "toneSuccess" : "toneDanger";
+  const vehicleTone = vehicleJourneyMeta.tone === "danger" ? "toneDanger" : (vehicleJourneyMeta.tone === "success" ? "toneSuccess" : "toneWarning");
   const routeQuickStats = [
     { key: "fuel", label: "Fuel Stop", value: quickSummary.fuelStops ?? 0, icon: <Fuel size={12} /> },
     { key: "entries", label: "Ward Entries", value: quickSummary.wardEntries ?? 0, icon: <MapPin size={12} /> },
@@ -770,28 +791,60 @@ const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward e
                 >
                   <div className={styles.cardHeading}>
                     <h3>Live Status Board</h3>
-                    <Activity size={18} color="var(--themeColor)" />
+                    <div style={{ display: "flex", gap: "8px" }}>
+                       <Activity size={18} color="var(--themeColor)" />
+                    </div>
                   </div>
                   <div className={styles.cardBody}>
-                    <StatusLine
-                      label="Vehicle Status"
-                      value={wardData.vehicleStatus}
-                      icon={<Truck size={16} />}
-                      color="var(--textDanger)"
-                      onClick={() => setActiveStatusModal("vehicle")}
-                    />
-                    <StatusLine
-                      label="Trip Execution"
-                      value={`${wardData.trips} Trips`}
-                      icon={<TrendingUp size={16} />}
-                    />
-                    <StatusLine
-                      label="App Status"
-                      value={wardData.appStatus}
-                      icon={<Zap size={16} />}
-                      color="var(--textSuccess)"
-                      onClick={() => setActiveStatusModal("app")}
-                    />
+                    <div className={styles.liveStatusGrid}>
+                      <div 
+                        className={styles.liveBoardCard}
+                        onClick={() => setActiveStatusModal("vehicle")}
+                      >
+                        <div className={styles.liveStatusGridLeft}>
+                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
+                            <Truck size={18} />
+                          </div>
+                          <div className={styles.liveBoardLabel}>Vehicle Status</div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", }}>
+                          <div className={`${styles.liveBoardValue} ${styles[vehicleTone]}`}>{wardData.vehicleStatus}</div>
+                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
+                        </div>
+                      </div>
+
+                      <div 
+                        className={styles.liveBoardCard}
+                        onClick={() => setActiveStatusModal("trips")}
+                      >
+                        <div className={styles.liveStatusGridLeft}>
+                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
+                            <Package size={18} />
+                          </div>
+                          <div className={styles.liveBoardLabel}>Trip Execution</div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", }}>
+                          <div className={`${styles.liveBoardValue} ${styles[getTripStatusTone()]}`}>{wardData.trips} Trips</div>
+                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
+                        </div>
+                      </div>
+
+                      <div 
+                        className={styles.liveBoardCard}
+                        onClick={() => setActiveStatusModal("app")}
+                      >
+                        <div className={styles.liveStatusGridLeft}>
+                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
+                            <Zap size={18} />
+                          </div>
+                          <div className={styles.liveBoardLabel}>App Status</div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center",}}>
+                          <div className={`${styles.liveBoardValue} ${styles[appTone]}`}>{wardData.appStatus}</div>
+                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className={styles.glassCard}>
@@ -877,22 +930,24 @@ const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward e
             className={`${styles.modalContent} ${showVehicleModal ? styles.vehicleIssueModal : ""} ${
               activeStatusModal === "app" ? styles.appStatusModal : ""
             } ${activeStatusModal === "app" ? styles.appStatusModalPlain : ""} ${
-              activeStatusModal === "vehicle"
+              activeStatusModal === "vehicle" || activeStatusModal === "trips"
                 ? styles.vehicleJourneyModalShell
                 : ""
-            }`}
+            } ${activeStatusModal === "trips" ? styles.tripExecutionModalShell : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
-            {activeStatusModal !== "app" && activeStatusModal !== "vehicle" && (
+            {(activeStatusModal !== "app" && activeStatusModal !== "vehicle" && activeStatusModal !== "trips") && (
               <div className={styles.modalHeader}>
                 <h3>
                   {showVehicleModal
                     ? "Vehicle Assignment Desk"
                     : activeStatusModal === "vehicle"
                       ? "Logistics Diagnostic"
-                      : editingRemarkId
-                        ? "Edit Field Query"
-                        : "Add Field Query"}
+                      : activeStatusModal === "trips"
+                        ? "Trip Execution"
+                        : editingRemarkId
+                          ? "Edit Field Query"
+                          : "Add Field Query"}
                 </h3>
                 <button
                   className={styles.modalCloseBtn}
@@ -1064,6 +1119,73 @@ const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward e
                       {appClosedCount}x · screen off 1x
                     </div>
                   </div>
+                </div>
+              </div>
+            ) : activeStatusModal === "trips" ? (
+              <div className={styles.vehicleJourneyModal}>
+                <div className={styles.vehicleJourneyHeader}>
+                  <div className={styles.vehicleJourneyHeadingWrap}>
+                    <span className={styles.vehicleJourneyTagIcon} style={{ background: "#eff6ff", color: "#3b82f6" }}>
+                      <Package size={16} />
+                    </span>
+                    <div>
+                      <h3 className={styles.vehicleJourneyTitle}>
+                        Trip Execution
+                      </h3>
+                      <p className={styles.vehicleJourneySubTitle}>
+                        {wardData.vehicleNumber} · Today 
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    className={styles.modalCloseBtn}
+                    onClick={closeAllModals}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className={styles.modalTabContent}>
+                  <div className={styles.tripLogSection}>
+                 
+                    <div className={styles.tripItem}>
+                      <div className={`${styles.tripNumber} ${styles.tripNumberDone}`}>#1</div>
+                      <div className={styles.tripContent}>
+                        <div className={styles.tripTop}>
+                          <h5>Morning Run</h5>
+                          <span className={`${styles.tripBadge} ${styles.tripBadgeDone}`}>✓ Done</span>
+                        </div>
+                        <div className={styles.tripMeta}>
+                          <div className={styles.tripMetaItem}><Clock size={12} className={styles.tripMetaIcon} /> <b>06:23</b>  → 07:45</div>
+                          <div className={styles.tripMetaItem}><Navigation size={12} className={styles.tripMetaIcon} /> 4.55 km</div>
+                          <div className={styles.tripMetaItem}><MapPin size={12} className={styles.tripMetaIcon} /> 3 zones</div>
+                          <div className={styles.tripMetaItem}><Map size={12} className={styles.tripMetaIcon} /> 14 lines</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.tripItem}>
+                      <div className={`${styles.tripNumber} ${styles.tripNumberActive}`}>#2</div>
+                      <div className={styles.tripContent}>
+                        <div className={styles.tripTop}>
+                          <h5>Current Run</h5>
+                          <span className={`${styles.tripBadge} ${styles.tripBadgeActive}`}>• Active</span>
+                        </div>
+                        <div className={styles.tripMeta}>
+                          <div className={styles.tripMetaItem}><Clock size={12} className={styles.tripMetaIcon} /><b>  08:56</b>  → now</div>
+                          <div className={styles.tripMetaItem}><Navigation size={12} className={styles.tripMetaIcon} /> 0 km</div>
+                          <div className={styles.tripMetaItem}><MapPin size={12} className={styles.tripMetaIcon} /> 1 zones</div>
+                          <div className={styles.tripMetaItem}><Map size={12} className={styles.tripMetaIcon} /> 18 lines</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.vehicleJourneySummaryStrip} style={{ margin: "0 24px 24px" }}>
+                  <span className={styles.vehicleJourneySummaryIcon}>
+                    <Trophy size={12} />
+                  </span>
+                  <p>Vehicle made <b>{tripCompleted}</b> trips today · Total distance <b>4.55 km</b> · <b>{tripActive}</b> trip active</p>
                 </div>
               </div>
             ) : activeStatusModal === "vehicle" ? (

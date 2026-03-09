@@ -208,7 +208,6 @@
   gap: 4px;
 }
 .cardBody {
-  background-color: #fafafa;
   border-radius: 6px;
 }
 /* .statusUnifiedCard {
@@ -243,6 +242,285 @@
   display: flex;
   align-items: center;
   gap: 2px;
+}
+
+/* Redesigned Live Status Board */
+.liveStatusGrid {
+  display: flex;
+  gap: 6px;
+  flex-flow: column;
+}
+
+.liveBoardCard {
+  background: #f8fafc;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.liveBoardCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--themeColor);
+}
+
+.liveBoardCard:hover .liveBoardArrow {
+  transform: translateX(2px);
+  color: var(--themeColor);
+}
+
+.liveStatusGridLeft{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveBoardArrow {
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+  display: flex;
+  margin-left: 4px;
+}
+
+.toneSuccess {
+  color: var(--textSuccess) !important;
+}
+
+.toneDanger {
+  color: var(--textDanger) !important;
+}
+
+.toneWarning {
+  color: var(--warning) !important;
+}
+
+.liveBoardIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.liveBoardLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+  letter-spacing: 0.5px;
+}
+
+.liveBoardValue {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+/* Trip Execution Modal Updates */
+.tripExecutionModalShell {
+  width: 720px !important;
+  max-width: 90vw;
+  border-radius: 6px !important;
+}
+
+.modalTabs {
+  display: flex;
+  border-bottom: 1px solid var(--borderColor);
+  padding: 0 20px;
+  gap: 24px;
+}
+
+.modalTab {
+  padding: 14px 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.modalTab:hover {
+  color: var(--black);
+}
+
+.modalTabActive {
+  color: var(--themeColor);
+}
+
+.modalTabActive::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--themeColor);
+  border-radius: 2px 2px 0 0;
+}
+
+.modalTabContent {
+      padding: 15px 24px;
+
+  background: #fcfdfe;
+}
+
+/* Overview Tab */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.overviewCard {
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.overviewCardBlue { border-left: 4px solid #3b82f6; background: #eff6ff; }
+.overviewCardGreen { border-left: 4px solid #10b981; background: #ecfdf5; }
+.overviewCardOrange { border-left: 4px solid #f59e0b; background: #fffbeb; }
+.overviewCardPurple { border-left: 4px solid #8b5cf6; background: #f5f3ff; }
+
+.overviewStat {
+  font-size: 32px;
+  font-family: var(--fontGraphikBold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.overviewLabel {
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+}
+
+.overviewProgress {
+  height: 4px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.overviewProgressFill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* Trips Tab */
+.tripLogSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tripLogHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.tripLogHeader h4 {
+  font-size: 11px;
+  font-family: var(--fontGraphikBold);
+  color: var(--regularColor);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.tripLogDivider {
+  flex: 1;
+  height: 1px;
+  background: var(--borderColor);
+}
+
+.tripItem {
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tripNumber {
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-family: var(--fontGraphikBold);
+  color: var(--themeColor);
+  background: #f8fafc;
+  border-right: 1px solid var(--borderColor);
+}
+
+.tripNumberDone { color: #10b981; background: #f0fdf4; }
+.tripNumberActive { color: #f59e0b; background: #fffbeb; }
+
+.tripContent {
+  flex: 1;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tripTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tripTop h5 {
+  font-size: 13px;
+  margin: 0;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.tripBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  text-transform: uppercase;
+}
+
+.tripBadgeDone { background: #dcfce7; color: #166534; }
+.tripBadgeActive { background: #fef3c7; color: #92400e; }
+
+.tripMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikMedium);
+}
+
+.tripMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tripMetaIcon {
+  color: #94a3b8;
 }
 
 .statusClickIndicator {
@@ -699,7 +977,7 @@
 
 .completionCard {
   border: 1px solid #e5eaf4;
-  border-radius: 24px;
+  border-radius: 6px;
   padding: 20px 18px;
   background: #f7f9ff;
 }
@@ -1181,7 +1459,6 @@
       color-mix(in srgb, var(--themeColor) 8%, var(--white)) 0%,
       color-mix(in srgb, var(--textSuccess) 10%, var(--white)) 100%
     ); */
-  border-bottom: 1px solid  var(--borderColor);
   display: flex;
   align-items: center;
   justify-content: space-between;
