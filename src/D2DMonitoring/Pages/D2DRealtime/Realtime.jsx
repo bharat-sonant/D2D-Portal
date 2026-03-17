@@ -100,6 +100,13 @@ const D2DRealtime = () => {
     zones: { total: 74, completed: 31, active: 29, inactive: 9, stop: 5 },
     heroesOnWork: 89,
     garageDuty: "0/0",
+    heroesDutyReplica: {
+      dateLabel: dayjs().format("DD MMM, YYYY"),
+      onFieldLabel: "On Field",
+      driver: { lines: 72, field: "3h", rating: 5.0 },
+      helper: { lines: 68, field: "3h", rating: 5.0 },
+      summary: { tripsDone: 2, totalLines: 140, teamRating: 5.0 },
+    },
   });
 
   const handleWardSelect = (ward) => {
@@ -444,6 +451,10 @@ const D2DRealtime = () => {
                       </div>
                     </button>
                   </div>
+                  <DutyComparisonReplica
+                    data={wardData}
+                    onVehicleClick={openVehicleModal}
+                  />
 
                   <div
                     className={`${styles.glassCard} ${styles.statusUnifiedCard}`}
@@ -1084,6 +1095,123 @@ const EnhancedProfile = ({ profile, role, isOnline }) => (
     </div>
   </div>
 );
+
+const DutyComparisonReplica = ({ data, onVehicleClick }) => {
+  const replica = data?.heroesDutyReplica || {};
+  const driver = data?.profiles?.driver || {};
+  const helper = data?.profiles?.helper || {};
+
+  return (
+    <div className={`${styles.glassCard} ${styles.heroReplicaCard}`}>
+      <div className={styles.heroReplicaHead}>
+        <div className={styles.heroReplicaTitleWrap}>
+          <span className={styles.heroReplicaBadgeIcon}>
+            <Truck size={14} />
+          </span>
+          <div>
+            <h4>Heroes on Duty</h4>
+            <p>{`Ward 1 · ${replica.dateLabel || dayjs().format("DD MMM, YYYY")}`}</p>
+          </div>
+        </div>
+        <span className={styles.heroReplicaFieldPill}>
+          {replica.onFieldLabel || "On Field"}
+        </span>
+      </div>
+
+      <div className={styles.heroReplicaCrewGrid}>
+        <div className={styles.heroReplicaCrewCard}>
+          <span
+            className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleCaptain}`}
+          >
+            Captain
+          </span>
+          <div className={styles.heroReplicaAvatarWrap}>
+            <img src={Chetan} alt="Driver" />
+            <span className={styles.heroReplicaOnlineDot} />
+          </div>
+          <h5>{driver.name || "Driver Name"}</h5>
+          <p className={styles.heroReplicaPhone}>
+            <Phone size={11} />
+            <a href={`tel:${String(driver.phone || "").replace(/[^\d+]/g, "")}`}>
+              {driver.phone || "-"}
+            </a>
+          </p>
+          <p className={styles.heroReplicaRating}>5.0</p>
+          <div className={styles.heroReplicaStatsRow}>
+            <div>
+              <strong>{replica?.driver?.lines ?? 0}</strong>
+              <span>Lines</span>
+            </div>
+            <div>
+              <strong>{replica?.driver?.field || "0h"}</strong>
+              <span>Field</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.heroReplicaCrewCard}>
+          <span
+            className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleHelper}`}
+          >
+            Helper
+          </span>
+          <div className={styles.heroReplicaAvatarWrap}>
+            <img src={Chetan} alt="Helper" />
+            <span className={styles.heroReplicaOnlineDot} />
+          </div>
+          <h5>{helper.name || "Helper Name"}</h5>
+          <p className={styles.heroReplicaPhone}>
+            <Phone size={11} />
+            <a href={`tel:${String(helper.phone || "").replace(/[^\d+]/g, "")}`}>
+              {helper.phone || "-"}
+            </a>
+          </p>
+          <p className={styles.heroReplicaRating}>5.0</p>
+          <div className={styles.heroReplicaStatsRow}>
+            <div>
+              <strong>{replica?.helper?.lines ?? 0}</strong>
+              <span>Lines</span>
+            </div>
+            <div>
+              <strong>{replica?.helper?.field || "0h"}</strong>
+              <span>Field</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className={styles.heroReplicaVehicleRow}
+        onClick={onVehicleClick}
+      >
+        <div className={styles.heroReplicaVehicleLeft}>
+          <Truck size={14} />
+          <div>
+            <strong>{data?.vehicleNumber}</strong>
+            <span>{data?.vehicleStatus}</span>
+          </div>
+        </div>
+        <ChevronRight size={14} />
+      </button>
+
+      <div className={styles.heroReplicaFooter}>
+        <div>
+          <strong>{replica?.summary?.tripsDone ?? data?.trips ?? 0}</strong>
+          <span>Trips Done</span>
+        </div>
+        <div>
+          <strong>{replica?.summary?.totalLines ?? data?.lines?.total ?? 0}</strong>
+          <span>Total Lines</span>
+        </div>
+        <div>
+          <strong>{replica?.summary?.teamRating ?? 5.0}</strong>
+          <span>Team Rating</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PremiumProfile = ({ profile, role, isOnline }) => (
   <div className={styles.premiumProfile}>

@@ -1,6 +1,6 @@
 .realtimePage {
   background-color: #f3f3f9;
-    height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
 
   display: flex;
   font-family: var(--fontGraphik), system-ui;
@@ -208,7 +208,6 @@
   gap: 4px;
 }
 .cardBody {
-  background-color: #fafafa;
   border-radius: 6px;
 }
 /* .statusUnifiedCard {
@@ -243,6 +242,285 @@
   display: flex;
   align-items: center;
   gap: 2px;
+}
+
+/* Redesigned Live Status Board */
+.liveStatusGrid {
+  display: flex;
+  gap: 6px;
+  flex-flow: column;
+}
+
+.liveBoardCard {
+  background: #f8fafc;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.liveBoardCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--themeColor);
+}
+
+.liveBoardCard:hover .liveBoardArrow {
+  transform: translateX(2px);
+  color: var(--themeColor);
+}
+
+.liveStatusGridLeft{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveBoardArrow {
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+  display: flex;
+  margin-left: 4px;
+}
+
+.toneSuccess {
+  color: var(--textSuccess) !important;
+}
+
+.toneDanger {
+  color: var(--textDanger) !important;
+}
+
+.toneWarning {
+  color: var(--warning) !important;
+}
+
+.liveBoardIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.liveBoardLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+  letter-spacing: 0.5px;
+}
+
+.liveBoardValue {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+/* Trip Execution Modal Updates */
+.tripExecutionModalShell {
+  width: 720px !important;
+  max-width: 90vw;
+  border-radius: 6px !important;
+}
+
+.modalTabs {
+  display: flex;
+  border-bottom: 1px solid var(--borderColor);
+  padding: 0 20px;
+  gap: 24px;
+}
+
+.modalTab {
+  padding: 14px 4px;
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.modalTab:hover {
+  color: var(--black);
+}
+
+.modalTabActive {
+  color: var(--themeColor);
+}
+
+.modalTabActive::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--themeColor);
+  border-radius: 2px 2px 0 0;
+}
+
+.modalTabContent {
+      padding: 15px 24px;
+
+  background: #fcfdfe;
+}
+
+/* Overview Tab */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.overviewCard {
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.overviewCardBlue { border-left: 4px solid #3b82f6; background: #eff6ff; }
+.overviewCardGreen { border-left: 4px solid #10b981; background: #ecfdf5; }
+.overviewCardOrange { border-left: 4px solid #f59e0b; background: #fffbeb; }
+.overviewCardPurple { border-left: 4px solid #8b5cf6; background: #f5f3ff; }
+
+.overviewStat {
+  font-size: 32px;
+  font-family: var(--fontGraphikBold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.overviewLabel {
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+}
+
+.overviewProgress {
+  height: 4px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.overviewProgressFill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* Trips Tab */
+.tripLogSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tripLogHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.tripLogHeader h4 {
+  font-size: 11px;
+  font-family: var(--fontGraphikBold);
+  color: var(--regularColor);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.tripLogDivider {
+  flex: 1;
+  height: 1px;
+  background: var(--borderColor);
+}
+
+.tripItem {
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tripNumber {
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-family: var(--fontGraphikBold);
+  color: var(--themeColor);
+  background: #f8fafc;
+  border-right: 1px solid var(--borderColor);
+}
+
+.tripNumberDone { color: #10b981; background: #f0fdf4; }
+.tripNumberActive { color: #f59e0b; background: #fffbeb; }
+
+.tripContent {
+  flex: 1;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tripTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tripTop h5 {
+  font-size: 13px;
+  margin: 0;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.tripBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--fontGraphikBold);
+  text-transform: uppercase;
+}
+
+.tripBadgeDone { background: #dcfce7; color: #166534; }
+.tripBadgeActive { background: #fef3c7; color: #92400e; }
+
+.tripMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikMedium);
+}
+
+.tripMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tripMetaIcon {
+  color: #94a3b8;
 }
 
 .statusClickIndicator {
@@ -699,7 +977,7 @@
 
 .completionCard {
   border: 1px solid #e5eaf4;
-  border-radius: 24px;
+  border-radius: 6px;
   padding: 20px 18px;
   background: #f7f9ff;
 }
@@ -755,7 +1033,14 @@
   border-radius: 120px 120px 0 0;
   overflow: hidden;
   position: relative;
-  background: conic-gradient(from 180deg, #4b64eb 0deg, #4b64eb calc((var(--completionRate) * 1.8) * 1deg), #d8deee calc((var(--completionRate) * 1.8) * 1deg), #d8deee 180deg, transparent 180deg);
+  background: conic-gradient(
+    from 180deg,
+    #4b64eb 0deg,
+    #4b64eb calc((var(--completionRate) * 1.8) * 1deg),
+    #d8deee calc((var(--completionRate) * 1.8) * 1deg),
+    #d8deee 180deg,
+    transparent 180deg
+  );
 }
 
 .gaugeInner {
@@ -1160,6 +1445,305 @@
   text-decoration: underline;
 }
 
+.heroReplicaCard {
+  padding: 0;
+  border: 1px solid var(--borderColor);
+}
+
+.heroReplicaHead {
+  padding: 12px 14px;
+  /* background:
+    radial-gradient(circle at 28% 0%, rgba(250, 204, 21, 0.16), transparent 42%),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--themeColor) 8%, var(--white)) 0%,
+      color-mix(in srgb, var(--textSuccess) 10%, var(--white)) 100%
+    ); */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.heroReplicaTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heroReplicaBadgeIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--themeColor) 18%, var(--borderColor));
+  background: color-mix(in srgb, var(--themeColor) 9%, var(--white));
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroReplicaTitleWrap h4 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+}
+
+.heroReplicaTitleWrap p {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+  line-height: 1.2;
+}
+
+.heroReplicaFieldPill {
+    width: 26px;
+    height: 26px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--textSuccess) 13%, var(--white));
+  color: var(--textSuccessDark);
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  justify-content: center;
+}
+
+.heroReplicaCrewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--borderColor);
+  text-align: center;
+  position: relative;
+}
+.coverImg{
+  height: 100px;
+  position: absolute;
+  width: 100%;
+   background: linear-gradient(to bottom, rgb(232 244 252 / 66%) 0%, rgb(221 241 255 / 45%) 40%, rgb(255 255 255 / 50%) 70%, rgb(255 255 255 / 0%) 100%);
+    overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  &:before{
+    content: '';
+    position: absolute;
+    inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, #00000000 1px), linear-gradient(90deg, rgb(255 255 255) 1px, #00000000 1px);
+    background-size: 24px 24px;
+  }
+}
+.heroReplicaCrewCard {
+    padding: 5px 10px 15px;
+      z-index: 2;
+    border-right: 1px solid var(--borderColor);
+
+}
+
+.heroReplicaCrewCard:last-child {
+  border-right: none;
+  z-index: 2;
+}
+
+.heroReplicaRolePill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  min-height: 20px;
+  padding: 0 8px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaRoleCaptain {
+  color: #b7791f;
+  border: 1px solid #f3dda8;
+  background: #fff8e8;
+}
+
+.heroReplicaRoleHelper {
+  color: #7c4ed8;
+  border: 1px solid #e3d8fa;
+  background: #f6f0ff;
+}
+
+.heroReplicaAvatarWrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 6px;
+  margin: 8px auto 0;
+  border: 1px solid var(--borderColor);
+  overflow: hidden;
+  position: relative;
+  background: #f4f7fb;
+}
+
+.heroReplicaAvatarWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroReplicaOnlineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #22c55e;
+  border: 2px solid var(--white);
+  position: absolute;
+  right: 4px;
+      bottom: 4px;
+}
+
+.heroReplicaCrewCard h5 {
+  margin: 8px 0 5px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaPhone {
+  margin: 3px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #64748b;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+}
+
+.heroReplicaPhone a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.heroReplicaPhone a:hover {
+  text-decoration: underline;
+}
+
+.heroReplicaRating {
+  margin: 5px 0 0;
+  text-align: center;
+  color: #d48b16;
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaStatsRow {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+}
+
+.heroReplicaStatsRow > div {
+  padding: 6px 5px;
+  text-align: center;
+}
+
+.heroReplicaStatsRow strong {
+  display: block;
+  font-size: 11px;
+  color: var(--textSuccessDark);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.heroReplicaStatsRow span {
+  display: block;
+  margin-top: 4px;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #60708a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.heroReplicaVehicleRow {
+  margin: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background-color: var(--white);
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--black);
+}
+.heroReplicaVehicleRow:hover{
+background-color: #2898ca10;
+}
+.vehicleContent{
+  text-align: left;
+}
+.heroReplicaVehicleLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heroReplicaVehicleLeft strong {
+  display: block;
+  font-size: 13px;
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1.1;
+}
+
+.heroReplicaVehicleLeft span {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--textSuccessDark);
+  font-family: var(--fontGraphikMedium);
+}
+
+.heroReplicaFooter {
+  border-top: 1px solid var(--borderColor);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.heroReplicaFooter > div {
+  text-align: center;
+  padding: 10px 6px 12px;
+  border-right: 1px solid var(--borderColor);
+}
+
+.heroReplicaFooter > div:last-child {
+  border-right: 0;
+}
+
+.heroReplicaFooter strong {
+  display: block;
+  font-size: 24px;
+  color: var(--themeColorDark);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.heroReplicaFooter span {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #62718a;
+  font-family: var(--fontGraphikSemibold);
+}
+
 .enhancedRatingRow {
   display: flex;
   align-items: center;
@@ -1462,10 +2046,71 @@
   position: relative;
   border-radius: 6px;
   flex: 1;
+  height: 370px;
   min-height: 370px;
   background-color: var(--white);
   padding: 5px;
   border-radius: 6px;
+}
+
+.mapSectionShell {
+  position: relative;
+}
+
+.mapCardFullscreen {
+  position: fixed;
+  margin: 0;
+  z-index: 1301;
+  min-height: 0;
+  max-width: none;
+}
+
+.mapCardTransitioning {
+  transition:
+    top 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mapFullscreenBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  border: 0;
+  background: rgba(15, 23, 42, 0.36);
+  backdrop-filter: blur(2px);
+  cursor: zoom-out;
+}
+
+.mapFullscreenBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--regularColor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.mapFullscreenBtn:hover {
+  transform: translateY(-1px);
+  background: #fff;
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
 }
 
 .mapFocusCard {
@@ -2145,7 +2790,7 @@
   justify-content: center;
   cursor: pointer;
 }
-.appPanelClose:hover{
+.appPanelClose:hover {
   color: var(--textDanger);
 }
 .appChipRow {
@@ -2244,9 +2889,9 @@
   border-top: 1px solid #dce2ed;
   border-bottom: 1px solid #dce2ed;
   padding: 8px 12px;
-min-height: 460px;
-    overflow-y: auto;
-    max-height: calc(100vh - 150px);
+  min-height: 460px;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
 }
 
 .appLogRow {
@@ -2369,9 +3014,784 @@ min-height: 460px;
 }
 
 .modalCloseBtn:hover {
-  border-color: color-mix(in srgb, var(--themeColor) 35%, var(--borderColor));
+  color: var(--textDanger);
+}
+
+.vehicleJourneyModalShell {
+  width: min(92vw, 520px);
+  max-width: 620px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background: var(--white);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+  padding: 0px;
+}
+
+.vehicleJourneyModal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vehicleJourneyHeader {
+  min-height: 64px;
+  border-bottom: 1px solid var(--borderColor);
+  padding: 12px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.vehicleJourneyHeadingWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vehicleJourneyTagIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--themeColor) 8%, var(--white));
   color: var(--themeColor);
-  background: color-mix(in srgb, var(--themeColor) 6%, var(--white));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicleJourneyTitle {
+  margin: 0;
+  font-size: 18px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+  letter-spacing: 0.2px;
+}
+
+.vehicleJourneySubTitle {
+  margin: 2px 0 0;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+}
+.vehicleJourneyBody {
+  padding: 12px 20px;
+}
+.vehicleJourneyStatusCard {
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  position: relative;
+  &::before {
+    content: "🚛";
+    position: absolute;
+    right: 10px;
+    bottom: -24px;
+    font-size: 72px;
+    opacity: 0.2;
+    transform: scaleX(-1);
+  }
+}
+
+.vehicleJourneyStatusDanger {
+  background: color-mix(in srgb, var(--textDanger) 11%, var(--white));
+  border-color: color-mix(in srgb, var(--textDanger) 30%, var(--borderColor));
+}
+
+.vehicleJourneyStatusWarning {
+  background: color-mix(in srgb, #f59e0b 12%, var(--white));
+  border-color: color-mix(in srgb, #f59e0b 35%, var(--borderColor));
+}
+
+.vehicleJourneyStatusSuccess {
+  background: color-mix(in srgb, var(--textSuccess) 10%, var(--white));
+  border-color: color-mix(in srgb, var(--textSuccess) 28%, var(--borderColor));
+}
+
+.vehicleJourneyStatusNeutral {
+  background: color-mix(in srgb, var(--themeColor) 9%, var(--white));
+  border-color: color-mix(in srgb, var(--themeColor) 24%, var(--borderColor));
+}
+
+.vehicleJourneyStatusCopy {
+  min-width: 0;
+}
+
+.vehicleJourneyStatusLabel {
+  margin: 0;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--black) 75%, var(--white));
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyStatusTitle {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.15;
+  color: var(--textDangerDark);
+  font-family: var(--fontGraphikBold);
+}
+
+.vehicleJourneyStatusDesc {
+  margin: 5px 0 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikMedium);
+}
+
+.vehicleJourneyStatusVisual {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  border: 1px solid
+    color-mix(in srgb, var(--themeColor) 20%, var(--borderColor));
+  background: color-mix(in srgb, var(--white) 90%, var(--themeColor));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--themeColorDark);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.vehicleJourneyStatusVisual img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.vehicleJourneyStatGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vehicleJourneyStatChip {
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  padding: 8px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.vehicleJourneyStatKey {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--regularColor);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyStatVal {
+  font-size: 12px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyStatIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(in srgb, var(--themeColor) 22%, var(--borderColor));
+  background: color-mix(in srgb, var(--themeColor) 8%, var(--white));
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vehicleJourneySection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.vehicleJourneySectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.vehicleJourneySectionTitle {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #5e697f;
+  font-family: var(--fontGraphikSemibold);
+  padding-top: 9px;
+}
+
+.vehicleJourneyViewToggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background: var(--whitefa);
+  color: var(--themeColorDark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.vehicleJourneyViewToggle:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 35%, var(--borderColor));
+}
+
+.vehicleJourneyRouteRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  overflow-x: hidden;
+  padding-bottom: 2px;
+}
+
+.vehicleJourneyRouteRowScroll {
+  overflow-x: auto;
+}
+
+.vehicleJourneyRouteNode {
+  min-width: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.vehicleJourneyRouteIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--borderColor);
+  background: var(--whitefa);
+  color: #435a7d;
+}
+
+.vehicleJourneyRouteTime {
+  font-size: 11px;
+  color: #5c6678;
+  font-family: var(--fontGraphikSemibold);
+  white-space: nowrap;
+}
+
+.vehicleJourneyRouteLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikSemibold);
+  white-space: nowrap;
+}
+
+.vehicleJourneyRouteConnector {
+  min-width: 36px;
+  padding-top: 16px;
+  position: relative;
+  text-align: center;
+}
+
+.vehicleJourneyRouteConnector::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 20px;
+  border-top: 1px dashed #cbd3df;
+}
+
+.vehicleJourneyRouteConnector span {
+  position: relative;
+  z-index: 1;
+  font-size: 9px;
+  color: #8b95a7;
+  background: var(--white);
+  padding: 0 4px;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyRouteList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vehicleJourneyRouteListItem {
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  padding: 7px 9px;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.vehicleJourneyRouteListIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicleJourneyRouteListCopy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicleJourneyRouteListCopy span {
+  font-size: 11px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1.1;
+}
+
+.vehicleJourneyRouteListCopy small {
+  font-size: 10px;
+  color: #74809a;
+  font-family: var(--fontGraphikMedium);
+  line-height: 1;
+}
+
+.vehicleJourneyRouteListTime {
+  font-size: 10px;
+  color: #60708a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyCompactList {
+  background-color: var(--whitefa);
+  border-radius: 6px;
+  padding: 14px 14px;
+  max-height: calc(100vh - 450px);
+
+  overflow: auto;
+}
+.vehicleJourneyCompactList h4 {
+  font-family: var(--fontGraphik) !important;
+  font-size: 13px !important;
+}
+.vehicleJourneyCompactRow {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 10px;
+}
+
+.vehicleJourneyCompactAxis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vehicleJourneyCompactDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid var(--borderColor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+}
+
+.vehicleJourneyCompactLine {
+  width: 1px;
+  min-height: 32px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #cdd5e3,
+    #cdd5e3 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.vehicleJourneyCompactCopy {
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--borderColor) 88%, var(--white));
+  padding: 2px 0 12px;
+  margin-bottom: 10px;
+}
+
+.vehicleJourneyCompactRow:last-child .vehicleJourneyCompactCopy {
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+
+.vehicleJourneyCompactTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vehicleJourneyCompactTop h4 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1.1;
+}
+
+.vehicleJourneyCompactTop span {
+  font-size: 12px;
+  color: #687892;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyCompactMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.vehicleJourneyCompactMetaTag,
+.vehicleJourneyCompactMetaTime {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyCompactMetaTag {
+  color: #2b9668;
+}
+
+.vehicleJourneyCompactMetaTime {
+  color: #1ca06f;
+}
+
+.vehicleJourneyQuickStrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  margin-bottom: 10px;
+}
+
+.vehicleJourneyQuickChip {
+  min-height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background: var(--whitefa);
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.vehicleJourneyQuickIcon {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #60708a;
+}
+
+.vehicleJourneyQuickChip strong {
+  font-size: 13px;
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.vehicleJourneyQuickLabel {
+  font-size: 12px;
+  color: #4f5c73;
+  font-family: var(--fontGraphikMedium);
+  white-space: nowrap;
+}
+
+.vehicleJourneyQuickfuel strong,
+.vehicleJourneyQuickfuel .vehicleJourneyQuickIcon {
+  color: #6b4bbd;
+}
+
+.vehicleJourneyQuickentries strong,
+.vehicleJourneyQuickentries .vehicleJourneyQuickIcon {
+  color: #1a9c69;
+}
+
+.vehicleJourneyQuickinward strong,
+.vehicleJourneyQuickinward .vehicleJourneyQuickIcon {
+  color: #1098c4;
+}
+
+.vehicleJourneyQuicklongest strong,
+.vehicleJourneyQuicklongest .vehicleJourneyQuickIcon {
+  color: #dd7a18;
+}
+
+.vehicleJourneyEventList {
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--white);
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100vh - 450px);
+
+  overflow: auto;
+}
+
+.vehicleJourneyEventRow {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
+}
+
+.vehicleJourneyEventAxis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vehicleJourneyEventDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--borderColor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+}
+
+.vehicleJourneyEventLine {
+  width: 1px;
+  flex: 1;
+  margin-top: 4px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #cdd5e3,
+    #cdd5e3 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.vehicleJourneyEventCard {
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background: var(--whitefa);
+  padding: 8px 10px;
+}
+
+.vehicleJourneyEventTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.vehicleJourneyEventTop h4 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyEventTop span {
+  font-size: 11px;
+  color: #6f7a8f;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneyEventCard p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--regularColor);
+  font-family: var(--fontGraphik);
+}
+
+.vehicleJourneyEventMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.vehicleJourneyEventTag,
+.vehicleJourneyEventDuration {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.vehicleJourneySummaryStrip {
+  border: 1px solid
+    color-mix(in srgb, var(--textSuccess) 30%, var(--borderColor));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--textSuccess) 11%, var(--white));
+  padding: 8px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.vehicleJourneySummaryIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid
+    color-mix(in srgb, var(--textSuccess) 32%, var(--borderColor));
+  background: color-mix(in srgb, var(--textSuccess) 16%, var(--white));
+  color: #1f7d5c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vehicleJourneySummaryStrip p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #1f4f40;
+  font-family: var(--fontGraphikMedium);
+}
+
+.vehicleJourneyTonefuel {
+  border-color: #f4c6db;
+  background: #fef1f7;
+  color: #c13f80;
+}
+
+.vehicleJourneyTonedeparted {
+  border-color: #a8deef;
+  background: #edf9ff;
+  color: #1f86ad;
+}
+
+.vehicleJourneyToneentered {
+  border-color: #aedecc;
+  background: #ecfbf2;
+  color: #2a9364;
+}
+
+.vehicleJourneyToneexited {
+  border-color: #f3d3a8;
+  background: #fff6ea;
+  color: #ba7b1b;
+}
+
+.vehicleJourneyTonecheckpoint {
+  border-color: #d9dcea;
+  background: #f5f7fc;
+  color: #67758d;
+}
+
+.vehicleJourneyTextfuel {
+  color: #bd4d86;
+}
+
+.vehicleJourneyTextdeparted {
+  color: #1f8eb9;
+}
+
+.vehicleJourneyTextentered {
+  color: #279164;
+}
+
+.vehicleJourneyTextexited {
+  color: #c67f18;
+}
+
+.vehicleJourneyTextcheckpoint {
+  color: #6b7793;
+}
+
+.vehicleJourneyEventfuel {
+  background: #fef7fc;
+  border-color: #efc9de;
+}
+
+.vehicleJourneyEventdeparted {
+  background: #f1fbff;
+  border-color: #b9e4f2;
+}
+
+.vehicleJourneyEvententered {
+  background: #f2fcf7;
+  border-color: #bfe7d2;
+}
+
+.vehicleJourneyEventexited {
+  background: #fff9f0;
+  border-color: #f1dbb7;
+}
+
+.vehicleJourneyEventcheckpoint {
+  background: #f7f8fc;
+  border-color: #dde2ef;
+}
+
+.vehicleJourneyEventfuel .vehicleJourneyEventTag,
+.vehicleJourneyEventfuel .vehicleJourneyEventDuration {
+  color: #bf4f88;
+}
+
+.vehicleJourneyEventdeparted .vehicleJourneyEventTag,
+.vehicleJourneyEventdeparted .vehicleJourneyEventDuration {
+  color: #1f87ad;
+}
+
+.vehicleJourneyEvententered .vehicleJourneyEventTag,
+.vehicleJourneyEvententered .vehicleJourneyEventDuration {
+  color: #2b9668;
+}
+
+.vehicleJourneyEventexited .vehicleJourneyEventTag,
+.vehicleJourneyEventexited .vehicleJourneyEventDuration {
+  color: #bf7d21;
+}
+
+.vehicleJourneyEventcheckpoint .vehicleJourneyEventTag,
+.vehicleJourneyEventcheckpoint .vehicleJourneyEventDuration {
+  color: #6e7892;
+}
+
+@media (max-width: 640px) {
+  .vehicleJourneyModalShell {
+    width: min(96vw, 520px);
+    padding: 10px;
+  }
+
+  .vehicleJourneyStatusTitle {
+    font-size: 16px;
+  }
+
+  .vehicleJourneyStatGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicleJourneyRouteList {
+    grid-template-columns: 1fr;
+  }
 }
 
 .modalRow {
@@ -2649,6 +4069,7 @@ min-height: 460px;
   }
 
   .mapCard {
+    height: 360px;
     min-height: 360px;
   }
 }
@@ -2771,6 +4192,7 @@ min-height: 460px;
   }
 
   .mapCard {
+    height: 300px;
     min-height: 300px;
   }
 
@@ -2820,7 +4242,9 @@ min-height: 460px;
   .addRemarkBtn,
   .addAnotherBtn,
   .remarkItemCard,
-  .remarkActionBtn {
+  .remarkActionBtn,
+  .mapFullscreenBtn,
+  .mapCardTransitioning {
     transition: none !important;
   }
 

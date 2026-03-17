@@ -4,6 +4,18 @@
   background: var(--white);
   border-radius: 6px;
   box-shadow: 0 1px 3px #0000000a;
+    animation: pageFadeIn 0.35s ease both;
+}
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .headerRow {
@@ -343,9 +355,9 @@
 }
 
 .modalHeader {
-  min-height: 84px;
+  min-height: 64px;
   border-bottom: 1px solid #dde2eb;
-  padding: 18px 20px;
+    padding: 12px 20px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
