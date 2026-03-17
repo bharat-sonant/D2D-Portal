@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, useLocation } from 'react-router-dom';
+import { BrowserRouter, useLocation, matchPath } from 'react-router-dom';
 import RouterComponent from './router/RouterComponent';
 import 'react-toastify/dist/ReactToastify.css';
 import globleStyles from "./assets/css/globleStyles.module.css";
@@ -13,9 +13,13 @@ import { PermissionProvider } from './context/PermissionContext';
 const AppWrapper = () => {
   const location = useLocation();
   // jis page me mobile frame remove karna hai
-  const noFrameRoutes = ["/d2dMonitoring/monitoring", '/settings', '/tasks', '/realtime', '/realtime-monitoring', '/reports', '/daily-report', '/vehicle', '/user', '/', '/sites', "/Dashboard", "/monitoring", "/employee/dashboard", "/employee/employees", "/employee/branches", "/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis', "/fe-WebView/login", "/fe-WebView/dashboard", "/fuel/add_fuel_entries", "/field-executive/dashboard", "/field-executive/users", "/field-executive/tracking", "/field-executive/reports", "/field-executive/tasks", "/field-executive/analysis", "/field-executive/assignments", "/fuel/fuel_report", "/d2dMonitoring/dashboard", "/d2dMonitoring/realtime", "/d2dMonitoring/report", "/d2dMonitoring/daily-report"]; // <-- yaha route add karo
+  const noFrameRoutes = ['/settings', '/tasks', '/realtime', '/realtime-monitoring', '/reports', '/daily-report', '/vehicle', '/user', '/', '/sites', "/Dashboard", "/monitoring", "/employee/dashboard", "/employee/employees", "/employee/branches", "/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis', "/fe-WebView/login", "/fe-WebView/dashboard", "/fuel/add_fuel_entries", "/field-executive/dashboard", "/field-executive/users", "/field-executive/tracking", "/field-executive/reports", "/field-executive/tasks", "/field-executive/analysis", "/field-executive/assignments", "/fuel/fuel_report", "/d2dMonitoring/dashboard", "/d2dMonitoring/realtime", "/d2dMonitoring/report", "/d2dMonitoring/daily-report"]; // <-- yaha route add karo
 
-  const shouldRemoveFrame = noFrameRoutes.includes(location.pathname);
+  const dynamicNoFrameRoutes = ["/:city/d2dMonitoring/monitoring"];
+
+  const shouldRemoveFrame =
+    noFrameRoutes.includes(location.pathname) ||
+    dynamicNoFrameRoutes.some((pattern) => matchPath(pattern, location.pathname));
 
   return (
     <div className={shouldRemoveFrame ? '' : globleStyles.mobileFrame}>
