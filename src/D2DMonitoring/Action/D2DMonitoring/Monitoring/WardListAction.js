@@ -52,7 +52,6 @@ export const getWardListAction = async (city) => {
     if (!city) { console.warn("getWardListAction: city is empty"); return []; }
 
     const cityDetails = await fetchCityDetails();
-    console.log("CityDetails count:", cityDetails.length, "| Looking for city:", city);
 
     const normalizedCity = city.trim().toLowerCase();
     const detail = cityDetails.find(
@@ -61,24 +60,14 @@ export const getWardListAction = async (city) => {
             item?.cityName?.toString()?.trim()?.toLowerCase() === normalizedCity
     );
 
-    if (!detail) {
-        console.warn(`getWardListAction: "${city}" not found in CityDetails.json`);
-        console.log("Available cities:", cityDetails.map(i => i?.city));
-        return [];
-    }
-
-    console.log("City detail found:", detail);
+    if (!detail) return [];
 
     const { cityName, firebaseStoragePath, storageBucket } = detail;
-    // storageCity field nahi hai JSON mein — cityName hi folder name hai (e.g. "Sikar")
     const storageCity = cityName;
     const storagePath = firebaseStoragePath ||
         `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/`;
 
-    console.log("Fetching wards | storagePath:", storagePath, "| storageCity:", storageCity);
-
     const response = await getAvailableWardsFromStorage(storagePath, storageCity);
-    console.log("Wards response:", response);
 
     if (response?.status !== "Success" || !Array.isArray(response.data)) return [];
 
