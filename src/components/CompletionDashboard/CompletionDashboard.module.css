@@ -24,6 +24,7 @@
   flex-direction: column;
   gap: 18px;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .topRow {

@@ -13,7 +13,6 @@ const RemarksCard = ({ remarks, onAddRemark, onEditRemark, onDeleteRemark }) => 
   return (
     <MonitoringCard
       title="Remark"
-      icon={<Plus size={16} />}
       headerRight={addBtn}
     >
       {remarks.length === 0 ? (
