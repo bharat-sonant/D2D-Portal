@@ -15,7 +15,7 @@ import styles from "../../Style/D2DMonitoring/Sidebar.module.css";
 
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, to: "/d2dMonitoring/dashboard", tag: "Live" },
-  { id: "realtime", label: "Monitoring", icon: Activity , to: "/d2dMonitoring/monitoring", tag: "AI" },
+  // { id: "realtime", label: "Monitoring", icon: Activity , to: "/d2dMonitoring/monitoring", tag: "AI" },
   { id: "report", label: "Report", icon: ClipboardMinus, to: "/d2dMonitoring/report", tag: "Data" },
   // { id: "monitoring", label: "Monitoring", icon: CircleGauge, to: "/d2dMonitoring/monitoring", tag: "Auto" },
   // { id: "daily-report", label: "Daily Report", icon: FileText, to: "/d2dMonitoring/daily-report", tag: "Doc" },

@@ -4,16 +4,8 @@ import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
   Clock,
-  Zap,
-  TrendingUp,
   Users as UsersIcon,
-  Plus,
-  RefreshCw,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
   User as UserIcon,
-  Phone,
   MapPin,
   Fuel,
   Wrench,
@@ -21,19 +13,8 @@ import {
   ArrowRight,
   LogOut,
   Flag,
-  Pencil,
-  Trash2,
-  UserStar,
-  Package,
-  CheckCircle2,
-  Navigation,
-  MapPinCheck,
-  MapPinCheckIcon,
-  Map,
-  Activity,
 } from "lucide-react";
 import dayjs from "dayjs";
-import Chetan from "../../../assets/images/Chetan.jpeg";
 // import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
@@ -41,16 +22,14 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
-import StateItem from "../../Components/D2DMonitoring/StateItem";
+import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 
 // Component imports
-import MonitoringCard from "../../Components/D2DMonitoring/Common/MonitoringCard/MonitoringCard";
 import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
 import LiveStatusBoard from "../../Components/D2DMonitoring/LiveStatusBoard/LiveStatusBoard";
-import LiquidCoverageTracker from "../../Components/D2DMonitoring/LiquidCoverageTracker/LiquidCoverageTracker";
 import RemarksCard from "../../Components/D2DMonitoring/RemarksCard/RemarksCard";
 import DutyComparisonReplica from "../../Components/D2DMonitoring/DutyComparisonReplica/DutyComparisonReplica";
 import AppStatusModal from "../../Components/D2DMonitoring/Modals/AppStatusModal/AppStatusModal";
@@ -170,6 +149,14 @@ const MonitoringList = () => {
     getWardListAction(city).then((wards) => {
       setWardList(wards);
       if (wards.length > 0) setSelectedWard(wards[0]);
+      prefetchAllWardLines(city, wards, (wardId, geoJson) => {
+        setWardLinesGeoJsonById((prev) => ({ ...prev, [wardId]: geoJson }));
+      });
+      action.fetchWardLineStatusCacheForToday(wards).then((statusByWard) => {
+        if (Object.keys(statusByWard || {}).length > 0) {
+          setLineStatusByWard((prev) => ({ ...prev, ...statusByWard }));
+        }
+      });
     });
   }, [city]);
   const remarkTopicOptions = [
@@ -198,6 +185,8 @@ const MonitoringList = () => {
   const [appStatusTab, setAppStatusTab] = useState("all");
   const [routeSnapshotView, setRouteSnapshotView] = useState("detail");
   const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
+  const [wardLinesGeoJson, setWardLinesGeoJson] = useState(null);
+  const [wardLinesGeoJsonById, setWardLinesGeoJsonById] = useState({});
   const [lineStatusByWard, setLineStatusByWard] = useState({});
   const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
   const [phoneClock, setPhoneClock] = useState(new Date());
@@ -499,74 +488,18 @@ const MonitoringList = () => {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-    const selectedWardId = selectedWard?.id;
-    if (!selectedWardId)
-      return () => {
-        isMounted = false;
-      };
-
-    if (action.hasWardStatusCache(lineStatusByWard, selectedWardId)) {
-      setIsWardMetricsLoading(false);
-      return () => {
-        isMounted = false;
-      };
-    }
+    const wardId = selectedWard?.id;
+    if (!wardId) return;
 
     setIsWardMetricsLoading(true);
 
-    action
-      .fetchWardLineStatusCacheForToday(wardList)
-      .then((nextStatusByWard) => {
-        if (!isMounted) return;
-        if (Object.keys(nextStatusByWard || {}).length > 0) {
-          setLineStatusByWard((prev) => ({ ...prev, ...nextStatusByWard }));
-        }
-        setIsWardMetricsLoading(false);
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        setIsWardMetricsLoading(false);
-      });
+    const unsubscribe = action.subscribeWardLineStatusForToday(wardId, (statusByLine) => {
+      setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
+      setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
+      setIsWardMetricsLoading(false);
+    });
 
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedWard?.id, wardList]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const wardId = selectedWard?.id;
-    if (!wardId)
-      return () => {
-        isMounted = false;
-      };
-
-    const pollWardStatus = async () => {
-      try {
-        const latestStatusByLine =
-          await action.fetchSingleWardLineStatusForToday(wardId);
-        if (!isMounted) return;
-        if (latestStatusByLine && Object.keys(latestStatusByLine).length > 0) {
-          setLineStatusByWard((prev) => ({
-            ...prev,
-            [wardId]: latestStatusByLine,
-          }));
-          setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
-          setIsWardMetricsLoading(false);
-        }
-      } catch (error) {
-        if (!isMounted) return;
-      }
-    };
-
-    pollWardStatus();
-    const intervalId = setInterval(pollWardStatus, 15000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(intervalId);
-    };
+    return unsubscribe;
   }, [selectedWard?.id]);
 
   const handleWardSelect = (ward) => {
@@ -702,7 +635,10 @@ const MonitoringList = () => {
     [lineStatusByWard, selectedWard?.id],
   );
 
-  const wardLengthMetrics = { totalMeter: 0, lineLengthMeterById: {} };
+  const wardLengthMetrics = React.useMemo(
+    () => action.getWardLengthMetrics(wardLinesGeoJson),
+    [wardLinesGeoJson],
+  );
 
   const completedLengthKm = React.useMemo(() => {
     return action.getCompletedLengthKm(
@@ -721,6 +657,18 @@ const MonitoringList = () => {
   const zoneCoveragePercent = React.useMemo(() => {
     return action.getZoneCoveragePercent(completedLengthKm, totalWardLengthKm);
   }, [completedLengthKm, totalWardLengthKm]);
+
+  const wardCoverageById = React.useMemo(() => {
+    const result = {};
+    wardList.forEach((ward) => {
+      const metrics = action.getWardLengthMetrics(wardLinesGeoJsonById[ward.id]);
+      const lineStatus = lineStatusByWard[ward.id] || {};
+      const completed = action.getCompletedLengthKm(lineStatus, metrics);
+      const total = action.getTotalWardLengthKm(metrics, 0);
+      result[ward.id] = action.getZoneCoveragePercent(completed, total);
+    });
+    return result;
+  }, [wardList, wardLinesGeoJsonById, lineStatusByWard]);
 
   const remainingLengthKm = React.useMemo(
     () => action.getRemainingLengthKm(totalWardLengthKm, completedLengthKm),
@@ -763,6 +711,7 @@ const MonitoringList = () => {
         onRefresh={handleRefresh}
         getZoneLabel={getZoneLabel}
         getProgressStyle={getProgressStyle}
+        wardCoverageById={wardCoverageById}
       />
 
       {/* Main Content */}
@@ -828,6 +777,7 @@ const MonitoringList = () => {
                   city={city}
                   selectedWard={selectedWard}
                   onWardLengthResolved={setSelectedWardLengthInMeter}
+                  onWardLinesResolved={setWardLinesGeoJson}
                   lineStatusByLine={currentWardLineStatus}
                   focusLocation={mapFocus}
                 />

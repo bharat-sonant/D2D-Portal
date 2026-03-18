@@ -11,6 +11,7 @@ const MonitoringSidebar = ({
   onRefresh,
   getZoneLabel,
   getProgressStyle,
+  wardCoverageById = {},
 }) => {
   return (
     <div className={styles.sidebar}>
@@ -45,9 +46,9 @@ const MonitoringSidebar = ({
               </div>
               <div
                 className={styles.progressChip}
-                style={getProgressStyle(ward.progress)}
+                style={getProgressStyle(wardCoverageById[ward.id] ?? 0)}
               >
-                {ward.progress}%
+                {wardCoverageById[ward.id] ?? 0}%
               </div>
             </div>
           </div>

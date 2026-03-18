@@ -1,15 +1,23 @@
 import axios from "axios";
+import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { setResponse } from "../../../common/common";
+import { getStorageInstance } from "../../../firebase/firebaseService";
+
+// In-memory cache per session
+const _wardLinesCache = new Map();       // "cityName_wardId" → geoJson data
+const _wardLatestRefCache = new Map();   // "cityName_wardId" → latest file ref
+const _wardBoundaryCache = new Map();    // "cityName_wardId" → boundary data
 
 /**
  * Firebase Storage se selected ward ki boundary fetch karta hai.
  * Path: {storagePath}{cityName}%2FWardBoundryJson%2F{wardId}.json
- *
- * @param {string} storagePath - e.g. "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/"
- * @param {string} cityName    - e.g. "Sikar"
- * @param {string|number} wardId
  */
 export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
+    const cacheKey = `${cityName}_${wardId}`;
+    if (_wardBoundaryCache.has(cacheKey)) {
+        return Promise.resolve(setResponse("Success", "Ward boundary fetched", _wardBoundaryCache.get(cacheKey)));
+    }
+
     return new Promise((resolve) => {
         if (!storagePath || !cityName || !wardId) {
             resolve(setResponse("Fail", "Invalid Params !!", null));
@@ -21,47 +29,59 @@ export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
         axios.get(url)
             .then((response) => {
                 if (response?.data) {
+                    _wardBoundaryCache.set(cacheKey, response.data);
                     resolve(setResponse("Success", "Ward boundary fetched", response.data));
                 } else {
                     resolve(setResponse("Fail", "No boundary data found", null));
                 }
             })
             .catch((error) => {
-                console.error("getWardBoundaryFromStorage error:", error);
                 resolve(setResponse("Fail", error.message, null));
             });
     });
 };
 
 /**
- * Firebase Storage se selected ward ki lines (GeoJSON) fetch karta hai.
- * Path: {storagePath}{cityName}%2FWardLines%2F{wardId}.json
- *
- * @param {string} storagePath
- * @param {string} cityName
- * @param {string|number} wardId
+ * Firebase Storage SDK se ward lines fetch karta hai.
+ * Folder: {cityName}/GeoJsonWard/{wardId}/
+ * Cache: first fetch stores data + file ref; subsequent calls return instantly.
  */
-export const getWardLinesFromStorage = (storagePath, cityName, wardId) => {
-    return new Promise((resolve) => {
-        if (!storagePath || !cityName || !wardId) {
-            resolve(setResponse("Fail", "Invalid Params !!", null));
-            return;
+export const getWardLinesFromStorage = async (cityName, wardId) => {
+    const cacheKey = `${cityName}_${wardId}`;
+
+    // Return from data cache immediately if available
+    if (_wardLinesCache.has(cacheKey)) {
+        return setResponse("Success", "Ward lines fetched", _wardLinesCache.get(cacheKey));
+    }
+
+    try {
+        const storage = getStorageInstance();
+        if (!storage) return setResponse("Fail", "Storage not ready", null);
+
+        let latestRef = _wardLatestRefCache.get(cacheKey);
+
+        // Only call listAll once per ward per session
+        if (!latestRef) {
+            const folderRef = ref(storage, `${cityName}/GeoJsonWard/${wardId}`);
+            const result = await listAll(folderRef);
+            if (!result.items.length) {
+                return setResponse("Fail", "No ward line files found", null);
+            }
+            const sorted = [...result.items].sort((a, b) => b.name.localeCompare(a.name));
+            latestRef = sorted[0];
+            _wardLatestRefCache.set(cacheKey, latestRef);
         }
 
-        const url = `${storagePath}${encodeURIComponent(cityName)}%2FWardLinesjson%2F${wardId}.json?alt=media`;
-        console.log("WardLines URL:", url);
+        const downloadUrl = await getDownloadURL(latestRef);
+        const response = await axios.get(downloadUrl);
 
-        axios.get(url)
-            .then((response) => {
-                if (response?.data) {
-                    resolve(setResponse("Success", "Ward lines fetched", response.data));
-                } else {
-                    resolve(setResponse("Fail", "No lines data found", null));
-                }
-            })
-            .catch((error) => {
-                console.error("getWardLinesFromStorage error:", error);
-                resolve(setResponse("Fail", error.message, null));
-            });
-    });
+        if (response?.data) {
+            _wardLinesCache.set(cacheKey, response.data);
+            return setResponse("Success", "Ward lines fetched", response.data);
+        }
+        return setResponse("Fail", "No data in file", null);
+    } catch (error) {
+        console.error("getWardLinesFromStorage error:", error);
+        return setResponse("Fail", error.message, null);
+    }
 };

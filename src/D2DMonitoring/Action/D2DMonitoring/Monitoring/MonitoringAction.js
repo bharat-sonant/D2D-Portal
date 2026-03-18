@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
-import { getWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
+import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 
 export const getDutyInTime = (ward, setShowDutyInTime) => {
@@ -86,12 +86,48 @@ export const fetchSingleWardLineStatusForToday = async (wardId) => {
     return Object.keys(resp.data).length > 0 ? resp.data : null;
 };
 
-export const getWardLengthMetrics = (selectedWardLineGeoJson) => {
-    const allFeatures = Array.isArray(selectedWardLineGeoJson?.features) ? selectedWardLineGeoJson.features : [];
+/**
+ * Firebase onValue subscription — fires instantly from cache, then realtime.
+ * Returns unsubscribe; call in useEffect cleanup.
+ */
+export const subscribeWardLineStatusForToday = (wardId, onUpdate) => {
+    if (!wardId) return () => {};
+    const year = dayjs().format("YYYY");
+    const month = dayjs().format("MMMM");
+    const date = dayjs().format("YYYY-MM-DD");
+    return subscribeWardLineStatus(wardId, year, month, date, onUpdate);
+};
 
-    if (!allFeatures.length) {
-        return { totalMeter: 0, lineLengthMeterById: {} };
+export const getWardLengthMetrics = (selectedWardLineGeoJson) => {
+    if (!selectedWardLineGeoJson) return { totalMeter: 0, lineLengthMeterById: {} };
+
+    // Custom format: { "1": { points: [[lat,lng],...] }, "2": {...}, ... }
+    if (typeof selectedWardLineGeoJson === "object" && !Array.isArray(selectedWardLineGeoJson) && !selectedWardLineGeoJson.type) {
+        const numericKeys = Object.keys(selectedWardLineGeoJson).filter((key) => !isNaN(key));
+        if (numericKeys.length > 0) {
+            const lineLengthMeterById = {};
+            let totalMeter = 0;
+            numericKeys.forEach((key) => {
+                const points = selectedWardLineGeoJson[key]?.points;
+                if (!Array.isArray(points) || points.length < 2) { lineLengthMeterById[key] = 0; return; }
+                // Custom format is [lat, lng]; GeoJSON coordinates are [lng, lat]
+                const feature = {
+                    type: "Feature",
+                    geometry: { type: "LineString", coordinates: points.map(([lat, lng]) => [lng, lat]) },
+                };
+                const lengthInMeter = Math.max(toFiniteNumber(
+                    calculateWardLineLengthInMeter({ type: "FeatureCollection", features: [feature] }), 0
+                ), 0);
+                lineLengthMeterById[key] = lengthInMeter;
+                totalMeter += lengthInMeter;
+            });
+            return { totalMeter: Math.max(totalMeter, 0), lineLengthMeterById };
+        }
     }
+
+    // GeoJSON FeatureCollection
+    const allFeatures = Array.isArray(selectedWardLineGeoJson?.features) ? selectedWardLineGeoJson.features : [];
+    if (!allFeatures.length) return { totalMeter: 0, lineLengthMeterById: {} };
 
     const lineLengthMeterById = {};
     let totalMeter = 0;
