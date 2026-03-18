@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { getWardDutyOnTimeFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
+import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
 import { getWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
-import { calculateWardLineLengthInMeter } from "../../../../common/common";
+import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 
 export const getDutyInTime = (ward, setShowDutyInTime) => {
     try {
@@ -168,4 +168,118 @@ export const getLineColorByStatus = (status, DEFAULT_LINE_STYLE) => {
     if (normalizedStatus === "linecompleted") return "#22c55e";
     if (normalizedStatus === "skipped") return "#ef4444";
     return DEFAULT_LINE_STYLE.strokeColor;
+};
+
+// Removes comma-duplicated values e.g. "TATA-1816,TATA-1816" → "TATA-1816"
+const cleanField = (val) => {
+    if (!val) return "";
+    const parts = String(val).split(",").map(s => s.trim()).filter(Boolean);
+    return [...new Set(parts)][0] || "";
+};
+
+const toTitleCase = (str) =>
+    String(str || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+const calcExperience = (doj) => {
+    if (!doj) return "-";
+    const joined = new Date(doj);
+    if (isNaN(joined)) return "-";
+    const diff   = Date.now() - joined.getTime();
+    const days   = Math.floor(diff / 86400000);
+    const months = Math.floor(days / 30.44);
+    const years  = Math.floor(days / 365.25);
+    if (years  >= 1) return `${years} yr${years  > 1 ? "s" : ""}`;
+    if (months >= 1) return `${months} mo`;
+    return `${days} day${days !== 1 ? "s" : ""}`;
+};
+
+const getDoj = (d) =>
+    d?.doj || d?.dateOfJoining || d?.joiningDate || d?.DOJ || d?.JoiningDate || d?.date_of_joining || "";
+
+const buildWorkerState = (driverDetails, helperDetails, vehicle) => ({
+    captain: {
+        name:         toTitleCase(driverDetails?.name || ""),
+        phone:        driverDetails?.mobile || "",
+        profileImage: driverDetails?.profilePhotoURL || null,
+        experience:   calcExperience(getDoj(driverDetails)),
+    },
+    pilot: {
+        name:         toTitleCase(helperDetails?.name || ""),
+        phone:        helperDetails?.mobile || "",
+        profileImage: helperDetails?.profilePhotoURL || null,
+        experience:   calcExperience(getDoj(helperDetails)),
+    },
+    vehicle,
+});
+
+// ── In-memory caches (cleared on page reload, valid for the day) ──────────
+const workerCache = new Map();  // key: `${wardId}-${date}`  → raw WorkerDetails
+const empCache    = new Map();  // key: employeeId           → GeneralDetails
+
+const getCachedEmployee = async (empId) => {
+    if (!empId) return {};
+    if (empCache.has(empId)) return empCache.get(empId);
+    const resp = await getEmployeeGeneralDetailsFromDB(empId);
+    const data = resp?.status === "Success" ? resp.data : {};
+    empCache.set(empId, data);
+    return data;
+};
+
+/**
+ * Subscribes to WorkerDetails with onValue — fires instantly from Firebase's
+ * in-memory cache on every revisit, no network round-trip needed.
+ * Returns unsubscribe; call it in useEffect cleanup.
+ */
+export const subscribeWorkerDetails = (wardId, setWorkers) => {
+    const year  = dayjs().format("YYYY");
+    const month = dayjs().format("MMMM");
+    const day   = dayjs().format("YYYY-MM-DD");
+
+    const unsubscribe = subscribeWorkerDetailsFromDB(year, month, day, wardId, async (raw) => {
+        const driverId = cleanField(raw.driver);
+        const helperId = cleanField(raw.helper);
+
+        const [driverDetails, helperDetails] = await Promise.all([
+            getCachedEmployee(driverId),
+            getCachedEmployee(helperId),
+        ]);
+
+        setWorkers(buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle)));
+    });
+
+    return unsubscribe;
+};
+
+export const getWorkerDetails = async (wardId, setWorkers) => {
+    try {
+        const year  = dayjs().format("YYYY");
+        const month = dayjs().format("MMMM");
+        const day   = dayjs().format("YYYY-MM-DD");
+        const cacheKey = `${wardId}-${day}`;
+
+        // ── Serve from cache instantly, then refresh in background ──────────
+        if (workerCache.has(cacheKey)) {
+            const cached = workerCache.get(cacheKey);
+            setWorkers(cached);  // instant render from cache
+        }
+
+        // Always fetch fresh in background (updates cache for next switch)
+        const workerResp = await getWorkerDetailsFromDB(year, month, day, wardId);
+        if (workerResp.status !== "Success") return;
+
+        const raw      = workerResp.data;
+        const driverId = cleanField(raw.driver);
+        const helperId = cleanField(raw.helper);
+
+        const [driverDetails, helperDetails] = await Promise.all([
+            getCachedEmployee(driverId),
+            getCachedEmployee(helperId),
+        ]);
+
+        const workers = buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle));
+        workerCache.set(cacheKey, workers);
+        setWorkers(workers);
+    } catch (error) {
+        console.error("Error in getWorkerDetails:", error);
+    }
 };

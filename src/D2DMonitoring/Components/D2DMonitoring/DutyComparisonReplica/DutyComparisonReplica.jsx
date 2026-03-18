@@ -1,24 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Phone, ChevronRight, UserStar } from "lucide-react";
-import Chetan from "../../../../assets/images/Chetan.jpeg";
+import fallbackAvatar from "../../../../assets/images/avtarUser.png";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
+import { subscribeWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 
-const getVehicleJourneyMeta = (rawStatus = "") => {
-  const normalizedStatus = String(rawStatus || "").trim().toLowerCase();
-  if (normalizedStatus.includes("petrol") || normalizedStatus.includes("fuel") || normalizedStatus.includes("pump")) {
-    return { tone: "warning" };
-  }
-  if (normalizedStatus.includes("dump")) return { tone: "danger" };
-  if (normalizedStatus.includes("garage") || normalizedStatus.includes("service") || normalizedStatus.includes("workshop")) {
-    return { tone: "neutral" };
-  }
-  return { tone: "success" };
+const INITIAL_WORKERS = {
+  captain: { name: "", phone: "", profileImage: null, experience: "" },
+  pilot:   { name: "", phone: "", profileImage: null, experience: "" },
+  vehicle: "",
 };
 
-const DutyComparisonReplica = ({ data, onVehicleClick }) => {
-  const driver = data?.profiles?.driver || {};
-  const helper = data?.profiles?.helper || {};
+const CrewCard = ({ role, roleStyle, member }) => (
+  <div className={styles.heroReplicaCrewCard}>
+    <span className={`${styles.heroReplicaRolePill} ${roleStyle}`}>{role}</span>
+
+    <div className={styles.heroReplicaAvatarWrap}>
+      <img
+        src={member.profileImage || fallbackAvatar}
+        alt={member.name || role}
+        onError={(e) => { e.target.src = fallbackAvatar; }}
+      />
+      {/* <span className={styles.heroReplicaOnlineDot} /> */}
+    </div>
+
+    <h5>{member.name || `${role} Name`}</h5>
+
+    <p className={styles.heroReplicaPhone}>
+      <Phone size={11} />
+      {member.phone ? (
+        <a href={`tel:${member.phone.replace(/[^\d+]/g, "")}`}>
+          {member.phone}
+        </a>
+      ) : (
+        <span>-</span>
+      )}
+    </p>
+
+    <div className={styles.heroReplicaStatsRow}>
+      <div>
+        <strong>{member.experience || "-"}</strong>
+        <span>Exp.</span>
+      </div>
+         <div>
+              <strong>640Km</strong>
+              <span>Driven</span>
+            </div>
+    </div>
+  </div>
+);
+
+const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
+  const [workers, setWorkers] = useState(INITIAL_WORKERS);
+
+  useEffect(() => {
+    if (!wardId) return;
+    const unsubscribe = subscribeWorkerDetails(wardId, setWorkers);
+    return () => unsubscribe();
+  }, [wardId]);
+
+  const { captain, pilot, vehicle } = workers;
+  const displayVehicle = vehicle || data?.vehicleNumber || "";
 
   return (
     <MonitoringCard
@@ -28,87 +70,36 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
     >
       <div className={styles.heroReplicaCrewGrid}>
         <div className={styles.coverImg}></div>
-        <div className={styles.heroReplicaCrewCard}>
-          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleCaptain}`}>Captain</span>
-          <div className={styles.heroReplicaAvatarWrap}>
-            <img src={Chetan} alt="Driver" />
-            <span className={styles.heroReplicaOnlineDot} />
-          </div>
-          <h5>{driver.name || "Driver Name"}</h5>
-          <p className={styles.heroReplicaPhone}>
-            <Phone size={11} />
-            <a href={`tel:${String(driver.phone || "").replace(/[^\d+]/g, "")}`}>
-              {driver.phone || "-"}
-            </a>
-          </p>
-          <p className={styles.heroReplicaRating}>5.0 Star</p>
-          <div className={styles.heroReplicaStatsRow}>
-            <div>
-              <strong>5 yrs</strong>
-              <span>Exp.</span>
-            </div>
-            <div>
-              <strong>640Km</strong>
-              <span>Driven</span>
-            </div>
-          </div>
-        </div>
 
-        <div className={styles.heroReplicaCrewCard}>
-          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleHelper}`}>Pilot</span>
-          <div className={styles.heroReplicaAvatarWrap}>
-            <img src={Chetan} alt="Helper" />
-            <span className={styles.heroReplicaOnlineDot} />
-          </div>
-          <h5>{helper.name || "Helper Name"}</h5>
-          <p className={styles.heroReplicaPhone}>
-            <Phone size={11} />
-            <a href={`tel:${String(helper.phone || "").replace(/[^\d+]/g, "")}`}>
-              {helper.phone || "-"}
-            </a>
-          </p>
-          <p className={styles.heroReplicaRating}>5.0 Star</p>
-          <div className={styles.heroReplicaStatsRow}>
-            <div>
-              <strong>1.5 yrs</strong>
-              <span>Exp.</span>
-            </div>
-            <div>
-              <strong>180Km</strong>
-              <span>Driven</span>
-            </div>
-          </div>
-        </div>
+        <CrewCard
+          role="Captain"
+          roleStyle={styles.heroReplicaRoleCaptain}
+          member={captain}
+        />
+
+        <CrewCard
+          role="Pilot"
+          roleStyle={styles.heroReplicaRoleHelper}
+          member={pilot}
+        />
       </div>
-        <div  className={styles.cardFooter}>
-      <button
-        type="button"
-        className={styles.heroReplicaVehicleRow}
-        onClick={onVehicleClick}
-      >
-        <div className={styles.heroReplicaVehicleLeft}>
-          🚛
-          <div className={styles.vehicleContent}>
-            <strong>{data?.vehicleNumber}</strong>
+
+      {/* ── Vehicle row ── */}
+      <div className={styles.cardFooter}>
+        <button
+          type="button"
+          className={styles.heroReplicaVehicleRow}
+          onClick={onVehicleClick}
+        >
+          <div className={styles.heroReplicaVehicleLeft}>
+            🚛
+            <div className={styles.vehicleContent}>
+              <strong>{displayVehicle}</strong>
+            </div>
           </div>
-        </div>
-        <ChevronRight size={14} />
-      </button>
-</div>
-      {/* <div className={styles.heroReplicaFooter}>
-        <div>
-          <strong>{replica?.summary?.tripsDone ?? data?.trips ?? 0}</strong>
-          <span>Trips Done</span>
-        </div>
-        <div>
-          <strong>{replica?.summary?.totalLines ?? data?.lines?.total ?? 0}</strong>
-          <span>Total Lines</span>
-        </div>
-        <div>
-          <strong>{replica?.summary?.teamRating ?? 5.0}</strong>
-          <span>Team Rating</span>
-        </div>
-      </div> */}
+          <ChevronRight size={14} />
+        </button>
+      </div>
     </MonitoringCard>
   );
 };

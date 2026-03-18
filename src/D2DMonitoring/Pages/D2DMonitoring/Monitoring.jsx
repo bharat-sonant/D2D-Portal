@@ -772,6 +772,7 @@ const MonitoringList = () => {
 
             <DutyComparisonReplica
               data={wardData}
+              wardId={selectedWard?.id}
               onVehicleClick={() => setShowVehicleModal(true)}
             />
 
