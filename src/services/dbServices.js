@@ -1,4 +1,4 @@
-import { ref, get, update, set, remove } from "firebase/database";
+import { ref, get, onValue, update, set, remove } from "firebase/database";
 import { ref as refStorage, uploadBytes } from "firebase/storage";
 import * as common from '../common/common'
 import { getDatabaseInstance, getStorageInstance, waitForFirebaseReady } from "../firebase/firebaseService";
@@ -28,6 +28,19 @@ export const uploadImageToStorage = async (image, filePath) => {
   }
 };
  
+/**
+ * 🔔 Subscribe to realtime updates — fires instantly from cache on revisit.
+ * Returns an unsubscribe function; call it in useEffect cleanup.
+ */
+export const subscribeData = (path, callback) => {
+  const database = getDatabaseInstance();
+  if (!database) return () => {};
+  const unsubscribe = onValue(ref(database, path), (snapshot) => {
+    callback(snapshot.val() ?? null);
+  });
+  return unsubscribe;
+};
+
 /**
  * 📦 Get Data from Firebase Database
  */
