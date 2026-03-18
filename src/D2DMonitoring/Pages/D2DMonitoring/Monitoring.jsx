@@ -50,6 +50,7 @@ import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplic
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 
 // Component imports
+import MonitoringCard from "../../Components/D2DMonitoring/Common/MonitoringCard/MonitoringCard";
 import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
 import LiveStatusBoard from "../../Components/D2DMonitoring/LiveStatusBoard/LiveStatusBoard";
 import LiquidCoverageTracker from "../../Components/D2DMonitoring/LiquidCoverageTracker/LiquidCoverageTracker";
@@ -806,13 +807,15 @@ const MonitoringList = () => {
                 />
               </div>
               <div className={styles.mapColumn}>
-                <div
-                  className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
+                <MonitoringCard
+                  title="Zone Coverage"
+                  icon={<Activity size={18} />}
+                  className={styles.fullWidthZoneCard}
                 >
                   <div className={styles.statsFourAcross}>
                     <StateItem items={stateItems} />
                   </div>
-                </div>
+                </MonitoringCard>
 
                 {/* <LiquidCoverageTracker
                   liquidCoveragePercent={liquidCoveragePercent}

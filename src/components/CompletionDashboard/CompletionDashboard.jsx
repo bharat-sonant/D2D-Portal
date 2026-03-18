@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./CompletionDashboard.module.css";
 import { Map, TrendingUp } from "lucide-react";
+import MonitoringCard from "../../D2DMonitoring/Components/D2DMonitoring/Common/MonitoringCard/MonitoringCard";
 
 const clampPercent = (value) => {
   if (!Number.isFinite(value)) return 0;
@@ -102,15 +103,8 @@ const CompletionDashboard = ({ totalLines, completedLines, skippedLines }) => {
   };
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.card}>
-        <div className={styles.topRow}>
-          <p className={styles.title}>Ward Lines</p>
-          <div className={styles.totalBlock}>
-             <Map size={16} color="var(--themeColor)" />
-          </div>
-        </div>
-<div className="d-flex">
+    <MonitoringCard title="Ward Lines" icon={<Map size={16} />}>
+      <div className="d-flex">
         <div className={styles.legendRow}>
           <div className={styles.legendItem}>
             <span>Completed Lines </span>
@@ -163,10 +157,8 @@ const CompletionDashboard = ({ totalLines, completedLines, skippedLines }) => {
             )}
           </div>
         </div>
-
-        </div>
       </div>
-    </div>
+    </MonitoringCard>
   );
 };
 
