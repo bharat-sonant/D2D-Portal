@@ -1,23 +1,21 @@
 import React from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./RemarksCard.module.css";
 
 const RemarksCard = ({ remarks, onAddRemark, onEditRemark, onDeleteRemark }) => {
+  const addBtn = (
+    <button type="button" className={styles.addRemarkBtn} onClick={onAddRemark}>
+      Add
+    </button>
+  );
+
   return (
-    <div className={styles.glassCard}>
-      <div className={styles.remarksHeadRow}>
-        <div className={styles.remarksHeadLeft}>
-          <Plus size={16} color="var(--themeColor)" />
-          <span className={styles.remarksHeadTitle}>Remark</span>
-        </div>
-        <button
-          type="button"
-          className={styles.addRemarkBtn}
-          onClick={onAddRemark}
-        >
-          Add
-        </button>
-      </div>
+    <MonitoringCard
+      title="Remark"
+      icon={<Plus size={16} />}
+      headerRight={addBtn}
+    >
       {remarks.length === 0 ? (
         <div className={styles.remarkEmpty}>
           No query yet. Click Add New to create one.
@@ -48,7 +46,7 @@ const RemarksCard = ({ remarks, onAddRemark, onEditRemark, onDeleteRemark }) => 
           ))}
         </div>
       )}
-    </div>
+    </MonitoringCard>
   );
 };
 

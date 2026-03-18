@@ -1,9 +1,23 @@
 import React from "react";
+import { ClipboardList } from "lucide-react";
+import MonitoringModal from "../../Common/MonitoringModal/MonitoringModal";
 import styles from "./VehicleAssignmentModal.module.css";
 
-const VehicleAssignmentModal = ({ vehicleIssueRows, onRowChange, onSubmit }) => {
+const VehicleAssignmentModal = ({ vehicleIssueRows, onRowChange, onSubmit, onClose }) => {
+  const footer = (
+    <button type="button" className={styles.modalSubmitBtn} onClick={onSubmit}>
+      Submit
+    </button>
+  );
+
   return (
-    <div className={styles.vehicleIssueWrap}>
+    <MonitoringModal
+      title="Vehicle Assignment Desk"
+      icon={<ClipboardList size={16} />}
+      width="xl"
+      onClose={onClose}
+      footer={footer}
+    >
       <div className={styles.vehicleIssueList}>
         {vehicleIssueRows.map((item) => (
           <div key={item.id} className={styles.vehicleIssueRow}>
@@ -24,10 +38,7 @@ const VehicleAssignmentModal = ({ vehicleIssueRows, onRowChange, onSubmit }) => 
           </div>
         ))}
       </div>
-      <button type="button" className={styles.modalSubmitBtn} onClick={onSubmit}>
-        Submit
-      </button>
-    </div>
+    </MonitoringModal>
   );
 };
 

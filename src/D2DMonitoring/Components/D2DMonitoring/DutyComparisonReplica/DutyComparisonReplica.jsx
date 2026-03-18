@@ -1,6 +1,7 @@
 import React from "react";
 import { Phone, ChevronRight, UserStar } from "lucide-react";
 import Chetan from "../../../../assets/images/Chetan.jpeg";
+import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
 
 const getVehicleJourneyMeta = (rawStatus = "") => {
@@ -20,16 +21,11 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
   const helper = data?.profiles?.helper || {};
 
   return (
-    <div className={`${styles.glassCard} ${styles.heroReplicaCard}`}>
-      <div className={styles.heroReplicaHead}>
-        <div className={styles.heroReplicaTitleWrap}>
-          <div>
-            <h4>Heroes on Duty</h4>
-          </div>
-        </div>
-        <span className={styles.heroReplicaFieldPill}><UserStar size={14} /></span>
-      </div>
-
+    <MonitoringCard
+      title="Heroes on Duty"
+      headerRight={<span className={styles.heroReplicaFieldPill}><UserStar size={14} /></span>}
+      noPadding={true}
+    >
       <div className={styles.heroReplicaCrewGrid}>
         <div className={styles.coverImg}></div>
         <div className={styles.heroReplicaCrewCard}>
@@ -84,7 +80,7 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
           </div>
         </div>
       </div>
-
+        <div  className={styles.cardFooter}>
       <button
         type="button"
         className={styles.heroReplicaVehicleRow}
@@ -98,7 +94,7 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
         </div>
         <ChevronRight size={14} />
       </button>
-
+</div>
       {/* <div className={styles.heroReplicaFooter}>
         <div>
           <strong>{replica?.summary?.tripsDone ?? data?.trips ?? 0}</strong>
@@ -113,7 +109,7 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
           <span>Team Rating</span>
         </div>
       </div> */}
-    </div>
+    </MonitoringCard>
   );
 };
 

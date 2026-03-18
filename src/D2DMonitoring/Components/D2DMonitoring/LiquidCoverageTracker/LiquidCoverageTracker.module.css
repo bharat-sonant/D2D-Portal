@@ -1,23 +1,4 @@
-.glassCard {
-  background: #fff;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.glassCard:hover {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
-}
-
-.liquidTankCard {
-  padding: 0;
-  overflow: hidden;
-  border-radius: 6px;
-  border: 1px solid var(--borderColor);
-  background: var(--white);
-}
+/* LiquidCoverageTracker – internal styles only (card shell from MonitoringCard) */
 
 .liquidTankTopRow {
   display: flex;

@@ -1,0 +1,88 @@
+/* ========================================
+   MonitoringCard – Global Card Component
+   ======================================== */
+
+.card {
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
+  margin-bottom: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+}
+
+/* ── Header ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  border-bottom: 1px solid #edf2f7;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  color: var(--themeColor);
+}
+
+/* Custom header slot (no predefined styles imposed) */
+.customHeaderWrap {
+  flex-shrink: 0;
+}
+
+/* ── Body ── */
+.cardBody {
+  padding: 16px 18px;
+  flex: 1;
+}
+
+.noPadding {
+  padding: 0;
+}
+
+/* ── Footer ── */
+.cardFooter {
+  border-top: 1px solid #edf2f7;
+  padding: 12px 18px;
+  flex-shrink: 0;
+  background: #fafbfc;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .cardHeader {
+    padding: 11px 14px;
+  }
+  .cardBody {
+    padding: 12px 14px;
+  }
+  .cardFooter {
+    padding: 10px 14px;
+  }
+}

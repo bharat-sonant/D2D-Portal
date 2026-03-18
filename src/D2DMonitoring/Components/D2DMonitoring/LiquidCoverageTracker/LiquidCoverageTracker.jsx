@@ -1,5 +1,6 @@
 import React from "react";
 import { Truck } from "lucide-react";
+import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./LiquidCoverageTracker.module.css";
 
 const LiquidCoverageTracker = ({
@@ -9,15 +10,18 @@ const LiquidCoverageTracker = ({
   liquidLeftKm,
   liquidTrackFillWidth,
 }) => {
-  return (
-    <div className={`${styles.glassCard} ${styles.liquidTankCard}`}>
-      <div className={styles.liquidTankTopRow}>
-        <span className={styles.liquidTankLiveTag}>Live Tracking</span>
-        <div className={styles.liquidTankPercentBlock}>
-          <strong>{Math.round(liquidCoveragePercent)}</strong>
-          <span>%</span>
-        </div>
+  const topRow = (
+    <div className={styles.liquidTankTopRow}>
+      <span className={styles.liquidTankLiveTag}>Live Tracking</span>
+      <div className={styles.liquidTankPercentBlock}>
+        <strong>{Math.round(liquidCoveragePercent)}</strong>
+        <span>%</span>
       </div>
+    </div>
+  );
+
+  return (
+    <MonitoringCard noPadding={true} customHeader={topRow}>
       <div className={styles.liquidTankBody}>
         <div className={styles.liquidTankVisualWrap}>
           <div className={styles.liquidTankVisual}>
@@ -72,7 +76,7 @@ const LiquidCoverageTracker = ({
           <span>Coverage</span>
         </div>
       </div>
-    </div>
+    </MonitoringCard>
   );
 };
 
