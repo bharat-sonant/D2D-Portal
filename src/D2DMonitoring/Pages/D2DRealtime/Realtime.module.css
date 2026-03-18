@@ -915,6 +915,264 @@
   flex-shrink: 0;
 }
 
+.liquidTankCard {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--borderColor);
+  background: var(--white);
+}
+
+.liquidTankTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--borderColor);
+}
+
+.liquidTankLiveTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--textSuccessDark);
+  background: #daf5e7;
+}
+
+.liquidTankLiveTag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--textSuccess);
+}
+
+.liquidTankPercentBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  color: var(--themeColorDark);
+}
+
+.liquidTankPercentBlock strong {
+  font-size: 29px;
+  line-height: 1;
+  font-family: var(--fontGraphikBold);
+}
+
+.liquidTankPercentBlock span {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--gray);
+}
+
+.liquidTankBody {
+  display: flex;
+  gap: 14px;
+  padding: 12px 14px;
+}
+
+.liquidTankVisualWrap {
+  width: 72px;
+  min-width: 72px;
+}
+
+.liquidTankVisual {
+  height: 116px;
+  border: 1px solid #a6dfc0;
+  border-radius: 14px;
+  background: #eaf8f0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.liquidTankVisual::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  height: 10px;
+  border-radius: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.26) 0 10px,
+    rgba(255, 255, 255, 0.1) 10px 20px
+  );
+  z-index: 2;
+}
+
+.liquidTankFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #2fc86f 0%, #1eaa4f 100%);
+  transition: height 0.35s ease;
+}
+
+.liquidTankVisual span {
+  position: relative;
+  z-index: 3;
+  font-size: 16px;
+  color: var(--white);
+  font-family: var(--fontGraphikBold);
+}
+
+.liquidTankMetrics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.liquidTankMetricHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.liquidTankMetricHead label {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.liquidTankMetricHead strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--themeColorDark);
+  font-family: var(--fontGraphikBold);
+}
+
+.liquidTankCoveredValue {
+  color: var(--textSuccess) !important;
+}
+
+.liquidTankTrack {
+  height: 22px;
+  border-radius: 999px;
+  background: #e6eef7;
+  overflow: hidden;
+  border: 1px solid #d6e1ee;
+  padding: 2px;
+}
+
+.liquidTankTrackFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1eb25a 0%, #1aa34f 100%);
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  gap: 6px;
+}
+
+.liquidTankTrackDash {
+  flex: 1;
+  height: 2px;
+  border-radius: 3px;
+  opacity: 0.8;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.88) 0 8px,
+    transparent 8px 14px
+  );
+}
+
+.liquidTankTruckIcon {
+  width: 13px;
+  height: 13px;
+  color: #f5fbff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.liquidTankAlertRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ffd8bf;
+  background: #fff6ef;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.liquidTankAlertRow span {
+  font-size: 11px;
+  color: #e8621b;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.liquidTankAlertRow strong {
+  font-size: 18px;
+  line-height: 1;
+  color: #f06023;
+  font-family: var(--fontGraphikBold);
+}
+
+.liquidTankFooter {
+  border-top: 1px solid var(--borderColor);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.liquidTankFooter > div {
+  text-align: center;
+  padding: 10px 6px;
+  border-right: 1px solid var(--borderColor);
+}
+
+.liquidTankFooter > div:last-child {
+  border-right: 0;
+}
+
+.liquidTankFooter strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--themeColorDark);
+  font-family: var(--fontGraphikBold);
+}
+
+.liquidTankFooter > div:nth-child(1) strong {
+  color: var(--textSuccess);
+}
+
+.liquidTankFooter > div:nth-child(2) strong {
+  color: var(--textDanger);
+}
+
+.liquidTankFooter > div:nth-child(3) strong {
+  color: var(--themeColor);
+}
+
+.liquidTankFooter span {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray);
+  font-family: var(--fontGraphikSemibold);
+}
+
 .divider {
   height: 1px;
   background: #f1f5f9;
@@ -4072,6 +4330,18 @@ background-color: #2898ca10;
     height: 360px;
     min-height: 360px;
   }
+
+  .liquidTankPercentBlock strong {
+    font-size: 24px;
+  }
+
+  .liquidTankMetricHead strong {
+    font-size: 18px;
+  }
+
+  .liquidTankFooter strong {
+    font-size: 20px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -4194,6 +4464,30 @@ background-color: #2898ca10;
   .mapCard {
     height: 300px;
     min-height: 300px;
+  }
+
+  .liquidTankBody {
+    flex-direction: column;
+  }
+
+  .liquidTankVisualWrap {
+    width: 100%;
+  }
+
+  .liquidTankVisual {
+    height: 94px;
+  }
+
+  .liquidTankMetricHead strong {
+    font-size: 16px;
+  }
+
+  .liquidTankAlertRow strong {
+    font-size: 14px;
+  }
+
+  .liquidTankFooter strong {
+    font-size: 16px;
   }
 
   .vehicleIssueModal {

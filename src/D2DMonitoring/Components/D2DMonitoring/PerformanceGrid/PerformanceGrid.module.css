@@ -1,0 +1,4 @@
+.wardSummaryStats {
+  display: flex;
+  flex-wrap: wrap;
+}

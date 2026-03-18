@@ -1,0 +1,275 @@
+.appStatusWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.appPhoneShell {
+  position: relative;
+}
+
+.appSideBtn {
+  position: absolute;
+  width: 4px;
+  border-radius: 999px;
+  background: #30365c;
+  z-index: 1;
+}
+
+.appSideBtnLeft {
+  left: -4px;
+  top: 86px;
+  height: 44px;
+}
+
+.appSideBtnRightTop {
+  right: -4px;
+  top: 96px;
+  height: 26px;
+}
+
+.appSideBtnRightBottom {
+  right: -4px;
+  top: 128px;
+  height: 36px;
+}
+
+.appPhoneFrame {
+  width: 304px;
+  border-radius: 28px;
+  border: 8px solid #1a1f39;
+  background: #f5f7fb;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(19, 24, 48, 0.35), inset 0 0 0 1px #2f355a;
+}
+
+.appPhoneTop {
+  height: 32px;
+  padding: 4px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #1f2440;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.appPhoneNotch {
+  width: 70px;
+  height: 20px;
+  border-radius: 999px;
+  background: #1a1f39;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.appNotchSpeaker {
+  width: 24px;
+  height: 4px;
+  border-radius: 999px;
+  background: #636a8e;
+}
+
+.appNotchCam {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3b4268;
+  box-shadow: 0 0 0 1px #525981;
+}
+
+.appPhoneDate {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+.appPanelHeader {
+  border-top: 1px solid #dce2ed;
+  border-bottom: 1px solid #dce2ed;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.appPanelLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.appPanelIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: #e8f8ee;
+  color: #2ea85e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.appPanelTitle {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: #1f2440;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.appPanelSub {
+  margin: 1px 0 0;
+  font-size: 10px;
+  color: #7a859f;
+  font-family: var(--fontGraphik);
+}
+
+.appPanelClose {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid #d6ddea;
+  background: #eef2f8;
+  color: #8d96ad;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.appPanelClose:hover {
+  color: var(--textDanger);
+}
+
+.appChipRow {
+  padding: 8px 12px 4px;
+  display: flex;
+  gap: 6px;
+}
+
+.appChip {
+  min-height: 20px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid #d7deea;
+  background: #eef2f8;
+  color: #67728d;
+  font-size: 10px;
+  font-family: var(--fontGraphikSemibold);
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.appChip:hover {
+  filter: brightness(0.98);
+}
+
+.appTabActive {
+  box-shadow: inset 0 0 0 1px #93a3bf;
+}
+
+.appChipOpen {
+  background: #dff5e6;
+  border-color: #cde9d6;
+  color: #25a555;
+}
+
+.appChipClosed {
+  background: #fde8ea;
+  border-color: #f6d3d8;
+  color: #d64551;
+}
+
+.appLogList {
+  margin-top: 8px;
+  border-top: 1px solid #dce2ed;
+  border-bottom: 1px solid #dce2ed;
+  padding: 8px 12px;
+  min-height: 460px;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
+}
+
+.appLogRow {
+  display: grid;
+  grid-template-columns: 12px 42px 1fr 54px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.appLogRow:last-child {
+  margin-bottom: 0;
+}
+
+.appLogDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.appLogDotOpen {
+  border-color: #1fb054;
+}
+
+.appLogDotClose {
+  border-color: #ef3f3f;
+}
+
+.appLogDotMin {
+  border-color: #f0a015;
+}
+
+.appLogTime {
+  font-size: 12px;
+  color: #26304a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.appLogBadge {
+  min-height: 18px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--fontGraphikSemibold);
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+}
+
+.appLogBadgeOpen {
+  background: #dff5e6;
+  color: #20a153;
+}
+
+.appLogBadgeClose {
+  background: #fde8ea;
+  color: #d64551;
+}
+
+.appLogBadgeMin {
+  background: #fff3dc;
+  color: #d58b12;
+}
+
+.appLogDuration {
+  text-align: right;
+  font-size: 11px;
+  color: #74809a;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.appPanelFooter {
+  padding: 8px 12px 10px;
+  font-size: 10px;
+  color: #65708c;
+  font-family: var(--fontGraphikMedium);
+}
