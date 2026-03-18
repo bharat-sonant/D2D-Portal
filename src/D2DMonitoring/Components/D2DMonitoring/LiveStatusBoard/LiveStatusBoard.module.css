@@ -1,0 +1,125 @@
+.glassCard {
+  background: #fff;
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.glassCard:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
+}
+
+.statusUnifiedCard {
+  gap: 8px;
+}
+
+.cardHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cardHeading h3 {
+  font-size: 15px;
+  color: var(--black);
+  font-family: var(--fontGraphikMedium);
+  margin: 0;
+}
+
+.cardHeadingActions {
+  display: flex;
+  gap: 8px;
+}
+
+.cardBody {
+  border-radius: 6px;
+}
+
+.liveStatusGrid {
+  display: flex;
+  gap: 6px;
+  flex-flow: column;
+}
+
+.liveBoardCard {
+  background: #f8fafc;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.liveBoardCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--themeColor);
+}
+
+.liveBoardCard:hover .liveBoardArrow {
+  transform: translateX(2px);
+  color: var(--themeColor);
+}
+
+.liveStatusGridLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveBoardIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  color: var(--themeColor);
+}
+
+.liveBoardLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--regularColor);
+  letter-spacing: 0.5px;
+}
+
+.liveBoardValue {
+  font-size: 13px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.liveBoardValueWrap {
+  display: flex;
+  align-items: center;
+}
+
+.liveBoardArrow {
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+  display: flex;
+  margin-left: 4px;
+}
+
+.toneSuccess {
+  color: var(--textSuccess) !important;
+}
+
+.toneDanger {
+  color: var(--textDanger) !important;
+}
+
+.toneWarning {
+  color: var(--warning) !important;
+}

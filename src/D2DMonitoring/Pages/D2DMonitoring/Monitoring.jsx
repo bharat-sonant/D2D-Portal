@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
-  Activity,
   Truck,
   Clock,
   Zap,
@@ -31,6 +30,7 @@ import {
   MapPinCheck,
   MapPinCheckIcon,
   Map,
+  Activity,
 } from "lucide-react";
 import dayjs from "dayjs";
 import Chetan from "../../../assets/images/Chetan.jpeg";
@@ -49,6 +49,18 @@ import ward5Line from "../../../assets/Sikar/WardLines/5.json";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
+
+// Component imports
+import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
+import LiveStatusBoard from "../../Components/D2DMonitoring/LiveStatusBoard/LiveStatusBoard";
+import LiquidCoverageTracker from "../../Components/D2DMonitoring/LiquidCoverageTracker/LiquidCoverageTracker";
+import RemarksCard from "../../Components/D2DMonitoring/RemarksCard/RemarksCard";
+import DutyComparisonReplica from "../../Components/D2DMonitoring/DutyComparisonReplica/DutyComparisonReplica";
+import AppStatusModal from "../../Components/D2DMonitoring/Modals/AppStatusModal/AppStatusModal";
+import VehicleJourneyModal from "../../Components/D2DMonitoring/Modals/VehicleJourneyModal/VehicleJourneyModal";
+import TripExecutionModal from "../../Components/D2DMonitoring/Modals/TripExecutionModal/TripExecutionModal";
+import VehicleAssignmentModal from "../../Components/D2DMonitoring/Modals/VehicleAssignmentModal/VehicleAssignmentModal";
+import RemarkFormModal from "../../Components/D2DMonitoring/Modals/RemarkFormModal/RemarkFormModal";
 
 const wardLinesById = {
   1: ward1Line,
@@ -411,23 +423,49 @@ const MonitoringList = () => {
   }</b> · Currently <b>${statusSummaryText}</b>`;
 
   // Trip Status Logic
-  const tripTotal = wardData.trips || 5; 
-  const tripCompleted = wardData.tripsDone || 2; 
-  const tripActive = (tripTotal > tripCompleted) ? 1 : 0; 
-  
+  const tripTotal = wardData.trips || 5;
+  const tripCompleted = wardData.tripsDone || 2;
+  const tripActive = tripTotal > tripCompleted ? 1 : 0;
+
   const getTripStatusTone = () => {
     if (tripCompleted === tripTotal) return "toneSuccess";
     if (tripActive > 0) return "toneWarning";
     return "toneDanger";
   };
 
-  const appTone = wardData.appStatus === "Opened" ? "toneSuccess" : "toneDanger";
-  const vehicleTone = vehicleJourneyMeta.tone === "danger" ? "toneDanger" : (vehicleJourneyMeta.tone === "success" ? "toneSuccess" : "toneWarning");
+  const appTone =
+    wardData.appStatus === "Opened" ? "toneSuccess" : "toneDanger";
+  const vehicleTone =
+    vehicleJourneyMeta.tone === "danger"
+      ? "toneDanger"
+      : vehicleJourneyMeta.tone === "success"
+        ? "toneSuccess"
+        : "toneWarning";
   const routeQuickStats = [
-    { key: "fuel", label: "Fuel Stop", value: quickSummary.fuelStops ?? 0, icon: <Fuel size={12} /> },
-    { key: "entries", label: "Ward Entries", value: quickSummary.wardEntries ?? 0, icon: <MapPin size={12} /> },
-    { key: "inward", label: "In Ward", value: quickSummary.inWard || "0m", icon: <Clock size={12} /> },
-    { key: "longest", label: "Longest Stay", value: quickSummary.longestSession || "0m", icon: <Trophy size={12} /> },
+    {
+      key: "fuel",
+      label: "Fuel Stop",
+      value: quickSummary.fuelStops ?? 0,
+      icon: <Fuel size={12} />,
+    },
+    {
+      key: "entries",
+      label: "Ward Entries",
+      value: quickSummary.wardEntries ?? 0,
+      icon: <MapPin size={12} />,
+    },
+    {
+      key: "inward",
+      label: "In Ward",
+      value: quickSummary.inWard || "0m",
+      icon: <Clock size={12} />,
+    },
+    {
+      key: "longest",
+      label: "Longest Stay",
+      value: quickSummary.longestSession || "0m",
+      icon: <Trophy size={12} />,
+    },
   ];
   const routeSnapshotRows =
     eventLog.length > 0
@@ -631,6 +669,12 @@ const MonitoringList = () => {
     setRemarks((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const handleVehicleIssueRowChange = (id, field, value) => {
+    setVehicleIssueRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)),
+    );
+  };
+
   const currentShiftEvents = React.useMemo(
     () => [
       {
@@ -697,84 +741,42 @@ const MonitoringList = () => {
     completedLengthKm,
     remainingLengthKm,
   });
+  const isCoverageReady =
+    !isWardMetricsLoading && Array.isArray(stateItems) && stateItems.length > 0;
+  const liquidCoveragePercent = isCoverageReady
+    ? Math.max(0, Math.min(100, Number(zoneCoveragePercent) || 0))
+    : 0;
+  const liquidTotalKm = isCoverageReady
+    ? Math.max(0, Number(totalWardLengthKm) || 0)
+    : 0;
+  const liquidCoveredKm = isCoverageReady
+    ? Math.max(0, Number(completedLengthKm) || 0)
+    : 0;
+  const liquidLeftKm = isCoverageReady
+    ? Math.max(0, Number(remainingLengthKm) || 0)
+    : 0;
+  const liquidTrackFillWidth =
+    liquidCoveragePercent <= 0 ? 0 : Math.max(liquidCoveragePercent, 14);
 
   return (
     <div className={styles.realtimePage}>
       {/* Sidebar */}
-      <div className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
-          <div className={styles.sidebarHeaderTop}>
-            <div className={styles.sidebarSubText}>
-              <h3>Zone Summary</h3>
-              Last Update: {lastRefreshed}
-            </div>
-            <button
-              type="button"
-              className={styles.sidebarRefreshBtn}
-              onClick={handleRefresh}
-            >
-              <RefreshCw
-                size={14}
-                className={refreshing ? styles.spinIcon : ""}
-              />
-            </button>
-          </div>
-        </div>
-        <div className={styles.wardItems}>
-          {wardList.map((ward) => (
-            <div
-              key={ward.id}
-              className={`${styles.wardRow} ${selectedWard?.id === ward.id ? styles.wardRowActive : ""}`}
-              onClick={() => handleWardSelect(ward)}
-            >
-              <div className={styles.wardRowHead}>
-                <div className={styles.wardPrimaryName}>
-                  {getZoneLabel(ward)}
-                </div>
-                <div
-                  className={styles.progressChip}
-                  style={getProgressStyle(ward.progress)}
-                >
-                  {ward.progress}%
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <MonitoringSidebar
+        wardList={wardList}
+        selectedWard={selectedWard}
+        lastRefreshed={lastRefreshed}
+        refreshing={refreshing}
+        onWardSelect={handleWardSelect}
+        onRefresh={handleRefresh}
+        getZoneLabel={getZoneLabel}
+        getProgressStyle={getProgressStyle}
+      />
 
       {/* Main Content */}
       <div className={styles.mainContent}>
         <div className={styles.layoutSplit}>
           <div className={styles.leftColumn}>
-            {/* <div className={styles.glassCard}>
-              <div className={styles.cardHeading}>
-                <h3>Heroes on Duty</h3>
-                <UsersIcon size={18} color="var(--themeColor)" />
-              </div>
-              <EnhancedProfile
-                profile={wardData.profiles.driver}
-                role="Captain"
-                isOnline
-              />
-              <EnhancedProfile
-                profile={wardData.profiles.helper}
-                role="Pilot"
-                isOnline={false}
-              />
-              <button
-                type="button"
-                className={styles.vehicleBar}
-                onClick={() => setShowVehicleModal(true)}
-              >
-                <div className={styles.vehicleBarMain}>
-                  <Truck size={14} />
-                  <span>{wardData.vehicleNumber}</span>
-                </div>
-                <ChevronRight size={14} />
-              </button>
-            </div> */}
-                
+
             <DutyComparisonReplica
               data={wardData}
               onVehicleClick={() => setShowVehicleModal(true)}
@@ -786,116 +788,23 @@ const MonitoringList = () => {
             <div className={styles.dataRightBottom}>
               <div className={styles.centerColumn}>
                 <CompletionDashboard />
-                <div
-                  className={`${styles.glassCard} ${styles.statusUnifiedCard}`}
-                >
-                  <div className={styles.cardHeading}>
-                    <h3>Live Status Board</h3>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                       <Activity size={18} color="var(--themeColor)" />
-                    </div>
-                  </div>
-                  <div className={styles.cardBody}>
-                    <div className={styles.liveStatusGrid}>
-                      <div 
-                        className={styles.liveBoardCard}
-                        onClick={() => setActiveStatusModal("vehicle")}
-                      >
-                        <div className={styles.liveStatusGridLeft}>
-                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
-                            <Truck size={18} />
-                          </div>
-                          <div className={styles.liveBoardLabel}>Vehicle Status</div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", }}>
-                          <div className={`${styles.liveBoardValue} ${styles[vehicleTone]}`}>{wardData.vehicleStatus}</div>
-                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
-                        </div>
-                      </div>
 
-                      <div 
-                        className={styles.liveBoardCard}
-                        onClick={() => setActiveStatusModal("trips")}
-                      >
-                        <div className={styles.liveStatusGridLeft}>
-                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
-                            <Package size={18} />
-                          </div>
-                          <div className={styles.liveBoardLabel}>Trip Execution</div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", }}>
-                          <div className={`${styles.liveBoardValue} ${styles[getTripStatusTone()]}`}>{wardData.trips} Trips</div>
-                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
-                        </div>
-                      </div>
+                <LiveStatusBoard
+                  wardData={wardData}
+                  vehicleTone={vehicleTone}
+                  getTripStatusTone={getTripStatusTone}
+                  appTone={appTone}
+                  onVehicleClick={() => setActiveStatusModal("vehicle")}
+                  onTripsClick={() => setActiveStatusModal("trips")}
+                  onAppClick={() => setActiveStatusModal("app")}
+                />
 
-                      <div 
-                        className={styles.liveBoardCard}
-                        onClick={() => setActiveStatusModal("app")}
-                      >
-                        <div className={styles.liveStatusGridLeft}>
-                          <div className={styles.liveBoardIcon} style={{ color: "var(--themeColor)" }}>
-                            <Zap size={18} />
-                          </div>
-                          <div className={styles.liveBoardLabel}>App Status</div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center",}}>
-                          <div className={`${styles.liveBoardValue} ${styles[appTone]}`}>{wardData.appStatus}</div>
-                          <span className={styles.liveBoardArrow}><ChevronRight size={14} /></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.glassCard}>
-                  <div className={styles.remarksHeadRow}>
-                    <div className={styles.remarksHeadLeft}>
-                      <Plus size={16} color="var(--themeColor)" />
-                      <span className={styles.remarksHeadTitle}>Remark</span>
-                    </div>
-                    <button
-                      type="button"
-                      className={styles.addRemarkBtn}
-                      onClick={openNewRemarkModal}
-                    >
-                      Add
-                    </button>
-                  </div>
-                  {remarks.length === 0 ? (
-                    <div className={styles.remarkEmpty}>
-                      No query yet. Click Add New to create one.
-                    </div>
-                  ) : (
-                    <div className={styles.remarkList}>
-                      {remarks.map((item) => (
-                        <div key={item.id} className={styles.remarkItemCard}>
-                          <div className={styles.remarkItemTopic}>
-                            {item.topic}
-                          </div>
-                          <div className={styles.remarkItemDescription}>
-                            {item.description}
-                          </div>
-                          <div className={styles.remarkItemActions}>
-                            <button
-                              type="button"
-                              className={styles.remarkActionBtn}
-                              onClick={() => openEditRemarkModal(item)}
-                            >
-                              <Pencil size={13} /> Edit
-                            </button>
-                            <button
-                              type="button"
-                              className={`${styles.remarkActionBtn} ${styles.deleteActionBtn}`}
-                              onClick={() => deleteRemark(item.id)}
-                            >
-                              <Trash2 size={13} /> Delete
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <RemarksCard
+                  remarks={remarks}
+                  onAddRemark={openNewRemarkModal}
+                  onEditRemark={openEditRemarkModal}
+                  onDeleteRemark={deleteRemark}
+                />
               </div>
               <div className={styles.mapColumn}>
                 <div
@@ -905,6 +814,14 @@ const MonitoringList = () => {
                     <StateItem items={stateItems} />
                   </div>
                 </div>
+
+                {/* <LiquidCoverageTracker
+                  liquidCoveragePercent={liquidCoveragePercent}
+                  liquidTotalKm={liquidTotalKm}
+                  liquidCoveredKm={liquidCoveredKm}
+                  liquidLeftKm={liquidLeftKm}
+                  liquidTrackFillWidth={liquidTrackFillWidth}
+                /> */}
 
                 <MapSection
                   selectedWard={selectedWard}
@@ -936,683 +853,93 @@ const MonitoringList = () => {
             } ${activeStatusModal === "trips" ? styles.tripExecutionModalShell : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
-            {(activeStatusModal !== "app" && activeStatusModal !== "vehicle" && activeStatusModal !== "trips") && (
-              <div className={styles.modalHeader}>
-                <h3>
-                  {showVehicleModal
-                    ? "Vehicle Assignment Desk"
-                    : activeStatusModal === "vehicle"
-                      ? "Logistics Diagnostic"
-                      : activeStatusModal === "trips"
-                        ? "Trip Execution"
-                        : editingRemarkId
-                          ? "Edit Field Query"
-                          : "Add Field Query"}
-                </h3>
-                <button
-                  className={styles.modalCloseBtn}
-                  onClick={closeAllModals}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            )}
+            {activeStatusModal !== "app" &&
+              activeStatusModal !== "vehicle" &&
+              activeStatusModal !== "trips" && (
+                <div className={styles.modalHeader}>
+                  <h3>
+                    {showVehicleModal
+                      ? "Vehicle Assignment Desk"
+                      : activeStatusModal === "vehicle"
+                        ? "Logistics Diagnostic"
+                        : activeStatusModal === "trips"
+                          ? "Trip Execution"
+                          : editingRemarkId
+                            ? "Edit Field Query"
+                            : "Add Field Query"}
+                  </h3>
+                  <button
+                    className={styles.modalCloseBtn}
+                    onClick={closeAllModals}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              )}
 
             {showVehicleModal ? (
-              <div className={styles.vehicleIssueWrap}>
-                <div className={styles.vehicleIssueList}>
-                  {vehicleIssueRows.map((item) => (
-                    <div key={item.id} className={styles.vehicleIssueRow}>
-                      <div className={styles.vehicleIssueNoCol}>
-                        <div className={styles.vehicleIssueNo}>
-                          {item.vehicleNo}
-                        </div>
-                        <input
-                          type="checkbox"
-                          checked={item.selected}
-                          onChange={(e) =>
-                            setVehicleIssueRows((prev) =>
-                              prev.map((r) =>
-                                r.id === item.id
-                                  ? { ...r, selected: e.target.checked }
-                                  : r,
-                              ),
-                            )
-                          }
-                        />
-                      </div>
-                      <textarea
-                        className={styles.vehicleIssueReason}
-                        placeholder="Write reason..."
-                        value={item.reason}
-                        onChange={(e) =>
-                          setVehicleIssueRows((prev) =>
-                            prev.map((r) =>
-                              r.id === item.id
-                                ? { ...r, reason: e.target.value }
-                                : r,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  className={styles.modalSubmitBtn}
-                  onClick={closeAllModals}
-                >
-                  Submit
-                </button>
-              </div>
+              <VehicleAssignmentModal
+                vehicleIssueRows={vehicleIssueRows}
+                onRowChange={handleVehicleIssueRowChange}
+                onSubmit={closeAllModals}
+              />
             ) : activeStatusModal === "app" ? (
-              <div className={styles.appStatusWrap}>
-                {/* <div className={styles.appPhoneLabel}>DRIVER&apos;S PHONE</div> */}
-                <div className={styles.appPhoneShell}>
-                  <span
-                    className={`${styles.appSideBtn} ${styles.appSideBtnLeft}`}
-                  />
-                  <span
-                    className={`${styles.appSideBtn} ${styles.appSideBtnRightTop}`}
-                  />
-                  <span
-                    className={`${styles.appSideBtn} ${styles.appSideBtnRightBottom}`}
-                  />
-                  <div className={styles.appPhoneFrame}>
-                    <div className={styles.appPhoneTop}>
-                      <span>{phoneClockTime}</span>
-                      <span className={styles.appPhoneNotch}>
-                        <span className={styles.appNotchSpeaker} />
-                        <span className={styles.appNotchCam} />
-                      </span>
-                      <span className={styles.appPhoneDate}>
-                        {phoneClockDate}
-                      </span>
-                    </div>
-
-                    <div className={styles.appPanelHeader}>
-                      <div className={styles.appPanelLeft}>
-                        <span className={styles.appPanelIcon}>&#9638;</span>
-                        <div>
-                          <p className={styles.appPanelTitle}>App Status</p>
-                          <p className={styles.appPanelSub}>
-                            Today&apos;s full session log
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        className={styles.appPanelClose}
-                        onClick={closeAllModals}
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-
-                    <div className={styles.appChipRow}>
-                      <button
-                        type="button"
-                        className={`${styles.appChip} ${appStatusTab === "all" ? styles.appTabActive : ""}`}
-                        onClick={() => setAppStatusTab("all")}
-                      >
-                        All {appSessionLogs.length}
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles.appChip} ${styles.appChipOpen} ${
-                          appStatusTab === "opened" ? styles.appTabActive : ""
-                        }`}
-                        onClick={() => setAppStatusTab("opened")}
-                      >
-                        Opened {appOpenedCount}
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles.appChip} ${styles.appChipClosed} ${
-                          appStatusTab === "closed" ? styles.appTabActive : ""
-                        }`}
-                        onClick={() => setAppStatusTab("closed")}
-                      >
-                        Closed {appClosedCount}
-                      </button>
-                    </div>
-
-                    <div className={styles.appLogList}>
-                      {filteredAppSessionLogs.map((entry, index) => (
-                        <div
-                          key={`${entry.time}-${index}`}
-                          className={styles.appLogRow}
-                        >
-                          <span
-                            className={`${styles.appLogDot} ${
-                              entry.tone === "opened"
-                                ? styles.appLogDotOpen
-                                : entry.tone === "closed"
-                                  ? styles.appLogDotClose
-                                  : styles.appLogDotMin
-                            }`}
-                          />
-                          <span className={styles.appLogTime}>
-                            {entry.time}
-                          </span>
-                          <span
-                            className={`${styles.appLogBadge} ${
-                              entry.tone === "opened"
-                                ? styles.appLogBadgeOpen
-                                : entry.tone === "closed"
-                                  ? styles.appLogBadgeClose
-                                  : styles.appLogBadgeMin
-                            }`}
-                          >
-                            {entry.status}
-                          </span>
-                          <span className={styles.appLogDuration}>
-                            {entry.duration}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className={styles.appPanelFooter}>
-                      App opened {appOpenedCount}x · avg 32m 17s · closed{" "}
-                      {appClosedCount}x · screen off 1x
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <AppStatusModal
+                appSessionLogs={appSessionLogs}
+                appOpenedCount={appOpenedCount}
+                appClosedCount={appClosedCount}
+                appStatusTab={appStatusTab}
+                filteredAppSessionLogs={filteredAppSessionLogs}
+                phoneClockTime={phoneClockTime}
+                phoneClockDate={phoneClockDate}
+                onTabChange={setAppStatusTab}
+                onClose={closeAllModals}
+              />
             ) : activeStatusModal === "trips" ? (
-              <div className={styles.vehicleJourneyModal}>
-                <div className={styles.vehicleJourneyHeader}>
-                  <div className={styles.vehicleJourneyHeadingWrap}>
-                    <span className={styles.vehicleJourneyTagIcon} style={{ background: "#eff6ff", color: "#3b82f6" }}>
-                      <Package size={16} />
-                    </span>
-                    <div>
-                      <h3 className={styles.vehicleJourneyTitle}>
-                        Trip Execution
-                      </h3>
-                      <p className={styles.vehicleJourneySubTitle}>
-                        {wardData.vehicleNumber} · Today 
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className={styles.modalCloseBtn}
-                    onClick={closeAllModals}
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-
-                <div className={styles.modalTabContent}>
-                  <div className={styles.tripLogSection}>
-                 
-                    <div className={styles.tripItem}>
-                      <div className={`${styles.tripNumber} ${styles.tripNumberDone}`}>#1</div>
-                      <div className={styles.tripContent}>
-                        <div className={styles.tripTop}>
-                          <h5>Morning Run</h5>
-                          <span className={`${styles.tripBadge} ${styles.tripBadgeDone}`}>✓ Done</span>
-                        </div>
-                        <div className={styles.tripMeta}>
-                          <div className={styles.tripMetaItem}><Clock size={12} className={styles.tripMetaIcon} /> <b>06:23</b>  → 07:45</div>
-                          <div className={styles.tripMetaItem}><Navigation size={12} className={styles.tripMetaIcon} /> 4.55 km</div>
-                          <div className={styles.tripMetaItem}><MapPin size={12} className={styles.tripMetaIcon} /> 3 zones</div>
-                          <div className={styles.tripMetaItem}><Map size={12} className={styles.tripMetaIcon} /> 14 lines</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.tripItem}>
-                      <div className={`${styles.tripNumber} ${styles.tripNumberActive}`}>#2</div>
-                      <div className={styles.tripContent}>
-                        <div className={styles.tripTop}>
-                          <h5>Current Run</h5>
-                          <span className={`${styles.tripBadge} ${styles.tripBadgeActive}`}>• Active</span>
-                        </div>
-                        <div className={styles.tripMeta}>
-                          <div className={styles.tripMetaItem}><Clock size={12} className={styles.tripMetaIcon} /><b>  08:56</b>  → now</div>
-                          <div className={styles.tripMetaItem}><Navigation size={12} className={styles.tripMetaIcon} /> 0 km</div>
-                          <div className={styles.tripMetaItem}><MapPin size={12} className={styles.tripMetaIcon} /> 1 zones</div>
-                          <div className={styles.tripMetaItem}><Map size={12} className={styles.tripMetaIcon} /> 18 lines</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.vehicleJourneySummaryStrip} style={{ margin: "0 24px 24px" }}>
-                  <span className={styles.vehicleJourneySummaryIcon}>
-                    <Trophy size={12} />
-                  </span>
-                  <p>Vehicle made <b>{tripCompleted}</b> trips today · Total distance <b>4.55 km</b> · <b>{tripActive}</b> trip active</p>
-                </div>
-              </div>
+              <TripExecutionModal
+                wardData={wardData}
+                tripCompleted={tripCompleted}
+                tripActive={tripActive}
+                onClose={closeAllModals}
+              />
             ) : activeStatusModal === "vehicle" ? (
-              <div className={styles.vehicleJourneyModal}>
-                <div className={styles.vehicleJourneyHeader}>
-                  <div className={styles.vehicleJourneyHeadingWrap}>
-                    <span className={styles.vehicleJourneyTagIcon}>
-                      <Truck size={14} />
-                    </span>
-                    <div>
-                      <h3 className={styles.vehicleJourneyTitle}>
-                        Vehicle Status
-                      </h3>
-                      <p className={styles.vehicleJourneySubTitle}>
-                        {wardData.vehicleNumber} · Today
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className={styles.modalCloseBtn}
-                    onClick={closeAllModals}
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                <div className={styles.vehicleJourneyBody}>
-                  <div
-                    className={`${styles.vehicleJourneyStatusCard} ${
-                      vehicleJourneyMeta.tone === "danger"
-                        ? styles.vehicleJourneyStatusDanger
-                        : vehicleJourneyMeta.tone === "warning"
-                          ? styles.vehicleJourneyStatusWarning
-                          : vehicleJourneyMeta.tone === "success"
-                            ? styles.vehicleJourneyStatusSuccess
-                            : styles.vehicleJourneyStatusNeutral
-                    }`}
-                  >
-                    <div className={styles.vehicleJourneyStatusCopy}>
-                      <p className={styles.vehicleJourneyStatusLabel}>
-                        Current Status
-                      </p>
-                      <h4 className={styles.vehicleJourneyStatusTitle}>
-                        {vehicleJourneyMeta.title}
-                      </h4>
-                      <p className={styles.vehicleJourneyStatusDesc}>
-                        {vehicleJourneyMeta.description}
-                      </p>
-                    </div>
-                  </div>
-
-            
-          <div className={styles.vehicleJourneyQuickStrip}>
-                      {routeQuickStats.map((chip) => (
-                        <div
-                          key={chip.key}
-                          className={`${styles.vehicleJourneyQuickChip} ${
-                            styles[`vehicleJourneyQuick${chip.key}`]
-                          }`}
-                        >
-                          <span className={styles.vehicleJourneyQuickIcon}>
-                            {chip.icon}
-                          </span>
-                          <strong>{chip.value}</strong>
-                          <span className={styles.vehicleJourneyQuickLabel}>
-                            {chip.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  <div className={styles.vehicleJourneySection}>
-                    <div className={styles.vehicleJourneySectionHead}>
-                      <div className={styles.vehicleJourneySectionTitle}>
-                        Route Snapshot
-                      </div>
-                      <button
-                        type="button"
-                        className={styles.vehicleJourneyViewToggle}
-                        onClick={() =>
-                          setRouteSnapshotView((prev) =>
-                            prev === "detail" ? "compact" : "detail",
-                          )
-                        }
-                        title={
-                          routeSnapshotView === "detail"
-                            ? "Switch to compact view"
-                            : "Switch to detailed view"
-                        }
-                        aria-label={
-                          routeSnapshotView === "detail"
-                            ? "Switch to compact view"
-                            : "Switch to detailed view"
-                        }
-                      >
-                        {routeSnapshotView === "detail" ? (
-                          <ChevronDown size={14} />
-                        ) : (
-                          <ChevronUp size={14} />
-                        )}
-                      </button>
-                    </div>
-
-                    {routeSnapshotView === "detail" ? (
-                      <div className={styles.vehicleJourneyEventList}>
-                        {routeSnapshotRows.map((entry, index) => {
-                          const meta = getJourneyKindMeta(entry.kind);
-                          const EventIcon = meta.icon;
-                          return (
-                            <div
-                              key={entry.id || `${entry.time}-${index}`}
-                              className={styles.vehicleJourneyEventRow}
-                            >
-                              <div className={styles.vehicleJourneyEventAxis}>
-                                <span
-                                  className={`${styles.vehicleJourneyEventDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}
-                                >
-                                  <EventIcon size={12} />
-                                </span>
-                                {index < routeSnapshotRows.length - 1 && (
-                                  <span className={styles.vehicleJourneyEventLine} />
-                                )}
-                              </div>
-                              <div
-                                className={`${styles.vehicleJourneyEventCard} ${styles[`vehicleJourneyEvent${meta.tone}`]}`}
-                              >
-                                <div className={styles.vehicleJourneyEventTop}>
-                                  <h4>{entry.title}</h4>
-                                  <span>{entry.time}</span>
-                                </div>
-                                <p>{entry.description}</p>
-                                <div className={styles.vehicleJourneyEventMeta}>
-                                  <span className={styles.vehicleJourneyEventTag}>
-                                    {entry.tag}
-                                  </span>
-                                  <span
-                                    className={styles.vehicleJourneyEventDuration}
-                                  >
-                                    {entry.duration}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className={styles.vehicleJourneyCompactList}>
-                        {routeSnapshotRows.map((entry, index) => {
-                          const meta = getJourneyKindMeta(entry.kind);
-                          const EventIcon = meta.icon;
-                          const shouldShowMeta =
-                            String(entry.duration || "")
-                              .toLowerCase()
-                              .includes("active") || index === routeSnapshotRows.length - 1;
-                          return (
-                            <div
-                              key={entry.id || `${entry.time}-${index}`}
-                              className={styles.vehicleJourneyCompactRow}
-                            >
-                              <div className={styles.vehicleJourneyCompactAxis}>
-                                <span
-                                  className={`${styles.vehicleJourneyCompactDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}
-                                >
-                                  <EventIcon size={11} />
-                                </span>
-                                {index < routeSnapshotRows.length - 1 && (
-                                  <span className={styles.vehicleJourneyCompactLine} />
-                                )}
-                              </div>
-                              <div className={styles.vehicleJourneyCompactCopy}>
-                                <div className={styles.vehicleJourneyCompactTop}>
-                                  <h4>{entry.title}</h4>
-                                  <span>{entry.time}</span>
-                                </div>
-                                {shouldShowMeta && (
-                                  <div className={styles.vehicleJourneyCompactMeta}>
-                                    <span className={styles.vehicleJourneyCompactMetaTag}>
-                                      {entry.tag}
-                                    </span>
-                                    <span className={styles.vehicleJourneyCompactMetaTime}>
-                                      {entry.duration}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-        
-                  <div className={styles.vehicleJourneySummaryStrip}>
-                    <span className={styles.vehicleJourneySummaryIcon}>
-                      <Trophy size={12} />
-                    </span>
-                 <p dangerouslySetInnerHTML={{ __html: summaryText }} />
-                  </div>
-                </div>
-              </div>
+              <VehicleJourneyModal
+                wardData={wardData}
+                vehicleJourneyMeta={vehicleJourneyMeta}
+                routeQuickStats={routeQuickStats}
+                routeSnapshotRows={routeSnapshotRows}
+                routeSnapshotView={routeSnapshotView}
+                summaryText={summaryText}
+                onRouteSnapshotViewToggle={() =>
+                  setRouteSnapshotView((prev) =>
+                    prev === "detail" ? "compact" : "detail",
+                  )
+                }
+                onClose={closeAllModals}
+              />
             ) : (
-              <div className={styles.remarkFormWrap}>
-                <div className={styles.customDropdownWrap}>
-                  <button
-                    type="button"
-                    className={styles.customDropdownToggle}
-                    onClick={() => setShowTopicDropdown(!showTopicDropdown)}
-                  >
-                    {remarkForm.topic || "Select Remark Topic"}
-                  </button>
-                  {showTopicDropdown && (
-                    <div className={styles.customDropdownMenu}>
-                      {remarkTopicOptions.map((item) => (
-                        <button
-                          key={item}
-                          type="button"
-                          className={styles.customDropdownItem}
-                          onClick={() => {
-                            setRemarkForm({ ...remarkForm, topic: item });
-                            setShowTopicDropdown(false);
-                          }}
-                        >
-                          {item}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <textarea
-                  className={styles.remarkTextarea}
-                  placeholder="Remark Description"
-                  value={remarkForm.description}
-                  onChange={(e) =>
-                    setRemarkForm({
-                      ...remarkForm,
-                      description: e.target.value,
-                    })
-                  }
-                />
-                <button
-                  className={styles.modalSubmitBtn}
-                  onClick={handleRemarkSubmit}
-                >
-                  {editingRemarkId ? "Update Query" : "Submit Query"}
-                </button>
-              </div>
+              <RemarkFormModal
+                remarkForm={remarkForm}
+                editingRemarkId={editingRemarkId}
+                showTopicDropdown={showTopicDropdown}
+                remarkTopicOptions={remarkTopicOptions}
+                onTopicDropdownToggle={() =>
+                  setShowTopicDropdown(!showTopicDropdown)
+                }
+                onTopicSelect={(item) => {
+                  setRemarkForm({ ...remarkForm, topic: item });
+                  setShowTopicDropdown(false);
+                }}
+                onDescriptionChange={(value) =>
+                  setRemarkForm({ ...remarkForm, description: value })
+                }
+                onSubmit={handleRemarkSubmit}
+                onClose={closeAllModals}
+              />
             )}
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-// Sub-components
-const StatusLine = ({ label, value, icon, color, onClick }) => (
-  <button
-    type="button"
-    className={styles.statusLine}
-    onClick={onClick}
-    style={{ cursor: onClick ? "pointer" : "default" }}
-  >
-    <div className={styles.statusLineLeft}>
-      <div style={{ color: "var(--themeColor)", display: "flex" }}>{icon}</div>
-      <span className={styles.statusLabel}>{label}</span>
-    </div>
-    <div className={styles.statusLineRight}>
-      <span className={styles.statusValue} style={{ color }}>
-        {value}
-      </span>
-      {onClick && (
-        <span className={styles.statusClickIndicator}>
-          <ChevronRight size={14} />
-        </span>
-      )}
-    </div>
-  </button>
-);
-
-const PerformanceGrid = ({ data }) => {
-  const items = [
-    // { label: "Total Lines", value: data.lines.total },
-    { label: "Total Halt", value: data.halt.total, color: "var(--textDanger)" },
-    // { label: "Completed", value: data.lines.completed, color: "var(--textSuccess)" },
-    {
-      label: "Curr Halt",
-      value: data.halt.current,
-      color: "var(--textSuccess)",
-    },
-    // { label: "Skipped", value: data.lines.skipped, color: "var(--textDanger)" },
-    {
-      label: "Curr Line",
-      value: data.lines.current,
-      color: "var(--themeColor)",
-    },
-  ];
-  return (
-    <div className={styles.wardSummaryStats}>
-      <StateItem items={items} />
-    </div>
-  );
-};
-
-const EnhancedProfile = ({ profile, role, isOnline }) => (
-  <div className={styles.enhancedProfile}>
-    <div className={styles.enhancedAvatarSection}>
-      <div className={styles.enhancedAvatarBox}>
-        <img src={Chetan} alt="" />
-        <UserIcon size={32} color="#94a3b8" />
-      </div>
-      <div className={styles.enhancedProfileInfo}>
-        <span className={styles.enhancedRoleTag}>{role}</span>
-        <span className={styles.enhancedProfileName}>{profile.name}</span>
-        <div className={styles.enhancedProfilePhone}>
-          <Phone size={11} />{" "}
-          <a href={`tel:${profile.phone}`} className={styles.enhancedPhoneLink}>
-            {profile.phone}
-          </a>
-        </div>
-      </div>
-    </div>
-    <div className={styles.enhancedRatingRow}>
-      <span className={styles.ratingText}>5.0</span>
-    </div>
-  </div>
-);
-
-const DutyComparisonReplica = ({ data, onVehicleClick }) => {
-  const replica = data?.heroesDutyReplica || {};
-  const driver = data?.profiles?.driver || {};
-  const helper = data?.profiles?.helper || {};
-  const vehicleStatus = getVehicleJourneyMeta(data?.vehicleStatus || "");
-
-  return (
-    <div className={`${styles.glassCard} ${styles.heroReplicaCard}`}>
-      <div className={styles.heroReplicaHead}>
-        <div className={styles.heroReplicaTitleWrap}> 
-          <div>
-            <h4>Heroes on Duty</h4>
-          </div>
-        </div>
-        <span className={styles.heroReplicaFieldPill}><UserStar size={14} /></span>
-      </div>
-
-      <div className={styles.heroReplicaCrewGrid}>
-        <div className={styles.coverImg}></div>
-        <div className={styles.heroReplicaCrewCard}>
-          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleCaptain}`}>Captain</span>
-          <div className={styles.heroReplicaAvatarWrap}>
-            <img src={Chetan} alt="Driver" />
-            <span className={styles.heroReplicaOnlineDot} />
-          </div>
-          <h5>{driver.name || "Driver Name"}</h5>
-          <p className={styles.heroReplicaPhone}>
-            <Phone size={11} />
-            <a href={`tel:${String(driver.phone || "").replace(/[^\d+]/g, "")}`}>
-              {driver.phone || "-"}
-            </a>
-          </p>
-          <p className={styles.heroReplicaRating}>5.0 Star</p>
-          <div className={styles.heroReplicaStatsRow}>
-            <div>
-              <strong>5 yrs</strong>
-              <span>Exp.</span>
-            </div>
-            <div>
-              <strong>640Km</strong>
-              <span>Driven</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.heroReplicaCrewCard}>
-          <span className={`${styles.heroReplicaRolePill} ${styles.heroReplicaRoleHelper}`}>Pilot</span>
-          <div className={styles.heroReplicaAvatarWrap}>
-            <img src={Chetan} alt="Helper" />
-            <span className={styles.heroReplicaOnlineDot} />
-          </div>
-          <h5>{helper.name || "Helper Name"}</h5>
-          <p className={styles.heroReplicaPhone}>
-            <Phone size={11} />
-            <a href={`tel:${String(helper.phone || "").replace(/[^\d+]/g, "")}`}>
-              {helper.phone || "-"}
-            </a>
-          </p>
-          <p className={styles.heroReplicaRating}>5.0 Star</p>
-          <div className={styles.heroReplicaStatsRow}>
-            <div>
-              <strong>1.5 yrs</strong>
-              <span>Exp.</span>
-            </div>
-            <div>
-              <strong>180Km</strong>
-              <span>Driven</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className={styles.heroReplicaVehicleRow}
-        onClick={onVehicleClick}
-      >
-        <div className={styles.heroReplicaVehicleLeft}>
-         🚛
-          <div className={styles.vehicleContent}>
-            <strong>{data?.vehicleNumber}</strong>
-          </div>
-        </div>
-        <ChevronRight size={14} />
-      </button>
-
-      {/* <div className={styles.heroReplicaFooter}>
-        <div>
-          <strong>{replica?.summary?.tripsDone ?? data?.trips ?? 0}</strong>
-          <span>Trips Done</span>
-        </div>
-        <div>
-          <strong>{replica?.summary?.totalLines ?? data?.lines?.total ?? 0}</strong>
-          <span>Total Lines</span>
-        </div>
-        <div>
-          <strong>{replica?.summary?.teamRating ?? 5.0}</strong>
-          <span>Team Rating</span>
-        </div>
-      </div> */}
     </div>
   );
 };

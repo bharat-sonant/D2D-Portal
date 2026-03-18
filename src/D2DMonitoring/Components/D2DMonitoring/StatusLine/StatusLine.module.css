@@ -1,0 +1,66 @@
+.statusLine {
+  border: 1px solid #edf2f7;
+  background: #fafbfc;
+  border-radius: 6px;
+  width: 100%;
+  padding: 15px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.statusLineClickable {
+  cursor: pointer;
+}
+
+.statusLineClickable:hover {
+  border: 1px solid rgba(40, 152, 202, 0.35);
+  box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
+  background: #f0f7ff;
+}
+
+.statusLineLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusLineIconWrap {
+  color: var(--themeColor);
+  display: flex;
+}
+
+.statusLineRight {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.statusLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--gray);
+  letter-spacing: 0.5px;
+}
+
+.statusValue {
+  font-size: 13px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  text-transform: capitalize;
+}
+
+.statusClickIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--regularColor);
+  opacity: 0.8;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.statusLineClickable:hover .statusClickIndicator {
+  opacity: 1;
+  transform: translateX(1px);
+}

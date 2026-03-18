@@ -1,0 +1,121 @@
+.glassCard {
+  background: #fff;
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.glassCard:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
+}
+
+.remarksHeadRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.remarksHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remarksHeadTitle {
+  font-size: 15px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+}
+
+.addRemarkBtn {
+  border: 1px solid var(--themeColor);
+  background: #fff;
+  color: var(--themeColor);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.addRemarkBtn:hover {
+  background: var(--themeColor);
+  color: #fff;
+}
+
+.remarkEmpty {
+  border: 1px dashed #dbe3ec;
+  border-radius: 6px;
+  padding: 30px 16px;
+  color: var(--gray);
+  font-size: 12px;
+  font-family: var(--fontGraphik);
+  text-align: center;
+}
+
+.remarkList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.remarkItemCard {
+  border: 1px solid #e9eef4;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fbfcfe;
+}
+
+.remarkItemTopic {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  margin-bottom: 4px;
+}
+
+.remarkItemDescription {
+  font-size: 12px;
+  color: var(--gray);
+  line-height: 1.45;
+}
+
+.remarkItemActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.remarkActionBtn {
+  border: 1px solid #dbe3ec;
+  background: #fff;
+  color: var(--gray);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.remarkActionBtn:hover {
+  border-color: var(--themeColor);
+  color: var(--themeColor);
+}
+
+.deleteActionBtn:hover {
+  border-color: var(--textDanger);
+  color: var(--textDanger);
+}

@@ -1,0 +1,102 @@
+.enhancedProfile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--whitefa);
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: relative;
+  margin-bottom: 5px;
+  border: 1px solid transparent;
+}
+
+.enhancedProfile:hover {
+  border: 1px solid rgba(40, 152, 202, 0.35);
+  box-shadow: 0 4px 12px rgba(79, 110, 247, 0.08);
+  background: #f0f7ff;
+}
+
+.enhancedAvatarSection {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.enhancedAvatarBox {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  background: var(--gradientTheme);
+  border: 1px solid var(--borderColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--shadow);
+}
+
+.enhancedAvatarBox img {
+  object-fit: cover;
+  width: 60px;
+  height: 60px;
+}
+
+.enhancedProfileInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.enhancedRoleTag {
+  font-size: 9px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--themeColor);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.enhancedProfileName {
+  font-size: 13px;
+  font-family: var(--fontGraphik);
+  color: var(--black);
+}
+
+.enhancedProfilePhone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--gray);
+  font-family: var(--fontGraphik);
+}
+
+.enhancedPhoneLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.enhancedPhoneLink:hover {
+  text-decoration: underline;
+}
+
+.enhancedRatingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: #0ab39c10;
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
+.ratingText {
+  font-size: 12px;
+  font-family: var(--fontGraphikBold);
+  color: var(--textSuccess);
+}
