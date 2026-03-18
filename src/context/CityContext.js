@@ -2,6 +2,47 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getCityFirebaseConfig } from "../configurations/cityDBConfig";
 import { connectFirebase } from "../firebase/firebaseService";
+import axios from "axios";
+
+// CityDetails.json — Firebase Storage se fetch hota hai (ek baar, phir cache)
+const CITY_DETAILS_URL =
+  "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
+
+let _cityDetailsCache = null;
+
+const getMonitoringFirebaseConfig = async (city) => {
+  if (!_cityDetailsCache) {
+    try {
+      const res = await axios.get(CITY_DETAILS_URL);
+      _cityDetailsCache = res.data || [];
+    } catch {
+      _cityDetailsCache = [];
+    }
+  }
+  const normalizedCity = city?.toString()?.trim()?.toLowerCase();
+  const detail = _cityDetailsCache.find(
+    (item) =>
+      item?.city?.toString()?.trim()?.toLowerCase() === normalizedCity ||
+      item?.cityName?.toString()?.trim()?.toLowerCase() === normalizedCity
+  );
+  if (detail) {
+    const {
+      apiKey, authDomain, databaseURL, projectId, storageBucket,
+      messagingSenderId, appId, firebaseStoragePath, storageCity, latLng,
+    } = detail;
+
+    // Storage info localStorage mein save karo — getWards ke liye zaruri
+    const storagePath = firebaseStoragePath ||
+      `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/`;
+    localStorage.setItem("storagePath", storagePath);
+    localStorage.setItem("storageCity", storageCity || "");
+    localStorage.setItem("cityLatLng", latLng || "");
+
+    return { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId };
+  }
+  // Fallback to .env config
+  return getCityFirebaseConfig(city);
+};
 
 const CityContext = createContext();
 
@@ -22,16 +63,25 @@ export const CityProvider = ({ children }) => {
 
   useEffect(() => {
     const { city, cityId, cityLogo } = cityState;
-    const isMonitoringRoute = location.pathname === "/d2dMonitoring/monitoring"
-    const firebaseCity = isMonitoringRoute ? "Sikar" : city;
 
     localStorage.setItem("city", city);
     localStorage.setItem("cityId", cityId);
     localStorage.setItem("logoUrl", cityLogo);
 
-    // Keep Monitoring page pinned to Sikar Firebase.
-    const firebaseConfig = getCityFirebaseConfig(firebaseCity);
-    connectFirebase(firebaseConfig, firebaseCity);
+    // Route: /:city/d2dMonitoring/monitoring — city URL param se dynamic Firebase
+    const monitoringMatch = location.pathname.match(/^\/([^/]+)\/d2dMonitoring\/monitoring/);
+    const monitoringCity = monitoringMatch?.[1];
+
+    if (monitoringCity) {
+      // CityDetails.json se config fetch karo
+      getMonitoringFirebaseConfig(monitoringCity).then((firebaseConfig) => {
+        connectFirebase(firebaseConfig, monitoringCity);
+      });
+    } else {
+      // Normal flow — .env se config
+      const firebaseConfig = getCityFirebaseConfig(city);
+      connectFirebase(firebaseConfig, city);
+    }
 
     // Update browser title
     // document.title = `D2D : ${city}`;

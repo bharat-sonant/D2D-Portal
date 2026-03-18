@@ -2,35 +2,42 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { Maximize2, Minimize2 } from "lucide-react";
-//ward boundaries for ward 1 to 5
-import ward1Boundary from "../../../assets/Sikar/WardBoundaries/1.json";
-import ward2Boundary from "../../../assets/Sikar/WardBoundaries/2.json";
-import ward3Boundary from "../../../assets/Sikar/WardBoundaries/3.json";
-import ward4Boundary from "../../../assets/Sikar/WardBoundaries/4.json";
-import ward5Boundary from "../../../assets/Sikar/WardBoundaries/5.json";
-//ward lines for ward 1 to 5
-import ward1Line from '../../../assets/Sikar/WardLines/1.json';
-import ward2Line from '../../../assets/Sikar/WardLines/2.json';
-import ward3Line from '../../../assets/Sikar/WardLines/3.json';
-import ward4Line from '../../../assets/Sikar/WardLines/4.json';
-import ward5Line from '../../../assets/Sikar/WardLines/5.json';
+import axios from "axios";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import { getLineColorByStatus } from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import { getWardBoundaryFromStorage, getWardLinesFromStorage } from "../../Services/WardsService/WardMapService";
+import { calculateWardLineLengthInMeter } from "../../../common/common";
 
-const wardBoundariesById = {
-    1: ward1Boundary,
-    2: ward2Boundary,
-    3: ward3Boundary,
-    4: ward4Boundary,
-    5: ward5Boundary,
+const CITY_DETAILS_URL =
+    "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
+
+let _cityDetailsCache = null;
+
+const fetchCityDetails = async () => {
+    if (_cityDetailsCache) return _cityDetailsCache;
+    try {
+        const res = await axios.get(CITY_DETAILS_URL);
+        _cityDetailsCache = res.data || [];
+    } catch {
+        _cityDetailsCache = [];
+    }
+    return _cityDetailsCache;
 };
 
-const wardLinesById = {
-    1: ward1Line,
-    2: ward2Line,
-    3: ward3Line,
-    4: ward4Line,
-    5: ward5Line
+const getCityStorageInfo = async (city) => {
+    const cityDetails = await fetchCityDetails();
+    const normalizedCity = city?.trim()?.toLowerCase();
+    const detail = cityDetails.find(
+        (item) =>
+            item?.city?.toString()?.trim()?.toLowerCase() === normalizedCity ||
+            item?.cityName?.toString()?.trim()?.toLowerCase() === normalizedCity
+    );
+    if (!detail) return null;
+    return {
+        cityName: detail.cityName,
+        storagePath: detail.firebaseStoragePath ||
+            `https://firebasestorage.googleapis.com/v0/b/${detail.storageBucket}/o/`,
+    };
 };
 
 const DEFAULT_LINE_STYLE = {
@@ -61,26 +68,58 @@ const getElementFrame = (element) => {
     };
 };
 
-const MapSection = ({ selectedWard, onWardLengthResolved, lineStatusByLine = {}, focusLocation = null }) => {
+const MapSection = ({ city, selectedWard, onWardLengthResolved, lineStatusByLine = {}, focusLocation = null }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMapAnimating, setIsMapAnimating] = useState(false);
     const [fullscreenFrame, setFullscreenFrame] = useState(null);
     const [mapPlaceholderHeight, setMapPlaceholderHeight] = useState(0);
+    const [boundaryJson, setBoundaryJson] = useState(null);
+    const [linesGeoJson, setLinesGeoJson] = useState(null);
     const mapRef = useRef(null);
     const mapSectionRef = useRef(null);
     const mapAnimationTimerRef = useRef(null);
     const mapContainerStyle = { width: "100%", height: "100%" };
     const defaultCenter = { lat: 27.625, lng: 75.13 };
 
-    const { wardBoundary, selectedWardLinePaths, selectedWardLengthInMeter } = useMemo(
-        () =>
-            action.getSelectedWardMapData({
-                wardId: selectedWard?.id,
-                wardBoundariesById,
-                wardLinesById,
-            }),
-        [selectedWard?.id],
+    // Selected ward badlne par boundary + lines fetch karo
+    useEffect(() => {
+        if (!city || !selectedWard?.id) return;
+        setBoundaryJson(null);
+        setLinesGeoJson(null);
+
+        getCityStorageInfo(city).then((info) => {
+            console.log("MapSection city info:", info, "| wardId:", selectedWard.id);
+            if (!info) { console.warn("MapSection: city not found in CityDetails"); return; }
+            const { storagePath, cityName } = info;
+
+            getWardBoundaryFromStorage(storagePath, cityName, selectedWard.id)
+                .then((res) => {
+                    console.log("Boundary response:", res);
+                    if (res?.status === "Success") setBoundaryJson(res.data);
+                });
+
+            getWardLinesFromStorage(storagePath, cityName, selectedWard.id)
+                .then((res) => {
+                    console.log("Lines response:", res);
+                    if (res?.status === "Success") setLinesGeoJson(res.data);
+                });
+        });
+    }, [city, selectedWard?.id]);
+
+    const wardBoundary = useMemo(
+        () => action.getBoundaryPathFromWardBoundaryJson(boundaryJson),
+        [boundaryJson],
+    );
+
+    const selectedWardLinePaths = useMemo(
+        () => action.getLinePathsFromGeoJson(linesGeoJson),
+        [linesGeoJson],
+    );
+
+    const selectedWardLengthInMeter = useMemo(
+        () => calculateWardLineLengthInMeter(linesGeoJson),
+        [linesGeoJson],
     );
 
     useEffect(() => {

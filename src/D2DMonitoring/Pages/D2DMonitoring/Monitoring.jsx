@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
@@ -39,12 +40,8 @@ import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSectio
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
 import StateItem from "../../Components/D2DMonitoring/StateItem";
-import ward1Line from "../../../assets/Sikar/WardLines/1.json";
-import ward2Line from "../../../assets/Sikar/WardLines/2.json";
-import ward3Line from "../../../assets/Sikar/WardLines/3.json";
-import ward4Line from "../../../assets/Sikar/WardLines/4.json";
-import ward5Line from "../../../assets/Sikar/WardLines/5.json";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
@@ -65,13 +62,6 @@ import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCove
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
-const wardLinesById = {
-  1: ward1Line,
-  2: ward2Line,
-  3: ward3Line,
-  4: ward4Line,
-  5: ward5Line,
-};
 
 const toTitleCase = (value = "") =>
   String(value)
@@ -172,13 +162,16 @@ const getJourneyKindMeta = (kind = "") => {
 };
 
 const MonitoringList = () => {
-  const [wardList] = useState([
-    { id: 1, name: "Ward 1", progress: 25 },
-    { id: 2, name: "Ward 2", progress: 40 },
-    { id: 3, name: "Ward 3", progress: 65 },
-    { id: 4, name: "Ward 4", progress: 80 },
-    { id: 5, name: "Ward 5", progress: 95 },
-  ]);
+  const { city } = useParams();
+  const [wardList, setWardList] = useState([]);
+
+  useEffect(() => {
+    if (!city) return;
+    getWardListAction(city).then((wards) => {
+      setWardList(wards);
+      if (wards.length > 0) setSelectedWard(wards[0]);
+    });
+  }, [city]);
   const remarkTopicOptions = [
     "Performance Issue",
     "Route Observation",
@@ -188,7 +181,7 @@ const MonitoringList = () => {
     "Other",
   ];
 
-  const [selectedWard, setSelectedWard] = useState(wardList[0]);
+  const [selectedWard, setSelectedWard] = useState(null);
   const [lastRefreshed, setLastRefreshed] = useState(
     dayjs().format("DD MMM, hh:mm A"),
   );
@@ -709,10 +702,7 @@ const MonitoringList = () => {
     [lineStatusByWard, selectedWard?.id],
   );
 
-  const wardLengthMetrics = React.useMemo(() => {
-    const selectedWardLineGeoJson = wardLinesById[selectedWard?.id];
-    return action.getWardLengthMetrics(selectedWardLineGeoJson);
-  }, [selectedWard?.id]);
+  const wardLengthMetrics = { totalMeter: 0, lineLengthMeterById: {} };
 
   const completedLengthKm = React.useMemo(() => {
     return action.getCompletedLengthKm(
@@ -834,6 +824,7 @@ const MonitoringList = () => {
                 /> */}
 
                 <MapSection
+                  city={city}
                   selectedWard={selectedWard}
                   onWardLengthResolved={setSelectedWardLengthInMeter}
                   lineStatusByLine={currentWardLineStatus}
