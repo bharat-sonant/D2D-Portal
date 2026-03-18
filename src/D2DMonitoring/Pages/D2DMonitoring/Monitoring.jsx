@@ -61,6 +61,9 @@ import VehicleJourneyModal from "../../Components/D2DMonitoring/Modals/VehicleJo
 import TripExecutionModal from "../../Components/D2DMonitoring/Modals/TripExecutionModal/TripExecutionModal";
 import VehicleAssignmentModal from "../../Components/D2DMonitoring/Modals/VehicleAssignmentModal/VehicleAssignmentModal";
 import RemarkFormModal from "../../Components/D2DMonitoring/Modals/RemarkFormModal/RemarkFormModal";
+import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
+import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
+import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
 const wardLinesById = {
   1: ward1Line,
@@ -807,7 +810,7 @@ const MonitoringList = () => {
                 />
               </div>
               <div className={styles.mapColumn}>
-                <MonitoringCard
+                {/* <MonitoringCard
                   title="Zone Coverage"
                   icon={<Activity size={18} />}
                   className={styles.fullWidthZoneCard}
@@ -815,7 +818,12 @@ const MonitoringList = () => {
                   <div className={styles.statsFourAcross}>
                     <StateItem items={stateItems} />
                   </div>
-                </MonitoringCard>
+                </MonitoringCard> */}
+
+                {/* ── UI Variants for comparison ── */}
+                <ZoneCoverageV2 items={stateItems} />
+                {/* <ZoneCoverageV3 items={stateItems} /> */}
+                {/* <ZoneCoverageV4 items={stateItems} /> */}
 
                 {/* <LiquidCoverageTracker
                   liquidCoveragePercent={liquidCoveragePercent}
