@@ -23,7 +23,7 @@ const DutyComparisonReplica = ({ data, onVehicleClick }) => {
   return (
     <MonitoringCard
       title="Heroes on Duty"
-      headerRight={<span className={styles.heroReplicaFieldPill}><UserStar size={14} /></span>}
+      icon={<UserStar size={16} />}
       noPadding={true}
     >
       <div className={styles.heroReplicaCrewGrid}>

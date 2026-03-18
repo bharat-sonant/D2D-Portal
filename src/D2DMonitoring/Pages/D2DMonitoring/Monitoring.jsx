@@ -50,6 +50,7 @@ import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplic
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 
 // Component imports
+import MonitoringCard from "../../Components/D2DMonitoring/Common/MonitoringCard/MonitoringCard";
 import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
 import LiveStatusBoard from "../../Components/D2DMonitoring/LiveStatusBoard/LiveStatusBoard";
 import LiquidCoverageTracker from "../../Components/D2DMonitoring/LiquidCoverageTracker/LiquidCoverageTracker";
@@ -60,6 +61,9 @@ import VehicleJourneyModal from "../../Components/D2DMonitoring/Modals/VehicleJo
 import TripExecutionModal from "../../Components/D2DMonitoring/Modals/TripExecutionModal/TripExecutionModal";
 import VehicleAssignmentModal from "../../Components/D2DMonitoring/Modals/VehicleAssignmentModal/VehicleAssignmentModal";
 import RemarkFormModal from "../../Components/D2DMonitoring/Modals/RemarkFormModal/RemarkFormModal";
+import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
+// import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
+// import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
 const wardLinesById = {
   1: ward1Line,
@@ -806,13 +810,20 @@ const MonitoringList = () => {
                 />
               </div>
               <div className={styles.mapColumn}>
-                <div
-                  className={`${styles.glassCard} ${styles.fullWidthZoneCard}`}
+                {/* <MonitoringCard
+                  title="Zone Coverage"
+                  icon={<Activity size={18} />}
+                  className={styles.fullWidthZoneCard}
                 >
                   <div className={styles.statsFourAcross}>
                     <StateItem items={stateItems} />
                   </div>
-                </div>
+                </MonitoringCard> */}
+
+                {/* ── UI Variants for comparison ── */}
+                <ZoneCoverageV2 items={stateItems} />
+                {/* <ZoneCoverageV3 items={stateItems} /> */}
+                {/* <ZoneCoverageV4 items={stateItems} /> */}
 
                 {/* <LiquidCoverageTracker
                   liquidCoveragePercent={liquidCoveragePercent}

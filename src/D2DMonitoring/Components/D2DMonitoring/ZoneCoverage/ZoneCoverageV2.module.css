@@ -1,0 +1,332 @@
+@import "../../../../assets/css/variable.css";
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Head row ──────────────────────────────────────────── */
+.headRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.liveTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-family: var(--fontGraphikMedium);
+  color: #ff4b60;
+  background: #fff1f3;
+  border-radius: 999px;
+  padding: 4px 10px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  background: #ff4b60;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+.percentDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.percentBig {
+  font-size: 38px;
+  line-height: 1;
+  color: var(--themeColor);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.percentSym {
+  font-size: 17px;
+  color: #7d8bb2;
+  font-family: var(--fontGraphikMedium);
+}
+
+.percentSub {
+  font-size: 11px;
+  color: #9aa8bf;
+  font-family: var(--fontGraphik);
+  margin-left: 4px;
+}
+
+/* ── Endpoint anchor row ───────────────────────────────── */
+.anchorRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.anchor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.anchorRight {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.anchorVal {
+  font-size: 17px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.remainVal {
+  color: var(--themeColor);
+}
+
+.anchorLabel {
+  font-size: 9px;
+  color: #9aa8bf;
+  font-family: var(--fontGraphikMedium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Road track ────────────────────────────────────────── */
+.roadOuter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+
+.road {
+  position: relative;
+  height: 10px;
+  background: #cbd5e1;
+  border-radius: 30px;
+  overflow: visible;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.roadCompleted {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+  border-radius: 30px;
+  /* width animated by JS RAF — CSS transition removed to prevent double-animation overshoot */
+  transition: background 0.4s ease;
+}
+
+/* dashed center lane marking */
+.dashLine {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.25) 0,
+    rgba(255, 255, 255, 0.25) 14px,
+    transparent 14px,
+    transparent 26px
+  );
+  pointer-events: none;
+}
+
+.vehicleWrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-60%) translateX(-50%) scaleX(-1);
+  /* left animated by JS RAF — CSS transition removed to prevent spring overshoot */
+  z-index: 3;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
+  font-size: 18px;
+}
+
+.vehicleImg {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.roadMarkers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #9aa8bf;
+  font-family: var(--fontGraphikMedium);
+  letter-spacing: 0.3px;
+  padding: 0 3px;
+}
+
+/* ── Stats grid ────────────────────────────────────────── */
+.statsGrid {
+  display: flex;
+  gap: 8px;
+}
+
+.statBox {
+  flex: 1;
+  background: var(--whitefa, #f8f9fc);
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statLabel {
+  font-size: 9px;
+  color: #9aa8bf;
+  font-family: var(--fontGraphikMedium);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.statVal {
+  font-size: 13px;
+  color: var(--black);
+  font-family: var(--fontGraphikSemibold);
+}
+
+.doneVal {
+  color: #16a34a;
+}
+
+.leftVal {
+  color: var(--themeColor);
+}
+
+.statBoxDone {
+  border-color: rgba(22, 163, 74, 0.25);
+  background: rgba(22, 163, 74, 0.05);
+}
+
+.statBoxLeft {
+  border-color: rgba(63, 94, 251, 0.2);
+  background: rgba(63, 94, 251, 0.04);
+}
+
+/* ── Anchor value colours ──────────────────────────────── */
+.doneAnchorVal {
+  color: #16a34a;
+}
+
+/* ── Remaining bottom strip ────────────────────────────── */
+.remainingStrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgb(248 250 252);
+  border: 1px solid rgba(63, 94, 251, 0.18);
+  border-radius: 6px;
+  padding: 7px 11px;
+}
+
+.remainingIcon {
+  color: var(--themeColor);
+  flex-shrink: 0;
+}
+
+.stripLabel {
+  font-size: 10px;
+  color: #9aa8bf;
+  font-family: var(--fontGraphikMedium);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  flex: 1;
+}
+
+.remainingVal {
+  font-size: 15px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--themeColor);
+}
+
+/* ── Badge row: dedicated space so badge never overlaps ─── */
+.badgeRow {
+  position: relative;
+  /* height: 34px; */
+}
+
+/* ── Floating % badge — hidden, shown on track hover ──── */
+.pctBadgeWrap {
+  position: absolute;
+  bottom: 0;                      /* sits at bottom of badgeRow, just above road */
+  transform: translateX(-50%);
+  /* left is set inline by JS RAF — no CSS left transition */
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.roadOuter:hover .pctBadgeWrap {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pctBadge {
+  background: var(--themeColor);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 9px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  box-shadow: 0 3px 10px rgba(63, 94, 251, 0.35);
+  white-space: nowrap;
+}
+
+.pctNum {
+  font-size: 13px;
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+}
+
+.pctSub {
+  font-size: 9px;
+  font-family: var(--fontGraphikMedium);
+  opacity: 0.8;
+}
+
+.pctBadgeTail {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--themeColor);
+}
+
+
+/* ── Animations ────────────────────────────────────────── */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.65); }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .percentBig { font-size: 28px; }
+  .statsGrid  { flex-direction: column; }
+}

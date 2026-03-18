@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./HaltSummaryReplica.module.css";
 import { MoveUpRight, Pause, X, MapPin, BarChart3, Pin, ChevronRight } from "lucide-react";
+import MonitoringCard from "../../D2DMonitoring/Components/D2DMonitoring/Common/MonitoringCard/MonitoringCard";
 
 const breakLogs = [
   {
@@ -271,14 +272,11 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
 
   return (
     <>
-      <section className={styles.card} aria-label="Halt Summary">
-        <div className={styles.headerRow}>
-          <h4 className={styles.title}>Halt Summary</h4>
-          <span className={styles.iconWrap}>
-            <MoveUpRight size={13} strokeWidth={2.1} />
-          </span>
-        </div>
-
+      <MonitoringCard
+        title="Halt Summary"
+        icon={<MoveUpRight size={16} />}
+        noPadding={true}
+      >
         <div className={styles.section}>
           <div className={styles.timelineHead}>
             <span className={styles.sectionTitle}>TIMELINE</span>
@@ -380,7 +378,7 @@ const HaltSummaryReplica = ({ onMapFocusChange }) => {
       <ChevronRight size={10} />
           </div>
         </button>
-      </section>
+      </MonitoringCard>
 
       {!!activeModalType && (
         <div className={styles.overlay} onClick={closeModal}>
