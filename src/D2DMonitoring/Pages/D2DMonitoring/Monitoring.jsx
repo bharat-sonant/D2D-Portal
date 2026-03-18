@@ -13,7 +13,6 @@ import {
   ChevronUp,
   User as UserIcon,
   Phone,
-  X,
   MapPin,
   Fuel,
   Wrench,
@@ -843,47 +842,18 @@ const MonitoringList = () => {
       {/* Modals */}
       {(activeStatusModal || showRemarkModal || showVehicleModal) && (
         <div className={styles.modalOverlay} onClick={closeAllModals}>
-          <div
-            className={`${styles.modalContent} ${showVehicleModal ? styles.vehicleIssueModal : ""} ${
-              activeStatusModal === "app" ? styles.appStatusModal : ""
-            } ${activeStatusModal === "app" ? styles.appStatusModalPlain : ""} ${
-              activeStatusModal === "vehicle" || activeStatusModal === "trips"
-                ? styles.vehicleJourneyModalShell
-                : ""
-            } ${activeStatusModal === "trips" ? styles.tripExecutionModalShell : ""}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {activeStatusModal !== "app" &&
-              activeStatusModal !== "vehicle" &&
-              activeStatusModal !== "trips" && (
-                <div className={styles.modalHeader}>
-                  <h3>
-                    {showVehicleModal
-                      ? "Vehicle Assignment Desk"
-                      : activeStatusModal === "vehicle"
-                        ? "Logistics Diagnostic"
-                        : activeStatusModal === "trips"
-                          ? "Trip Execution"
-                          : editingRemarkId
-                            ? "Edit Field Query"
-                            : "Add Field Query"}
-                  </h3>
-                  <button
-                    className={styles.modalCloseBtn}
-                    onClick={closeAllModals}
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-              )}
-
-            {showVehicleModal ? (
-              <VehicleAssignmentModal
-                vehicleIssueRows={vehicleIssueRows}
-                onRowChange={handleVehicleIssueRowChange}
-                onSubmit={closeAllModals}
-              />
-            ) : activeStatusModal === "app" ? (
+          {showVehicleModal ? (
+            <VehicleAssignmentModal
+              vehicleIssueRows={vehicleIssueRows}
+              onRowChange={handleVehicleIssueRowChange}
+              onSubmit={closeAllModals}
+              onClose={closeAllModals}
+            />
+          ) : activeStatusModal === "app" ? (
+            <div
+              className={`${styles.modalContent} ${styles.appStatusModal} ${styles.appStatusModalPlain}`}
+              onClick={(e) => e.stopPropagation()}
+            >
               <AppStatusModal
                 appSessionLogs={appSessionLogs}
                 appOpenedCount={appOpenedCount}
@@ -895,49 +865,49 @@ const MonitoringList = () => {
                 onTabChange={setAppStatusTab}
                 onClose={closeAllModals}
               />
-            ) : activeStatusModal === "trips" ? (
-              <TripExecutionModal
-                wardData={wardData}
-                tripCompleted={tripCompleted}
-                tripActive={tripActive}
-                onClose={closeAllModals}
-              />
-            ) : activeStatusModal === "vehicle" ? (
-              <VehicleJourneyModal
-                wardData={wardData}
-                vehicleJourneyMeta={vehicleJourneyMeta}
-                routeQuickStats={routeQuickStats}
-                routeSnapshotRows={routeSnapshotRows}
-                routeSnapshotView={routeSnapshotView}
-                summaryText={summaryText}
-                onRouteSnapshotViewToggle={() =>
-                  setRouteSnapshotView((prev) =>
-                    prev === "detail" ? "compact" : "detail",
-                  )
-                }
-                onClose={closeAllModals}
-              />
-            ) : (
-              <RemarkFormModal
-                remarkForm={remarkForm}
-                editingRemarkId={editingRemarkId}
-                showTopicDropdown={showTopicDropdown}
-                remarkTopicOptions={remarkTopicOptions}
-                onTopicDropdownToggle={() =>
-                  setShowTopicDropdown(!showTopicDropdown)
-                }
-                onTopicSelect={(item) => {
-                  setRemarkForm({ ...remarkForm, topic: item });
-                  setShowTopicDropdown(false);
-                }}
-                onDescriptionChange={(value) =>
-                  setRemarkForm({ ...remarkForm, description: value })
-                }
-                onSubmit={handleRemarkSubmit}
-                onClose={closeAllModals}
-              />
-            )}
-          </div>
+            </div>
+          ) : activeStatusModal === "trips" ? (
+            <TripExecutionModal
+              wardData={wardData}
+              tripCompleted={tripCompleted}
+              tripActive={tripActive}
+              onClose={closeAllModals}
+            />
+          ) : activeStatusModal === "vehicle" ? (
+            <VehicleJourneyModal
+              wardData={wardData}
+              vehicleJourneyMeta={vehicleJourneyMeta}
+              routeQuickStats={routeQuickStats}
+              routeSnapshotRows={routeSnapshotRows}
+              routeSnapshotView={routeSnapshotView}
+              summaryText={summaryText}
+              onRouteSnapshotViewToggle={() =>
+                setRouteSnapshotView((prev) =>
+                  prev === "detail" ? "compact" : "detail",
+                )
+              }
+              onClose={closeAllModals}
+            />
+          ) : (
+            <RemarkFormModal
+              remarkForm={remarkForm}
+              editingRemarkId={editingRemarkId}
+              showTopicDropdown={showTopicDropdown}
+              remarkTopicOptions={remarkTopicOptions}
+              onTopicDropdownToggle={() =>
+                setShowTopicDropdown(!showTopicDropdown)
+              }
+              onTopicSelect={(item) => {
+                setRemarkForm({ ...remarkForm, topic: item });
+                setShowTopicDropdown(false);
+              }}
+              onDescriptionChange={(value) =>
+                setRemarkForm({ ...remarkForm, description: value })
+              }
+              onSubmit={handleRemarkSubmit}
+              onClose={closeAllModals}
+            />
+          )}
         </div>
       )}
     </div>

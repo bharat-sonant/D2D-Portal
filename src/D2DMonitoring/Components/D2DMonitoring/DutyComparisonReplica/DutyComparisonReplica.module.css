@@ -1,51 +1,4 @@
-.glassCard {
-  background: #fff;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.glassCard:hover {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
-}
-
-.heroReplicaCard {
-  padding: 0;
-  border: 1px solid var(--borderColor);
-}
-
-.heroReplicaHead {
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-}
-
-.heroReplicaTitleWrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.heroReplicaTitleWrap h4 {
-  margin: 0;
-  font-size: 15px;
-  color: var(--black);
-  font-family: var(--fontGraphikMedium);
-}
-
-.heroReplicaTitleWrap p {
-  margin: 2px 0 0;
-  font-size: 10px;
-  color: var(--regularColor);
-  font-family: var(--fontGraphik);
-  line-height: 1.2;
-}
+/* DutyComparisonReplica – internal styles only (card shell from MonitoringCard) */
 
 .heroReplicaFieldPill {
   width: 26px;
@@ -219,9 +172,10 @@
   color: #60708a;
   font-family: var(--fontGraphikSemibold);
 }
-
+.cardFooter{
+  padding: 10px;
+}
 .heroReplicaVehicleRow {
-  margin: 10px;
   border-radius: 6px;
   border: 1px solid var(--borderColor);
   background-color: var(--white);
@@ -231,6 +185,7 @@
   justify-content: space-between;
   gap: 8px;
   color: var(--black);
+  width: 100%;
 }
 
 .heroReplicaVehicleRow:hover {

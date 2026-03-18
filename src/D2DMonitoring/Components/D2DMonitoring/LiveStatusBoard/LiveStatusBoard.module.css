@@ -1,48 +1,9 @@
-.glassCard {
-  background: #fff;
-  border-radius: 6px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.glassCard:hover {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
-}
-
-.statusUnifiedCard {
-  gap: 8px;
-}
-
-.cardHeading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.cardHeading h3 {
-  font-size: 15px;
-  color: var(--black);
-  font-family: var(--fontGraphikMedium);
-  margin: 0;
-}
-
-.cardHeadingActions {
-  display: flex;
-  gap: 8px;
-}
-
-.cardBody {
-  border-radius: 6px;
-}
+/* LiveStatusBoard – internal styles only (card shell from MonitoringCard) */
 
 .liveStatusGrid {
   display: flex;
+  flex-direction: column;
   gap: 6px;
-  flex-flow: column;
 }
 
 .liveBoardCard {
@@ -112,14 +73,6 @@
   margin-left: 4px;
 }
 
-.toneSuccess {
-  color: var(--textSuccess) !important;
-}
-
-.toneDanger {
-  color: var(--textDanger) !important;
-}
-
-.toneWarning {
-  color: var(--warning) !important;
-}
+.toneSuccess { color: var(--textSuccess) !important; }
+.toneDanger  { color: var(--textDanger)  !important; }
+.toneWarning { color: var(--warning)     !important; }

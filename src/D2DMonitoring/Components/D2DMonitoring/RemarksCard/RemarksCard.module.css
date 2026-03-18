@@ -1,36 +1,4 @@
-.glassCard {
-  background: #fff;
-  border-radius: 6px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.glassCard:hover {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  transform: translateY(-1px);
-}
-
-.remarksHeadRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.remarksHeadLeft {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.remarksHeadTitle {
-  font-size: 15px;
-  font-family: var(--fontGraphikMedium);
-  color: var(--black);
-}
+/* RemarksCard – internal styles only (card shell from MonitoringCard) */
 
 .addRemarkBtn {
   border: 1px solid var(--themeColor);
