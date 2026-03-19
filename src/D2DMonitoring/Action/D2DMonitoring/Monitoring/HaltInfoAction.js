@@ -10,7 +10,6 @@ export const getHaltInfo = (ward, setHaltData) => {
         const date = dayjs().format("YYYY-MM-DD");
 
         getHaltInfoFromDB(year, month, date, ward).then((response) => {
-            console.log(response,"Hello")
             if (response.status === "Success") {
                 setHaltData(response.data);
             } else {
