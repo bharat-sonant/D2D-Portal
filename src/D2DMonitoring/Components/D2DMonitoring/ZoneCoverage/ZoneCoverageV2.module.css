@@ -151,11 +151,11 @@
 .vehicleWrap {
   position: absolute;
   top: 50%;
-  transform: translateY(-60%) translateX(-50%) scaleX(-1);
+  transform: translateY(-66%) translateX(-50%) scaleX(-1);
   /* left animated by JS RAF — CSS transition removed to prevent spring overshoot */
   z-index: 3;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
-  font-size: 18px;
+  font-size: 25px;
 }
 
 .vehicleImg {
@@ -268,7 +268,7 @@
 /* ── Floating % badge — hidden, shown on track hover ──── */
 .pctBadgeWrap {
   position: absolute;
-  bottom: 0;                      /* sits at bottom of badgeRow, just above road */
+  bottom: 7px;                      /* sits at bottom of badgeRow, just above road */
   transform: translateX(-50%);
   /* left is set inline by JS RAF — no CSS left transition */
   transition: opacity 0.2s ease, visibility 0.2s ease;

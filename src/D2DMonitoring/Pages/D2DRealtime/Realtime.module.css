@@ -913,6 +913,19 @@
   flex-shrink: 0;
 }
 
+/* ── Above-map row: Zone Coverage (left) + Shift Timeline (right) ── */
+.aboveMapRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+.aboveMapRow > * {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0 !important;
+}
+
 .liquidTankCard {
   padding: 0;
   overflow: hidden;
@@ -2311,6 +2324,7 @@ background-color: #2898ca10;
 
 .mapSectionShell {
   position: relative;
+  margin-bottom: 10px;
 }
 
 .mapCardFullscreen {

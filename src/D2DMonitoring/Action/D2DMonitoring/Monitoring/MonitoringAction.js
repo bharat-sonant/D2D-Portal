@@ -160,6 +160,19 @@ export const getCompletedLengthKm = (currentWardLineStatus, wardLengthMetrics) =
     return Math.max(completedMeter / 1000, 0);
 };
 
+export const getLineCounts = (wardLengthMetrics, currentWardLineStatus) => {
+    const lineIds = Object.keys(wardLengthMetrics?.lineLengthMeterById || {});
+    const total = lineIds.length;
+    let completed = 0;
+    let skipped = 0;
+    lineIds.forEach((lineId) => {
+        const status = normalizeStatus(currentWardLineStatus?.[lineId]);
+        if (COMPLETED_STATUSES.has(status)) completed++;
+        else if (status === "skipped") skipped++;
+    });
+    return { total, completed, skipped, pending: Math.max(total - completed - skipped, 0) };
+};
+
 export const getTotalWardLengthKm = (wardLengthMetrics, selectedWardLengthInMeter) => {
     const staticTotalKm = Math.max(toFiniteNumber(wardLengthMetrics?.totalMeter, 0) / 1000, 0);
     if (staticTotalKm > 0) return staticTotalKm;

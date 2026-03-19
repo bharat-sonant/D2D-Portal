@@ -17,7 +17,7 @@ import {
 import dayjs from "dayjs";
 // import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
-import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
+
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
@@ -37,7 +37,9 @@ import VehicleJourneyModal from "../../Components/D2DMonitoring/Modals/VehicleJo
 import TripExecutionModal from "../../Components/D2DMonitoring/Modals/TripExecutionModal/TripExecutionModal";
 import VehicleAssignmentModal from "../../Components/D2DMonitoring/Modals/VehicleAssignmentModal/VehicleAssignmentModal";
 import RemarkFormModal from "../../Components/D2DMonitoring/Modals/RemarkFormModal/RemarkFormModal";
+
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
+import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
@@ -647,6 +649,11 @@ const MonitoringList = () => {
     );
   }, [currentWardLineStatus, wardLengthMetrics]);
 
+  const lineCounts = React.useMemo(
+    () => action.getLineCounts(wardLengthMetrics, currentWardLineStatus),
+    [wardLengthMetrics, currentWardLineStatus],
+  );
+
   const totalWardLengthKm = React.useMemo(() => {
     return action.getTotalWardLengthKm(
       wardLengthMetrics,
@@ -730,7 +737,11 @@ const MonitoringList = () => {
           <div className={styles.dataRight}>
             <div className={styles.dataRightBottom}>
               <div className={styles.centerColumn}>
-                <CompletionDashboard />
+                <CompletionDashboard
+                  totalLines={lineCounts.total}
+                  completedLines={lineCounts.completed}
+                  skippedLines={lineCounts.skipped}
+                />
 
                 <LiveStatusBoard
                   wardData={wardData}
@@ -760,18 +771,7 @@ const MonitoringList = () => {
                   </div>
                 </MonitoringCard> */}
 
-                {/* ── UI Variants for comparison ── */}
                 <ZoneCoverageV2 items={stateItems} />
-                {/* <ZoneCoverageV3 items={stateItems} /> */}
-                {/* <ZoneCoverageV4 items={stateItems} /> */}
-
-                {/* <LiquidCoverageTracker
-                  liquidCoveragePercent={liquidCoveragePercent}
-                  liquidTotalKm={liquidTotalKm}
-                  liquidCoveredKm={liquidCoveredKm}
-                  liquidLeftKm={liquidLeftKm}
-                  liquidTrackFillWidth={liquidTrackFillWidth}
-                /> */}
 
                 <MapSection
                   city={city}
@@ -781,6 +781,7 @@ const MonitoringList = () => {
                   lineStatusByLine={currentWardLineStatus}
                   focusLocation={mapFocus}
                 />
+
                 <ShiftStatusSection
                   events={currentShiftEvents}
                   activeConnectorIndex={1}

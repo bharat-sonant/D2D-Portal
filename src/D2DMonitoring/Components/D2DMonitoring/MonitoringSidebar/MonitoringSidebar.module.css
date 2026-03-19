@@ -99,7 +99,7 @@
 
 .wardPrimaryName {
   font-size: 12px;
-  font-family: var(--fontGraphikMedium);
+  font-family: var(--fontGraphik);
   color: var(--black);
   white-space: nowrap;
   overflow: hidden;
