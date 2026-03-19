@@ -603,6 +603,15 @@
   gap: 10px;
 }
 
+.breakListScrollable {
+  padding: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
 .breakTimelineWrap {
   position: relative;
   padding-left: 26px;
