@@ -732,7 +732,10 @@ const MonitoringList = () => {
               onVehicleClick={() => setShowVehicleModal(true)}
             />
 
-            <HaltSummaryReplica onMapFocusChange={setMapFocus} />
+            <HaltSummaryReplica
+              onMapFocusChange={setMapFocus}
+              ward={selectedWard?.id}
+            />
           </div>
           <div className={styles.dataRight}>
             <div className={styles.dataRightBottom}>
