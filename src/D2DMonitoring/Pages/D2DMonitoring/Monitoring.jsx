@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -21,6 +21,7 @@ import MapSection from "../../Components/D2DMonitoring/MapSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
 import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
@@ -209,6 +210,12 @@ const MonitoringList = () => {
     { id: 3, vehicleNo: "COMP-9812", selected: false, reason: "" },
   ]);
 
+  const [liveVehicleStatus, setLiveVehicleStatus] = useState({
+    currentStatus: null,
+    eventLog: [],
+    quickSummary: {},
+  });
+
   const [wardData] = useState({
     vehicleStatus: "Dumping Yard out",
     trips: 2,
@@ -392,17 +399,27 @@ const MonitoringList = () => {
         );
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
-  const vehicleJourneyMeta = getVehicleJourneyMeta(wardData.vehicleStatus);
-  const vehicleJourneyData = wardData.vehicleJourney || {};
-  const quickSummary = vehicleJourneyData.quickSummary || {};
+
+  // Merge live vehicle status into wardData for display
+  const displayVehicleStatus = liveVehicleStatus.currentStatus || wardData.vehicleStatus;
+  const displayEventLog = liveVehicleStatus.eventLog.length > 0 ? liveVehicleStatus.eventLog : (wardData.vehicleJourney?.eventLog || []);
+  const displayQuickSummary = Object.keys(liveVehicleStatus.quickSummary).length > 0 ? liveVehicleStatus.quickSummary : (wardData.vehicleJourney?.quickSummary || {});
+
+  const vehicleJourneyMeta = getVehicleJourneyMeta(displayVehicleStatus);
+  const vehicleJourneyData = {
+    ...wardData.vehicleJourney,
+    eventLog: displayEventLog,
+    quickSummary: displayQuickSummary
+  };
+  const quickSummary = displayQuickSummary;
   const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
-  const eventLog = vehicleJourneyData.eventLog || [];
-  const statusSummaryText = String(wardData.vehicleStatus || "")
+  const eventLog = displayEventLog;
+  const statusSummaryText = String(displayVehicleStatus || "")
     .toLowerCase()
     .includes("dump")
     ? "outside dumping yard"
     : String(
-        vehicleJourneyMeta.title || wardData.vehicleStatus || "in transit",
+        vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
       ).toLowerCase();
 
   const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
@@ -430,6 +447,13 @@ const MonitoringList = () => {
       : vehicleJourneyMeta.tone === "success"
         ? "toneSuccess"
         : "toneWarning";
+
+  const displayWardData = {
+    ...wardData,
+    vehicleStatus: displayVehicleStatus,
+    vehicleJourney: vehicleJourneyData
+  };
+
   const routeQuickStats = [
     {
       key: "fuel",
@@ -501,6 +525,19 @@ const MonitoringList = () => {
       setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
       setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
       setIsWardMetricsLoading(false);
+    });
+
+    return unsubscribe;
+  }, [selectedWard?.id]);
+
+  useEffect(() => {
+    const wardId = selectedWard?.id;
+    if (!wardId) return;
+
+    console.log(`[Monitoring] Subscribing to live vehicle status for ward: ${wardId}`);
+    const unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(wardId, (data) => {
+      console.log("[Monitoring] Live Vehicle Status Updated:", data);
+      setLiveVehicleStatus(data);
     });
 
     return unsubscribe;
@@ -735,7 +772,7 @@ const MonitoringList = () => {
           <div className={styles.leftColumn}>
 
             <DutyComparisonReplica
-              data={wardData}
+              data={displayWardData}
               wardId={selectedWard?.id}
               onVehicleClick={() => setShowVehicleModal(true)}
             />
@@ -755,7 +792,7 @@ const MonitoringList = () => {
                 />
 
                 <LiveStatusBoard
-                  wardData={wardData}
+                  wardData={displayWardData}
                   vehicleTone={vehicleTone}
                   getTripStatusTone={getTripStatusTone}
                   appTone={appTone}
