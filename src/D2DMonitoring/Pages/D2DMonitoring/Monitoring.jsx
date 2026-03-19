@@ -37,6 +37,7 @@ import VehicleJourneyModal from "../../Components/D2DMonitoring/Modals/VehicleJo
 import TripExecutionModal from "../../Components/D2DMonitoring/Modals/TripExecutionModal/TripExecutionModal";
 import VehicleAssignmentModal from "../../Components/D2DMonitoring/Modals/VehicleAssignmentModal/VehicleAssignmentModal";
 import RemarkFormModal from "../../Components/D2DMonitoring/Modals/RemarkFormModal/RemarkFormModal";
+import DutyCheckModal from "../../Components/D2DMonitoring/Modals/DutyCheckModal/DutyCheckModal";
 
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
@@ -179,6 +180,7 @@ const MonitoringList = () => {
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
+  const [dutyModal, setDutyModal] = useState(null); // "dutyIn" | "dutyOff" | null
   const [remarks, setRemarks] = useState([]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
@@ -577,6 +579,12 @@ const MonitoringList = () => {
     setShowRemarkModal(false);
     setShowTopicDropdown(false);
     setAppStatusTab("all");
+    setDutyModal(null);
+  };
+
+  const handleShiftEventClick = (event) => {
+    if (event.key === "dutyOn")  setDutyModal("dutyIn");
+    if (event.key === "dutyOff") setDutyModal("dutyOff");
   };
 
   const handleRemarkSubmit = () => {
@@ -777,6 +785,7 @@ const MonitoringList = () => {
                   events={currentShiftEvents}
                   activeConnectorIndex={1}
                   showDutyInTime={showDutyInTime}
+                  onEventClick={handleShiftEventClick}
                 />
                 <MapSection
                   city={city}
@@ -792,6 +801,19 @@ const MonitoringList = () => {
           </div>
         </div>
       </div>
+
+      {/* Duty In / Duty Off Modal */}
+      {dutyModal && (
+        <div className={styles.modalOverlay} onClick={closeAllModals}>
+          <DutyCheckModal
+            type={dutyModal}
+            time={showDutyInTime}
+            wardName={selectedWard?.name}
+            onClose={closeAllModals}
+            onSubmit={closeAllModals}
+          />
+        </div>
+      )}
 
       {/* Modals */}
       {(activeStatusModal || showRemarkModal || showVehicleModal) && (

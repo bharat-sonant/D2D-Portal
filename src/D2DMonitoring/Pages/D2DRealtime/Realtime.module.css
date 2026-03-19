@@ -660,6 +660,8 @@
   font-size: 12px;
   color: #0f172a;
   font-family: var(--fontGraphikSemibold);
+  display: flex;
+    align-items: center;
 }
 
 .shiftEventTimePending {
@@ -694,6 +696,53 @@
 
 .shiftEventConnectorPending {
   background: repeating-linear-gradient(90deg, #cbd5e1 0 4px, #eef2f6 4px 8px);
+}
+
+/* ── Clickable shift events (Duty On / Duty Off) ── */
+.shiftEventClickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 2px 4px;
+  transition: background 0.18s ease;
+}
+/* .shiftEventClickable:hover {
+  background: rgba(63, 94, 251, 0.06);
+} */
+.shiftEventIconClickable {
+  position: relative;
+  overflow: visible;
+}
+/* ripple ring on hover */
+.shiftEventRipple {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid var(--themeColor, #3f5efb);
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.shiftEventClickable:hover .shiftEventRipple {
+  opacity: 0.5;
+  animation: ripplePulse 1.1s ease-out infinite;
+}
+@keyframes ripplePulse {
+  0%   { transform: scale(1);    opacity: 0.5; }
+  100% { transform: scale(1.7);  opacity: 0; }
+}
+/* always-visible arrow next to time on clickable events */
+.shiftEventArrow {
+  display: inline-block;
+  margin-left: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--themeColor, #3f5efb);
+  line-height: 1;
+  vertical-align: middle;
+  transition: transform 0.18s ease;
+}
+.shiftEventClickable:hover .shiftEventArrow {
+  transform: translateX(2px);
 }
 
 @keyframes pulseLive {
