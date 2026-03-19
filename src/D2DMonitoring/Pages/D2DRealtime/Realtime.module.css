@@ -563,6 +563,7 @@
 }
 
 .shiftTimelineCard {
+  margin-bottom: 10px;
   display: flex;
   align-items: flex-start;
   padding: 14px 16px;

@@ -773,6 +773,11 @@ const MonitoringList = () => {
 
                 <ZoneCoverageV2 items={stateItems} />
 
+                <ShiftStatusSection
+                  events={currentShiftEvents}
+                  activeConnectorIndex={1}
+                  showDutyInTime={showDutyInTime}
+                />
                 <MapSection
                   city={city}
                   selectedWard={selectedWard}
@@ -782,11 +787,6 @@ const MonitoringList = () => {
                   focusLocation={mapFocus}
                 />
 
-                <ShiftStatusSection
-                  events={currentShiftEvents}
-                  activeConnectorIndex={1}
-                  showDutyInTime={showDutyInTime}
-                />
               </div>
             </div>
           </div>
