@@ -396,7 +396,7 @@ const HaltSummaryReplica = ({ onMapFocusChange, ward }) => {
                 </div>
 
                 <h4 className={styles.modalSubTitle}>Break Log</h4>
-                <div className={styles.breakList}>
+                <div className={styles.breakListScrollable}>
                   {haltList.map((item) => (
                     <button
                       type="button"
