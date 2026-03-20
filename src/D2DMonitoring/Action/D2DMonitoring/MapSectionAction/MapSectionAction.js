@@ -79,20 +79,34 @@ export const fetchWardMapData = (city, wardId, setBoundaryJson, setLinesGeoJson)
  * Background prefetch — fills cache for all wards silently.
  * Call once after ward list loads; subsequent getWardLinesFromStorage calls return instantly.
  */
-export const prefetchAllWardLines = (city, wardList = [], onWardLinesReady = null) => {
+export const prefetchAllWardLines = async (city, wardList = [], onWardLinesReady = null) => {
     if (!city || !wardList.length) return;
-    getCityStorageInfo(city).then((info) => {
+    
+    try {
+        const info = await getCityStorageInfo(city);
         if (!info) return;
         const { cityName } = info;
-        wardList.forEach((ward) => {
-            if (!ward?.id) return;
-            getWardLinesFromStorage(cityName, ward.id).then((res) => {
-                if (res?.status === "Success" && typeof onWardLinesReady === "function") {
-                    onWardLinesReady(ward.id, res.data);
-                }
-            });
-        });
-    });
+        
+        const batchSize = 10;
+        for (let i = 0; i < wardList.length; i += batchSize) {
+            const batch = wardList.slice(i, i + batchSize);
+            await Promise.all(
+                batch.map(async (ward) => {
+                    if (!ward?.id) return;
+                    try {
+                        const res = await getWardLinesFromStorage(cityName, ward.id);
+                        if (res?.status === "Success" && typeof onWardLinesReady === "function") {
+                            onWardLinesReady(ward.id, res.data);
+                        }
+                    } catch (err) {
+                        console.warn("Error prefetching ward lines", err);
+                    }
+                })
+            );
+        }
+    } catch (e) {
+        console.error("Error in prefetchAllWardLines", e);
+    }
 };
 
 // ─── GeoJSON / Boundary Parsers ───────────────────────────────────────────────

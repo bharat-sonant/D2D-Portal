@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -181,6 +181,7 @@ const MonitoringList = () => {
   const [activeStatusModal, setActiveStatusModal] = useState(null);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
   const [dutyModal, setDutyModal] = useState(null);
+  const [isDutyImageLoading, setIsDutyImageLoading] = useState(false);
   const [remarks, setRemarks] = useState([]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
@@ -519,18 +520,38 @@ const MonitoringList = () => {
     if (!selectedWard?.id) return;
     const effectiveCity = city || "Sikar";
     action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-    action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
-    action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
     action.getWardReachedTime(selectedWard.id, setWardReachedTime);
     action.getDutyOffTime(selectedWard.id, setDutyOffTime);
+    
+    // Clear previous images instantly to avoid showing wrong imagery on modal pop
+    setDutyInImage(null);
+    setDutyOffImage(null);
+    setDutyModal(null);
   }, [selectedWard?.id, city]);
 
   useEffect(() => {
-    if (!selectedWard?.id) return;
-    action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-    action.getDutyInImage(city, selectedWard.id, setDutyInImage);
-    action.getWardReachedTime(selectedWard.id, setWardReachedTime);
-  }, [selectedWard?.id, city]);
+    if (!dutyModal || !selectedWard?.id) return;
+    const effectiveCity = city ? toTitleCase(city) : "Sikar";
+
+    const fetchImage = async () => {
+      setIsDutyImageLoading(true);
+      try {
+        if (dutyModal === "dutyIn" && !dutyInImage) {
+          await action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
+        } else if (dutyModal === "dutyOff" && !dutyOffImage) {
+          if (!dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") {
+            setDutyOffImage(null);
+          } else {
+            await action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
+          }
+        }
+      } finally {
+        setIsDutyImageLoading(false);
+      }
+    };
+
+    fetchImage();
+  }, [dutyModal, selectedWard?.id, city, dutyInImage, dutyOffImage, dutyOffTime]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -649,7 +670,7 @@ const MonitoringList = () => {
 
   const handleShiftEventClick = (event) => {
     if (event.key === "dutyOn") setDutyModal("dutyIn");
-    if (event.key === "dutyOff") setDutyModal(null);
+    if (event.key === "dutyOff") setDutyModal("dutyOff");
   };
 
   const handleRemarkSubmit = () => {
@@ -696,14 +717,19 @@ const MonitoringList = () => {
       {
         key: "workStatus",
         label: "Working",
-        time: "Live",
-        status: "active",
-        isLive: true,
+        time: dutyOffTime ? "Ended" : "Live",
+        status: dutyOffTime ? "completed" : "active",
+        isLive: !dutyOffTime,
         isGray: !wardReachedTime,
       },
-      { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
+      {
+        key: "dutyOff",
+        label: "Off",
+        time: dutyOffTime || "--:--",
+        status: dutyOffTime ? "completed" : "pending",
+      },
     ],
-    [showDutyInTime, wardReachedTime],
+    [showDutyInTime, wardReachedTime, dutyOffTime],
   );
 
   const currentWardLineStatus = React.useMemo(
@@ -896,9 +922,9 @@ const MonitoringList = () => {
             time={dutyModal === "dutyOff" ? dutyOffTime : showDutyInTime}
             wardName={selectedWard?.name}
             attendanceImage={dutyModal === "dutyOff" ? dutyOffImage : dutyInImage}
+            isLoading={isDutyImageLoading}
             onClose={closeAllModals}
             onSubmit={closeAllModals}
-
           />
         </div>
       )}

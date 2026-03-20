@@ -16,11 +16,25 @@ import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
         console.log("[Action] Fetching Duty In Image for:", { city, wardId });
-        const year = dayjs().format("YYYY");
-        const month = dayjs().format("MMMM");
-        const date = dayjs().format("YYYY-MM-DD");
-        const url = await getDutyInImageFromStorage(city, wardId, year, month, date);
-        console.log("[Action] Duty In Image URL:", url);
+        
+        const tryFetch = async (targetDay) => {
+            return await getDutyInImageFromStorage(
+                city, wardId, 
+                targetDay.format("YYYY"), 
+                targetDay.format("MMMM"), 
+                targetDay.format("YYYY-MM-DD")
+            );
+        };
+
+        const today = dayjs();
+        let url = await tryFetch(today);
+        
+        // Fallback for night shifts spanning over midnight
+        if (!url) {
+            url = await tryFetch(today.subtract(1, "day"));
+        }
+        
+        console.log("[Action] Final Duty In Image URL:", url);
         setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty In Image:", error);
@@ -31,11 +45,24 @@ export const getDutyInImage = async (city, wardId, setImageUrl) => {
 export const getDutyOffImage = async (city, wardId, setImageUrl) => {
     try {
         console.log("[Action] Fetching Duty Off Image for:", { city, wardId });
-        const year = dayjs().format("YYYY");
-        const month = dayjs().format("MMMM");
-        const date = dayjs().format("YYYY-MM-DD");
-        const url = await getDutyOffImageFromStorage(city, wardId, year, month, date);
-        console.log("[Action] Duty Off Image URL:", url);
+        
+        const tryFetch = async (targetDay) => {
+            return await getDutyOffImageFromStorage(
+                city, wardId, 
+                targetDay.format("YYYY"), 
+                targetDay.format("MMMM"), 
+                targetDay.format("YYYY-MM-DD")
+            );
+        };
+
+        const today = dayjs();
+        let url = await tryFetch(today);
+        
+        if (!url) {
+            url = await tryFetch(today.subtract(1, "day"));
+        }
+        
+        console.log("[Action] Final Duty Off Image URL:", url);
         setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty Off Image:", error);
@@ -131,17 +158,28 @@ export const fetchWardLineStatusCacheForToday = async (wardList = []) => {
     const month = dayjs().format("MMMM");
     const date = dayjs().format("YYYY-MM-DD");
 
-    const entries = await Promise.all(
-        wardList.map(async (ward) => {
-            const wardId = ward?.id;
-            if (!wardId) return { wardId, statusByLine: {} };
-            const resp = await getWardLineStatus(wardId, year, month, date);
-            return {
-                wardId,
-                statusByLine: resp?.status === "success" ? (resp?.data || {}) : {},
-            };
-        })
-    );
+    const batchSize = 10;
+    const entries = [];
+    
+    for (let i = 0; i < wardList.length; i += batchSize) {
+        const batch = wardList.slice(i, i + batchSize);
+        const batchResults = await Promise.all(
+            batch.map(async (ward) => {
+                const wardId = ward?.id;
+                if (!wardId) return { wardId, statusByLine: {} };
+                try {
+                    const resp = await getWardLineStatus(wardId, year, month, date);
+                    return {
+                        wardId,
+                        statusByLine: resp?.status === "success" ? (resp?.data || {}) : {},
+                    };
+                } catch (e) {
+                    return { wardId, statusByLine: {} };
+                }
+            })
+        );
+        entries.push(...batchResults);
+    }
 
     const statusByWard = {};
     entries.forEach(({ wardId, statusByLine }) => {
