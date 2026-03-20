@@ -51,6 +51,31 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
     });
 };
 
+/**
+ * Fetches the full Employees/{id} parent node so DOJ can be found
+ * in any sub-node (GeneralDetails, OfficialDetails, PersonalDetails, etc.)
+ */
+export const getEmployeeAllDetailsFromDB = async (employeeId) => {
+    return new Promise((resolve) => {
+        try {
+            if (!employeeId) {
+                resolve(setResponse("Fail", "Invalid Params !!", { employeeId }));
+                return;
+            }
+            db.getData(`Employees/${employeeId}`).then((resp) => {
+                if (resp !== null) {
+                    resolve(setResponse("Success", "Employee Details Fetched Successfully !!", resp));
+                } else {
+                    resolve(setResponse("Fail", "No Employee Found !!", {}));
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching Employee Details: ", error);
+            resolve(setResponse("Fail", "Error fetching Employee Details !!", error.message));
+        }
+    });
+};
+
 export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
     return new Promise((resolve) => {
         try {

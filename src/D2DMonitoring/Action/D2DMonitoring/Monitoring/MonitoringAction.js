@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
+import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, getEmployeeAllDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 
@@ -229,11 +229,27 @@ const cleanField = (val) => {
 const toTitleCase = (str) =>
     String(str || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 
+/**
+ * Handles all common date formats:
+ *   YYYY-MM-DD / YYYY/MM/DD  → ISO (standard)
+ *   DD-MM-YYYY / DD/MM/YYYY  → Indian format (most common in Indian HRMS)
+ *   fallback                 → native Date parse
+ */
+const parseDojDate = (str) => {
+    if (!str) return null;
+    const s = String(str).trim();
+    if (/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(s)) return new Date(s.replace(/\//g, "-"));
+    const m = s.match(/^(\d{2})[-/](\d{2})[-/](\d{4})$/);
+    if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}`);  // DD-MM-YYYY → YYYY-MM-DD
+    return new Date(s);
+};
+
 const calcExperience = (doj) => {
     if (!doj) return "-";
-    const joined = new Date(doj);
-    if (isNaN(joined)) return "-";
-    const diff   = Date.now() - joined.getTime();
+    const joined = parseDojDate(doj);
+    if (!joined || isNaN(joined)) return "-";
+    const diff = Date.now() - joined.getTime();
+    if (diff < 0) return "-";
     const days   = Math.floor(diff / 86400000);
     const months = Math.floor(days / 30.44);
     const years  = Math.floor(days / 365.25);
@@ -242,21 +258,98 @@ const calcExperience = (doj) => {
     return `${days} day${days !== 1 ? "s" : ""}`;
 };
 
-const getDoj = (d) =>
-    d?.doj || d?.dateOfJoining || d?.joiningDate || d?.DOJ || d?.JoiningDate || d?.date_of_joining || "";
+const DATE_RE = /^\d{4}[-/]\d{2}[-/]\d{2}$|^\d{2}[-/]\d{2}[-/]\d{4}$/;
 
-const buildWorkerState = (driverDetails, helperDetails, vehicle) => ({
+/**
+ * Searches a flat object for the best date to use as experience start.
+ * Priority: dateOfRejoining (if present) → dateOfJoining → other join-like keys
+ */
+const findDojInObject = (obj) => {
+    if (!obj || typeof obj !== "object") return "";
+
+    // 1. Highest priority — rejoining date
+    const rejoinKeys = ["dateOfRejoining", "dateofRejoining", "rejoiningDate", "rejoinDate", "reJoiningDate"];
+    for (const k of rejoinKeys) {
+        if (obj[k]) return String(obj[k]);
+    }
+
+    // 2. Standard joining date
+    const joinKeys = ["dateOfJoining", "dateofJoining", "joiningDate", "joinDate", "doj", "DOJ"];
+    for (const k of joinKeys) {
+        if (obj[k]) return String(obj[k]);
+    }
+
+    // 3. Keyword scan fallback — any key containing "rejoin" first, then "join"
+    for (const k of Object.keys(obj)) {
+        if (k.toLowerCase().includes("rejoin") && obj[k]) return String(obj[k]);
+    }
+    for (const k of Object.keys(obj)) {
+        const lower = k.toLowerCase();
+        if ((lower.includes("join") || lower.includes("hire") || lower.includes("appoint")) && obj[k]) return String(obj[k]);
+    }
+    // 2. scan string values that look like a past date
+    for (const k of Object.keys(obj)) {
+        const val = obj[k];
+        if (typeof val !== "string") continue;
+        if (!DATE_RE.test(val.trim())) continue;
+        const parsed = new Date(val);
+        if (!isNaN(parsed) && parsed < new Date()) return val;
+    }
+    return "";
+};
+
+/**
+ * Searches the full employee record (all sub-nodes) for DOJ.
+ * fullEmp shape: { GeneralDetails: {...}, OfficialDetails: {...}, ... }
+ */
+const getDojFromFullEmployee = (fullEmp) => {
+    if (!fullEmp || typeof fullEmp !== "object") return "";
+    // Try each sub-node in priority order
+    const priority = ["OfficialDetails", "GeneralDetails", "PersonalDetails", "EmploymentDetails", "BasicDetails"];
+    for (const node of priority) {
+        if (fullEmp[node]) {
+            const found = findDojInObject(fullEmp[node]);
+            if (found) return found;
+        }
+    }
+    // Fall back: search remaining sub-nodes we haven't tried yet
+    for (const node of Object.keys(fullEmp)) {
+        if (priority.includes(node)) continue;
+        if (typeof fullEmp[node] === "object") {
+            const found = findDojInObject(fullEmp[node]);
+            if (found) return found;
+        }
+    }
+    return "";
+};
+
+/**
+ * Extracts display fields from the full employee record.
+ * Always reads GeneralDetails for name/mobile/photo.
+ * DOJ is searched across all sub-nodes.
+ */
+const extractEmployeeDisplay = (fullEmp) => {
+    const g = fullEmp?.GeneralDetails || {};
+    return {
+        name:         g.name || g.fullName || g.employeeName || "",
+        mobile:       g.mobile || g.phone || g.mobileNumber || "",
+        profilePhotoURL: g.profilePhotoURL || g.profileImage || g.photo || null,
+        _doj:         getDojFromFullEmployee(fullEmp),   // internal — used by buildWorkerState
+    };
+};
+
+const buildWorkerState = (driverEmp, helperEmp, vehicle) => ({
     captain: {
-        name:         toTitleCase(driverDetails?.name || ""),
-        phone:        driverDetails?.mobile || "",
-        profileImage: driverDetails?.profilePhotoURL || null,
-        experience:   calcExperience(getDoj(driverDetails)),
+        name:         toTitleCase(driverEmp.name || ""),
+        phone:        driverEmp.mobile || "",
+        profileImage: driverEmp.profilePhotoURL || null,
+        experience:   calcExperience(driverEmp._doj || ""),
     },
     pilot: {
-        name:         toTitleCase(helperDetails?.name || ""),
-        phone:        helperDetails?.mobile || "",
-        profileImage: helperDetails?.profilePhotoURL || null,
-        experience:   calcExperience(getDoj(helperDetails)),
+        name:         toTitleCase(helperEmp.name || ""),
+        phone:        helperEmp.mobile || "",
+        profileImage: helperEmp.profilePhotoURL || null,
+        experience:   calcExperience(helperEmp._doj || ""),
     },
     vehicle,
 });
@@ -266,12 +359,22 @@ const workerCache = new Map();  // key: `${wardId}-${date}`  → raw WorkerDetai
 const empCache    = new Map();  // key: employeeId           → GeneralDetails
 
 const getCachedEmployee = async (empId) => {
-    if (!empId) return {};
+    if (!empId) return { name: "", mobile: "", profilePhotoURL: null, _doj: "" };
     if (empCache.has(empId)) return empCache.get(empId);
-    const resp = await getEmployeeGeneralDetailsFromDB(empId);
-    const data = resp?.status === "Success" ? resp.data : {};
-    empCache.set(empId, data);
-    return data;
+
+    // Fetch full employee record so DOJ can be found in any sub-node
+    const resp = await getEmployeeAllDetailsFromDB(empId);
+    const fullEmp = resp?.status === "Success" ? resp.data : null;
+
+    const display = fullEmp && Object.keys(fullEmp).length > 0
+        ? extractEmployeeDisplay(fullEmp)
+        : { name: "", mobile: "", profilePhotoURL: null, _doj: "" };
+
+    // Only cache non-empty results so failures are retried
+    if (display.name || display.mobile) {
+        empCache.set(empId, display);
+    }
+    return display;
 };
 
 /**

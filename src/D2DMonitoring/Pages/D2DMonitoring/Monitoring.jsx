@@ -527,20 +527,18 @@ const MonitoringList = () => {
       setIsWardMetricsLoading(false);
     });
 
-    return unsubscribe;
+    return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
 
   useEffect(() => {
     const wardId = selectedWard?.id;
     if (!wardId) return;
 
-    console.log(`[Monitoring] Subscribing to live vehicle status for ward: ${wardId}`);
     const unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(wardId, (data) => {
-      console.log("[Monitoring] Live Vehicle Status Updated:", data);
       setLiveVehicleStatus(data);
     });
 
-    return unsubscribe;
+    return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
 
   const handleWardSelect = (ward) => {
