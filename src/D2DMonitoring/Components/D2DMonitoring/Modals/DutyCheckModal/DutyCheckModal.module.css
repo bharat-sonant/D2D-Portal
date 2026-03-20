@@ -70,6 +70,7 @@
   color: #475569;
 }
 .timeStrip strong { color: #0f172a; }
+.grayTime { color: #94a3b8 !important; }
 
 /* ── Crew row ───────────────────────────── */
 .crewRow {
@@ -113,6 +114,22 @@
   object-fit: cover;
   border: 2.5px solid #e2e8f0;
   display: block;
+}
+
+.noImagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+  width: 180px;
+  height: 180px;
 }
 
 .largePhotoWrap {

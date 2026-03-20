@@ -8,17 +8,23 @@ const LABELS = {
   dutyOff: { title: "Duty Off", subtitle: "Shift end attendance record"   },
 };
 
-const CrewCard = ({ role, name, profileImage, isLarge = false }) => (
+const CrewCard = ({ role, name, profileImage, isLarge = false, noImage = false }) => (
   <div className={styles.crewCard}>
     <div className={styles.roleChip}>{role}</div>
-    <div className={`${styles.photoWrap} ${isLarge ? styles.largePhotoWrap : ""}`}>
-      <img
-        src={profileImage || avtarUser}
-        alt={name || role}
-        className={`${styles.photo} ${isLarge ? styles.largePhoto : ""}`}
-        onError={(e) => { e.target.src = avtarUser; }}
-      />
-    </div>
+    {noImage ? (
+      <div className={styles.noImagePlaceholder}>
+        No image available
+      </div>
+    ) : (
+      <div className={`${styles.photoWrap} ${isLarge ? styles.largePhotoWrap : ""}`}>
+        <img
+          src={profileImage || avtarUser}
+          alt={name || role}
+          className={`${styles.photo} ${isLarge ? styles.largePhoto : ""}`}
+          onError={(e) => { e.target.src = avtarUser; }}
+        />
+      </div>
+    )}
     <div className={styles.crewName}>{name || "—"}</div>
   </div>
 );
@@ -48,8 +54,8 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInI
 
       {/* ── Time strip ── */}
       <div className={styles.timeStrip}>
-        <Clock size={13} />
-        <span>Duty in Time: <strong>{time || "—"}</strong></span>
+        <Clock size={13} className={time === "00:00" || !time ? styles.grayTime : ""} />
+        <span>Duty in Time: <strong className={time === "00:00" || !time ? styles.grayTime : ""}>{time || "00:00"}</strong></span>
       </div>
 
       {/* ── Crew cards ── */}
@@ -59,6 +65,7 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInI
           name={workers.captain?.name}
           profileImage={type === "dutyIn" && dutyInImage ? dutyInImage : workers.captain?.profileImage}
           isLarge={type === "dutyIn" && !!dutyInImage}
+          noImage={type === "dutyIn" && !dutyInImage}
         />
       </div>
     </div>
