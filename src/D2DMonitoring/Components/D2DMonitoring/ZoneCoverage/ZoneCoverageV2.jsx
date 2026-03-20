@@ -54,7 +54,7 @@ const ZoneCoverageV2 = ({ items = [] }) => {
     return () => cancelAnimationFrame(rafId);
   }, [percent]);
 
-  const vehicleLeft = Math.max(1, Math.min(91, animated - 2));
+  const vehicleLeft = Math.max(1, Math.min(98, animated));
   const { gradient, label, badgeBg } = getStage(percent);
 
   return (
