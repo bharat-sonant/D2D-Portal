@@ -47,6 +47,7 @@ import DutyCheckModal from "../../Components/D2DMonitoring/Modals/DutyCheckModal
 
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
+import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
@@ -212,6 +213,7 @@ const MonitoringList = () => {
   const [showDutyInTime, setShowDutyInTime] = useState("");
   const [appStatusTab, setAppStatusTab] = useState("all");
   const [routeSnapshotView, setRouteSnapshotView] = useState("detail");
+  const [showLargeMap, setShowLargeMap] = useState(false);
   const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
   const [wardLinesGeoJson, setWardLinesGeoJson] = useState(null);
   const [wardLinesGeoJsonById, setWardLinesGeoJsonById] = useState({});
@@ -1006,6 +1008,7 @@ const MonitoringList = () => {
                     onWardLinesResolved={setWardLinesGeoJson}
                     lineStatusByLine={currentWardLineStatus}
                     focusLocation={mapFocus}
+                    onExpandMap={() => setShowLargeMap(true)}
                   />
                 </div>
               </div>
@@ -1113,6 +1116,17 @@ const MonitoringList = () => {
       isDropdown={true}
       onChangePassword={() => setShowChangePassword(true)}
       onLogout={handleLogout}
+    />
+
+    {/* ── Map Offcanvas ── */}
+    <MapOffcanvas
+      open={showLargeMap}
+      onClose={() => setShowLargeMap(false)}
+      wardName={selectedWard?.name}
+      city={city}
+      selectedWard={selectedWard}
+      lineStatusByLine={currentWardLineStatus}
+      focusLocation={mapFocus}
     />
     </>
   );

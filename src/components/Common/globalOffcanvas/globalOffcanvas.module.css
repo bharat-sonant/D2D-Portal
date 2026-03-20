@@ -25,9 +25,11 @@
   background: var(--white);
   z-index: 1000;
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
-  overflow-y: auto;
+  overflow: hidden;
   width: 500px;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
 
   /* Start hidden on right */
   transform: translateX(110%);
@@ -71,7 +73,9 @@
   }
 }
 .OffcanvasBody {
-  padding: 14px 20px;
-  height: calc(100vh - 90px);
-  overflow: auto;
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }

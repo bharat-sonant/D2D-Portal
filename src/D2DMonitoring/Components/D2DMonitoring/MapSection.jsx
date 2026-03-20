@@ -4,7 +4,7 @@ import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { Maximize2, Minimize2 } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 
-const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null }) => {
+const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMapAnimating, setIsMapAnimating] = useState(false);
@@ -102,7 +102,10 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
         <div
             ref={mapSectionRef}
             className={styles.mapSectionShell}
-            style={isFullscreen && mapPlaceholderHeight > 0 ? { minHeight: `${mapPlaceholderHeight}px` } : undefined}
+            style={{
+                ...(isFullscreen && mapPlaceholderHeight > 0 ? { minHeight: `${mapPlaceholderHeight}px` } : {}),
+                ...(fullHeight ? { flex: 1, display: "flex", flexDirection: "column", marginBottom: 0 } : {}),
+            }}
         >
             {isFullscreen && (
                 <button
@@ -124,21 +127,22 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                             width: `${fullscreenFrame.width}px`,
                             height: `${fullscreenFrame.height}px`,
                         }
-                        : undefined
+                        : fullHeight
+                            ? { height: "auto", flex: 1, minHeight: 0 }
+                            : undefined
                 }
             >
-                {/* <button
-                    type="button"
-                    className={styles.mapFullscreenBtn}
-                    onClick={isFullscreen
-                        ? () => action.closeFullscreen(mapSectionRef, mapAnimationTimerRef, fullscreenSetters)
-                        : () => action.openFullscreen(mapSectionRef, mapAnimationTimerRef, fullscreenSetters)
-                    }
-                    aria-label={isFullscreen ? "Exit fullscreen map" : "Open fullscreen map"}
-                    title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                >
-                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                </button> */}
+                {onExpandMap && (
+                    <button
+                        type="button"
+                        className={styles.mapFullscreenBtn}
+                        onClick={onExpandMap}
+                        aria-label="Open large map"
+                        title="Expand map"
+                    >
+                        <Maximize2 size={14} />
+                    </button>
+                )}
                 <GoogleMap
                     mapContainerStyle={{ width: "100%", height: "100%" }}
                     defaultCenter={{ lat: 27.625, lng: 75.13 }}
