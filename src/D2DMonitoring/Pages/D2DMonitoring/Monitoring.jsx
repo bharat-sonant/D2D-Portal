@@ -149,18 +149,25 @@ const MonitoringList = () => {
 
   useEffect(() => {
     if (!city) return;
-    getWardListAction(city).then((wards) => {
-      setWardList(wards);
-      if (wards.length > 0) setSelectedWard(wards[0]);
-      prefetchAllWardLines(city, wards, (wardId, geoJson) => {
-        setWardLinesGeoJsonById((prev) => ({ ...prev, [wardId]: geoJson }));
-      });
-      action.fetchWardLineStatusCacheForToday(wards).then((statusByWard) => {
+    const fetchWards = async () => {
+      try {
+        const wards = await getWardListAction(city);
+        setWardList(wards);
+        if (wards.length > 0) setSelectedWard(wards[0]);
+        
+        prefetchAllWardLines(city, wards, (wardId, geoJson) => {
+          setWardLinesGeoJsonById((prev) => ({ ...prev, [wardId]: geoJson }));
+        });
+        
+        const statusByWard = await action.fetchWardLineStatusCacheForToday(wards);
         if (Object.keys(statusByWard || {}).length > 0) {
           setLineStatusByWard((prev) => ({ ...prev, ...statusByWard }));
         }
-      });
-    });
+      } catch (error) {
+        console.error("Error initializing monitoring page data:", error);
+      }
+    };
+    fetchWards();
   }, [city]);
   const remarkTopicOptions = [
     "Performance Issue",
@@ -509,24 +516,32 @@ const MonitoringList = () => {
   // Monitoring page always uses Sikar Firebase
   useEffect(() => {
     const initFirebase = async () => {
-      const city = "Sikar";
-      const firebaseConfig = getCityFirebaseConfig(city);
-      connectFirebase(firebaseConfig, city);
+      try {
+        const city = "Sikar";
+        const firebaseConfig = getCityFirebaseConfig(city);
+        connectFirebase(firebaseConfig, city);
+      } catch (error) {
+        console.error("Error initializing Firebase for Sikar:", error);
+      }
     };
     initFirebase();
   }, []);
 
   useEffect(() => {
     if (!selectedWard?.id) return;
-    const effectiveCity = city || "Sikar";
-    action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-    action.getWardReachedTime(selectedWard.id, setWardReachedTime);
-    action.getDutyOffTime(selectedWard.id, setDutyOffTime);
-    
-    // Clear previous images instantly to avoid showing wrong imagery on modal pop
-    setDutyInImage(null);
-    setDutyOffImage(null);
-    setDutyModal(null);
+    try {
+      const effectiveCity = city || "Sikar";
+      action.getDutyInTime(selectedWard.id, setShowDutyInTime);
+      action.getWardReachedTime(selectedWard.id, setWardReachedTime);
+      action.getDutyOffTime(selectedWard.id, setDutyOffTime);
+      
+      // Clear previous images instantly to avoid showing wrong imagery on modal pop
+      setDutyInImage(null);
+      setDutyOffImage(null);
+      setDutyModal(null);
+    } catch (error) {
+      console.error("Error fetching generic ward details:", error);
+    }
   }, [selectedWard?.id, city]);
 
   useEffect(() => {
@@ -566,14 +581,20 @@ const MonitoringList = () => {
 
     setIsWardMetricsLoading(true);
 
-    const unsubscribe = action.subscribeWardLineStatusForToday(
-      wardId,
-      (statusByLine) => {
-        setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
-        setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
-        setIsWardMetricsLoading(false);
-      },
-    );
+    let unsubscribe = () => {};
+    try {
+      unsubscribe = action.subscribeWardLineStatusForToday(
+        wardId,
+        (statusByLine) => {
+          setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
+          setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
+          setIsWardMetricsLoading(false);
+        },
+      );
+    } catch (error) {
+      console.error("Error subscribing to ward line status:", error);
+      setIsWardMetricsLoading(false);
+    }
 
     return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
@@ -582,12 +603,17 @@ const MonitoringList = () => {
     const wardId = selectedWard?.id;
     if (!wardId) return;
 
-    const unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(
-      wardId,
-      (data) => {
-        setLiveVehicleStatus(data);
-      },
-    );
+    let unsubscribe = () => {};
+    try {
+      unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(
+        wardId,
+        (data) => {
+          setLiveVehicleStatus(data);
+        },
+      );
+    } catch (error) {
+      console.error("Error subscribing to live vehicle status:", error);
+    }
 
     return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
