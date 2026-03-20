@@ -1,5 +1,5 @@
 import React from "react";
-import { Truck, ChevronDown, ChevronUp, Trophy } from "lucide-react";
+import { Truck } from "lucide-react";
 import { Fuel, ArrowRight, LogOut, MapPin, Flag } from "lucide-react";
 import MonitoringModal from "../../Common/MonitoringModal/MonitoringModal";
 import styles from "./VehicleJourneyModal.module.css";
@@ -19,9 +19,7 @@ const VehicleJourneyModal = ({
   vehicleJourneyMeta,
   routeQuickStats,
   routeSnapshotRows,
-  routeSnapshotView,
   summaryText,
-  onRouteSnapshotViewToggle,
   onClose,
 }) => {
   // const footer = (
@@ -76,88 +74,44 @@ const VehicleJourneyModal = ({
       <div className={styles.vehicleJourneySection}>
         <div className={styles.vehicleJourneySectionHead}>
           <div className={styles.vehicleJourneySectionTitle}>Route Snapshot</div>
-          <button
-            type="button"
-            className={styles.vehicleJourneyViewToggle}
-            onClick={onRouteSnapshotViewToggle}
-            title={routeSnapshotView === "detail" ? "Switch to compact view" : "Switch to detailed view"}
-            aria-label={routeSnapshotView === "detail" ? "Switch to compact view" : "Switch to detailed view"}
-          >
-            {routeSnapshotView === "detail" ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
-          </button>
         </div>
 
-        {routeSnapshotView === "detail" ? (
-          <div className={styles.vehicleJourneyEventList}>
-            {routeSnapshotRows.map((entry, index) => {
-              const meta = getJourneyKindMeta(entry.kind);
-              const EventIcon = meta.icon;
-              return (
-                <div
-                  key={entry.id || `${entry.time}-${index}`}
-                  className={styles.vehicleJourneyEventRow}
-                >
-                  <div className={styles.vehicleJourneyEventAxis}>
-                    <span className={`${styles.vehicleJourneyEventDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}>
-                      <EventIcon size={12} />
-                    </span>
-                    {index < routeSnapshotRows.length - 1 && (
-                      <span className={styles.vehicleJourneyEventLine} />
-                    )}
-                  </div>
-                  <div className={`${styles.vehicleJourneyEventCard} ${styles[`vehicleJourneyEvent${meta.tone}`]}`}>
-                    <div className={styles.vehicleJourneyEventTop}>
-                      <h4>{entry.title}</h4>
-                      <span>{entry.time}</span>
-                    </div>
-                    <p>{entry.description}</p>
-                    <div className={styles.vehicleJourneyEventMeta}>
-                      <span className={styles.vehicleJourneyEventTag}>{entry.tag}</span>
-                      <span className={styles.vehicleJourneyEventDuration}>{entry.duration}</span>
-                    </div>
-                  </div>
+        <div className={styles.vehicleJourneyCompactList}>
+          {routeSnapshotRows.map((entry, index) => {
+            const meta = getJourneyKindMeta(entry.kind);
+            const EventIcon = meta.icon;
+            const shouldShowMeta =
+              String(entry.duration || "").toLowerCase().includes("active") ||
+              index === routeSnapshotRows.length - 1;
+            return (
+              <div
+                key={entry.id || `${entry.time}-${index}`}
+                className={styles.vehicleJourneyCompactRow}
+              >
+                <div className={styles.vehicleJourneyCompactAxis}>
+                  <span className={`${styles.vehicleJourneyCompactDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}>
+                    <EventIcon size={11} />
+                  </span>
+                  {index < routeSnapshotRows.length - 1 && (
+                    <span className={styles.vehicleJourneyCompactLine} />
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className={styles.vehicleJourneyCompactList}>
-            {routeSnapshotRows.map((entry, index) => {
-              const meta = getJourneyKindMeta(entry.kind);
-              const EventIcon = meta.icon;
-              const shouldShowMeta =
-                String(entry.duration || "").toLowerCase().includes("active") ||
-                index === routeSnapshotRows.length - 1;
-              return (
-                <div
-                  key={entry.id || `${entry.time}-${index}`}
-                  className={styles.vehicleJourneyCompactRow}
-                >
-                  <div className={styles.vehicleJourneyCompactAxis}>
-                    <span className={`${styles.vehicleJourneyCompactDot} ${styles[`vehicleJourneyTone${meta.tone}`]}`}>
-                      <EventIcon size={11} />
-                    </span>
-                    {index < routeSnapshotRows.length - 1 && (
-                      <span className={styles.vehicleJourneyCompactLine} />
-                    )}
+                <div className={styles.vehicleJourneyCompactCopy}>
+                  <div className={styles.vehicleJourneyCompactTop}>
+                    <h4>{entry.title}</h4>
+                    <span>{entry.time}</span>
                   </div>
-                  <div className={styles.vehicleJourneyCompactCopy}>
-                    <div className={styles.vehicleJourneyCompactTop}>
-                      <h4>{entry.title}</h4>
-                      <span>{entry.time}</span>
+                  {shouldShowMeta && (
+                    <div className={styles.vehicleJourneyCompactMeta}>
+                      <span className={styles.vehicleJourneyCompactMetaTag}>{entry.tag}</span>
+                      <span className={styles.vehicleJourneyCompactMetaTime}>{entry.duration}</span>
                     </div>
-                    {shouldShowMeta && (
-                      <div className={styles.vehicleJourneyCompactMeta}>
-                        <span className={styles.vehicleJourneyCompactMetaTag}>{entry.tag}</span>
-                        <span className={styles.vehicleJourneyCompactMetaTime}>{entry.duration}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </MonitoringModal>
   );

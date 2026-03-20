@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -717,7 +717,10 @@ const MonitoringList = () => {
 
   const handleShiftEventClick = (event) => {
     if (event.key === "dutyOn") setDutyModal("dutyIn");
-    if (event.key === "dutyOff") setDutyModal("dutyOff");
+    if (event.key === "dutyOff") {
+      if (!dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") return;
+      setDutyModal("dutyOff");
+    }
   };
 
   const handleRemarkSubmit = () => {
@@ -774,6 +777,7 @@ const MonitoringList = () => {
         label: "Off",
         time: dutyOffTime || "--:--",
         status: dutyOffTime ? "completed" : "pending",
+        isGray: !dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--",
       },
     ],
     [showDutyInTime, wardReachedTime, dutyOffTime],
