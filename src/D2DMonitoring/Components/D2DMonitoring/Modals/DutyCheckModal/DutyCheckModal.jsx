@@ -11,7 +11,7 @@ const LABELS = {
 
 const CrewCard = ({ role, name, profileImage, isLarge = false, noImage = false }) => (
   <div className={styles.crewCard}>
-    <div className={styles.roleChip}>{role}</div>
+    {role && <div className={styles.roleChip}>{role}</div>}
     {noImage ? (
       <div className={styles.noImagePlaceholder}>
         No image available
@@ -73,7 +73,6 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, attenda
            </div>
         ) : (
           <CrewCard
-            role="Captain"
             name={workers.captain?.name}
             profileImage={attendanceImage || workers.captain?.profileImage}
             isLarge={!!attendanceImage}
