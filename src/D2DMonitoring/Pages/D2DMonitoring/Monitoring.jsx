@@ -907,20 +907,7 @@ const MonitoringList = () => {
               : "Select a ward to begin"}
           </span> */}
         </div>
-        <div className={styles.topBarRight}>
-          <div
-            className={topbarStyles.userBadge}
-            onClick={() => setShowQuickAppSelect((p) => !p)}
-            style={{ cursor: "pointer" }}
-          >
-            <button className={`btn ${topbarStyles.userDropdownBtn}`}>
-              <span className={topbarStyles.userBG}>
-                {firstchar}{secondchar}
-              </span>
-              <span className={topbarStyles.userName}>{storedName}</span>
-            </button>
-          </div>
-        </div>
+      
       </div>
       <div className={styles.mainSection}>
         {/* Sidebar */}
