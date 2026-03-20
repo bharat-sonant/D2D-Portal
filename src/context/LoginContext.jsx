@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, matchPath } from "react-router-dom";
 
 const LoginContext = createContext();
+
+const PUBLIC_ROUTES = ["/", "/:city/d2dMonitoring/monitoring"];
 
 export const LoginProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
@@ -15,7 +17,10 @@ export const LoginProvider = ({ children }) => {
       return;
     }
 
-    if (location.pathname === "/") {
+    const isPublic = PUBLIC_ROUTES.some((pattern) =>
+      matchPath(pattern, location.pathname)
+    );
+    if (isPublic) {
       return;
     }
 

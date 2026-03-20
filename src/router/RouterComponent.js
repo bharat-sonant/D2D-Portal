@@ -136,9 +136,9 @@ const RouterComponent = () => {
 
         <Route path="/:city/d2dMonitoring/monitoring" element={
           // <ProtectedRouter>
-            <D2DMonitoringLayout>
+            // <D2DMonitoringLayout>
               <D2DMonitoring />
-            </D2DMonitoringLayout>
+            // </D2DMonitoringLayout>
           // </ProtectedRouter>
         } />
 
