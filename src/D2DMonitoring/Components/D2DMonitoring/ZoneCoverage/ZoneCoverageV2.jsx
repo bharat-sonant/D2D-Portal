@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Activity, MapPin } from "lucide-react";
+import { Activity } from "lucide-react";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./ZoneCoverageV2.module.css";
 
@@ -58,19 +58,29 @@ const ZoneCoverageV2 = ({ items = [] }) => {
   const { gradient, label, badgeBg } = getStage(percent);
 
   return (
-    <MonitoringCard title="Zone Coverage" icon={<Activity size={16} />}>
+    <MonitoringCard
+      title="Zone Coverage"
+      // icon={<Activity size={16} />}
+      headerRight={
+        item?.remainingValue ? (
+          <span className={styles.headerRemaining}>
+            <span className={styles.headerRemainingVal}>{item.remainingValue}</span>
+            <span className={styles.headerRemainingLabel}>remaining</span>
+          </span>
+        ) : null
+      }
+    >
       <div className={styles.wrap}>
 
-        {/* ── Anchors: Total LEFT · Completed RIGHT ── */}
+        {/* ── Anchors: Total LEFT · Remaining CENTER · Completed RIGHT ── */}
         <div className={styles.anchorRow}>
           <div className={styles.anchor}>
             <span className={styles.anchorVal}>{item?.totalValue || "--"}</span>
             <span className={styles.anchorLabel}>{item?.totalLabel || "TOTAL LENGTH"}</span>
           </div>
 
-    
+      
 
-          {/* ← COMPLETED now sits top-right (swapped with remaining) */}
           <div className={`${styles.anchor} ${styles.anchorRight}`}>
             <span className={`${styles.anchorVal} ${styles.doneAnchorVal}`}>
               {item?.completedValue || "--"}
@@ -113,16 +123,10 @@ const ZoneCoverageV2 = ({ items = [] }) => {
             <span>25%</span>
             <span>50%</span>
             <span>75%</span>
-            <span>100%</span>
+            <span>Target • 100%</span>
           </div>
         </div>
 
-        {/* ── Bottom strip — REMAINING (swapped from completed) ── */}
-        <div className={styles.remainingStrip}>
-          <MapPin size={13} className={styles.remainingIcon} />
-          <span className={styles.stripLabel}>REMAINING</span>
-          <span className={styles.remainingVal}>{item?.remainingValue || "--"}</span>
-        </div>
 
       </div>
     </MonitoringCard>
