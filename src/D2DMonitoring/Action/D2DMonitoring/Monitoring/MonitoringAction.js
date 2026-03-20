@@ -9,19 +9,36 @@ import {
     getWardDutyOffTimeFromDB,
     getDutyOffImageFromStorage,
     getEmployeeAllDetailsFromDB
-} from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
+} from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
  
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
+        console.log("[Action] Fetching Duty In Image for:", { city, wardId });
         const year = dayjs().format("YYYY");
         const month = dayjs().format("MMMM");
         const date = dayjs().format("YYYY-MM-DD");
         const url = await getDutyInImageFromStorage(city, wardId, year, month, date);
+        console.log("[Action] Duty In Image URL:", url);
         setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty In Image:", error);
+        setImageUrl(null);
+    }
+};
+
+export const getDutyOffImage = async (city, wardId, setImageUrl) => {
+    try {
+        console.log("[Action] Fetching Duty Off Image for:", { city, wardId });
+        const year = dayjs().format("YYYY");
+        const month = dayjs().format("MMMM");
+        const date = dayjs().format("YYYY-MM-DD");
+        const url = await getDutyOffImageFromStorage(city, wardId, year, month, date);
+        console.log("[Action] Duty Off Image URL:", url);
+        setImageUrl(url);
+    } catch (error) {
+        console.error("Error fetching Duty Off Image:", error);
         setImageUrl(null);
     }
 };
@@ -42,6 +59,25 @@ export const getWardReachedTime = (ward, setWardReachedTime) => {
     } catch (error) {
         console.error("Error fetching Ward Reached Time: ", error);
         setWardReachedTime("");
+    };
+};
+
+export const getDutyOffTime = (ward, setDutyOffTime) => {
+    try {
+        const year = dayjs().format("YYYY");
+        const month = dayjs().format("MMMM");
+        const day = dayjs().format("YYYY-MM-DD");
+
+        getWardDutyOffTimeFromDB(year, month, day, ward).then((response) => {
+            if (response.status === "Success") {
+                setDutyOffTime(response.data || "");
+            } else {
+                setDutyOffTime("");
+            };
+        });
+    } catch (error) {
+        console.error("Error fetching Duty Off Time: ", error);
+        setDutyOffTime("");
     };
 };
 

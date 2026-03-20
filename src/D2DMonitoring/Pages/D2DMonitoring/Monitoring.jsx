@@ -180,7 +180,7 @@ const MonitoringList = () => {
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
-  const [dutyModal, setDutyModal] = useState(null); // "dutyIn" | "dutyOff" | null
+  const [dutyModal, setDutyModal] = useState(null);
   const [remarks, setRemarks] = useState([]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
@@ -217,7 +217,8 @@ const MonitoringList = () => {
 
   const [dutyInImage, setDutyInImage] = useState(null);
   const [wardReachedTime, setWardReachedTime] = useState(null);
-
+  const [dutyOffTime, setDutyOffTime] = useState(null);
+  const [dutyOffImage, setDutyOffImage] = useState(null);
   const [wardData] = useState({
     vehicleStatus: "Dumping Yard out",
     trips: 2,
@@ -395,10 +396,10 @@ const MonitoringList = () => {
     appStatusTab === "all"
       ? appSessionLogs
       : appSessionLogs.filter((entry) =>
-          appStatusTab === "opened"
-            ? entry.tone === "opened"
-            : entry.tone === "closed",
-        );
+        appStatusTab === "opened"
+          ? entry.tone === "opened"
+          : entry.tone === "closed",
+      );
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
 
@@ -428,8 +429,8 @@ const MonitoringList = () => {
     .includes("dump")
     ? "outside dumping yard"
     : String(
-        vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
-      ).toLowerCase();
+      vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
+    ).toLowerCase();
 
   // const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
   //   quickSummary.fuelStops ?? 0
@@ -495,14 +496,14 @@ const MonitoringList = () => {
     eventLog.length > 0
       ? eventLog
       : routeSnapshot.map((item) => ({
-          id: item.id,
-          title: item.label,
-          description: "",
-          time: item.time,
-          tag: item.label,
-          duration: item.duration || "-",
-          kind: item.kind,
-        }));
+        id: item.id,
+        title: item.label,
+        description: "",
+        time: item.time,
+        tag: item.label,
+        duration: item.duration || "-",
+        kind: item.kind,
+      }));
 
   // Monitoring page always uses Sikar Firebase
   useEffect(() => {
@@ -513,6 +514,16 @@ const MonitoringList = () => {
     };
     initFirebase();
   }, []);
+
+  useEffect(() => {
+    if (!selectedWard?.id) return;
+    const effectiveCity = city || "Sikar";
+    action.getDutyInTime(selectedWard.id, setShowDutyInTime);
+    action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
+    action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
+    action.getWardReachedTime(selectedWard.id, setWardReachedTime);
+    action.getDutyOffTime(selectedWard.id, setDutyOffTime);
+  }, [selectedWard?.id, city]);
 
   useEffect(() => {
     if (!selectedWard?.id) return;
@@ -638,7 +649,7 @@ const MonitoringList = () => {
 
   const handleShiftEventClick = (event) => {
     if (event.key === "dutyOn") setDutyModal("dutyIn");
-    if (event.key === "dutyOff") setDutyModal("dutyOff");
+    if (event.key === "dutyOff") setDutyModal(null);
   };
 
   const handleRemarkSubmit = () => {
@@ -882,11 +893,12 @@ const MonitoringList = () => {
         <div className={styles.modalOverlay} onClick={closeAllModals}>
           <DutyCheckModal
             type={dutyModal}
-            time={showDutyInTime}
+            time={dutyModal === "dutyOff" ? dutyOffTime : showDutyInTime}
             wardName={selectedWard?.name}
-            dutyInImage={dutyInImage}
+            attendanceImage={dutyModal === "dutyOff" ? dutyOffImage : dutyInImage}
             onClose={closeAllModals}
             onSubmit={closeAllModals}
+
           />
         </div>
       )}
