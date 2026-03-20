@@ -312,18 +312,22 @@ const D2DRealtime = () => {
     ? -1
     : wardData.finalPointReached
       ? 2
-      : 1;
+      : wardData.reachOn
+        ? 1
+        : wardData.dutyOn
+          ? 0
+          : -1;
   const currentShiftEvents = [
     {
       key: "dutyOn",
       label: "Duty On",
-      time: wardData.dutyOn || "--:--",
+      time: wardData.dutyOn || "00:00",
       status: "completed",
     },
     {
       key: "reachOn",
       label: "Reached",
-      time: wardData.reachOn || "--:--",
+      time: wardData.reachOn || "00:00",
       status: wardData.reachOn ? "completed" : "pending",
     },
     {
@@ -332,6 +336,7 @@ const D2DRealtime = () => {
       time: currentShiftCompleted ? wardData.lastLineTime || "--:--" : "Live",
       status: currentShiftCompleted ? "completed" : "active",
       isLive: !currentShiftCompleted,
+      isGray: !currentShiftCompleted && !wardData.reachOn,
     },
     {
       key: "dutyOff",

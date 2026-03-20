@@ -17,14 +17,14 @@ const ShiftTimeLine = ({ events, activeConnectorIndex = -1, onEventClick }) => {
                                 onClick={isClickable ? () => onEventClick(event) : undefined}
                                 title={isClickable ? `Open ${event.label} details` : undefined}
                             >
-                                <div className={`${styles.shiftEventLabel} ${event.status === "active" ? styles.shiftEventLabelActive : ""}`}>
+                                <div className={`${styles.shiftEventLabel} ${event.status === "active" ? styles.shiftEventLabelActive : ""} ${event.time === "00:00" || event.isGray ? styles.grayTime : ""}`}>
                                     {event.label}
                                 </div>
-                                <div className={`${styles.shiftEventIconWrap} ${styles[`shiftEventIcon${event.status.charAt(0).toUpperCase() + event.status.slice(1)}`]} ${isClickable ? styles.shiftEventIconClickable : ""}`}>
+                                <div className={`${styles.shiftEventIconWrap} ${styles[`shiftEventIcon${event.status.charAt(0).toUpperCase() + event.status.slice(1)}`]} ${isClickable ? styles.shiftEventIconClickable : ""} ${event.time === "00:00" || event.isGray ? styles.grayTimeIcon : ""}`}>
                                     {event.status === "completed" ? <Check size={14} /> : event.status === "active" ? <Clock size={14} /> : <AlertCircle size={14} />}
                                     {isClickable && <span className={styles.shiftEventRipple} />}
                                 </div>
-                                <div className={`${styles.shiftEventTime} ${event.status === "pending" ? styles.shiftEventTimePending : ""} ${event.isLive ? styles.shiftEventTimeLive : ""}`}>
+                                <div className={`${styles.shiftEventTime} ${event.status === "pending" ? styles.shiftEventTimePending : ""} ${event.isLive ? styles.shiftEventTimeLive : ""} ${event.time === "00:00" || event.isGray ? styles.grayTime : ""}`}>
                                     {event.time}
                                     {isClickable && <span className={styles.shiftEventArrow}>›</span>}
                                 </div>

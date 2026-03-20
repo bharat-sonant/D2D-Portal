@@ -673,6 +673,16 @@
   font-family: var(--fontGraphikBold);
 }
 
+.grayTime {
+  color: #94a3b8 !important;
+}
+
+.grayTimeIcon {
+  color: #94a3b8 !important;
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
 .shiftEventConnector {
   flex: 1;
   height: 1px;

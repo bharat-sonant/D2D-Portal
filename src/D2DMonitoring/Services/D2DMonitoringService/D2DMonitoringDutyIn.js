@@ -97,3 +97,39 @@ export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
         };
     });
 };
+
+export const getWardReachedTimeFromDB = async (year, month, day, ward) => {
+    return new Promise((resolve) => {
+        try {
+            if (!year || !month || !day || !ward) {
+                resolve(setResponse("Fail", "Invalid Params !!", { year, month, day, ward }));
+                return;
+            }
+            db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/Summary/wardReachedOn`).then((resp) => {
+                if (resp !== null) {
+                    resolve(setResponse("Success", "Ward Reached Time Fetched Successfully !!", resp));
+                } else {
+                    resolve(setResponse("Fail", "No Ward Reached Time Found !!", {}));
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching Ward Reached Time: ", error);
+            resolve(setResponse("Fail", "Error fetching Ward Reached Time !!", error.message));
+        }
+    });
+};
+
+/**
+ * 🖼 Get Duty In Photo from Firebase Storage
+ * Path: {city}/DutyOnImages/{wardId}/{year}/{month}/{date}/{wardId}.png
+ */
+export const getDutyInImageFromStorage = async (city, wardId, year, month, date) => {
+    try {
+        if (!city || !wardId || !year || !month || !date) return null;
+        const filePath = `${city}/DutyOnImages/${wardId}/${year}/${month}/${date}/1.png`;
+        console.log("[Service] Duty In Image Path:", filePath);
+        return await db.getDownloadURLFromStorage(filePath);
+    } catch (error) {
+        return null;
+    }
+};

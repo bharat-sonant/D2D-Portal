@@ -216,6 +216,9 @@ const MonitoringList = () => {
     quickSummary: {},
   });
 
+  const [dutyInImage, setDutyInImage] = useState(null);
+  const [wardReachedTime, setWardReachedTime] = useState(null);
+
   const [wardData] = useState({
     vehicleStatus: "Dumping Yard out",
     trips: 2,
@@ -451,7 +454,9 @@ const MonitoringList = () => {
   const displayWardData = {
     ...wardData,
     vehicleStatus: displayVehicleStatus,
-    vehicleJourney: vehicleJourneyData
+    vehicleJourney: vehicleJourneyData,
+    dutyOn: showDutyInTime || "00:00",
+    reachOn: wardReachedTime || "00:00"
   };
 
   const routeQuickStats = [
@@ -506,7 +511,9 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!selectedWard?.id) return;
     action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-  }, [selectedWard?.id]);
+    action.getDutyInImage(city, selectedWard.id, setDutyInImage);
+    action.getWardReachedTime(selectedWard.id, setWardReachedTime);
+  }, [selectedWard?.id, city]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -654,13 +661,13 @@ const MonitoringList = () => {
       {
         key: "dutyOn",
         label: "Duty On",
-        time: showDutyInTime,
+        time: showDutyInTime || "00:00",
         status: "completed",
       },
       {
         key: "reachOn",
         label: "Reached",
-        time: "09:00 AM",
+        time: wardReachedTime || "00:00",
         status: "completed",
       },
       {
@@ -669,10 +676,11 @@ const MonitoringList = () => {
         time: "Live",
         status: "active",
         isLive: true,
+        isGray: !wardReachedTime,
       },
       { key: "dutyOff", label: "Off", time: "--:--", status: "pending" },
     ],
-    [showDutyInTime],
+    [showDutyInTime, wardReachedTime],
   );
 
   const currentWardLineStatus = React.useMemo(
@@ -821,7 +829,7 @@ const MonitoringList = () => {
 
                 <ShiftStatusSection
                   events={currentShiftEvents}
-                  activeConnectorIndex={1}
+                  activeConnectorIndex={wardReachedTime ? 1 : showDutyInTime ? 0 : -1}
                   showDutyInTime={showDutyInTime}
                   onEventClick={handleShiftEventClick}
                 />
@@ -847,6 +855,7 @@ const MonitoringList = () => {
             type={dutyModal}
             time={showDutyInTime}
             wardName={selectedWard?.name}
+            dutyInImage={dutyInImage}
             onClose={closeAllModals}
             onSubmit={closeAllModals}
           />

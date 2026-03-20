@@ -1,7 +1,39 @@
 import dayjs from "dayjs";
-import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, getEmployeeAllDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
+import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
+ 
+export const getDutyInImage = async (city, wardId, setImageUrl) => {
+    try {
+        const year = dayjs().format("YYYY");
+        const month = dayjs().format("MMMM");
+        const date = dayjs().format("YYYY-MM-DD");
+        const url = await getDutyInImageFromStorage(city, wardId, year, month, date);
+        setImageUrl(url);
+    } catch (error) {
+        console.error("Error fetching Duty In Image:", error);
+        setImageUrl(null);
+    }
+};
+
+export const getWardReachedTime = (ward, setWardReachedTime) => {
+    try {
+        const year = dayjs().format("YYYY");
+        const month = dayjs().format("MMMM");
+        const day = dayjs().format("YYYY-MM-DD");
+
+        getWardReachedTimeFromDB(year, month, day, ward).then((response) => {
+            if (response.status === "Success") {
+                setWardReachedTime(response.data || "");
+            } else {
+                setWardReachedTime("");
+            };
+        });
+    } catch (error) {
+        console.error("Error fetching Ward Reached Time: ", error);
+        setWardReachedTime("");
+    };
+};
 
 export const getDutyInTime = (ward, setShowDutyInTime) => {
     try {
