@@ -4,7 +4,7 @@ import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { Maximize2, Minimize2 } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 
-const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false }) => {
+const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false, showMarkers = false }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMapAnimating, setIsMapAnimating] = useState(false);
@@ -165,7 +165,7 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                         />
                     ))}
 
-                    {Number.isFinite(focusLocation?.lat) && Number.isFinite(focusLocation?.lng) && (
+                    {showMarkers && Number.isFinite(focusLocation?.lat) && Number.isFinite(focusLocation?.lng) && (
                         <Marker
                             position={{ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) }}
                             title={focusLocation?.title || "Selected location"}

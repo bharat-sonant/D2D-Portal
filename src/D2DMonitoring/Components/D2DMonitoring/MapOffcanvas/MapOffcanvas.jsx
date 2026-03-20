@@ -70,6 +70,7 @@ const MapOffcanvas = ({
             selectedWard={selectedWard}
             lineStatusByLine={lineStatusByLine}
             focusLocation={focusLocation}
+            showMarkers
             fullHeight
           />
         </div>
