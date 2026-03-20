@@ -24,14 +24,14 @@ const VehicleJourneyModal = ({
   onRouteSnapshotViewToggle,
   onClose,
 }) => {
-  const footer = (
-    <div className={styles.vehicleJourneySummaryStrip}>
-      <span className={styles.vehicleJourneySummaryIcon}>
-        <Trophy size={12} />
-      </span>
-      <p dangerouslySetInnerHTML={{ __html: summaryText }} />
-    </div>
-  );
+  // const footer = (
+  //   <div className={styles.vehicleJourneySummaryStrip}>
+  //     <span className={styles.vehicleJourneySummaryIcon}>
+  //       <Trophy size={12} />
+  //     </span>
+  //     <p dangerouslySetInnerHTML={{ __html: summaryText }} />
+  //   </div>
+  // );
 
   return (
     <MonitoringModal
@@ -40,7 +40,7 @@ const VehicleJourneyModal = ({
       icon={<Truck size={16} />}
       width="md"
       onClose={onClose}
-      footer={footer}
+      // footer={footer}
     >
       <div
         className={`${styles.vehicleJourneyStatusCard} ${

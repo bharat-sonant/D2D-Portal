@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -44,7 +44,6 @@ import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCove
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
-
 
 const toTitleCase = (value = "") =>
   String(value)
@@ -404,15 +403,22 @@ const MonitoringList = () => {
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
 
   // Merge live vehicle status into wardData for display
-  const displayVehicleStatus = liveVehicleStatus.currentStatus || wardData.vehicleStatus;
-  const displayEventLog = liveVehicleStatus.eventLog.length > 0 ? liveVehicleStatus.eventLog : (wardData.vehicleJourney?.eventLog || []);
-  const displayQuickSummary = Object.keys(liveVehicleStatus.quickSummary).length > 0 ? liveVehicleStatus.quickSummary : (wardData.vehicleJourney?.quickSummary || {});
+  const displayVehicleStatus =
+    liveVehicleStatus.currentStatus || wardData.vehicleStatus;
+  const displayEventLog =
+    liveVehicleStatus.eventLog.length > 0
+      ? liveVehicleStatus.eventLog
+      : wardData.vehicleJourney?.eventLog || [];
+  const displayQuickSummary =
+    Object.keys(liveVehicleStatus.quickSummary).length > 0
+      ? liveVehicleStatus.quickSummary
+      : wardData.vehicleJourney?.quickSummary || {};
 
   const vehicleJourneyMeta = getVehicleJourneyMeta(displayVehicleStatus);
   const vehicleJourneyData = {
     ...wardData.vehicleJourney,
     eventLog: displayEventLog,
-    quickSummary: displayQuickSummary
+    quickSummary: displayQuickSummary,
   };
   const quickSummary = displayQuickSummary;
   const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
@@ -425,11 +431,11 @@ const MonitoringList = () => {
         vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
       ).toLowerCase();
 
-  const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
-    quickSummary.fuelStops ?? 0
-  }</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
-    quickSummary.longestSession || "0m"
-  }</b> · Currently <b>${statusSummaryText}</b>`;
+  // const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
+  //   quickSummary.fuelStops ?? 0
+  // }</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
+  //   quickSummary.longestSession || "0m"
+  // }</b> · Currently <b>${statusSummaryText}</b>`;
 
   // Trip Status Logic
   const tripTotal = wardData.trips || 5;
@@ -456,7 +462,7 @@ const MonitoringList = () => {
     vehicleStatus: displayVehicleStatus,
     vehicleJourney: vehicleJourneyData,
     dutyOn: showDutyInTime || "00:00",
-    reachOn: wardReachedTime || "00:00"
+    reachOn: wardReachedTime || "00:00",
   };
 
   const routeQuickStats = [
@@ -528,11 +534,14 @@ const MonitoringList = () => {
 
     setIsWardMetricsLoading(true);
 
-    const unsubscribe = action.subscribeWardLineStatusForToday(wardId, (statusByLine) => {
-      setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
-      setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
-      setIsWardMetricsLoading(false);
-    });
+    const unsubscribe = action.subscribeWardLineStatusForToday(
+      wardId,
+      (statusByLine) => {
+        setLineStatusByWard((prev) => ({ ...prev, [wardId]: statusByLine }));
+        setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
+        setIsWardMetricsLoading(false);
+      },
+    );
 
     return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
@@ -541,9 +550,12 @@ const MonitoringList = () => {
     const wardId = selectedWard?.id;
     if (!wardId) return;
 
-    const unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(wardId, (data) => {
-      setLiveVehicleStatus(data);
-    });
+    const unsubscribe = vehicleStatusAction.subscribeVehicleStatusForToday(
+      wardId,
+      (data) => {
+        setLiveVehicleStatus(data);
+      },
+    );
 
     return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
@@ -625,7 +637,7 @@ const MonitoringList = () => {
   };
 
   const handleShiftEventClick = (event) => {
-    if (event.key === "dutyOn")  setDutyModal("dutyIn");
+    if (event.key === "dutyOn") setDutyModal("dutyIn");
     if (event.key === "dutyOff") setDutyModal("dutyOff");
   };
 
@@ -719,7 +731,9 @@ const MonitoringList = () => {
   const wardCoverageById = React.useMemo(() => {
     const result = {};
     wardList.forEach((ward) => {
-      const metrics = action.getWardLengthMetrics(wardLinesGeoJsonById[ward.id]);
+      const metrics = action.getWardLengthMetrics(
+        wardLinesGeoJsonById[ward.id],
+      );
       const lineStatus = lineStatusByWard[ward.id] || {};
       const completed = action.getCompletedLengthKm(lineStatus, metrics);
       const total = action.getTotalWardLengthKm(metrics, 0);
@@ -776,21 +790,35 @@ const MonitoringList = () => {
       <div className={styles.mainContent}>
         <div className={styles.layoutSplit}>
           <div className={styles.leftColumn}>
-
             <DutyComparisonReplica
               data={displayWardData}
               wardId={selectedWard?.id}
               onVehicleClick={() => setShowVehicleModal(true)}
             />
+            <CompletionDashboard
+              totalLines={lineCounts.total}
+              completedLines={lineCounts.completed}
+              skippedLines={lineCounts.skipped}
+            />
 
+            <LiveStatusBoard
+              wardData={displayWardData}
+              vehicleTone={vehicleTone}
+              getTripStatusTone={getTripStatusTone}
+              appTone={appTone}
+              onVehicleClick={() => setActiveStatusModal("vehicle")}
+              onTripsClick={() => setActiveStatusModal("trips")}
+              onAppClick={() => setActiveStatusModal("app")}
+            />
+            {/* 
             <HaltSummaryReplica
               onMapFocusChange={setMapFocus}
               ward={selectedWard?.id}
-            />
+            /> */}
           </div>
           <div className={styles.dataRight}>
             <div className={styles.dataRightBottom}>
-              <div className={styles.centerColumn}>
+              {/* <div className={styles.centerColumn}>
                 <CompletionDashboard
                   totalLines={lineCounts.total}
                   completedLines={lineCounts.completed}
@@ -813,7 +841,7 @@ const MonitoringList = () => {
                   onEditRemark={openEditRemarkModal}
                   onDeleteRemark={deleteRemark}
                 />
-              </div>
+              </div> */}
               <div className={styles.mapColumn}>
                 {/* <MonitoringCard
                   title="Zone Coverage"
@@ -829,7 +857,9 @@ const MonitoringList = () => {
 
                 <ShiftStatusSection
                   events={currentShiftEvents}
-                  activeConnectorIndex={wardReachedTime ? 1 : showDutyInTime ? 0 : -1}
+                  activeConnectorIndex={
+                    wardReachedTime ? 1 : showDutyInTime ? 0 : -1
+                  }
                   showDutyInTime={showDutyInTime}
                   onEventClick={handleShiftEventClick}
                 />
@@ -841,7 +871,6 @@ const MonitoringList = () => {
                   lineStatusByLine={currentWardLineStatus}
                   focusLocation={mapFocus}
                 />
-
               </div>
             </div>
           </div>
@@ -903,7 +932,7 @@ const MonitoringList = () => {
               routeQuickStats={routeQuickStats}
               routeSnapshotRows={routeSnapshotRows}
               routeSnapshotView={routeSnapshotView}
-              summaryText={summaryText}
+              // summaryText={summaryText}
               onRouteSnapshotViewToggle={() =>
                 setRouteSnapshotView((prev) =>
                   prev === "detail" ? "compact" : "detail",

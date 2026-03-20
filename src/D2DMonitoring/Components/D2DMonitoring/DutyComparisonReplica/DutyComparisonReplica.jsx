@@ -37,16 +37,7 @@ const CrewCard = ({ role, roleStyle, member }) => (
       )}
     </p>
 
-    <div className={styles.heroReplicaStatsRow}>
-      <div>
-        <strong>{member.experience || "-"}</strong>
-        <span>Exp.</span>
-      </div>
-         <div>
-              <strong>640Km</strong>
-              <span>Driven</span>
-            </div>
-    </div>
+
   </div>
 );
 
@@ -72,13 +63,13 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
         <div className={styles.coverImg}></div>
 
         <CrewCard
-          role="Captain"
+          role="Driver"
           roleStyle={styles.heroReplicaRoleCaptain}
           member={captain}
         />
 
         <CrewCard
-          role="Pilot"
+          role="Helper"
           roleStyle={styles.heroReplicaRoleHelper}
           member={pilot}
         />
@@ -89,7 +80,7 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
         <button
           type="button"
           className={styles.heroReplicaVehicleRow}
-          onClick={onVehicleClick}
+          // onClick={onVehicleClick}
         >
           <div className={styles.heroReplicaVehicleLeft}>
             🚛

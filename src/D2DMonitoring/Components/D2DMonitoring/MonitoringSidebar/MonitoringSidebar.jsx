@@ -15,7 +15,7 @@ const MonitoringSidebar = ({
 }) => {
   return (
     <div className={styles.sidebar}>
-      <div className={styles.sidebarHeader}>
+      {/* <div className={styles.sidebarHeader}>
         <div className={styles.sidebarHeaderTop}>
           <div className={styles.sidebarSubText}>
             <h3>Zone Summary</h3>
@@ -32,7 +32,7 @@ const MonitoringSidebar = ({
             />
           </button>
         </div>
-      </div>
+      </div> */}
       <div className={styles.wardItems}>
         {wardList.map((ward) => (
           <div

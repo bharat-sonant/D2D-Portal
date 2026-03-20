@@ -35,7 +35,7 @@ const LiveStatusBoard = ({
           </div>
         </div>
 
-        <div className={styles.liveBoardCard} onClick={onTripsClick}>
+        {/* <div className={styles.liveBoardCard} onClick={onTripsClick}>
           <div className={styles.liveStatusGridLeft}>
             <div className={styles.liveBoardIcon}>
               <Package size={18} />
@@ -67,7 +67,7 @@ const LiveStatusBoard = ({
               <ChevronRight size={14} />
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </MonitoringCard>
   );

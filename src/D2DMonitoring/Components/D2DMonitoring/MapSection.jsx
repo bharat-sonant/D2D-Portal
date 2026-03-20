@@ -127,7 +127,7 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                         : undefined
                 }
             >
-                <button
+                {/* <button
                     type="button"
                     className={styles.mapFullscreenBtn}
                     onClick={isFullscreen
@@ -138,7 +138,7 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                     title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
                 >
                     {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                </button>
+                </button> */}
                 <GoogleMap
                     mapContainerStyle={{ width: "100%", height: "100%" }}
                     defaultCenter={{ lat: 27.625, lng: 75.13 }}
