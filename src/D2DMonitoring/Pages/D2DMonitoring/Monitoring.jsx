@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -27,6 +27,7 @@ import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionActio
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
+import wevoisLogo from "../../../assets/images/wevoisLogo.png";
 
 // Component imports
 import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
@@ -154,12 +155,13 @@ const MonitoringList = () => {
         const wards = await getWardListAction(city);
         setWardList(wards);
         if (wards.length > 0) setSelectedWard(wards[0]);
-        
+
         prefetchAllWardLines(city, wards, (wardId, geoJson) => {
           setWardLinesGeoJsonById((prev) => ({ ...prev, [wardId]: geoJson }));
         });
-        
-        const statusByWard = await action.fetchWardLineStatusCacheForToday(wards);
+
+        const statusByWard =
+          await action.fetchWardLineStatusCacheForToday(wards);
         if (Object.keys(statusByWard || {}).length > 0) {
           setLineStatusByWard((prev) => ({ ...prev, ...statusByWard }));
         }
@@ -404,10 +406,10 @@ const MonitoringList = () => {
     appStatusTab === "all"
       ? appSessionLogs
       : appSessionLogs.filter((entry) =>
-        appStatusTab === "opened"
-          ? entry.tone === "opened"
-          : entry.tone === "closed",
-      );
+          appStatusTab === "opened"
+            ? entry.tone === "opened"
+            : entry.tone === "closed",
+        );
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
 
@@ -437,8 +439,8 @@ const MonitoringList = () => {
     .includes("dump")
     ? "outside dumping yard"
     : String(
-      vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
-    ).toLowerCase();
+        vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
+      ).toLowerCase();
 
   // const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
   //   quickSummary.fuelStops ?? 0
@@ -504,14 +506,14 @@ const MonitoringList = () => {
     eventLog.length > 0
       ? eventLog
       : routeSnapshot.map((item) => ({
-        id: item.id,
-        title: item.label,
-        description: "",
-        time: item.time,
-        tag: item.label,
-        duration: item.duration || "-",
-        kind: item.kind,
-      }));
+          id: item.id,
+          title: item.label,
+          description: "",
+          time: item.time,
+          tag: item.label,
+          duration: item.duration || "-",
+          kind: item.kind,
+        }));
 
   // Monitoring page always uses Sikar Firebase
   useEffect(() => {
@@ -534,7 +536,7 @@ const MonitoringList = () => {
       action.getDutyInTime(selectedWard.id, setShowDutyInTime);
       action.getWardReachedTime(selectedWard.id, setWardReachedTime);
       action.getDutyOffTime(selectedWard.id, setDutyOffTime);
-      
+
       // Clear previous images instantly to avoid showing wrong imagery on modal pop
       setDutyInImage(null);
       setDutyOffImage(null);
@@ -552,12 +554,24 @@ const MonitoringList = () => {
       setIsDutyImageLoading(true);
       try {
         if (dutyModal === "dutyIn" && !dutyInImage) {
-          await action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
+          await action.getDutyInImage(
+            effectiveCity,
+            selectedWard.id,
+            setDutyInImage,
+          );
         } else if (dutyModal === "dutyOff" && !dutyOffImage) {
-          if (!dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") {
+          if (
+            !dutyOffTime ||
+            dutyOffTime === "00:00" ||
+            dutyOffTime === "--:--"
+          ) {
             setDutyOffImage(null);
           } else {
-            await action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
+            await action.getDutyOffImage(
+              effectiveCity,
+              selectedWard.id,
+              setDutyOffImage,
+            );
           }
         }
       } finally {
@@ -566,7 +580,14 @@ const MonitoringList = () => {
     };
 
     fetchImage();
-  }, [dutyModal, selectedWard?.id, city, dutyInImage, dutyOffImage, dutyOffTime]);
+  }, [
+    dutyModal,
+    selectedWard?.id,
+    city,
+    dutyInImage,
+    dutyOffImage,
+    dutyOffTime,
+  ]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -836,52 +857,74 @@ const MonitoringList = () => {
 
   return (
     <div className={styles.realtimePage}>
-      {/* Sidebar */}
-      <MonitoringSidebar
-        wardList={wardList}
-        selectedWard={selectedWard}
-        lastRefreshed={lastRefreshed}
-        refreshing={refreshing}
-        onWardSelect={handleWardSelect}
-        onRefresh={handleRefresh}
-        getZoneLabel={getZoneLabel}
-        getProgressStyle={getProgressStyle}
-        wardCoverageById={wardCoverageById}
-      />
+      {" "}
+      {/* ── Top Bar ── */}
+      <div className={styles.topBar}>
+        <div className={styles.topBarLeft}>
+          <img src={wevoisLogo} alt="WeVOIS" className={styles.topBarLogo} />
+        </div>
+        <div className={styles.topBarCenter}>
+          <span className={styles.topBarTitle}>Realtime Monitoring</span>
+          {/* <span className={styles.topBarSub}>
+            {selectedWard?.name
+              ? `Ward · ${selectedWard.name}`
+              : "Select a ward to begin"}
+          </span> */}
+        </div>
+        {/* <div className={styles.topBarRight}>
+          <span className={styles.topBarLiveDot} />
+          <span className={styles.topBarLiveLabel}>Live</span>
+          <span className={styles.topBarTime}>
+            {dayjs().format("DD MMM, YYYY")}
+          </span>
+        </div> */}
+      </div>
+      <div className={styles.mainSection}>
+        {/* Sidebar */}
+        <MonitoringSidebar
+          wardList={wardList}
+          selectedWard={selectedWard}
+          lastRefreshed={lastRefreshed}
+          refreshing={refreshing}
+          onWardSelect={handleWardSelect}
+          onRefresh={handleRefresh}
+          getZoneLabel={getZoneLabel}
+          getProgressStyle={getProgressStyle}
+          wardCoverageById={wardCoverageById}
+        />
+        {/* Main Content */}
+        <div className={styles.mainContent}>
+          <div className={styles.layoutSplit}>
+            <div className={styles.leftColumn}>
+              <DutyComparisonReplica
+                data={displayWardData}
+                wardId={selectedWard?.id}
+                onVehicleClick={() => setShowVehicleModal(true)}
+              />
+              <CompletionDashboard
+                totalLines={lineCounts.total}
+                completedLines={lineCounts.completed}
+                skippedLines={lineCounts.skipped}
+              />
 
-      {/* Main Content */}
-      <div className={styles.mainContent}>
-        <div className={styles.layoutSplit}>
-          <div className={styles.leftColumn}>
-            <DutyComparisonReplica
-              data={displayWardData}
-              wardId={selectedWard?.id}
-              onVehicleClick={() => setShowVehicleModal(true)}
-            />
-            <CompletionDashboard
-              totalLines={lineCounts.total}
-              completedLines={lineCounts.completed}
-              skippedLines={lineCounts.skipped}
-            />
-
-            <LiveStatusBoard
-              wardData={displayWardData}
-              vehicleTone={vehicleTone}
-              getTripStatusTone={getTripStatusTone}
-              appTone={appTone}
-              onVehicleClick={() => setActiveStatusModal("vehicle")}
-              onTripsClick={() => setActiveStatusModal("trips")}
-              onAppClick={() => setActiveStatusModal("app")}
-            />
-            {/* 
+              <LiveStatusBoard
+                wardData={displayWardData}
+                vehicleTone={vehicleTone}
+                getTripStatusTone={getTripStatusTone}
+                appTone={appTone}
+                onVehicleClick={() => setActiveStatusModal("vehicle")}
+                onTripsClick={() => setActiveStatusModal("trips")}
+                onAppClick={() => setActiveStatusModal("app")}
+              />
+              {/* 
             <HaltSummaryReplica
               onMapFocusChange={setMapFocus}
               ward={selectedWard?.id}
             /> */}
-          </div>
-          <div className={styles.dataRight}>
-            <div className={styles.dataRightBottom}>
-              {/* <div className={styles.centerColumn}>
+            </div>
+            <div className={styles.dataRight}>
+              <div className={styles.dataRightBottom}>
+                {/* <div className={styles.centerColumn}>
                 <CompletionDashboard
                   totalLines={lineCounts.total}
                   completedLines={lineCounts.completed}
@@ -905,8 +948,8 @@ const MonitoringList = () => {
                   onDeleteRemark={deleteRemark}
                 />
               </div> */}
-              <div className={styles.mapColumn}>
-                {/* <MonitoringCard
+                <div className={styles.mapColumn}>
+                  {/* <MonitoringCard
                   title="Zone Coverage"
                   icon={<Activity size={18} />}
                   className={styles.fullWidthZoneCard}
@@ -916,45 +959,46 @@ const MonitoringList = () => {
                   </div>
                 </MonitoringCard> */}
 
-                <ZoneCoverageV2 items={stateItems} />
+                  <ZoneCoverageV2 items={stateItems} />
 
-                <ShiftStatusSection
-                  events={currentShiftEvents}
-                  activeConnectorIndex={
-                    wardReachedTime ? 1 : showDutyInTime ? 0 : -1
-                  }
-                  showDutyInTime={showDutyInTime}
-                  onEventClick={handleShiftEventClick}
-                />
-                <MapSection
-                  city={city}
-                  selectedWard={selectedWard}
-                  onWardLengthResolved={setSelectedWardLengthInMeter}
-                  onWardLinesResolved={setWardLinesGeoJson}
-                  lineStatusByLine={currentWardLineStatus}
-                  focusLocation={mapFocus}
-                />
+                  <ShiftStatusSection
+                    events={currentShiftEvents}
+                    activeConnectorIndex={
+                      wardReachedTime ? 1 : showDutyInTime ? 0 : -1
+                    }
+                    showDutyInTime={showDutyInTime}
+                    onEventClick={handleShiftEventClick}
+                  />
+                  <MapSection
+                    city={city}
+                    selectedWard={selectedWard}
+                    onWardLengthResolved={setSelectedWardLengthInMeter}
+                    onWardLinesResolved={setWardLinesGeoJson}
+                    lineStatusByLine={currentWardLineStatus}
+                    focusLocation={mapFocus}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
+        {/* Duty In / Duty Off Modal */}
+        {dutyModal && (
+          <div className={styles.modalOverlay} onClick={closeAllModals}>
+            <DutyCheckModal
+              type={dutyModal}
+              time={dutyModal === "dutyOff" ? dutyOffTime : showDutyInTime}
+              wardName={selectedWard?.name}
+              attendanceImage={
+                dutyModal === "dutyOff" ? dutyOffImage : dutyInImage
+              }
+              isLoading={isDutyImageLoading}
+              onClose={closeAllModals}
+              onSubmit={closeAllModals}
+            />
+          </div>
+        )}
       </div>
-
-      {/* Duty In / Duty Off Modal */}
-      {dutyModal && (
-        <div className={styles.modalOverlay} onClick={closeAllModals}>
-          <DutyCheckModal
-            type={dutyModal}
-            time={dutyModal === "dutyOff" ? dutyOffTime : showDutyInTime}
-            wardName={selectedWard?.name}
-            attendanceImage={dutyModal === "dutyOff" ? dutyOffImage : dutyInImage}
-            isLoading={isDutyImageLoading}
-            onClose={closeAllModals}
-            onSubmit={closeAllModals}
-          />
-        </div>
-      )}
-
       {/* Modals */}
       {(activeStatusModal || showRemarkModal || showVehicleModal) && (
         <div className={styles.modalOverlay} onClick={closeAllModals}>

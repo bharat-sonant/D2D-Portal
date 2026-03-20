@@ -11,7 +11,111 @@
   /* margin-top: 60px; */
   padding: 10px;
   display: flex;
+      flex-flow: column;
   gap: 10px;
+}
+.mainSection{
+  display: flex;
+  gap: 10px;
+}
+/* ── Top Bar ─────────────────────────────────────────── */
+.topBar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--borderColor);
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+}
+
+.topBarCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  text-align: center;
+}
+
+.topBarLogo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.topBarDivider {
+  display: none;
+}
+
+.topBarTitle {
+  font-size: 15px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--black);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.topBarSub {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.topBarLiveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+  animation: topBarPulse 1.5s ease-in-out infinite;
+}
+
+.topBarLiveLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.topBarTime {
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--text-secondary);
+  padding: 3px 9px;
+  background: var(--whitefa);
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+@keyframes topBarPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.7); }
+}
+
+@media (max-width: 768px) {
+  .topBar { padding: 8px 12px; }
+  .topBarLogo { height: 22px; }
+  .topBarTime { display: none; }
+  .topBarSub { display: none; }
 }
 
 .mainContent {
