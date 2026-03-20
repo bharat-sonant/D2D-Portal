@@ -1,5 +1,15 @@
 import dayjs from "dayjs";
-import { getWardDutyOnTimeFromDB, getWorkerDetailsFromDB, getEmployeeGeneralDetailsFromDB, subscribeWorkerDetailsFromDB } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
+import { 
+    getWardDutyOnTimeFromDB, 
+    getWorkerDetailsFromDB, 
+    getEmployeeGeneralDetailsFromDB, 
+    subscribeWorkerDetailsFromDB,
+    getDutyInImageFromStorage,
+    getWardReachedTimeFromDB,
+    getWardDutyOffTimeFromDB,
+    getDutyOffImageFromStorage,
+    getEmployeeAllDetailsFromDB
+} from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn"
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
  

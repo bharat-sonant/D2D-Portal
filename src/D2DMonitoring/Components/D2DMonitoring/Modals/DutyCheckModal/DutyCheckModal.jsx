@@ -29,7 +29,7 @@ const CrewCard = ({ role, name, profileImage, isLarge = false, noImage = false }
   </div>
 );
 
-const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInImage, onClose }) => {
+const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, attendanceImage, onClose }) => {
   const meta = LABELS[type] ?? LABELS.dutyIn;
 
   return (
@@ -55,7 +55,7 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInI
       {/* ── Time strip ── */}
       <div className={styles.timeStrip}>
         <Clock size={13} className={time === "00:00" || !time ? styles.grayTime : ""} />
-        <span>Duty in Time: <strong className={time === "00:00" || !time ? styles.grayTime : ""}>{time || "00:00"}</strong></span>
+        <span>{type === "dutyIn" ? "Duty in Time" : "Duty off Time"}: <strong className={time === "00:00" || !time ? styles.grayTime : ""}>{time || "00:00"}</strong></span>
       </div>
 
       {/* ── Crew cards ── */}
@@ -63,9 +63,9 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInI
         <CrewCard
           role="Captain"
           name={workers.captain?.name}
-          profileImage={type === "dutyIn" && dutyInImage ? dutyInImage : workers.captain?.profileImage}
-          isLarge={type === "dutyIn" && !!dutyInImage}
-          noImage={type === "dutyIn" && !dutyInImage}
+          profileImage={attendanceImage || workers.captain?.profileImage}
+          isLarge={!!attendanceImage}
+          noImage={!attendanceImage}
         />
       </div>
     </div>

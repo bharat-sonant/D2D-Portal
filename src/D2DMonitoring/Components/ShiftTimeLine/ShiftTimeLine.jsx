@@ -9,7 +9,9 @@ const ShiftTimeLine = ({ events, activeConnectorIndex = -1, onEventClick }) => {
         <div className={styles.shiftTimelineCard}>
             <div className={styles.shiftTimelineTrack}>
                 {events.map((event, index) => {
-                    const isClickable = CLICKABLE_KEYS.has(event.key) && !!onEventClick;
+                    const isClickable = !!onEventClick &&
+                            (event.key === "dutyOn" || event.key === "dutyOff") &&
+                            event.time && event.time !== "00:00";
                     return (
                         <React.Fragment key={event.key}>
                             <div
