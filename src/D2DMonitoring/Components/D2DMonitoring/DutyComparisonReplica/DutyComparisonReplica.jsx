@@ -21,9 +21,8 @@ const CrewCard = ({ role, roleStyle, member }) => (
         alt={member.name || role}
         onError={(e) => { e.target.src = fallbackAvatar; }}
       />
-      {/* <span className={styles.heroReplicaOnlineDot} /> */}
     </div>
-
+<div className={styles.nameBG}>
     <h5>{member.name || `${role} Name`}</h5>
 
     <p className={styles.heroReplicaPhone}>
@@ -36,7 +35,7 @@ const CrewCard = ({ role, roleStyle, member }) => (
         <span>-</span>
       )}
     </p>
-
+</div>
 
   </div>
 );

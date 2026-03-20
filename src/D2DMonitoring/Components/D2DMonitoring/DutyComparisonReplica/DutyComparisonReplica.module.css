@@ -17,7 +17,6 @@
 .heroReplicaCrewGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-bottom: 1px solid var(--borderColor);
   text-align: center;
   position: relative;
 }
@@ -104,17 +103,21 @@
   right: 4px;
   bottom: 4px;
 }
-
+.nameBG{
+  margin-top: 7px;
+    border-radius: 4px;
+    background: var(--whitefa);
+    padding: 7px 3px;
+      border: 1px solid var(--borderColor);
+}
 .heroReplicaCrewCard h5 {
-  margin: 8px 0 5px;
+  margin: 2px 0 5px;
   text-align: center;
   font-size: 13px;
   color: var(--black);
   font-family: var(--fontGraphikSemibold);
-  border: 1px solid var(--borderColor);
-    border-radius: 6px;
-    background: var(--whitefa);
-    padding: 7px 3px;
+
+
 }
 
 .heroReplicaPhone {
@@ -125,10 +128,8 @@
   gap: 5px;
   color: #64748b;
   font-size: 11px;
-  font-family: var(--fontGraphikMedium);  border: 1px solid var(--borderColor);
-    border-radius: 6px;
-    background: var(--whitefa);
-      padding: 7px 3px;
+  font-family: var(--fontGraphikMedium); 
+
 
 }
 
@@ -182,11 +183,13 @@
   font-family: var(--fontGraphikSemibold);
 }
 .cardFooter{
-  padding: 10px;
+  padding: 0px ;
 }
 .heroReplicaVehicleRow {
   border-radius: 6px;
-  border: 1px solid var(--borderColor);
+    border-color: var(--borderColor);
+    border-radius: 0px 0px 6px 6px;
+    border-width: 1px 0px 0px;
   background-color: var(--white);
   padding: 9px 11px;
   display: flex;
