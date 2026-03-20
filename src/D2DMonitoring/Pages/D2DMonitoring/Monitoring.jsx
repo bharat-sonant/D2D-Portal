@@ -216,6 +216,8 @@ const MonitoringList = () => {
     quickSummary: {},
   });
 
+  const [dutyInImage, setDutyInImage] = useState(null);
+
   const [wardData] = useState({
     vehicleStatus: "Dumping Yard out",
     trips: 2,
@@ -506,7 +508,8 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!selectedWard?.id) return;
     action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-  }, [selectedWard?.id]);
+    action.getDutyInImage(city, selectedWard.id, setDutyInImage);
+  }, [selectedWard?.id, city]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -849,6 +852,7 @@ const MonitoringList = () => {
             type={dutyModal}
             time={showDutyInTime}
             wardName={selectedWard?.name}
+            dutyInImage={dutyInImage}
             onClose={closeAllModals}
             onSubmit={closeAllModals}
           />

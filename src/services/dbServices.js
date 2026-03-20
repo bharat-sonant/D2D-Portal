@@ -1,5 +1,5 @@
 import { ref, get, onValue, update, set, remove } from "firebase/database";
-import { ref as refStorage, uploadBytes } from "firebase/storage";
+import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as common from '../common/common'
 import { getDatabaseInstance, getStorageInstance, waitForFirebaseReady } from "../firebase/firebaseService";
  
@@ -25,6 +25,21 @@ export const uploadImageToStorage = async (image, filePath) => {
     return { success: true };
   } catch (error) {
     return { success: false, message: error.message };
+  }
+};
+
+/**
+ * 🔗 Get Download URL from Firebase Storage
+ */
+export const getDownloadURLFromStorage = async (filePath) => {
+  try {
+    const storage = await getReadyStorage();
+    const storageRef = refStorage(storage, filePath);
+    const url = await getDownloadURL(storageRef);
+    return url;
+  } catch (error) {
+    // console.error("Error getting download URL:", error);
+    return null;
   }
 };
  

@@ -8,14 +8,14 @@ const LABELS = {
   dutyOff: { title: "Duty Off", subtitle: "Shift end attendance record"   },
 };
 
-const CrewCard = ({ role, name, profileImage }) => (
+const CrewCard = ({ role, name, profileImage, isLarge = false }) => (
   <div className={styles.crewCard}>
     <div className={styles.roleChip}>{role}</div>
-    <div className={styles.photoWrap}>
+    <div className={`${styles.photoWrap} ${isLarge ? styles.largePhotoWrap : ""}`}>
       <img
         src={profileImage || avtarUser}
         alt={name || role}
-        className={styles.photo}
+        className={`${styles.photo} ${isLarge ? styles.largePhoto : ""}`}
         onError={(e) => { e.target.src = avtarUser; }}
       />
     </div>
@@ -23,7 +23,7 @@ const CrewCard = ({ role, name, profileImage }) => (
   </div>
 );
 
-const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, onClose }) => {
+const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, dutyInImage, onClose }) => {
   const meta = LABELS[type] ?? LABELS.dutyIn;
 
   return (
@@ -38,7 +38,6 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, onClose
             <span className={`${styles.typeBadge} ${styles[`badge_${type}`]}`}>
               <Clock size={11} /> {meta.title}
             </span>
-            {wardName && <span className={styles.wardTag}>{wardName}</span>}
           </div>
           <p className={styles.subtitle}>{meta.subtitle}</p>
         </div>
@@ -50,7 +49,7 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, onClose
       {/* ── Time strip ── */}
       <div className={styles.timeStrip}>
         <Clock size={13} />
-        <span>Timestamp: <strong>{time || "—"}</strong></span>
+        <span>Duty in Time: <strong>{time || "—"}</strong></span>
       </div>
 
       {/* ── Crew cards ── */}
@@ -58,12 +57,8 @@ const DutyCheckModal = ({ type = "dutyIn", time, wardName, workers = {}, onClose
         <CrewCard
           role="Captain"
           name={workers.captain?.name}
-          profileImage={workers.captain?.profileImage}
-        />
-        <CrewCard
-          role="Pilot"
-          name={workers.pilot?.name}
-          profileImage={workers.pilot?.profileImage}
+          profileImage={type === "dutyIn" && dutyInImage ? dutyInImage : workers.captain?.profileImage}
+          isLarge={type === "dutyIn" && !!dutyInImage}
         />
       </div>
     </div>

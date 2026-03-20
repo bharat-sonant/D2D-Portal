@@ -72,3 +72,18 @@ export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
         };
     });
 };
+
+/**
+ * 🖼 Get Duty In Photo from Firebase Storage
+ * Path: {city}/DutyOnImages/{wardId}/{year}/{month}/{date}/{wardId}.png
+ */
+export const getDutyInImageFromStorage = async (city, wardId, year, month, date) => {
+    try {
+        if (!city || !wardId || !year || !month || !date) return null;
+        const filePath = `${city}/DutyOnImages/${wardId}/${year}/${month}/${date}/${wardId}.png`;
+        console.log("[Service] Duty In Image Path:", filePath);
+        return await db.getDownloadURLFromStorage(filePath);
+    } catch (error) {
+        return null;
+    }
+};
