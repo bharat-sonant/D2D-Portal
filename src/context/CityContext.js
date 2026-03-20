@@ -72,16 +72,14 @@ export const CityProvider = ({ children }) => {
     const monitoringMatch = location.pathname.match(/^\/([^/]+)\/d2dMonitoring\/monitoring/);
     const monitoringCity = monitoringMatch?.[1];
 
-    if (monitoringCity) {
-      // CityDetails.json se config fetch karo
-      getMonitoringFirebaseConfig(monitoringCity).then((firebaseConfig) => {
-        connectFirebase(firebaseConfig, monitoringCity);
-      });
-    } else {
-      // Normal flow — .env se config
-      const firebaseConfig = getCityFirebaseConfig(city);
-      connectFirebase(firebaseConfig, city);
-    }
+    // Hamesha CityDetails se config fetch karo (cache hit hone par instant hai)
+    // Agar city CityDetails mein nahi mili toh getCityFirebaseConfig fallback karta hai
+    const targetCity = monitoringCity || city;
+    getMonitoringFirebaseConfig(targetCity).then((firebaseConfig) => {
+      if (firebaseConfig?.databaseURL) {
+        connectFirebase(firebaseConfig, targetCity);
+      }
+    });
 
     // Update browser title
     // document.title = `D2D : ${city}`;

@@ -1,3 +1,36 @@
+import axios from "axios";
+
+const CITY_DETAILS_URL =
+  "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
+
+let _cityDetailsCache = null;
+
+/**
+ * CityDetails.json se Firebase config fetch karta hai.
+ * Agar city wahan nahi mili toh .env fallback use karta hai.
+ */
+export const getCityFirebaseConfigAsync = async (city) => {
+  if (!_cityDetailsCache) {
+    try {
+      const res = await axios.get(CITY_DETAILS_URL);
+      _cityDetailsCache = res.data || [];
+    } catch {
+      _cityDetailsCache = [];
+    }
+  }
+  const normalizedCity = city?.toString()?.trim()?.toLowerCase();
+  const detail = _cityDetailsCache.find(
+    (item) =>
+      item?.city?.toString()?.trim()?.toLowerCase() === normalizedCity ||
+      item?.cityName?.toString()?.trim()?.toLowerCase() === normalizedCity
+  );
+  if (detail) {
+    const { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId } = detail;
+    return { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId };
+  }
+  return getCityFirebaseConfig(city);
+};
+
 export const cityDbConfig = {
   Reengus: process.env.REACT_APP_FIREBASE_DATABASE_URL_REENGUS,
   Ajmer: process.env.REACT_APP_FIREBASE_DATABASE_URL_AJMER,

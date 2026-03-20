@@ -2,6 +2,7 @@ import axios from "axios";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { setResponse } from "../../../common/common";
 import { getStorageInstance } from "../../../firebase/firebaseService";
+import { logServiceCall } from "../../../common/serviceLogger";
 
 // In-memory cache per session
 const _wardLinesCache = new Map();       // "cityName_wardId" → geoJson data
@@ -13,6 +14,7 @@ const _wardBoundaryCache = new Map();    // "cityName_wardId" → boundary data
  * Path: {storagePath}{cityName}%2FWardBoundryJson%2F{wardId}.json
  */
 export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
+    logServiceCall('WardMapService', 'getWardBoundaryFromStorage');
     const cacheKey = `${cityName}_${wardId}`;
     if (_wardBoundaryCache.has(cacheKey)) {
         return Promise.resolve(setResponse("Success", "Ward boundary fetched", _wardBoundaryCache.get(cacheKey)));
@@ -47,6 +49,7 @@ export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
  * Cache: first fetch stores data + file ref; subsequent calls return instantly.
  */
 export const getWardLinesFromStorage = async (cityName, wardId) => {
+    logServiceCall('WardMapService', 'getWardLinesFromStorage');
     const cacheKey = `${cityName}_${wardId}`;
 
     // Return from data cache immediately if available
@@ -81,7 +84,6 @@ export const getWardLinesFromStorage = async (cityName, wardId) => {
         }
         return setResponse("Fail", "No data in file", null);
     } catch (error) {
-        console.error("getWardLinesFromStorage error:", error);
         return setResponse("Fail", error.message, null);
     }
 };

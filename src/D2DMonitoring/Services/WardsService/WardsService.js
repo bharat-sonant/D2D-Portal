@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setResponse } from "../../../common/common";
+import { logServiceCall } from "../../../common/serviceLogger";
 
 /**
  * Firebase Storage se city ka AvailableWard.json fetch karta hai.
@@ -10,6 +11,7 @@ import { setResponse } from "../../../common/common";
  * @returns {Promise} setResponse with raw array data
  */
 export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
+    logServiceCall('WardsService', 'getAvailableWardsFromStorage');
     return new Promise((resolve) => {
         if (!storagePath || !storageCity) {
             resolve(setResponse("Fail", "Invalid Params !!", { storagePath, storageCity }));
@@ -28,7 +30,6 @@ export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
                 }
             })
             .catch((error) => {
-                console.error("getAvailableWardsFromStorage error:", error);
                 resolve(setResponse("Fail", error.message, []));
             });
     });

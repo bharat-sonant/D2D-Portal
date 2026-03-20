@@ -3,6 +3,7 @@ import {
     subscribeVehicleSurfingHistoryFromDB,
     getVehicleSurfingHistoryFromDB,
 } from "../../../Services/VehicleStatusService/VehicleStatusService";
+import { logServiceCall } from "../../../../common/serviceLogger";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -159,27 +160,17 @@ export const buildVehicleQuickSummary = (rawHistory = {}) => {
  * Returns unsubscribe — call in useEffect cleanup.
  */
 export const subscribeVehicleStatusForToday = (wardId, onUpdate) => {
+    logServiceCall('VehicleStatusAction', 'subscribeVehicleStatusForToday');
     if (!wardId) return () => {};
 
     const year = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
     const date = dayjs().format("YYYY-MM-DD");
 
-    console.log(
-        `[VehicleStatusAction] Subscribing → GeoGraphicallySurfingHistory/${wardId}/${year}/${month}/${date}`
-    );
-
     return subscribeVehicleSurfingHistoryFromDB(wardId, year, month, date, (rawData) => {
-        console.log("[VehicleStatusAction] Raw surfing history data:", rawData);
-
         const currentStatus = getCurrentVehicleStatus(rawData);
         const eventLog = buildVehicleEventLog(rawData);
         const quickSummary = buildVehicleQuickSummary(rawData);
-
-        console.log("[VehicleStatusAction] Derived currentStatus:", currentStatus);
-        console.log("[VehicleStatusAction] Derived eventLog:", eventLog);
-        console.log("[VehicleStatusAction] Derived quickSummary:", quickSummary);
-
         onUpdate({ currentStatus, eventLog, quickSummary });
     });
 };
@@ -189,18 +180,14 @@ export const subscribeVehicleStatusForToday = (wardId, onUpdate) => {
  * Returns { currentStatus, eventLog, quickSummary } or null on failure.
  */
 export const getVehicleStatusForToday = async (wardId) => {
+    logServiceCall('VehicleStatusAction', 'getVehicleStatusForToday');
     if (!wardId) return null;
 
     const year = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
     const date = dayjs().format("YYYY-MM-DD");
 
-    console.log(
-        `[VehicleStatusAction] Fetching → GeoGraphicallySurfingHistory/${wardId}/${year}/${month}/${date}`
-    );
-
     const resp = await getVehicleSurfingHistoryFromDB(wardId, year, month, date);
-    console.log("[VehicleStatusAction] Fetch response:", resp);
 
     if (resp?.status !== "Success" || !resp?.data) return null;
 

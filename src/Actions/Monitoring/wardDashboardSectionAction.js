@@ -1,8 +1,10 @@
 import { getWardDailySummary } from "../../services/RealtimeMonitoring/realtimeMonitoringServices";
 import { DailyWorkReportDataFromFirebase } from "../../services/ReportServices/DailyWorkReportService";
 import * as sbs from "../../services/supabaseServices";
+import { logServiceCall } from "../../common/serviceLogger";
 
 export const getWardDailyWorkSummaryAction = async (date, ward, cityId) => {
+  logServiceCall('wardDashboardSectionAction', 'getWardDailyWorkSummaryAction');
   try {
     if (!ward) return null;
 
@@ -22,6 +24,7 @@ export const getWardDailyWorkSummaryAction = async (date, ward, cityId) => {
 };
 
 export const getWardBoundryAction = async (cityId, wardId) => {
+  logServiceCall('wardDashboardSectionAction', 'getWardBoundryAction');
   try {
     const latestBoundary = await sbs.getLatestDate(wardId);
     if (!latestBoundary?.data) {
@@ -82,6 +85,7 @@ export const getWardBoundryAction = async (cityId, wardId) => {
 };
 
 export const getWardDashboardDataAction = async ({ date, ward, cityId }) => {
+  logServiceCall('wardDashboardSectionAction', 'getWardDashboardDataAction');
   try {
     if (!ward || !cityId) {
       return {
@@ -109,14 +113,11 @@ export const getWardDashboardDataAction = async ({ date, ward, cityId }) => {
     };
   }
 };
-export const fetchWardDailySummaryAction=async(cityId,wardList,date)=>{
-  try{
-    let list = wardList?.map(ward=>({name:ward?.name,id:ward?.id}));
-    let resp = await getWardDailySummary(list,date,cityId);
-    console.log(resp)
-
-  }catch(error){
-    console.log(error);
+export const fetchWardDailySummaryAction = async (cityId, wardList, date) => {
+  logServiceCall('wardDashboardSectionAction', 'fetchWardDailySummaryAction');
+  try {
+    const list = wardList?.map(ward => ({ name: ward?.name, id: ward?.id }));
+    await getWardDailySummary(list, date, cityId);
+  } catch (error) {
   }
-  
 }

@@ -1,6 +1,8 @@
 import { getWardData } from "../../services/MonitoringServices/MonitoringServices";
+import { logServiceCall } from "../../common/serviceLogger";
 
 export const getWardListAction = async (cityId, selectedWardId = null) => {
+  logServiceCall('wardListSectionAction', 'getWardListAction');
   try {
     const response = await getWardData(cityId);
     if (response.status !== "success" || !Array.isArray(response.data)) {

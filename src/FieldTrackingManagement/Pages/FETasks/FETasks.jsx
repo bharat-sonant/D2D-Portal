@@ -386,3 +386,6 @@
 // };
 
 // export default FETasks;
+
+const FETasks = () => <div>Field Executive Tasks</div>;
+export default FETasks;

@@ -1,4 +1,5 @@
 import * as sbs from '../supabaseServices';
+import { logServiceCall } from '../../common/serviceLogger';
 
 const normalize = (value = '') =>
   value.toString().replace(/_/g, ' ').trim();
@@ -32,6 +33,7 @@ const sortWards = (list = []) => {
 };
 
 export const getWardData = async(cityId) => {
+   logServiceCall('MonitoringServices', 'getWardData');
    let filters ={city_Id:cityId,show_realtime:'Yes'}
   const result = await sbs.getDataByColumns('Wards',filters)
   if(!result.success){

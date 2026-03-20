@@ -1,11 +1,13 @@
 import * as common from "../../../common/common";
 import * as db from "../../../services/dbServices";
+import { logServiceCall } from "../../../common/serviceLogger";
 
 /**
  * Firebase onValue listener — fires instantly from cache, then realtime.
  * Returns unsubscribe function; call in useEffect cleanup.
  */
 export const subscribeWardLineStatus = (ward, year, month, date, onUpdate) => {
+    logServiceCall('MapSectionService', 'subscribeWardLineStatus');
     if (!ward || !year || !month || !date) return () => {};
     const path = `WasteCollectionInfo/${ward}/${year}/${month}/${date}/LineStatus`;
     return db.subscribeData(path, (data) => {
@@ -21,6 +23,7 @@ export const subscribeWardLineStatus = (ward, year, month, date, onUpdate) => {
 };
 
 export const getWardLineStatus = (ward, year, month, date) => {
+    logServiceCall('MapSectionService', 'getWardLineStatus');
     return new Promise((resolve) => {
         try {
             if (ward && year && month && date) {
@@ -45,7 +48,6 @@ export const getWardLineStatus = (ward, year, month, date) => {
                 resolve(common.setResponse('fail', "Invalid Params", { ward, year, month, date }));
             };
         } catch (error) {
-            console.log('Error while fetching ward line status', error);
             resolve(common.setResponse('fail', error.message));
         };
     });

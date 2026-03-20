@@ -381,3 +381,6 @@
 // };
 
 // export default FE_Dashboard;
+
+const FE_Dashboard = () => <div>Field Executive Dashboard</div>;
+export default FE_Dashboard;

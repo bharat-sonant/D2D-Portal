@@ -1,9 +1,10 @@
 import * as db from '../../../../services/dbServices';
 import * as common from '../../../../common/common';
 import dayjs from 'dayjs';
-
+import { logServiceCall } from '../../../../common/serviceLogger';
 
 export const getBasicWorkMonitoringData = async (selectedDate) => {
+    logServiceCall('WorkersDetailService', 'getBasicWorkMonitoringData');
     return new Promise(async (resolve) => {
         if (!selectedDate) {
             resolve(common.setResponse("fail", "Invalid parameters!", {}));

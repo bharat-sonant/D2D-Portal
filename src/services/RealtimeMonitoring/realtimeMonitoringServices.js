@@ -1,8 +1,10 @@
 import * as sbs from '../supabaseServices';
 import axios from 'axios';
 import dayjs from "dayjs";
+import { logServiceCall } from '../../common/serviceLogger';
 
 export const getWardDailySummary = async (wardList, date, cityId) => {
+  logServiceCall('RealtimeMonitoringServices', 'getWardDailySummary');
   try {
 
     if (!validateInput(wardList, date, cityId)) {
@@ -36,7 +38,6 @@ export const getWardDailySummary = async (wardList, date, cityId) => {
     return {...savedSummary,data:final};
 
   } catch (error) {
-    console.error("getWardDailySummary error:", error);
     return { status: "error", message: "Internal server error" };
   }
 };
@@ -84,7 +85,6 @@ const fetchSummariesFromFirebase = async (wards, date, firebaseBaseUrl) => {
       };
 
     } catch (err) {
-      console.error(`Firebase fetch failed for ${ward.name}`, err.message);
       return null;
     }
   });

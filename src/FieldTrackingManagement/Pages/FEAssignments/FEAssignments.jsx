@@ -212,3 +212,6 @@
 // };
 
 // export default FEAssignments;
+
+const FEAssignments = () => <div>Field Executive Assignments</div>;
+export default FEAssignments;

@@ -83,10 +83,9 @@ export const prefetchAllWardLines = (city, wardList = [], onWardLinesReady = nul
     if (!city || !wardList.length) return;
     getCityStorageInfo(city).then((info) => {
         if (!info) return;
-        const { storagePath, cityName } = info;
+        const { cityName } = info;
         wardList.forEach((ward) => {
             if (!ward?.id) return;
-            getWardBoundaryFromStorage(storagePath, cityName, ward.id);
             getWardLinesFromStorage(cityName, ward.id).then((res) => {
                 if (res?.status === "Success" && typeof onWardLinesReady === "function") {
                     onWardLinesReady(ward.id, res.data);
