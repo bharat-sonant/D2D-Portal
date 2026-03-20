@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
@@ -28,6 +28,10 @@ import CompletionDashboard from "../../../components/CompletionDashboard/Complet
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
+import ChangePassword from "../../../components/ChangePassword/changePassword";
+import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
+import topbarStyles from "../../../Style/MainLayout/Topbar.module.css";
+import { useCity } from "../../../context/CityContext";
 
 // Component imports
 import MonitoringSidebar from "../../Components/D2DMonitoring/MonitoringSidebar/MonitoringSidebar";
@@ -146,6 +150,16 @@ const getJourneyKindMeta = (kind = "") => {
 
 const MonitoringList = () => {
   const { city } = useParams();
+  const navigate = useNavigate();
+  const { setCityContext } = useCity();
+
+  // ── User badge state ──────────────────────────────────
+  const storedName = localStorage.getItem("name");
+  const [firstchar, setFirstchar] = useState("");
+  const [secondchar, setSecondchar] = useState("");
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
+
   const [wardList, setWardList] = useState([]);
 
   useEffect(() => {
@@ -639,6 +653,23 @@ const MonitoringList = () => {
     return () => typeof unsubscribe === "function" && unsubscribe();
   }, [selectedWard?.id]);
 
+  // ── User badge: parse initials ────────────────────────
+  useEffect(() => {
+    if (storedName) {
+      const parts = storedName.split(" ");
+      setFirstchar(parts[0].charAt(0).toUpperCase());
+      setSecondchar(parts.length > 1 ? parts[1].charAt(0).toUpperCase() : "");
+    }
+  }, [storedName]);
+
+  const handleLogout = () => {
+    ["isLogin", "loginDate", "name", "userId", "city", "cityId", "defaultCity", "logoUrl"].forEach(
+      (k) => localStorage.removeItem(k),
+    );
+    setCityContext({ city: "", cityId: "", cityLogo: "" });
+    navigate("/");
+  };
+
   const handleWardSelect = (ward) => {
     if (selectedWard?.id === ward.id) return;
     setDataLoading(true);
@@ -860,6 +891,7 @@ const MonitoringList = () => {
     liquidCoveragePercent <= 0 ? 0 : Math.max(liquidCoveragePercent, 14);
 
   return (
+    <>
     <div className={styles.realtimePage}>
       {" "}
       {/* ── Top Bar ── */}
@@ -875,13 +907,20 @@ const MonitoringList = () => {
               : "Select a ward to begin"}
           </span> */}
         </div>
-        {/* <div className={styles.topBarRight}>
-          <span className={styles.topBarLiveDot} />
-          <span className={styles.topBarLiveLabel}>Live</span>
-          <span className={styles.topBarTime}>
-            {dayjs().format("DD MMM, YYYY")}
-          </span>
-        </div> */}
+        <div className={styles.topBarRight}>
+          <div
+            className={topbarStyles.userBadge}
+            onClick={() => setShowQuickAppSelect((p) => !p)}
+            style={{ cursor: "pointer" }}
+          >
+            <button className={`btn ${topbarStyles.userDropdownBtn}`}>
+              <span className={topbarStyles.userBG}>
+                {firstchar}{secondchar}
+              </span>
+              <span className={topbarStyles.userName}>{storedName}</span>
+            </button>
+          </div>
+        </div>
       </div>
       <div className={styles.mainSection}>
         {/* Sidebar */}
@@ -1075,6 +1114,20 @@ const MonitoringList = () => {
         </div>
       )}
     </div>
+
+    {/* ── User account modals ── */}
+    <ChangePassword
+      showChangePassword={showChangePassword}
+      setShowChangePassword={setShowChangePassword}
+    />
+    <QuickAppSelection
+      showQuickAppSelect={showQuickAppSelect}
+      onClose={() => setShowQuickAppSelect(false)}
+      isDropdown={true}
+      onChangePassword={() => setShowChangePassword(true)}
+      onLogout={handleLogout}
+    />
+    </>
   );
 };
 
