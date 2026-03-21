@@ -25,8 +25,8 @@
   background: var(--white);
   border: 1px solid var(--borderColor);
   border-radius: 0px;
-  /* padding: 0px 0px 0px 16px; */
-  padding: 8px 16px;
+  padding: 0px 0px 0px 16px;
+  /* padding: 8px 16px; */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
 }
