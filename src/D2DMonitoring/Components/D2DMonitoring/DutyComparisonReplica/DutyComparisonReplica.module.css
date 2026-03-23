@@ -51,6 +51,37 @@
   z-index: 2;
 }
 
+/* ── Without Helper placeholder ── */
+.noHelperCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 10px;
+  z-index: 2;
+}
+
+.noHelperIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1.5px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.noHelperIcon { color: #94a3b8; }
+
+.noHelperLabel {
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  color: #94a3b8;
+  letter-spacing: 0.2px;
+}
+
 .heroReplicaRolePill {
   display: inline-flex;
   align-items: center;

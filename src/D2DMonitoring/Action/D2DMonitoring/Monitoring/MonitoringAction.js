@@ -8,7 +8,8 @@ import {
     getWardReachedTimeFromDB,
     getWardDutyOffTimeFromDB,
     getDutyOffImageFromStorage,
-    getEmployeeAllDetailsFromDB
+    getEmployeeAllDetailsFromDB,
+    getHelperDummyFlagFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
@@ -454,21 +455,34 @@ const extractEmployeeDisplay = (fullEmp) => {
     };
 };
 
-const buildWorkerState = (driverEmp, helperEmp, vehicle) => ({
-    captain: {
-        name:         toTitleCase(driverEmp.name || ""),
-        phone:        driverEmp.mobile || "",
-        profileImage: driverEmp.profilePhotoURL || null,
-        experience:   calcExperience(driverEmp._doj || ""),
-    },
-    pilot: {
-        name:         toTitleCase(helperEmp.name || ""),
-        phone:        helperEmp.mobile || "",
-        profileImage: helperEmp.profilePhotoURL || null,
-        experience:   calcExperience(helperEmp._doj || ""),
-    },
-    vehicle,
-});
+/** Returns true if name contains "(c)" or "(C)" anywhere */
+const hasCTag = (name = "") => /\(c\)/i.test(name);
+
+const buildWorkerState = (driverEmp, helperEmp, vehicle, helperIsDummyFlag = null) => {
+    const rawHelperName = helperEmp.name || "";
+    const helperHasCTag = hasCTag(rawHelperName);
+    const helperIsDummy = Number(helperIsDummyFlag) === 1;
+
+    return {
+        captain: {
+            name:         toTitleCase(driverEmp.name || ""),
+            phone:        driverEmp.mobile || "",
+            profileImage: driverEmp.profilePhotoURL || null,
+            experience:   calcExperience(driverEmp._doj || ""),
+        },
+        pilot: {
+            name:         toTitleCase(rawHelperName),
+            phone:        helperEmp.mobile || "",
+            profileImage: helperEmp.profilePhotoURL || null,
+            experience:   calcExperience(helperEmp._doj || ""),
+            isDummy:      helperIsDummy,
+            hasCTag:      helperHasCTag,
+            noHelper:     helperIsDummy && helperHasCTag,
+            nameRed:      !helperIsDummy && helperHasCTag,
+        },
+        vehicle,
+    };
+};
 
 // ── In-memory caches (cleared on page reload, valid for the day) ──────────
 const workerCache = new Map();  // key: `${wardId}-${date}`  → raw WorkerDetails
@@ -507,12 +521,13 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
 
-        const [driverDetails, helperDetails] = await Promise.all([
+        const [driverDetails, helperDetails, helperDummyFlag] = await Promise.all([
             getCachedEmployee(driverId),
             getCachedEmployee(helperId),
+            getHelperDummyFlagFromDB(helperId),
         ]);
 
-        setWorkers(buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle)));
+        setWorkers(buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle), helperDummyFlag));
     });
 
     return unsubscribe;

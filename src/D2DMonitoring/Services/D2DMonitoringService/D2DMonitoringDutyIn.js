@@ -55,6 +55,24 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
  * Fetches the full Employees/{id} parent node so DOJ can be found
  * in any sub-node (GeneralDetails, OfficialDetails, PersonalDetails, etc.)
  */
+/**
+ * Fetches EmployeeDetailData/{employeeId}/isDummyId
+ * Returns the numeric flag (0 or 1) or null if not found.
+ */
+export const getHelperDummyFlagFromDB = async (employeeId) => {
+    return new Promise((resolve) => {
+        try {
+            if (!employeeId) { resolve(null); return; }
+            db.getData(`EmployeeDetailData/${employeeId}/isDummyId`).then((resp) => {
+                resolve(resp !== null ? resp : null);
+            });
+        } catch (error) {
+            console.error("Error fetching isDummyId: ", error);
+            resolve(null);
+        }
+    });
+};
+
 export const getEmployeeAllDetailsFromDB = async (employeeId) => {
     return new Promise((resolve) => {
         try {

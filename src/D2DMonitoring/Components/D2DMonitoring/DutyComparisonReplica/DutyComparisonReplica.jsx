@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Phone, ChevronRight, UserStar } from "lucide-react";
+import { Phone, ChevronRight, UserStar, UserX } from "lucide-react";
 import fallbackAvatar from "../../../../assets/images/avtarUser.png";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
@@ -7,7 +7,7 @@ import { subscribeWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring
 
 const INITIAL_WORKERS = {
   captain: { name: "", phone: "", profileImage: null, experience: "" },
-  pilot:   { name: "", phone: "", profileImage: null, experience: "" },
+  pilot:   { name: "", phone: "", profileImage: null, experience: "", noHelper: false, nameRed: false },
   vehicle: "",
 };
 
@@ -22,21 +22,29 @@ const CrewCard = ({ role, roleStyle, member }) => (
         onError={(e) => { e.target.src = fallbackAvatar; }}
       />
     </div>
-<div className={styles.nameBG}>
-    <h5>{member.name || `${role} Name`}</h5>
+    <div className={styles.nameBG}>
+      <h5 style={member.nameRed ? { color: "#dc2626" } : undefined}>
+        {member.name || `${role} Name`}
+      </h5>
+      <p className={styles.heroReplicaPhone}>
+        <Phone size={11} />
+        {member.phone ? (
+          <a href={`tel:${member.phone.replace(/[^\d+]/g, "")}`}>{member.phone}</a>
+        ) : (
+          <span>-</span>
+        )}
+      </p>
+    </div>
+  </div>
+);
 
-    <p className={styles.heroReplicaPhone}>
-      <Phone size={11} />
-      {member.phone ? (
-        <a href={`tel:${member.phone.replace(/[^\d+]/g, "")}`}>
-          {member.phone}
-        </a>
-      ) : (
-        <span>-</span>
-      )}
-    </p>
-</div>
-
+/** Shown instead of helper CrewCard when isDummy=1 and (c) tag present */
+const NoHelperCard = () => (
+  <div className={styles.noHelperCard}>
+    <div className={styles.noHelperIconWrap}>
+      <UserX size={22} className={styles.noHelperIcon} />
+    </div>
+    <span className={styles.noHelperLabel}>Without Helper</span>
   </div>
 );
 
@@ -67,11 +75,15 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
           member={captain}
         />
 
-        <CrewCard
-          role="Helper"
-          roleStyle={styles.heroReplicaRoleHelper}
-          member={pilot}
-        />
+        {pilot.noHelper ? (
+          <NoHelperCard />
+        ) : (
+          <CrewCard
+            role="Helper"
+            roleStyle={styles.heroReplicaRoleHelper}
+            member={pilot}
+          />
+        )}
       </div>
 
       {/* ── Vehicle row ── */}
