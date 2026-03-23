@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import MapSection from "../MapSection";
 import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
@@ -15,6 +15,10 @@ const MapOffcanvas = ({
   vehicleLocation = null,
 }) => {
   const [showTracking, setShowTracking] = useState(false);
+
+  useEffect(() => {
+    if (!open) setShowTracking(false);
+  }, [open]);
 
   return (
     <>
@@ -66,7 +70,7 @@ const MapOffcanvas = ({
         {/* Body */}
         <div className={styles.mapBody}>
           {showTracking ? (
-            <VehicleTrackingMap selectedWard={selectedWard} />
+            <VehicleTrackingMap selectedWard={selectedWard} city={city} />
           ) : (
             <MapSection
               city={city}
