@@ -81,6 +81,39 @@
   margin-top: 2px;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggleBtn:hover {
+  background: #e8f3ff;
+  border-color: #93c5fd;
+  color: #2898ca;
+}
+
+.toggleBtnActive {
+  background: #e8f3ff;
+  border-color: #2898ca;
+  color: #2898ca;
+}
+
 .closeBtn {
   width: 34px;
   height: 34px;
@@ -109,4 +142,9 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+}
+
+.headerIconActivity {
+  background: #f0fdf4;
+  color: #16a34a;
 }

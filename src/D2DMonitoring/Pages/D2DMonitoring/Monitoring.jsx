@@ -1145,6 +1145,8 @@ const MonitoringList = () => {
       selectedWard={selectedWard}
       lineStatusByLine={currentWardLineStatus}
       focusLocation={mapFocus}
+      vehicleId={selectedWard?.id}
+      vehicleNumber={wardData.vehicleNumber}
     />
     </>
   );

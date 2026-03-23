@@ -1,5 +1,7 @@
-import { X, Map } from "lucide-react";
+import { useState } from "react";
+import { X, Map, Layers } from "lucide-react";
 import MapSection from "../MapSection";
+import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
 import styles from "./MapOffcanvas.module.css";
 
 /**
@@ -10,10 +12,12 @@ import styles from "./MapOffcanvas.module.css";
  *  open            – boolean, whether panel is visible
  *  onClose         – fn, called when backdrop or X is clicked
  *  wardName        – string, shown in header subtitle
- *  city            – passed to MapSection
- *  selectedWard    – passed to MapSection
- *  lineStatusByLine– passed to MapSection
+ *  city            – passed to MapSection / VehicleTrackingMap
+ *  selectedWard    – passed to MapSection / VehicleTrackingMap
+ *  lineStatusByLine– passed to MapSection / VehicleTrackingMap
  *  focusLocation   – passed to MapSection
+ *  vehicleId       – passed to VehicleTrackingMap for live status subscription
+ *  vehicleNumber   – vehicle registration label shown in VehicleTrackingMap sidebar
  */
 const MapOffcanvas = ({
   open,
@@ -23,7 +27,11 @@ const MapOffcanvas = ({
   selectedWard,
   lineStatusByLine = {},
   focusLocation = null,
+  vehicleId,
+  vehicleNumber,
 }) => {
+  const [showActivityMap, setShowActivityMap] = useState(false);
+
   return (
     <>
       {/* Backdrop */}
@@ -43,36 +51,59 @@ const MapOffcanvas = ({
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <span className={styles.headerIcon}>
-              <Map size={16} />
+            <span className={`${styles.headerIcon} ${showActivityMap ? styles.headerIconActivity : ""}`}>
+              {showActivityMap ? <Layers size={16} /> : <Map size={16} />}
             </span>
             <div>
-              <div className={styles.headerTitle}>Live Map</div>
+              <div className={styles.headerTitle}>
+                {showActivityMap ? "Vehicle Tracking" : "Live Map"}
+              </div>
               {wardName && (
                 <div className={styles.headerSub}>{wardName}</div>
               )}
             </div>
           </div>
-          <button
-            type="button"
-            className={styles.closeBtn}
-            onClick={onClose}
-            aria-label="Close map"
-          >
-            <X size={18} />
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${showActivityMap ? styles.toggleBtnActive : ""}`}
+              onClick={() => setShowActivityMap((prev) => !prev)}
+              aria-label="Toggle vehicle tracking"
+              title={showActivityMap ? "Switch to Live Map" : "Track Vehicle Activity"}
+            >
+              <Layers size={16} />
+            </button>
+            <button
+              type="button"
+              className={styles.closeBtn}
+              onClick={onClose}
+              aria-label="Close map"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
-        {/* Map body — stretches to fill remaining height */}
+        {/* Body */}
         <div className={styles.mapBody}>
-          <MapSection
-            city={city}
-            selectedWard={selectedWard}
-            lineStatusByLine={lineStatusByLine}
-            focusLocation={focusLocation}
-            showMarkers
-            fullHeight
-          />
+          {showActivityMap ? (
+            <VehicleTrackingMap
+              vehicleId={vehicleId || selectedWard?.id}
+              vehicleNumber={vehicleNumber}
+              city={city}
+              selectedWard={selectedWard}
+              lineStatusByLine={lineStatusByLine}
+            />
+          ) : (
+            <MapSection
+              city={city}
+              selectedWard={selectedWard}
+              lineStatusByLine={lineStatusByLine}
+              focusLocation={focusLocation}
+              showMarkers
+              fullHeight
+            />
+          )}
         </div>
       </div>
     </>
