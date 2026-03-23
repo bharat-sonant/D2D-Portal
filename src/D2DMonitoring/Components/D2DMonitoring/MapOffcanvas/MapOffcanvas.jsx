@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Map, Route } from "lucide-react";
 import MapSection from "../MapSection";
 import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
 import styles from "./MapOffcanvas.module.css";
@@ -40,22 +40,11 @@ const MapOffcanvas = ({
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             {wardName && (
-              <div className={styles.headerSub}>{wardName}</div>
+              <div className={styles.headerTitle}>{wardName}</div>
             )}
           </div>
 
           <div className={styles.headerActions}>
-            <span className={styles.toggleLabel}>
-              {showTracking ? "Travel Path" : "Map View"}
-            </span>
-            <label className={styles.switch}>
-              <input
-                type="checkbox"
-                checked={showTracking}
-                onChange={(e) => setShowTracking(e.target.checked)}
-              />
-              <span className={styles.slider} />
-            </label>
             <button
               type="button"
               className={styles.closeBtn}
@@ -80,8 +69,32 @@ const MapOffcanvas = ({
               vehicleLocation={vehicleLocation}
               showMarkers
               fullHeight
+              hideHeader
             />
           )}
+
+          {/* ── Floating accordion-style view toggle ── */}
+          <div className={styles.viewToggle}>
+            <button
+              type="button"
+              className={`${styles.viewSegment} ${!showTracking ? styles.viewSegmentActive : styles.viewSegmentInactive}`}
+              onClick={() => setShowTracking(false)}
+            >
+              <Map size={13} />
+              <span className={styles.viewSegmentText}>Map View</span>
+            </button>
+
+            <span className={styles.viewToggleDivider} />
+
+            <button
+              type="button"
+              className={`${styles.viewSegment} ${showTracking ? styles.viewSegmentActive : styles.viewSegmentInactive}`}
+              onClick={() => setShowTracking(true)}
+            >
+              <Route size={13} />
+              <span className={styles.viewSegmentText}>Travel Path</span>
+            </button>
+          </div>
         </div>
       </div>
     </>

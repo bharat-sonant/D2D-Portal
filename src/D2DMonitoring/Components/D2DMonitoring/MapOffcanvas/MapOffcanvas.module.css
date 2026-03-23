@@ -19,9 +19,9 @@
 /* ── Panel ── */
 .panel {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
   width: 70vw;
   min-width: 320px;
   background: #fff;
@@ -29,10 +29,11 @@
   display: flex;
   flex-direction: column;
   box-shadow: -12px 0 36px rgba(0, 0, 0, 0.14);
-  border-radius: 14px 0 0 14px;
+  border-radius: 12px;
   transform: translateX(105%);
   transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
+
 }
 
 .panelOpen {
@@ -48,6 +49,7 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   background: linear-gradient(135deg, #f0f7ff 0%, #f8fafc 100%);
   flex-shrink: 0;
+    
 }
 
 .headerLeft {
@@ -68,9 +70,9 @@
 }
 
 .headerTitle {
-  font-size: 15px;
-  font-family: var(--fontGraphikSemibold);
-  color: var(--darkBlack);
+  font-size: 17px;
+    color: var(--black);
+    font-family: var(--fontGraphikSemibold);
   line-height: 1.1;
 }
 
@@ -142,6 +144,7 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  position: relative;
 }
 
 .headerIconActivity {
@@ -149,54 +152,61 @@
   color: #16a34a;
 }
 
-/* ── Toggle Switch ── */
-.toggleLabel {
-  font-size: 12px;
-  font-family: var(--fontGraphikMedium);
-  color: #6b7280;
-  white-space: nowrap;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 36px;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
+/* ── Floating accordion-style view toggle ── */
+.viewToggle {
   position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
   cursor: pointer;
-  inset: 0;
-  background: #d1d5db;
-  border-radius: 20px;
-  transition: background 0.2s ease;
+  padding: 0;
+  z-index: 10;
+  transition: box-shadow 0.2s ease;
 }
 
-.slider::before {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  left: 3px;
-  top: 3px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+.viewToggle:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
 }
 
-.switch input:checked + .slider {
-  background: #2898ca;
+.viewSegment {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  font-size: 12px;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
-.switch input:checked + .slider::before {
-  transform: translateX(16px);
+.viewSegmentActive {
+  background: var(--themeColor);
+  color: #ffffff;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.viewSegmentInactive {
+  background: transparent;
+  color: #6b7280;
+  font-family: var(--fontGraphikMedium);
+}
+
+.viewToggleDivider {
+  display: block;
+  width: 1px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+}
+
+.viewSegmentText {
+  line-height: 1;
 }
