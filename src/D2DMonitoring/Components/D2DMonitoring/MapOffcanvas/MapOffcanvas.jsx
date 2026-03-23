@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Map, Layers } from "lucide-react";
+import { X } from "lucide-react";
 import MapSection from "../MapSection";
 import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
 import styles from "./MapOffcanvas.module.css";
@@ -34,37 +34,37 @@ const MapOffcanvas = ({
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <span className={`${styles.headerIcon} ${showTracking ? styles.headerIconActivity : ""}`}>
-              {showTracking ? <Layers size={16} /> : <Map size={16} />}
-            </span>
-            <div>
-              <div className={styles.headerTitle}>
-                {showTracking ? "Vehicle Tracking" : "Live Map"}
-              </div>
-              {wardName && (
-                <div className={styles.headerSub}>{wardName}</div>
-              )}
-            </div>
+            {wardName && (
+              <div className={styles.headerSub}>{wardName}</div>
+            )}
           </div>
-          <div className={styles.headerActions}>
+
+          {/* Toggle */}
+          <div className={styles.tabToggle}>
             <button
               type="button"
-              className={`${styles.toggleBtn} ${showTracking ? styles.toggleBtnActive : ""}`}
-              onClick={() => setShowTracking((prev) => !prev)}
-              aria-label="Toggle vehicle tracking"
-              title={showTracking ? "Switch to Live Map" : "Track Vehicle"}
+              className={`${styles.tabBtn} ${!showTracking ? styles.tabBtnActive : ""}`}
+              onClick={() => setShowTracking(false)}
             >
-              <Layers size={16} />
+              Live Map
             </button>
             <button
               type="button"
-              className={styles.closeBtn}
-              onClick={onClose}
-              aria-label="Close map"
+              className={`${styles.tabBtn} ${showTracking ? styles.tabBtnActive : ""}`}
+              onClick={() => setShowTracking(true)}
             >
-              <X size={18} />
+              Vehicle Tracking
             </button>
           </div>
+
+          <button
+            type="button"
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Close map"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Body */}

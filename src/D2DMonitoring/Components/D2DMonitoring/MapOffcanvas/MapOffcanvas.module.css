@@ -148,3 +148,33 @@
   background: #f0fdf4;
   color: #16a34a;
 }
+
+/* ── Tab Toggle ── */
+.tabToggle {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tabBtn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tabBtnActive {
+  background: #fff;
+  color: var(--darkBlack);
+  font-family: var(--fontGraphikSemibold);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
