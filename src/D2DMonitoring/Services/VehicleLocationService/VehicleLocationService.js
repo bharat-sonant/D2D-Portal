@@ -10,15 +10,21 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "
  * @returns unsubscribe function
  */
 export const subscribeVehicleLocation = (wardId, onUpdate) => {
+
     if (!wardId) return () => {};
+
     return db.subscribeData(
         `CurrentLocationInfo/${wardId}/latLng`,
         (data) => {
+
             if (!data) return onUpdate(null);
+
             saveRealtimeDbServiceHistory('VehicleLocationService', 'subscribeVehicleLocation');
             saveRealtimeDbServiceDataHistory('VehicleLocationService', 'subscribeVehicleLocation', data);
+
             const [lat, lng] = String(data).split(",").map(Number);
             onUpdate(isNaN(lat) || isNaN(lng) ? null : { lat, lng });
         }
     );
+
 };
