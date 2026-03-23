@@ -3,6 +3,7 @@ import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { setResponse } from "../../../common/common";
 import { getStorageInstance } from "../../../firebase/firebaseService";
 import { logServiceCall } from "../../../common/serviceLogger";
+import { trackCall } from "../DbServiceTracker/serviceTracker";
 
 // In-memory cache per session
 const _wardLinesCache = new Map();       // "cityName_wardId" → geoJson data
@@ -32,6 +33,7 @@ export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
             .then((response) => {
                 if (response?.data) {
                     _wardBoundaryCache.set(cacheKey, response.data);
+                    trackCall(`WardBoundaryStorage/${wardId}`, "axios", response.data);
                     resolve(setResponse("Success", "Ward boundary fetched", response.data));
                 } else {
                     resolve(setResponse("Fail", "No boundary data found", null));
@@ -80,6 +82,7 @@ export const getWardLinesFromStorage = async (cityName, wardId) => {
 
         if (response?.data) {
             _wardLinesCache.set(cacheKey, response.data);
+            trackCall(`GeoJsonWardLines/${wardId}`, "axios", response.data);
             return setResponse("Success", "Ward lines fetched", response.data);
         }
         return setResponse("Fail", "No data in file", null);

@@ -2,6 +2,7 @@ import { ref, get, onValue, update, set, remove } from "firebase/database";
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as common from '../common/common'
 import { getDatabaseInstance, getStorageInstance, waitForFirebaseReady } from "../firebase/firebaseService";
+import { trackCall } from "../D2DMonitoring/Services/DbServiceTracker/serviceTracker";
  
 /** ✅ Ensure Firebase Ready */
 const getReadyDatabase = async () => {
@@ -36,6 +37,7 @@ export const getDownloadURLFromStorage = async (filePath) => {
     const storage = await getReadyStorage();
     const storageRef = refStorage(storage, filePath);
     const url = await getDownloadURL(storageRef);
+    trackCall(filePath, "storage", url);
     return url;
   } catch (error) {
     console.error("Error getting download URL:", error);
@@ -51,7 +53,9 @@ export const subscribeData = (path, callback) => {
   const database = getDatabaseInstance();
   if (!database) return () => {};
   const unsubscribe = onValue(ref(database, path), (snapshot) => {
-    callback(snapshot.val() ?? null);
+    const val = snapshot.val() ?? null;
+    trackCall(path, "subscribeData", val);
+    callback(val);
   });
   return unsubscribe;
 };
@@ -63,7 +67,9 @@ export const getData = async (path) => {
   try {
     const database = await getReadyDatabase();
     const snapshot = await get(ref(database, path));
-    return snapshot.val() ?? null;
+    const val = snapshot.val() ?? null;
+    trackCall(path, "getData", val);
+    return val;
   } catch (error) {
     return null;
   }

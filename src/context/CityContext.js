@@ -68,8 +68,8 @@ export const CityProvider = ({ children }) => {
     localStorage.setItem("cityId", cityId);
     localStorage.setItem("logoUrl", cityLogo);
 
-    // Route: /:city/d2dMonitoring/monitoring — city URL param se dynamic Firebase
-    const monitoringMatch = location.pathname.match(/^\/([^/]+)\/d2dMonitoring\/monitoring/);
+    // Route: /:city/d2dMonitoring/* — city URL param se dynamic Firebase
+    const monitoringMatch = location.pathname.match(/^\/([^/]+)\/d2dMonitoring\//);
     const monitoringCity = monitoringMatch?.[1];
 
     // Hamesha CityDetails se config fetch karo (cache hit hone par instant hai)
