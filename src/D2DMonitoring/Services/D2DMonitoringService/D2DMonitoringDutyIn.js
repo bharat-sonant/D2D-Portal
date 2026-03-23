@@ -34,7 +34,6 @@ export const getWorkerDetailsFromDB = async (year, month, day, ward) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Worker Details: ", error);
             resolve(setResponse("Fail", "Error fetching Worker Details !!", error.message));
         }
     });
@@ -57,7 +56,6 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Employee General Details: ", error);
             resolve(setResponse("Fail", "Error fetching Employee General Details !!", error.message));
         }
     });
@@ -75,7 +73,6 @@ export const getHelperDummyFlagFromDB = async (employeeId) => {
                 resolve(resp !== null ? resp : null);
             });
         } catch (error) {
-            console.error("Error fetching isDummyId: ", error);
             resolve(null);
         }
     });
@@ -98,7 +95,6 @@ export const getEmployeeAllDetailsFromDB = async (employeeId) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Employee Details: ", error);
             resolve(setResponse("Fail", "Error fetching Employee Details !!", error.message));
         }
     });
@@ -121,7 +117,6 @@ export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Duty In Time: ", error);
             resolve(setResponse("Fail", "Error fetching Duty In Time !!", error.message));
         }
     });
@@ -144,7 +139,6 @@ export const getWardReachedTimeFromDB = async (year, month, day, ward) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Ward Reached Time: ", error);
             resolve(setResponse("Fail", "Error fetching Ward Reached Time !!", error.message));
         }
     });
@@ -167,7 +161,6 @@ export const getWardDutyOffTimeFromDB = async (year, month, day, ward) => {
                 }
             });
         } catch (error) {
-            console.error("Error fetching Duty Off Time: ", error);
             resolve(setResponse("Fail", "Error fetching Duty Off Time !!", error.message));
         }
     });
@@ -177,8 +170,10 @@ export const getDutyInImageFromStorage = async (city, wardId, year, month, date)
     try {
         if (!city || !wardId || !year || !month || !date) return null;
         const filePath = `${city}/DutyOnImages/${wardId}/${year}/${month}/${date}/1.png`;
-        console.log("[Service] Duty In Image Path:", filePath);
-        return await db.getDownloadURLFromStorage(filePath);
+        const url = await db.getDownloadURLFromStorage(filePath);
+        saveRealtimeDbServiceHistory(FILE, 'DutyInTimeImage');
+        saveRealtimeDbServiceDataHistory(FILE, 'DutyInTimeImage', url);
+        return url;
     } catch (error) {
         return null;
     }
@@ -188,8 +183,10 @@ export const getDutyOffImageFromStorage = async (city, wardId, year, month, date
     try {
         if (!city || !wardId || !year || !month || !date) return null;
         const filePath = `${city}/DutyOutImages/${wardId}/${year}/${month}/${date}/1.png`;
-        console.log("[Service] Duty Off Image Path:", filePath);
-        return await db.getDownloadURLFromStorage(filePath);
+        const url = await db.getDownloadURLFromStorage(filePath);
+        saveRealtimeDbServiceHistory(FILE, 'DutyOffTimeImage');
+        saveRealtimeDbServiceDataHistory(FILE, 'DutyOffTimeImage', url);
+        return url;
     } catch (error) {
         return null;
     }

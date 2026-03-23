@@ -1,11 +1,10 @@
-import React, { useState, useEffect, forwardRef } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, forwardRef } from "react";
 import styles from "./DbServiceTracking.module.css";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
 import { Database, Calendar, Activity, HardDrive, Layers, ChevronUp, ChevronDown } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getStats } from "../../Services/DbServiceTracker/serviceTracker";
+import { getServiceFiles } from "../../Services/DbServiceTracker/serviceTracker";
 
 function formatBytes(bytes) {
   if (!bytes || bytes === 0) return "0 B";
@@ -28,14 +27,13 @@ const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
 ));
 
 const DbServiceTracking = () => {
-  const { city } = useParams();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [stats, setStats] = useState([]);
-  const [sortBy, setSortBy] = useState("callCount");
+  const [sortBy, setSortBy] = useState("totalCalls");
   const [sortDir, setSortDir] = useState("desc");
 
   const loadStats = async () => {
-    const data = await getStats(selectedDate);
+    const data = await getServiceFiles(selectedDate);
     setStats(data);
   };
 
@@ -50,13 +48,13 @@ const DbServiceTracking = () => {
     };
   }, [selectedDate]);
 
-  const totalCalls  = stats.reduce((s, r) => s + r.callCount, 0);
+  const totalCalls  = stats.reduce((s, r) => s + r.totalCalls, 0);
   const totalBytes  = stats.reduce((s, r) => s + r.totalBytes, 0);
-  const maxCalls    = Math.max(...stats.map(r => r.callCount), 1);
+  const maxCalls    = Math.max(...stats.map(r => r.totalCalls), 1);
 
   const sorted = [...stats].sort((a, b) => {
     const dir = sortDir === "asc" ? 1 : -1;
-    if (sortBy === "callCount") return dir * (a.callCount - b.callCount);
+    if (sortBy === "totalCalls") return dir * (a.totalCalls - b.totalCalls);
     if (sortBy === "totalBytes") return dir * (a.totalBytes - b.totalBytes);
     return 0;
   });
@@ -161,7 +159,7 @@ const DbServiceTracking = () => {
                 <div className={styles.thIdx}>#</div>
                 <div className={styles.thName}>Service Name</div>
                 <div className={styles.thBar} />
-                <div className={styles.thNum}><SortBtn col="callCount" label="Total Call" /></div>
+                <div className={styles.thNum}><SortBtn col="totalCalls" label="Total Call" /></div>
                 <div className={styles.thNum}><SortBtn col="totalBytes" label="Data Consume" /></div>
                 <div className={styles.thNum} style={{ color: "#9aa5bc", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Avg / Call</div>
               </div>
@@ -170,14 +168,14 @@ const DbServiceTracking = () => {
               <div className={styles.tableBody}>
                 {sorted.map((row, i) => {
                   const color   = SERVICE_COLORS[i % SERVICE_COLORS.length];
-                  const pct     = Math.round((row.callCount / maxCalls) * 100);
-                  const avg     = row.callCount > 0 ? Math.round(row.totalBytes / row.callCount) : 0;
+                  const pct     = Math.round((row.totalCalls / maxCalls) * 100);
+                  const avg     = row.totalCalls > 0 ? Math.round(row.totalBytes / row.totalCalls) : 0;
                   return (
-                    <div className={styles.tableRow} key={row.path}>
+                    <div className={styles.tableRow} key={row.name}>
                       <div className={styles.tdIdx}>{i + 1}</div>
                       <div className={styles.tdName}>
                         <span className={styles.dot} style={{ background: color }} />
-                        <span className={styles.serviceName}>{row.path}</span>
+                        <span className={styles.serviceName}>{row.name}</span>
                       </div>
                       <div className={styles.tdBar}>
                         <div className={styles.barTrack}>
@@ -185,7 +183,7 @@ const DbServiceTracking = () => {
                         </div>
                       </div>
                       <div className={styles.tdNum}>
-                        <span className={styles.callBadge} style={{ background: `${color}18`, color }}>{row.callCount}</span>
+                        <span className={styles.callBadge} style={{ background: `${color}18`, color }}>{row.totalCalls}</span>
                       </div>
                       <div className={styles.tdNum}>{formatBytes(row.totalBytes)}</div>
                       <div className={styles.tdNum} style={{ color: "#9aa5bc" }}>{formatBytes(avg)}</div>
