@@ -23,6 +23,7 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
+import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
 import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
@@ -216,6 +217,7 @@ const MonitoringList = () => {
   const [appStatusTab, setAppStatusTab] = useState("all");
   const [routeSnapshotView, setRouteSnapshotView] = useState("detail");
   const [showLargeMap, setShowLargeMap] = useState(false);
+  const [vehicleLocation, setVehicleLocation] = useState(null);
   const [selectedWardLengthInMeter, setSelectedWardLengthInMeter] = useState(0);
   const [wardLinesGeoJson, setWardLinesGeoJson] = useState(null);
   const [wardLinesGeoJsonById, setWardLinesGeoJsonById] = useState({});
@@ -639,6 +641,11 @@ const MonitoringList = () => {
   }, [selectedWard?.id]);
 
   useEffect(() => {
+    if (!selectedWard?.id) return;
+    return subscribeVehicleLocationAction(selectedWard.id, setVehicleLocation);
+  }, [selectedWard?.id]);
+
+  useEffect(() => {
     const wardId = selectedWard?.id;
     if (!wardId) return;
 
@@ -1048,6 +1055,7 @@ const MonitoringList = () => {
                     onWardLinesResolved={setWardLinesGeoJson}
                     lineStatusByLine={currentWardLineStatus}
                     focusLocation={mapFocus}
+                    vehicleLocation={vehicleLocation}
                     onExpandMap={() => setShowLargeMap(true)}
                   />
                 </div>
@@ -1167,8 +1175,7 @@ const MonitoringList = () => {
       selectedWard={selectedWard}
       lineStatusByLine={currentWardLineStatus}
       focusLocation={mapFocus}
-      vehicleId={selectedWard?.id}
-      vehicleNumber={wardData.vehicleNumber}
+      vehicleLocation={vehicleLocation}
     />
     </>
   );

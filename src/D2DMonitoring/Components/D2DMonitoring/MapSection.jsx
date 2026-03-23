@@ -5,7 +5,13 @@ import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { Maximize2, Map, MoveUpRight } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 
-const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false, showMarkers = false }) => {
+const CAR_ICON = {
+    url: `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="19" fill="#1d6fa4" stroke="#fff" stroke-width="2"/><g transform="translate(8,9) scale(0.6)"><path d="M36 8H8L4 18H0v14h4v4h6v-4h20v4h6v-4h4V18h-4L36 8z" fill="#fff"/><rect x="4" y="18" width="36" height="2" fill="#1d6fa4" opacity="0.3"/><circle cx="10" cy="32" r="3" fill="#1d6fa4"/><circle cx="34" cy="32" r="3" fill="#1d6fa4"/><path d="M10 10h24l3 8H7l3-8z" fill="#1d6fa4" opacity="0.5"/></g></svg>`)}`,
+    scaledSize: { width: 40, height: 40 },
+    anchor: { x: 20, y: 20 },
+};
+
+const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false, showMarkers = false, vehicleLocation = null }) => {
     const [isGoogleReady, setIsGoogleReady] = useState(action.isGoogleMapsReady());
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isMapAnimating, setIsMapAnimating] = useState(false);
@@ -183,6 +189,14 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                             <Marker
                                 position={{ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) }}
                                 title={focusLocation?.title || "Selected location"}
+                            />
+                        )}
+
+                        {vehicleLocation?.lat && vehicleLocation?.lng && (
+                            <Marker
+                                position={{ lat: vehicleLocation.lat, lng: vehicleLocation.lng }}
+                                icon={CAR_ICON}
+                                title="Vehicle Location"
                             />
                         )}
                     </GoogleMap>

@@ -12,6 +12,7 @@ const MapOffcanvas = ({
   selectedWard,
   lineStatusByLine = {},
   focusLocation = null,
+  vehicleLocation = null,
 }) => {
   const [showTracking, setShowTracking] = useState(false);
 
@@ -65,13 +66,14 @@ const MapOffcanvas = ({
         {/* Body */}
         <div className={styles.mapBody}>
           {showTracking ? (
-            <VehicleTrackingMap />
+            <VehicleTrackingMap selectedWard={selectedWard} />
           ) : (
             <MapSection
               city={city}
               selectedWard={selectedWard}
               lineStatusByLine={lineStatusByLine}
               focusLocation={focusLocation}
+              vehicleLocation={vehicleLocation}
               showMarkers
               fullHeight
             />
