@@ -41,7 +41,7 @@ const MapOffcanvas = ({
 
           <div className={styles.headerActions}>
             <span className={styles.toggleLabel}>
-              {showTracking ? "Vehicle Tracking" : "Live Map"}
+              {showTracking ? "Travel Path" : "Map View"}
             </span>
             <label className={styles.switch}>
               <input
