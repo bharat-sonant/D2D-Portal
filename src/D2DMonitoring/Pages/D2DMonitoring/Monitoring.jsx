@@ -1041,7 +1041,7 @@ const MonitoringList = () => {
                   <ShiftStatusSection
                     events={currentShiftEvents}
                     activeConnectorIndex={
-                      wardReachedTime ? 1 : showDutyInTime ? 0 : -1
+                      dutyOffTime ? -1 : wardReachedTime ? 1 : showDutyInTime ? 0 : -1
                     }
                     showDutyInTime={showDutyInTime}
                     onEventClick={handleShiftEventClick}
