@@ -54,7 +54,9 @@
 .customHeaderWrap {
   flex-shrink: 0;
 }
-
+.mapBody{
+  padding: 12px 16px;
+}
 /* ── Body ── */
 .cardBody {
   padding: 16px 18px;

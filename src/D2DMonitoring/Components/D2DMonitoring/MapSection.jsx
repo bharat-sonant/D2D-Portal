@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
+import mcStyles from "./Common/MonitoringCard/MonitoringCard.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Map, MoveUpRight } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 
 const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResolved, lineStatusByLine = {}, focusLocation = null, onExpandMap, fullHeight = false, showMarkers = false }) => {
@@ -119,8 +120,10 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                 className={`${styles.glassCard} ${styles.mapCard} ${isFullscreen ? styles.mapCardFullscreen : ""} ${
                     isMapAnimating ? styles.mapCardTransitioning : ""
                 }`}
-                style={
-                    isFullscreen && fullscreenFrame
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    ...(isFullscreen && fullscreenFrame
                         ? {
                             top: `${fullscreenFrame.top}px`,
                             left: `${fullscreenFrame.left}px`,
@@ -129,49 +132,61 @@ const MapSection = ({ city, selectedWard, onWardLengthResolved, onWardLinesResol
                         }
                         : fullHeight
                             ? { height: "auto", flex: 1, minHeight: 0 }
-                            : undefined
-                }
+                            : {}),
+                }}
             >
-                {onExpandMap && (
-                    <button
-                        type="button"
-                        className={styles.mapFullscreenBtn}
-                        onClick={onExpandMap}
-                        aria-label="Open large map"
-                        title="Expand map"
+                {/* ── Card Header ── */}
+                <div className={mcStyles.cardHeader}>
+                    <h3 className={mcStyles.cardTitle}>Live Map</h3>
+                    <div className={mcStyles.cardHeaderRight}>
+                        {onExpandMap && (
+                            <button
+                                type="button"
+                                className={styles.mapFullscreenBtn}
+                                onClick={onExpandMap}
+                                aria-label="Open large map"
+                                title="Expand map"
+                                style={{ position: "static", margin: 0 }}
+                            >
+                                <MoveUpRight size={14} />
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* ── Map Area ── */}
+                <div  className={mcStyles.mapBody} style={{ flex: 1, position: "relative", overflow: "hidden", minHeight: 0 }}>
+                    <GoogleMap
+                        mapContainerStyle={{ width: "100%", height: "100%", }}
+                        defaultCenter={{ lat: 27.625, lng: 75.13 }}
+                        defaultZoom={14}
+                        onLoad={(map) => { mapRef.current = map; }}
+                        options={{ disableDefaultUI: true }}
+                        style={{borderRadius: "6px" }}
                     >
-                        <Maximize2 size={14} />
-                    </button>
-                )}
-                <GoogleMap
-                    mapContainerStyle={{ width: "100%", height: "100%" }}
-                    defaultCenter={{ lat: 27.625, lng: 75.13 }}
-                    defaultZoom={14}
-                    onLoad={(map) => { mapRef.current = map; }}
-                    options={{ disableDefaultUI: true }}
-                >
-                    {wardBoundary.length > 0 && (
-                        <Polyline
-                            path={wardBoundary}
-                            options={action.WARD_BOUNDARY_STYLE}
-                        />
-                    )}
+                        {wardBoundary.length > 0 && (
+                            <Polyline
+                                path={wardBoundary}
+                                options={action.WARD_BOUNDARY_STYLE}
+                            />
+                        )}
 
-                    {selectedWardLinePaths.map((path, index) => (
-                        <Polyline
-                            key={`${selectedWard?.id}-line-${index}`}
-                            path={path}
-                            options={lineOptionsByIndex[index]}
-                        />
-                    ))}
+                        {selectedWardLinePaths.map((path, index) => (
+                            <Polyline
+                                key={`${selectedWard?.id}-line-${index}`}
+                                path={path}
+                                options={lineOptionsByIndex[index]}
+                            />
+                        ))}
 
-                    {showMarkers && Number.isFinite(focusLocation?.lat) && Number.isFinite(focusLocation?.lng) && (
-                        <Marker
-                            position={{ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) }}
-                            title={focusLocation?.title || "Selected location"}
-                        />
-                    )}
-                </GoogleMap>
+                        {showMarkers && Number.isFinite(focusLocation?.lat) && Number.isFinite(focusLocation?.lng) && (
+                            <Marker
+                                position={{ lat: Number(focusLocation.lat), lng: Number(focusLocation.lng) }}
+                                title={focusLocation?.title || "Selected location"}
+                            />
+                        )}
+                    </GoogleMap>
+                </div>
             </div>
         </div>
     );

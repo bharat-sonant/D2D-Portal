@@ -1,16 +1,16 @@
-import React from "react";
-import styles from "../../Pages/D2DRealtime/Realtime.module.css";
+import { Clock } from "lucide-react";
 import ShiftTimeLine from "../ShiftTimeLine/ShiftTimeLine";
+import MonitoringCard from "./Common/MonitoringCard/MonitoringCard";
 
 const ShiftStatusSection = ({ events, activeConnectorIndex, onEventClick }) => {
     return (
-        <div className={styles.timingGrid}>
+        <MonitoringCard title="Shift Timeline" icon={<Clock size={16} />}>
             <ShiftTimeLine
                 events={events}
                 activeConnectorIndex={activeConnectorIndex}
                 onEventClick={onEventClick}
             />
-        </div>
+        </MonitoringCard>
     );
 };
 
