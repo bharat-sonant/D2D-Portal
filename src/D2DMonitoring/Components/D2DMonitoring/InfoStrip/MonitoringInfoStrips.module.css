@@ -1,0 +1,135 @@
+/* ══════════════════════════════════════════════════════════
+   MonitoringInfoStrips
+   Two compact, low-visual-weight info cards for secondary data.
+   Intentionally subdued so they don't compete with primary cards.
+   ══════════════════════════════════════════════════════════ */
+
+/* ─── Card 1: Shift Snapshot Strip ─────────────────────── */
+.stripCard {
+  display: flex;
+  align-items: stretch;
+  background: #fafbfc;
+  border: 1px solid #e8eef5;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+  min-height: 54px;
+}
+
+.stripAccent {
+  display: block;
+  width: 3px;
+  background: var(--themeColor);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.stripRow {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 4px;
+}
+
+.stripChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.chipIcon {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.chipLabel {
+  font-size: 9px;
+  font-family: var(--fontGraphikMedium);
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.chipValue {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  color: #374151;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tone_open  { color: #16a34a; }
+.tone_closed { color: #dc2626; }
+
+.stripDivider {
+  display: block;
+  width: 1px;
+  height: 28px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+/* ─── Card 2: Line Count Grid (inside MonitoringCard body) ── */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: -16px -18px; /* bleed to card body edges */
+}
+
+.metricCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px 16px 10px;
+  position: relative;
+}
+
+.borderRight  { border-right:  1px solid #f0f4f8; }
+.borderBottom { border-bottom: 1px solid #f0f4f8; }
+
+.metricValue {
+  font-size: 17px;
+  font-family: var(--fontGraphikSemibold);
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.metricCellLabel {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.metricValueRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+}
+
+.metricIcon {
+  display: flex;
+  align-items: center;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .chipLabel { display: none; }
+  .stripChip { padding: 8px 4px; }
+  .metricCell { padding: 6px 10px 8px; }
+  .metricValue { font-size: 12px; }
+}

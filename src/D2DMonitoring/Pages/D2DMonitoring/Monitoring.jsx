@@ -47,6 +47,7 @@ import DutyCheckModal from "../../Components/D2DMonitoring/Modals/DutyCheckModal
 
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
+import { ShiftSnapshotStrip, FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
@@ -947,11 +948,14 @@ const MonitoringList = () => {
                 wardId={selectedWard?.id}
                 onVehicleClick={() => setShowVehicleModal(true)}
               />
-              <CompletionDashboard
+              {/* <CompletionDashboard
                 totalLines={lineCounts.total}
                 completedLines={lineCounts.completed}
                 skippedLines={lineCounts.skipped}
               />
+
+              <ShiftSnapshotStrip wardData={displayWardData} /> */}
+              <FieldMetricsGrid lineCounts={lineCounts} />
 
               <LiveStatusBoard
                 wardData={displayWardData}
