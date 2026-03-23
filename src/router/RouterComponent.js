@@ -51,6 +51,7 @@ import D2DReports from "../D2DMonitoring/Pages/D2DReports/Reports";
 import D2DRealtime from "../D2DMonitoring/Pages/D2DRealtime/Realtime";
 import D2DMonitoring from "../D2DMonitoring/Pages/D2DMonitoring/Monitoring";
 import D2DDailyReport from "../D2DMonitoring/Pages/DailyReport/DailyReport";
+import DbServiceTracking from "../D2DMonitoring/Pages/DbServiceTracking/DbServiceTracking";
 
 
 const RouterComponent = () => {
@@ -141,6 +142,8 @@ const RouterComponent = () => {
             // </D2DMonitoringLayout>
           // </ProtectedRouter>
         } />
+
+        <Route path="/:city/d2dMonitoring/db-service-tracking" element={<DbServiceTracking />} />
 
         <Route path="/d2dMonitoring/daily-report" element={
           <ProtectedRouter>

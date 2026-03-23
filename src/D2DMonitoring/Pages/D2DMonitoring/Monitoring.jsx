@@ -13,6 +13,7 @@ import {
   ArrowRight,
   LogOut,
   Flag,
+  Database,
 } from "lucide-react";
 import dayjs from "dayjs";
 // import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
@@ -912,6 +913,27 @@ const MonitoringList = () => {
         </div>
 
         <div className={styles.topBarRight}>
+          <button
+            className={`btn`}
+            onClick={() => navigate(`/${city}/d2dMonitoring/db-service-tracking`)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 500,
+              color: "#3a4155",
+              border: "1px solid #dde1ea",
+              borderRadius: 8,
+              padding: "6px 14px",
+              marginRight: 12,
+              background: "#fff",
+              cursor: "pointer",
+            }}
+          >
+            <Database size={15} />
+            DbService Tracking
+          </button>
           <div
             className={topbarStyles.userBadge}
             // onClick={() => setShowQuickAppSelect((p) => !p)}
