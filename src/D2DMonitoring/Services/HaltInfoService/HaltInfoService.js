@@ -1,10 +1,8 @@
 import { setResponse } from '../../../common/common';
 import * as db from '../../../services/dbServices';
-import { logServiceCall } from '../../../common/serviceLogger';
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
 
 export const getHaltInfoFromDB = async (year, month, date, ward) => {
-    logServiceCall('HaltInfoService', 'getHaltInfoFromDB');
     return new Promise((resolve) => {
         try {
             if (!year || !month || !date || !ward) {

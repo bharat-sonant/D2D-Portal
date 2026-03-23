@@ -1,6 +1,5 @@
 import axios from "axios";
 import { setResponse } from "../../../common/common";
-import { logServiceCall } from "../../../common/serviceLogger";
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "../DbServiceTracker/serviceTracker";
 
 /**
@@ -12,7 +11,6 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "
  * @returns {Promise} setResponse with raw array data
  */
 export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
-    logServiceCall('WardsService', 'getAvailableWardsFromStorage');
     return new Promise((resolve) => {
         if (!storagePath || !storageCity) {
             resolve(setResponse("Fail", "Invalid Params !!", { storagePath, storageCity }));

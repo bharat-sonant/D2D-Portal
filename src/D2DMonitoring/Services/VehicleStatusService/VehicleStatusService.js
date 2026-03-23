@@ -1,6 +1,5 @@
 import { setResponse } from '../../../common/common';
 import * as db from '../../../services/dbServices';
-import { logServiceCall } from '../../../common/serviceLogger';
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
 
 /**
@@ -9,7 +8,6 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '
  * Returns unsubscribe function — call in useEffect cleanup.
  */
 export const subscribeVehicleSurfingHistoryFromDB = (vehicleId, year, month, date, onData) => {
-    logServiceCall('VehicleStatusService', 'subscribeVehicleSurfingHistoryFromDB');
     if (!vehicleId || !year || !month || !date) return () => {};
     const path = `GeoGraphicallySurfingHistory/${vehicleId}/${year}/${month}/${date}`;
     return db.subscribeData(path, (data) => {
@@ -26,7 +24,6 @@ export const subscribeVehicleSurfingHistoryFromDB = (vehicleId, year, month, dat
  * Path: GeoGraphicallySurfingHistory/{vehicleId}/{year}/{month}/{date}
  */
 export const getVehicleSurfingHistoryFromDB = async (vehicleId, year, month, date) => {
-    logServiceCall('VehicleStatusService', 'getVehicleSurfingHistoryFromDB');
     return new Promise((resolve) => {
         try {
             if (!vehicleId || !year || !month || !date) {

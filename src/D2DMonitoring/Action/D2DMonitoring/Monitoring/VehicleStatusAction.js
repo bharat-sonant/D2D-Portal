@@ -3,7 +3,6 @@ import {
     subscribeVehicleSurfingHistoryFromDB,
     getVehicleSurfingHistoryFromDB,
 } from "../../../Services/VehicleStatusService/VehicleStatusService";
-import { logServiceCall } from "../../../../common/serviceLogger";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -160,7 +159,6 @@ export const buildVehicleQuickSummary = (rawHistory = {}) => {
  * Returns unsubscribe — call in useEffect cleanup.
  */
 export const subscribeVehicleStatusForToday = (wardId, onUpdate) => {
-    logServiceCall('VehicleStatusAction', 'subscribeVehicleStatusForToday');
     if (!wardId) return () => {};
 
     const year = dayjs().format("YYYY");
@@ -180,7 +178,6 @@ export const subscribeVehicleStatusForToday = (wardId, onUpdate) => {
  * Returns { currentStatus, eventLog, quickSummary } or null on failure.
  */
 export const getVehicleStatusForToday = async (wardId) => {
-    logServiceCall('VehicleStatusAction', 'getVehicleStatusForToday');
     if (!wardId) return null;
 
     const year = dayjs().format("YYYY");

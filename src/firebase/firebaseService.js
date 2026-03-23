@@ -9,6 +9,7 @@ let activeKey = null;
 // 🧠 Promise-based readiness system
 let firebaseReadyPromise = null;
 let firebaseReadyResolve = null;
+let firebaseReadyLogged = false;
  
 const createReadyPromise = () => {
     firebaseReadyPromise = new Promise((resolve) => {
@@ -166,6 +167,11 @@ export const restoreFirebaseConnection = () => {
         }
  
         const savedConfig = JSON.parse(savedConfigStr);
+        if (!savedConfig?.databaseURL) {
+            console.log("⚠️ Firebase restore failed, removing invalid config");
+            localStorage.removeItem("firebaseConfig");
+            return { success: false, message: "No databaseURL in saved config" };
+        }
         const key = savedConfig.cityName || savedConfig.city || savedConfig.projectId;
  
         // 🟢 Check if an app already exists before calling connectFirebase
@@ -211,5 +217,8 @@ export const waitForFirebaseReady = async () => {
         console.log("⏳ Waiting for Firebase to connect...");
     }
     await firebaseReadyPromise;
-    console.log("✅ Firebase is ready to use.");
+    if (!firebaseReadyLogged) {
+        firebaseReadyLogged = true;
+        console.log("✅ Firebase is ready to use.");
+    }
 };

@@ -1,9 +1,7 @@
 import dayjs from "dayjs";
 import { getHaltInfoFromDB } from "../../../Services/HaltInfoService/HaltInfoService";
-import { logServiceCall } from "../../../../common/serviceLogger";
 
 export const getHaltInfo = (ward, setHaltData) => {
-    logServiceCall('HaltInfoAction', 'getHaltInfo');
     try {
         if (!ward) return;
 

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { getAvailableWardsFromStorage } from "../../../Services/WardsService/WardsService";
-import { logServiceCall } from "../../../../common/serviceLogger";
 
 const CITY_DETAILS_URL =
     "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
@@ -50,7 +49,6 @@ const toZoneName = (zoneNo, city) => {
  * @returns {Promise<Array<{ id: string, name: string, progress: number }>>}
  */
 export const getWardListAction = async (city) => {
-    logServiceCall('WardListAction', 'getWardListAction');
     if (!city) return [];
 
     const cityDetails = await fetchCityDetails();

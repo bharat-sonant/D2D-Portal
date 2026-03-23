@@ -29,11 +29,9 @@ const VehicleTrackingMap = ({ selectedWard, city }) => {
 
     useEffect(() => {
         if (!selectedWard?.id) return;
-        console.log("[VehicleTrackingMap] subscribing wardId:", selectedWard.id);
         fittedRef.current = false;
         setPathPoints([]);
         return subscribeLocationHistoryAction(selectedWard.id, (points) => {
-            console.log("[VehicleTrackingMap] pathPoints received:", points.length);
             setPathPoints(points);
         });
     }, [selectedWard?.id]);
