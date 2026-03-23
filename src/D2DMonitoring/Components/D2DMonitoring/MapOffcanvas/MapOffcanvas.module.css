@@ -149,32 +149,54 @@
   color: #16a34a;
 }
 
-/* ── Tab Toggle ── */
-.tabToggle {
-  display: flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  padding: 3px;
-  gap: 2px;
-}
-
-.tabBtn {
-  padding: 5px 14px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
+/* ── Toggle Switch ── */
+.toggleLabel {
   font-size: 12px;
   font-family: var(--fontGraphikMedium);
   color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
-.tabBtnActive {
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #d1d5db;
+  border-radius: 20px;
+  transition: background 0.2s ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
   background: #fff;
-  color: var(--darkBlack);
-  font-family: var(--fontGraphikSemibold);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .slider {
+  background: #2898ca;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(16px);
 }

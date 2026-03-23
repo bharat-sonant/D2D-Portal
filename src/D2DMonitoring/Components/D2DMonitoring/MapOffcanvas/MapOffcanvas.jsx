@@ -39,32 +39,27 @@ const MapOffcanvas = ({
             )}
           </div>
 
-          {/* Toggle */}
-          <div className={styles.tabToggle}>
+          <div className={styles.headerActions}>
+            <span className={styles.toggleLabel}>
+              {showTracking ? "Vehicle Tracking" : "Live Map"}
+            </span>
+            <label className={styles.switch}>
+              <input
+                type="checkbox"
+                checked={showTracking}
+                onChange={(e) => setShowTracking(e.target.checked)}
+              />
+              <span className={styles.slider} />
+            </label>
             <button
               type="button"
-              className={`${styles.tabBtn} ${!showTracking ? styles.tabBtnActive : ""}`}
-              onClick={() => setShowTracking(false)}
+              className={styles.closeBtn}
+              onClick={onClose}
+              aria-label="Close map"
             >
-              Live Map
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${showTracking ? styles.tabBtnActive : ""}`}
-              onClick={() => setShowTracking(true)}
-            >
-              Vehicle Tracking
+              <X size={18} />
             </button>
           </div>
-
-          <button
-            type="button"
-            className={styles.closeBtn}
-            onClick={onClose}
-            aria-label="Close map"
-          >
-            <X size={18} />
-          </button>
         </div>
 
         {/* Body */}
