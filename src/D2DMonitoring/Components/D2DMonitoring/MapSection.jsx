@@ -4,6 +4,13 @@ import mcStyles from "./Common/MonitoringCard/MonitoringCard.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { MoveUpRight } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
+import tippperIcon from "../../../assets/images/tipper-green.png";
+
+const CAR_ICON = {
+  url: tippperIcon,
+  scaledSize: { width: 41, height: 26 },
+  anchor: { x: 24, y: 24 },
+};
 
 const MapSection = ({
   city,
@@ -16,6 +23,7 @@ const MapSection = ({
   fullHeight = false,
   showMarkers = false,
   hideHeader = false,
+  vehicleLocation = null,
   wardStartPoint = null,
   wardEndPoint = null,
 }) => {
@@ -264,6 +272,14 @@ const MapSection = ({
                     title={focusLocation?.title || "Selected location"}
                   />
                 )}
+
+              {vehicleLocation?.lat && vehicleLocation?.lng && (
+                <Marker
+                  position={{ lat: vehicleLocation.lat, lng: vehicleLocation.lng }}
+                  icon={CAR_ICON}
+                  title="Vehicle Location"
+                />
+              )}
 
               {wardStartPoint?.lat && wardStartPoint?.lng && (
                 <Marker
