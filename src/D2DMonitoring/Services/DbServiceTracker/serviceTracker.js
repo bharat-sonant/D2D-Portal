@@ -4,9 +4,10 @@ import dayjs from "dayjs";
 
 const ROOT = "RealtimeDbServiceDetails";
 
-// ── Backend Function Call History ─────────────────────────────────────────────
-
+// ── No-op (old trackCall disabled) ───────────────────────────────────────────
 export function trackCall() {}
+
+// ── Save tracking data ────────────────────────────────────────────────────────
 
 export function saveRealtimeDbServiceHistory(serviceFileName, functionName) {
   try {
@@ -43,62 +44,74 @@ export function saveRealtimeDbServiceDataHistory(serviceFileName, functionName, 
   }
 }
 
-// ── Service File / Function Stats ─────────────────────────────────────────────
+// ── Read Stats (year + month as strings, e.g. "2026" + "March") ──────────────
 
-export async function getServiceFiles(filterDate) {
+// Panel 1: all service files for a given month
+export async function getServiceFiles(year, month) {
   try {
-    const targetDate = dayjs(filterDate).format("YYYY-MM-DD");
-    const year       = dayjs(filterDate).format("YYYY");
-    const month      = dayjs(filterDate).format("MMMM");
-
     const history = await getData(`${ROOT}/History`);
     if (!history) return [];
 
     const result = [];
-
-    for (const [key, value] of Object.entries(history)) {
-      if (!value || typeof value !== "object") continue;
-      if (/^\d{4}$/.test(key)) continue; // skip old year-keyed structure
+    for (const [sfName, sfData] of Object.entries(history)) {
+      if (!sfData || typeof sfData !== "object") continue;
+      if (/^\d{4}$/.test(sfName)) continue; // skip old year-keyed structure
 
       let totalCalls = 0;
       let totalBytes = 0;
-      Object.values(value).forEach((funcData) => {
-        const day = funcData?.[year]?.[month]?.[targetDate];
-        if (day) {
-          totalCalls += day.count    || 0;
-          totalBytes += (day.dataSize || 0) * 1024;
+      for (const funcData of Object.values(sfData)) {
+        if (typeof funcData !== "object") continue;
+        const m = funcData?.[year]?.[month];
+        if (m) {
+          totalCalls += m.count    || 0;
+          totalBytes += (m.dataSize || 0) * 1024; // KB → bytes
         }
-      });
-      if (totalCalls > 0) result.push({ name: key, totalCalls, totalBytes });
+      }
+      if (totalCalls > 0) result.push({ name: sfName, totalCalls, totalBytes });
     }
-
-    return result.sort((a, b) => b.totalCalls - a.totalCalls);
+    return result.sort((a, b) => b.totalBytes - a.totalBytes);
   } catch {
     return [];
   }
 }
 
-export async function getFunctionStats(serviceFile, filterDate) {
+// Panel 2: all functions inside a service for a given month
+export async function getFunctionStats(serviceFile, year, month) {
   try {
-    const targetDate = dayjs(filterDate).format("YYYY-MM-DD");
-    const year       = dayjs(filterDate).format("YYYY");
-    const month      = dayjs(filterDate).format("MMMM");
+    const sfData = await getData(`${ROOT}/History/${serviceFile}`);
+    if (!sfData || typeof sfData !== "object") return [];
 
-    const serviceData = await getData(`${ROOT}/History/${serviceFile}`);
-    if (!serviceData || typeof serviceData !== "object") return [];
-
-    return Object.entries(serviceData)
+    return Object.entries(sfData)
       .filter(([, v]) => typeof v === "object")
       .map(([funcName, funcData]) => {
-        const day = funcData?.[year]?.[month]?.[targetDate];
+        const m = funcData?.[year]?.[month];
         return {
           functionName: funcName,
-          callCount:    day?.count    || 0,
-          totalBytes:   (day?.dataSize || 0) * 1024,
+          callCount:    m?.count    || 0,
+          totalBytes:   (m?.dataSize || 0) * 1024,
         };
       })
       .filter((f) => f.callCount > 0)
-      .sort((a, b) => b.callCount - a.callCount);
+      .sort((a, b) => b.totalBytes - a.totalBytes);
+  } catch {
+    return [];
+  }
+}
+
+// Panel 3: per-date breakdown for one function in a given month
+export async function getDateBreakdown(serviceFile, funcName, year, month) {
+  try {
+    const monthData = await getData(`${ROOT}/History/${serviceFile}/${funcName}/${year}/${month}`);
+    if (!monthData || typeof monthData !== "object") return [];
+
+    return Object.entries(monthData)
+      .filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && typeof v === "object")
+      .map(([date, info]) => ({
+        date,
+        count: info.count    || 0,
+        bytes: (info.dataSize || 0) * 1024,
+      }))
+      .sort((a, b) => b.date.localeCompare(a.date));
   } catch {
     return [];
   }
