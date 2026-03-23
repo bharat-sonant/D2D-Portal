@@ -1,6 +1,7 @@
 import axios from "axios";
 import { setResponse } from "../../../common/common";
 import { logServiceCall } from "../../../common/serviceLogger";
+import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "../DbServiceTracker/serviceTracker";
 
 /**
  * Firebase Storage se city ka AvailableWard.json fetch karta hai.
@@ -24,6 +25,8 @@ export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
         axios.get(url)
             .then((response) => {
                 if (response?.data) {
+                    saveRealtimeDbServiceHistory('WardsService', 'getAvailableWardsFromStorage');
+                    saveRealtimeDbServiceDataHistory('WardsService', 'getAvailableWardsFromStorage', response.data);
                     resolve(setResponse("Success", "Wards fetched successfully", response.data));
                 } else {
                     resolve(setResponse("Fail", "No ward data found", []));

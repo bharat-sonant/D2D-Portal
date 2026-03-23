@@ -152,3 +152,43 @@ export async function clearStats() {
     // silent
   }
 }
+
+// ── Backend Function Call History ─────────────────────────────────────────────
+
+const ROOT = "RealtimeDbServiceDetails";
+
+export function saveRealtimeDbServiceHistory(serviceFileName, functionName) {
+  try {
+    const date  = dayjs().format("YYYY-MM-DD");
+    const year  = date.split("-")[0];
+    const month = dayjs().format("MMM");
+    const base  = `${ROOT}/History/${serviceFileName}/${functionName}`;
+
+    saveData(`${base}/${year}/${month}/${date}`, { count: increment(1) });
+    saveData(`${base}/${year}/${month}`,         { count: increment(1) });
+    saveData(`${ROOT}/Summary/${serviceFileName}/${functionName}`, { count: increment(1) });
+  } catch {
+    // silent
+  }
+}
+
+export function saveRealtimeDbServiceDataHistory(serviceFileName, functionName, data) {
+  try {
+    if (data === null || data === undefined) return;
+
+    const jsonString      = JSON.stringify(data);
+    const dataSizeInBytes = new TextEncoder().encode(jsonString).length;
+    const dataSize        = parseFloat((dataSizeInBytes / 1024).toFixed(4));
+
+    const date  = dayjs().format("YYYY-MM-DD");
+    const year  = date.split("-")[0];
+    const month = dayjs().format("MMM");
+    const base  = `${ROOT}/History/${serviceFileName}/${functionName}`;
+
+    saveData(`${base}/${year}/${month}/${date}`, { dataSize: increment(dataSize) });
+    saveData(`${base}/${year}/${month}`,         { dataSize: increment(dataSize) });
+    saveData(`${ROOT}/Summary/${serviceFileName}/${functionName}`, { dataSize: increment(dataSize) });
+  } catch {
+    // silent
+  }
+}
