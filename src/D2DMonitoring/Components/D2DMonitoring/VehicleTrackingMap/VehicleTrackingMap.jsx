@@ -9,8 +9,7 @@ const PATH_STYLE     = { strokeColor: "#16a34a", strokeOpacity: 0.9, strokeWeigh
 const LABEL_STYLE    = { color: "#fff", fontWeight: "bold", fontSize: "11px" };
 
 const VehicleTrackingMap = ({ selectedWard, city }) => {
-    const mapRef    = useRef(null);
-    const fittedRef = useRef(false);
+    const mapRef = useRef(null);
 
     const [isGoogleReady, setIsGoogleReady] = useState(mapAction.isGoogleMapsReady());
     const [pathPoints, setPathPoints]       = useState([]);
@@ -29,25 +28,22 @@ const VehicleTrackingMap = ({ selectedWard, city }) => {
 
     useEffect(() => {
         if (!selectedWard?.id) return;
-        fittedRef.current = false;
         setPathPoints([]);
-        return subscribeLocationHistoryAction(selectedWard.id, (points) => {
-            setPathPoints(points);
-        });
+        return subscribeLocationHistoryAction(selectedWard.id, setPathPoints);
     }, [selectedWard?.id]);
-
-    useEffect(() => {
-        if (fittedRef.current || !mapRef.current || pathPoints.length < 2 || !window.google?.maps) return;
-        const bounds = new window.google.maps.LatLngBounds();
-        pathPoints.forEach((p) => bounds.extend(p));
-        mapRef.current.fitBounds(bounds, 40);
-        fittedRef.current = true;
-    }, [pathPoints]);
 
     const wardBoundary = useMemo(
         () => mapAction.getBoundaryPathFromWardBoundaryJson(boundaryJson),
         [boundaryJson]
     );
+
+    // Focus on ward boundary when it loads
+    useEffect(() => {
+        if (!mapRef.current || !window.google?.maps || wardBoundary.length === 0) return;
+        const bounds = new window.google.maps.LatLngBounds();
+        wardBoundary.forEach((p) => bounds.extend(p));
+        mapRef.current.fitBounds(bounds, 40);
+    }, [wardBoundary]);
 
     if (!isGoogleReady) return null;
 

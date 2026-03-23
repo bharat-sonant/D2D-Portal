@@ -1,11 +1,19 @@
 import { setResponse } from '../../../common/common';
 import * as db from '../../../services/dbServices';
+import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
+
+const FILE = 'D2DMonitoringDutyIn';
 
 export const subscribeWorkerDetailsFromDB = (year, month, day, ward, onData) => {
     if (!year || !month || !day || !ward) return () => {};
     return db.subscribeData(
         `WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`,
-        (data) => { if (data) onData(data); }
+        (data) => {
+            if (!data) return;
+            saveRealtimeDbServiceHistory(FILE, 'subscribeWorkerDetailsFromDB');
+            saveRealtimeDbServiceDataHistory(FILE, 'subscribeWorkerDetailsFromDB', data);
+            onData(data);
+        }
     );
 };
 
@@ -18,6 +26,8 @@ export const getWorkerDetailsFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getWorkerDetailsFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getWorkerDetailsFromDB', resp);
                     resolve(setResponse("Success", "Worker Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Worker Details Found !!", {}));
@@ -39,6 +49,8 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
             }
             db.getData(`Employees/${employeeId}/GeneralDetails`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getEmployeeGeneralDetailsFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getEmployeeGeneralDetailsFromDB', resp);
                     resolve(setResponse("Success", "Employee General Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Employee Details Found !!", {}));
@@ -51,19 +63,15 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
     });
 };
 
-/**
- * Fetches the full Employees/{id} parent node so DOJ can be found
- * in any sub-node (GeneralDetails, OfficialDetails, PersonalDetails, etc.)
- */
-/**
- * Fetches EmployeeDetailData/{employeeId}/isDummyId
- * Returns the numeric flag (0 or 1) or null if not found.
- */
 export const getHelperDummyFlagFromDB = async (employeeId) => {
     return new Promise((resolve) => {
         try {
             if (!employeeId) { resolve(null); return; }
             db.getData(`EmployeeDetailData/${employeeId}/isDummyId`).then((resp) => {
+                if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getHelperDummyFlagFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getHelperDummyFlagFromDB', resp);
+                }
                 resolve(resp !== null ? resp : null);
             });
         } catch (error) {
@@ -82,6 +90,8 @@ export const getEmployeeAllDetailsFromDB = async (employeeId) => {
             }
             db.getData(`Employees/${employeeId}`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getEmployeeAllDetailsFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getEmployeeAllDetailsFromDB', resp);
                     resolve(setResponse("Success", "Employee Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Employee Found !!", {}));
@@ -100,19 +110,20 @@ export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
             if (!year || !month || !day || !Ward) {
                 resolve(setResponse("Fail", "Invalid Params !!", { year, month, day, Ward }));
                 return;
-            };
-
+            }
             db.getData(`WasteCollectionInfo/${Ward}/${year}/${month}/${day}/Summary/dutyInTime`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getWardDutyOnTimeFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getWardDutyOnTimeFromDB', resp);
                     resolve(setResponse("Success", "Duty In Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Duty In Time Found !!", {}));
                 }
-            })
+            });
         } catch (error) {
             console.error("Error fetching Duty In Time: ", error);
             resolve(setResponse("Fail", "Error fetching Duty In Time !!", error.message));
-        };
+        }
     });
 };
 
@@ -125,6 +136,8 @@ export const getWardReachedTimeFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/Summary/wardReachedOn`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getWardReachedTimeFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getWardReachedTimeFromDB', resp);
                     resolve(setResponse("Success", "Ward Reached Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Ward Reached Time Found !!", {}));
@@ -146,6 +159,8 @@ export const getWardDutyOffTimeFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/Summary/dutyOutTime`).then((resp) => {
                 if (resp !== null) {
+                    saveRealtimeDbServiceHistory(FILE, 'getWardDutyOffTimeFromDB');
+                    saveRealtimeDbServiceDataHistory(FILE, 'getWardDutyOffTimeFromDB', resp);
                     resolve(setResponse("Success", "Duty Off Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Duty Off Time Found !!", {}));
@@ -158,10 +173,6 @@ export const getWardDutyOffTimeFromDB = async (year, month, day, ward) => {
     });
 };
 
-/**
- * 🖼 Get Duty In Photo from Firebase Storage
- * Path: {city}/DutyOnImages/{wardId}/{year}/{month}/{date}/{wardId}.png
- */
 export const getDutyInImageFromStorage = async (city, wardId, year, month, date) => {
     try {
         if (!city || !wardId || !year || !month || !date) return null;
