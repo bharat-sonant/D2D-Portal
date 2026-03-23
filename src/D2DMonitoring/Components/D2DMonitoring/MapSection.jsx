@@ -2,15 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import mcStyles from "./Common/MonitoringCard/MonitoringCard.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
-import { Maximize2, Map, MoveUpRight } from "lucide-react";
+import { MoveUpRight } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
-import tippperIcon from "../../../assets/images/tipper-green.png";
-
-const CAR_ICON = {
-  url: tippperIcon,
-  scaledSize: { width: 41, height: 26 },
-  anchor: { x: 24, y: 24 },
-};
 
 const MapSection = ({
   city,
@@ -22,8 +15,9 @@ const MapSection = ({
   onExpandMap,
   fullHeight = false,
   showMarkers = false,
-  vehicleLocation = null,
   hideHeader = false,
+  wardStartPoint = null,
+  wardEndPoint = null,
 }) => {
   const [isGoogleReady, setIsGoogleReady] = useState(
     action.isGoogleMapsReady(),
@@ -271,16 +265,22 @@ const MapSection = ({
                   />
                 )}
 
-              {vehicleLocation?.lat && vehicleLocation?.lng && (
+              {wardStartPoint?.lat && wardStartPoint?.lng && (
                 <Marker
-                  position={{
-                    lat: vehicleLocation.lat,
-                    lng: vehicleLocation.lng,
-                  }}
-                  icon={CAR_ICON}
-                  title="Vehicle Location"
+                  position={{ lat: wardStartPoint.lat, lng: wardStartPoint.lng }}
+                  title="Ward Started"
+                  label={{ text: "S", color: "#fff", fontWeight: "bold", fontSize: "11px" }}
                 />
               )}
+
+              {wardEndPoint?.lat && wardEndPoint?.lng && (
+                <Marker
+                  position={{ lat: wardEndPoint.lat, lng: wardEndPoint.lng }}
+                  title="Ward End"
+                  label={{ text: "E", color: "#fff", fontWeight: "bold", fontSize: "11px" }}
+                />
+              )}
+
             </GoogleMap>
           </div>
         </div>

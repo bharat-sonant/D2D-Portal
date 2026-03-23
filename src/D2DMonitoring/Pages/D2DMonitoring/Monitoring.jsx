@@ -25,7 +25,7 @@ import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction"
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
-import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
+import { prefetchAllWardLines, getLinePathsFromGeoJson } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
@@ -218,14 +218,7 @@ const MonitoringList = () => {
   const [lineStatusByWard, setLineStatusByWard] = useState({});
   const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
   const [phoneClock, setPhoneClock] = useState(new Date());
-  const [mapFocus, setMapFocus] = useState({
-    id: "curr-halt",
-    title: "Current Halt Location",
-    subtitle: "Live halt point",
-    address: "120/18, Bajaj Rd, Imam Ganj, Kalwaria Kunj, Sikar",
-    lat: 27.6098,
-    lng: 75.1412,
-  });
+  const [mapFocus, setMapFocus] = useState(null);
 
   const [vehicleIssueRows, setVehicleIssueRows] = useState([
     { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
@@ -829,6 +822,17 @@ const MonitoringList = () => {
     [wardLinesGeoJson],
   );
 
+  const { wardStartPoint, wardEndPoint } = React.useMemo(() => {
+    const paths = getLinePathsFromGeoJson(wardLinesGeoJson);
+    if (!paths.length) return { wardStartPoint: null, wardEndPoint: null };
+    const firstPath = paths[0];
+    const lastPath = paths[paths.length - 1];
+    return {
+      wardStartPoint: firstPath[0] ?? null,
+      wardEndPoint: lastPath[lastPath.length - 1] ?? null,
+    };
+  }, [wardLinesGeoJson]);
+
   const completedLengthKm = React.useMemo(() => {
     return action.getCompletedLengthKm(
       currentWardLineStatus,
@@ -1048,8 +1052,9 @@ const MonitoringList = () => {
                     onWardLengthResolved={setSelectedWardLengthInMeter}
                     onWardLinesResolved={setWardLinesGeoJson}
                     lineStatusByLine={currentWardLineStatus}
-                    focusLocation={mapFocus}
                     vehicleLocation={vehicleLocation}
+                    wardStartPoint={wardStartPoint}
+                    wardEndPoint={wardEndPoint}
                     onExpandMap={() => setShowLargeMap(true)}
                   />
                 </div>
@@ -1168,7 +1173,6 @@ const MonitoringList = () => {
       city={city}
       selectedWard={selectedWard}
       lineStatusByLine={currentWardLineStatus}
-      focusLocation={mapFocus}
       vehicleLocation={vehicleLocation}
     />
     </>
