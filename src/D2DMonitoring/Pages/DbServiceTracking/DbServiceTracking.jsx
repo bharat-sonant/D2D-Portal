@@ -1,14 +1,14 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, useCallback, forwardRef } from "react";
 import styles from "./DbServiceTracking.module.css";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
-import { Database, Calendar, Activity, HardDrive, Layers, ChevronUp, ChevronDown } from "lucide-react";
+import { Database, Calendar, Activity, HardDrive, Zap } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getServiceFiles } from "../../Services/DbServiceTracker/serviceTracker";
+import { getServiceFiles, getFunctionStats } from "../../Services/DbServiceTracker/serviceTracker";
 
 function formatBytes(bytes) {
   if (!bytes || bytes === 0) return "0 B";
-  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024) return `${Math.round(bytes)} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
@@ -27,51 +27,79 @@ const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
 ));
 
 const DbServiceTracking = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [stats, setStats] = useState([]);
-  const [sortBy, setSortBy] = useState("totalCalls");
-  const [sortDir, setSortDir] = useState("desc");
+  const [selectedDate, setSelectedDate]       = useState(new Date());
+  const [serviceFiles, setServiceFiles]       = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [loadingFuncs, setLoadingFuncs]       = useState(false);
+  const [colorMap, setColorMap]               = useState({});
+  const [selectedService, setSelectedService] = useState(null);
+  const [funcMap, setFuncMap]                 = useState({});
+  const [selectedFunc, setSelectedFunc]       = useState(null);
 
-  const loadStats = async () => {
+  const loadServices = useCallback(async () => {
+    setLoadingServices(true);
     const data = await getServiceFiles(selectedDate);
-    setStats(data);
-  };
-
-  useEffect(() => { loadStats(); }, [selectedDate]);
-
-  useEffect(() => {
-    window.addEventListener("d2d_tracker_update", loadStats);
-    const interval = setInterval(loadStats, 5000);
-    return () => {
-      window.removeEventListener("d2d_tracker_update", loadStats);
-      clearInterval(interval);
-    };
+    setServiceFiles(data);
+    setLoadingServices(false);
+    setColorMap((prev) => {
+      const next = { ...prev };
+      data.forEach((sf, i) => {
+        if (!next[sf.name]) next[sf.name] = SERVICE_COLORS[i % SERVICE_COLORS.length];
+      });
+      return next;
+    });
+    if (data.length > 0) {
+      setSelectedService((prev) => prev ?? data[0].name);
+      setFuncMap((prev) => {
+        if (prev[data[0].name]) return prev;
+        setLoadingFuncs(true);
+        getFunctionStats(data[0].name, selectedDate).then((fns) => {
+          setFuncMap((p) => ({ ...p, [data[0].name]: fns }));
+          if (fns.length > 0) setSelectedFunc((f) => f ?? fns[0]);
+          setLoadingFuncs(false);
+        });
+        return prev;
+      });
+    }
   }, [selectedDate]);
 
-  const totalCalls  = stats.reduce((s, r) => s + r.totalCalls, 0);
-  const totalBytes  = stats.reduce((s, r) => s + r.totalBytes, 0);
-  const maxCalls    = Math.max(...stats.map(r => r.totalCalls), 1);
+  useEffect(() => {
+    setSelectedFunc(null);
+    setFuncMap({});
+    loadServices();
+  }, [loadServices]);
 
-  const sorted = [...stats].sort((a, b) => {
-    const dir = sortDir === "asc" ? 1 : -1;
-    if (sortBy === "totalCalls") return dir * (a.totalCalls - b.totalCalls);
-    if (sortBy === "totalBytes") return dir * (a.totalBytes - b.totalBytes);
-    return 0;
-  });
+  useEffect(() => {
+    const interval = setInterval(loadServices, 10000);
+    window.addEventListener("d2d_tracker_update", loadServices);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("d2d_tracker_update", loadServices);
+    };
+  }, [loadServices]);
 
-  const handleSort = (col) => {
-    if (sortBy === col) setSortDir(d => d === "asc" ? "desc" : "asc");
-    else { setSortBy(col); setSortDir("desc"); }
-  };
+  const handleServiceClick = useCallback(async (sf) => {
+    setSelectedService(sf.name);
+    setSelectedFunc(null);
+    if (!funcMap[sf.name]) {
+      setLoadingFuncs(true);
+      const fns = await getFunctionStats(sf.name, selectedDate);
+      setFuncMap((prev) => ({ ...prev, [sf.name]: fns }));
+      if (fns.length > 0) setSelectedFunc(fns[0]);
+      setLoadingFuncs(false);
+    } else {
+      const fns = funcMap[sf.name];
+      if (fns.length > 0) setSelectedFunc(fns[0]);
+    }
+  }, [funcMap, selectedDate]);
 
-  const SortBtn = ({ col, label }) => (
-    <button className={`${styles.sortBtn} ${sortBy === col ? styles.sortBtnActive : ""}`} onClick={() => handleSort(col)}>
-      {label}
-      {sortBy === col
-        ? sortDir === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />
-        : <ChevronDown size={12} style={{ opacity: 0.3 }} />}
-    </button>
-  );
+  const handleFuncClick = useCallback((fn) => {
+    setSelectedFunc(fn);
+  }, []);
+
+  const fns     = selectedService ? (funcMap[selectedService] || []) : [];
+  const color   = selectedService ? (colorMap[selectedService] || SERVICE_COLORS[0]) : SERVICE_COLORS[0];
+  const avg     = selectedFunc?.callCount > 0 ? selectedFunc.totalBytes / selectedFunc.callCount : 0;
 
   return (
     <div className={styles.page}>
@@ -90,108 +118,143 @@ const DbServiceTracking = () => {
         <div className={styles.topBarRight} />
       </div>
 
-      {/* Content */}
+      {/* Body — 3 panels */}
       <div className={styles.body}>
 
-        {/* Left Panel */}
-        <div className={styles.leftPanel}>
-
-          {/* Date Picker */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Date</div>
+        {/* Panel 1 — Service Files */}
+        <div className={styles.panel1}>
+          <div className={styles.panelHeader}>
+            <div className={styles.panelLabel}>Date</div>
             <DatePicker
               selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
+              onChange={setSelectedDate}
               dateFormat="dd MMM yyyy"
               maxDate={new Date()}
-              placeholderText="Select date"
               popperPlacement="bottom-start"
               customInput={<CustomDateInput />}
             />
           </div>
 
-          {/* Stats Cards */}
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Summary</div>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: "#eef3fe" }}>
-                <Activity size={16} color="#4f8ef7" />
+          <div className={styles.panelLabel} style={{ padding: "12px 14px 6px" }}>Services</div>
+
+          <div className={styles.listScroll}>
+            {loadingServices ? (
+              <div className={styles.loaderWrap}>
+                <span className={styles.spinner} />
               </div>
-              <div>
-                <div className={styles.statVal}>{totalCalls.toLocaleString()}</div>
-                <div className={styles.statLabel}>Total Calls</div>
-              </div>
-            </div>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: "#edfaf4" }}>
-                <HardDrive size={16} color="#10b981" />
-              </div>
-              <div>
-                <div className={styles.statVal}>{formatBytes(totalBytes)}</div>
-                <div className={styles.statLabel}>Total Data</div>
-              </div>
-            </div>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: "#fff4e5" }}>
-                <Layers size={16} color="#f59e0b" />
-              </div>
-              <div>
-                <div className={styles.statVal}>{stats.length}</div>
-                <div className={styles.statLabel}>Services</div>
-              </div>
-            </div>
+            ) : serviceFiles.length === 0 ? (
+              <div className={styles.emptyList}>No data for this date</div>
+            ) : (
+              serviceFiles.map((sf) => {
+                const c       = colorMap[sf.name] || SERVICE_COLORS[0];
+                const active  = selectedService === sf.name;
+                return (
+                  <div
+                    key={sf.name}
+                    className={`${styles.serviceRow} ${active ? styles.rowActive : ""}`}
+                    style={active ? { borderLeftColor: c, background: `${c}12` } : {}}
+                    onClick={() => handleServiceClick(sf)}
+                  >
+                    <span className={styles.dot} style={{ background: c }} />
+                    <span className={styles.rowName}>{sf.name}</span>
+                    <span
+                      className={styles.badge}
+                      style={active ? { background: c, color: "#fff" } : {}}
+                    >
+                      {sf.totalCalls}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
-
-
         </div>
 
-        {/* Right Panel — Table */}
-        <div className={styles.rightPanel}>
-          {sorted.length === 0 ? (
+        {/* Panel 2 — Functions */}
+        <div className={styles.panel2}>
+          <div className={styles.panelLabel} style={{ padding: "14px 14px 8px" }}>
+            {selectedService ? selectedService : "Functions"}
+          </div>
+
+          <div className={styles.listScroll}>
+            {loadingFuncs ? (
+              <div className={styles.loaderWrap}>
+                <span className={styles.spinner} />
+              </div>
+            ) : !selectedService ? (
+              <div className={styles.emptyList}>Select a service</div>
+            ) : fns.length === 0 ? (
+              <div className={styles.emptyList}>No functions found</div>
+            ) : (
+              fns.map((fn) => {
+                const active = selectedFunc?.functionName === fn.functionName;
+                return (
+                  <div
+                    key={fn.functionName}
+                    className={`${styles.funcRow} ${active ? styles.rowActive : ""}`}
+                    style={active ? { borderLeftColor: color, background: `${color}12` } : {}}
+                    onClick={() => handleFuncClick(fn)}
+                  >
+                    <span
+                      className={styles.funcDot}
+                      style={active ? { background: color } : {}}
+                    />
+                    <span className={styles.rowName}>{fn.functionName}</span>
+                    <span
+                      className={styles.badge}
+                      style={active ? { background: color, color: "#fff" } : {}}
+                    >
+                      {fn.callCount}
+                    </span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Panel 3 — Detail */}
+        <div className={styles.panel3}>
+          {!selectedFunc ? (
             <div className={styles.emptyState}>
               <Database size={48} color="#d1d8e8" />
-              <p>No data for this date.<br />Open the Monitoring page to start tracking.</p>
+              <p>Select a function<br />to view its details.</p>
             </div>
           ) : (
-            <>
-              {/* Table Header */}
-              <div className={styles.tableHead}>
-                <div className={styles.thIdx}>#</div>
-                <div className={styles.thName}>Service Name</div>
-                <div className={styles.thBar} />
-                <div className={styles.thNum}><SortBtn col="totalCalls" label="Total Call" /></div>
-                <div className={styles.thNum}><SortBtn col="totalBytes" label="Data Consume" /></div>
-                <div className={styles.thNum} style={{ color: "#9aa5bc", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Avg / Call</div>
+            <div className={styles.detailWrap}>
+              <div className={styles.detailHeader}>
+                <div className={styles.detailBreadcrumb} style={{ color }}>
+                  {selectedService}
+                </div>
+                <div className={styles.detailTitle}>{selectedFunc.functionName}</div>
               </div>
 
-              {/* Rows */}
-              <div className={styles.tableBody}>
-                {sorted.map((row, i) => {
-                  const color   = SERVICE_COLORS[i % SERVICE_COLORS.length];
-                  const pct     = Math.round((row.totalCalls / maxCalls) * 100);
-                  const avg     = row.totalCalls > 0 ? Math.round(row.totalBytes / row.totalCalls) : 0;
-                  return (
-                    <div className={styles.tableRow} key={row.name}>
-                      <div className={styles.tdIdx}>{i + 1}</div>
-                      <div className={styles.tdName}>
-                        <span className={styles.dot} style={{ background: color }} />
-                        <span className={styles.serviceName}>{row.name}</span>
-                      </div>
-                      <div className={styles.tdBar}>
-                        <div className={styles.barTrack}>
-                          <div className={styles.barFill} style={{ width: `${pct}%`, background: color }} />
-                        </div>
-                      </div>
-                      <div className={styles.tdNum}>
-                        <span className={styles.callBadge} style={{ background: `${color}18`, color }}>{row.totalCalls}</span>
-                      </div>
-                      <div className={styles.tdNum}>{formatBytes(row.totalBytes)}</div>
-                      <div className={styles.tdNum} style={{ color: "#9aa5bc" }}>{formatBytes(avg)}</div>
-                    </div>
-                  );
-                })}
+              <div className={styles.statCards}>
+                <div className={styles.statCard} style={{ borderTopColor: "#4f8ef7" }}>
+                  <div className={styles.statCardIcon} style={{ background: "#eef3fe" }}>
+                    <Activity size={22} color="#4f8ef7" />
+                  </div>
+                  <div className={styles.statCardVal}>{selectedFunc.callCount.toLocaleString()}</div>
+                  <div className={styles.statCardLabel}>Total Calls</div>
+                </div>
+
+                <div className={styles.statCard} style={{ borderTopColor: "#10b981" }}>
+                  <div className={styles.statCardIcon} style={{ background: "#edfaf4" }}>
+                    <HardDrive size={22} color="#10b981" />
+                  </div>
+                  <div className={styles.statCardVal}>{formatBytes(selectedFunc.totalBytes)}</div>
+                  <div className={styles.statCardLabel}>Data Consumed</div>
+                </div>
+
+                <div className={styles.statCard} style={{ borderTopColor: "#f59e0b" }}>
+                  <div className={styles.statCardIcon} style={{ background: "#fff4e5" }}>
+                    <Zap size={22} color="#f59e0b" />
+                  </div>
+                  <div className={styles.statCardVal}>{formatBytes(avg)}</div>
+                  <div className={styles.statCardLabel}>Avg / Call</div>
+                </div>
               </div>
-            </>
+            </div>
           )}
         </div>
 
