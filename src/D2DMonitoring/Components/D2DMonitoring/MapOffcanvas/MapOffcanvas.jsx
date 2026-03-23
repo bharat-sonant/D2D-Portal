@@ -4,21 +4,6 @@ import MapSection from "../MapSection";
 import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
 import styles from "./MapOffcanvas.module.css";
 
-/**
- * MapOffcanvas
- * A right-side offcanvas panel (70 vw wide) that renders a full-height map.
- *
- * Props:
- *  open            – boolean, whether panel is visible
- *  onClose         – fn, called when backdrop or X is clicked
- *  wardName        – string, shown in header subtitle
- *  city            – passed to MapSection / VehicleTrackingMap
- *  selectedWard    – passed to MapSection / VehicleTrackingMap
- *  lineStatusByLine– passed to MapSection / VehicleTrackingMap
- *  focusLocation   – passed to MapSection
- *  vehicleId       – passed to VehicleTrackingMap for live status subscription
- *  vehicleNumber   – vehicle registration label shown in VehicleTrackingMap sidebar
- */
 const MapOffcanvas = ({
   open,
   onClose,
@@ -27,10 +12,8 @@ const MapOffcanvas = ({
   selectedWard,
   lineStatusByLine = {},
   focusLocation = null,
-  vehicleId,
-  vehicleNumber,
 }) => {
-  const [showActivityMap, setShowActivityMap] = useState(false);
+  const [showTracking, setShowTracking] = useState(false);
 
   return (
     <>
@@ -51,12 +34,12 @@ const MapOffcanvas = ({
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <span className={`${styles.headerIcon} ${showActivityMap ? styles.headerIconActivity : ""}`}>
-              {showActivityMap ? <Layers size={16} /> : <Map size={16} />}
+            <span className={`${styles.headerIcon} ${showTracking ? styles.headerIconActivity : ""}`}>
+              {showTracking ? <Layers size={16} /> : <Map size={16} />}
             </span>
             <div>
               <div className={styles.headerTitle}>
-                {showActivityMap ? "Vehicle Tracking" : "Live Map"}
+                {showTracking ? "Vehicle Tracking" : "Live Map"}
               </div>
               {wardName && (
                 <div className={styles.headerSub}>{wardName}</div>
@@ -66,10 +49,10 @@ const MapOffcanvas = ({
           <div className={styles.headerActions}>
             <button
               type="button"
-              className={`${styles.toggleBtn} ${showActivityMap ? styles.toggleBtnActive : ""}`}
-              onClick={() => setShowActivityMap((prev) => !prev)}
+              className={`${styles.toggleBtn} ${showTracking ? styles.toggleBtnActive : ""}`}
+              onClick={() => setShowTracking((prev) => !prev)}
               aria-label="Toggle vehicle tracking"
-              title={showActivityMap ? "Switch to Live Map" : "Track Vehicle Activity"}
+              title={showTracking ? "Switch to Live Map" : "Track Vehicle"}
             >
               <Layers size={16} />
             </button>
@@ -86,14 +69,8 @@ const MapOffcanvas = ({
 
         {/* Body */}
         <div className={styles.mapBody}>
-          {showActivityMap ? (
-            <VehicleTrackingMap
-              vehicleId={vehicleId || selectedWard?.id}
-              vehicleNumber={vehicleNumber}
-              city={city}
-              selectedWard={selectedWard}
-              lineStatusByLine={lineStatusByLine}
-            />
+          {showTracking ? (
+            <VehicleTrackingMap />
           ) : (
             <MapSection
               city={city}
