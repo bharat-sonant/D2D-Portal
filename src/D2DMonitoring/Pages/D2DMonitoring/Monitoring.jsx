@@ -28,7 +28,6 @@ import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardLis
 import { prefetchAllWardLines } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
-import vehicleGif from "../../../assets/images/icons/vehicle.gif";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
 import ChangePassword from "../../../components/ChangePassword/changePassword";
 import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
@@ -59,17 +58,12 @@ const toTitleCase = (value = "") =>
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-const toStatusBadgeImage = (label, bg, fg) =>
-  `data:image/svg+xml;utf8,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><rect width='72' height='72' rx='12' fill='${bg}'/><text x='36' y='42' text-anchor='middle' font-size='13' font-family='Arial' font-weight='700' fill='${fg}'>${label}</text></svg>`,
-  )}`;
-
-const STATUS_IMAGE_BY_TYPE = {
-  fuel: toStatusBadgeImage("FUEL", "#fff2f4", "#be185d"),
-  dump: toStatusBadgeImage("DUMP", "#fff7ed", "#c2410c"),
-  garage: toStatusBadgeImage("SERV", "#eef2ff", "#3730a3"),
-  ward: toStatusBadgeImage("WARD", "#ecfdf5", "#047857"),
-  transit: vehicleGif,
+const STATUS_EMOJI_BY_TYPE = {
+  fuel: "⛽",
+  dump: "🏭",
+  garage: "🔧",
+  ward: "🚛",
+  transit: "🚛",
 };
 
 const getVehicleJourneyMeta = (rawStatus = "") => {
@@ -87,7 +81,7 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
       description: "Stopped for refuelling",
       icon: Fuel,
       tone: "warning",
-      imageSrc: STATUS_IMAGE_BY_TYPE.fuel,
+      emoji: STATUS_EMOJI_BY_TYPE.fuel,
     };
   }
 
@@ -97,7 +91,7 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
       description: "Vehicle is outside — returning to route",
       icon: Truck,
       tone: "danger",
-      imageSrc: STATUS_IMAGE_BY_TYPE.dump,
+      emoji: STATUS_EMOJI_BY_TYPE.dump,
     };
   }
 
@@ -111,7 +105,7 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
       description: "Vehicle is under inspection",
       icon: Wrench,
       tone: "neutral",
-      imageSrc: STATUS_IMAGE_BY_TYPE.garage,
+      emoji: STATUS_EMOJI_BY_TYPE.garage,
     };
   }
 
@@ -125,7 +119,7 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
       description: "Collection is active on assigned route",
       icon: MapPin,
       tone: "success",
-      imageSrc: STATUS_IMAGE_BY_TYPE.ward,
+      emoji: STATUS_EMOJI_BY_TYPE.ward,
     };
   }
 
@@ -134,7 +128,7 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
     description: "Vehicle is moving on assigned route",
     icon: Truck,
     tone: "success",
-    imageSrc: STATUS_IMAGE_BY_TYPE.transit,
+    emoji: STATUS_EMOJI_BY_TYPE.transit,
   };
 };
 

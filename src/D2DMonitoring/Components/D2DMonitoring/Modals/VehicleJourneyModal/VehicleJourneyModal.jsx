@@ -56,6 +56,11 @@ const VehicleJourneyModal = ({
           <h4 className={styles.vehicleJourneyStatusTitle}>{vehicleJourneyMeta.title}</h4>
           <p className={styles.vehicleJourneyStatusDesc}>{vehicleJourneyMeta.description}</p>
         </div>
+        {vehicleJourneyMeta.emoji && (
+          <span className={styles.vehicleJourneyStatusEmoji} aria-hidden="true">
+            {vehicleJourneyMeta.emoji}
+          </span>
+        )}
       </div>
 
       <div className={styles.vehicleJourneyQuickStrip}>
