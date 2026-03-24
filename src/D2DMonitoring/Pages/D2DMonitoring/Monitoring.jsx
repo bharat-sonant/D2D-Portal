@@ -1190,6 +1190,8 @@ const MonitoringList = () => {
       selectedWard={selectedWard}
       lineStatusByLine={currentWardLineStatus}
       vehicleLocation={vehicleLocation}
+      wardStartPoint={wardStartPoint}
+      wardEndPoint={wardEndPoint}
     />
     </>
   );

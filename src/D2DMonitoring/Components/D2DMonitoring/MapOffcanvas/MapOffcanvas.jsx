@@ -13,6 +13,8 @@ const MapOffcanvas = ({
   lineStatusByLine = {},
   focusLocation = null,
   vehicleLocation = null,
+  wardStartPoint = null,
+  wardEndPoint = null,
 }) => {
   const [showTracking, setShowTracking] = useState(false);
 
@@ -67,6 +69,8 @@ const MapOffcanvas = ({
               lineStatusByLine={lineStatusByLine}
               focusLocation={focusLocation}
               vehicleLocation={vehicleLocation}
+              wardStartPoint={wardStartPoint}
+              wardEndPoint={wardEndPoint}
               showMarkers
               fullHeight
               hideHeader
