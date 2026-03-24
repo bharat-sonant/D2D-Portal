@@ -183,14 +183,23 @@ const MonitoringList = () => {
     };
     fetchWards();
   }, [city]);
-  const remarkTopicOptions = [
-    "Performance Issue",
-    "Route Observation",
-    "Safety Alert",
-    "Vehicle Issue",
-    "Team Coordination",
-    "Other",
-  ];
+  const [remarkTopicOptions, setRemarkTopicOptions] = useState([]);
+
+  useEffect(() => {
+    const fallback = [
+      { id: "1", name: "Vehicle Related" },
+      { id: "2", name: "Device" },
+      { id: "3", name: "Location Issue" },
+      { id: "4", name: "Fast Working" },
+      { id: "5", name: "Halts" },
+      { id: "6", name: "General" },
+    ];
+    action.fetchRemarkCategories().then((categories) => {
+      setRemarkTopicOptions(
+        categories && categories.length > 0 ? categories : fallback,
+      );
+    });
+  }, []);
 
   const [selectedWard, setSelectedWard] = useState(null);
   const [lastRefreshed, setLastRefreshed] = useState(
@@ -993,6 +1002,13 @@ const MonitoringList = () => {
                 onTripsClick={() => setActiveStatusModal("trips")}
                 onAppClick={() => setActiveStatusModal("app")}
               />
+              
+                <RemarksCard
+                  remarks={remarks}
+                  onAddRemark={openNewRemarkModal}
+                  onEditRemark={openEditRemarkModal}
+                  onDeleteRemark={deleteRemark}
+                />
               {/* 
             <HaltSummaryReplica
               onMapFocusChange={setMapFocus}

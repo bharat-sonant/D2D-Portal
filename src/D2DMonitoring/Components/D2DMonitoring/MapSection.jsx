@@ -5,11 +5,25 @@ import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
 import { MoveUpRight } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import tippperIcon from "../../../assets/images/tipper-green.png";
+import goIcon from "../../../assets/images/go-image.png";
+import endIcon from "../../../assets/images/end-image.png";
 
 const CAR_ICON = {
   url: tippperIcon,
   scaledSize: { width: 41, height: 26 },
   anchor: { x: 24, y: 24 },
+};
+
+const GO_ICON = {
+  url: goIcon,
+  scaledSize: { width: 23, height: 41 },
+  anchor: { x: 18, y: 36 },
+};
+
+const END_ICON = {
+  url: endIcon,
+  scaledSize: { width: 32, height: 41 },
+  anchor: { x: 18, y: 36 },
 };
 
 const MapSection = ({
@@ -284,16 +298,16 @@ const MapSection = ({
               {wardStartPoint?.lat && wardStartPoint?.lng && (
                 <Marker
                   position={{ lat: wardStartPoint.lat, lng: wardStartPoint.lng }}
-                  title="Ward Started"
-                  label={{ text: "S", color: "#fff", fontWeight: "bold", fontSize: "11px" }}
+                  icon={GO_ICON}
+                  title="Ward Start"
                 />
               )}
 
               {wardEndPoint?.lat && wardEndPoint?.lng && (
                 <Marker
                   position={{ lat: wardEndPoint.lat, lng: wardEndPoint.lng }}
+                  icon={END_ICON}
                   title="Ward End"
-                  label={{ text: "E", color: "#fff", fontWeight: "bold", fontSize: "11px" }}
                 />
               )}
 
