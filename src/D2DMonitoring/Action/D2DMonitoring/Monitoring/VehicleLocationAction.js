@@ -1,4 +1,4 @@
-import { subscribeVehicleLocation } from "../../../Services/VehicleLocationService/VehicleLocationService";
+import { getVehicleCurrentLocation } from "../../../Services/VehicleLocationService/VehicleLocationService";
 
 export const subscribeVehicleLocationAction = (wardId, onUpdate) =>
-    subscribeVehicleLocation(wardId, onUpdate);
+    getVehicleCurrentLocation(wardId, onUpdate);

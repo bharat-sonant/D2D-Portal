@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import { subscribeLocationHistory } from "../../../Services/LocationHistoryService/LocationHistoryService";
+import { getTravelPath } from "../../../Services/LocationHistoryService/LocationHistoryService";
 
 export const subscribeLocationHistoryAction = (wardId, onUpdate) => {
     const now = dayjs();
-    return subscribeLocationHistory(
+    return getTravelPath(
         wardId,
         now.format("YYYY"),
         now.format("MMMM"),

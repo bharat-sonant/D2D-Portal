@@ -23,8 +23,8 @@ export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
         axios.get(url)
             .then((response) => {
                 if (response?.data) {
-                    saveRealtimeDbServiceHistory('WardsService', 'getAvailableWardsFromStorage');
-                    saveRealtimeDbServiceDataHistory('WardsService', 'getAvailableWardsFromStorage', response.data);
+                    saveRealtimeDbServiceHistory('WardServices', 'getAvailableWardsFromStorage');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getAvailableWardsFromStorage', response.data);
                     resolve(setResponse("Success", "Wards fetched successfully", response.data));
                 } else {
                     resolve(setResponse("Fail", "No ward data found", []));

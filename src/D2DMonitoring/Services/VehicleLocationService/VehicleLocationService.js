@@ -9,19 +9,15 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "
  * @param {function} onUpdate - called with { lat, lng } or null
  * @returns unsubscribe function
  */
-export const subscribeVehicleLocation = (wardId, onUpdate) => {
+export const getVehicleCurrentLocation = (wardId, onUpdate) => {
 
-    if (!wardId) return () => {};
+    if (!wardId) return () => { };
 
-    return db.subscribeData(
-        `CurrentLocationInfo/${wardId}/latLng`,
+    return db.subscribeData(`CurrentLocationInfo/${wardId}/latLng`,
         (data) => {
-
             if (!data) return onUpdate(null);
-
-            saveRealtimeDbServiceHistory('VehicleLocationService', 'subscribeVehicleLocation');
-            saveRealtimeDbServiceDataHistory('VehicleLocationService', 'subscribeVehicleLocation', data);
-
+            saveRealtimeDbServiceHistory('MapServices', 'getVehicleCurrentLocation');
+            saveRealtimeDbServiceDataHistory('MapServices', 'getVehicleCurrentLocation', data);
             const [lat, lng] = String(data).split(",").map(Number);
             onUpdate(isNaN(lat) || isNaN(lng) ? null : { lat, lng });
         }

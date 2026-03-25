@@ -11,8 +11,6 @@ export const subscribeWorkerDetailsFromDB = (year, month, day, ward, onData) => 
         `WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`,
         (data) => {
             if (!data) return;
-            saveRealtimeDbServiceHistory(FILE, 'subscribeWorkerDetailsFromDB');
-            saveRealtimeDbServiceDataHistory(FILE, 'subscribeWorkerDetailsFromDB', data);
             onData(data);
         }
     );
@@ -68,8 +66,8 @@ export const getHelperDummyFlagFromDB = async (employeeId) => {
             if (!employeeId) { resolve(null); return; }
             db.getData(`EmployeeDetailData/${employeeId}/isDummyId`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getHelperDummyFlagFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getHelperDummyFlagFromDB', resp);
+                    saveRealtimeDbServiceHistory('WardServices', 'getHelperDummyFlagFromDB');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getHelperDummyFlagFromDB', resp);
                 }
                 resolve(resp !== null ? resp : null);
             });
@@ -88,8 +86,8 @@ export const getEmployeeAllDetailsFromDB = async (employeeId) => {
             }
             db.getData(`Employees/${employeeId}`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getEmployeeAllDetailsFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getEmployeeAllDetailsFromDB', resp);
+                    saveRealtimeDbServiceHistory('EmployeeDetailsServices', 'getEmployeeAllDetailsFromDB');
+                    saveRealtimeDbServiceDataHistory('EmployeeDetailsServices', 'getEmployeeAllDetailsFromDB', resp);
                     resolve(setResponse("Success", "Employee Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Employee Found !!", {}));
@@ -110,8 +108,8 @@ export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
             }
             db.getData(`WasteCollectionInfo/${Ward}/${year}/${month}/${day}/Summary/dutyInTime`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getWardDutyOnTimeFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getWardDutyOnTimeFromDB', resp);
+                    saveRealtimeDbServiceHistory('WardServices', 'getWardDutyOnTimeFromDB');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getWardDutyOnTimeFromDB', resp);
                     resolve(setResponse("Success", "Duty In Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Duty In Time Found !!", {}));
@@ -132,8 +130,8 @@ export const getWardReachedTimeFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/Summary/wardReachedOn`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getWardReachedTimeFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getWardReachedTimeFromDB', resp);
+                    saveRealtimeDbServiceHistory('WardServices', 'getWardReachedTimeFromDB');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getWardReachedTimeFromDB', resp);
                     resolve(setResponse("Success", "Ward Reached Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Ward Reached Time Found !!", {}));
@@ -154,8 +152,8 @@ export const getWardDutyOffTimeFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/Summary/dutyOutTime`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getWardDutyOffTimeFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getWardDutyOffTimeFromDB', resp);
+                    saveRealtimeDbServiceHistory('WardServices', 'getWardDutyOffTimeFromDB');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getWardDutyOffTimeFromDB', resp);
                     resolve(setResponse("Success", "Duty Off Time Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Duty Off Time Found !!", {}));
@@ -172,8 +170,8 @@ export const getDutyInImageFromStorage = async (city, wardId, year, month, date)
         if (!city || !wardId || !year || !month || !date) return null;
         const filePath = `${city}/DutyOnImages/${wardId}/${year}/${month}/${date}/1.png`;
         const url = await db.getDownloadURLFromStorage(filePath);
-        saveRealtimeDbServiceHistory(FILE, 'DutyInTimeImage');
-        saveRealtimeDbServiceDataHistory(FILE, 'DutyInTimeImage', url);
+        saveRealtimeDbServiceHistory('WardServices', 'DutyInTimeImage');
+        saveRealtimeDbServiceDataHistory('WardServices', 'DutyInTimeImage', url);
         return url;
     } catch (error) {
         return null;
@@ -185,8 +183,8 @@ export const getDutyOffImageFromStorage = async (city, wardId, year, month, date
         if (!city || !wardId || !year || !month || !date) return null;
         const filePath = `${city}/DutyOutImages/${wardId}/${year}/${month}/${date}/1.png`;
         const url = await db.getDownloadURLFromStorage(filePath);
-        saveRealtimeDbServiceHistory(FILE, 'DutyOffTimeImage');
-        saveRealtimeDbServiceDataHistory(FILE, 'DutyOffTimeImage', url);
+        saveRealtimeDbServiceHistory('WardServices', 'DutyOffTimeImage');
+        saveRealtimeDbServiceDataHistory('WardServices', 'DutyOffTimeImage', url);
         return url;
     } catch (error) {
         return null;

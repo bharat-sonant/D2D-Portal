@@ -12,8 +12,6 @@ export const subscribeVehicleSurfingHistoryFromDB = (vehicleId, year, month, dat
     const path = `GeoGraphicallySurfingHistory/${vehicleId}/${year}/${month}/${date}`;
     return db.subscribeData(path, (data) => {
         if (data) {
-            saveRealtimeDbServiceHistory('VehicleStatusService', 'subscribeVehicleSurfingHistoryFromDB');
-            saveRealtimeDbServiceDataHistory('VehicleStatusService', 'subscribeVehicleSurfingHistoryFromDB', data);
             onData(data);
         }
     });
@@ -33,8 +31,8 @@ export const getVehicleSurfingHistoryFromDB = async (vehicleId, year, month, dat
             const path = `GeoGraphicallySurfingHistory/${vehicleId}/${year}/${month}/${date}`;
             db.getData(path).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory('VehicleStatusService', 'getVehicleSurfingHistoryFromDB');
-                    saveRealtimeDbServiceDataHistory('VehicleStatusService', 'getVehicleSurfingHistoryFromDB', resp);
+                    saveRealtimeDbServiceHistory('WardServices', 'getVehicleStatus');
+                    saveRealtimeDbServiceDataHistory('WardServices', 'getVehicleStatus', resp);
                     resolve(setResponse("Success", "Vehicle Surfing History Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Surfing History Found !!", {}));

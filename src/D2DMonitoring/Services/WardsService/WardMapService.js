@@ -32,8 +32,8 @@ export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
                 if (response?.data) {
                     _wardBoundaryCache.set(cacheKey, response.data);
                     trackCall(`WardBoundaryStorage/${wardId}`, "axios", response.data);
-                    saveRealtimeDbServiceHistory('WardMapService', 'getWardBoundaryFromStorage');
-                    saveRealtimeDbServiceDataHistory('WardMapService', 'getWardBoundaryFromStorage', response.data);
+                    saveRealtimeDbServiceHistory('MapServices', 'getWardBoundaryFromStorage');
+                    saveRealtimeDbServiceDataHistory('MapServices', 'getWardBoundaryFromStorage', response.data);
                     resolve(setResponse("Success", "Ward boundary fetched", response.data));
                 } else {
                     resolve(setResponse("Fail", "No boundary data found", null));
@@ -82,8 +82,8 @@ export const getWardLinesFromStorage = async (cityName, wardId) => {
         if (response?.data) {
             _wardLinesCache.set(cacheKey, response.data);
             trackCall(`GeoJsonWardLines/${wardId}`, "axios", response.data);
-            saveRealtimeDbServiceHistory('WardMapService', 'getWardLinesFromStorage');
-            saveRealtimeDbServiceDataHistory('WardMapService', 'getWardLinesFromStorage', response.data);
+            saveRealtimeDbServiceHistory('MapServices', 'getWardLinesFromStorage');
+            saveRealtimeDbServiceDataHistory('MapServices', 'getWardLinesFromStorage', response.data);
             return setResponse("Success", "Ward lines fetched", response.data);
         }
         return setResponse("Fail", "No data in file", null);

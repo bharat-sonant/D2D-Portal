@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, NavLink } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
@@ -946,27 +946,17 @@ const MonitoringList = () => {
         </div>
 
         <div className={styles.topBarRight}>
-          <button
-            className={`btn`}
-            onClick={() => navigate(`/${city}/d2dMonitoring/db-service-tracking`)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 13,
-              fontWeight: 500,
-              color: "#3a4155",
-              border: "1px solid #dde1ea",
-              borderRadius: 8,
-              padding: "6px 14px",
-              marginRight: 12,
-              background: "#fff",
-              cursor: "pointer",
-            }}
+          <NavLink
+            to={`/${city}/d2dMonitoring/db-service-tracking`}
+            className={({ isActive }) =>
+              `${topbarStyles.menuItem} ${isActive ? topbarStyles.menuItemActive : ""}`
+            }
           >
-            <Database size={15} />
-            DbService Tracking
-          </button>
+            <div className={topbarStyles.menuIcon}>
+              <Database className={topbarStyles.navIcon} size={20} />
+            </div>
+            <span className={topbarStyles.menuLabel}>Db Service Tracking</span>
+          </NavLink>
           <div
             className={topbarStyles.userBadge}
             // onClick={() => setShowQuickAppSelect((p) => !p)}
@@ -1022,12 +1012,12 @@ const MonitoringList = () => {
                 onAppClick={() => setActiveStatusModal("app")}
               />
               
-                {/* <RemarksCard
+                <RemarksCard
                   remarks={remarks}
                   onAddRemark={openNewRemarkModal}
                   onEditRemark={openEditRemarkModal}
                   onDeleteRemark={deleteRemark}
-                /> */}
+                />
               {/* 
             <HaltSummaryReplica
               onMapFocusChange={setMapFocus}

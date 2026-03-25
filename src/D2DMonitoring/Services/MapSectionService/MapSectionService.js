@@ -11,8 +11,6 @@ export const subscribeWardLineStatus = (ward, year, month, date, onUpdate) => {
     const path = `WasteCollectionInfo/${ward}/${year}/${month}/${date}/LineStatus`;
     return db.subscribeData(path, (data) => {
         if (!data) { onUpdate({}); return; }
-        saveRealtimeDbServiceHistory('MapSectionService', 'subscribeWardLineStatus');
-        saveRealtimeDbServiceDataHistory('MapSectionService', 'subscribeWardLineStatus', data);
         const statusByLine = {};
         for (const key in data) {
             if (data[key] && typeof data[key] === "object") {
@@ -31,8 +29,8 @@ export const getWardLineStatus = (ward, year, month, date) => {
                 const path = `WasteCollectionInfo/${ward}/${year}/${month}/${date}/LineStatus`;
                 db.getData(path).then((resp) => {
                     if (resp !== null) {
-                        saveRealtimeDbServiceHistory('MapSectionService', 'getWardLineStatus');
-                        saveRealtimeDbServiceDataHistory('MapSectionService', 'getWardLineStatus', resp);
+                        saveRealtimeDbServiceHistory('MapServices', 'getWardLineStatus');
+                        saveRealtimeDbServiceDataHistory('MapServices', 'getWardLineStatus', resp);
                         for (const key in resp) {
                             if (resp[key] && typeof resp[key] === "object") {
                                 statusByLine[key] = resp[key].Status ?? null;
