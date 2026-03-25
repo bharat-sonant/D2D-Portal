@@ -97,7 +97,7 @@
 .borderBottom { border-bottom: 1px solid #f0f4f8; }
 
 .metricValue {
-  font-size: 17px;
+  font-size: 15px;
   font-family: var(--fontGraphikSemibold);
   line-height: 1;
   letter-spacing: -0.5px;

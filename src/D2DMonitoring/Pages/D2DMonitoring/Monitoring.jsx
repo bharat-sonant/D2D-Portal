@@ -213,6 +213,13 @@ const MonitoringList = () => {
   const [dutyModal, setDutyModal] = useState(null);
   const [isDutyImageLoading, setIsDutyImageLoading] = useState(false);
   const [remarks, setRemarks] = useState([]);
+
+  // Subscribe to today's remarks for the selected ward
+  useEffect(() => {
+    if (!selectedWard?.id) return;
+    const unsub = action.subscribeRemarksFromDB(selectedWard.id, setRemarks);
+    return () => unsub();
+  }, [selectedWard?.id]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
@@ -740,7 +747,7 @@ const MonitoringList = () => {
 
   const openEditRemarkModal = (item) => {
     setEditingRemarkId(item.id);
-    setRemarkForm({ topic: item.topic, description: item.description });
+    setRemarkForm({ topic: item.topic || "", description: item.remark || item.description || "" });
     setShowRemarkModal(true);
   };
 
@@ -761,25 +768,37 @@ const MonitoringList = () => {
     }
   };
 
-  const handleRemarkSubmit = () => {
+  const handleRemarkSubmit = async () => {
     const topic = remarkForm.topic.trim();
     const description = remarkForm.description.trim();
-    if (!topic || !description) return;
+    if (!topic || !description || !selectedWard?.id) return;
+
+    const matchedCategory = remarkTopicOptions.find(
+      (opt) => (typeof opt === "string" ? opt : opt.name) === topic,
+    );
+    const categoryId = matchedCategory?.id ?? "";
+    const categoryImage = matchedCategory?.image ?? "";
+    const userId = localStorage.getItem("userId") ?? "";
+
+    const payload = {
+      remark: description,
+      category: categoryId,
+      image: categoryImage,
+      topic,
+      userId,
+    };
 
     if (editingRemarkId) {
-      setRemarks((prev) =>
-        prev.map((item) =>
-          item.id === editingRemarkId ? { ...item, topic, description } : item,
-        ),
-      );
+      await action.updateRemarkInDB(selectedWard.id, editingRemarkId, payload);
     } else {
-      setRemarks((prev) => [{ id: Date.now(), topic, description }, ...prev]);
+      await action.saveRemarkToDB(selectedWard.id, payload);
     }
     closeAllModals();
   };
 
-  const deleteRemark = (id) => {
-    setRemarks((prev) => prev.filter((item) => item.id !== id));
+  const deleteRemark = async (id) => {
+    if (!selectedWard?.id) return;
+    await action.deleteRemarkFromDB(selectedWard.id, id);
   };
 
   const handleVehicleIssueRowChange = (id, field, value) => {

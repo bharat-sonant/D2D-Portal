@@ -1,5 +1,6 @@
 import { setResponse } from '../../../common/common';
 import * as db from '../../../services/dbServices';
+import dayjs from 'dayjs';
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
 
 const FILE = 'D2DMonitoringDutyIn';
@@ -189,5 +190,88 @@ export const getDutyOffImageFromStorage = async (city, wardId, year, month, date
         return url;
     } catch (error) {
         return null;
+    }
+};
+
+/**
+ * Fetches remark categories from Firebase.
+ * Handles both flat { id: "name" } and object { id: { name, image } } formats.
+ * Returns an array of { id, name, image } objects.
+ */
+export const getRemarkCategoriesFromDB = async () => {
+    try {
+        const data = await db.getData('RemarkCategory');
+        if (!data || typeof data !== 'object') return [];
+        saveRealtimeDbServiceHistory(FILE, 'getRemarkCategoriesFromDB');
+        return Object.entries(data).map(([id, val]) => ({
+            id,
+            name: typeof val === 'string' ? val : (val?.name ?? val?.title ?? String(id)),
+            image: typeof val === 'object' ? (val?.image ?? null) : null,
+        }));
+    } catch (error) {
+        return [];
+    }
+};
+
+// ── Remarks CRUD ─────────────────────────────────────────────────────────────
+
+const getRemarkDateParts = () => ({
+    year: dayjs().format('YYYY'),
+    month: dayjs().format('MMMM'),
+    date: dayjs().format('YYYY-MM-DD'),
+});
+
+const remarkPath = (wardId) => {
+    const { year, month, date } = getRemarkDateParts();
+    return `Remarks/${wardId}/${year}/${month}/${date}`;
+};
+
+export const subscribeRemarksFromDB = (wardId, onData) => {
+    if (!wardId) return () => {};
+    return db.subscribeData(remarkPath(wardId), (data) => {
+        if (!data) { onData([]); return; }
+        saveRealtimeDbServiceHistory(FILE, 'subscribeRemarksFromDB');
+        const list = Object.entries(data)
+            .map(([id, val]) => ({ id, ...val }))
+            .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+        onData(list);
+    });
+};
+
+export const saveRemarkToDB = async (wardId, remarkData) => {
+    try {
+        if (!wardId) return { success: false, message: 'No ward selected' };
+        const payload = {
+            ...remarkData,
+            time: dayjs().format('h:mm:ss A'),
+            createdAt: Date.now(),
+        };
+        const result = await db.pushData(remarkPath(wardId), payload);
+        if (result.success) saveRealtimeDbServiceHistory(FILE, 'saveRemarkToDB');
+        return result;
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+};
+
+export const updateRemarkInDB = async (wardId, remarkId, remarkData) => {
+    try {
+        if (!wardId || !remarkId) return { success: false, message: 'Invalid params' };
+        const result = await db.saveData(`${remarkPath(wardId)}/${remarkId}`, remarkData);
+        if (result.success) saveRealtimeDbServiceHistory(FILE, 'updateRemarkInDB');
+        return result;
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+};
+
+export const deleteRemarkFromDB = async (wardId, remarkId) => {
+    try {
+        if (!wardId || !remarkId) return { success: false, message: 'Invalid params' };
+        const result = await db.removeData(`${remarkPath(wardId)}/${remarkId}`);
+        if (result.success) saveRealtimeDbServiceHistory(FILE, 'deleteRemarkFromDB');
+        return result;
+    } catch (error) {
+        return { success: false, message: error.message };
     }
 };

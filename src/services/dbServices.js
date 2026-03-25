@@ -1,4 +1,4 @@
-import { ref, get, onValue, update, set, remove } from "firebase/database";
+import { ref, get, onValue, update, set, remove, push } from "firebase/database";
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as common from '../common/common'
 import { getDatabaseInstance, getStorageInstance, waitForFirebaseReady } from "../firebase/firebaseService";
@@ -143,11 +143,26 @@ export const setLastKey = async (path, val) => {
   if (!path || val === undefined || val === null) {
     return common.setResponse("Fail", "Invalid Params !!", { service: "setLastKey" });
   }
- 
+
   try {
     const res = await saveData(path, { value: val });
     if (res.success) return { success: true, message: "Last key updated successfully" };
     return res;
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
+/**
+ * ➕ Push new entry with auto-generated Firebase key
+ * Returns { success, key } where key is the generated push ID
+ */
+export const pushData = async (path, data) => {
+  try {
+    const database = await getReadyDatabase();
+    const newRef = await push(ref(database, path), data);
+    trackCall(path, "pushData", data);
+    return { success: true, key: newRef.key };
   } catch (error) {
     return { success: false, message: error.message };
   }

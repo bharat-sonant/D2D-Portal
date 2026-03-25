@@ -10,9 +10,18 @@ import {
     getDutyOffImageFromStorage,
     getEmployeeAllDetailsFromDB,
     getHelperDummyFlagFromDB,
+    getRemarkCategoriesFromDB,
+    subscribeRemarksFromDB,
+    saveRemarkToDB,
+    updateRemarkInDB,
+    deleteRemarkFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
+
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
+
+export const fetchRemarkCategories = () => getRemarkCategoriesFromDB();
+export { subscribeRemarksFromDB, saveRemarkToDB, updateRemarkInDB, deleteRemarkFromDB };
  
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {

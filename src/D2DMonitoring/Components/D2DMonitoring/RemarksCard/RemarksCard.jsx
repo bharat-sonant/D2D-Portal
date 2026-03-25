@@ -23,8 +23,8 @@ const RemarksCard = ({ remarks, onAddRemark, onEditRemark, onDeleteRemark }) => 
         <div className={styles.remarkList}>
           {remarks.map((item) => (
             <div key={item.id} className={styles.remarkItemCard}>
-              <div className={styles.remarkItemTopic}>{item.topic}</div>
-              <div className={styles.remarkItemDescription}>{item.description}</div>
+              <div className={styles.remarkItemTopic}>{item.topic || item.category}</div>
+              <div className={styles.remarkItemDescription}>{item.remark || item.description}</div>
               <div className={styles.remarkItemActions}>
                 <button
                   type="button"
