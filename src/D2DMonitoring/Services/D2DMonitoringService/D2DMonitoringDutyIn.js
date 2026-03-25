@@ -200,7 +200,7 @@ export const getRemarkCategoriesFromDB = async () => {
     try {
         const data = await db.getData('RemarkCategory');
         if (!data || typeof data !== 'object') return [];
-        saveRealtimeDbServiceHistory(FILE, 'getRemarkCategoriesFromDB');
+        saveRealtimeDbServiceHistory('WardServices', 'getRemarkCategoriesFromDB');
         return Object.entries(data).map(([id, val]) => ({
             id,
             name: typeof val === 'string' ? val : (val?.name ?? val?.title ?? String(id)),
@@ -228,7 +228,6 @@ export const subscribeRemarksFromDB = (wardId, onData) => {
     if (!wardId) return () => {};
     return db.subscribeData(remarkPath(wardId), (data) => {
         if (!data) { onData([]); return; }
-        saveRealtimeDbServiceHistory(FILE, 'subscribeRemarksFromDB');
         const list = Object.entries(data)
             .map(([id, val]) => ({ id, ...val }))
             .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
@@ -245,7 +244,6 @@ export const saveRemarkToDB = async (wardId, remarkData) => {
             createdAt: Date.now(),
         };
         const result = await db.pushData(remarkPath(wardId), payload);
-        if (result.success) saveRealtimeDbServiceHistory(FILE, 'saveRemarkToDB');
         return result;
     } catch (error) {
         return { success: false, message: error.message };
@@ -256,7 +254,6 @@ export const updateRemarkInDB = async (wardId, remarkId, remarkData) => {
     try {
         if (!wardId || !remarkId) return { success: false, message: 'Invalid params' };
         const result = await db.saveData(`${remarkPath(wardId)}/${remarkId}`, remarkData);
-        if (result.success) saveRealtimeDbServiceHistory(FILE, 'updateRemarkInDB');
         return result;
     } catch (error) {
         return { success: false, message: error.message };
@@ -267,7 +264,6 @@ export const deleteRemarkFromDB = async (wardId, remarkId) => {
     try {
         if (!wardId || !remarkId) return { success: false, message: 'Invalid params' };
         const result = await db.removeData(`${remarkPath(wardId)}/${remarkId}`);
-        if (result.success) saveRealtimeDbServiceHistory(FILE, 'deleteRemarkFromDB');
         return result;
     } catch (error) {
         return { success: false, message: error.message };

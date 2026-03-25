@@ -178,20 +178,6 @@ export const getLineOptionsForPaths = (linePaths, lineStatusByLine) => {
         return {
             ...DEFAULT_LINE_STYLE,
             strokeColor,
-            icons: [
-                {
-                    icon: {
-                        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                        scale: 1.5,
-                        strokeColor,
-                        fillColor: strokeColor,
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                    },
-                    offset: "100%",
-                    repeat: "80px",
-                },
-            ],
         };
     });
 };

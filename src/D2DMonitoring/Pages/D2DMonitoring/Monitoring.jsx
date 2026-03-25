@@ -821,14 +821,14 @@ const MonitoringList = () => {
         time: wardReachedTime || "00:00",
         status: "completed",
       },
-      {
+      ...(!dutyOffTime ? [{
         key: "workStatus",
         label: "Working",
-        time: dutyOffTime ? "Ended" : "Live",
-        status: dutyOffTime ? "completed" : "active",
-        isLive: !dutyOffTime,
+        time: "Live",
+        status: "active",
+        isLive: true,
         isGray: !wardReachedTime,
-      },
+      }] : []),
       {
         key: "dutyOff",
         label: "Off",
