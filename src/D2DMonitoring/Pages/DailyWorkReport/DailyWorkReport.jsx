@@ -44,11 +44,10 @@ const DailyWorkReport = () => {
 
         // Cleanup previous realtime listeners
         if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
-        setData([]);
 
         if (selectedDate === TODAY) {
             // Realtime: har zone pe live listener
-            unsubRef.current = subscribeTodayAction(wards, selectedDate, setData, setLoading);
+            unsubRef.current = subscribeTodayAction(wards, selectedDate, setData, setLoading, city);
         } else {
             // Past date: localStorage → Firebase parallel fetch
             loadPastDateAction(city, selectedDate, wards, setData, setLoading);

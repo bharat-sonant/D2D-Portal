@@ -7,12 +7,13 @@
 
 import * as db from '../../../services/dbServices';
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
+import { getWorkerCache, setWorkerCache } from './DailyWorkReportCache';
 
 const FILE = 'DailyWorkReportService';
 
 // ─── Console logger (ek baar, sab zones ka total) ───────────────
 
-const logTotalConsumption = (fnName, allData) => {
+const logTotalConsumption = (fnName, allData, reads, writes) => {
     const totalBytes = allData.reduce((sum, d) => {
         if (!d) return sum;
         return sum + new TextEncoder().encode(JSON.stringify(d)).length;
@@ -23,7 +24,7 @@ const logTotalConsumption = (fnName, allData) => {
         `%c[DailyWorkReport] %c${fnName}`,
         'color:#667eea;font-weight:bold',
         'color:#334155;font-weight:bold',
-        `| zones: ${allData.length} | ${totalBytes} bytes (${kb} KB / ${mb} MB)`
+        `| zones: ${allData.length} | reads: ${reads} | writes: ${writes} | ${totalBytes} bytes (${kb} KB / ${mb} MB)`
     );
 };
 
@@ -35,11 +36,14 @@ const MONTHS = [
 
 // ─── Helpers ────────────────────────────────────────────────────
 
-const getPath = (wardId, date) => {
+const getBasePath = (wardId, date) => {
     const [year, monthNum] = date.split('-');
     const month = MONTHS[Number(monthNum) - 1];
     return `WasteCollectionInfo/${wardId}/${year}/${month}/${date}`;
 };
+
+const getSummaryPath      = (wardId, date) => `${getBasePath(wardId, date)}/Summary`;
+const getWorkerDetailsPath = (wardId, date) => `${getBasePath(wardId, date)}/WorkerDetails`;
 
 const normalizeTime = (value, mode = "first") => {
     if (!value) return null;
@@ -70,20 +74,30 @@ const buildRow = (id, name, raw) => ({
  * @returns {Promise<Array>}
  */
 export const fetchAllZonesOnce = async (wards, date) => {
+    let workerReads = 0;
+
     const rawAll = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
-                const raw = await db.getData(getPath(id, date));
-                saveRealtimeDbServiceHistory(FILE, 'fetchAllZonesOnce');
-                saveRealtimeDbServiceDataHistory(FILE, 'fetchAllZonesOnce', raw);
-                return { id, name, raw };
+                const cached = getWorkerCache(id, date);
+                const [summary, workerDetails] = await Promise.all([
+                    db.getData(getSummaryPath(id, date)),
+                    cached !== null ? Promise.resolve(cached) : db.getData(getWorkerDetailsPath(id, date)).then(d => { setWorkerCache(id, date, d); return d; }),
+                ]);
+                if (cached === null) workerReads++;
+                return { id, name, raw: { Summary: summary, WorkerDetails: workerDetails } };
             } catch {
                 return { id, name, raw: null };
             }
         })
     );
 
-    logTotalConsumption('fetchAllZonesOnce', rawAll.map(r => r.raw));
+    const allRaw = rawAll.map(r => r.raw);
+    saveRealtimeDbServiceHistory(FILE, 'fetchAllZonesOnce');
+    saveRealtimeDbServiceDataHistory(FILE, 'fetchAllZonesOnce', allRaw);
+    // reads: 1 Summary per zone + WorkerDetails only if not cached
+    logTotalConsumption('fetchAllZonesOnce', allRaw, wards.length + workerReads, 6);
+
     return rawAll.map(({ id, name, raw }) => buildRow(id, name, raw));
 };
 
@@ -103,22 +117,41 @@ export const subscribeAllZones = (wards, date, onRowUpdate) => {
     const initialData = {};
     const loggedOnce  = { done: false };
 
-    const unsubscribers = wards.map(({ id, name }) =>
-        db.subscribeData(getPath(id, date), (raw) => {
-            saveRealtimeDbServiceHistory(FILE, 'subscribeAllZones');
-            saveRealtimeDbServiceDataHistory(FILE, 'subscribeAllZones', raw);
+    let workerReads = 0;
 
-            // Initial load: collect all zones, log once when all received
+    const unsubscribers = wards.map(({ id, name }) => {
+        // WorkerDetails — cache hit to 0 reads, miss to fetch + cache
+        const cached = getWorkerCache(id, date);
+        if (cached !== null) {
+            initialData[id] = { ...(initialData[id] || {}), WorkerDetails: cached };
+        } else {
+            workerReads++;
+            db.getData(getWorkerDetailsPath(id, date))
+                .then(workerDetails => {
+                    setWorkerCache(id, date, workerDetails);
+                    initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
+                })
+                .catch(() => {});
+        }
+
+        // Summary pe live listener (duty times din mein update hote hain)
+        return db.subscribeData(getSummaryPath(id, date), (summary) => {
+            initialData[id] = { ...(initialData[id] || {}), Summary: summary };
+
+            // Jab sab zones ka pehla callback aaye tab sirf 1 baar tracker + log
             if (!loggedOnce.done) {
-                initialData[id] = raw;
                 if (Object.keys(initialData).length >= wards.length) {
                     loggedOnce.done = true;
-                    logTotalConsumption('subscribeAllZones (initial)', Object.values(initialData));
+                    const allRaw = Object.values(initialData);
+                    saveRealtimeDbServiceHistory(FILE, 'subscribeAllZones');
+                    saveRealtimeDbServiceDataHistory(FILE, 'subscribeAllZones', allRaw);
+                    // reads: 1 Summary onValue per zone + WorkerDetails only if not cached
+                    logTotalConsumption('subscribeAllZones (initial)', allRaw, wards.length + workerReads, 6);
                 }
             }
 
-            onRowUpdate(buildRow(id, name, raw));
-        })
-    );
+            onRowUpdate(buildRow(id, name, initialData[id]));
+        });
+    });
     return () => unsubscribers.forEach(fn => fn());
 };

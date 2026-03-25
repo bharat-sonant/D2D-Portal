@@ -7,16 +7,15 @@
  *   Today       →  NO cache            →  Firebase Realtime DB (live listeners)
  */
 
-import dayjs from 'dayjs';
 import { getWardListAction } from '../D2DMonitoring/Monitoring/WardListAction';
 import { fetchAllZonesOnce, subscribeAllZones } from '../../Services/DailyWorkReport/DailyWorkReportService';
 import {
     getCachedWardList, setCachedWardList,
     getCachedReport,   setCachedReport,
     cleanExpiredCache,
+    getTodayCache,     setTodayCache,
 } from '../../Services/DailyWorkReport/DailyWorkReportCache';
 
-const isToday = (date) => date === dayjs().format('YYYY-MM-DD');
 
 // ─── Cache cleanup ───────────────────────────────────────────────
 
@@ -88,22 +87,34 @@ export const loadPastDateAction = async (city, date, wards, setData, setLoading)
  * @param {function} setLoading
  * @returns {function}          unsubscribe
  */
-export const subscribeTodayAction = (wards, date, setData, setLoading) => {
+export const subscribeTodayAction = (wards, date, setData, setLoading, city) => {
     if (!wards?.length) return () => {};
 
-    // Turant empty rows dikhao (no blank screen)
-    setData(wards.map(({ id, name }) => ({
-        wardId: id, zone: name,
-        dutyOn: null, enteredWardBoundary: null, dutyOff: null, vehicle: null,
-    })));
-    setLoading(true);
+    // Session cache hit → show instantly, no loader
+    const cached = getTodayCache(city, date);
+    if (cached) {
+        setData(cached);
+        setLoading(false);
+    } else {
+        setData(wards.map(({ id, name }) => ({
+            wardId: id, zone: name,
+            dutyOn: null, enteredWardBoundary: null, dutyOff: null, vehicle: null,
+        })));
+        setLoading(true);
+    }
 
-    // Track initial callbacks — jab sab aa jaayein tab loading band karo
+    // Track initial callbacks — jab sab aa jaayein tab loading band karo + cache update
     const reported = new Set();
+    const latestRows = {};
 
     const unsubscribe = subscribeAllZones(wards, date, (row) => {
         reported.add(row.wardId);
-        if (reported.size >= wards.length) setLoading(false);
+        latestRows[row.wardId] = row;
+
+        if (reported.size >= wards.length) {
+            setLoading(false);
+            setTodayCache(city, date, Object.values(latestRows));
+        }
 
         setData(prev => {
             const idx = prev.findIndex(r => r.wardId === row.wardId);
