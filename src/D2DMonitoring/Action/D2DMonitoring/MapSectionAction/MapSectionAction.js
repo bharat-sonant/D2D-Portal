@@ -174,9 +174,24 @@ export const getWardLengthInMeter = (linesGeoJson) => calculateWardLineLengthInM
 export const getLineOptionsForPaths = (linePaths, lineStatusByLine) => {
     return linePaths.map((_, index) => {
         const lineId = String(index + 1);
+        const strokeColor = getLineColorByStatus(lineStatusByLine[lineId], DEFAULT_LINE_STYLE);
         return {
             ...DEFAULT_LINE_STYLE,
-            strokeColor: getLineColorByStatus(lineStatusByLine[lineId], DEFAULT_LINE_STYLE),
+            strokeColor,
+            icons: [
+                {
+                    icon: {
+                        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                        scale: 1.5,
+                        strokeColor,
+                        fillColor: strokeColor,
+                        fillOpacity: 1,
+                        strokeOpacity: 1,
+                    },
+                    offset: "100%",
+                    repeat: "80px",
+                },
+            ],
         };
     });
 };

@@ -575,3 +575,5 @@ export const getWorkerDetails = async (wardId, setWorkers) => {
         console.error("Error in getWorkerDetails:", error);
     }
 };
+
+export const fetchRemarkCategories = async () => null;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Map, Route } from "lucide-react";
+import { X, Map, Route, Play, Square } from "lucide-react";
 import MapSection from "../MapSection";
 import VehicleTrackingMap from "../VehicleTrackingMap/VehicleTrackingMap";
 import styles from "./MapOffcanvas.module.css";
@@ -13,12 +13,19 @@ const MapOffcanvas = ({
   lineStatusByLine = {},
   focusLocation = null,
   vehicleLocation = null,
+  wardStartPoint = null,
+  wardEndPoint = null,
 }) => {
   const [showTracking, setShowTracking] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    if (!open) setShowTracking(false);
+    if (!open) { setShowTracking(false); setIsPlaying(false); }
   }, [open]);
+
+  useEffect(() => {
+    if (!showTracking) setIsPlaying(false);
+  }, [showTracking]);
 
   return (
     <>
@@ -45,6 +52,17 @@ const MapOffcanvas = ({
           </div>
 
           <div className={styles.headerActions}>
+            {showTracking && (
+              <button
+                type="button"
+                className={`${styles.toggleBtn} ${isPlaying ? styles.toggleBtnActive : ""}`}
+                onClick={() => setIsPlaying((p) => !p)}
+                aria-label={isPlaying ? "Stop animation" : "Play route animation"}
+                title={isPlaying ? "Stop" : "Play VTS Route"}
+              >
+                {isPlaying ? <Square size={14} /> : <Play size={14} />}
+              </button>
+            )}
             <button
               type="button"
               className={styles.closeBtn}
@@ -59,7 +77,12 @@ const MapOffcanvas = ({
         {/* Body */}
         <div className={styles.mapBody}>
           {showTracking ? (
-            <VehicleTrackingMap selectedWard={selectedWard} city={city} />
+            <VehicleTrackingMap
+              selectedWard={selectedWard}
+              city={city}
+              isPlaying={isPlaying}
+              onPlayingChange={setIsPlaying}
+            />
           ) : (
             <MapSection
               city={city}
@@ -67,6 +90,8 @@ const MapOffcanvas = ({
               lineStatusByLine={lineStatusByLine}
               focusLocation={focusLocation}
               vehicleLocation={vehicleLocation}
+              wardStartPoint={wardStartPoint}
+              wardEndPoint={wardEndPoint}
               showMarkers
               fullHeight
               hideHeader
