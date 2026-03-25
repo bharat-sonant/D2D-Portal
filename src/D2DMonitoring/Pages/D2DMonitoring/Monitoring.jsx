@@ -1003,12 +1003,12 @@ const MonitoringList = () => {
                 onAppClick={() => setActiveStatusModal("app")}
               />
               
-                <RemarksCard
+                {/* <RemarksCard
                   remarks={remarks}
                   onAddRemark={openNewRemarkModal}
                   onEditRemark={openEditRemarkModal}
                   onDeleteRemark={deleteRemark}
-                />
+                /> */}
               {/* 
             <HaltSummaryReplica
               onMapFocusChange={setMapFocus}
