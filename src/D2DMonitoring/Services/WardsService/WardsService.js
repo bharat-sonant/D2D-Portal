@@ -2,6 +2,8 @@ import axios from "axios";
 import { setResponse } from "../../../common/common";
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "../DbServiceTracker/serviceTracker";
 
+const _availableWardsCache = new Map(); // storageCity → ward data
+
 /**
  * Firebase Storage se city ka AvailableWard.json fetch karta hai.
  * Path: {storagePath}{storageCity}/Defaults/AvailableWard.json
@@ -11,6 +13,10 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "
  * @returns {Promise} setResponse with raw array data
  */
 export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
+    if (_availableWardsCache.has(storageCity)) {
+        return Promise.resolve(setResponse("Success", "Wards fetched successfully", _availableWardsCache.get(storageCity)));
+    }
+
     return new Promise((resolve) => {
         if (!storagePath || !storageCity) {
             resolve(setResponse("Fail", "Invalid Params !!", { storagePath, storageCity }));
@@ -23,6 +29,7 @@ export const getAvailableWardsFromStorage = (storagePath, storageCity) => {
         axios.get(url)
             .then((response) => {
                 if (response?.data) {
+                    _availableWardsCache.set(storageCity, response.data);
                     saveRealtimeDbServiceHistory('WardServices', 'getAvailableWardsFromStorage');
                     saveRealtimeDbServiceDataHistory('WardServices', 'getAvailableWardsFromStorage', response.data);
                     resolve(setResponse("Success", "Wards fetched successfully", response.data));

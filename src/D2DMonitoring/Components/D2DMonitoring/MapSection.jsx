@@ -61,10 +61,19 @@ const MapSection = ({
     setMapPlaceholderHeight,
   };
 
+  const lastFetchedKey = useRef(null);
+
   useEffect(() => {
     if (!city || !selectedWard?.id) return;
-    setBoundaryJson(null);
-    setLinesGeoJson(null);
+    const key = `${city}__${selectedWard.id}`;
+
+    // Don't reset to null if same ward (avoids flicker on re-renders)
+    if (lastFetchedKey.current !== key) {
+      setBoundaryJson(null);
+      setLinesGeoJson(null);
+      lastFetchedKey.current = key;
+    }
+
     action.fetchWardMapData(
       city,
       selectedWard.id,

@@ -17,10 +17,14 @@ export const getTravelPath = (wardId, year, month, date, onUpdate) => {
 
     const path = `LocationHistory/${wardId}/${year}/${month}/${date}`;
 
+    let tracked = false;
     return db.subscribeData(path, (data) => {
         if (!data) return onUpdate([]);
-        saveRealtimeDbServiceHistory('MapServices', 'getTravelPath');
-        saveRealtimeDbServiceDataHistory('MapServices', 'getTravelPath', data);
+        if (!tracked) {
+            saveRealtimeDbServiceHistory('MapServices', 'getTravelPath');
+            saveRealtimeDbServiceDataHistory('MapServices', 'getTravelPath', data);
+            tracked = true;
+        }
         const points = Object.keys(data)
             .sort()
             .flatMap((key) => {
