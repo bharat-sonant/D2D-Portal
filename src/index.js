@@ -15,7 +15,7 @@ const AppWrapper = () => {
   // jis page me mobile frame remove karna hai
   const noFrameRoutes = ['/settings', '/tasks', '/realtime', '/realtime-monitoring', '/reports', '/daily-report', '/vehicle', '/user', '/', '/sites', "/Dashboard", "/monitoring", "/employee/dashboard", "/employee/employees", "/employee/branches", "/employee/departments", '/fuel/add-field-employee', '/fuel/fuel_analysis', "/fe-WebView/login", "/fe-WebView/dashboard", "/fuel/add_fuel_entries", "/field-executive/dashboard", "/field-executive/users", "/field-executive/tracking", "/field-executive/reports", "/field-executive/tasks", "/field-executive/analysis", "/field-executive/assignments", "/fuel/fuel_report", "/d2dMonitoring/dashboard", "/d2dMonitoring/realtime", "/d2dMonitoring/report", "/d2dMonitoring/daily-report"]; // <-- yaha route add karo
 
-  const dynamicNoFrameRoutes = ["/:city/d2dMonitoring/monitoring", "/:city/d2dMonitoring/db-service-tracking"];
+  const dynamicNoFrameRoutes = ["/:city/d2dMonitoring/monitoring", "/:city/d2dMonitoring/db-service-tracking", "/:city/d2dMonitoring/daily-work-report"];
 
   const shouldRemoveFrame =
     noFrameRoutes.includes(location.pathname) ||

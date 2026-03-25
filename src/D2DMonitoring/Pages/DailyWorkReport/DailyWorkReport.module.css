@@ -1,0 +1,206 @@
+.pageWrapper {
+  min-height: 100vh;
+  background: #f5f7fc;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: var(--fontGraphik);
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border: 1px solid #e6edf6;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.pageTitle {
+  font-size: 16px;
+  font-family: var(--fontGraphikSemibold);
+  color: #0f172a;
+  margin: 0;
+}
+
+/* ── DATE TABS ── */
+.dateTabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dateTab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 66px;
+  padding: 7px 10px;
+  border: 1px solid #dce8f6;
+  border-radius: 7px;
+  background: #f8faff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dateTabDay {
+  font-size: 10px;
+  font-family: var(--fontGraphikMedium);
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dateTabLabel {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  color: #334155;
+}
+
+.dateTab:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 40%, #dce8f6);
+  background: color-mix(in srgb, var(--themeColor) 6%, #fff);
+}
+
+.dateTabActive {
+  background: var(--gradientTheme);
+  border-color: transparent;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--themeColor) 30%, transparent);
+}
+
+.dateTabActive .dateTabDay,
+.dateTabActive .dateTabLabel {
+  color: #fff;
+}
+
+/* ── TABLE CONTAINER ── */
+.tableContainer {
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid #e6edf6;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  overflow: auto;
+  max-height: calc(100vh - 148px);
+}
+
+/* ── TABLE ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.table thead th {
+  background: #f4f6fc;
+  color: #1e293b;
+  font-family: var(--fontGraphikMedium);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 13px 16px;
+  text-align: left;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid #dde6f3;
+}
+
+.table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #f4f6fc;
+}
+
+.table tbody td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #334155;
+  border-bottom: 1px solid #edf2f8;
+  white-space: nowrap;
+  font-family: var(--fontGraphik);
+}
+
+.table tbody td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--white);
+  z-index: 1;
+  font-family: var(--fontGraphikMedium);
+  color: #0f172a;
+  border-right: 1px solid #edf2f8;
+}
+
+.table tbody tr:hover td {
+  background: #f6f9ff;
+}
+
+.table tbody tr:hover td:first-child {
+  background: #f6f9ff;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ── VEHICLE CHIP ── */
+.vehicleChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
+  color: #334155;
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+}
+
+/* ── LOADER CELL ── */
+.loaderCell {
+  height: 300px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ── EMPTY STATE ── */
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.emptyState svg {
+  opacity: 0.4;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+  .pageWrapper {
+    padding: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dateTabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+  }
+
+  .dateTab {
+    flex-shrink: 0;
+  }
+}
