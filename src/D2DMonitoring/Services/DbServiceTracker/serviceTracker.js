@@ -3,24 +3,20 @@ import { saveData, getData } from "../../../services/dbServices";
 import dayjs from "dayjs";
 
 const ROOT = "RealtimeDbServiceDetails";
-
-// ── No-op (old trackCall disabled) ───────────────────────────────────────────
-export function trackCall() {}
-
-// ── Save tracking data ────────────────────────────────────────────────────────
+export function trackCall() { }
 
 export function saveRealtimeDbServiceHistory(serviceFileName, functionName) {
   try {
-    const year  = dayjs().format("YYYY");
+    const year = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
-    const date  = dayjs().format("YYYY-MM-DD");
-    const base  = `${ROOT}/History/${serviceFileName}/${functionName}`;
+    const date = dayjs().format("YYYY-MM-DD");
+    const base = `${ROOT}/History/${serviceFileName}/${functionName}`;
 
     saveData(`${base}/${year}/${month}/${date}`, { count: increment(1) });
-    saveData(`${base}/${year}/${month}`,         { count: increment(1) });
+    saveData(`${base}/${year}/${month}`, { count: increment(1) });
     saveData(`${ROOT}/Summary/${serviceFileName}/${functionName}`, { count: increment(1) });
-  } catch {
-    // silent
+  } catch (err) {
+    console.log("Error while saving db service in db", err);
   }
 }
 
@@ -29,18 +25,19 @@ export function saveRealtimeDbServiceDataHistory(serviceFileName, functionName, 
     if (data === null || data === undefined) return;
 
     const dataSizeInBytes = new TextEncoder().encode(JSON.stringify(data)).length;
-    const dataSize        = parseFloat((dataSizeInBytes / 1024).toFixed(4));
+    const dataSize = parseFloat((dataSizeInBytes / 1024).toFixed(4));
 
-    const year  = dayjs().format("YYYY");
+    const year = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
-    const date  = dayjs().format("YYYY-MM-DD");
-    const base  = `${ROOT}/History/${serviceFileName}/${functionName}`;
+    const date = dayjs().format("YYYY-MM-DD");
+    const base = `${ROOT}/History/${serviceFileName}/${functionName}`;
 
     saveData(`${base}/${year}/${month}/${date}`, { dataSize: increment(dataSize) });
-    saveData(`${base}/${year}/${month}`,         { dataSize: increment(dataSize) });
+    saveData(`${base}/${year}/${month}`, { dataSize: increment(dataSize) });
     saveData(`${ROOT}/Summary/${serviceFileName}/${functionName}`, { dataSize: increment(dataSize) });
-  } catch {
-    // silent
+  } catch (err) {
+    console.log("Error while saving db service in db", err);
+
   }
 }
 
@@ -63,7 +60,7 @@ export async function getServiceFiles(year, month) {
         if (typeof funcData !== "object") continue;
         const m = funcData?.[year]?.[month];
         if (m) {
-          totalCalls += m.count    || 0;
+          totalCalls += m.count || 0;
           totalBytes += (m.dataSize || 0) * 1024; // KB → bytes
         }
       }
@@ -87,8 +84,8 @@ export async function getFunctionStats(serviceFile, year, month) {
         const m = funcData?.[year]?.[month];
         return {
           functionName: funcName,
-          callCount:    m?.count    || 0,
-          totalBytes:   (m?.dataSize || 0) * 1024,
+          callCount: m?.count || 0,
+          totalBytes: (m?.dataSize || 0) * 1024,
         };
       })
       .filter((f) => f.callCount > 0)
@@ -108,7 +105,7 @@ export async function getDateBreakdown(serviceFile, funcName, year, month) {
       .filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && typeof v === "object")
       .map(([date, info]) => ({
         date,
-        count: info.count    || 0,
+        count: info.count || 0,
         bytes: (info.dataSize || 0) * 1024,
       }))
       .sort((a, b) => b.date.localeCompare(a.date));
