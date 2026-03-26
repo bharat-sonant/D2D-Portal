@@ -219,8 +219,8 @@
   align-items: center;
   position: relative;
   padding: 5px 26px 5px 12px;
-
-  /* border: 1px solid var(--borderColor); */
+background: transparent;
+  border: 0px solid var(--borderColor);
   &:after {
     background-image: url(../../assets/images/icons/iconDown.png);
     background-repeat: no-repeat;
