@@ -166,22 +166,11 @@ export const getCurrentWardLineStatus = (lineStatusByWard, wardId) => (
     toSafeObject(lineStatusByWard)?.[wardId] || {}
 );
 
-// Session cache — keyed by "date" so it auto-invalidates next day
-let _wardLineStatusCache = null;
-let _wardLineStatusCacheDate = null;
-
 export const fetchWardLineStatusCacheForToday = async (wardList = []) => {
     const year = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
     const date = dayjs().format("YYYY-MM-DD");
 
-    // Return from session cache if same day and already fetched
-    if (_wardLineStatusCache && _wardLineStatusCacheDate === date) {
-        return _wardLineStatusCache;
-    }
-
-    // Fire all ward reads in parallel — Firebase uses a single WebSocket connection
-    // so concurrent reads are far faster than sequential batches
     const entries = await Promise.all(
         wardList.map(async (ward) => {
             const wardId = ward?.id;
@@ -192,7 +181,7 @@ export const fetchWardLineStatusCacheForToday = async (wardList = []) => {
                     wardId,
                     statusByLine: resp?.status === "success" ? (resp?.data || {}) : {},
                 };
-            } catch (e) {
+            } catch {
                 return { wardId, statusByLine: {} };
             }
         })
@@ -204,11 +193,6 @@ export const fetchWardLineStatusCacheForToday = async (wardList = []) => {
             statusByWard[wardId] = statusByLine;
         }
     });
-
-    // Store in session cache
-    _wardLineStatusCache = statusByWard;
-    _wardLineStatusCacheDate = date;
-
     return statusByWard;
 };
 

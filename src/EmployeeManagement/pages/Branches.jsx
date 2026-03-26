@@ -10,7 +10,6 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import AddBranch from "../components/AddBranch";
 import BranchMap from "../components/BranchMap";
 import { getBranchesAction, deleteBranchAction } from "../../services/BranchService/BranchAction";
-import { getAllWards } from "../../services/WardsServices/WardsService";
 import { getVehicleData } from "../../services/VehicleServices/VehicleServices";
 import GlobalAlertModal from "../../components/GlobalAlertModal/GlobalAlertModal";
 import globalAlertStyles from "../../components/GlobalAlertModal/GlobalAlertModal.module.css";
@@ -70,16 +69,7 @@ const Branches = () => {
         }, setLoading);
     };
 
-    const fetchWards = async () => {
-        const response = await getAllWards();
-        if (response.status === "success") {
-            setWards([...STATIC_WARDS, ...(response.data || [])]);
-        } else {
-            setWards(STATIC_WARDS);
-        }
-    };
-
-    const fetchVehicles = async () => {
+const fetchVehicles = async () => {
         const response = await getVehicleData();
         if (response.status === "success") {
             setVehicles([...STATIC_VEHICLES, ...(response.data || [])]);
@@ -90,7 +80,6 @@ const Branches = () => {
 
     useEffect(() => {
         fetchBranches();
-        fetchWards();
         fetchVehicles();
     }, []);
 

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "d2d-portal-81196"
-  }
+    "default": "d2d-portal-qa",
+    "d2d-qa": "d2d-portal-qa"
+  },
+  "targets": {},
+  "etags": {}
 }

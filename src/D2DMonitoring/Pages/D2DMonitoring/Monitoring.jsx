@@ -167,7 +167,7 @@ const MonitoringList = () => {
     if (!city) return;
     const fetchWards = async () => {
       try {
-        const wards = await getWardListAction(city);
+        const wards = getWardListAction(city);
         setWardList(wards);
         if (wards.length > 0) setSelectedWard(wards[0]);
 

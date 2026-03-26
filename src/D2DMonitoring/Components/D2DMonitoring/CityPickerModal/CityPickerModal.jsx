@@ -12,14 +12,8 @@ const getInitials = (name = "") =>
 const CityPickerModal = ({ currentCity, onClose }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [cityList, setCityList] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getCityList()
-      .then(setCityList)
-      .finally(() => setLoading(false));
-  }, []);
+  const [cityList] = useState(() => getCityList());
+  const [loading] = useState(false);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };

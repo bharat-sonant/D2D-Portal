@@ -7,7 +7,6 @@
 
 import * as db from '../../../services/dbServices';
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../DbServiceTracker/serviceTracker';
-import { getWorkerCache, setWorkerCache } from './DailyWorkReportCache';
 
 const FILE = 'DailyWorkReportService';
 
@@ -85,12 +84,9 @@ export const fetchZonesFull = async (wards, date) => {
     const rawAll = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
-                const cached = getWorkerCache(id, date);
                 const [summary, workerDetails] = await Promise.all([
                     db.getData(getSummaryPath(id, date)),
-                    cached !== null
-                        ? Promise.resolve(cached)
-                        : db.getData(getWorkerDetailsPath(id, date)).then(d => { setWorkerCache(id, date, d); return d; }),
+                    db.getData(getWorkerDetailsPath(id, date)),
                 ]);
                 return { id, name, raw: { Summary: summary, WorkerDetails: workerDetails } };
             } catch {
@@ -112,30 +108,23 @@ export const fetchZonesFull = async (wards, date) => {
  * @returns {Promise<Array>}
  */
 export const fetchAllZonesOnce = async (wards, date) => {
-    let workerReads = 0;
-
     const rawAll = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
-                const cached = getWorkerCache(id, date);
                 const [summary, workerDetails] = await Promise.all([
                     db.getData(getSummaryPath(id, date)),
-                    cached !== null ? Promise.resolve(cached) : db.getData(getWorkerDetailsPath(id, date)).then(d => { setWorkerCache(id, date, d); return d; }),
+                    db.getData(getWorkerDetailsPath(id, date)),
                 ]);
-                if (cached === null) workerReads++;
                 return { id, name, raw: { Summary: summary, WorkerDetails: workerDetails } };
             } catch {
                 return { id, name, raw: null };
             }
         })
     );
-
     const allRaw = rawAll.map(r => r.raw);
     saveRealtimeDbServiceHistory(FILE, 'fetchAllZonesOnce');
     saveRealtimeDbServiceDataHistory(FILE, 'fetchAllZonesOnce', allRaw);
-    // reads: 1 Summary per zone + WorkerDetails only if not cached
-    logTotalConsumption('fetchAllZonesOnce', allRaw, wards.length + workerReads, 6);
-
+    logTotalConsumption('fetchAllZonesOnce', allRaw, wards.length * 2, 6);
     return rawAll.map(({ id, name, raw }) => buildRow(id, name, raw));
 };
 
@@ -158,23 +147,15 @@ export const subscribeAllZones = (wards, date, onRowUpdate) => {
     let workerReads = 0;
 
     const unsubscribers = wards.map(({ id, name }) => {
-        // WorkerDetails — cache hit to 0 reads, miss to fetch + cache
-        const cached = getWorkerCache(id, date);
-        if (cached !== null) {
-            initialData[id] = { ...(initialData[id] || {}), WorkerDetails: cached };
-        } else {
-            workerReads++;
-            db.getData(getWorkerDetailsPath(id, date))
-                .then(workerDetails => {
-                    setWorkerCache(id, date, workerDetails);
-                    initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
-                    // Summary pehle aa chuka tha — vehicle update karo UI mein
-                    if (initialData[id].Summary !== undefined) {
-                        onRowUpdate(buildRow(id, name, initialData[id]));
-                    }
-                })
-                .catch(() => {});
-        }
+        workerReads++;
+        db.getData(getWorkerDetailsPath(id, date))
+            .then(workerDetails => {
+                initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
+                if (initialData[id].Summary !== undefined) {
+                    onRowUpdate(buildRow(id, name, initialData[id]));
+                }
+            })
+            .catch(() => {});
 
         // Summary pe live listener (duty times din mein update hote hain)
         return db.subscribeData(getSummaryPath(id, date), (summary) => {

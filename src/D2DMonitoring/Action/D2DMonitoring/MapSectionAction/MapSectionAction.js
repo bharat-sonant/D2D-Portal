@@ -25,19 +25,13 @@ export const WARD_BOUNDARY_STYLE = {
     zIndex: 2,
 };
 
-// ─── City Details Cache ───────────────────────────────────────────────────────
-
-let _cityDetailsCache = null;
-
 const fetchCityDetails = async () => {
-    if (_cityDetailsCache) return _cityDetailsCache;
     try {
         const res = await axios.get(CITY_DETAILS_URL);
-        _cityDetailsCache = res.data || [];
+        return res.data || [];
     } catch {
-        _cityDetailsCache = [];
+        return [];
     }
-    return _cityDetailsCache;
 };
 
 export const getCityStorageInfo = async (city) => {
@@ -56,98 +50,41 @@ export const getCityStorageInfo = async (city) => {
     };
 };
 
-// ─── Ward Map Data Cache (session-level) ─────────────────────────────────────
-// Avoids re-fetching even across component remounts for the same city+ward
-
-const _wardMapDataCache = new Map(); // key: "city__wardId" → { boundaryJson, linesGeoJson }
-
 // ─── Ward Map Data Fetch ──────────────────────────────────────────────────────
 
 export const fetchWardMapData = (city, wardId, setBoundaryJson, setLinesGeoJson) => {
-    const cacheKey = `${city}__${wardId}`;
-
-    // Serve from action-level cache instantly — no promise overhead
-    if (_wardMapDataCache.has(cacheKey)) {
-        const cached = _wardMapDataCache.get(cacheKey);
-        if (cached.boundaryJson) setBoundaryJson(cached.boundaryJson);
-        if (cached.linesGeoJson) setLinesGeoJson(cached.linesGeoJson);
-        return;
-    }
-
     getCityStorageInfo(city).then((info) => {
         if (!info) return;
         const { storagePath, cityName } = info;
-        const entry = _wardMapDataCache.get(cacheKey) || {};
 
         getWardBoundaryFromStorage(storagePath, cityName, wardId)
-            .then((res) => {
-                if (res?.status === "Success") {
-                    entry.boundaryJson = res.data;
-                    _wardMapDataCache.set(cacheKey, entry);
-                    setBoundaryJson(res.data);
-                }
-            });
+            .then((res) => { if (res?.status === "Success") setBoundaryJson(res.data); });
 
         getWardLinesFromStorage(cityName, wardId)
-            .then((res) => {
-                if (res?.status === "Success") {
-                    entry.linesGeoJson = res.data;
-                    _wardMapDataCache.set(cacheKey, entry);
-                    setLinesGeoJson(res.data);
-                }
-            });
+            .then((res) => { if (res?.status === "Success") setLinesGeoJson(res.data); });
     });
 };
 
-/**
- * Background prefetch — fills cache for all wards silently.
- * Call once after ward list loads; subsequent getWardLinesFromStorage calls return instantly.
- */
-const _prefetchedCities = new Set(); // skip re-prefetch per session
-
 export const prefetchAllWardLines = async (city, wardList = [], onWardLinesReady = null) => {
     if (!city || !wardList.length) return;
-
-    // Already prefetched for this city in this session — skip
-    if (_prefetchedCities.has(city)) {
-        // Still fire callbacks with cached data
-        if (typeof onWardLinesReady === "function") {
-            wardList.forEach((ward) => {
-                const cached = _wardMapDataCache.get(`${city}__${ward.id}`);
-                if (cached?.linesGeoJson) onWardLinesReady(ward.id, cached.linesGeoJson);
-            });
-        }
-        return;
-    }
-    _prefetchedCities.add(city);
-    
     try {
         const info = await getCityStorageInfo(city);
         if (!info) return;
-        const { cityName } = info;
-        
-        const { storagePath } = info;
+        const { cityName, storagePath } = info;
         const batchSize = 10;
         for (let i = 0; i < wardList.length; i += batchSize) {
             const batch = wardList.slice(i, i + batchSize);
             await Promise.all(
                 batch.map(async (ward) => {
                     if (!ward?.id) return;
-                    const cacheKey = `${city}__${ward.id}`;
-                    const entry = _wardMapDataCache.get(cacheKey) || {};
                     try {
-                        const [linesRes, boundaryRes] = await Promise.all([
+                        const [linesRes] = await Promise.all([
                             getWardLinesFromStorage(cityName, ward.id),
                             getWardBoundaryFromStorage(storagePath, cityName, ward.id),
                         ]);
-                        if (linesRes?.status === "Success") {
-                            entry.linesGeoJson = linesRes.data;
-                            if (typeof onWardLinesReady === "function") onWardLinesReady(ward.id, linesRes.data);
+                        if (linesRes?.status === "Success" && typeof onWardLinesReady === "function") {
+                            onWardLinesReady(ward.id, linesRes.data);
                         }
-                        if (boundaryRes?.status === "Success") {
-                            entry.boundaryJson = boundaryRes.data;
-                        }
-                        _wardMapDataCache.set(cacheKey, entry);
                     } catch (err) {
                         console.warn("Error prefetching ward data", err);
                     }
