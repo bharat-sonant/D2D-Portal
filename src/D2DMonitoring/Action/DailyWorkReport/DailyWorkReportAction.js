@@ -3,7 +3,7 @@
  *
  * Cache priority:
  *   Ward list   →  localStorage (24h)  →  Firebase Storage
- *   Past date   →  localStorage (15d)  →  Firebase Realtime DB (parallel)
+ *   Past date   →  localStorage (7d)   →  Firebase Realtime DB (parallel)
  *   Today       →  NO cache            →  Firebase Realtime DB (live listeners)
  */
 
@@ -13,7 +13,7 @@ import {
     getCachedWardList, setCachedWardList,
     getCachedReport,   setCachedReport,
     cleanExpiredCache,
-    getTodayCache,     setTodayCache,
+    getTodayCache,     getStaleTodayCache,     setTodayCache,
 } from '../../Services/DailyWorkReport/DailyWorkReportCache';
 
 
@@ -90,8 +90,10 @@ export const loadPastDateAction = async (city, date, wards, setData, setLoading)
 export const subscribeTodayAction = (wards, date, setData, setLoading, city) => {
     if (!wards?.length) return () => {};
 
-    // Session cache hit → show instantly, no loader
-    const cached = getTodayCache(city, date);
+    // Cache hai (fresh ya stale) → instantly show, no loader
+    // No cache (pehli baar) → empty rows + loader
+    const cached = getTodayCache(city, date) || getStaleTodayCache(city, date);
+
     if (cached) {
         setData(cached);
         setLoading(false);
@@ -103,27 +105,36 @@ export const subscribeTodayAction = (wards, date, setData, setLoading, city) => 
         setLoading(true);
     }
 
-    // Track initial callbacks — jab sab aa jaayein tab loading band karo + cache update
-    const reported = new Set();
+    const reported   = new Set();
     const latestRows = {};
+    const loadingTimeout = !cached ? setTimeout(() => setLoading(false), 3000) : null;
 
     const unsubscribe = subscribeAllZones(wards, date, (row) => {
         reported.add(row.wardId);
         latestRows[row.wardId] = row;
 
         if (reported.size >= wards.length) {
+            if (loadingTimeout) clearTimeout(loadingTimeout);
             setLoading(false);
             setTodayCache(city, date, Object.values(latestRows));
         }
 
+        // Sirf wahi row update karo jo actually change hui ho
         setData(prev => {
             const idx = prev.findIndex(r => r.wardId === row.wardId);
             if (idx < 0) return [...prev, row];
+            const cur = prev[idx];
+            if (
+                cur.dutyOn              === row.dutyOn &&
+                cur.enteredWardBoundary === row.enteredWardBoundary &&
+                cur.dutyOff             === row.dutyOff &&
+                cur.vehicle             === row.vehicle
+            ) return prev;  // kuch nahi badla → React re-render skip
             const next = [...prev];
             next[idx] = row;
             return next;
         });
     });
 
-    return unsubscribe;
+    return () => { if (loadingTimeout) clearTimeout(loadingTimeout); unsubscribe(); };
 };

@@ -80,6 +80,63 @@
   color: #fff;
 }
 
+/* ── DATE CONTROLS (tabs + picker) ── */
+.dateControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.datePickerDivider {
+  width: 1px;
+  height: 32px;
+  background: #dce8f6;
+  flex-shrink: 0;
+}
+
+.datePickerWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid #dce8f6;
+  border-radius: 7px;
+  background: #f8faff;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.datePickerWrapper:hover {
+  border-color: color-mix(in srgb, var(--themeColor) 40%, #dce8f6);
+  background: color-mix(in srgb, var(--themeColor) 6%, #fff);
+}
+
+.datePickerActive {
+  background: var(--gradientTheme);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--themeColor) 30%, transparent);
+}
+
+.datePickerLabel {
+  font-size: 12px;
+  font-family: var(--fontGraphikSemibold);
+  pointer-events: none;
+}
+
+.datePickerInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
 /* ── TABLE CONTAINER ── */
 .tableContainer {
   background: var(--white);
@@ -88,6 +145,34 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   overflow: auto;
   max-height: calc(100vh - 148px);
+}
+
+/* ── TABLE DATE BAR ── */
+.tableDateBar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #edf2f8;
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: #64748b;
+  background: #fafbff;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  height: 39px;
+  box-sizing: border-box;
+}
+
+.tableDateBadge {
+  margin-left: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  background: color-mix(in srgb, var(--themeColor) 10%, #fff);
+  color: var(--themeColor);
 }
 
 /* ── TABLE ── */
@@ -108,7 +193,7 @@
   text-align: left;
   white-space: nowrap;
   position: sticky;
-  top: 0;
+  top: 39px;
   z-index: 2;
   border-bottom: 1px solid #dde6f3;
 }
@@ -117,6 +202,7 @@
   position: sticky;
   left: 0;
   z-index: 3;
+  top: 39px;
   background: #f4f6fc;
 }
 
@@ -191,6 +277,10 @@
   .header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .dateControls {
+    width: 100%;
   }
 
   .dateTabs {
