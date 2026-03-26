@@ -35,6 +35,7 @@
   color: var(--black);
   margin: 0;
   line-height: 1.2;
+  font-weight: 500;
 }
 
 .cardHeaderRight {
