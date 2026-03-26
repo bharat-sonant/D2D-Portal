@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import { 
-    getWardDutyOnTimeFromDB, 
-    getWorkerDetailsFromDB, 
-    getEmployeeGeneralDetailsFromDB, 
+import {
+    getWardDutyOnTimeFromDB,
+    getWorkerDetailsFromDB,
+    getEmployeeGeneralDetailsFromDB,
     subscribeWorkerDetailsFromDB,
     getDutyInImageFromStorage,
     getWardReachedTimeFromDB,
@@ -10,18 +10,21 @@ import {
     getDutyOffImageFromStorage,
     getEmployeeAllDetailsFromDB,
     getHelperDummyFlagFromDB,
-    getRemarkCategoriesFromDB,
-    subscribeRemarksFromDB,
-    saveRemarkToDB,
-    updateRemarkInDB,
-    deleteRemarkFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
+import {
+    getRemark,
+    subscribeRemarks,
+    saveRemark,
+    updateRemark,
+    deleteRemark,
+    getRemarkCategories,
+} from "../../../Services/RemarkService/RemarkService";
 
-// export const fetchRemarkCategories = () => getRemarkCategoriesFromDB();
-export { subscribeRemarksFromDB, saveRemarkToDB, updateRemarkInDB, deleteRemarkFromDB };
+export { getRemark, subscribeRemarks, saveRemark, updateRemark, deleteRemark };
+export const fetchRemarkCategories = () => getRemarkCategories();
  
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
@@ -584,4 +587,3 @@ export const getWorkerDetails = async (wardId, setWorkers) => {
     }
 };
 
-export const fetchRemarkCategories = async () => null;

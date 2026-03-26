@@ -217,7 +217,7 @@ const MonitoringList = () => {
   // Subscribe to today's remarks for the selected ward
   useEffect(() => {
     if (!selectedWard?.id) return;
-    const unsub = action.subscribeRemarksFromDB(selectedWard.id, setRemarks);
+    const unsub = action.subscribeRemarks(selectedWard.id, setRemarks);
     return () => unsub();
   }, [selectedWard?.id]);
   const [remarkForm, setRemarkForm] = useState({ topic: "", description: "" });
@@ -789,16 +789,16 @@ const MonitoringList = () => {
     };
 
     if (editingRemarkId) {
-      await action.updateRemarkInDB(selectedWard.id, editingRemarkId, payload);
+      await action.updateRemark(selectedWard.id, editingRemarkId, payload);
     } else {
-      await action.saveRemarkToDB(selectedWard.id, payload);
+      await action.saveRemark(selectedWard.id, payload);
     }
     closeAllModals();
   };
 
   const deleteRemark = async (id) => {
     if (!selectedWard?.id) return;
-    await action.deleteRemarkFromDB(selectedWard.id, id);
+    await action.deleteRemark(selectedWard.id, id);
   };
 
   const handleVehicleIssueRowChange = (id, field, value) => {
