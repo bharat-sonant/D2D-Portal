@@ -48,6 +48,13 @@ const toZoneName = (zoneNo, city) => {
  * @param {string} city — URL param (e.g. "Sikar", "Ajmer")
  * @returns {Promise<Array<{ id: string, name: string, progress: number }>>}
  */
+export const getCityList = async () => {
+    const cityDetails = await fetchCityDetails();
+    return cityDetails
+        .filter((item) => item?.cityName)
+        .map((item) => ({ city: item.city || item.cityName, cityName: item.cityName }));
+};
+
 export const getWardListAction = async (city) => {
     if (!city) return [];
 

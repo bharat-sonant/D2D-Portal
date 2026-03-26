@@ -133,6 +133,34 @@
   }
 }
 
+/* ── City Picker trigger button ── */
+.cityPickerBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 14px;
+  padding: 5px 10px;
+  border: 1px solid var(--borderColor);
+  border-radius: 6px;
+  background: var(--whitefa);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--fontGraphikMedium);
+  color: var(--black);
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.cityPickerBtn:hover {
+  background: var(--white);
+  border-color: var(--themeColor);
+}
+
+.cityPickerBtn svg:first-child {
+  color: var(--themeColor);
+  flex-shrink: 0;
+}
+
 .mainContent {
   flex: 1;
   overflow: hidden;

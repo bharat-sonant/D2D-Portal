@@ -14,6 +14,7 @@ import {
   LogOut,
   Flag,
   Database,
+  ChevronDown,
 } from "lucide-react";
 import dayjs from "dayjs";
 // import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
@@ -25,6 +26,7 @@ import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction"
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
+import CityPickerModal from "../../Components/D2DMonitoring/CityPickerModal/CityPickerModal";
 import { prefetchAllWardLines, getLinePathsFromGeoJson } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
@@ -159,6 +161,7 @@ const MonitoringList = () => {
   const [showQuickAppSelect, setShowQuickAppSelect] = useState(false);
 
   const [wardList, setWardList] = useState([]);
+  const [showCityModal, setShowCityModal] = useState(false);
 
   useEffect(() => {
     if (!city) return;
@@ -935,6 +938,15 @@ const MonitoringList = () => {
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
           <img src={wevoisLogo} alt="WeVOIS" className={styles.topBarLogo} fetchpriority="high" />
+          <button
+            type="button"
+            className={styles.cityPickerBtn}
+            onClick={() => setShowCityModal(true)}
+          >
+            <MapPin size={12} />
+            <span>{city}</span>
+            <ChevronDown size={12} />
+          </button>
         </div>
         <div className={styles.topBarCenter}>
           <span className={styles.topBarTitle}>Realtime Monitoring</span>
@@ -1176,6 +1188,14 @@ const MonitoringList = () => {
         </div>
       )}
     </div>
+
+    {/* ── City Picker Modal ── */}
+    {showCityModal && (
+      <CityPickerModal
+        currentCity={city}
+        onClose={() => setShowCityModal(false)}
+      />
+    )}
 
     {/* ── User account modals ── */}
     <ChangePassword
