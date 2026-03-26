@@ -63,7 +63,45 @@ const buildRow = (id, name, raw) => ({
     vehicle:              raw?.WorkerDetails?.vehicle ?? null,
 });
 
-// ─── Past dates — one-time parallel fetch ────────────────────────
+// ─── Past dates — change check (dutyInTime only) ────────────────
+// 103 tiny reads — sirf dutyInTime check karo, poora data nahi
+
+export const checkDutyInTimeAll = async (wards, date) => {
+    return Promise.all(
+        wards.map(async ({ id, name }) => {
+            try {
+                const raw = await db.getData(`${getSummaryPath(id, date)}/dutyInTime`);
+                return { id, name, dutyOn: normalizeTime(raw, 'first') };
+            } catch {
+                return { id, name, dutyOn: null };
+            }
+        })
+    );
+};
+
+// ─── Past dates — fetch sirf changed zones ka full data ──────────
+
+export const fetchZonesFull = async (wards, date) => {
+    const rawAll = await Promise.all(
+        wards.map(async ({ id, name }) => {
+            try {
+                const cached = getWorkerCache(id, date);
+                const [summary, workerDetails] = await Promise.all([
+                    db.getData(getSummaryPath(id, date)),
+                    cached !== null
+                        ? Promise.resolve(cached)
+                        : db.getData(getWorkerDetailsPath(id, date)).then(d => { setWorkerCache(id, date, d); return d; }),
+                ]);
+                return { id, name, raw: { Summary: summary, WorkerDetails: workerDetails } };
+            } catch {
+                return { id, name, raw: null };
+            }
+        })
+    );
+    return rawAll.map(({ id, name, raw }) => buildRow(id, name, raw));
+};
+
+// ─── Past dates — one-time parallel fetch (cache miss) ───────────
 
 /**
  * Sab zones ka data ek saath (Promise.all) fetch karta hai.
@@ -130,6 +168,10 @@ export const subscribeAllZones = (wards, date, onRowUpdate) => {
                 .then(workerDetails => {
                     setWorkerCache(id, date, workerDetails);
                     initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
+                    // Summary pehle aa chuka tha — vehicle update karo UI mein
+                    if (initialData[id].Summary !== undefined) {
+                        onRowUpdate(buildRow(id, name, initialData[id]));
+                    }
                 })
                 .catch(() => {});
         }

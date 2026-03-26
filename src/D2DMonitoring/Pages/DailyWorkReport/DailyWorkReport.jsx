@@ -8,21 +8,20 @@ import {
     getWardsForReportAction,
     loadPastDateAction,
     subscribeTodayAction,
+    logDateSwitch,
 } from "../../Action/DailyWorkReport/DailyWorkReportAction";
-
-const TODAY = dayjs().format("YYYY-MM-DD");
-
-const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const d = dayjs().subtract(i, "day");
-    return {
-        label: i === 0 ? "Today" : d.format("DD MMM"),
-        day:   d.format("ddd"),
-        value: d.format("YYYY-MM-DD"),
-    };
-});
 
 const DailyWorkReport = () => {
     const { city } = useParams();
+    const TODAY     = dayjs().format("YYYY-MM-DD");
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = dayjs().subtract(i, "day");
+        return {
+            label: i === 0 ? "Today" : d.format("DD MMM"),
+            day:   d.format("ddd"),
+            value: d.format("YYYY-MM-DD"),
+        };
+    });
     const [selectedDate, setSelectedDate] = useState(TODAY);
     const [wards,        setWards]        = useState([]);
     const [data,         setData]         = useState([]);
@@ -53,19 +52,21 @@ const DailyWorkReport = () => {
         // Cleanup previous realtime listeners
         if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
 
-        if (selectedDate === TODAY) {
-            // Realtime: har zone pe live listener
+        const isToday = selectedDate === TODAY;
+        logDateSwitch(selectedDate, isToday);
+
+        if (isToday) {
             unsubRef.current = subscribeTodayAction(wards, selectedDate, setData, setLoading, city);
         } else {
-            // Past date: localStorage → Firebase parallel fetch
-            loadPastDateAction(city, selectedDate, wards, setData, setLoading);
+            const signal = { cancelled: false };
+            loadPastDateAction(city, selectedDate, wards, setData, setLoading, signal);
+            unsubRef.current = () => { signal.cancelled = true; };
         }
 
-        // Cleanup on date change / unmount
         return () => {
             if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
         };
-    }, [selectedDate, wards]);
+    }, [selectedDate, wards, city]);
 
     return (
         <div className={styles.pageWrapper}>
