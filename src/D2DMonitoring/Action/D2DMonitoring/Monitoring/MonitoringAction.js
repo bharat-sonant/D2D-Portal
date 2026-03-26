@@ -177,28 +177,23 @@ export const fetchWardLineStatusCacheForToday = async (wardList = []) => {
         return _wardLineStatusCache;
     }
 
-    const batchSize = 10;
-    const entries = [];
-
-    for (let i = 0; i < wardList.length; i += batchSize) {
-        const batch = wardList.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
-            batch.map(async (ward) => {
-                const wardId = ward?.id;
-                if (!wardId) return { wardId, statusByLine: {} };
-                try {
-                    const resp = await getWardLineStatus(wardId, year, month, date);
-                    return {
-                        wardId,
-                        statusByLine: resp?.status === "success" ? (resp?.data || {}) : {},
-                    };
-                } catch (e) {
-                    return { wardId, statusByLine: {} };
-                }
-            })
-        );
-        entries.push(...batchResults);
-    }
+    // Fire all ward reads in parallel — Firebase uses a single WebSocket connection
+    // so concurrent reads are far faster than sequential batches
+    const entries = await Promise.all(
+        wardList.map(async (ward) => {
+            const wardId = ward?.id;
+            if (!wardId) return { wardId, statusByLine: {} };
+            try {
+                const resp = await getWardLineStatus(wardId, year, month, date);
+                return {
+                    wardId,
+                    statusByLine: resp?.status === "success" ? (resp?.data || {}) : {},
+                };
+            } catch (e) {
+                return { wardId, statusByLine: {} };
+            }
+        })
+    );
 
     const statusByWard = {};
     entries.forEach(({ wardId, statusByLine }) => {

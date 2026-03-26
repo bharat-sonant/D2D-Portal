@@ -37,7 +37,6 @@ export function saveRealtimeDbServiceDataHistory(serviceFileName, functionName, 
     saveData(`${ROOT}/Summary/${serviceFileName}/${functionName}`, { dataSize: increment(dataSize) });
   } catch (err) {
     console.log("Error while saving db service in db", err);
-
   }
 }
 

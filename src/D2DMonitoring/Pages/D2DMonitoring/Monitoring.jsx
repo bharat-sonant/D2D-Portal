@@ -934,7 +934,7 @@ const MonitoringList = () => {
       {/* ── Top Bar ── */}
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
-          <img src={wevoisLogo} alt="WeVOIS" className={styles.topBarLogo} />
+          <img src={wevoisLogo} alt="WeVOIS" className={styles.topBarLogo} fetchpriority="high" />
         </div>
         <div className={styles.topBarCenter}>
           <span className={styles.topBarTitle}>Realtime Monitoring</span>

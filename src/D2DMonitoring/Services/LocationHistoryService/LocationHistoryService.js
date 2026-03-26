@@ -1,4 +1,4 @@
-import * as db from "../../../services/dbServices";
+import { subscribeChildEvents } from "../../../services/dbServices";
 import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "../DbServiceTracker/serviceTracker";
 
 const parseSlotString = (value) => {
@@ -12,26 +12,42 @@ const parseSlotString = (value) => {
         .filter(Boolean);
 };
 
+const parseSlot = (slot) => {
+    const raw = typeof slot === "string" ? slot : slot?.["lat-lng"];
+    return parseSlotString(raw);
+};
+
 export const getTravelPath = (wardId, year, month, date, onUpdate) => {
     if (!wardId || !year || !month || !date) return () => {};
 
     const path = `LocationHistory/${wardId}/${year}/${month}/${date}`;
 
+    // Accumulate slots by key — only new/changed slots trigger a re-render
+    // Old slots are NEVER re-downloaded (unlike onValue which re-sends everything)
+    const slots = new Map(); // key → parsed points[]
     let tracked = false;
-    return db.subscribeData(path, (data) => {
-        if (!data) return onUpdate([]);
+
+    const rebuild = () => {
+        const points = [...slots.keys()]
+            .sort()
+            .flatMap((k) => slots.get(k));
+        onUpdate(points);
+    };
+
+    const onAdded = (key, slot) => {
         if (!tracked) {
             saveRealtimeDbServiceHistory('MapServices', 'getTravelPath');
-            saveRealtimeDbServiceDataHistory('MapServices', 'getTravelPath', data);
+            saveRealtimeDbServiceDataHistory('MapServices', 'getTravelPath', slot);
             tracked = true;
         }
-        const points = Object.keys(data)
-            .sort()
-            .flatMap((key) => {
-                const slot = data[key];
-                const raw = typeof slot === "string" ? slot : slot?.["lat-lng"];
-                return parseSlotString(raw);
-            });
-        onUpdate(points);
-    });
+        slots.set(key, parseSlot(slot));
+        rebuild();
+    };
+
+    const onChanged = (key, slot) => {
+        slots.set(key, parseSlot(slot));
+        rebuild();
+    };
+
+    return subscribeChildEvents(path, onAdded, onChanged);
 };

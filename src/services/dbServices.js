@@ -1,4 +1,4 @@
-import { ref, get, onValue, update, set, remove, push } from "firebase/database";
+import { ref, get, onValue, onChildAdded, onChildChanged, update, set, remove, push } from "firebase/database";
 import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as common from '../common/common'
 import { getDatabaseInstance, getStorageInstance, waitForFirebaseReady } from "../firebase/firebaseService";
@@ -58,6 +58,22 @@ export const subscribeData = (path, callback) => {
     callback(val);
   });
   return unsubscribe;
+};
+
+/**
+ * 🔔 Subscribe to child-added + child-changed events (incremental).
+ * onChildAdded fires once per existing child on attach, then for each new child.
+ * onChildChanged fires when an existing child's value changes.
+ * Each event carries only that one child — never re-downloads the full list.
+ * Returns an unsubscribe function; call it in useEffect cleanup.
+ */
+export const subscribeChildEvents = (path, onAdded, onChanged) => {
+  const database = getDatabaseInstance();
+  if (!database) return () => {};
+  const nodeRef = ref(database, path);
+  const unsubAdded   = onChildAdded(nodeRef,   (snap) => onAdded(snap.key, snap.val()));
+  const unsubChanged = onChildChanged(nodeRef, (snap) => onChanged(snap.key, snap.val()));
+  return () => { unsubAdded(); unsubChanged(); };
 };
 
 /**
