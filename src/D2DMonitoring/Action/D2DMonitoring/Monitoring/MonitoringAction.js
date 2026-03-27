@@ -31,12 +31,8 @@ const fetchDayArgs = (d) => [d.format("YYYY"), d.format("MMMM"), d.format("YYYY-
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
         const today = dayjs();
-        // Fetch today + yesterday in parallel (night-shift fallback at zero extra cost).
-        const [todayUrl, yesterdayUrl] = await Promise.all([
-            getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today)),
-            getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today.subtract(1, "day"))),
-        ]);
-        setImageUrl(todayUrl || yesterdayUrl);
+        const url = await getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today));
+        setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty In Image:", error);
         setImageUrl(null);
@@ -46,11 +42,8 @@ export const getDutyInImage = async (city, wardId, setImageUrl) => {
 export const getDutyOffImage = async (city, wardId, setImageUrl) => {
     try {
         const today = dayjs();
-        const [todayUrl, yesterdayUrl] = await Promise.all([
-            getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today)),
-            getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today.subtract(1, "day"))),
-        ]);
-        setImageUrl(todayUrl || yesterdayUrl);
+        const url = await getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today));
+        setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty Off Image:", error);
         setImageUrl(null);

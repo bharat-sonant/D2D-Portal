@@ -171,7 +171,7 @@ export const getLineOptionsForPaths = (linePaths, lineStatusByLine) => {
 export const isGoogleMapsReady = () => Boolean(window.google?.maps);
 
 export const waitForGoogleMapsReady = (onReady, interval = 100) => {
-    if (isGoogleMapsReady()) { onReady(true); return null; }
+    if (isGoogleMapsReady()) { onReady(true); return; }
     const intervalId = setInterval(() => {
         if (isGoogleMapsReady()) { onReady(true); clearInterval(intervalId); }
     }, interval);
