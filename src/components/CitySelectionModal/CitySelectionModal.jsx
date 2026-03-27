@@ -15,7 +15,7 @@ import styles from "./CitySelectionModal.module.css";
  *  infoMessage   – string   (plain text, shown in the orange banner)
  *  boldWord      – string   (word inside infoMessage that should be bold)
  *  selectedCity  – string   (currently selected city, optional)
- */
+ */    
 const CitySelectionModal = ({
   open,
   onClose,
