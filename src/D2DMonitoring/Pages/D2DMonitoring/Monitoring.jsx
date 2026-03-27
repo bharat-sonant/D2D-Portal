@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, NavLink } from "react-router-dom";
+import { useParams, useNavigate, useLocation, NavLink } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
@@ -25,8 +25,7 @@ import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
-import { getWardListAction } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
-import CityPickerModal from "../../Components/D2DMonitoring/CityPickerModal/CityPickerModal";
+import { getWardListAction, getCityList } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
 import { prefetchAllWardLines, getLinePathsFromGeoJson } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
 import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
@@ -52,6 +51,7 @@ import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCove
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { ShiftSnapshotStrip, FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
+import CitySelectionModal from "components/CitySelectionModal/CitySelectionModal";
 // import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
 // import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
@@ -151,6 +151,7 @@ const getJourneyKindMeta = (kind = "") => {
 const MonitoringList = () => {
   const { city } = useParams();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { setCityContext } = useCity();
 
   // ── User badge state ──────────────────────────────────
@@ -1191,9 +1192,17 @@ const MonitoringList = () => {
 
     {/* ── City Picker Modal ── */}
     {showCityModal && (
-      <CityPickerModal
-        currentCity={city}
+      <CitySelectionModal
+        open={showCityModal}
         onClose={() => setShowCityModal(false)}
+        onSelect={(selectedCity) => {
+          setShowCityModal(false);
+          const newPath = pathname.replace(/^\/[^/]+/, `/${selectedCity}`);
+          navigate(newPath);
+        }}
+        cityList={getCityList().map((item) => item.cityName)}
+        selectedCity={city}
+        title="Select City"
       />
     )}
 
