@@ -8,7 +8,8 @@ import {
     getWardDutyOffTimeFromDB,
     getDutyOffImageFromStorage,
     getHelperDummyFlagFromDB,
-    getEmployeeGeneralDetailsFromDB,
+    getEmployeeProfilePhotoFromDB,
+    getEmployeeMobileFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
@@ -25,29 +26,17 @@ import {
 export { getRemark, subscribeRemarks, saveRemark, updateRemark, deleteRemark };
 export const fetchRemarkCategories = () => getRemarkCategories();
  
+const fetchDayArgs = (d) => [d.format("YYYY"), d.format("MMMM"), d.format("YYYY-MM-DD")];
+
 export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
-        console.log("[Action] Fetching Duty In Image for:", { city, wardId });
-        
-        const tryFetch = async (targetDay) => {
-            return await getDutyInImageFromStorage(
-                city, wardId, 
-                targetDay.format("YYYY"), 
-                targetDay.format("MMMM"), 
-                targetDay.format("YYYY-MM-DD")
-            );
-        };
-
         const today = dayjs();
-        let url = await tryFetch(today);
-        
-        // Fallback for night shifts spanning over midnight
-        if (!url) {
-            url = await tryFetch(today.subtract(1, "day"));
-        }
-        
-        console.log("[Action] Final Duty In Image URL:", url);
-        setImageUrl(url);
+        // Fetch today + yesterday in parallel (night-shift fallback at zero extra cost).
+        const [todayUrl, yesterdayUrl] = await Promise.all([
+            getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today)),
+            getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today.subtract(1, "day"))),
+        ]);
+        setImageUrl(todayUrl || yesterdayUrl);
     } catch (error) {
         console.error("Error fetching Duty In Image:", error);
         setImageUrl(null);
@@ -56,26 +45,12 @@ export const getDutyInImage = async (city, wardId, setImageUrl) => {
 
 export const getDutyOffImage = async (city, wardId, setImageUrl) => {
     try {
-        console.log("[Action] Fetching Duty Off Image for:", { city, wardId });
-        
-        const tryFetch = async (targetDay) => {
-            return await getDutyOffImageFromStorage(
-                city, wardId, 
-                targetDay.format("YYYY"), 
-                targetDay.format("MMMM"), 
-                targetDay.format("YYYY-MM-DD")
-            );
-        };
-
         const today = dayjs();
-        let url = await tryFetch(today);
-        
-        if (!url) {
-            url = await tryFetch(today.subtract(1, "day"));
-        }
-        
-        console.log("[Action] Final Duty Off Image URL:", url);
-        setImageUrl(url);
+        const [todayUrl, yesterdayUrl] = await Promise.all([
+            getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today)),
+            getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today.subtract(1, "day"))),
+        ]);
+        setImageUrl(todayUrl || yesterdayUrl);
     } catch (error) {
         console.error("Error fetching Duty Off Image:", error);
         setImageUrl(null);
@@ -382,31 +357,42 @@ const buildWorkerState = (raw, driverPhoto, driverMobile, helperPhoto, helperMob
 // ── In-memory caches (cleared on page reload) ─────────────────────────────
 const workerCache   = new Map(); // key: `${wardId}-${date}` → full WorkerState
 const employeeCache = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
+const imagePreloadCache = new Set(); // URLs already kicked off in browser cache
 
 // Call this on city switch — employee IDs are city-specific so stale data
 // from a previous city must not bleed into the new one.
 export const clearWorkerCaches = () => {
     workerCache.clear();
     employeeCache.clear();
+    imagePreloadCache.clear();
 };
 
+// Kicks off a browser image fetch so it lands in HTTP cache before the
+// <img> tag is rendered — eliminates the visible "blank → image" flash.
+const preloadImage = (url) => {
+    if (!url || imagePreloadCache.has(url)) return;
+    imagePreloadCache.add(url);
+    const img = new window.Image();
+    img.src = url;
+};
 
-// Fetches GeneralDetails + dummyFlag in 2 parallel reads (instead of 3).
-// Result cached by employeeId — same person across wards = 0 extra reads.
+// Fetches only the 3 fields we need (photo, mobile, dummyFlag) in parallel —
+// avoids downloading the entire GeneralDetails object.
 const fetchEmployeeData = async (employeeId) => {
     if (!employeeId) return { photo: null, mobile: "", dummyFlag: null };
     if (employeeCache.has(employeeId)) return employeeCache.get(employeeId);
-    const [generalResp, dummyFlag] = await Promise.all([
-        getEmployeeGeneralDetailsFromDB(employeeId),
+    const [photo, mobile, dummyFlag] = await Promise.all([
+        getEmployeeProfilePhotoFromDB(employeeId),
+        getEmployeeMobileFromDB(employeeId),
         getHelperDummyFlagFromDB(employeeId),
     ]);
-    const general = generalResp?.status === "Success" ? generalResp.data : {};
-    const result  = {
-        photo:     general?.profilePhotoURL || null,
-        mobile:    general?.mobile          || "",
+    const result = {
+        photo:     photo     || null,
+        mobile:    mobile    || "",
         dummyFlag: dummyFlag ?? null,
     };
     employeeCache.set(employeeId, result);
+    preloadImage(result.photo); // start browser fetch immediately
     return result;
 };
 
@@ -416,9 +402,13 @@ const fetchEmployeeData = async (employeeId) => {
  * Returns unsubscribe; call it in useEffect cleanup.
  */
 export const subscribeWorkerDetails = (wardId, setWorkers) => {
-    const year  = dayjs().format("YYYY");
-    const month = dayjs().format("MMMM");
-    const day   = dayjs().format("YYYY-MM-DD");
+    const year     = dayjs().format("YYYY");
+    const month    = dayjs().format("MMMM");
+    const day      = dayjs().format("YYYY-MM-DD");
+    const cacheKey = `${wardId}-${day}`;
+
+    // Serve from cache instantly (0ms) — no waiting for Firebase round-trip.
+    if (workerCache.has(cacheKey)) setWorkers(workerCache.get(cacheKey));
 
     const unsubscribe = subscribeWorkerDetailsFromDB(year, month, day, wardId, async (raw) => {
         const driverId = cleanField(raw.driver);
@@ -427,7 +417,9 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
             fetchEmployeeData(driverId),
             fetchEmployeeData(helperId),
         ]);
-        setWorkers(buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag));
+        const workers = buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag);
+        workerCache.set(cacheKey, workers);
+        setWorkers(workers);
     });
 
     return unsubscribe;

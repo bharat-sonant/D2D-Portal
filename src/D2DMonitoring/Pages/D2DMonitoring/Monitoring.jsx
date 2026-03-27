@@ -161,6 +161,10 @@ const MonitoringList = () => {
         if (Object.keys(statusByWard || {}).length > 0) {
           setLineStatusByWard((prev) => ({ ...prev, ...statusByWard }));
         }
+
+        // Pre-warm worker + photo cache for every ward so that selecting any
+        // ward shows driver/helper images instantly (no extra Firebase reads).
+        wards.forEach((ward) => action.getWorkerDetails(ward.id, () => {}));
       } catch (error) {
         console.error("Error initializing monitoring page data:", error);
       }
@@ -529,6 +533,7 @@ const MonitoringList = () => {
 
   useEffect(() => {
     if (!selectedWard?.id) return;
+    const effectiveCity = city ? toTitleCase(city) : "Sikar";
     try {
       action.getDutyInTime(selectedWard.id, setShowDutyInTime);
       action.getWardReachedTime(selectedWard.id, setWardReachedTime);
@@ -538,11 +543,22 @@ const MonitoringList = () => {
       setDutyInImage(null);
       setDutyOffImage(null);
       setDutyModal(null);
+
+      // Pre-fetch duty-in image in the background so it's ready when the modal opens.
+      action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
     } catch (error) {
       console.error("Error fetching generic ward details:", error);
     }
   }, [selectedWard?.id, city]);
 
+  // Pre-fetch duty-off image as soon as dutyOffTime is known (before modal opens).
+  useEffect(() => {
+    if (!selectedWard?.id || !dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") return;
+    const effectiveCity = city ? toTitleCase(city) : "Sikar";
+    action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
+  }, [dutyOffTime, selectedWard?.id, city]);
+
+  // Fallback: if image wasn't pre-fetched by the time modal opens, fetch it now.
   useEffect(() => {
     if (!dutyModal || !selectedWard?.id) return;
     const effectiveCity = city ? toTitleCase(city) : "Sikar";
@@ -551,30 +567,22 @@ const MonitoringList = () => {
       setIsDutyImageLoading(true);
       try {
         if (dutyModal === "dutyIn" && !dutyInImage) {
-          await action.getDutyInImage(
-            effectiveCity,
-            selectedWard.id,
-            setDutyInImage,
-          );
+          await action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
         } else if (dutyModal === "dutyOff" && !dutyOffImage) {
-          if (
-            !dutyOffTime ||
-            dutyOffTime === "00:00" ||
-            dutyOffTime === "--:--"
-          ) {
+          if (!dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") {
             setDutyOffImage(null);
           } else {
-            await action.getDutyOffImage(
-              effectiveCity,
-              selectedWard.id,
-              setDutyOffImage,
-            );
+            await action.getDutyOffImage(effectiveCity, selectedWard.id, setDutyOffImage);
           }
         }
       } finally {
         setIsDutyImageLoading(false);
       }
     };
+
+    // If image already pre-fetched, skip loading state entirely.
+    if (dutyModal === "dutyIn" && dutyInImage) { setIsDutyImageLoading(false); return; }
+    if (dutyModal === "dutyOff" && dutyOffImage) { setIsDutyImageLoading(false); return; }
 
     fetchImage();
   }, [
@@ -954,6 +962,7 @@ const MonitoringList = () => {
           <div className={styles.layoutSplit}>
             <div className={styles.leftColumn}>
               <DutyComparisonReplica
+                key={`${city}-${selectedWard?.id}`}
                 data={displayWardData}
                 wardId={selectedWard?.id}
                 onVehicleClick={() => setShowVehicleModal(true)}
