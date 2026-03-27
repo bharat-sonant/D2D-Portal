@@ -22,8 +22,8 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 88vw;
-  max-width: 68%;
+  width: 100%;
+  max-width: 70%;
   min-width: 360px;
   background: #f4f5f7;
   z-index: 1200;

@@ -22,8 +22,8 @@ export const getWorkerDetailsFromDB = async (year, month, day, ward) => {
             }
             db.getData(`WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getWorkerDetailsFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getWorkerDetailsFromDB', resp);
+                    saveRealtimeDbServiceHistory('EmployeeDetailServices', 'getWorkerDetails');
+                    saveRealtimeDbServiceDataHistory('EmployeeDetailServices', 'getWorkerDetails', resp);
                     resolve(setResponse("Success", "Worker Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Worker Details Found !!", {}));
@@ -44,8 +44,8 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
             }
             db.getData(`Employees/${employeeId}/GeneralDetails`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory(FILE, 'getEmployeeGeneralDetailsFromDB');
-                    saveRealtimeDbServiceDataHistory(FILE, 'getEmployeeGeneralDetailsFromDB', resp);
+                    saveRealtimeDbServiceHistory('EmployeeDetailServices', 'getEmployeeGeneralDetailsFromDB');
+                    saveRealtimeDbServiceDataHistory('EmployeeDetailServices', 'getEmployeeGeneralDetailsFromDB', resp);
                     resolve(setResponse("Success", "Employee General Details Fetched Successfully !!", resp));
                 } else {
                     resolve(setResponse("Fail", "No Employee Details Found !!", {}));
@@ -59,12 +59,22 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
 
 export const getEmployeeProfilePhotoFromDB = async (employeeId) => {
     if (!employeeId) return null;
-    return (await db.getData(`Employees/${employeeId}/GeneralDetails/profilePhotoURL`)) || null;
+    const resp = await db.getData(`Employees/${employeeId}/GeneralDetails/profilePhotoURL`);
+    if (resp) {
+        saveRealtimeDbServiceHistory('EmployeeDetailServices', 'getEmployeeProfilePhotoFromDB');
+        saveRealtimeDbServiceDataHistory('EmployeeDetailServices', 'getEmployeeProfilePhotoFromDB', resp);
+    }
+    return resp || null;
 };
 
 export const getEmployeeMobileFromDB = async (employeeId) => {
     if (!employeeId) return null;
-    return (await db.getData(`Employees/${employeeId}/GeneralDetails/mobile`)) || null;
+    const resp = await db.getData(`Employees/${employeeId}/GeneralDetails/mobile`);
+    if (resp) {
+        saveRealtimeDbServiceHistory('EmployeeDetailServices', 'getEmployeeMobileFromDB');
+        saveRealtimeDbServiceDataHistory('EmployeeDetailServices', 'getEmployeeMobileFromDB', resp);
+    }
+    return resp || null;
 };
 
 export const getHelperDummyFlagFromDB = async (employeeId) => {
@@ -73,8 +83,8 @@ export const getHelperDummyFlagFromDB = async (employeeId) => {
             if (!employeeId) { resolve(null); return; }
             db.getData(`EmployeeDetailData/${employeeId}/isDummyId`).then((resp) => {
                 if (resp !== null) {
-                    saveRealtimeDbServiceHistory('WardServices', 'getHelperDummyFlagFromDB');
-                    saveRealtimeDbServiceDataHistory('WardServices', 'getHelperDummyFlagFromDB', resp);
+                    saveRealtimeDbServiceHistory('EmployeeDetailServices', 'getHelperDummyFlagFromDB');
+                    saveRealtimeDbServiceDataHistory('EmployeeDetailServices', 'getHelperDummyFlagFromDB', resp);
                 }
                 resolve(resp !== null ? resp : null);
             });

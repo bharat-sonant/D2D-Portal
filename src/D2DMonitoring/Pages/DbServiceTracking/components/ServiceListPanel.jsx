@@ -7,7 +7,7 @@ import { getServiceFiles } from "../../../Services/DbServiceTracker/serviceTrack
 const SERVICE_GROUPS = [
   { label: "Map Services",              key: "MapServices"             },
   { label: "Ward Services",             key: "WardServices"            },
-  { label: "Employee Detail Services",  key: "EmployeeDetailsServices" },
+  { label: "Employee Detail Services",  key: "EmployeeDetailServices" },
 ];
 
 function formatSize(bytes) {
