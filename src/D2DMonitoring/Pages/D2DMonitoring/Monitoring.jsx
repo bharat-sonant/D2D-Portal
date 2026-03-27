@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation, NavLink } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
@@ -51,9 +51,8 @@ import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCove
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
 import { ShiftSnapshotStrip, FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
+import DbServiceOffcanvas from "../../Components/D2DMonitoring/DbServiceOffcanvas/DbServiceOffcanvas";
 import CitySelectionModal from "components/CitySelectionModal/CitySelectionModal";
-// import ZoneCoverageV3 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV3";
-// import ZoneCoverageV4 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV4";
 
 const toTitleCase = (value = "") =>
   String(value)
@@ -163,6 +162,7 @@ const MonitoringList = () => {
 
   const [wardList, setWardList] = useState([]);
   const [showCityModal, setShowCityModal] = useState(false);
+  const [showDbServiceOffcanvas, setShowDbServiceOffcanvas] = useState(false);
 
   useEffect(() => {
     if (!city) return;
@@ -959,17 +959,16 @@ const MonitoringList = () => {
         </div>
 
         <div className={styles.topBarRight}>
-          <NavLink
-            to={`/${city}/d2dMonitoring/db-service-tracking`}
-            className={({ isActive }) =>
-              `${topbarStyles.menuItem} ${isActive ? topbarStyles.menuItemActive : ""}`
-            }
+          <button
+            type="button"
+            className={`${topbarStyles.menuItem} ${showDbServiceOffcanvas ? topbarStyles.menuItemActive : ""}`}
+            onClick={() => setShowDbServiceOffcanvas(true)}
           >
             <div className={topbarStyles.menuIcon}>
               <Database className={topbarStyles.navIcon} size={20} />
             </div>
             <span className={topbarStyles.menuLabel}>Db Service Tracking</span>
-          </NavLink>
+          </button>
           <div
             className={topbarStyles.userBadge}
             // onClick={() => setShowQuickAppSelect((p) => !p)}
@@ -1217,6 +1216,13 @@ const MonitoringList = () => {
       isDropdown={true}
       onChangePassword={() => setShowChangePassword(true)}
       onLogout={handleLogout}
+    />
+
+    {/* ── Db Service Offcanvas ── */}
+    <DbServiceOffcanvas
+      open={showDbServiceOffcanvas}
+      onClose={() => setShowDbServiceOffcanvas(false)}
+      city={city}
     />
 
     {/* ── Map Offcanvas ── */}

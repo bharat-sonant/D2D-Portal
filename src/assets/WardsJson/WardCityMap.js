@@ -55,6 +55,7 @@ import WeVOISOthers from "./WeVOIS-Others.json";
 import Parbatsar from "./Parbatsar.json";
 import Reengus from "./Reengus.json";
 import Phalodi from "./Phalodi.json";
+import Vidisha from "./Vidisha.json";
 
 /**
  * City key (lowercase) → raw ward JSON array
@@ -118,6 +119,7 @@ const WardCityMap = {
     "parbatsar": Parbatsar,
     "reengus": Reengus,
     "phalodi": Phalodi,
+    "vidisha": Vidisha,
 };
 
 export default WardCityMap;

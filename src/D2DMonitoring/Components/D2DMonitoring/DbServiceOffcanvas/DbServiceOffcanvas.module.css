@@ -1,0 +1,117 @@
+/* ── Backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.32s ease, visibility 0.32s ease;
+  z-index: 1199;
+}
+
+.backdropVisible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* ── Panel ── */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 88vw;
+  max-width: 68%;
+  min-width: 360px;
+  background: #f4f5f7;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -12px 0 36px rgba(0, 0, 0, 0.14);
+  border-radius: 12px 0 0 12px;
+  transform: translateX(105%);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.panelOpen {
+  transform: translateX(0);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e8ecf4;
+  background: #fff;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 34px;
+  height: 34px;
+  background: var(--gradientTheme);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.28);
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-family: var(--fontGraphikSemibold);
+  color: var(--darkBlack, #111827);
+  line-height: 1.2;
+}
+
+.headerSub {
+  font-size: 11px;
+  color: #6b7280;
+  font-family: var(--fontGraphik);
+  margin-top: 1px;
+}
+
+.closeBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* ── Body — three panels ── */
+.body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
