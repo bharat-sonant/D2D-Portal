@@ -10,20 +10,22 @@ function formatSize(bytes) {
   return `${Math.round(bytes)} B`;
 }
 
-const FunctionListPanel = ({ selectedService, year, month, selectedFunc, onSelectFunc }) => {
+const FunctionListPanel = ({ selectedService, year, month, selectedFunc, onSelectFunc, city }) => {
   const [funcList, setFuncList] = useState([]);
   const [loading, setLoading]   = useState(false);
 
   useEffect(() => {
     if (!selectedService) { setFuncList([]); return; }
+    let cancelled = false;
     setLoading(true);
     setFuncList([]);
     getFunctionStats(selectedService, year, month).then((data) => {
+      if (cancelled) return;
       setFuncList(data);
       setLoading(false);
-      if (data.length > 0) onSelectFunc?.(data[0]);
     });
-  }, [selectedService, year, month]);
+    return () => { cancelled = true; };
+  }, [selectedService, year, month, city]);
 
   return (
     <div className={styles.panel}>

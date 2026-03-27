@@ -20,6 +20,13 @@ const DbServiceOffcanvas = ({ open, onClose, city }) => {
   }, [open]);
 
   useEffect(() => {
+    setSelectedService(null);
+    setSelectedFunc(null);
+    const t = setTimeout(() => setSelectedService("MapServices"), 0);
+    return () => clearTimeout(t);
+  }, [city]);
+
+  useEffect(() => {
     if (!open) return;
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
@@ -68,6 +75,7 @@ const DbServiceOffcanvas = ({ open, onClose, city }) => {
           <ServiceListPanel
             selectedService={selectedService}
             onSelectService={(s) => { setSelectedService(s); setSelectedFunc(null); }}
+            city={city}
           />
           <FunctionListPanel
             selectedService={selectedService}
@@ -75,6 +83,7 @@ const DbServiceOffcanvas = ({ open, onClose, city }) => {
             month={month}
             selectedFunc={selectedFunc}
             onSelectFunc={setSelectedFunc}
+            city={city}
           />
           <DateBreakdownPanel
             selectedService={selectedService}
@@ -83,6 +92,7 @@ const DbServiceOffcanvas = ({ open, onClose, city }) => {
             month={month}
             onYearChange={setYear}
             onMonthChange={setMonth}
+            city={city}
           />
         </div>
       </div>

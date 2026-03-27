@@ -18,19 +18,23 @@ function formatSize(bytes) {
   return `${Math.round(bytes)} B`;
 }
 
-const ServiceListPanel = ({ selectedService, onSelectService }) => {
+const ServiceListPanel = ({ selectedService, onSelectService, city }) => {
   const [dataMap, setDataMap] = useState({});
 
   useEffect(() => {
+    let cancelled = false;
     const year  = dayjs().format("YYYY");
     const month = dayjs().format("MMMM");
 
+    setDataMap({});
     getServiceFiles(year, month).then((list) => {
+      if (cancelled) return;
       const map = {};
       list.forEach((sf) => { map[sf.name] = sf; });
       setDataMap(map);
     });
-  }, []);
+    return () => { cancelled = true; };
+  }, [city]);
 
   return (
     <div className={styles.panel}>

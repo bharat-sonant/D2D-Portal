@@ -3,7 +3,7 @@ import CityDetails from "../../../../assets/WardsJson/CityDetails.json";
 
 export const getCityList = () =>
     CityDetails
-        .filter((item) => item?.cityName)
+        .filter((item) => item?.cityName && WardCityMap[item.cityName.toLowerCase()])
         .map((item) => ({ city: item.city || item.cityName, cityName: item.cityName }));
 
 export const getWardListAction = (city) => {

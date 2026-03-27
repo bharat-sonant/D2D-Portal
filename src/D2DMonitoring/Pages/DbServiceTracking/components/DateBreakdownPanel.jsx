@@ -16,19 +16,22 @@ function formatSize(bytes) {
   return `${Math.round(bytes)} B`;
 }
 
-const DateBreakdownPanel = ({ selectedService, selectedFunc, year, month, onYearChange, onMonthChange }) => {
+const DateBreakdownPanel = ({ selectedService, selectedFunc, year, month, onYearChange, onMonthChange, city }) => {
   const [dateRows, setDateRows] = useState([]);
   const [loading, setLoading]   = useState(false);
 
   useEffect(() => {
     if (!selectedService || !selectedFunc) { setDateRows([]); return; }
+    let cancelled = false;
     setLoading(true);
     setDateRows([]);
     getDateBreakdown(selectedService, selectedFunc.functionName, year, month).then((rows) => {
+      if (cancelled) return;
       setDateRows(rows);
       setLoading(false);
     });
-  }, [selectedService, selectedFunc, year, month]);
+    return () => { cancelled = true; };
+  }, [selectedService, selectedFunc, year, month, city]);
 
   const availableYears = [String(dayjs().year() - 1), String(dayjs().year())];
 
