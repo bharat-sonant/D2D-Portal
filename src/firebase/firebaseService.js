@@ -191,7 +191,8 @@ export const restoreFirebaseConnection = () => {
             // Restore internal tracking
             registry.set(key, connection);
             activeKey = key;
- 
+            firebaseReadyResolve?.(); // Firebase already exists — immediately mark ready
+
             return {
                 success: true,
                 message: `Reused existing Firebase app for ${key}`,
