@@ -22,6 +22,10 @@ const CrewCard = ({ role, roleStyle, member }) => {
   const src = member.profileImage || fallbackAvatar;
   const [imgLoaded, setImgLoaded] = useState(() => isCached(src));
 
+  useEffect(() => {
+    setImgLoaded(isCached(src));
+  }, [src]);
+
   return (
     <div className={styles.heroReplicaCrewCard}>
       <span className={`${styles.heroReplicaRolePill} ${roleStyle}`}>{role}</span>

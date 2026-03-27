@@ -32,6 +32,7 @@ export const getDutyInImage = async (city, wardId, setImageUrl) => {
     try {
         const today = dayjs();
         const url = await getDutyInImageFromStorage(city, wardId, ...fetchDayArgs(today));
+        if (url) { const img = new window.Image(); img.src = url; }
         setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty In Image:", error);
@@ -43,6 +44,7 @@ export const getDutyOffImage = async (city, wardId, setImageUrl) => {
     try {
         const today = dayjs();
         const url = await getDutyOffImageFromStorage(city, wardId, ...fetchDayArgs(today));
+        if (url) { const img = new window.Image(); img.src = url; }
         setImageUrl(url);
     } catch (error) {
         console.error("Error fetching Duty Off Image:", error);
