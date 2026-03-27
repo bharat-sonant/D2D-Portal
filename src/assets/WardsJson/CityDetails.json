@@ -1096,23 +1096,5 @@
         "messagingSenderId": "381118272786",
         "databaseName": "dtdwevois",
         "isUCCApplied": "no"
-    },
-    {
-        "cityName": "Vidisha",
-        "city": "vidisha",
-        "key": "VDS",
-        "dbPath": "https://dtdvidisha.firebaseio.com/",
-        "storagePath": "gs://dtdnavigator.appspot.com/Vidisha",
-        "empCode": "VDS",
-        "firebaseStoragePath": "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/",
-        "apiKey": "AIzaSyBGZ_IB4y5Ov1nuqIhWndGU8hfJadlE85I",
-        "appId": "1:381118272786:android:8580682aed749a06ec0fcb",
-        "authDomain": "dtdnavigator.firebaseapp.com",
-        "databaseURL": "https://dtdvidisha.firebaseio.com",
-        "projectId": "dtdnavigator",
-        "storageBucket": "dtdnavigator.appspot.com",
-        "messagingSenderId": "381118272786",
-        "databaseName": "dtdvidisha",
-        "isUCCApplied": "no"
     }
 ]

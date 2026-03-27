@@ -10,6 +10,7 @@ let activeKey = null;
 let firebaseReadyPromise = null;
 let firebaseReadyResolve = null;
 let firebaseReadyLogged = false;
+let waitingLogged = false;
  
 const createReadyPromise = () => {
     firebaseReadyPromise = new Promise((resolve) => {
@@ -37,7 +38,6 @@ export const connectFirebase = (config, city) => {
  
         // 🧹 If switching cities → clear previous connection
         if (activeKey && activeKey !== key) {
-            console.log(`🔁 Switching Firebase connection from ${activeKey} ➜ ${key}`);
             cleanupPreviousConnection();
         }
  
@@ -80,7 +80,7 @@ export const connectFirebase = (config, city) => {
  
         registry.set(key, connection);
         activeKey = key;
-        firebaseReadyResolve?.(); // mark ready (reuse case)
+        firebaseReadyResolve?.();
         console.log(`✅ Firebase connected for city: ${connection.cityName}`);
         return {
             success: true,
@@ -148,9 +148,12 @@ export const getActiveConnection = () =>
  */
 const cleanupPreviousConnection = () => {
     if (activeKey && registry.has(activeKey)) {
+        console.log(`🔁 Switching Firebase connection from: ${activeKey}`);
         registry.delete(activeKey);
-        console.log(`🧹 Removed previous Firebase connection (${activeKey})`);
         activeKey = null;
+        waitingLogged = false;
+        firebaseReadyLogged = false;
+        createReadyPromise();
     }
 };
  
@@ -213,12 +216,13 @@ export const restoreFirebaseConnection = () => {
 };
  
 export const waitForFirebaseReady = async () => {
-    if (!activeKey) {
+    if (!activeKey && !waitingLogged) {
         console.log("⏳ Waiting for Firebase to connect...");
+        waitingLogged = true;
     }
     await firebaseReadyPromise;
     if (!firebaseReadyLogged) {
-        firebaseReadyLogged = true;
         console.log("✅ Firebase is ready to use.");
+        firebaseReadyLogged = true;
     }
 };

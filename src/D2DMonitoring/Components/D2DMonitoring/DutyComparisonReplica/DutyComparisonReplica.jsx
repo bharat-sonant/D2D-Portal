@@ -3,11 +3,11 @@ import { Phone, ChevronRight, UserStar, UserX } from "lucide-react";
 import fallbackAvatar from "../../../../assets/images/avtarUser.png";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
-import { subscribeWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import { getWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 
 const INITIAL_WORKERS = {
-  captain: { name: "", phone: "", profileImage: null, experience: "" },
-  pilot:   { name: "", phone: "", profileImage: null, experience: "", noHelper: false, nameRed: false },
+  captain: { name: "", phone: "", profileImage: null },
+  pilot:   { name: "", phone: "", profileImage: null, noHelper: false, nameRed: false },
   vehicle: "",
 };
 
@@ -23,7 +23,7 @@ const CrewCard = ({ role, roleStyle, member }) => (
       />
     </div>
     <div className={styles.nameBG}>
-      <h5 style={member.nameRed ? { color: "#dc2626" } : undefined}>
+      <h5 className={member.nameRed ? styles.nameRed : undefined}>
         {member.name || `${role} Name`}
       </h5>
       <p className={styles.heroReplicaPhone}>
@@ -53,8 +53,7 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
 
   useEffect(() => {
     if (!wardId) return;
-    const unsubscribe = subscribeWorkerDetails(wardId, setWorkers);
-    return () => unsubscribe();
+    getWorkerDetails(wardId, setWorkers);
   }, [wardId]);
 
   const { captain, pilot, vehicle } = workers;

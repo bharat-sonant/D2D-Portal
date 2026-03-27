@@ -2,14 +2,13 @@ import dayjs from "dayjs";
 import {
     getWardDutyOnTimeFromDB,
     getWorkerDetailsFromDB,
-    getEmployeeGeneralDetailsFromDB,
     subscribeWorkerDetailsFromDB,
     getDutyInImageFromStorage,
     getWardReachedTimeFromDB,
     getWardDutyOffTimeFromDB,
     getDutyOffImageFromStorage,
-    getEmployeeAllDetailsFromDB,
     getHelperDummyFlagFromDB,
+    getEmployeeGeneralDetailsFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
@@ -350,165 +349,65 @@ const cleanField = (val) => {
 const toTitleCase = (str) =>
     String(str || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 
-/**
- * Handles all common date formats:
- *   YYYY-MM-DD / YYYY/MM/DD  → ISO (standard)
- *   DD-MM-YYYY / DD/MM/YYYY  → Indian format (most common in Indian HRMS)
- *   fallback                 → native Date parse
- */
-const parseDojDate = (str) => {
-    if (!str) return null;
-    const s = String(str).trim();
-    if (/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(s)) return new Date(s.replace(/\//g, "-"));
-    const m = s.match(/^(\d{2})[-/](\d{2})[-/](\d{4})$/);
-    if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}`);  // DD-MM-YYYY → YYYY-MM-DD
-    return new Date(s);
-};
+const buildWorkerState = (raw, driverPhoto, driverMobile, helperPhoto, helperMobile, helperIsDummyFlag = null) => {
+    const helperIsDummy  = Number(helperIsDummyFlag) === 1;
+    const helperName     = cleanField(raw.helperName) || "";
+    const helperHasCTag  = /\(c\)/i.test(helperName);
 
-const calcExperience = (doj) => {
-    if (!doj) return "-";
-    const joined = parseDojDate(doj);
-    if (!joined || isNaN(joined)) return "-";
-    const diff = Date.now() - joined.getTime();
-    if (diff < 0) return "-";
-    const days   = Math.floor(diff / 86400000);
-    const months = Math.floor(days / 30.44);
-    const years  = Math.floor(days / 365.25);
-    if (years  >= 1) return `${years} yr${years  > 1 ? "s" : ""}`;
-    if (months >= 1) return `${months} mo`;
-    return `${days} day${days !== 1 ? "s" : ""}`;
-};
-
-const DATE_RE = /^\d{4}[-/]\d{2}[-/]\d{2}$|^\d{2}[-/]\d{2}[-/]\d{4}$/;
-
-/**
- * Searches a flat object for the best date to use as experience start.
- * Priority: dateOfRejoining (if present) → dateOfJoining → other join-like keys
- */
-const findDojInObject = (obj) => {
-    if (!obj || typeof obj !== "object") return "";
-
-    // 1. Highest priority — rejoining date
-    const rejoinKeys = ["dateOfRejoining", "dateofRejoining", "rejoiningDate", "rejoinDate", "reJoiningDate"];
-    for (const k of rejoinKeys) {
-        if (obj[k]) return String(obj[k]);
-    }
-
-    // 2. Standard joining date
-    const joinKeys = ["dateOfJoining", "dateofJoining", "joiningDate", "joinDate", "doj", "DOJ"];
-    for (const k of joinKeys) {
-        if (obj[k]) return String(obj[k]);
-    }
-
-    // 3. Keyword scan fallback — any key containing "rejoin" first, then "join"
-    for (const k of Object.keys(obj)) {
-        if (k.toLowerCase().includes("rejoin") && obj[k]) return String(obj[k]);
-    }
-    for (const k of Object.keys(obj)) {
-        const lower = k.toLowerCase();
-        if ((lower.includes("join") || lower.includes("hire") || lower.includes("appoint")) && obj[k]) return String(obj[k]);
-    }
-    // 2. scan string values that look like a past date
-    for (const k of Object.keys(obj)) {
-        const val = obj[k];
-        if (typeof val !== "string") continue;
-        if (!DATE_RE.test(val.trim())) continue;
-        const parsed = new Date(val);
-        if (!isNaN(parsed) && parsed < new Date()) return val;
-    }
-    return "";
-};
-
-/**
- * Searches the full employee record (all sub-nodes) for DOJ.
- * fullEmp shape: { GeneralDetails: {...}, OfficialDetails: {...}, ... }
- */
-const getDojFromFullEmployee = (fullEmp) => {
-    if (!fullEmp || typeof fullEmp !== "object") return "";
-    // Try each sub-node in priority order
-    const priority = ["OfficialDetails", "GeneralDetails", "PersonalDetails", "EmploymentDetails", "BasicDetails"];
-    for (const node of priority) {
-        if (fullEmp[node]) {
-            const found = findDojInObject(fullEmp[node]);
-            if (found) return found;
-        }
-    }
-    // Fall back: search remaining sub-nodes we haven't tried yet
-    for (const node of Object.keys(fullEmp)) {
-        if (priority.includes(node)) continue;
-        if (typeof fullEmp[node] === "object") {
-            const found = findDojInObject(fullEmp[node]);
-            if (found) return found;
-        }
-    }
-    return "";
-};
-
-/**
- * Extracts display fields from the full employee record.
- * Always reads GeneralDetails for name/mobile/photo.
- * DOJ is searched across all sub-nodes.
- */
-const extractEmployeeDisplay = (fullEmp) => {
-    const g = fullEmp?.GeneralDetails || {};
-    return {
-        name:         g.name || g.fullName || g.employeeName || "",
-        mobile:       g.mobile || g.phone || g.mobileNumber || "",
-        profilePhotoURL: g.profilePhotoURL || g.profileImage || g.photo || null,
-        _doj:         getDojFromFullEmployee(fullEmp),   // internal — used by buildWorkerState
-    };
-};
-
-/** Returns true if name contains "(c)" or "(C)" anywhere */
-const hasCTag = (name = "") => /\(c\)/i.test(name);
-
-const buildWorkerState = (driverEmp, helperEmp, vehicle, helperIsDummyFlag = null) => {
-    const rawHelperName = helperEmp.name || "";
-    const helperHasCTag = hasCTag(rawHelperName);
-    const helperIsDummy = Number(helperIsDummyFlag) === 1;
+    // isDummy=1 AND (c) → Without Helper
+    // isDummy≠1 AND (c) → show helper, name red + blink
+    const noHelper = helperIsDummy && helperHasCTag;
+    const nameRed  = !helperIsDummy && helperHasCTag;
 
     return {
         captain: {
-            name:         toTitleCase(driverEmp.name || ""),
-            phone:        driverEmp.mobile || "",
-            profileImage: driverEmp.profilePhotoURL || null,
-            experience:   calcExperience(driverEmp._doj || ""),
+            id:           cleanField(raw.driver),
+            name:         toTitleCase(cleanField(raw.driverName)),
+            profileImage: driverPhoto  || null,
+            phone:        driverMobile || "",
         },
         pilot: {
-            name:         toTitleCase(rawHelperName),
-            phone:        helperEmp.mobile || "",
-            profileImage: helperEmp.profilePhotoURL || null,
-            experience:   calcExperience(helperEmp._doj || ""),
+            id:           cleanField(raw.helper),
+            name:         toTitleCase(helperName),
+            profileImage: helperPhoto  || null,
+            phone:        helperMobile || "",
             isDummy:      helperIsDummy,
-            hasCTag:      helperHasCTag,
-            noHelper:     helperIsDummy && helperHasCTag,
-            nameRed:      !helperIsDummy && helperHasCTag,
+            noHelper,
+            nameRed,
         },
-        vehicle,
+        vehicle: cleanField(raw.vehicle),
     };
 };
 
-// ── In-memory caches (cleared on page reload, valid for the day) ──────────
-const workerCache = new Map();  // key: `${wardId}-${date}`  → raw WorkerDetails
-const empCache    = new Map();  // key: employeeId           → GeneralDetails
+// ── In-memory caches (cleared on page reload) ─────────────────────────────
+const workerCache   = new Map(); // key: `${wardId}-${date}` → full WorkerState
+const employeeCache = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
 
-const getCachedEmployee = async (empId) => {
-    if (!empId) return { name: "", mobile: "", profilePhotoURL: null, _doj: "" };
-    if (empCache.has(empId)) return empCache.get(empId);
+// Call this on city switch — employee IDs are city-specific so stale data
+// from a previous city must not bleed into the new one.
+export const clearWorkerCaches = () => {
+    workerCache.clear();
+    employeeCache.clear();
+};
 
-    // Fetch full employee record so DOJ can be found in any sub-node
-    const resp = await getEmployeeAllDetailsFromDB(empId);
-    const fullEmp = resp?.status === "Success" ? resp.data : null;
 
-    const display = fullEmp && Object.keys(fullEmp).length > 0
-        ? extractEmployeeDisplay(fullEmp)
-        : { name: "", mobile: "", profilePhotoURL: null, _doj: "" };
-
-    // Only cache non-empty results so failures are retried
-    if (display.name || display.mobile) {
-        empCache.set(empId, display);
-    }
-    return display;
+// Fetches GeneralDetails + dummyFlag in 2 parallel reads (instead of 3).
+// Result cached by employeeId — same person across wards = 0 extra reads.
+const fetchEmployeeData = async (employeeId) => {
+    if (!employeeId) return { photo: null, mobile: "", dummyFlag: null };
+    if (employeeCache.has(employeeId)) return employeeCache.get(employeeId);
+    const [generalResp, dummyFlag] = await Promise.all([
+        getEmployeeGeneralDetailsFromDB(employeeId),
+        getHelperDummyFlagFromDB(employeeId),
+    ]);
+    const general = generalResp?.status === "Success" ? generalResp.data : {};
+    const result  = {
+        photo:     general?.profilePhotoURL || null,
+        mobile:    general?.mobile          || "",
+        dummyFlag: dummyFlag ?? null,
+    };
+    employeeCache.set(employeeId, result);
+    return result;
 };
 
 /**
@@ -524,14 +423,11 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
     const unsubscribe = subscribeWorkerDetailsFromDB(year, month, day, wardId, async (raw) => {
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
-
-        const [driverDetails, helperDetails, helperDummyFlag] = await Promise.all([
-            getCachedEmployee(driverId),
-            getCachedEmployee(helperId),
-            getHelperDummyFlagFromDB(helperId),
+        const [driver, helper] = await Promise.all([
+            fetchEmployeeData(driverId),
+            fetchEmployeeData(helperId),
         ]);
-
-        setWorkers(buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle), helperDummyFlag));
+        setWorkers(buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag));
     });
 
     return unsubscribe;
@@ -539,18 +435,18 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
 
 export const getWorkerDetails = async (wardId, setWorkers) => {
     try {
-        const year  = dayjs().format("YYYY");
-        const month = dayjs().format("MMMM");
-        const day   = dayjs().format("YYYY-MM-DD");
+        const year     = dayjs().format("YYYY");
+        const month    = dayjs().format("MMMM");
+        const day      = dayjs().format("YYYY-MM-DD");
         const cacheKey = `${wardId}-${day}`;
 
-        // ── Serve from cache instantly, then refresh in background ──────────
+        // ── Fully cached: instant, zero Firebase reads ──────────────────────
         if (workerCache.has(cacheKey)) {
-            const cached = workerCache.get(cacheKey);
-            setWorkers(cached);  // instant render from cache
+            setWorkers(workerCache.get(cacheKey));
+            return;
         }
 
-        // Always fetch fresh in background (updates cache for next switch)
+        // ── Fetch WorkerDetails (names + vehicle) ────────────────────────────
         const workerResp = await getWorkerDetailsFromDB(year, month, day, wardId);
         if (workerResp.status !== "Success") return;
 
@@ -558,14 +454,33 @@ export const getWorkerDetails = async (wardId, setWorkers) => {
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
 
-        const [driverDetails, helperDetails] = await Promise.all([
-            getCachedEmployee(driverId),
-            getCachedEmployee(helperId),
-        ]);
+        // ── Phase 1: show names + vehicle instantly ──────────────────────────
+        // Use cached employee data if available, else show placeholders
+        const dCached = employeeCache.get(driverId);
+        const hCached = employeeCache.get(helperId);
+        setWorkers(buildWorkerState(
+            raw,
+            dCached?.photo     ?? null,
+            dCached?.mobile    ?? "",
+            hCached?.photo     ?? null,
+            hCached?.mobile    ?? "",
+            hCached?.dummyFlag ?? null,
+        ));
 
-        const workers = buildWorkerState(driverDetails, helperDetails, cleanField(raw.vehicle));
-        workerCache.set(cacheKey, workers);
-        setWorkers(workers);
+        // ── Phase 2: fetch missing employee data (2 reads instead of 5) ─────
+        if (!dCached || !hCached) {
+            const [driver, helper] = await Promise.all([
+                fetchEmployeeData(driverId),
+                fetchEmployeeData(helperId),
+            ]);
+            const workers = buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag);
+            workerCache.set(cacheKey, workers);
+            setWorkers(workers);
+        } else {
+            workerCache.set(cacheKey, buildWorkerState(
+                raw, dCached.photo, dCached.mobile, hCached.photo, hCached.mobile, hCached.dummyFlag
+            ));
+        }
     } catch (error) {
         console.error("Error in getWorkerDetails:", error);
     }

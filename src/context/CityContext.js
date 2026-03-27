@@ -10,7 +10,7 @@ const CITY_DETAILS_URL =
 
 let _cityDetailsCache = null;
 
-const getMonitoringFirebaseConfig = async (city) => {
+const getMonitoringFirebaseConfig = async (city, saveToStorage = false) => {
   if (!_cityDetailsCache) {
     try {
       const res = await axios.get(CITY_DETAILS_URL);
@@ -31,12 +31,14 @@ const getMonitoringFirebaseConfig = async (city) => {
       messagingSenderId, appId, firebaseStoragePath, storageCity, latLng,
     } = detail;
 
-    // Storage info localStorage mein save karo — getWards ke liye zaruri
-    const storagePath = firebaseStoragePath ||
-      `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/`;
-    localStorage.setItem("storagePath", storagePath);
-    localStorage.setItem("storageCity", storageCity || "");
-    localStorage.setItem("cityLatLng", latLng || "");
+    // Storage info sirf user ki default city ke liye save karo
+    if (saveToStorage) {
+      const storagePath = firebaseStoragePath ||
+        `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/`;
+      localStorage.setItem("storagePath", storagePath);
+      localStorage.setItem("storageCity", storageCity || "");
+      localStorage.setItem("cityLatLng", latLng || "");
+    }
 
     return { apiKey, authDomain, databaseURL, projectId, storageBucket, messagingSenderId, appId };
   }
@@ -74,12 +76,21 @@ export const CityProvider = ({ children }) => {
 
     // Hamesha CityDetails se config fetch karo (cache hit hone par instant hai)
     // Agar city CityDetails mein nahi mili toh getCityFirebaseConfig fallback karta hai
-    const targetCity = monitoringCity || city;
-    getMonitoringFirebaseConfig(targetCity).then((firebaseConfig) => {
-      if (firebaseConfig?.databaseURL) {
-        connectFirebase(firebaseConfig, targetCity);
-      }
-    });
+    if (monitoringCity) {
+      // Monitoring URL city — sirf Firebase connect karo, localStorage touch mat karo
+      getMonitoringFirebaseConfig(monitoringCity, false).then((firebaseConfig) => {
+        if (firebaseConfig?.databaseURL) {
+          connectFirebase(firebaseConfig, monitoringCity);
+        }
+      });
+    } else {
+      // User ki default city — Firebase connect karo + storage info save karo
+      getMonitoringFirebaseConfig(city, true).then((firebaseConfig) => {
+        if (firebaseConfig?.databaseURL) {
+          connectFirebase(firebaseConfig, city);
+        }
+      });
+    }
 
     // Update browser title
     // document.title = `D2D : ${city}`;

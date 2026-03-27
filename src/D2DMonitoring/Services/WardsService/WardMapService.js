@@ -19,7 +19,12 @@ export const getWardBoundaryFromStorage = (storagePath, cityName, wardId) => {
             }
             return setResponse("Fail", "No boundary data found", null);
         })
-        .catch((error) => setResponse("Fail", error.message, null));
+        .catch((error) => {
+            if (error?.response?.status === 404) {
+                console.log(`⚠️ Ward boundary not found for ward: ${wardId}`);
+            }
+            return setResponse("Fail", error.message, null);
+        });
 };
 
 export const getWardLinesFromStorage = async (cityName, wardId) => {

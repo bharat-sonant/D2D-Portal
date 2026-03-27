@@ -78,10 +78,7 @@ export const prefetchAllWardLines = async (city, wardList = [], onWardLinesReady
                 batch.map(async (ward) => {
                     if (!ward?.id) return;
                     try {
-                        const [linesRes] = await Promise.all([
-                            getWardLinesFromStorage(cityName, ward.id),
-                            getWardBoundaryFromStorage(storagePath, cityName, ward.id),
-                        ]);
+                        const linesRes = await getWardLinesFromStorage(cityName, ward.id);
                         if (linesRes?.status === "Success" && typeof onWardLinesReady === "function") {
                             onWardLinesReady(ward.id, linesRes.data);
                         }

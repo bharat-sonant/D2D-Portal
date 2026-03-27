@@ -7,9 +7,7 @@ const FILE = 'D2DMonitoringDutyIn';
 
 export const subscribeWorkerDetailsFromDB = (year, month, day, ward, onData) => {
     if (!year || !month || !day || !ward) return () => {};
-    return db.subscribeData(
-        `WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`,
-        (data) => {
+    return db.subscribeData( `WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`, (data) => {
             if (!data) return;
             onData(data);
         }
@@ -60,6 +58,16 @@ export const getEmployeeGeneralDetailsFromDB = async (employeeId) => {
     });
 };
 
+export const getEmployeeProfilePhotoFromDB = async (employeeId) => {
+    if (!employeeId) return null;
+    return (await db.getData(`Employees/${employeeId}/GeneralDetails/profilePhotoURL`)) || null;
+};
+
+export const getEmployeeMobileFromDB = async (employeeId) => {
+    if (!employeeId) return null;
+    return (await db.getData(`Employees/${employeeId}/GeneralDetails/mobile`)) || null;
+};
+
 export const getHelperDummyFlagFromDB = async (employeeId) => {
     return new Promise((resolve) => {
         try {
@@ -77,27 +85,6 @@ export const getHelperDummyFlagFromDB = async (employeeId) => {
     });
 };
 
-export const getEmployeeAllDetailsFromDB = async (employeeId) => {
-    return new Promise((resolve) => {
-        try {
-            if (!employeeId) {
-                resolve(setResponse("Fail", "Invalid Params !!", { employeeId }));
-                return;
-            }
-            db.getData(`Employees/${employeeId}`).then((resp) => {
-                if (resp !== null) {
-                    saveRealtimeDbServiceHistory('EmployeeDetailsServices', 'getEmployeeAllDetailsFromDB');
-                    saveRealtimeDbServiceDataHistory('EmployeeDetailsServices', 'getEmployeeAllDetailsFromDB', resp);
-                    resolve(setResponse("Success", "Employee Details Fetched Successfully !!", resp));
-                } else {
-                    resolve(setResponse("Fail", "No Employee Found !!", {}));
-                }
-            });
-        } catch (error) {
-            resolve(setResponse("Fail", "Error fetching Employee Details !!", error.message));
-        }
-    });
-};
 
 export const getWardDutyOnTimeFromDB = async (year, month, day, Ward) => {
     return new Promise((resolve) => {

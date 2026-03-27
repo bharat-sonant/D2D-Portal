@@ -145,6 +145,7 @@ const MonitoringList = () => {
 
   useEffect(() => {
     if (!city) return;
+    action.clearWorkerCaches();
     const fetchWards = async () => {
       try {
         const wards = getWardListAction(city);

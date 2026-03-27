@@ -1,5 +1,15 @@
 /* DutyComparisonReplica – internal styles only (card shell from MonitoringCard) */
 
+@keyframes nameBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.nameRed {
+  color: #dc2626 !important;
+  animation: nameBlink 0.8s ease-in-out infinite;
+}
+
 .heroReplicaFieldPill {
   width: 26px;
   height: 26px;
