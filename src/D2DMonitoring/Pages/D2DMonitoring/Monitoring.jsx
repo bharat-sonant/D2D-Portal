@@ -52,7 +52,7 @@ import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSectio
 import { ShiftSnapshotStrip, FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
 import DbServiceOffcanvas from "../../Components/D2DMonitoring/DbServiceOffcanvas/DbServiceOffcanvas";
-import CitySelectionModal from "components/CitySelectionModal/CitySelectionModal";
+import CitySelectionModal from "../../../components/CitySelectionModal/CitySelectionModal";
 
 const toTitleCase = (value = "") =>
   String(value)
