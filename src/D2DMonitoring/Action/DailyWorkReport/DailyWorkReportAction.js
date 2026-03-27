@@ -12,7 +12,7 @@ export const logDateSwitch = (date, isToday) => {
     );
 };
 
-export const getWardsForReportAction = (city) => getWardListAction(city);
+export const getWardsForReportAction = async (city) => getWardListAction(city);
 
 export const loadPastDateAction = async (city, date, wards, setData, setLoading, signal) => {
     if (!wards?.length) return;

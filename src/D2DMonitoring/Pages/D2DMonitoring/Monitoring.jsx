@@ -4,15 +4,10 @@ import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
   Truck,
   Clock,
-  Users as UsersIcon,
-  User as UserIcon,
   MapPin,
   Fuel,
   Wrench,
   Trophy,
-  ArrowRight,
-  LogOut,
-  Flag,
   Database,
   ChevronDown,
 } from "lucide-react";
@@ -27,8 +22,6 @@ import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/Vehi
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction, getCityList } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
 import { prefetchAllWardLines, getLinePathsFromGeoJson } from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
-import CompletionDashboard from "../../../components/CompletionDashboard/CompletionDashboard";
-import HaltSummaryReplica from "../../../components/Monitoring/HaltSummaryReplica";
 import wevoisLogo from "../../../assets/images/wevoisLogo.png";
 import ChangePassword from "../../../components/ChangePassword/changePassword";
 import QuickAppSelection from "../../../mainLayout/QuickAppSelection";
@@ -49,7 +42,7 @@ import DutyCheckModal from "../../Components/D2DMonitoring/Modals/DutyCheckModal
 
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
-import { ShiftSnapshotStrip, FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
+import { FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
 import DbServiceOffcanvas from "../../Components/D2DMonitoring/DbServiceOffcanvas/DbServiceOffcanvas";
 import CitySelectionModal from "../../../components/CitySelectionModal/CitySelectionModal";
@@ -133,20 +126,6 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
   };
 };
 
-const getJourneyKindMeta = (kind = "") => {
-  const normalized = String(kind || "")
-    .trim()
-    .toLowerCase();
-  if (normalized.includes("fuel")) return { icon: Fuel, tone: "fuel" };
-  if (normalized.includes("depart"))
-    return { icon: ArrowRight, tone: "departed" };
-  if (normalized.includes("exit")) return { icon: LogOut, tone: "exited" };
-  if (normalized.includes("entry") || normalized.includes("enter"))
-    return { icon: MapPin, tone: "entered" };
-  if (normalized.includes("flag")) return { icon: Flag, tone: "checkpoint" };
-  return { icon: MapPin, tone: "entered" };
-};
-
 const MonitoringList = () => {
   const { city } = useParams();
   const navigate = useNavigate();
@@ -210,7 +189,7 @@ const MonitoringList = () => {
     dayjs().format("DD MMM, hh:mm A"),
   );
   const [refreshing, setRefreshing] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
+  const [, setDataLoading] = useState(false);
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
@@ -238,7 +217,6 @@ const MonitoringList = () => {
   const [lineStatusByWard, setLineStatusByWard] = useState({});
   const [isWardMetricsLoading, setIsWardMetricsLoading] = useState(true);
   const [phoneClock, setPhoneClock] = useState(new Date());
-  const [mapFocus, setMapFocus] = useState(null);
 
   const [vehicleIssueRows, setVehicleIssueRows] = useState([
     { id: 1, vehicleNo: "COMP-5340", selected: false, reason: "" },
@@ -461,14 +439,6 @@ const MonitoringList = () => {
   const quickSummary = displayQuickSummary;
   const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
   const eventLog = displayEventLog;
-  const statusSummaryText = String(displayVehicleStatus || "")
-    .toLowerCase()
-    .includes("dump")
-    ? "outside dumping yard"
-    : String(
-        vehicleJourneyMeta.title || displayVehicleStatus || "in transit",
-      ).toLowerCase();
-
   // const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
   //   quickSummary.fuelStops ?? 0
   // }</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
@@ -559,7 +529,6 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!selectedWard?.id) return;
     try {
-      const effectiveCity = city || "Sikar";
       action.getDutyInTime(selectedWard.id, setShowDutyInTime);
       action.getWardReachedTime(selectedWard.id, setWardReachedTime);
       action.getDutyOffTime(selectedWard.id, setDutyOffTime);
@@ -914,23 +883,6 @@ const MonitoringList = () => {
     completedLengthKm,
     remainingLengthKm,
   });
-  const isCoverageReady =
-    !isWardMetricsLoading && Array.isArray(stateItems) && stateItems.length > 0;
-  const liquidCoveragePercent = isCoverageReady
-    ? Math.max(0, Math.min(100, Number(zoneCoveragePercent) || 0))
-    : 0;
-  const liquidTotalKm = isCoverageReady
-    ? Math.max(0, Number(totalWardLengthKm) || 0)
-    : 0;
-  const liquidCoveredKm = isCoverageReady
-    ? Math.max(0, Number(completedLengthKm) || 0)
-    : 0;
-  const liquidLeftKm = isCoverageReady
-    ? Math.max(0, Number(remainingLengthKm) || 0)
-    : 0;
-  const liquidTrackFillWidth =
-    liquidCoveragePercent <= 0 ? 0 : Math.max(liquidCoveragePercent, 14);
-
   return (
     <>
     <div className={styles.realtimePage}>
