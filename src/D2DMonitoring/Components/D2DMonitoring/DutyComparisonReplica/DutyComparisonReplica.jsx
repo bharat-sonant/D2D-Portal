@@ -69,7 +69,6 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
 
   useEffect(() => {
     if (!wardId) { setWorkers(INITIAL_WORKERS); return; }
-    setWorkers(INITIAL_WORKERS);
     const unsub = subscribeWorkerDetails(wardId, setWorkers);
     return () => unsub();
   }, [wardId]);

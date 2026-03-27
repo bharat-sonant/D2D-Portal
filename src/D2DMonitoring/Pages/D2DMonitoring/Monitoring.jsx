@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import MapSection from "../../Components/D2DMonitoring/MapSection";
 
 import { connectFirebase } from "../../../firebase/firebaseService";
-import { getCityFirebaseConfig } from "../../../configurations/cityDBConfig";
+import { getCityFirebaseConfig, getCityFirebaseConfigAsync } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
@@ -146,6 +146,7 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!city) return;
     action.clearWorkerCaches();
+    setSelectedWard(null);
     const fetchWards = async () => {
       try {
         const wards = getWardListAction(city);
@@ -161,10 +162,6 @@ const MonitoringList = () => {
         if (Object.keys(statusByWard || {}).length > 0) {
           setLineStatusByWard((prev) => ({ ...prev, ...statusByWard }));
         }
-
-        // Pre-warm worker + photo cache for every ward so that selecting any
-        // ward shows driver/helper images instantly (no extra Firebase reads).
-        wards.forEach((ward) => action.getWorkerDetails(ward.id, () => {}));
       } catch (error) {
         console.error("Error initializing monitoring page data:", error);
       }
@@ -517,19 +514,19 @@ const MonitoringList = () => {
           kind: item.kind,
         }));
 
-  // Monitoring page always uses Sikar Firebase
   useEffect(() => {
+    if (!city) return;
     const initFirebase = async () => {
       try {
-        const city = "Sikar";
-        const firebaseConfig = getCityFirebaseConfig(city);
-        connectFirebase(firebaseConfig, city);
+        const effectiveCity = toTitleCase(city);
+        const firebaseConfig = await getCityFirebaseConfigAsync(effectiveCity);
+        connectFirebase(firebaseConfig, effectiveCity);
       } catch (error) {
-        console.error("Error initializing Firebase for Sikar:", error);
+        console.error("Error initializing Firebase:", error);
       }
     };
     initFirebase();
-  }, []);
+  }, [city]);
 
   useEffect(() => {
     if (!selectedWard?.id) return;

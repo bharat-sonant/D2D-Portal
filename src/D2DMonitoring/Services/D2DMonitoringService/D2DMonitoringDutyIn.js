@@ -8,8 +8,7 @@ const FILE = 'D2DMonitoringDutyIn';
 export const subscribeWorkerDetailsFromDB = (year, month, day, ward, onData) => {
     if (!year || !month || !day || !ward) return () => {};
     return db.subscribeData( `WasteCollectionInfo/${ward}/${year}/${month}/${day}/WorkerDetails`, (data) => {
-            if (!data) return;
-            onData(data);
+            onData(data ?? null);
         }
     );
 };

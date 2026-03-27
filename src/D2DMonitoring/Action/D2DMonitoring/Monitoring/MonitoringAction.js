@@ -347,6 +347,12 @@ const buildWorkerState = (raw, driverPhoto, driverMobile, helperPhoto, helperMob
     };
 };
 
+const EMPTY_WORKER_STATE = {
+    captain: { id: "", name: "", profileImage: null, phone: "" },
+    pilot:   { id: "", name: "", profileImage: null, phone: "", isDummy: false, noHelper: false, nameRed: false },
+    vehicle: "",
+};
+
 // ── In-memory caches (cleared on page reload) ─────────────────────────────
 const workerCache   = new Map(); // key: `${wardId}-${date}` → full WorkerState
 const employeeCache = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
@@ -404,6 +410,11 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
     if (workerCache.has(cacheKey)) setWorkers(workerCache.get(cacheKey));
 
     const unsubscribe = subscribeWorkerDetailsFromDB(year, month, day, wardId, async (raw) => {
+        if (!raw) {
+            workerCache.delete(cacheKey);
+            setWorkers(EMPTY_WORKER_STATE);
+            return;
+        }
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
         const [driver, helper] = await Promise.all([
