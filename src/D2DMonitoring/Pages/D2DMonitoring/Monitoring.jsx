@@ -962,7 +962,7 @@ const MonitoringList = () => {
           <div className={styles.layoutSplit}>
             <div className={styles.leftColumn}>
               <DutyComparisonReplica
-                key={`${city}-${selectedWard?.id}`}
+                key={city}
                 data={displayWardData}
                 wardId={selectedWard?.id}
                 onVehicleClick={() => setShowVehicleModal(true)}
