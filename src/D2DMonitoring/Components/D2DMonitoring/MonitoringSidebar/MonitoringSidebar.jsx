@@ -42,7 +42,7 @@ const MonitoringSidebar = ({
           >
             <div className={styles.wardRowHead}>
               <div className={styles.wardPrimaryName}>
-                {getZoneLabel(ward)}
+                {`Zone ${getZoneLabel(ward)}`}
               </div>
               <div
                 className={styles.progressChip}
