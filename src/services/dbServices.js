@@ -50,14 +50,19 @@ export const getDownloadURLFromStorage = async (filePath) => {
  * Returns an unsubscribe function; call it in useEffect cleanup.
  */
 export const subscribeData = (path, callback) => {
-  const database = getDatabaseInstance();
-  if (!database) return () => {};
-  const unsubscribe = onValue(ref(database, path), (snapshot) => {
-    const val = snapshot.val() ?? null;
-    trackCall(path, "subscribeData", val);
-    callback(val);
-  });
-  return unsubscribe;
+  let unsubscribe = () => {};
+  let cancelled = false;
+
+  getReadyDatabase().then(database => {
+    if (cancelled) return;
+    unsubscribe = onValue(ref(database, path), (snapshot) => {
+      const val = snapshot.val() ?? null;
+      trackCall(path, "subscribeData", val);
+      callback(val);
+    });
+  }).catch(() => {});
+
+  return () => { cancelled = true; unsubscribe(); };
 };
 
 /**
