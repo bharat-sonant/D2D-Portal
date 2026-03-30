@@ -141,7 +141,12 @@ const MonitoringList = () => {
 
   const [wardList, setWardList] = useState([]);
   const [showCityModal, setShowCityModal] = useState(false);
+  const [cityList, setCityList] = useState([]);
   const [showDbServiceOffcanvas, setShowDbServiceOffcanvas] = useState(false);
+
+  useEffect(() => {
+    getCityList().then((list) => setCityList(list.map((item) => item.cityName)));
+  }, []);
 
   useEffect(() => {
     if (!city) return;
@@ -1158,7 +1163,7 @@ const MonitoringList = () => {
           const newPath = pathname.replace(/^\/[^/]+/, `/${selectedCity}`);
           navigate(newPath);
         }}
-        cityList={getCityList().map((item) => item.cityName)}
+        cityList={cityList}
         selectedCity={city}
         title="Select City"
       />
