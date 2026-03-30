@@ -26,7 +26,7 @@ const Login = () => {
   const [activeDesign, setActiveDesign] = useState(1);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const DESIGN_DURATION = 1 * 60 * 1000;
+  const DESIGN_DURATION = 3 * 24 * 60 * 60 * 1000;
   const navigate = useNavigate();
   const { setCityContext } = useCity();
 
