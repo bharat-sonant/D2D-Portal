@@ -1,4 +1,5 @@
 import * as sbs from "../supabaseServices";
+import { getData } from "../dbServices";
 
 /**
  * Fetch all employees from Supabase
@@ -47,6 +48,60 @@ export const deleteEmployee = async (id) => {
     } else {
         return { status: 'error', message: result.error };
     }
+};
+
+const uploadImageFromFirebase = async (employeeId, cityName) => {
+    const firebaseUrl = await getData(`Employees/${employeeId}/GeneralDetails/profilePhotoURL`);
+    if (!firebaseUrl) return null;
+    let blob;
+    try {
+        const res = await fetch(firebaseUrl);
+        if (!res.ok) return null;
+        blob = await res.blob();
+    } catch { return null; }
+    const file = new File([blob], 'profileImage.jpg', { type: 'image/jpeg' });
+    const result = await sbs.uploadEmployeeProfileImage(file, cityName, employeeId);
+    return result.success ? result.url : null;
+};
+
+export const syncEmployeeProfileImage = async (employeeId, cityName) => {
+    if (!employeeId || !cityName) return { url: null };
+    const { exists, url: existingUrl } = await sbs.checkEmployeeImageExists(cityName, employeeId);
+    if (exists) return { url: existingUrl };
+    const url = await uploadImageFromFirebase(employeeId, cityName);
+    return { url };
+};
+
+export const syncMonitoringEmployee = async (employeeId, cityName) => {
+    if (!employeeId) return { name: null, mobile: null, dummyFlag: null, photo: null };
+    const { success, data: existing } = await sbs.getMonitoringEmployee(employeeId);
+    if (success && existing) {
+        return {
+            name:      existing.Name             || null,
+            mobile:    existing.Mobile != null   ? String(existing.Mobile) : null,
+            dummyFlag: existing.isDummyId        ?? null,
+            photo:     existing.profilePhotoUrl  || null,
+        };
+    }
+    const [name, mobile, dummyFlag, { url: photoUrl }] = await Promise.all([
+        getData(`Employees/${employeeId}/GeneralDetails/name`),
+        getData(`Employees/${employeeId}/GeneralDetails/mobile`),
+        getData(`EmployeeDetailData/${employeeId}/isDummyId`),
+        cityName ? syncEmployeeProfileImage(employeeId, cityName) : Promise.resolve({ url: null }),
+    ]);
+    await sbs.upsertMonitoringEmployee(employeeId, {
+        Name:            name      || null,
+        Mobile:          mobile    != null ? Number(mobile)    : null,
+        isDummyId:       dummyFlag != null ? Number(dummyFlag) : null,
+        profilePhotoUrl: photoUrl  || null,
+        CityName:        cityName  || null,
+    });
+    return {
+        name:      name      || null,
+        mobile:    mobile    != null ? String(mobile) : null,
+        dummyFlag: dummyFlag ?? null,
+        photo:     photoUrl  || null,
+    };
 };
 
 /**
