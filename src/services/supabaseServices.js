@@ -180,6 +180,92 @@ export const uploadAttachment = async (file, bucket,filePath) => {
   };
 };
 
+/**
+ * City-wise Supabase bucket mein file upload karta hai.
+ * Bucket exist na kare to automatically create karta hai.
+ * Bucket name: city ka naam lowercase mein (e.g. "sikar", "ajmer", "bharatpur")
+ * @param {File}   file      - upload karne wali file
+ * @param {string} cityName  - city ka naam (e.g. "Sikar", "Ajmer")
+ * @param {string} filePath  - bucket ke andar file ka path (e.g. "WardBoundaries/ward_1/2025-01-01")
+ * @returns {{ success: bool, url: string, path: string, bucketName: string }}
+ */
+export const uploadAttachmentCityWise = async (file, cityName, filePath) => {
+  if (!file || !cityName || !filePath) {
+    return { success: false, error: "file, cityName aur filePath required hain" };
+  }
+
+  const bucketName = String(cityName).toLowerCase().trim();
+
+  // Bucket exist karta hai ya nahi check karo
+  const { data: existing } = await supabase.storage.getBucket(bucketName);
+
+  if (!existing) {
+    const { error: createError } = await supabase.storage.createBucket(bucketName, {
+      public: true,
+      allowedMimeTypes: ['application/json', 'image/*'],
+      fileSizeLimit: 10485760, // 10 MB
+    });
+    if (createError) {
+      return { success: false, error: createError.message, bucketName, cityName };
+    }
+  }
+
+  // File upload karo
+  const { error: uploadError } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, { upsert: true });
+
+  if (uploadError) {
+    return { success: false, error: uploadError.message, bucketName };
+  }
+
+  const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+
+  return { success: true, url: data.publicUrl, path: filePath, bucketName };
+};
+
+/**
+ * Employee ki profile image city-wise bucket mein upload karta hai.
+ * Path: ${cityName}/EmployeeImages/${employeeId}/profileImage.jpg
+ * @param {File}   imageFile  - image file
+ * @param {string} cityName   - city ka naam (e.g. "Sikar")
+ * @param {string} employeeId - employee ka unique ID
+ * @returns {{ success: bool, url: string, path: string, bucketName: string }}
+ */
+export const uploadEmployeeProfileImage = async (imageFile, cityName, employeeId) => {
+  if (!imageFile || !cityName || !employeeId) {
+    return { success: false, error: "imageFile, cityName aur employeeId required hain" };
+  }
+
+  const filePath = `EmployeeImages/${employeeId}/profileImage.jpg`;
+  return uploadAttachmentCityWise(imageFile, cityName, filePath);
+};
+
+/**
+ * Check karta hai ki employee ki profile image Supabase mein already exist karti hai ya nahi.
+ * @param {string} cityName   - city ka naam (e.g. "Sikar")
+ * @param {string} employeeId - employee ka unique ID
+ * @returns {{ exists: bool, url: string|null }}
+ */
+export const checkEmployeeImageExists = async (cityName, employeeId) => {
+  if (!cityName || !employeeId) return { exists: false, url: null };
+
+  const bucketName = String(cityName).toLowerCase().trim();
+  const filePath = `EmployeeImages/${employeeId}/profileImage.jpg`;
+
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .list(`EmployeeImages/${employeeId}`);
+
+  if (error || !data || data.length === 0) return { exists: false, url: null };
+
+  const found = data.some(f => f.name === 'profileImage.jpg');
+  if (!found) return { exists: false, url: null };
+
+  const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+  return { exists: true, url: urlData.publicUrl };
+};
+
 
 export const fetchCalenderData = async (userId, year, month) => {
   try {
@@ -321,3 +407,70 @@ export const upsertBulkData = async (tableName, dataArray, conflictKeys) => {
 
 
 export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`
+
+/**
+ * MonitoringEmployees table se employee data fetch karo by Firebase employee ID.
+ */
+export const getMonitoringEmployee = async (employeeId) => {
+  try {
+    const { data, error } = await supabase
+      .from('MonitoringEmployees')
+      .select('*')
+      .eq('id', Number(employeeId))
+      .maybeSingle();
+    if (error) throw error;
+    return { success: true, data: data || null };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * MonitoringEmployees table mein employee data upsert karo (id = Firebase employee ID).
+ */
+export const upsertMonitoringEmployee = async (employeeId, payload) => {
+  try {
+    const { data, error } = await supabase
+      .from('MonitoringEmployees')
+      .upsert({ id: Number(employeeId), ...payload }, { onConflict: 'id' })
+      .select()
+      .single();
+    if (error) throw error;
+    return { success: true, data };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+/**
+ * Check if driver and helper data exists in Employees table for a given ward's assignment.
+ * @param {string} driverId  - driver_id from ward assignment
+ * @param {string} helperId  - helper_id from ward assignment
+ * @returns {{ driverExists: bool, helperExists: bool, missingIds: string[] }}
+ */
+export const checkWardEmployeesExist = async (driverId, helperId) => {
+  try {
+    const idsToCheck = [driverId, helperId].filter(Boolean);
+
+    if (idsToCheck.length === 0) {
+      return { success: true, driverExists: false, helperExists: false, missingIds: [] };
+    }
+
+    const { data, error } = await supabase
+      .from('Employees')
+      .select('id')
+      .in('id', idsToCheck);
+
+    if (error) throw error;
+
+    const foundIds = new Set((data || []).map(emp => emp.id));
+    const driverExists = driverId ? foundIds.has(driverId) : null;
+    const helperExists = helperId ? foundIds.has(helperId) : null;
+
+    const missingIds = idsToCheck.filter(id => !foundIds.has(id));
+
+    return { success: true, driverExists, helperExists, missingIds };
+  } catch (err) {
+    return { success: false, error: err.message || err };
+  }
+};

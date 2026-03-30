@@ -11,7 +11,7 @@ import {
     getEmployeeProfilePhotoFromDB,
     getEmployeeMobileFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
-
+import { syncMonitoringEmployee } from "../../../../services/EmployeeService/EmployeeService";
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 import {
@@ -319,28 +319,27 @@ const cleanField = (val) => {
 const toTitleCase = (str) =>
     String(str || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 
-const buildWorkerState = (raw, driverPhoto, driverMobile, helperPhoto, helperMobile, helperIsDummyFlag = null) => {
-    const helperIsDummy  = Number(helperIsDummyFlag) === 1;
-    const helperName     = cleanField(raw.helperName) || "";
+// driver / helper shape: { name, photo, mobile, dummyFlag }
+const buildWorkerState = (raw, driver, helper) => {
+    const helperIsDummy  = Number(helper.dummyFlag) === 1;
+    const helperName     = helper.name || cleanField(raw.helperName) || "";
     const helperHasCTag  = /\(c\)/i.test(helperName);
 
-    // isDummy=1 AND (c) → Without Helper
-    // isDummy≠1 AND (c) → show helper, name red + blink
     const noHelper = helperIsDummy && helperHasCTag;
     const nameRed  = !helperIsDummy && helperHasCTag;
 
     return {
         captain: {
             id:           cleanField(raw.driver),
-            name:         toTitleCase(cleanField(raw.driverName)),
-            profileImage: driverPhoto  || null,
-            phone:        driverMobile || "",
+            name:         toTitleCase(driver.name || cleanField(raw.driverName)),
+            profileImage: driver.photo  || null,
+            phone:        driver.mobile || "",
         },
         pilot: {
             id:           cleanField(raw.helper),
             name:         toTitleCase(helperName),
-            profileImage: helperPhoto  || null,
-            phone:        helperMobile || "",
+            profileImage: helper.photo  || null,
+            phone:        helper.mobile || "",
             isDummy:      helperIsDummy,
             noHelper,
             nameRed,
@@ -357,26 +356,8 @@ const EMPTY_WORKER_STATE = {
 
 // ── In-memory caches (cleared on page reload) ─────────────────────────────
 const workerCache       = new Map(); // key: `${wardId}-${date}` → full WorkerState
-const employeeCache     = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
+const employeeCache     = new Map(); // key: employeeId → { name, photo, mobile, dummyFlag }
 const imagePreloadCache = new Set(); // URLs already kicked off in browser cache
-
-// ── sessionStorage cache for photo URLs ───────────────────────────────────
-// Survives page reload (within the same tab). Cleared on city switch.
-// Benefit: zero RTDB reads for photo URL on subsequent loads → instant display.
-const PHOTO_SESSION_KEY = 'd2d_emp_photo';
-const getSessionPhoto = (id) => {
-    try {
-        const raw = sessionStorage.getItem(PHOTO_SESSION_KEY);
-        return raw ? (JSON.parse(raw)[id] ?? null) : null;
-    } catch { return null; }
-};
-const setSessionPhoto = (id, url) => {
-    try {
-        const cache = JSON.parse(sessionStorage.getItem(PHOTO_SESSION_KEY) || '{}');
-        cache[id] = url;
-        sessionStorage.setItem(PHOTO_SESSION_KEY, JSON.stringify(cache));
-    } catch {}
-};
 
 // Call this on city switch — employee IDs are city-specific so stale data
 // from a previous city must not bleed into the new one.
@@ -384,7 +365,6 @@ export const clearWorkerCaches = () => {
     workerCache.clear();
     employeeCache.clear();
     imagePreloadCache.clear();
-    try { sessionStorage.removeItem(PHOTO_SESSION_KEY); } catch {}
 };
 
 // Kicks off a browser image fetch AND pre-decodes into GPU memory before the
@@ -397,29 +377,15 @@ const preloadImage = (url) => {
     img.decode?.().catch(() => {}); // decode ahead of render (non-blocking)
 };
 
-// Fetches only the 3 fields we need (photo, mobile, dummyFlag) in parallel.
-// Photo URL is read from sessionStorage first — skips RTDB on reload.
-const fetchEmployeeData = async (employeeId) => {
-    if (!employeeId) return { photo: null, mobile: "", dummyFlag: null };
+// Supabase check → mila toh dikhaao, nahi mila toh Firebase → Supabase save → dikhaao.
+const fetchEmployeeData = async (employeeId, cityName) => {
+    if (!employeeId) return { name: null, photo: null, mobile: "", dummyFlag: null };
     if (employeeCache.has(employeeId)) return employeeCache.get(employeeId);
 
-    // sessionStorage hit → 0ms, no RTDB call for photo URL
-    const cachedPhoto = getSessionPhoto(employeeId);
-
-    const [photo, mobile, dummyFlag] = await Promise.all([
-        cachedPhoto ? Promise.resolve(cachedPhoto) : getEmployeeProfilePhotoFromDB(employeeId),
-        getEmployeeMobileFromDB(employeeId),
-        getHelperDummyFlagFromDB(employeeId),
-    ]);
-    const result = {
-        photo:     photo     || null,
-        mobile:    mobile    || "",
-        dummyFlag: dummyFlag ?? null,
-    };
-    // Persist URL to sessionStorage so next reload skips RTDB
-    if (result.photo && !cachedPhoto) setSessionPhoto(employeeId, result.photo);
+    const { name, photo, mobile, dummyFlag } = await syncMonitoringEmployee(employeeId, cityName);
+    const result = { name: name || null, photo: photo || null, mobile: mobile || "", dummyFlag: dummyFlag ?? null };
     employeeCache.set(employeeId, result);
-    preloadImage(result.photo); // download + decode before <img> renders
+    preloadImage(result.photo);
     return result;
 };
 
@@ -428,13 +394,12 @@ const fetchEmployeeData = async (employeeId) => {
  * in-memory cache on every revisit, no network round-trip needed.
  * Returns unsubscribe; call it in useEffect cleanup.
  */
-export const subscribeWorkerDetails = (wardId, setWorkers) => {
+export const subscribeWorkerDetails = (wardId, setWorkers, cityName) => {
     const year     = dayjs().format("YYYY");
     const month    = dayjs().format("MMMM");
     const day      = dayjs().format("YYYY-MM-DD");
     const cacheKey = `${wardId}-${day}`;
 
-    // Serve from cache instantly (0ms) — no waiting for Firebase round-trip.
     if (workerCache.has(cacheKey)) setWorkers(workerCache.get(cacheKey));
 
     const unsubscribe = subscribeWorkerDetailsFromDB(year, month, day, wardId, async (raw) => {
@@ -446,10 +411,10 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
         const [driver, helper] = await Promise.all([
-            fetchEmployeeData(driverId),
-            fetchEmployeeData(helperId),
+            fetchEmployeeData(driverId, cityName),
+            fetchEmployeeData(helperId, cityName),
         ]);
-        const workers = buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag);
+        const workers = buildWorkerState(raw, driver, helper);
         workerCache.set(cacheKey, workers);
         setWorkers(workers);
     });
@@ -457,7 +422,7 @@ export const subscribeWorkerDetails = (wardId, setWorkers) => {
     return unsubscribe;
 };
 
-export const getWorkerDetails = async (wardId, setWorkers) => {
+export const getWorkerDetails = async (wardId, setWorkers, cityName) => {
     try {
         const year     = dayjs().format("YYYY");
         const month    = dayjs().format("MMMM");
@@ -479,31 +444,22 @@ export const getWorkerDetails = async (wardId, setWorkers) => {
         const helperId = cleanField(raw.helper);
 
         // ── Phase 1: show names + vehicle instantly ──────────────────────────
-        // Use cached employee data if available, else show placeholders
-        const dCached = employeeCache.get(driverId);
-        const hCached = employeeCache.get(helperId);
-        setWorkers(buildWorkerState(
-            raw,
-            dCached?.photo     ?? null,
-            dCached?.mobile    ?? "",
-            hCached?.photo     ?? null,
-            hCached?.mobile    ?? "",
-            hCached?.dummyFlag ?? null,
-        ));
+        const dCached     = employeeCache.get(driverId);
+        const hCached     = employeeCache.get(helperId);
+        const placeholder = { name: null, photo: null, mobile: "", dummyFlag: null };
+        setWorkers(buildWorkerState(raw, dCached ?? placeholder, hCached ?? placeholder));
 
-        // ── Phase 2: fetch missing employee data (2 reads instead of 5) ─────
+        // ── Phase 2: fetch missing employee data ─────────────────────────────
         if (!dCached || !hCached) {
             const [driver, helper] = await Promise.all([
-                fetchEmployeeData(driverId),
-                fetchEmployeeData(helperId),
+                fetchEmployeeData(driverId, cityName),
+                fetchEmployeeData(helperId, cityName),
             ]);
-            const workers = buildWorkerState(raw, driver.photo, driver.mobile, helper.photo, helper.mobile, helper.dummyFlag);
+            const workers = buildWorkerState(raw, driver, helper);
             workerCache.set(cacheKey, workers);
             setWorkers(workers);
         } else {
-            workerCache.set(cacheKey, buildWorkerState(
-                raw, dCached.photo, dCached.mobile, hCached.photo, hCached.mobile, hCached.dummyFlag
-            ));
+            workerCache.set(cacheKey, buildWorkerState(raw, dCached, hCached));
         }
     } catch (error) {
         console.error("Error in getWorkerDetails:", error);

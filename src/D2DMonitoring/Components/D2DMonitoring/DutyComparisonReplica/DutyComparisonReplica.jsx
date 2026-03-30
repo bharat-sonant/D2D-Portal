@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Phone, ChevronRight, UserStar, UserX } from "lucide-react";
+import { useParams } from "react-router-dom";
 import fallbackAvatar from "../../../../assets/images/avtarUser.png";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
@@ -93,13 +94,14 @@ const NoHelperCard = () => (
 );
 
 const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
+  const { city } = useParams();
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
 
   useEffect(() => {
     if (!wardId) { setWorkers(INITIAL_WORKERS); return; }
-    const unsub = subscribeWorkerDetails(wardId, setWorkers);
+    const unsub = subscribeWorkerDetails(wardId, setWorkers, city);
     return () => unsub();
-  }, [wardId]);
+  }, [wardId, city]);
 
   const { captain, pilot, vehicle } = workers;
   const displayVehicle = vehicle || "";
