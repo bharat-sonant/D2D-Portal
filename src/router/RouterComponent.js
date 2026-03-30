@@ -175,20 +175,23 @@ const RouterComponent = () => {
           }
         />
         <Route
-          path="/fuel/add_fuel_entries"
+       
+          path="/:city/d2dMonitoring/vehicle_fuel_report"
           element={
-            <ProtectedRouter>
-              <FuelManagementLayout />
-              <FuelEntries />
-            </ProtectedRouter>
+            
+             
+                <FuelReport />
+             
+            
           }
         />
         <Route
           path="/fuel/fuel_report"
           element={
             <ProtectedRouter>
-              <FuelManagementLayout />
-              <FuelReport />
+              <FuelManagementLayout>
+                <FuelReport />
+              </FuelManagementLayout>
             </ProtectedRouter>
           }
         />

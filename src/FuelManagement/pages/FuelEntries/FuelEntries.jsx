@@ -204,7 +204,7 @@ import {
 } from "recharts";
 import { NavLink, Outlet } from "react-router-dom";
 import Vehicle from "../Vehicle/Vehicle";
-import SyncData from "../SyncData/SyncData";
+
 
 const companies = ["TATA", "Mahindra", "Leyland"];
 
@@ -735,11 +735,7 @@ export default function FuelEntries() {
           </div>
         )}
 
-        {activeTab === "Sync Data" && (
-          <div style={{ padding: "30px" }}>
-            <SyncData />
-          </div>
-        )}
+      
       </div>
     </div>
   );

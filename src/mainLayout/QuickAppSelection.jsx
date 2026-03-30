@@ -377,7 +377,7 @@ const appsList = [
     name: "Fuel Management",
     icon: Fuel,
     color: "#f6ad55",
-    path: "/fuel/add_fuel_entries",
+    path: "/d2dMonitoring/vehicle_fuel_report",
   },
   {
     id: 9,

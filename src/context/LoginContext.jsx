@@ -4,7 +4,7 @@ import { useLocation, useNavigate, matchPath } from "react-router-dom";
 
 const LoginContext = createContext();
 
-const PUBLIC_ROUTES = ["/", "/:city/d2dMonitoring/monitoring","/:city/d2dMonitoring/daily-work-report"];
+const PUBLIC_ROUTES = ["/", "/:city/d2dMonitoring/monitoring","/:city/d2dMonitoring/daily-work-report","/:city/d2dMonitoring/vehicle_fuel_report"];
 
 export const LoginProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
