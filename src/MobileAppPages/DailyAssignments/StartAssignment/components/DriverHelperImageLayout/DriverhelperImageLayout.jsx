@@ -4,6 +4,23 @@ import styles from "../../styles/DriverHelperImageLayout/DriverHelperImageLayout
 import * as common from '../../../../../common/common'
 import { saveDriverHelperImage } from "../../../../services/StartAssignmentService/StartAssignment";
 
+// Resize + convert to WebP — keeps dimensions within maxWidth, quality 0–1
+const compressToWebP = (file, maxWidth = 800, quality = 0.75) =>
+  new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => resolve(blob), "image/webp", quality);
+    };
+    img.src = url;
+  });
+
 const DriverHelperImageLayout = (props) => {
   const driverInputRef = useRef(null);
 
@@ -11,17 +28,19 @@ const DriverHelperImageLayout = (props) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    const compressed = await compressToWebP(file);
+
     const reader = new FileReader();
     reader.onload = async (event) => {
       if (type === "driverImage") {
         props.setDriverImage(event.target.result);
         clearError(type);
-        // ===== Auto Upload =====
-        await handleSave(event.target.result);
+        // ===== Auto Upload (compressed WebP blob) =====
+        await handleSave(compressed);
       }
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressed);
   };
 
 
@@ -39,11 +58,8 @@ const DriverHelperImageLayout = (props) => {
     }
   };
 
-  const handleSave = async (imgData) => {
-    const finalImage = imgData || props.driverImage;
+  const handleSave = async (blob) => {
     try {
-
-      const blob = await fetch(finalImage).then(res => res.blob());
       const selectedWard = props.ward !== 'N/A' ? props.ward : 'Bharat';
       const now = new Date();
 

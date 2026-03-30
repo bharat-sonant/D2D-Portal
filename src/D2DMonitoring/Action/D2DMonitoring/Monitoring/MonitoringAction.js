@@ -356,9 +356,27 @@ const EMPTY_WORKER_STATE = {
 };
 
 // ── In-memory caches (cleared on page reload) ─────────────────────────────
-const workerCache   = new Map(); // key: `${wardId}-${date}` → full WorkerState
-const employeeCache = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
+const workerCache       = new Map(); // key: `${wardId}-${date}` → full WorkerState
+const employeeCache     = new Map(); // key: employeeId → { photo, mobile, dummyFlag }
 const imagePreloadCache = new Set(); // URLs already kicked off in browser cache
+
+// ── sessionStorage cache for photo URLs ───────────────────────────────────
+// Survives page reload (within the same tab). Cleared on city switch.
+// Benefit: zero RTDB reads for photo URL on subsequent loads → instant display.
+const PHOTO_SESSION_KEY = 'd2d_emp_photo';
+const getSessionPhoto = (id) => {
+    try {
+        const raw = sessionStorage.getItem(PHOTO_SESSION_KEY);
+        return raw ? (JSON.parse(raw)[id] ?? null) : null;
+    } catch { return null; }
+};
+const setSessionPhoto = (id, url) => {
+    try {
+        const cache = JSON.parse(sessionStorage.getItem(PHOTO_SESSION_KEY) || '{}');
+        cache[id] = url;
+        sessionStorage.setItem(PHOTO_SESSION_KEY, JSON.stringify(cache));
+    } catch {}
+};
 
 // Call this on city switch — employee IDs are city-specific so stale data
 // from a previous city must not bleed into the new one.
@@ -366,24 +384,30 @@ export const clearWorkerCaches = () => {
     workerCache.clear();
     employeeCache.clear();
     imagePreloadCache.clear();
+    try { sessionStorage.removeItem(PHOTO_SESSION_KEY); } catch {}
 };
 
-// Kicks off a browser image fetch so it lands in HTTP cache before the
-// <img> tag is rendered — eliminates the visible "blank → image" flash.
+// Kicks off a browser image fetch AND pre-decodes into GPU memory before the
+// <img> tag renders — eliminates the visible "blank → image" flash.
 const preloadImage = (url) => {
     if (!url || imagePreloadCache.has(url)) return;
     imagePreloadCache.add(url);
     const img = new window.Image();
     img.src = url;
+    img.decode?.().catch(() => {}); // decode ahead of render (non-blocking)
 };
 
-// Fetches only the 3 fields we need (photo, mobile, dummyFlag) in parallel —
-// avoids downloading the entire GeneralDetails object.
+// Fetches only the 3 fields we need (photo, mobile, dummyFlag) in parallel.
+// Photo URL is read from sessionStorage first — skips RTDB on reload.
 const fetchEmployeeData = async (employeeId) => {
     if (!employeeId) return { photo: null, mobile: "", dummyFlag: null };
     if (employeeCache.has(employeeId)) return employeeCache.get(employeeId);
+
+    // sessionStorage hit → 0ms, no RTDB call for photo URL
+    const cachedPhoto = getSessionPhoto(employeeId);
+
     const [photo, mobile, dummyFlag] = await Promise.all([
-        getEmployeeProfilePhotoFromDB(employeeId),
+        cachedPhoto ? Promise.resolve(cachedPhoto) : getEmployeeProfilePhotoFromDB(employeeId),
         getEmployeeMobileFromDB(employeeId),
         getHelperDummyFlagFromDB(employeeId),
     ]);
@@ -392,8 +416,10 @@ const fetchEmployeeData = async (employeeId) => {
         mobile:    mobile    || "",
         dummyFlag: dummyFlag ?? null,
     };
+    // Persist URL to sessionStorage so next reload skips RTDB
+    if (result.photo && !cachedPhoto) setSessionPhoto(employeeId, result.photo);
     employeeCache.set(employeeId, result);
-    preloadImage(result.photo); // start browser fetch immediately
+    preloadImage(result.photo); // download + decode before <img> renders
     return result;
 };
 

@@ -19,26 +19,50 @@ const isCached = (url) => {
 };
 
 const CrewCard = ({ role, roleStyle, member }) => {
-  const src = member.profileImage || fallbackAvatar;
-  const [imgLoaded, setImgLoaded] = useState(() => isCached(src));
+  const realSrc = member.profileImage;
+
+  // Always show something immediately:
+  //   cached  → sharp real photo at 0 ms
+  //   loading → blurred fallback avatar, swap to sharp real photo once loaded
+  const [displaySrc, setDisplaySrc] = useState(
+    () => (realSrc && isCached(realSrc)) ? realSrc : fallbackAvatar
+  );
+  const [sharp, setSharp] = useState(() => !realSrc || isCached(realSrc));
 
   useEffect(() => {
-    setImgLoaded(isCached(src));
-  }, [src]);
+    if (!realSrc) {
+      setDisplaySrc(fallbackAvatar);
+      setSharp(true);
+      return;
+    }
+    if (isCached(realSrc)) {
+      setDisplaySrc(realSrc);
+      setSharp(true);
+      return;
+    }
+    // Show blurred fallback while real image downloads in background
+    setDisplaySrc(fallbackAvatar);
+    setSharp(false);
+    const img = new window.Image();
+    img.onload  = () => { setDisplaySrc(realSrc); setSharp(true); };
+    img.onerror = () => setSharp(true); // keep fallback, un-blur
+    img.src = realSrc;
+  }, [realSrc]);
 
   return (
     <div className={styles.heroReplicaCrewCard}>
       <span className={`${styles.heroReplicaRolePill} ${roleStyle}`}>{role}</span>
 
       <div className={styles.heroReplicaAvatarWrap}>
-        {!imgLoaded && <div className={styles.avatarSkeleton} />}
         <img
-          key={src}
-          src={src}
+          src={displaySrc}
           alt={member.name || role}
-          className={imgLoaded ? styles.imgLoaded : styles.imgLoading}
-          onLoad={() => setImgLoaded(true)}
-          onError={(e) => { e.target.src = fallbackAvatar; setImgLoaded(true); }}
+          className={sharp ? styles.imgLoaded : styles.imgBlurPlaceholder}
+          fetchpriority="high"
+          decoding="async"
+          width={90}
+          height={90}
+          onError={(e) => { e.target.src = fallbackAvatar; setSharp(true); }}
         />
       </div>
       <div className={styles.nameBG}>
