@@ -19,6 +19,45 @@
   border-radius: inherit;
 }
 
+.skeletonPill {
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f7fb 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonName {
+  height: 13px;
+  width: 70%;
+  margin: 4px auto 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f7fb 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonPhone {
+  height: 10px;
+  width: 55%;
+  margin: 0 auto;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f7fb 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeletonVehicle {
+  height: 14px;
+  width: 100px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8edf2 25%, #f4f7fb 50%, #e8edf2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
 /* Blurred fallback avatar shown while real photo loads */
 .imgBlurPlaceholder {
   width: 100%;

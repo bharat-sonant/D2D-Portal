@@ -1,19 +1,20 @@
 /**
  * DailyWorkReport — Cache
  *
- * Ward list  : localStorage   24h  TTL  (rarely changes)
+ * Ward list  : in-memory only  (derived from local WardCityMap — no network call needed)
  * Past dates : localStorage   7d   TTL  (static data)
  * Today      : sessionStorage 30m  TTL  (stale-while-revalidate supported)
  */
 
 const PREFIX      = 'dwr_';
-const WARD_TTL    = 24 * 60 * 60 * 1000;       // 24 hours
 const REPORT_TTL  = 7  * 24 * 60 * 60 * 1000;  // 7 days
 const TODAY_TTL   = 30 * 60 * 1000;             // 30 minutes
 
-const wardKey   = (city)       => `${PREFIX}wards_${city.toLowerCase()}`;
 const reportKey = (city, date) => `${PREFIX}report_${city.toLowerCase()}_${date}`;
 const todayKey  = (city, date) => `${PREFIX}today_${city.toLowerCase()}_${date}`;
+
+// ─── In-memory ward list cache (no localStorage — data is from local JSON) ──
+const _wardCache = new Map();
 
 // ─── Helpers ─────────────────────────────────────────────────────
 
@@ -55,8 +56,8 @@ const ssWrite = (key, data, ttl) => {
 
 // ─── Public API ──────────────────────────────────────────────────
 
-export const getCachedWardList    = (city)             => lsRead(wardKey(city));
-export const setCachedWardList    = (city, data)       => lsWrite(wardKey(city), data, WARD_TTL);
+export const getCachedWardList = (city) => _wardCache.get(city.toLowerCase()) ?? null;
+export const setCachedWardList = (city, data) => { _wardCache.set(city.toLowerCase(), data); };
 
 const MAX_REPORT_DATES = 7; // sirf last 7 dates store karo
 
@@ -88,12 +89,15 @@ export const getStaleTodayCache   = (city, date)       => ssRead(todayKey(city, 
 export const setTodayCache        = (city, date, data) => ssWrite(todayKey(city, date), data, TODAY_TTL);
 
 export const cleanExpiredCache = () => {
+    const WARD_KEY_PREFIX = `${PREFIX}wards_`;
     const clean = (storage) => {
         try {
             Object.keys(storage)
                 .filter(k => k.startsWith(PREFIX))
                 .forEach(k => {
                     try {
+                        // Remove legacy dwr_wards_* entries (now in-memory only)
+                        if (k.startsWith(WARD_KEY_PREFIX)) { storage.removeItem(k); return; }
                         const { expiry } = JSON.parse(storage.getItem(k));
                         if (Date.now() > expiry) storage.removeItem(k);
                     } catch { storage.removeItem(k); }

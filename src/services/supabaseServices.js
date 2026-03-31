@@ -409,6 +409,26 @@ export const upsertBulkData = async (tableName, dataArray, conflictKeys) => {
 export const storageUrl = `https://tayzauotsjxdgvfadcby.supabase.co/storage/v1/object/public`
 
 /**
+ * MonitoringEmployees table se multiple employees ek hi query mein fetch karo.
+ * Returns a Map: String(id) → row
+ */
+export const getMonitoringEmployeesBatch = async (employeeIds) => {
+  if (!employeeIds?.length) return new Map();
+  const ids = employeeIds.map(id => Number(id)).filter(Number.isFinite);
+  if (!ids.length) return new Map();
+  try {
+    const { data, error } = await supabase
+      .from('MonitoringEmployees')
+      .select('*')
+      .in('id', ids);
+    if (error) throw error;
+    return new Map((data || []).map(e => [String(e.id), e]));
+  } catch {
+    return new Map();
+  }
+};
+
+/**
  * MonitoringEmployees table se employee data fetch karo by Firebase employee ID.
  */
 export const getMonitoringEmployee = async (employeeId) => {

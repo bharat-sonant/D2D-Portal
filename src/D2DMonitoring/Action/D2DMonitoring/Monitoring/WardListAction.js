@@ -1,17 +1,8 @@
-import axios from "axios";
 import WardCityMap from "../../../../assets/WardsJson/WardCityMap";
+import { ensureCityDetails } from "../../../../configurations/cityDBConfig";
 
-const CITY_DETAILS_URL =
-    "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
-
-const fetchCityDetails = async () => {
-    try {
-        const res = await axios.get(CITY_DETAILS_URL);
-        return res.data || [];
-    } catch {
-        return [];
-    }
-};
+// Reuse the shared cached fetch from cityDBConfig to avoid a duplicate HTTP request
+const fetchCityDetails = () => ensureCityDetails().catch(() => []);
 
 export const getCityList = async () => {
     const cityDetails = await fetchCityDetails();

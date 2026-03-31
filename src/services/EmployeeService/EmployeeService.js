@@ -72,6 +72,44 @@ export const syncEmployeeProfileImage = async (employeeId, cityName) => {
     return { url };
 };
 
+/**
+ * Batch version of syncMonitoringEmployee.
+ * One Supabase query for all IDs → missing ones fall back to Firebase individually.
+ * Returns an object: { [employeeId]: { name, mobile, dummyFlag, photo } }
+ */
+export const syncMonitoringEmployeesBatch = async (employeeIds, cityName) => {
+    if (!employeeIds?.length) return {};
+
+    // Step 1: single batch query — 1 round-trip instead of N
+    const foundMap = await sbs.getMonitoringEmployeesBatch(employeeIds);
+
+    const result = {};
+    const missing = [];
+
+    for (const id of employeeIds) {
+        const row = foundMap.get(String(Number(id)));
+        if (row) {
+            result[String(id)] = {
+                name:      row.Name             || null,
+                mobile:    row.Mobile != null   ? String(row.Mobile) : null,
+                dummyFlag: row.isDummyId        ?? null,
+                photo:     row.profilePhotoUrl  || null,
+            };
+        } else {
+            missing.push(id);
+        }
+    }
+
+    // Step 2: individually sync truly missing employees (Firebase → Supabase)
+    if (missing.length) {
+        await Promise.all(missing.map(async (id) => {
+            result[String(id)] = await syncMonitoringEmployee(id, cityName);
+        }));
+    }
+
+    return result;
+};
+
 export const syncMonitoringEmployee = async (employeeId, cityName) => {
     if (!employeeId) return { name: null, mobile: null, dummyFlag: null, photo: null };
     const { success, data: existing } = await sbs.getMonitoringEmployee(employeeId);

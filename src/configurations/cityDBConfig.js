@@ -3,23 +3,46 @@ import axios from "axios";
 const CITY_DETAILS_URL =
   "https://firebasestorage.googleapis.com/v0/b/dtdnavigator.appspot.com/o/CityDetails%2FCityDetails.json?alt=media";
 
+const CACHE_KEY = "cityDetails_cache";
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
 let _cityDetailsCache = null;
+let _fetchPromise = null; // prevents duplicate in-flight HTTP requests
+
+const loadCityDetailsFromStorage = () => {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) { localStorage.removeItem(CACHE_KEY); return null; }
+    return data;
+  } catch { return null; }
+};
+
+const saveCityDetailsToStorage = (data) => {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch { }
+};
+
+export const ensureCityDetails = () => {
+  if (_cityDetailsCache) return Promise.resolve(_cityDetailsCache);
+  const fromStorage = loadCityDetailsFromStorage();
+  if (fromStorage) { _cityDetailsCache = fromStorage; return Promise.resolve(_cityDetailsCache); }
+  if (_fetchPromise) return _fetchPromise;
+  _fetchPromise = axios.get(CITY_DETAILS_URL)
+    .then((res) => { _cityDetailsCache = res.data || []; saveCityDetailsToStorage(_cityDetailsCache); return _cityDetailsCache; })
+    .catch(() => { _cityDetailsCache = []; return _cityDetailsCache; })
+    .finally(() => { _fetchPromise = null; });
+  return _fetchPromise;
+};
 
 /**
  * CityDetails.json se Firebase config fetch karta hai.
  * Agar city wahan nahi mili toh .env fallback use karta hai.
  */
 export const getCityFirebaseConfigAsync = async (city) => {
-  if (!_cityDetailsCache) {
-    try {
-      const res = await axios.get(CITY_DETAILS_URL);
-      _cityDetailsCache = res.data || [];
-    } catch {
-      _cityDetailsCache = [];
-    }
-  }
+  const details = await ensureCityDetails();
   const normalizedCity = city?.toString()?.trim()?.toLowerCase();
-  const detail = _cityDetailsCache.find(
+  const detail = details.find(
     (item) =>
       item?.city?.toString()?.trim()?.toLowerCase() === normalizedCity ||
       item?.cityName?.toString()?.trim()?.toLowerCase() === normalizedCity

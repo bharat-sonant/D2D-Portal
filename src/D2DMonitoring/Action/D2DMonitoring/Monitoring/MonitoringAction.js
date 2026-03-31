@@ -11,7 +11,8 @@ import {
     getEmployeeProfilePhotoFromDB,
     getEmployeeMobileFromDB,
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
-import { syncMonitoringEmployee } from "../../../../services/EmployeeService/EmployeeService";
+import { syncMonitoringEmployee, syncMonitoringEmployeesBatch } from "../../../../services/EmployeeService/EmployeeService";
+import { storageUrl } from "../../../../services/supabaseServices";
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 import {
@@ -325,8 +326,8 @@ const buildWorkerState = (raw, driver, helper) => {
     const helperName     = helper.name || cleanField(raw.helperName) || "";
     const helperHasCTag  = /\(c\)/i.test(helperName);
 
-    const noHelper = helperIsDummy && helperHasCTag;
-    const nameRed  = !helperIsDummy && helperHasCTag;
+    const noHelper       = helperIsDummy && helperHasCTag;
+    const nameRed        = !helperIsDummy && helperHasCTag;
 
     return {
         captain: {
@@ -359,14 +360,6 @@ const workerCache       = new Map(); // key: `${wardId}-${date}` → full Worker
 const employeeCache     = new Map(); // key: employeeId → { name, photo, mobile, dummyFlag }
 const imagePreloadCache = new Set(); // URLs already kicked off in browser cache
 
-// Call this on city switch — employee IDs are city-specific so stale data
-// from a previous city must not bleed into the new one.
-export const clearWorkerCaches = () => {
-    workerCache.clear();
-    employeeCache.clear();
-    imagePreloadCache.clear();
-};
-
 // Kicks off a browser image fetch AND pre-decodes into GPU memory before the
 // <img> tag renders — eliminates the visible "blank → image" flash.
 const preloadImage = (url) => {
@@ -375,6 +368,69 @@ const preloadImage = (url) => {
     const img = new window.Image();
     img.src = url;
     img.decode?.().catch(() => {}); // decode ahead of render (non-blocking)
+};
+
+// Builds the expected Supabase profile photo URL from employeeId + city — no network call.
+// Same path that uploadEmployeeProfileImage uses, so it matches the stored URL.
+const getSpeculativePhotoUrl = (employeeId, cityName) => {
+    if (!employeeId || !cityName) return null;
+    return `${storageUrl}/${String(cityName).toLowerCase().trim()}/EmployeeImages/${employeeId}/profileImage.jpg`;
+};
+
+// Waits for an image to fully load, with a max timeout.
+// This ensures skeleton is only removed when the image is already in browser cache.
+const waitForImage = (url, timeoutMs = 1200) => {
+    if (!url) return Promise.resolve();
+    return Promise.race([
+        new Promise((resolve) => {
+            const img = new window.Image();
+            img.src = url;
+            // Already in browser cache — resolve instantly
+            if (img.complete && img.naturalWidth > 0) { resolve(); return; }
+            img.onload  = resolve;
+            img.onerror = resolve; // don't block on network error
+        }),
+        new Promise(resolve => setTimeout(resolve, timeoutMs)),
+    ]);
+};
+
+// ── sessionStorage persistence for employeeCache ──────────────────────────
+// Employee data rarely changes; persist across page reloads so Supabase is
+// only queried ONCE per employee per browser session (not on every reload).
+const EMP_SESSION_KEY = 'mon_emp_cache';
+
+const _loadEmployeeCacheFromSession = () => {
+    try {
+        const raw = sessionStorage.getItem(EMP_SESSION_KEY);
+        if (!raw) return;
+        const entries = JSON.parse(raw);
+        for (const [id, entry] of Object.entries(entries)) {
+            employeeCache.set(id, entry);
+            preloadImage(entry.photo); // pre-warm browser image cache too
+        }
+    } catch {}
+};
+
+let _saveTimer = null;
+const _scheduleSessionSave = () => {
+    if (_saveTimer) return;
+    _saveTimer = setTimeout(() => {
+        try { sessionStorage.setItem(EMP_SESSION_KEY, JSON.stringify(Object.fromEntries(employeeCache))); } catch {}
+        _saveTimer = null;
+    }, 200); // batch writes — fires 200ms after last cache update
+};
+
+// Warm the cache immediately on module load
+_loadEmployeeCacheFromSession();
+
+// Call this on city switch — employee IDs are city-specific so stale data
+// from a previous city must not bleed into the new one.
+export const clearWorkerCaches = () => {
+    workerCache.clear();
+    employeeCache.clear();
+    imagePreloadCache.clear();
+    try { sessionStorage.removeItem(EMP_SESSION_KEY); } catch {}
+    if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
 };
 
 // Supabase check → mila toh dikhaao, nahi mila toh Firebase → Supabase save → dikhaao.
@@ -386,6 +442,34 @@ const fetchEmployeeData = async (employeeId, cityName) => {
     const result = { name: name || null, photo: photo || null, mobile: mobile || "", dummyFlag: dummyFlag ?? null };
     employeeCache.set(employeeId, result);
     preloadImage(result.photo);
+    _scheduleSessionSave();
+    return result;
+};
+
+// Batch version — 1 Supabase round-trip for all missing IDs instead of N separate calls.
+// Also waits for profile images to fully load (max 1.2s) so skeleton is removed
+// only when the card can render sharp images immediately — no blurred fallback flash.
+const fetchEmployeesBatch = async (missingIds, cityName) => {
+    if (!missingIds.length) return {};
+    const batchData = await syncMonitoringEmployeesBatch(missingIds, cityName);
+    const result = {};
+    const imageWaits = [];
+
+    for (const [id, data] of Object.entries(batchData)) {
+        const entry = { name: data.name || null, photo: data.photo || null, mobile: data.mobile || "", dummyFlag: data.dummyFlag ?? null };
+        employeeCache.set(id, entry);
+        if (entry.photo) {
+            preloadImage(entry.photo);
+            imageWaits.push(waitForImage(entry.photo));
+        }
+        result[id] = entry;
+    }
+
+    // Wait for all profile images to be in browser cache before returning.
+    // This ensures the skeleton is removed only when everything is ready to render.
+    if (imageWaits.length) await Promise.allSettled(imageWaits);
+
+    _scheduleSessionSave();
     return result;
 };
 
@@ -410,10 +494,31 @@ export const subscribeWorkerDetails = (wardId, setWorkers, cityName) => {
         }
         const driverId = cleanField(raw.driver);
         const helperId = cleanField(raw.helper);
-        const [driver, helper] = await Promise.all([
-            fetchEmployeeData(driverId, cityName),
-            fetchEmployeeData(helperId, cityName),
-        ]);
+
+        const dCached = employeeCache.get(driverId);
+        const hCached = employeeCache.get(helperId);
+
+        // Both cached — instant, zero network calls
+        if (dCached && hCached) {
+            const workers = buildWorkerState(raw, dCached, hCached);
+            workerCache.set(cacheKey, workers);
+            setWorkers(workers);
+            return;
+        }
+
+        // Speculative image preload — start downloading profile images RIGHT NOW,
+        // in parallel with the Supabase query below. URL is predictable from employeeId + city.
+        // If the image exists in Supabase storage, download will be done (or near-done)
+        // by the time the Supabase query returns.
+        const missingIds = [!dCached && driverId, !hCached && helperId].filter(Boolean);
+        for (const id of missingIds) preloadImage(getSpeculativePhotoUrl(id, cityName));
+
+        // Batch fetch missing employees — 1 Supabase round-trip for both
+        const batch = await fetchEmployeesBatch(missingIds, cityName);
+
+        const driver = dCached ?? batch[driverId] ?? { name: null, photo: null, mobile: "", dummyFlag: null };
+        const helper = hCached ?? batch[helperId] ?? { name: null, photo: null, mobile: "", dummyFlag: null };
+
         const workers = buildWorkerState(raw, driver, helper);
         workerCache.set(cacheKey, workers);
         setWorkers(workers);

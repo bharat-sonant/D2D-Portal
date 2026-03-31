@@ -1,1 +1,1 @@
-{"Circle1":[null,{"wardNo":1,"displayIndex":1,"startDate":"2020-01-02"},{"wardNo":2,"displayIndex":2,"startDate":"2019-01-01"},{"wardNo":3,"displayIndex":3,"startDate":"2019-01-01"},{"wardNo":4,"displayIndex":4,"startDate":"2019-01-01"},{"wardNo":5,"displayIndex":5,"startDate":"2022-04-27"},{"wardNo":"MarketRoute1","displayIndex":5,"startDate":"2019-01-01"},{"wardNo":"MarketRoute2","displayIndex":6,"startDate":"2019-01-01"},{"wardNo":"SPCMarket","displayIndex":7,"startDate":"2019-01-01"}]}
+[null, "1", "2", "3", "4", "5", "MarketRoute1", "MarketRoute2", "SPCMarket"]

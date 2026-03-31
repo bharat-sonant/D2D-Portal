@@ -8,7 +8,7 @@ import { subscribeWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring
 
 const INITIAL_WORKERS = {
   captain: { name: "", phone: "", profileImage: null },
-  pilot:   { name: "", phone: "", profileImage: null, noHelper: false, nameRed: false },
+  pilot:   { name: "", phone: "", profileImage: null, isDummy: false, noHelper: false, nameRed: false },
   vehicle: "",
 };
 
@@ -96,10 +96,16 @@ const NoHelperCard = () => (
 const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
   const { city } = useParams();
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!wardId) { setWorkers(INITIAL_WORKERS); return; }
-    const unsub = subscribeWorkerDetails(wardId, setWorkers, city);
+    if (!wardId) { setWorkers(INITIAL_WORKERS); setIsLoading(false); return; }
+    setIsLoading(true);
+    const handleUpdate = (w) => {
+      setWorkers(w);
+      setIsLoading(false); // complete data arrived (name + photo + phone all ready)
+    };
+    const unsub = subscribeWorkerDetails(wardId, handleUpdate, city);
     return () => unsub();
   }, [wardId, city]);
 
@@ -112,6 +118,27 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
       icon={<UserStar size={16} />}
       noPadding={true}
     >
+      {isLoading ? (
+        <div className={styles.heroReplicaCrewGrid}>
+          <div className={styles.coverImg}></div>
+          <div className={styles.heroReplicaCrewCard}>
+            <div className={styles.skeletonPill} />
+            <div className={styles.heroReplicaAvatarWrap}><div className={styles.avatarSkeleton} /></div>
+            <div className={styles.nameBG}>
+              <div className={styles.skeletonName} />
+              <div className={styles.skeletonPhone} />
+            </div>
+          </div>
+          <div className={styles.heroReplicaCrewCard}>
+            <div className={styles.skeletonPill} />
+            <div className={styles.heroReplicaAvatarWrap}><div className={styles.avatarSkeleton} /></div>
+            <div className={styles.nameBG}>
+              <div className={styles.skeletonName} />
+              <div className={styles.skeletonPhone} />
+            </div>
+          </div>
+        </div>
+      ) : (
       <div className={styles.heroReplicaCrewGrid}>
         <div className={styles.coverImg}></div>
 
@@ -131,22 +158,32 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
           />
         )}
       </div>
+      )}
 
       {/* ── Vehicle row ── */}
       <div className={styles.cardFooter}>
-        <button
-          type="button"
-          className={styles.heroReplicaVehicleRow}
-          // onClick={onVehicleClick}
-        >
-          <div className={styles.heroReplicaVehicleLeft}>
-            🚛
-            <div className={styles.vehicleContent}>
-              <strong>{displayVehicle || "No Vehicle Assigned"}</strong>
+        {isLoading ? (
+          <div className={styles.heroReplicaVehicleRow} style={{ pointerEvents: "none" }}>
+            <div className={styles.heroReplicaVehicleLeft}>
+              🚛
+              <div className={styles.skeletonVehicle} />
             </div>
           </div>
-          <ChevronRight size={14} />
-        </button>
+        ) : (
+          <button
+            type="button"
+            className={styles.heroReplicaVehicleRow}
+            // onClick={onVehicleClick}
+          >
+            <div className={styles.heroReplicaVehicleLeft}>
+              🚛
+              <div className={styles.vehicleContent}>
+                <strong>{displayVehicle || "No Vehicle Assigned"}</strong>
+              </div>
+            </div>
+            <ChevronRight size={14} />
+          </button>
+        )}
       </div>
     </MonitoringCard>
   );
