@@ -2,6 +2,9 @@ import * as sbs from '../supabaseServices';
 import axios from 'axios';
 import dayjs from "dayjs";
 import { logServiceCall } from '../../common/serviceLogger';
+import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '../../D2DMonitoring/Services/DbServiceTracker/serviceTracker';
+
+const FILE = 'dataSync';
 
 export const getWardDailySummary = async (wardList, date, cityId) => {
   logServiceCall('RealtimeMonitoringServices', 'getWardDailySummary');
@@ -90,7 +93,10 @@ const fetchSummariesFromFirebase = async (wards, date, firebaseBaseUrl) => {
   });
 
   const results = await Promise.all(promises);
-  return results.filter(Boolean);
+  const filtered = results.filter(Boolean);
+  saveRealtimeDbServiceHistory(FILE, 'fetchSummariesFromFirebase');
+  saveRealtimeDbServiceDataHistory(FILE, 'fetchSummariesFromFirebase', filtered);
+  return filtered;
 };
 
 const getMissingWards = (wardList, cachedData) => {

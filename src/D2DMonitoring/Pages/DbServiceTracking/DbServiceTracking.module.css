@@ -55,6 +55,37 @@
   overflow-x: hidden;
 }
 
+/* ── Panel header with refresh ── */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 8px;
+  border-bottom: 1px solid #edf0f7;
+  flex-shrink: 0;
+}
+.panelHeaderTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9aa5bc;
+}
+.refreshBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9aa5bc;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+.refreshBtn:hover { color: #00a86b; background: #eafaf4; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.refreshBtnSpin svg { animation: spin 0.7s linear infinite; }
+
 /* ── Service Groups ── */
 .serviceGroup {
   display: flex;

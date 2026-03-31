@@ -1,5 +1,8 @@
 import * as sbs from "../supabaseServices";
 import { getData } from "../dbServices";
+import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from "../../D2DMonitoring/Services/DbServiceTracker/serviceTracker";
+
+const FILE = 'dataSync';
 
 /**
  * Fetch all employees from Supabase
@@ -52,6 +55,8 @@ export const deleteEmployee = async (id) => {
 
 const uploadImageFromFirebase = async (employeeId, cityName) => {
     const firebaseUrl = await getData(`Employees/${employeeId}/GeneralDetails/profilePhotoURL`);
+    saveRealtimeDbServiceHistory(FILE, 'uploadImageSupabaseFromFirebase');
+    saveRealtimeDbServiceDataHistory(FILE, 'uploadImageSupabaseFromFirebase', firebaseUrl);
     if (!firebaseUrl) return null;
     let blob;
     try {
@@ -127,6 +132,8 @@ export const syncMonitoringEmployee = async (employeeId, cityName) => {
         getData(`EmployeeDetailData/${employeeId}/isDummyId`),
         cityName ? syncEmployeeProfileImage(employeeId, cityName) : Promise.resolve({ url: null }),
     ]);
+    saveRealtimeDbServiceHistory(FILE, 'syncMonitoringEmployee');
+    saveRealtimeDbServiceDataHistory(FILE, 'syncMonitoringEmployee', { name, mobile, dummyFlag });
     await sbs.upsertMonitoringEmployee(employeeId, {
         Name:            name      || null,
         Mobile:          mobile    != null ? Number(mobile)    : null,

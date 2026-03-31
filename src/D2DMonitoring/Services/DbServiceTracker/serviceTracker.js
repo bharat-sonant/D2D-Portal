@@ -41,8 +41,6 @@ export function saveRealtimeDbServiceDataHistory(serviceFileName, functionName, 
   }
 }
 
-// ── Read Stats (year + month as strings, e.g. "2026" + "March") ──────────────
-
 // Panel 1: all service files for a given month
 export async function getServiceFiles(year, month) {
   try {
