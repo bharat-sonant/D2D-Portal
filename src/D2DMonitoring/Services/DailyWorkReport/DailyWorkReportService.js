@@ -10,6 +10,11 @@ import { saveRealtimeDbServiceHistory, saveRealtimeDbServiceDataHistory } from '
 
 const FILE = 'DailyWorkReportService';
 
+// ─── WorkerDetails module-level cache ───────────────────────────
+// Vehicle/driver info din mein rarely change hoti — session tak same rehti
+// Key: "YYYY-MM-DD_wardId"  Value: WorkerDetails object
+const workerDetailsCache = new Map();
+
 // ─── Console logger (ek baar, sab zones ka total) ───────────────
 
 const logTotalConsumption = (fnName, allData, reads, writes) => {
@@ -143,19 +148,33 @@ export const fetchAllZonesOnce = async (wards, date) => {
 export const subscribeAllZones = (wards, date, onRowUpdate) => {
     const initialData = {};
     const loggedOnce  = { done: false };
+    // raw string cache — sirf dutyInTime + dutyOutTime track karo
+    const rawCache    = {};
 
     let workerReads = 0;
 
     const unsubscribers = wards.map(({ id, name }) => {
-        workerReads++;
-        db.getData(getWorkerDetailsPath(id, date))
-            .then(workerDetails => {
-                initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
-                if (initialData[id].Summary !== undefined) {
-                    onRowUpdate(buildRow(id, name, initialData[id]));
-                }
-            })
-            .catch(() => {});
+        const cacheKey      = `${date}_${id}`;
+        const cachedWorker  = workerDetailsCache.get(cacheKey);
+
+        if (cachedWorker !== undefined) {
+            // Cache hit — Firebase read skip, seedha use karo
+            initialData[id] = { ...(initialData[id] || {}), WorkerDetails: cachedWorker };
+            if (initialData[id].Summary !== undefined) {
+                onRowUpdate(buildRow(id, name, initialData[id]));
+            }
+        } else {
+            workerReads++;
+            db.getData(getWorkerDetailsPath(id, date))
+                .then(workerDetails => {
+                    workerDetailsCache.set(cacheKey, workerDetails);   // save for next time
+                    initialData[id] = { ...(initialData[id] || {}), WorkerDetails: workerDetails };
+                    if (initialData[id].Summary !== undefined) {
+                        onRowUpdate(buildRow(id, name, initialData[id]));
+                    }
+                })
+                .catch(() => {});
+        }
 
         // Summary pe live listener (duty times din mein update hote hain)
         return db.subscribeData(getSummaryPath(id, date), (summary) => {
@@ -168,11 +187,23 @@ export const subscribeAllZones = (wards, date, onRowUpdate) => {
                     const allRaw = Object.values(initialData);
                     saveRealtimeDbServiceHistory(FILE, 'subscribeAllZones');
                     saveRealtimeDbServiceDataHistory(FILE, 'subscribeAllZones', allRaw);
-                    // reads: 1 Summary onValue per zone + WorkerDetails only if not cached
                     logTotalConsumption('subscribeAllZones (initial)', allRaw, wards.length + workerReads, 6);
                 }
             }
 
+            // Raw string comparison — sirf dutyInTime ya dutyOutTime change hone pe update karo
+            const newDutyIn  = summary?.dutyInTime  ?? null;
+            const newDutyOut = summary?.dutyOutTime ?? null;
+            const prev       = rawCache[id];
+
+            // Pehli baar (prev nahi) → hamesha update karo
+            // Baad mein → sirf tab jab raw string actually change ho
+            if (prev &&
+                String(newDutyIn)  === String(prev.dutyInTime) &&
+                String(newDutyOut) === String(prev.dutyOutTime)
+            ) return; // koi change nahi — re-render skip
+
+            rawCache[id] = { dutyInTime: newDutyIn, dutyOutTime: newDutyOut };
             onRowUpdate(buildRow(id, name, initialData[id]));
         });
     });

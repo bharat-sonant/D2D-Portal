@@ -126,17 +126,10 @@ export const subscribeTodayAction = (wards, date, setData, setLoading, city) => 
             setTodayCache(city, date, Object.values(latestRows));
         }
 
-        // Sirf changed row update karo (unnecessary re-renders avoid)
+        // Service ne raw string check karke hi yahan bheja hai — seedha update karo
         setData(prev => {
             const idx = prev.findIndex(r => r.wardId === row.wardId);
             if (idx < 0) return [...prev, row];
-            const cur = prev[idx];
-            if (
-                cur.dutyOn              === row.dutyOn &&
-                cur.enteredWardBoundary === row.enteredWardBoundary &&
-                cur.dutyOff             === row.dutyOff &&
-                cur.vehicle             === row.vehicle
-            ) return prev;
             const next = [...prev];
             next[idx] = row;
             return next;
