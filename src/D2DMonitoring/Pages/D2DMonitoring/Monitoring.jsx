@@ -18,6 +18,7 @@ import MapSection from "../../Components/D2DMonitoring/MapSection";
 import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig, getCityFirebaseConfigAsync } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import { getOrFetchShiftTimeline, formatShiftTime } from "../../Action/D2DMonitoring/Monitoring/ShiftTimelineAction";
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction, getCityList } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
@@ -536,21 +537,26 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!selectedWard?.id) return;
     const effectiveCity = city ? toTitleCase(city) : "Sikar";
-    try {
-      action.getDutyInTime(selectedWard.id, setShowDutyInTime);
-      action.getWardReachedTime(selectedWard.id, setWardReachedTime);
-      action.getDutyOffTime(selectedWard.id, setDutyOffTime);
 
-      // Clear previous images instantly to avoid showing wrong imagery on modal pop
+    const fetchShiftTimeline = async () => {
       setDutyInImage(null);
       setDutyOffImage(null);
       setDutyModal(null);
 
-      // Pre-fetch duty-in image in the background so it's ready when the modal opens.
-      action.getDutyInImage(effectiveCity, selectedWard.id, setDutyInImage);
-    } catch (error) {
-      console.error("Error fetching generic ward details:", error);
-    }
+      // Supabase check → found: Supabase se show | not found: Firebase fetch → Supabase save → show
+      const data = await getOrFetchShiftTimeline(selectedWard, effectiveCity);
+
+      if (data) {
+        setShowDutyInTime(formatShiftTime(data.DutyInTime)    || "");
+        setWardReachedTime(formatShiftTime(data.wardReachedOn) || "");
+        setDutyOffTime(formatShiftTime(data.DutyOutTime)      || "");
+        // DutyOnImage/DutyOutImage mein comma-separated URLs ho sakti hain — pehli URL use karo
+        setDutyInImage(data.DutyOnImage  ? data.DutyOnImage.split(',')[0]  : null);
+        setDutyOffImage(data.DutyOutImage ? data.DutyOutImage.split(',')[0] : null);
+      }
+    };
+
+    fetchShiftTimeline().catch(console.error);
   }, [selectedWard?.id, city]);
 
   // Pre-fetch duty-off image as soon as dutyOffTime is known (before modal opens).
