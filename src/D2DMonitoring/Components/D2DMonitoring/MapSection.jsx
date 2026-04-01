@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import mcStyles from "./Common/MonitoringCard/MonitoringCard.module.css";
 import { GoogleMap, Polyline, Marker } from "@react-google-maps/api";
-import { MoveUpRight } from "lucide-react";
+import { MoveUpRight, CheckCircle2, XCircle, Clock4, ListOrdered } from "lucide-react";
 import * as action from "../../Action/D2DMonitoring/MapSectionAction/MapSectionAction";
 import tippperIcon from "../../../assets/images/tipper-green.png";
 import goIcon from "../../../assets/images/go-image.png";
@@ -40,6 +40,7 @@ const MapSection = ({
   vehicleLocation = null,
   wardStartPoint = null,
   wardEndPoint = null,
+  lineCounts = {},
 }) => {
   const [isGoogleReady, setIsGoogleReady] = useState(
     action.isGoogleMapsReady(),
@@ -223,7 +224,48 @@ const MapSection = ({
         {!hideHeader && (
           <div className={mcStyles.cardHeader}>
             <h3 className={mcStyles.cardTitle}>Live Map</h3>
-            <div className={mcStyles.cardHeaderRight}>
+            <div className={mcStyles.cardHeaderRight} style={{ flex: 1, justifyContent: "flex-end" }}>
+              {/* Ward Lines center metrics */}
+              {(lineCounts.total != null) && (() => {
+                const stats = [
+                  { label: "Total",     value: lineCounts.total,     color: "var(--themeColor)", icon: <ListOrdered size={10} /> },
+                  { label: "Completed", value: lineCounts.completed, color: "#16a34a",           icon: <CheckCircle2 size={10} /> },
+                  { label: "Skipped",   value: lineCounts.skipped,   color: "#dc2626",           icon: <XCircle size={10} /> },
+                  { label: "Pending",   value: lineCounts.pending,   color: "#d97706",           icon: <Clock4 size={10} /> },
+                ];
+                return (
+                  <div style={{ display: "flex", alignItems: "center", flex: 1, justifyContent: "center", gap: 8 }}>
+                    {/* Ward Lines label */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                      <span style={{ fontSize: 9, fontFamily: "var(--fontGraphikMedium)", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.6px", whiteSpace: "nowrap" }}>
+                        Ward Lines
+                      </span>
+                    </div>
+                    <span style={{ display: "block", width: 1, height: 24, background: "#e2e8f0", flexShrink: 0 }} />
+                    {/* Stats row */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                      {stats.map((p, i, arr) => (
+                        <div key={p.label} style={{ display: "flex", alignItems: "center" }}>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, padding: "0 11px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                              <span style={{ color: p.color, opacity: 0.8, display: "flex" }}>{p.icon}</span>
+                              <span style={{ fontSize: 13, fontFamily: "var(--fontGraphikSemibold)", color: p.color, lineHeight: 1, letterSpacing: "-0.4px" }}>
+                                {p.value ?? "--"}
+                              </span>
+                            </div>
+                            <span style={{ fontSize: 8, fontFamily: "var(--fontGraphikMedium)", color: "#b0bec5", textTransform: "uppercase", letterSpacing: "0.4px", whiteSpace: "nowrap" }}>
+                              {p.label}
+                            </span>
+                          </div>
+                          {i < arr.length - 1 && (
+                            <span style={{ display: "block", width: 1, height: 24, background: "#edf2f7", flexShrink: 0 }} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               {onExpandMap && (
                 <button
                   type="button"

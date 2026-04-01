@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, CheckCircle2, Clock, Timer } from 'lucide-react';
 import styles from '../../Pages/D2DRealtime/Realtime.module.css';
 
 /**
@@ -14,29 +14,22 @@ const ShiftTimelineTrigger = ({ events, onOpen }) => {
     const dutyOffEvent  = events.find(e => e.key === 'dutyOff');
     const allDone       = dutyOffEvent?.status === 'completed';
 
+    const statusIcon = !hasData
+        ? <Clock size={15} color="#94a3b8" />
+        : activeEvent
+            ? <Timer size={15} color="#f59e0b" />
+            : allDone
+                ? <CheckCircle2 size={15} color="#16a34a" />
+                : <Clock size={15} color="#3b82f6" />;
+
     return (
         <button
             className={styles.shiftTriggerBtn}
             onClick={onOpen}
             type="button"
         >
-            {/* ── Mini dot track ── */}
-            <div className={styles.shiftMiniTrack}>
-                {events.map((event, i) => (
-                    <React.Fragment key={event.key}>
-                        <span className={`${styles.shiftMiniDot} ${styles[`shiftMiniDot_${event.status}`]}`} />
-                        {i < events.length - 1 && (
-                            <span className={`${styles.shiftMiniLine} ${
-                                event.status === 'completed'
-                                    ? styles.shiftMiniLineCompleted
-                                    : event.status === 'active'
-                                        ? styles.shiftMiniLineActive
-                                        : styles.shiftMiniLinePending
-                            }`} />
-                        )}
-                    </React.Fragment>
-                ))}
-            </div>
+            {/* ── Status icon ── */}
+            <span className={styles.shiftStatusIcon}>{statusIcon}</span>
 
             {/* ── Status summary ── */}
             <div className={styles.shiftTriggerStatus}>

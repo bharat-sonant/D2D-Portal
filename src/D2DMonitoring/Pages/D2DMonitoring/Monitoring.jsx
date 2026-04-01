@@ -44,7 +44,7 @@ import DutyCheckModal from "../../Components/D2DMonitoring/Modals/DutyCheckModal
 
 import ZoneCoverageV2 from "../../Components/D2DMonitoring/ZoneCoverage/ZoneCoverageV2";
 import ShiftStatusSection from "../../Components/D2DMonitoring/ShiftStatusSection";
-import { FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
+// import { FieldMetricsGrid } from "../../Components/D2DMonitoring/InfoStrip/MonitoringInfoStrips";
 import MapOffcanvas from "../../Components/D2DMonitoring/MapOffcanvas/MapOffcanvas";
 import DbServiceOffcanvas from "../../Components/D2DMonitoring/DbServiceOffcanvas/DbServiceOffcanvas";
 import CitySelectionModal from "../../../components/CitySelectionModal/CitySelectionModal";
@@ -808,8 +808,6 @@ const MonitoringList = () => {
               />
 
               <ShiftSnapshotStrip wardData={displayWardData} /> */}
-              <FieldMetricsGrid lineCounts={lineCounts} />
-
               <LiveStatusBoard
                 wardData={displayWardData}
                 vehicleTone={vehicleTone}
@@ -881,6 +879,7 @@ const MonitoringList = () => {
                     wardStartPoint={wardStartPoint}
                     wardEndPoint={wardEndPoint}
                     onExpandMap={() => setShowLargeMap(true)}
+                    lineCounts={lineCounts}
                   />
                 </div>
               </div>

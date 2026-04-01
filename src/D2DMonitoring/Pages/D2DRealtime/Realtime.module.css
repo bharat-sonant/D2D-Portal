@@ -4861,6 +4861,13 @@
   box-shadow: none;
 }
 
+/* Status icon */
+.shiftStatusIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 /* Mini dot track */
 .shiftMiniTrack {
   display: flex;

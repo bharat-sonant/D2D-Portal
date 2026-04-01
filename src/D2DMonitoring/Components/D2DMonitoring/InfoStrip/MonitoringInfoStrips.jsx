@@ -1,5 +1,5 @@
+import React from "react";
 import { Route, PauseCircle, Smartphone, Repeat, LayoutList, CheckCircle2, Clock4, XCircle, ListOrdered } from "lucide-react";
-import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./MonitoringInfoStrips.module.css";
 
 /* ─── Card 1: Shift Snapshot Strip ─────────────────────────────
@@ -56,34 +56,33 @@ export const ShiftSnapshotStrip = ({ wardData }) => {
   );
 };
 
-/* ─── Card 2: Line Count Grid ───────────────────────────────────
-   2×2 grid showing completed / pending / skipped / total lines.
-   MonitoringCard header (same style as Shift Timeline card).
+/* ─── Card 2: Ward Lines Strip ──────────────────────────────────
+   Compact single-row strip — low-priority section, minimal space.
 ──────────────────────────────────────────────────────────────── */
 export const FieldMetricsGrid = ({ lineCounts = {} }) => {
-  const cells = [
-    { label: "Total",     value: lineCounts.total     ?? "--", accent: "var(--themeColor)", icon: <ListOrdered size={14} /> },
-    { label: "Completed", value: lineCounts.completed ?? "--", accent: "#16a34a",           icon: <CheckCircle2 size={14} /> },
-    { label: "Skipped",   value: lineCounts.skipped   ?? "--", accent: "#dc2626",           icon: <XCircle      size={14} /> },
-    { label: "Pending",   value: lineCounts.pending   ?? "--", accent: "#d97706",           icon: <Clock4       size={14} /> },
+  const items = [
+    { label: "Total",     value: lineCounts.total     ?? "--", color: "var(--themeColor)" },
+    { label: "Completed", value: lineCounts.completed ?? "--", color: "#16a34a" },
+    { label: "Skipped",   value: lineCounts.skipped   ?? "--", color: "#dc2626" },
+    { label: "Pending",   value: lineCounts.pending   ?? "--", color: "#d97706" },
   ];
 
   return (
-    <MonitoringCard title="Ward Lines" icon={<LayoutList size={16} />}>
-      <div className={styles.metricsGrid}>
-        {cells.map((cell, i) => (
-          <div
-            key={cell.label}
-            className={`${styles.metricCell} ${i < 2 ? styles.borderBottom : ""} ${i % 2 === 0 ? styles.borderRight : ""}`}
-          >
-            <div className={styles.metricValueRow}>
-              <span className={styles.metricValue} style={{ color: cell.accent }}>{cell.value}</span>
-              <span className={styles.metricIcon} style={{ color: cell.accent }}>{cell.icon}</span>
-            </div>
-            <span className={styles.metricCellLabel}>{cell.label}</span>
+    <div className={styles.wardLinesStrip}>
+      <span className={styles.wardLinesLabel}>
+        <LayoutList size={11} style={{ opacity: 0.5 }} />
+        Ward Lines
+      </span>
+      <div className={styles.wardLinesDivider} />
+      {items.map((item, i) => (
+        <React.Fragment key={item.label}>
+          <div className={styles.wardLinesCell}>
+            <span className={styles.wardLinesValue} style={{ color: item.color }}>{item.value}</span>
+            <span className={styles.wardLinesCellLabel}>{item.label}</span>
           </div>
-        ))}
-      </div>
-    </MonitoringCard>
+          {i < items.length - 1 && <span className={styles.wardLinesSep} />}
+        </React.Fragment>
+      ))}
+    </div>
   );
 };
