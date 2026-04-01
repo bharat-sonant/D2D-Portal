@@ -229,70 +229,89 @@ const checkInSupabase = async (wardName, city, date) => {
 /**
  * Firebase se data fetch karke Supabase mein save karta hai.
  *
- * Fetches:
- *   - DutyInTime, DutyOutTime, wardReachedOn → Firebase Realtime DB
- *   - DutyInImages, DutyOutImages            → Firebase Storage → Supabase Storage
+ * Two-phase approach:
+ *   Phase 1 (fast) → Times fetch karke turant return karo (UI instantly update ho)
+ *   Phase 2 (background) → Images sync + Supabase save (non-blocking)
  *
- * @returns {object|null} - Saved Supabase row ya Firebase payload
+ * @param {string}   cacheKey      - Memory cache update ke liye
+ * @param {Function} onImagesReady - Images ready hone par UI callback
+ * @returns {object|null} - Partial data (times only) ya null
  */
-const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, bucket }) => {
+const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, bucket, cacheKey, onImagesReady }) => {
     const imageArgs = { city, bucket, wardName, year, month, day };
 
     // Firebase Realtime DB hit — track karo
     saveRealtimeDbServiceHistory(SERVICE, 'SyncDutyInTimeAndOutTimeData');
     saveRealtimeDbServiceDataHistory(SERVICE, 'SyncDutyInTimeAndOutTimeData', { wardName, city, day });
 
-    const [
-        dutyInResp,
-        dutyOutResp,
-        reachedResp,
-        dutyInImagesText,
-        dutyOutImagesText,
-    ] = await Promise.all([
+    // ── Phase 1: Times only — fast (Realtime DB, no storage calls) ──────────
+    const [dutyInResp, dutyOutResp, reachedResp] = await Promise.all([
         getWardDutyOnTimeFromDB(year, month, day, wardName),
         getWardDutyOffTimeFromDB(year, month, day, wardName),
         getWardReachedTimeFromDB(year, month, day, wardName),
-        syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[0] }),
-        syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
     ]);
 
-    const dutyInTime   = buildTimesText(dutyInResp?.status === 'Success' ? dutyInResp.data : null);
+    const dutyInTime    = buildTimesText(dutyInResp?.status  === 'Success' ? dutyInResp.data  : null);
     const wardReachedOn = buildTimesText(reachedResp?.status === 'Success' ? reachedResp.data : null);
-    const dutyOutTime  = buildTimesText(dutyOutResp?.status === 'Success' ? dutyOutResp.data : null);
+    const dutyOutTime   = buildTimesText(dutyOutResp?.status === 'Success' ? dutyOutResp.data : null);
 
-    // Firebase mein koi bhi data nahi mila — Supabase mein save nahi karna
-    const hasData = dutyInTime || wardReachedOn || dutyOutTime || dutyInImagesText || dutyOutImagesText;
-    if (!hasData) {
+    // Koi time data nahi mila — save skip karo
+    if (!dutyInTime && !wardReachedOn && !dutyOutTime) {
         console.log('[ShiftTimeline] Firebase se koi data nahi mila — Supabase save skip');
         return null;
     }
 
-    const payload = {
+    const partialData = {
         WardName: wardName,
         CityName: city,
         date: day,
         DutyInTime: dutyInTime,
-        wardReachedOn: wardReachedOn,
+        wardReachedOn,
         DutyOutTime: dutyOutTime,
-        DutyOnImage: dutyInImagesText || null,
-        DutyOutImage: dutyOutImagesText || null,
+        DutyOnImage: null,
+        DutyOutImage: null,
     };
 
-    console.log('[ShiftTimeline] Firebase data fetched, saving to Supabase:', payload);
+    // ── Phase 2: Images + Supabase save — background mein (non-blocking) ────
+    (async () => {
+        const [dutyInImagesText, dutyOutImagesText] = await Promise.all([
+            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[0] }),
+            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
+        ]);
 
-    const { data: saved, error } = await supabase
-        .from(TABLE)
-        .insert(payload)
-        .select()
-        .maybeSingle();
+        const payload = {
+            ...partialData,
+            DutyOnImage:  dutyInImagesText  || null,
+            DutyOutImage: dutyOutImagesText || null,
+        };
 
-    if (error) {
-        console.error('[ShiftTimeline] Supabase save error:', error.message, '| code:', error.code);
-        return payload;
-    }
+        const { data: saved, error } = await supabase
+            .from(TABLE)
+            .insert(payload)
+            .select()
+            .maybeSingle();
 
-    console.log('[ShiftTimeline] Saved to Supabase successfully');
-    return saved || payload;
+        if (error) {
+            console.error('[ShiftTimeline] Supabase save error:', error.message, '| code:', error.code);
+            return;
+        }
+
+        console.log('[ShiftTimeline] Saved to Supabase successfully (with images)');
+
+        // Cache update karo with full data (images included)
+        if (cacheKey) shiftTimelineCache.set(cacheKey, saved || payload);
+
+        // UI callback — images ready hain
+        if (onImagesReady && (dutyInImagesText || dutyOutImagesText)) {
+            onImagesReady({
+                DutyOnImage:  dutyInImagesText  || null,
+                DutyOutImage: dutyOutImagesText || null,
+            });
+        }
+    })();
+
+    // Times turant return — UI block nahi hogi images ke liye
+    return partialData;
 };
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
@@ -302,14 +321,15 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
  *
  * Flow:
  *   Step 1 → Memory cache check (instant)
- *   Step 2 → Supabase check (WardName + CityName)
- *   Step 3 → Firebase fetch → Supabase save → return
+ *   Step 2 → Supabase check (WardName + CityName + date)
+ *   Step 3 → Firebase: times turant return, images background mein sync
  *
- * @param {object} ward - { id: "1" } (WardCityMap ward)
- * @param {string} city - City name, e.g. "Sikar"
- * @returns {object|null} - Supabase row data
+ * @param {object}   ward          - { id: "1" } (WardCityMap ward)
+ * @param {string}   city          - City name, e.g. "Sikar"
+ * @param {Function} onImagesReady - ({ DutyOnImage, DutyOutImage }) → called when bg images sync completes
+ * @returns {object|null} - Supabase row data (ya partial Firebase data)
  */
-export const getOrFetchShiftTimeline = async (ward, city) => {
+export const getOrFetchShiftTimeline = async (ward, city, onImagesReady) => {
     if (!ward?.id || !city) return null;
 
     const wardName = String(ward.id);
@@ -333,9 +353,9 @@ export const getOrFetchShiftTimeline = async (ward, city) => {
         return supabaseData;
     }
 
-    // Step 3: Firebase fetch → Supabase save
+    // Step 3: Firebase times turant return, images background mein
     console.log('[ShiftTimeline] Data not in Supabase — fetching from Firebase');
-    const freshData = await fetchFromFirebaseAndSave({ wardName, city, year, month, day, bucket });
+    const freshData = await fetchFromFirebaseAndSave({ wardName, city, year, month, day, bucket, cacheKey, onImagesReady });
 
     if (freshData) {
         shiftTimelineCache.set(cacheKey, freshData);

@@ -537,14 +537,27 @@ const MonitoringList = () => {
   useEffect(() => {
     if (!selectedWard?.id) return;
     const effectiveCity = city ? toTitleCase(city) : "Sikar";
+    let active = true;
 
     const fetchShiftTimeline = async () => {
+      // Ward switch hote hi sab clear karo — purana data na dikhe
+      setShowDutyInTime("");
+      setWardReachedTime("");
+      setDutyOffTime("");
       setDutyInImage(null);
       setDutyOffImage(null);
       setDutyModal(null);
 
-      // Supabase check → found: Supabase se show | not found: Firebase fetch → Supabase save → show
-      const data = await getOrFetchShiftTimeline(selectedWard, effectiveCity);
+      // Background images ready hone par UI update — sirf agar ward abhi bhi same ho
+      const onImagesReady = ({ DutyOnImage, DutyOutImage }) => {
+        if (!active) return;
+        if (DutyOnImage)  setDutyInImage(DutyOnImage.split(',')[0]);
+        if (DutyOutImage) setDutyOffImage(DutyOutImage.split(',')[0]);
+      };
+
+      // Supabase check → found: Supabase se show | not found: Firebase times turant + images background
+      const data = await getOrFetchShiftTimeline(selectedWard, effectiveCity, onImagesReady);
+      if (!active) return;
 
       if (data) {
         setShowDutyInTime(formatShiftTime(data.DutyInTime)    || "");
@@ -554,9 +567,11 @@ const MonitoringList = () => {
         setDutyInImage(data.DutyOnImage  ? data.DutyOnImage.split(',')[0]  : null);
         setDutyOffImage(data.DutyOutImage ? data.DutyOutImage.split(',')[0] : null);
       }
+      // data null hai (Firebase mein bhi nahi mila) → sab cleared hi rahega
     };
 
     fetchShiftTimeline().catch(console.error);
+    return () => { active = false; };
   }, [selectedWard?.id, city]);
 
   // Pre-fetch duty-off image as soon as dutyOffTime is known (before modal opens).

@@ -82,7 +82,12 @@ export const syncEmployeeProfileImage = async (employeeId, cityName) => {
  * One Supabase query for all IDs → missing ones fall back to Firebase individually.
  * Returns an object: { [employeeId]: { name, mobile, dummyFlag, photo } }
  */
-export const syncMonitoringEmployeesBatch = async (employeeIds, cityName) => {
+/**
+ * @param {string[]} employeeIds
+ * @param {string}   cityName
+ * @param {Function} onPhotoReady - (employeeId, photoUrl) → called when bg photo sync completes
+ */
+export const syncMonitoringEmployeesBatch = async (employeeIds, cityName, onPhotoReady) => {
     if (!employeeIds?.length) return {};
 
     // Step 1: single batch query — 1 round-trip instead of N
@@ -94,11 +99,23 @@ export const syncMonitoringEmployeesBatch = async (employeeIds, cityName) => {
     for (const id of employeeIds) {
         const row = foundMap.get(String(Number(id)));
         if (row) {
+            const photo = row.profilePhotoUrl || null;
+
+            // Supabase mein hai but photo nahi → background sync
+            if (!photo && cityName && onPhotoReady) {
+                (async () => {
+                    const { url: photoUrl } = await syncEmployeeProfileImage(id, cityName);
+                    if (!photoUrl) return;
+                    await sbs.upsertMonitoringEmployee(id, { profilePhotoUrl: photoUrl });
+                    onPhotoReady(id, photoUrl);
+                })();
+            }
+
             result[String(id)] = {
-                name:      row.Name             || null,
-                mobile:    row.Mobile != null   ? String(row.Mobile) : null,
-                dummyFlag: row.isDummyId        ?? null,
-                photo:     row.profilePhotoUrl  || null,
+                name:      row.Name            || null,
+                mobile:    row.Mobile != null  ? String(row.Mobile) : null,
+                dummyFlag: row.isDummyId       ?? null,
+                photo,
             };
         } else {
             missing.push(id);
@@ -108,44 +125,77 @@ export const syncMonitoringEmployeesBatch = async (employeeIds, cityName) => {
     // Step 2: individually sync truly missing employees (Firebase → Supabase)
     if (missing.length) {
         await Promise.all(missing.map(async (id) => {
-            result[String(id)] = await syncMonitoringEmployee(id, cityName);
+            result[String(id)] = await syncMonitoringEmployee(id, cityName, onPhotoReady);
         }));
     }
 
     return result;
 };
 
-export const syncMonitoringEmployee = async (employeeId, cityName) => {
+/**
+ * @param {string}   employeeId
+ * @param {string}   cityName
+ * @param {Function} onPhotoReady - (employeeId, photoUrl) → called when bg photo sync completes
+ */
+export const syncMonitoringEmployee = async (employeeId, cityName, onPhotoReady) => {
     if (!employeeId) return { name: null, mobile: null, dummyFlag: null, photo: null };
+
     const { success, data: existing } = await sbs.getMonitoringEmployee(employeeId);
     if (success && existing) {
+        const photo = existing.profilePhotoUrl || null;
+
+        // Photo nahi hai Supabase mein → background mein sync karo
+        if (!photo && cityName && onPhotoReady) {
+            (async () => {
+                const { url: photoUrl } = await syncEmployeeProfileImage(employeeId, cityName);
+                if (!photoUrl) return;
+                await sbs.upsertMonitoringEmployee(employeeId, { profilePhotoUrl: photoUrl });
+                onPhotoReady(employeeId, photoUrl);
+            })();
+        }
+
         return {
-            name:      existing.Name             || null,
-            mobile:    existing.Mobile != null   ? String(existing.Mobile) : null,
-            dummyFlag: existing.isDummyId        ?? null,
-            photo:     existing.profilePhotoUrl  || null,
+            name:      existing.Name            || null,
+            mobile:    existing.Mobile != null  ? String(existing.Mobile) : null,
+            dummyFlag: existing.isDummyId       ?? null,
+            photo,
         };
     }
-    const [name, mobile, dummyFlag, { url: photoUrl }] = await Promise.all([
+
+    // ── Phase 1: name/mobile/dummyFlag only — fast (Realtime DB) ────────────
+    const [name, mobile, dummyFlag] = await Promise.all([
         getData(`Employees/${employeeId}/GeneralDetails/name`),
         getData(`Employees/${employeeId}/GeneralDetails/mobile`),
         getData(`EmployeeDetailData/${employeeId}/isDummyId`),
-        cityName ? syncEmployeeProfileImage(employeeId, cityName) : Promise.resolve({ url: null }),
     ]);
+
     saveRealtimeDbServiceHistory(FILE, 'syncMonitoringEmployee');
     saveRealtimeDbServiceDataHistory(FILE, 'syncMonitoringEmployee', { name, mobile, dummyFlag });
+
+    // Supabase mein save karo (photo baad mein aayega)
     await sbs.upsertMonitoringEmployee(employeeId, {
         Name:            name      || null,
         Mobile:          mobile    != null ? Number(mobile)    : null,
         isDummyId:       dummyFlag != null ? Number(dummyFlag) : null,
-        profilePhotoUrl: photoUrl  || null,
+        profilePhotoUrl: null,
         CityName:        cityName  || null,
     });
+
+    // ── Phase 2: Photo background mein sync karo (non-blocking) ─────────────
+    if (cityName) {
+        (async () => {
+            const { url: photoUrl } = await syncEmployeeProfileImage(employeeId, cityName);
+            if (!photoUrl) return;
+            await sbs.upsertMonitoringEmployee(employeeId, { profilePhotoUrl: photoUrl });
+            if (onPhotoReady) onPhotoReady(employeeId, photoUrl);
+        })();
+    }
+
     return {
         name:      name      || null,
         mobile:    mobile    != null ? String(mobile) : null,
         dummyFlag: dummyFlag ?? null,
-        photo:     photoUrl  || null,
+        photo:     null, // background mein aayega
     };
 };
 

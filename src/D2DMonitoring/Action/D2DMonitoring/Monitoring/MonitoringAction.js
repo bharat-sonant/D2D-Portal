@@ -434,11 +434,11 @@ export const clearWorkerCaches = () => {
 };
 
 // Supabase check → mila toh dikhaao, nahi mila toh Firebase → Supabase save → dikhaao.
-const fetchEmployeeData = async (employeeId, cityName) => {
+const fetchEmployeeData = async (employeeId, cityName, onPhotoReady) => {
     if (!employeeId) return { name: null, photo: null, mobile: "", dummyFlag: null };
     if (employeeCache.has(employeeId)) return employeeCache.get(employeeId);
 
-    const { name, photo, mobile, dummyFlag } = await syncMonitoringEmployee(employeeId, cityName);
+    const { name, photo, mobile, dummyFlag } = await syncMonitoringEmployee(employeeId, cityName, onPhotoReady);
     const result = { name: name || null, photo: photo || null, mobile: mobile || "", dummyFlag: dummyFlag ?? null };
     employeeCache.set(employeeId, result);
     preloadImage(result.photo);
@@ -446,28 +446,19 @@ const fetchEmployeeData = async (employeeId, cityName) => {
     return result;
 };
 
-// Batch version — 1 Supabase round-trip for all missing IDs instead of N separate calls.
-// Also waits for profile images to fully load (max 1.2s) so skeleton is removed
-// only when the card can render sharp images immediately — no blurred fallback flash.
-const fetchEmployeesBatch = async (missingIds, cityName) => {
+// Batch version — 1 Supabase round-trip for all missing IDs.
+// Photo background mein aati hai via onPhotoReady callback — no waiting.
+const fetchEmployeesBatch = async (missingIds, cityName, onPhotoReady) => {
     if (!missingIds.length) return {};
-    const batchData = await syncMonitoringEmployeesBatch(missingIds, cityName);
+    const batchData = await syncMonitoringEmployeesBatch(missingIds, cityName, onPhotoReady);
     const result = {};
-    const imageWaits = [];
 
     for (const [id, data] of Object.entries(batchData)) {
         const entry = { name: data.name || null, photo: data.photo || null, mobile: data.mobile || "", dummyFlag: data.dummyFlag ?? null };
         employeeCache.set(id, entry);
-        if (entry.photo) {
-            preloadImage(entry.photo);
-            imageWaits.push(waitForImage(entry.photo));
-        }
+        if (entry.photo) preloadImage(entry.photo);
         result[id] = entry;
     }
-
-    // Wait for all profile images to be in browser cache before returning.
-    // This ensures the skeleton is removed only when everything is ready to render.
-    if (imageWaits.length) await Promise.allSettled(imageWaits);
 
     _scheduleSessionSave();
     return result;
@@ -506,15 +497,30 @@ export const subscribeWorkerDetails = (wardId, setWorkers, cityName) => {
             return;
         }
 
+        // Background photo ready hone par cache update + UI re-render
+        const onPhotoReady = (empId, photoUrl) => {
+            const cached = employeeCache.get(empId);
+            if (cached) {
+                cached.photo = photoUrl;
+                employeeCache.set(empId, cached);
+                _scheduleSessionSave();
+            }
+            preloadImage(photoUrl);
+            // Current driver/helper ka latest data lekar worker state rebuild karo
+            const latestDriver = employeeCache.get(driverId) ?? { name: null, photo: null, mobile: "", dummyFlag: null };
+            const latestHelper = employeeCache.get(helperId) ?? { name: null, photo: null, mobile: "", dummyFlag: null };
+            const updated = buildWorkerState(raw, latestDriver, latestHelper);
+            workerCache.set(cacheKey, updated);
+            setWorkers(updated);
+        };
+
         // Speculative image preload — start downloading profile images RIGHT NOW,
-        // in parallel with the Supabase query below. URL is predictable from employeeId + city.
-        // If the image exists in Supabase storage, download will be done (or near-done)
-        // by the time the Supabase query returns.
+        // in parallel with the Supabase query below.
         const missingIds = [!dCached && driverId, !hCached && helperId].filter(Boolean);
         for (const id of missingIds) preloadImage(getSpeculativePhotoUrl(id, cityName));
 
         // Batch fetch missing employees — 1 Supabase round-trip for both
-        const batch = await fetchEmployeesBatch(missingIds, cityName);
+        const batch = await fetchEmployeesBatch(missingIds, cityName, onPhotoReady);
 
         const driver = dCached ?? batch[driverId] ?? { name: null, photo: null, mobile: "", dummyFlag: null };
         const helper = hCached ?? batch[helperId] ?? { name: null, photo: null, mobile: "", dummyFlag: null };
