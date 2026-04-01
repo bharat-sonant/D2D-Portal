@@ -13,6 +13,7 @@ import {
 } from "../../../Services/D2DMonitoringService/D2DMonitoringDutyIn";
 import { syncMonitoringEmployee, syncMonitoringEmployeesBatch } from "../../../../services/EmployeeService/EmployeeService";
 import { storageUrl } from "../../../../services/supabaseServices";
+import { markImageReady } from "../../../Services/ImageCacheService/imageReadyCache";
 import { getWardLineStatus, subscribeWardLineStatus } from "../../../Services/MapSectionService/MapSectionService";
 import { calculateWardLineLengthInMeter, getTotalExperience } from "../../../../common/common";
 import {
@@ -366,8 +367,9 @@ const preloadImage = (url) => {
     if (!url || imagePreloadCache.has(url)) return;
     imagePreloadCache.add(url);
     const img = new window.Image();
+    img.onload = () => markImageReady(url); // shared cache mein mark karo — CrewCard instantly dikhayega
     img.src = url;
-    img.decode?.().catch(() => {}); // decode ahead of render (non-blocking)
+    img.decode?.().catch(() => {});
 };
 
 // Builds the expected Supabase profile photo URL from employeeId + city — no network call.

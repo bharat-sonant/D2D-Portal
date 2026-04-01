@@ -5,6 +5,7 @@ import fallbackAvatar from "../../../../assets/images/avtarUser.png";
 import MonitoringCard from "../Common/MonitoringCard/MonitoringCard";
 import styles from "./DutyComparisonReplica.module.css";
 import { subscribeWorkerDetails } from "../../../Action/D2DMonitoring/Monitoring/MonitoringAction";
+import { markImageReady, isImageReady } from "../../../Services/ImageCacheService/imageReadyCache";
 
 const INITIAL_WORKERS = {
   captain: { name: "", phone: "", profileImage: null },
@@ -12,12 +13,7 @@ const INITIAL_WORKERS = {
   vehicle: "",
 };
 
-const cachedUrls = new Set();
-
-const isCached = (url) => {
-  if (!url) return false;
-  return cachedUrls.has(url);
-};
+const isCached = (url) => isImageReady(url);
 
 const CrewCard = ({ role, roleStyle, member }) => {
   const realSrc = member.profileImage;
@@ -46,7 +42,7 @@ const CrewCard = ({ role, roleStyle, member }) => {
     setSharp(false);
     let cancelled = false;
     const img = new window.Image();
-    img.onload  = () => { if (cancelled) return; cachedUrls.add(realSrc); setDisplaySrc(realSrc); setSharp(true); };
+    img.onload  = () => { if (cancelled) return; markImageReady(realSrc); setDisplaySrc(realSrc); setSharp(true); };
     img.onerror = () => { if (cancelled) return; setSharp(true); };
     img.src = realSrc;
     return () => { cancelled = true; };
