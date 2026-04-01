@@ -40,7 +40,10 @@ export const getDownloadURLFromStorage = async (filePath) => {
     trackCall(filePath, "storage", url);
     return url;
   } catch (error) {
-    console.error("Error getting download URL:", error);
+    // object-not-found is expected (e.g. 2.png when only 1 duty cycle exists) — no log needed
+    if (error?.code !== "storage/object-not-found") {
+      console.error("Error getting download URL:", error);
+    }
     return null;
   }
 };

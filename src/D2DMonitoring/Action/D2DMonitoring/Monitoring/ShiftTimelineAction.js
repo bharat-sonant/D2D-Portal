@@ -153,9 +153,9 @@ export const formatShiftTime = (storedText) => {
  *
  * @returns {boolean}
  */
-const hasDataChanged = (existingData, newTimes) => {
-    const countEntries = (str) => (str ? str.split(',').filter(Boolean).length : 0);
+const countEntries = (str) => (str ? str.split(',').filter(Boolean).length : 0);
 
+const hasDataChanged = (existingData, newTimes) => {
     const fields = [
         { existing: existingData?.DutyInTime,    fresh: newTimes.DutyInTime },
         { existing: existingData?.DutyOutTime,   fresh: newTimes.DutyOutTime },
@@ -212,16 +212,17 @@ const uploadImageToSupabaseStorage = async (firebaseUrl, bucket, filePath) => {
 
 /**
  * Ek duty image type (DutyIn ya DutyOut) ke liye:
- *   - Firebase se 1.png aur 2.png fetch karta hai
+ *   - Firebase se images fetch karta hai (sirf utni jitne duty cycles hue)
  *   - Supabase Storage mein upload karta hai
  *   - Comma-separated Supabase URLs return karta hai
  *
+ * @param {number} maxCount - Kitni images try karni hain (duty time entries ki count)
  * @returns {string|null} - "url1,url2" ya null
  */
-const syncDutyImages = async ({ firebaseFolder, supabaseFolder, city, bucket, wardName, year, month, day }) => {
+const syncDutyImages = async ({ firebaseFolder, supabaseFolder, city, bucket, wardName, year, month, day, maxCount = 1 }) => {
     const uploadedUrls = [];
 
-    for (const imgIndex of [1, 2]) {
+    for (let imgIndex = 1; imgIndex <= maxCount; imgIndex++) {
         const firebasePath = `${city}/${firebaseFolder}/${wardName}/${year}/${month}/${day}/${imgIndex}.png`;
         const supabasePath = `${supabaseFolder}/${wardName}/${year}/${month}/${day}/${imgIndex}.png`;
 
@@ -311,8 +312,15 @@ const backgroundSyncFromFirebase = async ({
 
         console.log('[ShiftTimeline] Background sync: change detected, syncing images + saving —', wardName);
 
-        // Images bhi sync karo (naye duty cycle ki images bhi aa sakti hain)
-        const imageArgs = { city, bucket, wardName, year, month, day };
+        // Duty cycles ki count se decide karo kitni images fetch karni hain
+        const maxCount = Math.max(
+            countEntries(freshTimes.DutyInTime  || existingData?.DutyInTime),
+            countEntries(freshTimes.DutyOutTime || existingData?.DutyOutTime),
+            1,
+        );
+
+        // Images bhi sync karo (sirf utni jitne duty cycles hue)
+        const imageArgs = { city, bucket, wardName, year, month, day, maxCount };
         const [dutyInImagesText, dutyOutImagesText] = await Promise.all([
             syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[0] }),
             syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
@@ -407,9 +415,16 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
 
     // ── Phase 2: Images + Supabase save — background mein (non-blocking) ────
     (async () => {
+        // Duty cycles ki count se decide karo kitni images fetch karni hain
+        const maxCount = Math.max(
+            countEntries(dutyInTime),
+            countEntries(dutyOutTime),
+            1,
+        );
+        const imageArgsWithCount = { ...imageArgs, maxCount };
         const [dutyInImagesText, dutyOutImagesText] = await Promise.all([
-            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[0] }),
-            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
+            syncDutyImages({ ...imageArgsWithCount, ...IMAGE_FOLDER_MAP[0] }),
+            syncDutyImages({ ...imageArgsWithCount, ...IMAGE_FOLDER_MAP[1] }),
         ]);
 
         const payload = {
