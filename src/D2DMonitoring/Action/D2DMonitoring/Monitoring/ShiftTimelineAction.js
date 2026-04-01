@@ -2,13 +2,17 @@
  * ShiftTimelineAction.js
  *
  * Shift Timeline ka data manage karta hai:
- *   1. Pehle Supabase check karo (WardName + CityName)
- *   2. Mila → Supabase se hi dikhao (Firebase call nahi)
- *   3. Nahi mila → Firebase se fetch karo → Supabase table + Storage mein save karo → dikhao
+ *   1. Pehle Supabase check karo (WardName + CityName + date)
+ *   2. Mila → turant return karo, lekin background mein Firebase check bhi karo
+ *   3. Nahi mila → Firebase se fetch karo → Supabase mein save karo → dikhao
+ *
+ * Background Firebase Sync (ward select hone par har baar):
+ *   - Firebase se latest times fetch karo
+ *   - Agar Supabase ke data se alag/zyada entries hain → upsert karo → onDataUpdate callback
  *
  * Multiple times support:
  *   DutyInTime, wardReachedOn, DutyOutTime → comma-separated store hote hain
- *   e.g. "06:00:00,07:00:00"
+ *   e.g. "06:00:00,07:30:00"  (2 duty cycles)
  *
  * Multiple images support:
  *   DutyOnImage, DutyOutImage → comma-separated Supabase Storage URLs
@@ -131,6 +135,35 @@ export const formatShiftTime = (storedText) => {
     return firstEntry.length >= 5 ? firstEntry.substring(0, 5) : firstEntry;
 };
 
+// ─── Change Detection ─────────────────────────────────────────────────────────
+
+/**
+ * Firebase ke naye data ko existing data se compare karta hai.
+ *
+ * Change detect hota hai jab:
+ *   1. Firebase mein entries zyada hain (naya duty cycle aaya)
+ *   2. Firebase ki value alag hai (koi time update hua)
+ *
+ * @returns {boolean}
+ */
+const hasDataChanged = (existingData, newTimes) => {
+    const countEntries = (str) => (str ? str.split(',').filter(Boolean).length : 0);
+
+    const fields = [
+        { existing: existingData?.DutyInTime,    fresh: newTimes.DutyInTime },
+        { existing: existingData?.DutyOutTime,   fresh: newTimes.DutyOutTime },
+        { existing: existingData?.wardReachedOn, fresh: newTimes.wardReachedOn },
+    ];
+
+    return fields.some(({ existing, fresh }) => {
+        if (!fresh) return false; // Firebase mein kuch nahi — no change
+        if (!existing) return true; // Pehle kuch nahi tha, ab hai — change
+        if (countEntries(fresh) > countEntries(existing)) return true; // Naye entries
+        if (fresh !== existing) return true; // Value alag hai
+        return false;
+    });
+};
+
 // ─── Image Utilities ──────────────────────────────────────────────────────────
 
 /**
@@ -226,6 +259,99 @@ const checkInSupabase = async (wardName, city, date) => {
     return data || null;
 };
 
+// ─── Background Firebase Sync ─────────────────────────────────────────────────
+
+/**
+ * Ward select hone par background mein Firebase check karta hai.
+ *
+ * Flow:
+ *   1. Firebase se latest times fetch karo (fast, no storage)
+ *   2. Existing data se compare karo
+ *   3. Kuch naya mila → images bhi sync karo → Supabase upsert → cache update → onDataUpdate callback
+ *
+ * Ye function kabhi bhi UI ko block nahi karta — fire-and-forget hai.
+ *
+ * @param {object}   existingData  - Abhi dikhaye ja rahe data (cache/Supabase se)
+ * @param {Function} onDataUpdate  - Naya data milne par UI update ke liye callback
+ */
+const backgroundSyncFromFirebase = async ({
+    wardName, city, year, month, day, bucket, cacheKey, existingData, onDataUpdate,
+}) => {
+    try {
+        console.log('[ShiftTimeline] Background sync: Firebase check start —', wardName);
+
+        // Firebase Realtime DB hit — track karo
+        saveRealtimeDbServiceHistory(SERVICE, 'backgroundFirebaseSync');
+        saveRealtimeDbServiceDataHistory(SERVICE, 'backgroundFirebaseSync', { wardName, city, day });
+
+        const [dutyInResp, dutyOutResp, reachedResp] = await Promise.all([
+            getWardDutyOnTimeFromDB(year, month, day, wardName),
+            getWardDutyOffTimeFromDB(year, month, day, wardName),
+            getWardReachedTimeFromDB(year, month, day, wardName),
+        ]);
+
+        const freshTimes = {
+            DutyInTime:    buildTimesText(dutyInResp?.status  === 'Success' ? dutyInResp.data  : null),
+            wardReachedOn: buildTimesText(reachedResp?.status === 'Success' ? reachedResp.data : null),
+            DutyOutTime:   buildTimesText(dutyOutResp?.status === 'Success' ? dutyOutResp.data : null),
+        };
+
+        // Koi change nahi → kuch nahi karna
+        if (!hasDataChanged(existingData, freshTimes)) {
+            console.log('[ShiftTimeline] Background sync: no changes detected —', wardName);
+            return;
+        }
+
+        console.log('[ShiftTimeline] Background sync: change detected, syncing images + saving —', wardName);
+
+        // Images bhi sync karo (naye duty cycle ki images bhi aa sakti hain)
+        const imageArgs = { city, bucket, wardName, year, month, day };
+        const [dutyInImagesText, dutyOutImagesText] = await Promise.all([
+            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[0] }),
+            syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
+        ]);
+
+        // Naya payload — existing se merge karo taaki purana data na jaaye
+        const updatedPayload = {
+            WardName:    wardName,
+            CityName:    city,
+            date:        day,
+            DutyInTime:    freshTimes.DutyInTime    || existingData?.DutyInTime    || null,
+            wardReachedOn: freshTimes.wardReachedOn || existingData?.wardReachedOn || null,
+            DutyOutTime:   freshTimes.DutyOutTime   || existingData?.DutyOutTime   || null,
+            DutyOnImage:   dutyInImagesText         || existingData?.DutyOnImage   || null,
+            DutyOutImage:  dutyOutImagesText        || existingData?.DutyOutImage  || null,
+        };
+
+        // Supabase upsert — row hai toh update, nahi hai toh insert
+        const { data: saved, error } = await supabase
+            .from(TABLE)
+            .upsert(updatedPayload, { onConflict: 'WardName,CityName,date' })
+            .select()
+            .maybeSingle();
+
+        if (error) {
+            console.error('[ShiftTimeline] Background sync upsert error:', error.message);
+            return;
+        }
+
+        const finalData = saved || updatedPayload;
+        shiftTimelineCache.set(cacheKey, finalData);
+
+        console.log('[ShiftTimeline] Background sync: Supabase updated successfully —', wardName);
+
+        // UI ko update karo
+        if (onDataUpdate) {
+            onDataUpdate(finalData);
+        }
+
+    } catch (err) {
+        console.error('[ShiftTimeline] Background sync failed:', err.message);
+    }
+};
+
+// ─── Initial Firebase Fetch (fresh — no Supabase data) ────────────────────────
+
 /**
  * Firebase se data fetch karke Supabase mein save karta hai.
  *
@@ -234,10 +360,10 @@ const checkInSupabase = async (wardName, city, date) => {
  *   Phase 2 (background) → Images sync + Supabase save (non-blocking)
  *
  * @param {string}   cacheKey      - Memory cache update ke liye
- * @param {Function} onImagesReady - Images ready hone par UI callback
+ * @param {Function} onDataUpdate  - Images ready hone ya save complete hone par UI callback
  * @returns {object|null} - Partial data (times only) ya null
  */
-const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, bucket, cacheKey, onImagesReady }) => {
+const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, bucket, cacheKey, onDataUpdate }) => {
     const imageArgs = { city, bucket, wardName, year, month, day };
 
     // Firebase Realtime DB hit — track karo
@@ -287,7 +413,7 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
 
         const { data: saved, error } = await supabase
             .from(TABLE)
-            .insert(payload)
+            .upsert(payload, { onConflict: 'WardName,CityName,date' })
             .select()
             .maybeSingle();
 
@@ -301,12 +427,9 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
         // Cache update karo with full data (images included)
         if (cacheKey) shiftTimelineCache.set(cacheKey, saved || payload);
 
-        // UI callback — images ready hain
-        if (onImagesReady && (dutyInImagesText || dutyOutImagesText)) {
-            onImagesReady({
-                DutyOnImage:  dutyInImagesText  || null,
-                DutyOutImage: dutyOutImagesText || null,
-            });
+        // UI callback — images ya full data ready hai
+        if (onDataUpdate && (dutyInImagesText || dutyOutImagesText)) {
+            onDataUpdate(saved || payload);
         }
     })();
 
@@ -320,42 +443,57 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
  * Shift Timeline ka main action function.
  *
  * Flow:
- *   Step 1 → Memory cache check (instant)
- *   Step 2 → Supabase check (WardName + CityName + date)
- *   Step 3 → Firebase: times turant return, images background mein sync
+ *   Step 1 → Memory cache check (instant return)
+ *   Step 2 → Supabase check (return if found)
+ *   Step 3 → Firebase fresh fetch (Supabase mein nahi tha)
+ *
+ *   Steps 1 & 2 ke baad bhi background mein Firebase check hota hai:
+ *   → Naya data mila toh Supabase upsert + onDataUpdate callback
  *
  * @param {object}   ward          - { id: "1" } (WardCityMap ward)
  * @param {string}   city          - City name, e.g. "Sikar"
- * @param {Function} onImagesReady - ({ DutyOnImage, DutyOutImage }) → called when bg images sync completes
- * @returns {object|null} - Supabase row data (ya partial Firebase data)
+ * @param {Function} onDataUpdate  - Koi bhi update milne par UI refresh ke liye callback
+ *                                   Called with: (updatedRowData) → set state with this
+ * @returns {object|null} - Current data (cache/Supabase/Firebase se)
  */
-export const getOrFetchShiftTimeline = async (ward, city, onImagesReady) => {
+export const getOrFetchShiftTimeline = async (ward, city, onDataUpdate) => {
     if (!ward?.id || !city) return null;
 
     const wardName = String(ward.id);
-    const year = dayjs().format('YYYY');
-    const month = dayjs().format('MMMM');
-    const day = dayjs().format('YYYY-MM-DD');
-    const bucket = city.toLowerCase().trim();
+    const year     = dayjs().format('YYYY');
+    const month    = dayjs().format('MMMM');
+    const day      = dayjs().format('YYYY-MM-DD');
+    const bucket   = city.toLowerCase().trim();
     const cacheKey = `${wardName}-${city}-${day}`;
+
+    const bgSyncArgs = { wardName, city, year, month, day, bucket, cacheKey, onDataUpdate };
 
     // Step 1: Memory cache — instant, zero network calls
     if (shiftTimelineCache.has(cacheKey)) {
-        console.log('[ShiftTimeline] Serving from memory cache');
-        return shiftTimelineCache.get(cacheKey);
+        const cachedData = shiftTimelineCache.get(cacheKey);
+        console.log('[ShiftTimeline] Serving from memory cache —', wardName);
+
+        // Background: Firebase par check karo — kuch naya toh nahi aaya
+        backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: cachedData }).catch(() => {});
+
+        return cachedData;
     }
 
     // Step 2: Supabase check — sirf current date ka data
     const supabaseData = await checkInSupabase(wardName, city, day);
     if (supabaseData) {
         shiftTimelineCache.set(cacheKey, supabaseData);
-        console.log('[ShiftTimeline] Data found in Supabase — caching in memory');
+        console.log('[ShiftTimeline] Data found in Supabase — caching in memory —', wardName);
+
+        // Background: Firebase par check karo — kuch naya toh nahi aaya
+        backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: supabaseData }).catch(() => {});
+
         return supabaseData;
     }
 
-    // Step 3: Firebase times turant return, images background mein
-    console.log('[ShiftTimeline] Data not in Supabase — fetching from Firebase');
-    const freshData = await fetchFromFirebaseAndSave({ wardName, city, year, month, day, bucket, cacheKey, onImagesReady });
+    // Step 3: Supabase mein kuch nahi — Firebase se fresh fetch karo
+    console.log('[ShiftTimeline] Data not in Supabase — fetching from Firebase —', wardName);
+    const freshData = await fetchFromFirebaseAndSave({ wardName, city, year, month, day, bucket, cacheKey, onDataUpdate });
 
     if (freshData) {
         shiftTimelineCache.set(cacheKey, freshData);
