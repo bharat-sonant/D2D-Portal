@@ -202,18 +202,20 @@ const syncDutyImages = async ({ firebaseFolder, supabaseFolder, city, bucket, wa
 // ─── Supabase Table Helpers ───────────────────────────────────────────────────
 
 /**
- * Supabase WasteCollectionInfo table mein ward ka row check karta hai.
+ * Supabase WasteCollectionInfo table mein ward ka row check karta hai (sirf current date ka).
  *
  * @param {string} wardName
  * @param {string} city
+ * @param {string} date - YYYY-MM-DD format
  * @returns {object|null} - Row mila toh return, warna null
  */
-const checkInSupabase = async (wardName, city) => {
+const checkInSupabase = async (wardName, city, date) => {
     const { data, error } = await supabase
         .from(TABLE)
         .select('*')
         .eq('WardName', wardName)
         .eq('CityName', city)
+        .eq('date', date)
         .maybeSingle();
 
     if (error) {
@@ -254,12 +256,24 @@ const fetchFromFirebaseAndSave = async ({ wardName, city, year, month, day, buck
         syncDutyImages({ ...imageArgs, ...IMAGE_FOLDER_MAP[1] }),
     ]);
 
+    const dutyInTime   = buildTimesText(dutyInResp?.status === 'Success' ? dutyInResp.data : null);
+    const wardReachedOn = buildTimesText(reachedResp?.status === 'Success' ? reachedResp.data : null);
+    const dutyOutTime  = buildTimesText(dutyOutResp?.status === 'Success' ? dutyOutResp.data : null);
+
+    // Firebase mein koi bhi data nahi mila — Supabase mein save nahi karna
+    const hasData = dutyInTime || wardReachedOn || dutyOutTime || dutyInImagesText || dutyOutImagesText;
+    if (!hasData) {
+        console.log('[ShiftTimeline] Firebase se koi data nahi mila — Supabase save skip');
+        return null;
+    }
+
     const payload = {
         WardName: wardName,
         CityName: city,
-        DutyInTime: buildTimesText(dutyInResp?.status === 'Success' ? dutyInResp.data : null),
-        wardReachedOn: buildTimesText(reachedResp?.status === 'Success' ? reachedResp.data : null),
-        DutyOutTime: buildTimesText(dutyOutResp?.status === 'Success' ? dutyOutResp.data : null),
+        date: day,
+        DutyInTime: dutyInTime,
+        wardReachedOn: wardReachedOn,
+        DutyOutTime: dutyOutTime,
         DutyOnImage: dutyInImagesText || null,
         DutyOutImage: dutyOutImagesText || null,
     };
@@ -311,8 +325,8 @@ export const getOrFetchShiftTimeline = async (ward, city) => {
         return shiftTimelineCache.get(cacheKey);
     }
 
-    // Step 2: Supabase check
-    const supabaseData = await checkInSupabase(wardName, city);
+    // Step 2: Supabase check — sirf current date ka data
+    const supabaseData = await checkInSupabase(wardName, city, day);
     if (supabaseData) {
         shiftTimelineCache.set(cacheKey, supabaseData);
         console.log('[ShiftTimeline] Data found in Supabase — caching in memory');
