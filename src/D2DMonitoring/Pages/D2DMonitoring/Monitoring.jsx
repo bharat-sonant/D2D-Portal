@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import styles from "../../Pages/D2DRealtime/Realtime.module.css";
 import {
@@ -128,6 +128,60 @@ const getVehicleJourneyMeta = (rawStatus = "") => {
   };
 };
 
+const APP_SESSION_LOGS = [
+  { time: "12:52", status: "Opened", duration: "now", tone: "opened" },
+  { time: "12:39", status: "Closed", duration: "13m 3s", tone: "closed" },
+  { time: "12:38", status: "Minimized", duration: "31s", tone: "minimized" },
+  { time: "12:33", status: "Opened", duration: "5m 8s", tone: "opened" },
+  { time: "12:27", status: "Closed", duration: "6m 8s", tone: "closed" },
+  { time: "12:26", status: "Minimized", duration: "35s", tone: "minimized" },
+  { time: "10:55", status: "Opened", duration: "91m 41s", tone: "opened" },
+  { time: "10:54", status: "Closed", duration: "13s", tone: "closed" },
+  { time: "10:54", status: "Minimized", duration: "31s", tone: "minimized" },
+  { time: "10:54", status: "Opened", duration: "-", tone: "opened" },
+];
+const APP_OPENED_COUNT = APP_SESSION_LOGS.filter((e) => e.tone === "opened").length;
+const APP_CLOSED_COUNT = APP_SESSION_LOGS.filter((e) => e.tone === "closed").length;
+
+const getZoneLabel = (ward) => ward.name;
+
+const getProgressStyle = (progress = 0) => {
+  if (progress < 30) {
+    return {
+      "--progressWidth": `${progress}%`,
+      "--progressFill": "rgba(239, 68, 68, 0.16)",
+      "--progressText": "#c24141",
+      "--progressBg": "#fff6f6",
+      "--progressBorder": "#ffd7d7",
+    };
+  }
+  if (progress < 50) {
+    return {
+      "--progressWidth": `${progress}%`,
+      "--progressFill": "rgba(249, 115, 22, 0.16)",
+      "--progressText": "#c35a1f",
+      "--progressBg": "#fff9f2",
+      "--progressBorder": "#ffe1c3",
+    };
+  }
+  if (progress < 70) {
+    return {
+      "--progressWidth": `${progress}%`,
+      "--progressFill": "rgba(245, 158, 11, 0.15)",
+      "--progressText": "#a87413",
+      "--progressBg": "#fffdf4",
+      "--progressBorder": "#fcebb8",
+    };
+  }
+  return {
+    "--progressWidth": `${progress}%`,
+    "--progressFill": "rgba(34, 197, 94, 0.15)",
+    "--progressText": "#228f50",
+    "--progressBg": "#f5fdf8",
+    "--progressBorder": "#ccefd9",
+  };
+};
+
 const MonitoringList = () => {
   const { city } = useParams();
   const navigate = useNavigate();
@@ -198,7 +252,6 @@ const MonitoringList = () => {
     dayjs().format("DD MMM, hh:mm A"),
   );
   const [refreshing, setRefreshing] = useState(false);
-  const [, setDataLoading] = useState(false);
   const [showRemarkModal, setShowRemarkModal] = useState(false);
   const [activeStatusModal, setActiveStatusModal] = useState(null);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
@@ -244,275 +297,60 @@ const MonitoringList = () => {
   const [wardReachedTime, setWardReachedTime] = useState(null);
   const [dutyOffTime, setDutyOffTime] = useState(null);
   const [dutyOffImage, setDutyOffImage] = useState(null);
-  const [wardData] = useState({
-    vehicleStatus: "Dumping Yard out",
-    trips: 2,
-    appStatus: "Opened",
-    dutyOn: "8:37 AM",
-    reachOn: "9:17 AM",
-    lastLineTime: "14:02",
-    finalPointReached: false,
-    dutyOff: "---",
-    lines: { total: 206, completed: 61, skipped: 0, current: 168 },
-    halt: { total: "1:25", current: "0:00" },
-    timeStats: { total: "5 hr 35 min", inZone: "3 hr 16 min" },
-    kmStats: { total: "16.44 km", inZone: "7.37 km" },
-    profiles: {
-      driver: { name: "Sanwar Lal", phone: "8875907595", stars: 5 },
-      helper: { name: "Dharamraj", phone: "8058224585", stars: 5 },
-    },
-    vehicleNumber: "LEY-AT-4602",
-    vehicleJourney: {
-      quickSummary: {
-        fuelStops: 1,
-        wardEntries: 5,
-        inWard: "71m 32s",
-        longestSession: "61m 32s",
-      },
-      routeSnapshot: [
-        {
-          id: "r1",
-          time: "06:23",
-          label: "Entered",
-          duration: "1m",
-          kind: "fuel_stop",
-        },
-        {
-          id: "r2",
-          time: "06:24",
-          label: "Left",
-          duration: "30s",
-          kind: "departed",
-        },
-        {
-          id: "r3",
-          time: "06:24",
-          label: "Entered",
-          duration: "5m 30s",
-          kind: "entered",
-        },
-        {
-          id: "r4",
-          time: "06:30",
-          label: "Exited",
-          duration: "30s",
-          kind: "exited",
-        },
-        {
-          id: "r5",
-          time: "06:30",
-          label: "Entered",
-          duration: "3m 30s",
-          kind: "entered",
-        },
-        {
-          id: "r6",
-          time: "06:34",
-          label: "Exited",
-          duration: "2m 30s",
-          kind: "exited",
-        },
-        {
-          id: "r7",
-          time: "06:36",
-          label: "Entered",
-          duration: "",
-          kind: "entered",
-        },
-      ],
-      eventLog: [
-        {
-          id: "e1",
-          title: "Petrol Pump Entered",
-          description: "Stopped for refuelling",
-          time: "06:23",
-          tag: "Fuel Stop",
-          duration: "1m",
-          kind: "fuel_stop",
-        },
-        {
-          id: "e2",
-          title: "Petrol Pump Left",
-          description: "Refuelling done, heading out",
-          time: "06:24",
-          tag: "Departed",
-          duration: "30s",
-          kind: "departed",
-        },
-        {
-          id: "e3",
-          title: "Ward Entered",
-          description: "Inside ward - collecting",
-          time: "06:24",
-          tag: "In Ward",
-          duration: "5m 30s",
-          kind: "entered",
-        },
-        {
-          id: "e4",
-          title: "Ward Exited",
-          description: "Collection done, moving on",
-          time: "07:38",
-          tag: "Out",
-          duration: "30s",
-          kind: "exited",
-        },
-        {
-          id: "e5",
-          title: "Ward Entered",
-          description: "Inside ward - collecting",
-          time: "07:38",
-          tag: "In Ward",
-          duration: "1m",
-          kind: "entered",
-        },
-        {
-          id: "e6",
-          title: "Ward Exited",
-          description: "Collection done, moving on",
-          time: "07:39",
-          tag: "Out",
-          duration: "30s",
-          kind: "exited",
-        },
-        {
-          id: "e7",
-          title: "Ward Entered",
-          description: "Inside ward - collecting",
-          time: "07:40",
-          tag: "In Ward",
-          duration: "Active now",
-          kind: "entered",
-        },
-      ],
-    },
-    zones: { total: 74, completed: 31, active: 29, inactive: 9, stop: 5 },
-    heroesOnWork: 89,
-    garageDuty: "0/0",
-    heroesDutyReplica: {
-      dateLabel: dayjs().format("DD MMM, YYYY"),
-      onFieldLabel: "On Field",
-      driver: { lines: 72, field: "3h", rating: 5.0 },
-      helper: { lines: 68, field: "3h", rating: 5.0 },
-      summary: { tripsDone: 2, totalLines: 140, teamRating: 5.0 },
-    },
-  });
 
-  const appSessionLogs = [
-    { time: "12:52", status: "Opened", duration: "now", tone: "opened" },
-    { time: "12:39", status: "Closed", duration: "13m 3s", tone: "closed" },
-    { time: "12:38", status: "Minimized", duration: "31s", tone: "minimized" },
-    { time: "12:33", status: "Opened", duration: "5m 8s", tone: "opened" },
-    { time: "12:27", status: "Closed", duration: "6m 8s", tone: "closed" },
-    { time: "12:26", status: "Minimized", duration: "35s", tone: "minimized" },
-    { time: "10:55", status: "Opened", duration: "91m 41s", tone: "opened" },
-    { time: "10:54", status: "Closed", duration: "13s", tone: "closed" },
-    { time: "10:54", status: "Minimized", duration: "31s", tone: "minimized" },
-    { time: "10:54", status: "Opened", duration: "-", tone: "opened" },
-  ];
-
-  const appOpenedCount = appSessionLogs.filter(
-    (entry) => entry.tone === "opened",
-  ).length;
-  const appClosedCount = appSessionLogs.filter(
-    (entry) => entry.tone === "closed",
-  ).length;
-  const filteredAppSessionLogs =
+  const filteredAppSessionLogs = useMemo(() =>
     appStatusTab === "all"
-      ? appSessionLogs
-      : appSessionLogs.filter((entry) =>
-          appStatusTab === "opened"
-            ? entry.tone === "opened"
-            : entry.tone === "closed",
-        );
+      ? APP_SESSION_LOGS
+      : APP_SESSION_LOGS.filter((entry) =>
+          appStatusTab === "opened" ? entry.tone === "opened" : entry.tone === "closed"
+        ),
+  [appStatusTab]);
   const phoneClockTime = dayjs(phoneClock).format("HH:mm");
   const phoneClockDate = dayjs(phoneClock).format("DD MMM");
 
-  // Merge live vehicle status into wardData for display
-  const displayVehicleStatus =
-    liveVehicleStatus.currentStatus || wardData.vehicleStatus;
-  const displayEventLog =
-    liveVehicleStatus.eventLog.length > 0
-      ? liveVehicleStatus.eventLog
-      : wardData.vehicleJourney?.eventLog || [];
-  const displayQuickSummary =
-    Object.keys(liveVehicleStatus.quickSummary).length > 0
-      ? liveVehicleStatus.quickSummary
-      : wardData.vehicleJourney?.quickSummary || {};
+  // Merge live vehicle status for display
+  const displayVehicleStatus = liveVehicleStatus.currentStatus || "";
 
-  const vehicleJourneyMeta = getVehicleJourneyMeta(displayVehicleStatus);
-  const vehicleJourneyData = {
-    ...wardData.vehicleJourney,
-    eventLog: displayEventLog,
-    quickSummary: displayQuickSummary,
-  };
-  const quickSummary = displayQuickSummary;
-  const routeSnapshot = vehicleJourneyData.routeSnapshot || [];
-  const eventLog = displayEventLog;
-  // const summaryText = `Vehicle made <b>${quickSummary.wardEntries ?? 0}</b> ward entries & <b>${
-  //   quickSummary.fuelStops ?? 0
-  // }</b> fuel stops · Spent <b>${quickSummary.inWard || "0m"}</b> inside wards · Longest session <b>${
-  //   quickSummary.longestSession || "0m"
-  // }</b> · Currently <b>${statusSummaryText}</b>`;
+  const vehicleJourneyData = useMemo(() => ({
+    routeSnapshot: [],
+    eventLog: liveVehicleStatus.eventLog.length > 0 ? liveVehicleStatus.eventLog : [],
+    quickSummary: Object.keys(liveVehicleStatus.quickSummary).length > 0 ? liveVehicleStatus.quickSummary : {},
+  }), [liveVehicleStatus.eventLog, liveVehicleStatus.quickSummary]);
 
-  // Trip Status Logic
-  const tripTotal = wardData.trips || 5;
-  const tripCompleted = wardData.tripsDone || 2;
-  const tripActive = tripTotal > tripCompleted ? 1 : 0;
+  const vehicleJourneyMeta = useMemo(
+    () => getVehicleJourneyMeta(displayVehicleStatus),
+    [displayVehicleStatus],
+  );
 
-  const getTripStatusTone = () => {
-    if (tripCompleted === tripTotal) return "toneSuccess";
-    if (tripActive > 0) return "toneWarning";
-    return "toneDanger";
-  };
-
-  const appTone =
-    wardData.appStatus === "Opened" ? "toneSuccess" : "toneDanger";
   const vehicleTone =
     vehicleJourneyMeta.tone === "danger"
       ? "toneDanger"
       : vehicleJourneyMeta.tone === "success"
         ? "toneSuccess"
         : "toneWarning";
+  const getTripStatusTone = useCallback(() => "toneWarning", []);
+  const appTone = "toneWarning";
+  const tripCompleted = 0;
+  const tripActive = 0;
 
-  const displayWardData = {
-    ...wardData,
+  const displayWardData = useMemo(() => ({
     vehicleStatus: displayVehicleStatus,
     vehicleJourney: vehicleJourneyData,
     dutyOn: showDutyInTime || "00:00",
     reachOn: wardReachedTime || "00:00",
-  };
+  }), [displayVehicleStatus, vehicleJourneyData, showDutyInTime, wardReachedTime]);
 
-  const routeQuickStats = [
-    {
-      key: "fuel",
-      label: "Fuel Stop",
-      value: quickSummary.fuelStops ?? 0,
-      icon: <Fuel size={12} />,
-    },
-    {
-      key: "entries",
-      label: "Ward Entries",
-      value: quickSummary.wardEntries ?? 0,
-      icon: <MapPin size={12} />,
-    },
-    {
-      key: "inward",
-      label: "In Ward",
-      value: quickSummary.inWard || "0m",
-      icon: <Clock size={12} />,
-    },
-    {
-      key: "longest",
-      label: "Longest Stay",
-      value: quickSummary.longestSession || "0m",
-      icon: <Trophy size={12} />,
-    },
-  ];
-  const routeSnapshotRows =
-    eventLog.length > 0
-      ? eventLog
-      : routeSnapshot.map((item) => ({
+  const routeQuickStats = useMemo(() => [
+    { key: "fuel",    label: "Fuel Stop",     value: vehicleJourneyData.quickSummary.fuelStops ?? 0,          icon: <Fuel size={12} /> },
+    { key: "entries", label: "Ward Entries",  value: vehicleJourneyData.quickSummary.wardEntries ?? 0,        icon: <MapPin size={12} /> },
+    { key: "inward",  label: "In Ward",       value: vehicleJourneyData.quickSummary.inWard || "0m",          icon: <Clock size={12} /> },
+    { key: "longest", label: "Longest Stay",  value: vehicleJourneyData.quickSummary.longestSession || "0m",  icon: <Trophy size={12} /> },
+  ], [vehicleJourneyData.quickSummary]);
+
+  const routeSnapshotRows = useMemo(() =>
+    vehicleJourneyData.eventLog.length > 0
+      ? vehicleJourneyData.eventLog
+      : vehicleJourneyData.routeSnapshot.map((item) => ({
           id: item.id,
           title: item.label,
           description: "",
@@ -520,7 +358,8 @@ const MonitoringList = () => {
           tag: item.label,
           duration: item.duration || "-",
           kind: item.kind,
-        }));
+        })),
+  [vehicleJourneyData.eventLog, vehicleJourneyData.routeSnapshot]);
 
   useEffect(() => {
     if (!city) return;
@@ -691,89 +530,52 @@ const MonitoringList = () => {
     navigate("/");
   };
 
-  const handleWardSelect = (ward) => {
+  const handleWardSelect = useCallback((ward) => {
     if (selectedWard?.id === ward.id) return;
-    setDataLoading(true);
     setIsWardMetricsLoading(!lineStatusByWard?.[ward.id]);
     setSelectedWard(ward);
-    setDataLoading(false);
-  };
+  }, [selectedWard?.id, lineStatusByWard]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
       setLastRefreshed(dayjs().format("DD MMM, hh:mm A"));
     }, 800);
-  };
+  }, []);
 
-  const getZoneLabel = (ward) => ward.name;
-
-  const getProgressStyle = (progress = 0) => {
-    if (progress < 30) {
-      return {
-        "--progressWidth": `${progress}%`,
-        "--progressFill": "rgba(239, 68, 68, 0.16)",
-        "--progressText": "#c24141",
-        "--progressBg": "#fff6f6",
-        "--progressBorder": "#ffd7d7",
-      };
-    }
-    if (progress < 50) {
-      return {
-        "--progressWidth": `${progress}%`,
-        "--progressFill": "rgba(249, 115, 22, 0.16)",
-        "--progressText": "#c35a1f",
-        "--progressBg": "#fff9f2",
-        "--progressBorder": "#ffe1c3",
-      };
-    }
-    if (progress < 70) {
-      return {
-        "--progressWidth": `${progress}%`,
-        "--progressFill": "rgba(245, 158, 11, 0.15)",
-        "--progressText": "#a87413",
-        "--progressBg": "#fffdf4",
-        "--progressBorder": "#fcebb8",
-      };
-    }
-    return {
-      "--progressWidth": `${progress}%`,
-      "--progressFill": "rgba(34, 197, 94, 0.15)",
-      "--progressText": "#228f50",
-      "--progressBg": "#f5fdf8",
-      "--progressBorder": "#ccefd9",
-    };
-  };
-
-  const openNewRemarkModal = () => {
+  const openNewRemarkModal = useCallback(() => {
     setEditingRemarkId(null);
     setRemarkForm({ topic: "", description: "" });
     setShowRemarkModal(true);
-  };
+  }, []);
 
-  const openEditRemarkModal = (item) => {
+  const openEditRemarkModal = useCallback((item) => {
     setEditingRemarkId(item.id);
     setRemarkForm({ topic: item.topic || "", description: item.remark || item.description || "" });
     setShowRemarkModal(true);
-  };
+  }, []);
 
-  const closeAllModals = () => {
+  const closeAllModals = useCallback(() => {
     setActiveStatusModal(null);
     setShowVehicleModal(false);
     setShowRemarkModal(false);
     setShowTopicDropdown(false);
     setAppStatusTab("all");
     setDutyModal(null);
-  };
+  }, []);
 
-  const handleShiftEventClick = (event) => {
+  const openVehicleModal = useCallback(() => setActiveStatusModal("vehicle"), []);
+  const openTripsModal  = useCallback(() => setActiveStatusModal("trips"),   []);
+  const openAppModal    = useCallback(() => setActiveStatusModal("app"),      []);
+
+  const handleShiftEventClick = useCallback((event) => {
     if (event.key === "dutyOn") setDutyModal("dutyIn");
     if (event.key === "dutyOff") {
       if (!dutyOffTime || dutyOffTime === "00:00" || dutyOffTime === "--:--") return;
       setDutyModal("dutyOff");
     }
-  };
+  }, [dutyOffTime]);
 
   const handleRemarkSubmit = async () => {
     const topic = remarkForm.topic.trim();
@@ -803,16 +605,16 @@ const MonitoringList = () => {
     closeAllModals();
   };
 
-  const deleteRemark = async (id) => {
+  const deleteRemark = useCallback(async (id) => {
     if (!selectedWard?.id) return;
     await action.deleteRemark(selectedWard.id, id);
-  };
+  }, [selectedWard?.id]);
 
-  const handleVehicleIssueRowChange = (id, field, value) => {
+  const handleVehicleIssueRowChange = useCallback((id, field, value) => {
     setVehicleIssueRows((prev) =>
       prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)),
     );
-  };
+  }, []);
 
   const currentShiftEvents = React.useMemo(
     () => [
@@ -910,13 +712,13 @@ const MonitoringList = () => {
     [totalWardLengthKm, completedLengthKm],
   );
 
-  const stateItems = action.buildCoverageStateItems({
+  const stateItems = useMemo(() => action.buildCoverageStateItems({
     isWardMetricsLoading,
     zoneCoveragePercent,
     totalWardLengthKm,
     completedLengthKm,
     remainingLengthKm,
-  });
+  }), [isWardMetricsLoading, zoneCoveragePercent, totalWardLengthKm, completedLengthKm, remainingLengthKm]);
   return (
     <>
     <div className={styles.realtimePage}>
@@ -1013,9 +815,9 @@ const MonitoringList = () => {
                 vehicleTone={vehicleTone}
                 getTripStatusTone={getTripStatusTone}
                 appTone={appTone}
-                onVehicleClick={() => setActiveStatusModal("vehicle")}
-                onTripsClick={() => setActiveStatusModal("trips")}
-                onAppClick={() => setActiveStatusModal("app")}
+                onVehicleClick={openVehicleModal}
+                onTripsClick={openTripsModal}
+                onAppClick={openAppModal}
               />
               
                 <RemarksCard
@@ -1134,9 +936,9 @@ const MonitoringList = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <AppStatusModal
-                appSessionLogs={appSessionLogs}
-                appOpenedCount={appOpenedCount}
-                appClosedCount={appClosedCount}
+                appSessionLogs={APP_SESSION_LOGS}
+                appOpenedCount={APP_OPENED_COUNT}
+                appClosedCount={APP_CLOSED_COUNT}
                 appStatusTab={appStatusTab}
                 filteredAppSessionLogs={filteredAppSessionLogs}
                 phoneClockTime={phoneClockTime}
@@ -1147,14 +949,14 @@ const MonitoringList = () => {
             </div>
           ) : activeStatusModal === "trips" ? (
             <TripExecutionModal
-              wardData={wardData}
+              wardData={{ vehicleNumber: "" }}
               tripCompleted={tripCompleted}
               tripActive={tripActive}
               onClose={closeAllModals}
             />
           ) : activeStatusModal === "vehicle" ? (
             <VehicleJourneyModal
-              wardData={wardData}
+              wardData={{ vehicleNumber: "" }}
               vehicleJourneyMeta={vehicleJourneyMeta}
               routeQuickStats={routeQuickStats}
               routeSnapshotRows={routeSnapshotRows}

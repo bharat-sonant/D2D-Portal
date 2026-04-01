@@ -12,11 +12,11 @@ const INITIAL_WORKERS = {
   vehicle: "",
 };
 
+const cachedUrls = new Set();
+
 const isCached = (url) => {
   if (!url) return false;
-  const img = new window.Image();
-  img.src = url;
-  return img.complete && img.naturalWidth > 0;
+  return cachedUrls.has(url);
 };
 
 const CrewCard = ({ role, roleStyle, member }) => {
@@ -44,10 +44,12 @@ const CrewCard = ({ role, roleStyle, member }) => {
     // Show blurred fallback while real image downloads in background
     setDisplaySrc(fallbackAvatar);
     setSharp(false);
+    let cancelled = false;
     const img = new window.Image();
-    img.onload  = () => { setDisplaySrc(realSrc); setSharp(true); };
-    img.onerror = () => setSharp(true); // keep fallback, un-blur
+    img.onload  = () => { if (cancelled) return; cachedUrls.add(realSrc); setDisplaySrc(realSrc); setSharp(true); };
+    img.onerror = () => { if (cancelled) return; setSharp(true); };
     img.src = realSrc;
+    return () => { cancelled = true; };
   }, [realSrc]);
 
   return (

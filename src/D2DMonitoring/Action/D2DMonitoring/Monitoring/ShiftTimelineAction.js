@@ -46,6 +46,13 @@ const TABLE = 'WasteCollectionInfo';
 const shiftTimelineCache = new Map();
 
 /**
+ * Background sync deduplication — ek ward ka ek baar hi background Firebase
+ * check hoga per session. Page reload hone par fresh check hoga.
+ * Key: same as shiftTimelineCache key
+ */
+const bgSyncDone = new Set();
+
+/**
  * Firebase Storage folder → Supabase Storage folder mapping
  *
  * Firebase path  : {city}/{firebaseFolder}/{wardName}/{year}/{month}/{date}/N.png
@@ -473,8 +480,11 @@ export const getOrFetchShiftTimeline = async (ward, city, onDataUpdate) => {
         const cachedData = shiftTimelineCache.get(cacheKey);
         console.log('[ShiftTimeline] Serving from memory cache —', wardName);
 
-        // Background: Firebase par check karo — kuch naya toh nahi aaya
-        backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: cachedData }).catch(() => {});
+        // Background: sirf ek baar per session per ward Firebase check karo
+        if (!bgSyncDone.has(cacheKey)) {
+            bgSyncDone.add(cacheKey);
+            backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: cachedData }).catch(() => {});
+        }
 
         return cachedData;
     }
@@ -485,8 +495,11 @@ export const getOrFetchShiftTimeline = async (ward, city, onDataUpdate) => {
         shiftTimelineCache.set(cacheKey, supabaseData);
         console.log('[ShiftTimeline] Data found in Supabase — caching in memory —', wardName);
 
-        // Background: Firebase par check karo — kuch naya toh nahi aaya
-        backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: supabaseData }).catch(() => {});
+        // Background: sirf ek baar per session per ward Firebase check karo
+        if (!bgSyncDone.has(cacheKey)) {
+            bgSyncDone.add(cacheKey);
+            backgroundSyncFromFirebase({ ...bgSyncArgs, existingData: supabaseData }).catch(() => {});
+        }
 
         return supabaseData;
     }
