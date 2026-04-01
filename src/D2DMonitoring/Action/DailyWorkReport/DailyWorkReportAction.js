@@ -2,10 +2,13 @@ import { getWardListAction } from '../D2DMonitoring/Monitoring/WardListAction';
 import { fetchReportData } from '../../Services/DailyWorkReport/DailyWorkReportService';
 import { saveReportToSupabase, getReportFromSupabase } from '../../Services/DailyWorkReportSupabase/DailyWorkReportSupabaseService';
 
+
 // Refresh button — Firebase se latest data lao, Supabase se compare karo, sirf changed update karo
 export const syncFromFirebase = async (city, date) => {
     const wards = getWardListAction(city);
     if (!wards?.length) return [];
+
+    const t0 = performance.now();
 
     const [freshRows, savedRows] = await Promise.all([
         fetchReportData(wards, date),
@@ -27,32 +30,53 @@ export const syncFromFirebase = async (city, date) => {
     });
 
     if (changedRows.length) {
-        await saveReportToSupabase(city, date, changedRows);
+        const sizeKB = (new TextEncoder().encode(JSON.stringify(changedRows)).length / 1024).toFixed(1);
+        console.group(`[DWR Sync] ${changedRows.length} rows changed | ~${sizeKB} KB`);
+        changedRows.forEach(row => {
+            const saved = savedMap[row.zone];
+            const diff  = {};
+            if (saved?.duty_on               !== (row.dutyOn              ?? null)) diff.duty_on               = { old: saved?.duty_on,               new: row.dutyOn };
+            if (saved?.duty_off              !== (row.dutyOff             ?? null)) diff.duty_off              = { old: saved?.duty_off,              new: row.dutyOff };
+            if (saved?.entered_ward_boundary !== (row.enteredWardBoundary ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary, new: row.enteredWardBoundary };
+            if (saved?.vehicle               !== (row.vehicle             ?? null)) diff.vehicle               = { old: saved?.vehicle,               new: row.vehicle };
+            if (saved?.driver                !== (row.driver              ?? null)) diff.driver                = { old: saved?.driver,                new: row.driver };
+            if (saved?.helper                !== (row.helper              ?? null)) diff.helper                = { old: saved?.helper,                new: row.helper };
+            if (saved?.second_helper         !== (row.secondHelper        ?? null)) diff.second_helper         = { old: saved?.second_helper,         new: row.secondHelper };
+            console.log(`  Zone: ${row.zone}`, diff);
+        });
+        console.groupEnd();
+        await saveReportToSupabase(city, date, changedRows, savedMap);
+    } else {
+        console.log(`[DWR Sync] No changes detected`);
     }
 
-    console.log(`[DWR Sync] changed: ${changedRows.length} / ${freshRows.length}`);
+    console.log(`[DWR Sync] Total time: ${(performance.now() - t0).toFixed(0)}ms`);
 
-    // Updated data return karo
     return getReportFromSupabase(city, date);
 };
 
-// Step 1: Supabase mein data hai? → turant return
-// Step 2: Firebase se fresh data → Supabase update → updated data return
-export const loadReportData = async (city, date, onCacheHit) => {
+// Step 1: Supabase mein data hai → onHit callback se turant show, return
+// Step 2: Supabase mein data nahi → Firebase se fetch → Supabase save → return
+export const loadReportData = async (city, date, onHit) => {
     const wards = getWardListAction(city);
     if (!wards?.length) return [];
 
-    // Supabase check (fast)
+    const t0 = performance.now();
+
+    // Supabase check
     const cached = await getReportFromSupabase(city, date);
     if (cached?.length) {
-        onCacheHit(cached); // turant table dikhao
+        console.log(`[DWR Load] Supabase hit: ${cached.length} rows | ${(performance.now() - t0).toFixed(0)}ms`);
+        onHit?.(cached);
+        return cached;
     }
 
-    // Firebase se fresh data (background)
+    // Supabase mein data nahi — Firebase se fetch
+    console.log(`[DWR Load] Supabase miss — fetching from Firebase`);
     const fresh = await fetchReportData(wards, date);
     await saveReportToSupabase(city, date, fresh);
 
-    // Fresh data return karo (table update)
     const updated = await getReportFromSupabase(city, date);
+    console.log(`[DWR Load] Firebase fetch done | ${(performance.now() - t0).toFixed(0)}ms`);
     return updated;
 };

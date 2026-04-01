@@ -27,22 +27,40 @@ const DailyWorkReport = () => {
         if (syncing || !city) return;
         setSyncing(true);
         const updated = await syncFromFirebase(city, selectedDate);
-        setData(updated);
+        setData(sortByZone(filterEmpty(updated)));
         setLastSynced(dayjs().format("hh:mm A"));
         setSyncing(false);
     };
+
+    const filterEmpty = (rows) =>
+        rows.filter(row =>
+            row.duty_on || row.duty_off || row.entered_ward_boundary ||
+            row.vehicle || row.driver || row.helper
+        );
+
+    const sortByZone = (rows) =>
+        [...rows].sort((a, b) => {
+            const aNum = parseInt(a.zone);
+            const bNum = parseInt(b.zone);
+            const aIsNum = !isNaN(aNum);
+            const bIsNum = !isNaN(bNum);
+            if (aIsNum && bIsNum) return aNum - bNum;
+            if (aIsNum) return -1;
+            if (bIsNum) return 1;
+            return (a.zone || "").localeCompare(b.zone || "");
+        });
 
     useEffect(() => {
         if (!city) return;
 
         const load = async () => {
+            setData([]);
             setLoading(true);
-            // setData([]) nahi — purana data dikhata rahe, CLS prevent
             const updated = await loadReportData(city, selectedDate, (cached) => {
-                setData(cached);
+                setData(sortByZone(filterEmpty(cached)));
                 setLoading(false);
             });
-            setData(updated);
+            setData(sortByZone(filterEmpty(updated)));
             setLoading(false);
         };
 
@@ -160,12 +178,14 @@ const DailyWorkReport = () => {
                         ) : (
                             data.map((row, i) => (
                                 <tr key={row.id ?? i}>
-                                    <td>{row.zone                      || "-"}</td>
+                                    <td>{row.zone ? `Zone ${row.zone}` : "-"}</td>
                                     <td>{row.duty_on                   || "-"}</td>
                                     <td>{row.entered_ward_boundary     || "-"}</td>
                                     <td>{row.duty_off                  || "-"}</td>
                                     <td>{row.vehicle
-                                        ? <span className={styles.vehicleChip}>{row.vehicle}</span>
+                                        ? [...new Set(row.vehicle.split(',').map(v => v.trim()).filter(Boolean))].map((v, i, arr) => (
+                                            <span key={i}><span className={styles.vehicleChip}>{v}</span>{i < arr.length - 1 ? ', ' : ''}</span>
+                                        ))
                                         : "-"}
                                     </td>
                                     <td>{row.vehicle_reg_no            || "-"}</td>

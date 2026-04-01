@@ -41,6 +41,10 @@ const buildRow = (wardId, zone, summary, workerDetails) => ({
 
 // Past date — 2 reads per ward: Summary + WorkerDetails (parallel)
 export const fetchReportData = async (wards, date) => {
+    const totalReads = wards.length * 2;
+    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${totalReads}`);
+    const t0 = performance.now();
+
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
@@ -54,6 +58,14 @@ export const fetchReportData = async (wards, date) => {
             }
         })
     );
-    return rows;
+
+    const withData = rows.filter(r =>
+        r.dutyOn || r.dutyOff || r.enteredWardBoundary || r.vehicle || r.driver || r.helper
+    );
+
+    const sizeKB = (new TextEncoder().encode(JSON.stringify(withData)).length / 1024).toFixed(1);
+    console.log(`[DWR Firebase] Done in ${(performance.now() - t0).toFixed(0)}ms | zones with data=${withData.length}/${rows.length} | ~${sizeKB} KB`);
+
+    return withData;
 };
 
