@@ -19,6 +19,7 @@ import { connectFirebase } from "../../../firebase/firebaseService";
 import { getCityFirebaseConfig, getCityFirebaseConfigAsync } from "../../../configurations/cityDBConfig";
 import * as action from "../../Action/D2DMonitoring/Monitoring/MonitoringAction";
 import { getOrFetchShiftTimeline, formatShiftTime } from "../../Action/D2DMonitoring/Monitoring/ShiftTimelineAction";
+import ShiftTimelineModal from "../../Components/ShiftTimeLine/ShiftTimelineModal";
 import * as vehicleStatusAction from "../../Action/D2DMonitoring/Monitoring/VehicleStatusAction";
 import { subscribeVehicleLocationAction } from "../../Action/D2DMonitoring/Monitoring/VehicleLocationAction";
 import { getWardListAction, getCityList } from "../../Action/D2DMonitoring/Monitoring/WardListAction";
@@ -215,6 +216,7 @@ const MonitoringList = () => {
   const [editingRemarkId, setEditingRemarkId] = useState(null);
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
   const [showDutyInTime, setShowDutyInTime] = useState("");
+  const [showShiftModal, setShowShiftModal] = useState(false);
   const [appStatusTab, setAppStatusTab] = useState("all");
   const [routeSnapshotView, setRouteSnapshotView] = useState("detail");
   const [showLargeMap, setShowLargeMap] = useState(false);
@@ -818,15 +820,15 @@ const MonitoringList = () => {
         key: "dutyOn",
         label: "Duty On",
         time: showDutyInTime || "00:00",
-        status: "completed",
+        status: showDutyInTime ? "completed" : "pending",
       },
       {
         key: "reachOn",
         label: "Reached",
         time: wardReachedTime || "00:00",
-        status: "completed",
+        status: wardReachedTime ? "completed" : "pending",
       },
-      ...(!dutyOffTime ? [{
+      ...(!dutyOffTime && showDutyInTime ? [{
         key: "workStatus",
         label: "Working",
         time: "Live",
@@ -989,6 +991,13 @@ const MonitoringList = () => {
                 data={displayWardData}
                 wardId={selectedWard?.id}
                 onVehicleClick={() => setShowVehicleModal(true)}
+                shiftTimelineContent={
+                  <ShiftStatusSection
+                    events={currentShiftEvents}
+                    onOpenTimeline={() => setShowShiftModal(true)}
+                    embedded
+                  />
+                }
               />
               {/* <CompletionDashboard
                 totalLines={lineCounts.total}
@@ -1060,14 +1069,6 @@ const MonitoringList = () => {
 
                   <ZoneCoverageV2 items={stateItems} />
 
-                  <ShiftStatusSection
-                    events={currentShiftEvents}
-                    activeConnectorIndex={
-                      dutyOffTime ? -1 : wardReachedTime ? 1 : showDutyInTime ? 0 : -1
-                    }
-                    showDutyInTime={showDutyInTime}
-                    onEventClick={handleShiftEventClick}
-                  />
                   <MapSection
                     city={city}
                     selectedWard={selectedWard}
@@ -1084,6 +1085,22 @@ const MonitoringList = () => {
             </div>
           </div>
         </div>
+        {/* Shift Timeline Modal */}
+        {showShiftModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowShiftModal(false)}>
+            <ShiftTimelineModal
+              wardName={selectedWard?.name}
+              dutyInTime={showDutyInTime}
+              dutyOutTime={dutyOffTime}
+              wardReachedTime={wardReachedTime}
+              dutyInImage={dutyInImage}
+              dutyOutImage={dutyOffImage}
+              isLive={!dutyOffTime && !!showDutyInTime}
+              onClose={() => setShowShiftModal(false)}
+            />
+          </div>
+        )}
+
         {/* Duty In / Duty Off Modal */}
         {dutyModal && (
           <div className={styles.modalOverlay} onClick={closeAllModals}>

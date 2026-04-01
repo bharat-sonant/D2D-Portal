@@ -1,15 +1,15 @@
 import { Clock } from "lucide-react";
-import ShiftTimeLine from "../ShiftTimeLine/ShiftTimeLine";
 import MonitoringCard from "./Common/MonitoringCard/MonitoringCard";
+import ShiftTimelineTrigger from "../ShiftTimeLine/ShiftTimelineTrigger";
 
-const ShiftStatusSection = ({ events, activeConnectorIndex, onEventClick }) => {
+const ShiftStatusSection = ({ events, onOpenTimeline, embedded = false }) => {
+    if (embedded) {
+        return <ShiftTimelineTrigger events={events} onOpen={onOpenTimeline} />;
+    }
+
     return (
         <MonitoringCard title="Shift Timeline" icon={<Clock size={16} />}>
-            <ShiftTimeLine
-                events={events}
-                activeConnectorIndex={activeConnectorIndex}
-                onEventClick={onEventClick}
-            />
+            <ShiftTimelineTrigger events={events} onOpen={onOpenTimeline} />
         </MonitoringCard>
     );
 };

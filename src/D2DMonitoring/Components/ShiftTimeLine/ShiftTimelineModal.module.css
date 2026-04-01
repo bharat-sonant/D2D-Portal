@@ -1,0 +1,230 @@
+/* ══════════════════════════════════════════
+   Shift Timeline Modal
+   ══════════════════════════════════════════ */
+
+/* ── Two-column punch grid ── */
+.punchGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* ── Single punch card ── */
+.punchCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid #e8eef5;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ── Card top strip (label) ── */
+.punchCardTop {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.55px;
+  font-family: var(--fontGraphik, sans-serif);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.punchCardTopIn  { color: #16a34a; background: #f0fdf4; }
+.punchCardTopOut { color: #64748b; background: #f8fafc; }
+
+/* ── Image area ── */
+.punchImgWrap {
+  flex: 1;
+  width: 100%;
+  min-height: 160px;
+  background: #f1f5f9;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.punchImg {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.punchImgEmpty {
+  width: 100%;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+}
+
+.punchImgEmptyOut {
+  color: #dde4ee;
+}
+
+/* ── Card bottom strip (time) ── */
+.punchCardBottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.punchCardBottomIn  { background: #f0fdf4; }
+.punchCardBottomOut { background: #f8fafc; }
+
+/* ── Punch time ── */
+.punchTime {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  font-family: var(--fontGraphikSemibold, sans-serif);
+  color: #1e293b;
+  text-align: center;
+}
+
+.punchTimeFaint { color: #94a3b8; font-size: 18px; }
+.punchTimeLiveNote {
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  font-family: var(--fontGraphikMedium, sans-serif);
+  color: #334155;
+}
+
+/* ── Live block ── */
+.liveBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Matches .punchTime size — consistent look */
+.liveTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 22px;
+  font-family: var(--fontGraphikSemibold, sans-serif);
+  color: #d97706;
+  letter-spacing: 0.3px;
+}
+
+.liveDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+  animation: livePulse 1.2s ease-in-out infinite;
+}
+
+.liveHint {
+  font-size: 10px;
+  color: #94a3b8;
+  font-family: var(--fontGraphik, sans-serif);
+  letter-spacing: 0.2px;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.4; transform: scale(0.6);  }
+}
+
+/* ── Info row ── */
+.infoRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.infoCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.infoIconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: #eef2f9;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.infoBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.infoLabel {
+  margin: 0;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-family: var(--fontGraphik, sans-serif);
+  white-space: nowrap;
+}
+
+.infoVal {
+  margin: 0;
+  font-size: 17px;
+  color: #1e293b;
+  font-family: var(--fontGraphikSemibold, sans-serif);
+}
+
+.infoValFaint  { color: #94a3b8; }
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  font-size: 11px;
+  line-height: 1;
+  font-family: var(--fontGraphikSemibold, sans-serif);
+}
+
+.liveBadgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+  animation: livePulse 1.2s ease-in-out infinite;
+}
+
+/* Status variants */
+.statusWorking { color: #d97706; }
+.statusDone    { color: #16a34a; }
+.statusOnDuty  { color: #2563eb; }
+.statusPending { color: #94a3b8; }

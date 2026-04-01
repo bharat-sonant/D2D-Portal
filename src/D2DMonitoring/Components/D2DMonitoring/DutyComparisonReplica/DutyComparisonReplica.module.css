@@ -296,6 +296,18 @@
 .cardFooter{
   padding: 0px ;
 }
+
+.shiftTimelineWrap {
+  padding: 2px;
+  border-top: 1px solid var(--borderColor);
+  background: #fff;
+}
+
+.shiftTimelineWrap :global(.shiftTriggerBtn) {
+  margin: 0;
+  border-top: 0;
+}
+
 .heroReplicaVehicleRow {
   border-radius: 6px;
     border-color: var(--borderColor);

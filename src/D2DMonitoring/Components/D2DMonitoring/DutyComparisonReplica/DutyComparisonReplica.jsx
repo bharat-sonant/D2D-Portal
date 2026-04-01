@@ -93,7 +93,7 @@ const NoHelperCard = () => (
   </div>
 );
 
-const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
+const DutyComparisonReplica = ({ data, wardId, onVehicleClick, shiftTimelineContent }) => {
   const { city } = useParams();
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
   const [isLoading, setIsLoading] = useState(false);
@@ -185,6 +185,11 @@ const DutyComparisonReplica = ({ data, wardId, onVehicleClick }) => {
           </button>
         )}
       </div>
+      {shiftTimelineContent ? (
+        <div className={styles.shiftTimelineWrap}>
+          {shiftTimelineContent}
+        </div>
+      ) : null}
     </MonitoringCard>
   );
 };
