@@ -79,6 +79,36 @@ export const getDataByColumnName = async (table, column, columnValue) => {
   }
 };
 
+// Sirf check karo ki row exist karta hai ya nahi — koi data transfer nahi (HEAD request)
+export const checkExists = async (table, filters = {}) => {
+  try {
+    let query = supabase.from(table).select('*', { count: 'exact', head: true });
+    Object.entries(filters).forEach(([column, value]) => {
+      if (value !== undefined && value !== null) query = query.eq(column, value);
+    });
+    const { count, error } = await query;
+    if (error) throw error;
+    return { success: true, exists: count > 0, count: count ?? 0 };
+  } catch (err) {
+    return { success: false, exists: false, count: 0, error: err.message || err };
+  }
+};
+
+// Sirf specific columns fetch karo (e.g. 'id' for upsert lookups)
+export const getDataByColumnsSelect = async (table, filters = {}, select = '*') => {
+  try {
+    let query = supabase.from(table).select(select);
+    Object.entries(filters).forEach(([column, value]) => {
+      if (value !== undefined && value !== null) query = query.eq(column, value);
+    });
+    const { data, error } = await query;
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (err) {
+    return { success: false, error: err.message || err };
+  }
+};
+
 export const getDataByColumns = async(table, filters = {}) => {
   try{
     let query = supabase.from(table).select('*');
@@ -309,9 +339,7 @@ export const subscribeUserPermissions = ({
         }));
       }
     )
-    .subscribe((status) => {
-      // console.log("📡 Realtime status:", status);
-    });
+    .subscribe(() => {});
 
   return channel;
 };

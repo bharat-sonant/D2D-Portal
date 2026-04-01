@@ -144,6 +144,7 @@
   border: 1px solid #e6edf6;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   overflow: auto;
+  min-height: 300px;
   max-height: calc(100vh - 148px);
 }
 
@@ -247,6 +248,43 @@
   color: #334155;
   font-size: 12px;
   font-family: var(--fontGraphikMedium);
+}
+
+/* ── SYNC BUTTON ── */
+.syncBtn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid #dce8f6;
+  border-radius: 6px;
+  background: #f8faff;
+  color: #64748b;
+  font-size: 11px;
+  font-family: var(--fontGraphikMedium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.syncBtn:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--themeColor) 40%, #dce8f6);
+  color: var(--themeColor);
+  background: color-mix(in srgb, var(--themeColor) 6%, #fff);
+}
+
+.syncBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
 }
 
 /* ── LOADER CELL ── */

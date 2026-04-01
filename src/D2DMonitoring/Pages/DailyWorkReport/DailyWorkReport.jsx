@@ -2,32 +2,52 @@ import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
 import styles from "./DailyWorkReport.module.css";
-import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
-import {
-    initCacheCleanup,
-    getWardsForReportAction,
-    loadPastDateAction,
-    subscribeTodayAction,
-    logDateSwitch,
-} from "../../Action/DailyWorkReport/DailyWorkReportAction";
+import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
+
+const TODAY = dayjs().format("YYYY-MM-DD");
+const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = dayjs().subtract(i, "day");
+    return {
+        label: i === 0 ? "Today" : d.format("DD MMM"),
+        day:   d.format("ddd"),
+        value: d.format("YYYY-MM-DD"),
+    };
+});
 
 const DailyWorkReport = () => {
-    const { city } = useParams();
-    const TODAY     = dayjs().format("YYYY-MM-DD");
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-        const d = dayjs().subtract(i, "day");
-        return {
-            label: i === 0 ? "Today" : d.format("DD MMM"),
-            day:   d.format("ddd"),
-            value: d.format("YYYY-MM-DD"),
-        };
-    });
+    const { city }                        = useParams();
     const [selectedDate, setSelectedDate] = useState(TODAY);
-    const [wards,        setWards]        = useState([]);
     const [data,         setData]         = useState([]);
     const [loading,      setLoading]      = useState(false);
-    const unsubRef      = useRef(null);
-    const dateInputRef  = useRef(null);
+    const [syncing,      setSyncing]      = useState(false);
+    const [lastSynced,   setLastSynced]   = useState(null);
+    const dateInputRef                    = useRef(null);
+
+    const handleSync = async () => {
+        if (syncing || !city) return;
+        setSyncing(true);
+        const updated = await syncFromFirebase(city, selectedDate);
+        setData(updated);
+        setLastSynced(dayjs().format("hh:mm A"));
+        setSyncing(false);
+    };
+
+    useEffect(() => {
+        if (!city) return;
+
+        const load = async () => {
+            setLoading(true);
+            // setData([]) nahi — purana data dikhata rahe, CLS prevent
+            const updated = await loadReportData(city, selectedDate, (cached) => {
+                setData(cached);
+                setLoading(false);
+            });
+            setData(updated);
+            setLoading(false);
+        };
+
+        load();
+    }, [city, selectedDate]);
 
     const openDatePicker = () => {
         if (dateInputRef.current) {
@@ -35,38 +55,6 @@ const DailyWorkReport = () => {
             else dateInputRef.current.click();
         }
     };
-
-    // 1. Cleanup stale cache on mount
-    useEffect(() => { initCacheCleanup(); }, []);
-
-    // 2. Load ward list (localStorage → Firebase Storage, sirf pehli baar)
-    useEffect(() => {
-        if (!city) return;
-        getWardsForReportAction(city).then(setWards);
-    }, [city]);
-
-    // 3. Load / subscribe data whenever date or wards change
-    useEffect(() => {
-        if (!wards?.length) return;
-
-        // Cleanup previous realtime listeners
-        if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
-
-        const isToday = selectedDate === TODAY;
-        logDateSwitch(selectedDate, isToday);
-
-        if (isToday) {
-            unsubRef.current = subscribeTodayAction(wards, selectedDate, setData, setLoading, city);
-        } else {
-            const signal = { cancelled: false };
-            loadPastDateAction(city, selectedDate, wards, setData, setLoading, signal);
-            unsubRef.current = () => { signal.cancelled = true; };
-        }
-
-        return () => {
-            if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
-        };
-    }, [selectedDate, wards, city]);
 
     return (
         <div className={styles.pageWrapper}>
@@ -127,7 +115,18 @@ const DailyWorkReport = () => {
                             ? "Today — " + dayjs(selectedDate).format("DD MMMM YYYY")
                             : dayjs(selectedDate).format("DD MMMM YYYY")}
                     </span>
-                    {loading && <span className={styles.tableDateBadge}>Updating...</span>}
+                    {loading && <span className={styles.tableDateBadge}>Loading...</span>}
+                    <button
+                        className={styles.syncBtn}
+                        onClick={handleSync}
+                        disabled={syncing}
+                    >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={syncing ? styles.spinning : ""}>
+                            <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        {syncing ? "Syncing..." : lastSynced ? `Synced ${lastSynced}` : "Sync"}
+                    </button>
                 </div>
                 <table className={styles.table}>
                     <thead>
@@ -137,34 +136,50 @@ const DailyWorkReport = () => {
                             <th>Entered Ward Boundary</th>
                             <th>Duty Off</th>
                             <th>Vehicle</th>
+                            <th>Vehicle Reg. No.</th>
+                            <th>Driver</th>
+                            <th>Helper</th>
+                            <th>Second Helper</th>
+                            <th>Trip/Bins</th>
+                            <th>Total Working Hrs</th>
+                            <th>Ward Halt Duration</th>
+                            <th>Work Percentage</th>
+                            <th>Actual Work Percentage</th>
+                            <th>Run KM</th>
+                            <th>Zone Run KM</th>
+                            <th>Remark</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ? (
+                        {data.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className={styles.loaderCell}>
-                                    <WevoisLoader title="Loading data..." />
-                                </td>
-                            </tr>
-                        ) : data.length === 0 ? (
-                            <tr>
-                                <td colSpan={5}>
+                                <td colSpan={17}>
                                     <div className={styles.emptyState}>No data available</div>
                                 </td>
                             </tr>
                         ) : (
-                            data.map((row) => (
-                                <tr key={row.wardId}>
-                                    <td>{row.zone}</td>
-                                    <td>{row.dutyOn               || "-"}</td>
-                                    <td>{row.enteredWardBoundary  || "-"}</td>
-                                    <td>{row.dutyOff              || "-"}</td>
-                                    <td>
-                                        {row.vehicle
-                                            ? <span className={styles.vehicleChip}>{row.vehicle}</span>
-                                            : "-"
-                                        }
+                            data.map((row, i) => (
+                                <tr key={row.id ?? i}>
+                                    <td>{row.zone                      || "-"}</td>
+                                    <td>{row.duty_on                   || "-"}</td>
+                                    <td>{row.entered_ward_boundary     || "-"}</td>
+                                    <td>{row.duty_off                  || "-"}</td>
+                                    <td>{row.vehicle
+                                        ? <span className={styles.vehicleChip}>{row.vehicle}</span>
+                                        : "-"}
                                     </td>
+                                    <td>{row.vehicle_reg_no            || "-"}</td>
+                                    <td>{row.driver                    || "-"}</td>
+                                    <td>{row.helper                    || "-"}</td>
+                                    <td>{row.second_helper             || "-"}</td>
+                                    <td>{row.trip_bins                 ?? "-"}</td>
+                                    <td>{row.total_working_hrs         ?? "-"}</td>
+                                    <td>{row.ward_halt_duration        ?? "-"}</td>
+                                    <td>{row.work_percentage           ?? "-"}</td>
+                                    <td>{row.actual_work_percentage    ?? "-"}</td>
+                                    <td>{row.run_km                    ?? "-"}</td>
+                                    <td>{row.zone_run_km               ?? "-"}</td>
+                                    <td>{row.remark                    || "-"}</td>
                                 </tr>
                             ))
                         )}
