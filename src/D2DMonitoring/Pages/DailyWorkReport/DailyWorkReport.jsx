@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
 import styles from "./DailyWorkReport.module.css";
 import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
+import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
 const TODAY = dayjs().format("YYYY-MM-DD");
 const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -169,7 +170,13 @@ const DailyWorkReport = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length === 0 ? (
+                        {loading ? (
+                            <tr>
+                                <td colSpan={17} className={styles.loaderCell}>
+                                    <WevoisLoader />
+                                </td>
+                            </tr>
+                        ) : data.length === 0 ? (
                             <tr>
                                 <td colSpan={17}>
                                     <div className={styles.emptyState}>No data available</div>
