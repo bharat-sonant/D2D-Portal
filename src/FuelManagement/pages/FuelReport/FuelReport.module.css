@@ -101,6 +101,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .tableCardHeader {
@@ -118,7 +120,8 @@
 .tableScroll {
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 440px;
+  flex: 1;
+  min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: #86efac #f0fdf4;
 }
@@ -161,6 +164,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 0;
 }
 
 .totalsRow {
@@ -213,6 +217,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 0;
 }
 
 .vehicleBar {
@@ -264,6 +269,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 
 .vehicleListHeader {
@@ -349,3 +355,128 @@
 }
 .activeVehicle .vDot { background: #22c55e; }
 .vehicleItem:hover .vDot { background: #22c55e; }
+
+/* ══════ DATA PILL CLICKABLE ════════════════════════════════════════════ */
+.statPillClickable {
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.statPillClickable:hover {
+  background: rgba(220,252,231,0.25);
+  border-color: rgba(220,252,231,0.5);
+}
+
+/* ══════ DATA BREAKDOWN MODAL ══════════════════════════════════════════ */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalBox {
+  background: #fff;
+  border-radius: 12px;
+  width: 560px;
+  max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #dcfce7;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modalHeaderIcon { font-size: 18px; color: #86efac; }
+
+.modalClose {
+  margin-left: auto;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.modalClose:hover { background: rgba(255,255,255,0.2); }
+
+.modalBody {
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.modalEmpty {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  padding: 24px 0;
+  margin: 0;
+}
+
+.modalTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.modalTable thead th {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid #bbf7d0;
+}
+.modalTable tbody tr:hover { background: #f0fdf4; }
+.modalTable tbody td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f0fdf4;
+  color: #334155;
+}
+
+.modalFile {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.modalSize {
+  font-weight: 700;
+  color: #166534;
+  white-space: nowrap;
+}
+
+.modalTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #dcfce7;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #166534;
+}
+.modalTotal strong { font-size: 15px; }

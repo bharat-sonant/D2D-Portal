@@ -67,6 +67,8 @@ const FuelReport = () => {
 
   const [loading, setLoading] = useState(false);
   const [dataBytes, setDataBytes] = useState(0);
+  const [dataBreakdown, setDataBreakdown] = useState([]);
+  const [showDataModal, setShowDataModal] = useState(false);
 
   // ── Init Firebase ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -87,6 +89,7 @@ const FuelReport = () => {
     if (!cityName) return;
     setLoading(true);
     setDataBytes(0);
+    setDataBreakdown([]);
     setActiveVehicle(null);
     setVehicleFuelList([]);
     setVehicleTrackList([]);
@@ -94,11 +97,13 @@ const FuelReport = () => {
     setTotalDistance("0.000 KM");
 
     let totalBytes = 0;
+    const breakdown = [];
 
     try {
       // 1. Month Summary
       const { data: summaryData, bytes: sb } = await fetchStorageJSON(cityName, `${year}/${month}/MonthSummary.json`);
       totalBytes += sb;
+      breakdown.push({ label: "Month Summary", file: "MonthSummary.json", bytes: sb });
       setSummary({
         quantity: Number(summaryData.qty)      || 0,
         amount:   Number(summaryData.amount)   || 0,
@@ -113,6 +118,7 @@ const FuelReport = () => {
       // 2. Fuel Entries
       const { data: fuelData, bytes: fb } = await fetchStorageJSON(cityName, `${year}/${month}/VehicleFuel.json`);
       totalBytes += fb;
+      breakdown.push({ label: "Vehicle Fuel Entries", file: "VehicleFuel.json", bytes: fb });
       const list = Array.isArray(fuelData) ? fuelData : [];
       const parsed = list.map((r) => ({
         vehicle:      r.vehicle      || "",
@@ -138,6 +144,7 @@ const FuelReport = () => {
     }
 
     setDataBytes(totalBytes);
+    setDataBreakdown(breakdown);
     setLoading(false);
   }, [cityName, year, month]);
 
@@ -166,6 +173,7 @@ const FuelReport = () => {
       await waitForFirebaseReady();
       const { data: trackData, bytes: tb } = await fetchStorageJSON(cityName, `${year}/${month}/VehicleWardKM/${vehicle}.json`);
       setDataBytes((prev) => prev + tb);
+      setDataBreakdown((prev) => [...prev, { label: `GPS Route — ${vehicle}`, file: `VehicleWardKM/${vehicle}.json`, bytes: tb }]);
       const trackList = [];
       let distTotal = 0;
 
@@ -248,7 +256,7 @@ const FuelReport = () => {
               <span>Running KM</span>
             </div>
           </div>
-          <div className={styles.statPill}>
+          <div className={`${styles.statPill} ${styles.statPillClickable}`} onClick={() => setShowDataModal(true)}>
             <MdCloudDownload className={styles.pillIcon} />
             <div>
               <strong>{formatBytes(dataBytes)}</strong>
@@ -410,13 +418,58 @@ const FuelReport = () => {
                       );
                     })
                   )}
-                </tbody>
+                  </tbody>
               </table>
             </div>
           </div>
         </div>
 
       </div>
+
+      {/* ══════ DATA BREAKDOWN MODAL ══════ */}
+      {showDataModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowDataModal(false)}>
+          <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <MdCloudDownload className={styles.modalHeaderIcon} />
+              <span>Data Loaded Breakdown</span>
+              <button className={styles.modalClose} onClick={() => setShowDataModal(false)}>✕</button>
+            </div>
+            <div className={styles.modalBody}>
+              {dataBreakdown.length === 0 ? (
+                <p className={styles.modalEmpty}>No data loaded yet.</p>
+              ) : (
+                <>
+                  <table className={styles.modalTable}>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Service</th>
+                        <th>File</th>
+                        <th>Size</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataBreakdown.map((item, i) => (
+                        <tr key={i}>
+                          <td>{i + 1}</td>
+                          <td>{item.label}</td>
+                          <td className={styles.modalFile}>{item.file}</td>
+                          <td className={styles.modalSize}>{formatBytes(item.bytes)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className={styles.modalTotal}>
+                    <span>Total</span>
+                    <strong>{formatBytes(dataBytes)}</strong>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
