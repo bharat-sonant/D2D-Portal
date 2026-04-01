@@ -175,14 +175,11 @@ const RouterComponent = () => {
           }
         />
         <Route
-       
           path="/:city/d2dMonitoring/vehicle_fuel_report"
           element={
-            
-             
-                <FuelReport />
-             
-            
+            <div style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+              <FuelReport />
+            </div>
           }
         />
         <Route
