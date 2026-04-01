@@ -180,19 +180,20 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px;
+  table-layout: fixed;
 }
 
 .table thead th {
   background: #f4f6fc;
   color: #1e293b;
   font-family: var(--fontGraphikMedium);
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 13px 16px;
+  letter-spacing: 0.4px;
+  padding: 8px 6px;
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   position: sticky;
   top: 39px;
   z-index: 2;
@@ -205,14 +206,39 @@
   z-index: 3;
   top: 39px;
   background: #f4f6fc;
+  width: 56px;
 }
 
+.table thead th:nth-child(2),
+.table thead th:nth-child(4) { width: 62px; }
+
+.table thead th:nth-child(3)  { width: 72px; }
+
+.table thead th:nth-child(5),
+.table thead th:nth-child(6)  { width: 82px; }
+
+.table thead th:nth-child(7),
+.table thead th:nth-child(8),
+.table thead th:nth-child(9)  { width: 70px; }
+
+.table thead th:nth-child(10),
+.table thead th:nth-child(15),
+.table thead th:nth-child(16) { width: 48px; }
+
+.table thead th:nth-child(11),
+.table thead th:nth-child(12),
+.table thead th:nth-child(13),
+.table thead th:nth-child(14) { width: 58px; }
+
+.table thead th:nth-child(17) { width: 70px; }
+
 .table tbody td {
-  padding: 12px 16px;
-  font-size: 13px;
+  padding: 8px 6px;
+  font-size: 11px;
   color: #334155;
   border-bottom: 1px solid #edf2f8;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   font-family: var(--fontGraphik);
 }
 
@@ -242,11 +268,11 @@
 .vehicleChip {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
+  padding: 2px 6px;
   border-radius: 4px;
   background: linear-gradient(135deg, #667eea1f 0%, #764ba21f 100%);
   color: #334155;
-  font-size: 12px;
+  font-size: 10px;
   font-family: var(--fontGraphikMedium);
 }
 
