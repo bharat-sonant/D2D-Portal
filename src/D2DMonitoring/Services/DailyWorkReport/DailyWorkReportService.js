@@ -27,19 +27,40 @@ const normalizeTime = (value, mode = "first") => {
     return mode === "last" ? arr[arr.length - 1] : arr[0];
 };
 
-const buildRow = (wardId, zone, summary, workerDetails) => ({
+const fetchVehicleRegNo = async (vehicleStr) => {
+    if (!vehicleStr) return null;
+    const ids = [...new Set(vehicleStr.split(',').map(v => v.trim()).filter(Boolean))];
+    const regNos = await Promise.all(
+        ids.map(async id => {
+            try {
+                const regNo = await db.getData(`VehicleDetails/${id}/regNumber`);
+                return regNo || null;
+            } catch {
+                return id;
+            }
+        })
+    );
+    const valid = regNos.filter(Boolean);
+    return valid.length ? valid.join(', ') : null;
+};
+
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null) => ({
     wardId,
     zone,
-    dutyOn:              normalizeTime(summary?.dutyInTime,    "first"),
-    enteredWardBoundary: normalizeTime(summary?.wardReachedOn, "first"),
-    dutyOff:             normalizeTime(summary?.dutyOutTime,   "last"),
-    vehicle:             workerDetails?.vehicle      ?? null,
-    driver:              workerDetails?.driverName   ?? null,
-    helper:              workerDetails?.helperName   ?? null,
-    secondHelper:        workerDetails?.secondHelperName ?? null,
+    dutyOn:               normalizeTime(summary?.dutyInTime,    "first"),
+    enteredWardBoundary:  normalizeTime(summary?.wardReachedOn, "first"),
+    dutyOff:              normalizeTime(summary?.dutyOutTime,   "last"),
+    vehicle:              workerDetails?.vehicle               ?? null,
+    vehicleRegNo,
+    driver:               workerDetails?.driverName            ?? null,
+    helper:               workerDetails?.helperName            ?? null,
+    secondHelper:         workerDetails?.secondHelperName      ?? null,
+    remark:               summary?.workPercentageRemark                           ?? null,
+    actualWorkPercentage: summary?.workPercentage       != null ? Math.round(Number(summary.workPercentage))        : null,
+    workPercentage:       summary?.updatedWorkPercentage != null ? Math.round(Number(summary.updatedWorkPercentage)) : null,
 });
 
-// Past date — 2 reads per ward: Summary + WorkerDetails (parallel)
+// Past date — 2 reads per ward: Summary + WorkerDetails (parallel), + vehicle reg fetch
 export const fetchReportData = async (wards, date) => {
     const totalReads = wards.length * 2;
     console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${totalReads}`);
@@ -52,7 +73,8 @@ export const fetchReportData = async (wards, date) => {
                     db.getData(getSummaryPath(id, date)),
                     db.getData(getWorkerDetailsPath(id, date)),
                 ]);
-                return buildRow(id, name, summary, workerDetails);
+                const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
+                return buildRow(id, name, summary, workerDetails, vehicleRegNo);
             } catch {
                 return buildRow(id, name, null, null);
             }
@@ -60,7 +82,9 @@ export const fetchReportData = async (wards, date) => {
     );
 
     const withData = rows.filter(r =>
-        r.dutyOn || r.dutyOff || r.enteredWardBoundary || r.vehicle || r.driver || r.helper
+        r.dutyOn || r.dutyOff || r.enteredWardBoundary ||
+        r.vehicle || r.driver || r.helper ||
+        r.remark || r.actualWorkPercentage != null || r.workPercentage != null
     );
 
     const sizeKB = (new TextEncoder().encode(JSON.stringify(withData)).length / 1024).toFixed(1);
@@ -68,4 +92,3 @@ export const fetchReportData = async (wards, date) => {
 
     return withData;
 };
-

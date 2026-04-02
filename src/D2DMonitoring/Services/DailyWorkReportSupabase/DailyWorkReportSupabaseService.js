@@ -8,14 +8,18 @@ export const getReportFromSupabase = async (city, date) => {
 const buildPayload = (city, date, row) => ({
     city,
     date,
-    zone:                  row.zone               ?? null,
-    duty_on:               row.dutyOn             ?? null,
-    entered_ward_boundary: row.enteredWardBoundary ?? null,
-    duty_off:              row.dutyOff             ?? null,
-    vehicle:               row.vehicle             ?? null,
-    driver:                row.driver              ?? null,
-    helper:                row.helper              ?? null,
-    second_helper:         row.secondHelper        ?? null,
+    zone:                  row.zone                 ?? null,
+    duty_on:               row.dutyOn               ?? null,
+    entered_ward_boundary: row.enteredWardBoundary  ?? null,
+    duty_off:              row.dutyOff              ?? null,
+    vehicle:               row.vehicle              ?? null,
+    driver:                row.driver               ?? null,
+    helper:                row.helper               ?? null,
+    second_helper:         row.secondHelper         ?? null,
+    vehicle_reg_no:        row.vehicleRegNo         ?? null,
+    remark:                row.remark               ?? null,
+    actual_work_percentage: row.actualWorkPercentage ?? null,
+    work_percentage:       row.workPercentage        ?? null,
 });
 
 export const saveReportToSupabase = async (city, date, rows, existingMap = null) => {

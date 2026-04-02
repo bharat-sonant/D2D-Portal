@@ -42,7 +42,8 @@ const DailyWorkReport = () => {
     const filterEmpty = (rows) =>
         rows.filter(row =>
             row.duty_on || row.duty_off || row.entered_ward_boundary ||
-            row.vehicle || row.driver || row.helper
+            row.vehicle || row.driver || row.helper ||
+            row.remark || row.actual_work_percentage != null || row.work_percentage != null
         );
 
     const sortByZone = (rows) =>
@@ -215,7 +216,7 @@ const DailyWorkReport = () => {
                                     <td>{row.trip_bins                 ?? "-"}</td>
                                     <td>{row.total_working_hrs         ?? "-"}</td>
                                     <td>{row.ward_halt_duration        ?? "-"}</td>
-                                    <td>{row.work_percentage           ?? "-"}</td>
+                                    <td>{row.work_percentage ?? row.actual_work_percentage ?? "-"}</td>
                                     <td>{row.actual_work_percentage    ?? "-"}</td>
                                     <td>{row.run_km                    ?? "-"}</td>
                                     <td>{row.zone_run_km               ?? "-"}</td>

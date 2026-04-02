@@ -33,13 +33,17 @@ export const syncFromFirebase = async (city, date) => {
         if (!row.zone) return false;
         const saved = savedMap[row.zone];
         if (!saved) return true;
-        return saved.duty_on               !== (row.dutyOn              ?? null) ||
-               saved.duty_off              !== (row.dutyOff             ?? null) ||
-               saved.entered_ward_boundary !== (row.enteredWardBoundary ?? null) ||
-               saved.vehicle               !== (row.vehicle             ?? null) ||
-               saved.driver                !== (row.driver              ?? null) ||
-               saved.helper                !== (row.helper              ?? null) ||
-               saved.second_helper         !== (row.secondHelper        ?? null);
+        return saved.duty_on                !== (row.dutyOn               ?? null) ||
+               saved.duty_off              !== (row.dutyOff              ?? null) ||
+               saved.entered_ward_boundary !== (row.enteredWardBoundary  ?? null) ||
+               saved.vehicle               !== (row.vehicle              ?? null) ||
+               saved.driver                !== (row.driver               ?? null) ||
+               saved.helper                !== (row.helper               ?? null) ||
+               saved.second_helper         !== (row.secondHelper         ?? null) ||
+               saved.vehicle_reg_no        !== (row.vehicleRegNo         ?? null) ||
+               saved.remark                !== (row.remark               ?? null) ||
+               saved.actual_work_percentage !== (row.actualWorkPercentage ?? null) ||
+               saved.work_percentage       !== (row.workPercentage        ?? null);
     });
 
     if (changedRows.length) {
@@ -48,13 +52,17 @@ export const syncFromFirebase = async (city, date) => {
         changedRows.forEach(row => {
             const saved = savedMap[row.zone];
             const diff  = {};
-            if (saved?.duty_on               !== (row.dutyOn              ?? null)) diff.duty_on               = { old: saved?.duty_on,               new: row.dutyOn };
-            if (saved?.duty_off              !== (row.dutyOff             ?? null)) diff.duty_off              = { old: saved?.duty_off,              new: row.dutyOff };
-            if (saved?.entered_ward_boundary !== (row.enteredWardBoundary ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary, new: row.enteredWardBoundary };
-            if (saved?.vehicle               !== (row.vehicle             ?? null)) diff.vehicle               = { old: saved?.vehicle,               new: row.vehicle };
-            if (saved?.driver                !== (row.driver              ?? null)) diff.driver                = { old: saved?.driver,                new: row.driver };
-            if (saved?.helper                !== (row.helper              ?? null)) diff.helper                = { old: saved?.helper,                new: row.helper };
-            if (saved?.second_helper         !== (row.secondHelper        ?? null)) diff.second_helper         = { old: saved?.second_helper,         new: row.secondHelper };
+            if (saved?.duty_on                !== (row.dutyOn               ?? null)) diff.duty_on                = { old: saved?.duty_on,                new: row.dutyOn };
+            if (saved?.duty_off              !== (row.dutyOff              ?? null)) diff.duty_off              = { old: saved?.duty_off,               new: row.dutyOff };
+            if (saved?.entered_ward_boundary !== (row.enteredWardBoundary  ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary,  new: row.enteredWardBoundary };
+            if (saved?.vehicle               !== (row.vehicle              ?? null)) diff.vehicle               = { old: saved?.vehicle,                new: row.vehicle };
+            if (saved?.driver                !== (row.driver               ?? null)) diff.driver                = { old: saved?.driver,                 new: row.driver };
+            if (saved?.helper                !== (row.helper               ?? null)) diff.helper                = { old: saved?.helper,                 new: row.helper };
+            if (saved?.second_helper         !== (row.secondHelper         ?? null)) diff.second_helper         = { old: saved?.second_helper,          new: row.secondHelper };
+            if (saved?.vehicle_reg_no        !== (row.vehicleRegNo         ?? null)) diff.vehicle_reg_no        = { old: saved?.vehicle_reg_no,          new: row.vehicleRegNo };
+            if (saved?.remark                !== (row.remark               ?? null)) diff.remark                = { old: saved?.remark,                 new: row.remark };
+            if (saved?.actual_work_percentage !== (row.actualWorkPercentage ?? null)) diff.actual_work_percentage = { old: saved?.actual_work_percentage, new: row.actualWorkPercentage };
+            if (saved?.work_percentage       !== (row.workPercentage        ?? null)) diff.work_percentage       = { old: saved?.work_percentage,        new: row.workPercentage };
             console.log(`  Zone: ${row.zone}`, diff);
         });
         console.groupEnd();
