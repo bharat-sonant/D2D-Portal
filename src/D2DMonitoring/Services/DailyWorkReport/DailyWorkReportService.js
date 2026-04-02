@@ -18,6 +18,26 @@ const getWorkerDetailsPath = (wardId, date) => {
     return `WasteCollectionInfo/${wardId}/${year}/${month}/${date}/WorkerDetails`;
 };
 
+const getWardTripsPath = (wardId, date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `WardTrips/${year}/${month}/${date}/${wardId}`;
+};
+
+
+const timeToMinutes = (t) => {
+    if (!t) return null;
+    const parts = String(t).split(':').map(Number);
+    return parts[0] * 60 + (parts[1] || 0);
+};
+
+const calcWorkingHrs = (dutyOn, dutyOff) => {
+    const start = timeToMinutes(dutyOn);
+    const end   = timeToMinutes(dutyOff);
+    if (start === null || end === null || end <= start) return null;
+    return Number(((end - start) / 60).toFixed(2));
+};
+
 const normalizeTime = (value, mode = "first") => {
     if (!value) return null;
     const arr = Array.isArray(value)
@@ -26,6 +46,7 @@ const normalizeTime = (value, mode = "first") => {
     if (!arr.length) return null;
     return mode === "last" ? arr[arr.length - 1] : arr[0];
 };
+
 
 const fetchVehicleRegNo = async (vehicleStr) => {
     if (!vehicleStr) return null;
@@ -36,7 +57,7 @@ const fetchVehicleRegNo = async (vehicleStr) => {
                 const regNo = await db.getData(`VehicleDetails/${id}/regNumber`);
                 return regNo || null;
             } catch {
-                return id;
+                return null;
             }
         })
     );
@@ -44,37 +65,45 @@ const fetchVehicleRegNo = async (vehicleStr) => {
     return valid.length ? valid.join(', ') : null;
 };
 
-const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null) => ({
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null) => {
+    const dutyOn  = normalizeTime(summary?.dutyInTime,  "first");
+    const dutyOff = normalizeTime(summary?.dutyOutTime, "last");
+    return {
     wardId,
     zone,
-    dutyOn:               normalizeTime(summary?.dutyInTime,    "first"),
+    dutyOn,
     enteredWardBoundary:  normalizeTime(summary?.wardReachedOn, "first"),
-    dutyOff:              normalizeTime(summary?.dutyOutTime,   "last"),
+    dutyOff,
+    totalWorkingHrs:      calcWorkingHrs(dutyOn, dutyOff),
     vehicle:              workerDetails?.vehicle               ?? null,
     vehicleRegNo,
+    tripBins,
     driver:               workerDetails?.driverName            ?? null,
     helper:               workerDetails?.helperName            ?? null,
     secondHelper:         workerDetails?.secondHelperName      ?? null,
     remark:               summary?.workPercentageRemark                           ?? null,
     actualWorkPercentage: summary?.workPercentage       != null ? Math.round(Number(summary.workPercentage))        : null,
     workPercentage:       summary?.updatedWorkPercentage != null ? Math.round(Number(summary.updatedWorkPercentage)) : null,
-});
+    zoneRunKm:            summary?.wardCoveredDistance  != null ? Number((Number(summary.wardCoveredDistance) / 1000).toFixed(3)) : null,
+    };
+};
 
-// Past date — 2 reads per ward: Summary + WorkerDetails (parallel), + vehicle reg fetch
+// 3 reads per ward: Summary + WorkerDetails + WardTrips (parallel)
 export const fetchReportData = async (wards, date) => {
-    const totalReads = wards.length * 2;
-    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${totalReads}`);
+    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 3}`);
     const t0 = performance.now();
 
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
-                const [summary, workerDetails] = await Promise.all([
+                const [summary, workerDetails, tripsData] = await Promise.all([
                     db.getData(getSummaryPath(id, date)),
                     db.getData(getWorkerDetailsPath(id, date)),
+                    db.getData(getWardTripsPath(id, date)),
                 ]);
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
-                return buildRow(id, name, summary, workerDetails, vehicleRegNo);
+                const tripBins     = tripsData ? Object.keys(tripsData).length : null;
+                return buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins);
             } catch {
                 return buildRow(id, name, null, null);
             }

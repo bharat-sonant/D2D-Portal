@@ -41,9 +41,12 @@ export const syncFromFirebase = async (city, date) => {
                saved.helper                !== (row.helper               ?? null) ||
                saved.second_helper         !== (row.secondHelper         ?? null) ||
                saved.vehicle_reg_no        !== (row.vehicleRegNo         ?? null) ||
+               saved.trip_bins             !== (row.tripBins             ?? null) ||
+               saved.total_working_hrs    !== (row.totalWorkingHrs      ?? null) ||
                saved.remark                !== (row.remark               ?? null) ||
                saved.actual_work_percentage !== (row.actualWorkPercentage ?? null) ||
-               saved.work_percentage       !== (row.workPercentage        ?? null);
+               saved.work_percentage       !== (row.workPercentage        ?? null) ||
+               saved.zone_run_km           !== (row.zoneRunKm             ?? null);
     });
 
     if (changedRows.length) {
@@ -60,9 +63,12 @@ export const syncFromFirebase = async (city, date) => {
             if (saved?.helper                !== (row.helper               ?? null)) diff.helper                = { old: saved?.helper,                 new: row.helper };
             if (saved?.second_helper         !== (row.secondHelper         ?? null)) diff.second_helper         = { old: saved?.second_helper,          new: row.secondHelper };
             if (saved?.vehicle_reg_no        !== (row.vehicleRegNo         ?? null)) diff.vehicle_reg_no        = { old: saved?.vehicle_reg_no,          new: row.vehicleRegNo };
+            if (saved?.trip_bins             !== (row.tripBins             ?? null)) diff.trip_bins             = { old: saved?.trip_bins,               new: row.tripBins };
+            if (saved?.total_working_hrs    !== (row.totalWorkingHrs      ?? null)) diff.total_working_hrs    = { old: saved?.total_working_hrs,        new: row.totalWorkingHrs };
             if (saved?.remark                !== (row.remark               ?? null)) diff.remark                = { old: saved?.remark,                 new: row.remark };
             if (saved?.actual_work_percentage !== (row.actualWorkPercentage ?? null)) diff.actual_work_percentage = { old: saved?.actual_work_percentage, new: row.actualWorkPercentage };
             if (saved?.work_percentage       !== (row.workPercentage        ?? null)) diff.work_percentage       = { old: saved?.work_percentage,        new: row.workPercentage };
+            if (saved?.zone_run_km           !== (row.zoneRunKm             ?? null)) diff.zone_run_km           = { old: saved?.zone_run_km,             new: row.zoneRunKm };
             console.log(`  Zone: ${row.zone}`, diff);
         });
         console.groupEnd();

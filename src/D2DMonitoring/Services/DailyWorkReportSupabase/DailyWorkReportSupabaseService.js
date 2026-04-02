@@ -17,9 +17,12 @@ const buildPayload = (city, date, row) => ({
     helper:                row.helper               ?? null,
     second_helper:         row.secondHelper         ?? null,
     vehicle_reg_no:        row.vehicleRegNo         ?? null,
+    trip_bins:             row.tripBins             ?? null,
+    total_working_hrs:     row.totalWorkingHrs      ?? null,
     remark:                row.remark               ?? null,
     actual_work_percentage: row.actualWorkPercentage ?? null,
     work_percentage:       row.workPercentage        ?? null,
+    zone_run_km:           row.zoneRunKm             ?? null,
 });
 
 export const saveReportToSupabase = async (city, date, rows, existingMap = null) => {
