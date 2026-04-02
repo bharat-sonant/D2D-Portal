@@ -25,7 +25,7 @@ export const saveReportToSupabase = async (city, date, rows, existingMap = null)
         ((await getDataByColumns('daily_work_report', { city, date }))?.data || []).map(r => [r.zone, r])
     );
 
-    await Promise.all(
+    const results = await Promise.allSettled(
         rows.map(row => {
             if (!row.zone) return Promise.resolve();
             const payload  = buildPayload(city, date, row);
@@ -35,6 +35,12 @@ export const saveReportToSupabase = async (city, date, rows, existingMap = null)
                 : saveData('daily_work_report', payload);
         })
     );
+
+    const failed = results.filter(r => r.status === 'rejected');
+    if (failed.length) {
+        console.error(`[DWR Supabase] ${failed.length} rows failed to save`, failed.map(f => f.reason));
+        throw new Error(`${failed.length} row(s) failed to save in Supabase`);
+    }
 
     console.log(`[DWR Supabase] Saved ${rows.length} rows | city=${city} | date=${date}`);
 };

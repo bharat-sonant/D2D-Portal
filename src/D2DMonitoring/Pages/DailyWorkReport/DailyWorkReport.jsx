@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import styles from "./DailyWorkReport.module.css";
 import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
@@ -27,10 +28,15 @@ const DailyWorkReport = () => {
     const handleSync = async () => {
         if (syncing || !city) return;
         setSyncing(true);
-        const updated = await syncFromFirebase(city, selectedDate);
-        setData(sortByZone(filterEmpty(updated)));
-        setLastSynced(dayjs().format("hh:mm A"));
-        setSyncing(false);
+        try {
+            const updated = await syncFromFirebase(city, selectedDate);
+            setData(sortByZone(filterEmpty(updated)));
+            setLastSynced(dayjs().format("hh:mm A"));
+        } catch {
+            toast.error("Sync failed — data could not be saved. Please try again.");
+        } finally {
+            setSyncing(false);
+        }
     };
 
     const filterEmpty = (rows) =>
@@ -57,12 +63,19 @@ const DailyWorkReport = () => {
         const load = async () => {
             setData([]);
             setLoading(true);
-            const updated = await loadReportData(city, selectedDate, (cached) => {
-                setData(sortByZone(filterEmpty(cached)));
+            try {
+                let hitFromCache = false;
+                const updated = await loadReportData(city, selectedDate, (cached) => {
+                    hitFromCache = true;
+                    setData(sortByZone(filterEmpty(cached)));
+                    setLoading(false);
+                });
+                if (!hitFromCache) setData(sortByZone(filterEmpty(updated)));
+            } catch {
+                toast.error("Data could not be loaded. Please refresh the page.");
+            } finally {
                 setLoading(false);
-            });
-            setData(sortByZone(filterEmpty(updated)));
-            setLoading(false);
+            }
         };
 
         load();

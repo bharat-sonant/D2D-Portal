@@ -2,6 +2,19 @@ import { getWardListAction } from '../D2DMonitoring/Monitoring/WardListAction';
 import { fetchReportData } from '../../Services/DailyWorkReport/DailyWorkReportService';
 import { saveReportToSupabase, getReportFromSupabase } from '../../Services/DailyWorkReportSupabase/DailyWorkReportSupabaseService';
 
+// Network flaky ho toh 3 attempts, har attempt ke baad wait badhta hai (1s, 2s)
+const withRetry = async (fn, attempts = 3, delayMs = 1000) => {
+    for (let i = 0; i < attempts; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            const isLast = i === attempts - 1;
+            console.warn(`[DWR Retry] Attempt ${i + 1}/${attempts} failed: ${err.message}${isLast ? ' — giving up' : ' — retrying...'}`);
+            if (isLast) throw err;
+            await new Promise(res => setTimeout(res, delayMs * (i + 1)));
+        }
+    }
+};
 
 // Refresh button — Firebase se latest data lao, Supabase se compare karo, sirf changed update karo
 export const syncFromFirebase = async (city, date) => {
@@ -11,8 +24,8 @@ export const syncFromFirebase = async (city, date) => {
     const t0 = performance.now();
 
     const [freshRows, savedRows] = await Promise.all([
-        fetchReportData(wards, date),
-        getReportFromSupabase(city, date),
+        withRetry(() => fetchReportData(wards, date)),
+        withRetry(() => getReportFromSupabase(city, date)),
     ]);
 
     const savedMap    = Object.fromEntries(savedRows.map(r => [r.zone, r]));
@@ -45,14 +58,20 @@ export const syncFromFirebase = async (city, date) => {
             console.log(`  Zone: ${row.zone}`, diff);
         });
         console.groupEnd();
-        await saveReportToSupabase(city, date, changedRows, savedMap);
+        try {
+            // savedMap pass nahi kiya — retry pe fresh existingMap fetch hoga, duplicate inserts se bachne ke liye
+            await withRetry(() => saveReportToSupabase(city, date, changedRows));
+        } catch (err) {
+            console.error('[DWR Sync] Save failed:', err.message);
+            throw err;
+        }
     } else {
         console.log(`[DWR Sync] No changes detected`);
     }
 
     console.log(`[DWR Sync] Total time: ${(performance.now() - t0).toFixed(0)}ms`);
 
-    return getReportFromSupabase(city, date);
+    return withRetry(() => getReportFromSupabase(city, date));
 };
 
 // Step 1: Supabase mein data hai → onHit callback se turant show, return
@@ -64,7 +83,7 @@ export const loadReportData = async (city, date, onHit) => {
     const t0 = performance.now();
 
     // Supabase check
-    const cached = await getReportFromSupabase(city, date);
+    const cached = await withRetry(() => getReportFromSupabase(city, date));
     if (cached?.length) {
         console.log(`[DWR Load] Supabase hit: ${cached.length} rows | ${(performance.now() - t0).toFixed(0)}ms`);
         onHit?.(cached);
@@ -73,10 +92,15 @@ export const loadReportData = async (city, date, onHit) => {
 
     // Supabase mein data nahi — Firebase se fetch
     console.log(`[DWR Load] Supabase miss — fetching from Firebase`);
-    const fresh = await fetchReportData(wards, date);
-    await saveReportToSupabase(city, date, fresh);
+    const fresh = await withRetry(() => fetchReportData(wards, date));
+    try {
+        await withRetry(() => saveReportToSupabase(city, date, fresh));
+    } catch (err) {
+        console.error('[DWR Load] Save failed:', err.message);
+        throw err;
+    }
 
-    const updated = await getReportFromSupabase(city, date);
+    const updated = await withRetry(() => getReportFromSupabase(city, date));
     console.log(`[DWR Load] Firebase fetch done | ${(performance.now() - t0).toFixed(0)}ms`);
     return updated;
 };
