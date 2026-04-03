@@ -16,6 +16,13 @@ const last7Days = Array.from({ length: 7 }, (_, i) => {
     };
 });
 
+// "11:42:00" → "11:42" | already "11:42" → "11:42" | null/undefined → "-"
+const fmtTime = (t) => {
+    if (!t) return "-";
+    const parts = String(t).split(':');
+    return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : String(t);
+};
+
 // Pure functions — component ke bahar taaki har render pe recreate na ho
 const filterEmpty = (rows) =>
     rows.filter(row =>
@@ -212,9 +219,9 @@ const DailyWorkReport = () => {
                             displayData.map((row, i) => (
                                 <tr key={row.id ?? i}>
                                     <td>{row.zone ? `Zone ${row.zone}` : "-"}</td>
-                                    <td>{row.duty_on                   || "-"}</td>
-                                    <td>{row.entered_ward_boundary     || "-"}</td>
-                                    <td>{row.duty_off                  || "-"}</td>
+                                    <td>{fmtTime(row.duty_on)}</td>
+                                    <td>{fmtTime(row.entered_ward_boundary)}</td>
+                                    <td>{fmtTime(row.duty_off)}</td>
                                     <td>{row._vehicleList.length > 0
                                         ? row._vehicleList.map((v, i, arr) => (
                                             <span key={i}><span className={styles.vehicleChip}>{v}</span>{i < arr.length - 1 ? ', ' : ''}</span>
