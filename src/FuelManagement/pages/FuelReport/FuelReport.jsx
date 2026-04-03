@@ -9,8 +9,8 @@ import { ref, getDownloadURL } from "firebase/storage";
 import {
   getSummaryCache,      saveSummaryCache,
   getFuelCache,         saveFuelCache,       mapFuelRows,
-  getVehicleListCache,  getFuelCacheByVehicle,
-  getGPSCache, checkGPSCache, saveGPSCache,  mapGPSRows,
+  getVehicleListData,  getFuelDataByVehicle,
+  getGPSData, checkGPSCache, saveGPSCache,  mapGPSRows,
   saveGPSCacheMultiple, getUsageLogs,
 } from "../../services/fuelCacheService";
 
@@ -168,7 +168,7 @@ const FuelReport = () => {
     }
 
     // ── 2. Vehicles List ──────────────────────────────────────
-    const vehicleList = await getVehicleListCache(cityName, year, month);
+    const vehicleList = await getVehicleListData(cityName, year, month);
     if (vehicleList) {
       console.log("[VehicleList] data get from Supabase");
       setAllFuelEntries([]);
@@ -197,7 +197,7 @@ const FuelReport = () => {
         setVehicles([...new Set(parsed.map((e) => e.vehicle).filter(Boolean))].sort());
         await saveFuelCache(cityName, year, month, parsed);
         // Data ab Supabase me save ho gaya — log karo
-        await getVehicleListCache(cityName, year, month);
+        await getVehicleListData(cityName, year, month);
       } catch (err) {
         console.warn("VehicleFuel fetch failed:", err.message);
         setAllFuelEntries([]);
@@ -273,7 +273,7 @@ const FuelReport = () => {
     setVehicleLoading(true);
 
     // Fuel entries — Supabase first, fallback to in-memory (Firebase path)
-    const fuelByVehicle = await getFuelCacheByVehicle(cityName, year, month, vehicle);
+    const fuelByVehicle = await getFuelDataByVehicle(cityName, year, month, vehicle);
     if (fuelByVehicle) console.log(`[FuelEntries — ${vehicle}] data get from Supabase`);
     else console.log(`[FuelEntries — ${vehicle}] data get from Firebase (memory)`);
     const fuelList = fuelByVehicle
@@ -286,7 +286,7 @@ const FuelReport = () => {
     });
 
     // Try Supabase cache first
-    const gpsCache = await getGPSCache(cityName, year, month, vehicle);
+    const gpsCache = await getGPSData(cityName, year, month, vehicle);
     if (gpsCache) {
       console.log(`[GPSRoute — ${vehicle}] data get from Supabase`);
       const trackList = mapGPSRows(gpsCache);

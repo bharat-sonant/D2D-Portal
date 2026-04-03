@@ -76,7 +76,7 @@ export const getFuelCache = async (city, year, month) => {
 };
 
 // Returns only distinct vehicle names — lightweight query for vehicles list
-export const getVehicleListCache = async (city, year, month) => {
+export const getVehicleListData = async (city, year, month) => {
   const { data, error } = await supabase
     .from(FUEL_TABLE)
     .select("vehicle")
@@ -84,12 +84,12 @@ export const getVehicleListCache = async (city, year, month) => {
     .eq("year", year)
     .eq("month", month);
   if (error || !data?.length) return null;
-  logUsage(city, year, month, "getVehicleListCache", "Supabase", new Blob([JSON.stringify(data)]).size);
+  logUsage(city, year, month, "getVehicleListData", "Supabase", new Blob([JSON.stringify(data)]).size);
   return [...new Set(data.map((r) => r.vehicle).filter(Boolean))].sort();
 };
 
 // Returns fuel entries for a specific vehicle only
-export const getFuelCacheByVehicle = async (city, year, month, vehicle) => {
+export const getFuelDataByVehicle = async (city, year, month, vehicle) => {
   const { data, error } = await supabase
     .from(FUEL_TABLE)
     .select("*")
@@ -98,7 +98,7 @@ export const getFuelCacheByVehicle = async (city, year, month, vehicle) => {
     .eq("month", month)
     .eq("vehicle", vehicle);
   if (error || !data?.length) return null;
-  logUsage(city, year, month, "getFuelCacheByVehicle", "Supabase", new Blob([JSON.stringify(data)]).size);
+  logUsage(city, year, month, "getFuelDataByVehicle", "Supabase", new Blob([JSON.stringify(data)]).size);
   return data;
 };
 
@@ -157,7 +157,7 @@ export const checkGPSCache = async (city, year, month, vehicle) => {
 };
 
 // Normal version — used on vehicle click (logs usage)
-export const getGPSCache = async (city, year, month, vehicle) => {
+export const getGPSData = async (city, year, month, vehicle) => {
   const { data, error } = await supabase
     .from(GPS_TABLE)
     .select("*")
@@ -166,7 +166,7 @@ export const getGPSCache = async (city, year, month, vehicle) => {
     .eq("month", month)
     .eq("vehicle", vehicle);
   if (error || !data?.length) return null;
-  logUsage(city, year, month, "getGPSCache", "Supabase", new Blob([JSON.stringify(data)]).size);
+  logUsage(city, year, month, "getGPSData", "Supabase", new Blob([JSON.stringify(data)]).size);
   return data;
 };
 
