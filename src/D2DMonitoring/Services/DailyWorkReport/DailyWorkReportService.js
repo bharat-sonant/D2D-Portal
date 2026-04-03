@@ -24,6 +24,40 @@ const getWardTripsPath = (wardId, date) => {
     return `WardTrips/${year}/${month}/${date}/${wardId}`;
 };
 
+const getLocationHistoryPath = (wardId, date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `LocationHistory/${wardId}/${year}/${month}/${date}`;
+};
+
+const calculateRunKm = (locationData) => {
+    if (!locationData) return null;
+
+    // Step 1: Reverse karo
+    const reversed = [...Object.keys(locationData)].reverse();
+
+    // Step 2: Dedup — "10:05-1" aur "10:05-2" same base time hai, ek rakho
+    const deduped = [];
+    for (let i = 0; i < reversed.length; i++) {
+        const base     = reversed[i].split('-')[0];
+        const nextBase = reversed[i + 1]?.split('-')[0];
+        deduped.push(reversed[i]);
+        if (base === nextBase) i++;
+    }
+
+    // Step 3: Chronological order wapas
+    const keys = deduped.reverse();
+
+    // Step 4: Saare distances sum karo
+    let totalMeters = 0;
+    for (const key of keys) {
+        const dist = locationData[key]?.['distance-in-meter'];
+        if (dist != null) totalMeters += Number(dist);
+    }
+
+    return totalMeters > 0 ? Number((totalMeters / 1000).toFixed(3)) : null;
+};
+
 
 const timeToMinutes = (t) => {
     if (!t) return null;
@@ -65,7 +99,7 @@ const fetchVehicleRegNo = async (vehicleStr) => {
     return valid.length ? valid.join(', ') : null;
 };
 
-const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null) => {
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null) => {
     const dutyOn  = normalizeTime(summary?.dutyInTime,  "first");
     const dutyOff = normalizeTime(summary?.dutyOutTime, "last");
     return {
@@ -78,6 +112,7 @@ const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tri
     vehicle:              workerDetails?.vehicle               ?? null,
     vehicleRegNo,
     tripBins,
+    runKm,
     driver:               workerDetails?.driverName            ?? null,
     helper:               workerDetails?.helperName            ?? null,
     secondHelper:         workerDetails?.secondHelperName      ?? null,
@@ -96,14 +131,16 @@ export const fetchReportData = async (wards, date) => {
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
-                const [summary, workerDetails, tripsData] = await Promise.all([
+                const [summary, workerDetails, tripsData, locationData] = await Promise.all([
                     db.getData(getSummaryPath(id, date)),
                     db.getData(getWorkerDetailsPath(id, date)),
                     db.getData(getWardTripsPath(id, date)),
+                    db.getData(getLocationHistoryPath(id, date)),
                 ]);
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
-                return buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins);
+                const runKm        = calculateRunKm(locationData);
+                return buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm);
             } catch {
                 return buildRow(id, name, null, null);
             }

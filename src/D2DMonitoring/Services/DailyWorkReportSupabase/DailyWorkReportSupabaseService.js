@@ -19,6 +19,7 @@ const buildPayload = (city, date, row) => ({
     vehicle_reg_no:        row.vehicleRegNo         ?? null,
     trip_bins:             row.tripBins             ?? null,
     total_working_hrs:     row.totalWorkingHrs      ?? null,
+    run_km:                row.runKm                ?? null,
     remark:                row.remark               ?? null,
     actual_work_percentage: row.actualWorkPercentage ?? null,
     work_percentage:       row.workPercentage        ?? null,
