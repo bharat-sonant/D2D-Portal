@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -16,6 +16,26 @@ const last7Days = Array.from({ length: 7 }, (_, i) => {
     };
 });
 
+// Pure functions — component ke bahar taaki har render pe recreate na ho
+const filterEmpty = (rows) =>
+    rows.filter(row =>
+        row.duty_on || row.duty_off || row.entered_ward_boundary ||
+        row.vehicle || row.driver || row.helper ||
+        row.remark || row.actual_work_percentage != null || row.work_percentage != null
+    );
+
+const sortByZone = (rows) =>
+    [...rows].sort((a, b) => {
+        const aNum = parseInt(a.zone);
+        const bNum = parseInt(b.zone);
+        const aIsNum = !isNaN(aNum);
+        const bIsNum = !isNaN(bNum);
+        if (aIsNum && bIsNum) return aNum - bNum;
+        if (aIsNum) return -1;
+        if (bIsNum) return 1;
+        return (a.zone || "").localeCompare(b.zone || "");
+    });
+
 const DailyWorkReport = () => {
     const { city }                        = useParams();
     const [selectedDate, setSelectedDate] = useState(TODAY);
@@ -25,12 +45,23 @@ const DailyWorkReport = () => {
     const [lastSynced,   setLastSynced]   = useState(null);
     const dateInputRef                    = useRef(null);
 
+    // Sort + filter + vehicle_list — data change hone par ek baar compute hota hai, har render pe nahi
+    const displayData = useMemo(
+        () => sortByZone(filterEmpty(data)).map(row => ({
+            ...row,
+            _vehicleList: row.vehicle
+                ? [...new Set(row.vehicle.split(',').map(v => v.trim()).filter(Boolean))]
+                : [],
+        })),
+        [data]
+    );
+
     const handleSync = async () => {
         if (syncing || !city) return;
         setSyncing(true);
         try {
             const updated = await syncFromFirebase(city, selectedDate);
-            setData(sortByZone(filterEmpty(updated)));
+            setData(updated);
             setLastSynced(dayjs().format("hh:mm A"));
         } catch {
             toast.error("Sync failed — data could not be saved. Please try again.");
@@ -38,25 +69,6 @@ const DailyWorkReport = () => {
             setSyncing(false);
         }
     };
-
-    const filterEmpty = (rows) =>
-        rows.filter(row =>
-            row.duty_on || row.duty_off || row.entered_ward_boundary ||
-            row.vehicle || row.driver || row.helper ||
-            row.remark || row.actual_work_percentage != null || row.work_percentage != null
-        );
-
-    const sortByZone = (rows) =>
-        [...rows].sort((a, b) => {
-            const aNum = parseInt(a.zone);
-            const bNum = parseInt(b.zone);
-            const aIsNum = !isNaN(aNum);
-            const bIsNum = !isNaN(bNum);
-            if (aIsNum && bIsNum) return aNum - bNum;
-            if (aIsNum) return -1;
-            if (bIsNum) return 1;
-            return (a.zone || "").localeCompare(b.zone || "");
-        });
 
     useEffect(() => {
         if (!city) return;
@@ -68,10 +80,10 @@ const DailyWorkReport = () => {
                 let hitFromCache = false;
                 const updated = await loadReportData(city, selectedDate, (cached) => {
                     hitFromCache = true;
-                    setData(sortByZone(filterEmpty(cached)));
+                    setData(cached);
                     setLoading(false);
                 });
-                if (!hitFromCache) setData(sortByZone(filterEmpty(updated)));
+                if (!hitFromCache) setData(updated);
             } catch {
                 toast.error("Data could not be loaded. Please refresh the page.");
             } finally {
@@ -190,21 +202,21 @@ const DailyWorkReport = () => {
                                     <WevoisLoader />
                                 </td>
                             </tr>
-                        ) : data.length === 0 ? (
+                        ) : displayData.length === 0 ? (
                             <tr>
                                 <td colSpan={17}>
                                     <div className={styles.emptyState}>No data available</div>
                                 </td>
                             </tr>
                         ) : (
-                            data.map((row, i) => (
+                            displayData.map((row, i) => (
                                 <tr key={row.id ?? i}>
                                     <td>{row.zone ? `Zone ${row.zone}` : "-"}</td>
                                     <td>{row.duty_on                   || "-"}</td>
                                     <td>{row.entered_ward_boundary     || "-"}</td>
                                     <td>{row.duty_off                  || "-"}</td>
-                                    <td>{row.vehicle
-                                        ? [...new Set(row.vehicle.split(',').map(v => v.trim()).filter(Boolean))].map((v, i, arr) => (
+                                    <td>{row._vehicleList.length > 0
+                                        ? row._vehicleList.map((v, i, arr) => (
                                             <span key={i}><span className={styles.vehicleChip}>{v}</span>{i < arr.length - 1 ? ', ' : ''}</span>
                                         ))
                                         : "-"}

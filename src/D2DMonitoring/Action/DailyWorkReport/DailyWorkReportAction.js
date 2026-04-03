@@ -16,13 +16,42 @@ const withRetry = async (fn, attempts = 3, delayMs = 1000) => {
     }
 };
 
+// Firebase camelCase → Supabase snake_case display format
+// ward_halt_duration: future field — not yet computed, kept as null placeholder
+const toDisplayFormat = (row) => ({
+    zone:                   row.zone                  ?? null,
+    duty_on:                row.dutyOn                ?? null,
+    entered_ward_boundary:  row.enteredWardBoundary   ?? null,
+    duty_off:               row.dutyOff               ?? null,
+    vehicle:                row.vehicle               ?? null,
+    driver:                 row.driver                ?? null,
+    helper:                 row.helper                ?? null,
+    second_helper:          row.secondHelper          ?? null,
+    vehicle_reg_no:         row.vehicleRegNo          ?? null,
+    trip_bins:              row.tripBins              ?? null,
+    total_working_hrs:      row.totalWorkingHrs       ?? null,
+    run_km:                 row.runKm                 ?? null,
+    remark:                 row.remark                ?? null,
+    actual_work_percentage: row.actualWorkPercentage  ?? null,
+    work_percentage:        row.workPercentage        ?? null,
+    zone_run_km:            row.zoneRunKm             ?? null,
+    ward_halt_duration:     null,
+});
+
+// Session-level cache — avoids re-fetching Supabase on date switch
+// Invalidated when sync runs so fresh data is always shown after sync
+const reportCache = new Map(); // key: "city|date"
+
 // Refresh button — Firebase se latest data lao, Supabase se compare karo, sirf changed update karo
 export const syncFromFirebase = async (city, date) => {
     const wards = getWardListAction(city);
     if (!wards?.length) return [];
 
     const t0 = performance.now();
+    const cacheKey = `${city}|${date}`;
 
+    // Har case mein Firebase aur Supabase parallel fetch — sync hamesha latest Firebase data check karta hai
+    // Past date ho ya today — user ne Sync dabaya matlab woh fresh data chahta hai
     const [freshRows, savedRows] = await Promise.all([
         withRetry(() => fetchReportData(wards, date)),
         withRetry(() => getReportFromSupabase(city, date)),
@@ -50,6 +79,8 @@ export const syncFromFirebase = async (city, date) => {
                saved.zone_run_km           !== (row.zoneRunKm             ?? null);
     });
 
+    let result;
+
     if (changedRows.length) {
         const sizeKB = (new TextEncoder().encode(JSON.stringify(changedRows)).length / 1024).toFixed(1);
         console.group(`[DWR Sync] ${changedRows.length} rows changed | ~${sizeKB} KB`);
@@ -75,48 +106,81 @@ export const syncFromFirebase = async (city, date) => {
         });
         console.groupEnd();
         try {
-            // savedMap pass nahi kiya — retry pe fresh existingMap fetch hoga, duplicate inserts se bachne ke liye
-            await withRetry(() => saveReportToSupabase(city, date, changedRows));
+            // savedMap pass kiya — no extra Supabase fetch needed
+            // (retry safety: UPDATE is idempotent; new-row INSERT on retry is an edge case)
+            await withRetry(() => saveReportToSupabase(city, date, changedRows, savedMap));
         } catch (err) {
             console.error('[DWR Sync] Save failed:', err.message);
             throw err;
         }
+
+        // Local merge — Supabase re-fetch hataaya, savedRows mein changes apply karo
+        const changedZoneMap = Object.fromEntries(changedRows.map(r => [r.zone, toDisplayFormat(r)]));
+        const merged = savedRows.map(r =>
+            changedZoneMap[r.zone] ? { ...r, ...changedZoneMap[r.zone] } : r
+        );
+        const newRows = changedRows
+            .filter(r => !savedMap[r.zone])
+            .map(toDisplayFormat);
+        result = [...merged, ...newRows];
     } else {
         console.log(`[DWR Sync] No changes detected`);
+        result = savedRows;
     }
 
+    reportCache.set(cacheKey, result);
     console.log(`[DWR Sync] Total time: ${(performance.now() - t0).toFixed(0)}ms`);
-
-    return withRetry(() => getReportFromSupabase(city, date));
+    return result;
 };
 
-// Step 1: Supabase mein data hai → onHit callback se turant show, return
-// Step 2: Supabase mein data nahi → Firebase se fetch → Supabase save → return
+// Step 1: In-memory cache hit → turant show, return
+// Step 2: Supabase mein data hai → onHit callback se turant show, return
+// Step 3: Supabase mein data nahi → Firebase se fetch → Supabase save → return
 export const loadReportData = async (city, date, onHit) => {
     const wards = getWardListAction(city);
     if (!wards?.length) return [];
 
     const t0 = performance.now();
+    const cacheKey = `${city}|${date}`;
 
-    // Supabase check
+    // 1. In-memory session cache (date switch pe re-fetch nahi hoga)
+    const inMemory = reportCache.get(cacheKey);
+    if (inMemory?.length) {
+        console.log(`[DWR Load] Memory hit: ${inMemory.length} rows | 0ms`);
+        onHit?.(inMemory);
+        return inMemory;
+    }
+
+    // 2. Supabase check
     const cached = await withRetry(() => getReportFromSupabase(city, date));
     if (cached?.length) {
         console.log(`[DWR Load] Supabase hit: ${cached.length} rows | ${(performance.now() - t0).toFixed(0)}ms`);
+        reportCache.set(cacheKey, cached);
         onHit?.(cached);
         return cached;
     }
 
-    // Supabase mein data nahi — Firebase se fetch
+    // 3. Supabase mein data nahi — Firebase se fetch with progressive display
     console.log(`[DWR Load] Supabase miss — fetching from Firebase`);
-    const fresh = await withRetry(() => fetchReportData(wards, date));
+
+    // Progressive: jaise jaise har ward ka data aata hai, turant UI mein dikhao
+    // User ko pura load complete hone ka wait nahi karna padega
+    const progressive = [];
+    const onRow = (row) => {
+        progressive.push(toDisplayFormat(row));
+        onHit?.([...progressive]); // spread taaki React fresh reference dekhe
+    };
+
+    const fresh = await withRetry(() => fetchReportData(wards, date, onRow));
     try {
-        await withRetry(() => saveReportToSupabase(city, date, fresh));
+        await withRetry(() => saveReportToSupabase(city, date, fresh, {}));
     } catch (err) {
         console.error('[DWR Load] Save failed:', err.message);
         throw err;
     }
 
-    const updated = await withRetry(() => getReportFromSupabase(city, date));
+    const result = fresh.map(toDisplayFormat);
+    reportCache.set(cacheKey, result);
     console.log(`[DWR Load] Firebase fetch done | ${(performance.now() - t0).toFixed(0)}ms`);
-    return updated;
+    return result;
 };

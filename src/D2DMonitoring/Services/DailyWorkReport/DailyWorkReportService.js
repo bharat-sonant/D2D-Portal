@@ -82,14 +82,20 @@ const normalizeTime = (value, mode = "first") => {
 };
 
 
+// Session-level cache — vehicle reg numbers don't change, no need to re-fetch
+const vehicleRegNoCache = new Map();
+
 const fetchVehicleRegNo = async (vehicleStr) => {
     if (!vehicleStr) return null;
     const ids = [...new Set(vehicleStr.split(',').map(v => v.trim()).filter(Boolean))];
     const regNos = await Promise.all(
         ids.map(async id => {
+            if (vehicleRegNoCache.has(id)) return vehicleRegNoCache.get(id);
             try {
                 const regNo = await db.getData(`VehicleDetails/${id}/regNumber`);
-                return regNo || null;
+                const result = regNo || null;
+                vehicleRegNoCache.set(id, result);
+                return result;
             } catch {
                 return null;
             }
@@ -123,9 +129,15 @@ const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tri
     };
 };
 
-// 3 reads per ward: Summary + WorkerDetails + WardTrips (parallel)
-export const fetchReportData = async (wards, date) => {
-    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 3}`);
+const hasRowData = (r) =>
+    r.dutyOn || r.dutyOff || r.enteredWardBoundary ||
+    r.vehicle || r.driver || r.helper ||
+    r.remark || r.actualWorkPercentage != null || r.workPercentage != null;
+
+// 4 reads per ward: Summary + WorkerDetails + WardTrips + LocationHistory (all parallel)
+// onRow: optional — called as each ward's data arrives (for progressive rendering on first load)
+export const fetchReportData = async (wards, date, onRow) => {
+    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 4}`);
     const t0 = performance.now();
 
     const rows = await Promise.all(
@@ -140,18 +152,16 @@ export const fetchReportData = async (wards, date) => {
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
                 const runKm        = calculateRunKm(locationData);
-                return buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm);
+                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm);
+                if (onRow && hasRowData(row)) onRow(row);
+                return row;
             } catch {
                 return buildRow(id, name, null, null);
             }
         })
     );
 
-    const withData = rows.filter(r =>
-        r.dutyOn || r.dutyOff || r.enteredWardBoundary ||
-        r.vehicle || r.driver || r.helper ||
-        r.remark || r.actualWorkPercentage != null || r.workPercentage != null
-    );
+    const withData = rows.filter(hasRowData);
 
     const sizeKB = (new TextEncoder().encode(JSON.stringify(withData)).length / 1024).toFixed(1);
     console.log(`[DWR Firebase] Done in ${(performance.now() - t0).toFixed(0)}ms | zones with data=${withData.length}/${rows.length} | ~${sizeKB} KB`);
