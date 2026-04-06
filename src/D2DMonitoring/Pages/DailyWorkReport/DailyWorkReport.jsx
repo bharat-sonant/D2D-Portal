@@ -23,6 +23,23 @@ const fmtTime = (t) => {
     return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : String(t);
 };
 
+// 4.7 → "4h 42min" | 0.72 → "43min" | 4.0 → "4h" | null → "-"
+const fmtHours = (v) => {
+    if (v == null) return "-";
+    const hrs  = Math.floor(v);
+    const mins = Math.round((v - hrs) * 60);
+    if (hrs === 0) return `${mins}min`;
+    if (mins === 0) return `${hrs}h`;
+    return `${hrs}h ${String(mins).padStart(2, '0')}min`;
+};
+
+// 15.57 → "15.57 km" | 0.35 → "350 m" | 0.001 → "1 m" | null → "-"
+const fmtDist = (v) => {
+    if (v == null) return "-";
+    if (v < 1) return `${Math.round(v * 1000)} m`;
+    return `${Number(v.toFixed(2))} km`;
+};
+
 // Pure functions — component ke bahar taaki har render pe recreate na ho
 const filterEmpty = (rows) =>
     rows.filter(row =>
@@ -233,12 +250,12 @@ const DailyWorkReport = () => {
                                     <td>{row.helper                    || "-"}</td>
                                     <td>{row.second_helper             || "-"}</td>
                                     <td>{row.trip_bins                 ?? "-"}</td>
-                                    <td>{row.total_working_hrs         ?? "-"}</td>
-                                    <td>{row.ward_halt_duration        ?? "-"}</td>
+                                    <td>{fmtHours(row.total_working_hrs)}</td>
+                                    <td>{fmtHours(row.ward_halt_duration)}</td>
                                     <td>{row.work_percentage ?? row.actual_work_percentage ?? "-"}</td>
                                     <td>{row.actual_work_percentage    ?? "-"}</td>
-                                    <td>{row.run_km                    ?? "-"}</td>
-                                    <td>{row.zone_run_km               ?? "-"}</td>
+                                    <td>{fmtDist(row.run_km)}</td>
+                                    <td>{fmtDist(row.zone_run_km)}</td>
                                     <td>{row.remark                    || "-"}</td>
                                 </tr>
                             ))

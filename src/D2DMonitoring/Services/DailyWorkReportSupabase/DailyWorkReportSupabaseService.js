@@ -24,6 +24,7 @@ const buildPayload = (city, date, row) => ({
     actual_work_percentage: row.actualWorkPercentage ?? null,
     work_percentage:       row.workPercentage        ?? null,
     zone_run_km:           row.zoneRunKm             ?? null,
+    ward_halt_duration:    row.haltDuration          ?? null,
 });
 
 export const saveReportToSupabase = async (city, date, rows, existingMap = null) => {

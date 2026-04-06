@@ -35,7 +35,7 @@ const toDisplayFormat = (row) => ({
     actual_work_percentage: row.actualWorkPercentage  ?? null,
     work_percentage:        row.workPercentage        ?? null,
     zone_run_km:            row.zoneRunKm             ?? null,
-    ward_halt_duration:     null,
+    ward_halt_duration:     row.haltDuration      ?? null,
 });
 
 // Session-level cache — avoids re-fetching Supabase on date switch
@@ -76,7 +76,8 @@ export const syncFromFirebase = async (city, date) => {
                saved.remark                !== (row.remark               ?? null) ||
                saved.actual_work_percentage !== (row.actualWorkPercentage ?? null) ||
                saved.work_percentage       !== (row.workPercentage        ?? null) ||
-               saved.zone_run_km           !== (row.zoneRunKm             ?? null);
+               saved.zone_run_km           !== (row.zoneRunKm             ?? null) ||
+               saved.ward_halt_duration    !== (row.haltDuration          ?? null);
     });
 
     let result;
@@ -102,6 +103,7 @@ export const syncFromFirebase = async (city, date) => {
             if (saved?.actual_work_percentage !== (row.actualWorkPercentage ?? null)) diff.actual_work_percentage = { old: saved?.actual_work_percentage, new: row.actualWorkPercentage };
             if (saved?.work_percentage       !== (row.workPercentage        ?? null)) diff.work_percentage       = { old: saved?.work_percentage,        new: row.workPercentage };
             if (saved?.zone_run_km           !== (row.zoneRunKm             ?? null)) diff.zone_run_km           = { old: saved?.zone_run_km,             new: row.zoneRunKm };
+            if (saved?.ward_halt_duration    !== (row.haltDuration          ?? null)) diff.ward_halt_duration    = { old: saved?.ward_halt_duration,      new: row.haltDuration };
             console.log(`  Zone: ${row.zone}`, diff);
         });
         console.groupEnd();
