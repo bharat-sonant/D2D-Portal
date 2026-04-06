@@ -6,8 +6,8 @@ import styles from "./DailyWorkReport.module.css";
 import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
-const TODAY = dayjs().format("YYYY-MM-DD");
-const last7Days = Array.from({ length: 7 }, (_, i) => {
+const getToday      = () => dayjs().format("YYYY-MM-DD");
+const buildLast7Days = () => Array.from({ length: 7 }, (_, i) => {
     const d = dayjs().subtract(i, "day");
     return {
         label: i === 0 ? "Today" : d.format("DD MMM"),
@@ -61,13 +61,35 @@ const sortByZone = (rows) =>
     });
 
 const DailyWorkReport = () => {
-    const { city }                        = useParams();
-    const [selectedDate, setSelectedDate] = useState(TODAY);
-    const [data,         setData]         = useState([]);
-    const [loading,      setLoading]      = useState(false);
-    const [syncing,      setSyncing]      = useState(false);
-    const [lastSynced,   setLastSynced]   = useState(null);
-    const dateInputRef                    = useRef(null);
+    const { city }                          = useParams();
+    const [today,        setToday]          = useState(getToday);
+    const [last7Days,    setLast7Days]      = useState(buildLast7Days);
+    const [selectedDate, setSelectedDate]   = useState(getToday);
+    const [data,         setData]           = useState([]);
+    const [loading,      setLoading]        = useState(false);
+    const [syncing,      setSyncing]        = useState(false);
+    const [lastSynced,   setLastSynced]     = useState(null); // Date object
+    const [syncAge,      setSyncAge]        = useState("");   // "X min ago" string
+    const dateInputRef                      = useRef(null);
+    const loadIdRef                         = useRef(0);
+
+    // Fix 2: Midnight pe today + last7Days + selectedDate update
+    useEffect(() => {
+        const now  = new Date();
+        const next = new Date();
+        next.setHours(24, 0, 0, 0);
+        const timer = setTimeout(() => {
+            const newToday = getToday();
+            setToday(newToday);
+            setLast7Days(buildLast7Days());
+            // Agar user aaj ka date dekh raha tha toh naye today pe le jao
+            setSelectedDate(prev => {
+                const yesterday = dayjs(newToday).subtract(1, 'day').format('YYYY-MM-DD');
+                return prev === yesterday ? newToday : prev;
+            });
+        }, next - now);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Sort + filter + vehicle_list — data change hone par ek baar compute hota hai, har render pe nahi
     const displayData = useMemo(
@@ -80,13 +102,28 @@ const DailyWorkReport = () => {
         [data]
     );
 
+    // Sync age — har minute update hota hai jab lastSynced set ho
+    useEffect(() => {
+        if (!lastSynced) return;
+        const calc = () => {
+            const mins = Math.floor((Date.now() - lastSynced) / 60000);
+            if (mins < 1)  return setSyncAge("just now");
+            if (mins < 60) return setSyncAge(`${mins} min ago`);
+            const hrs = Math.floor(mins / 60);
+            return setSyncAge(`${hrs}h ago`);
+        };
+        calc();
+        const interval = setInterval(calc, 60000);
+        return () => clearInterval(interval);
+    }, [lastSynced]);
+
     const handleSync = async () => {
         if (syncing || !city) return;
         setSyncing(true);
         try {
             const updated = await syncFromFirebase(city, selectedDate);
             setData(updated);
-            setLastSynced(dayjs().format("hh:mm A"));
+            setLastSynced(Date.now());
         } catch {
             toast.error("Sync failed — data could not be saved. Please try again.");
         } finally {
@@ -97,21 +134,27 @@ const DailyWorkReport = () => {
     useEffect(() => {
         if (!city) return;
 
+        // Fix 1: har date change pe naya loadId — stale load ka result ignore hoga
+        const loadId = ++loadIdRef.current;
+
         const load = async () => {
             setData([]);
             setLoading(true);
             try {
                 let hitFromCache = false;
                 const updated = await loadReportData(city, selectedDate, (cached) => {
+                    if (loadId !== loadIdRef.current) return; // stale load, ignore
                     hitFromCache = true;
                     setData(cached);
                     setLoading(false);
                 });
+                if (loadId !== loadIdRef.current) return; // stale load, ignore
                 if (!hitFromCache) setData(updated);
             } catch {
+                if (loadId !== loadIdRef.current) return;
                 toast.error("Data could not be loaded. Please refresh the page.");
             } finally {
-                setLoading(false);
+                if (loadId === loadIdRef.current) setLoading(false);
             }
         };
 
@@ -166,7 +209,7 @@ const DailyWorkReport = () => {
                             type="date"
                             className={styles.datePickerInput}
                             value={selectedDate}
-                            max={TODAY}
+                            max={today}
                             onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
                         />
                     </div>
@@ -180,12 +223,12 @@ const DailyWorkReport = () => {
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                     <span>
-                        {selectedDate === TODAY
+                        {selectedDate === today
                             ? "Today — " + dayjs(selectedDate).format("DD MMMM YYYY")
                             : dayjs(selectedDate).format("DD MMMM YYYY")}
                     </span>
                     {loading && <span className={styles.tableDateBadge}>Loading...</span>}
-                    <button
+<button
                         className={styles.syncBtn}
                         onClick={handleSync}
                         disabled={syncing}
@@ -194,7 +237,7 @@ const DailyWorkReport = () => {
                             <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
                             <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
                         </svg>
-                        {syncing ? "Syncing..." : lastSynced ? `Synced ${lastSynced}` : "Sync"}
+                        {syncing ? "Syncing..." : lastSynced ? `Synced ${syncAge}` : "Sync"}
                     </button>
                 </div>
                 <table className={styles.table}>
@@ -229,7 +272,10 @@ const DailyWorkReport = () => {
                         ) : displayData.length === 0 ? (
                             <tr>
                                 <td colSpan={17}>
-                                    <div className={styles.emptyState}>No data available</div>
+                                    <div className={styles.emptyState}>
+                                        <div className={styles.emptyStateTitle}>No data found for this date</div>
+                                        <div className={styles.emptyStateHint}>Press <strong>Sync</strong> to fetch latest data from Firebase</div>
+                                    </div>
                                 </td>
                             </tr>
                         ) : (
