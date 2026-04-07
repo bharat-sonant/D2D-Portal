@@ -181,6 +181,8 @@ const DailyWorkReport = () => {
                             <button
                                 key={d.value}
                                 type="button"
+                                aria-pressed={selectedDate === d.value}
+                                aria-label={`Select date ${d.label}`}
                                 className={`${styles.dateTab} ${selectedDate === d.value ? styles.dateTabActive : ""}`}
                                 onClick={() => setSelectedDate(d.value)}
                             >
@@ -207,6 +209,7 @@ const DailyWorkReport = () => {
                         <input
                             ref={dateInputRef}
                             type="date"
+                            aria-label="Select custom date"
                             className={styles.datePickerInput}
                             value={selectedDate}
                             max={today}
@@ -228,10 +231,11 @@ const DailyWorkReport = () => {
                             : dayjs(selectedDate).format("DD MMMM YYYY")}
                     </span>
                     {loading && <span className={styles.tableDateBadge}>Loading...</span>}
-<button
+                    <button
                         className={styles.syncBtn}
                         onClick={handleSync}
                         disabled={syncing}
+                        aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
                     >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={syncing ? styles.spinning : ""}>
                             <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
@@ -243,23 +247,23 @@ const DailyWorkReport = () => {
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th>Zone</th>
-                            <th>Duty On</th>
-                            <th>Entered Ward Boundary</th>
-                            <th>Duty Off</th>
-                            <th>Vehicle</th>
-                            <th>Vehicle Reg. No.</th>
-                            <th>Driver</th>
-                            <th>Helper</th>
-                            <th>Second Helper</th>
-                            <th>Trip/Bins</th>
-                            <th>Total Working Hrs</th>
-                            <th>Ward Halt Duration</th>
-                            <th>Work Percentage</th>
-                            <th>Actual Work Percentage</th>
-                            <th>Run KM</th>
-                            <th>Zone Run KM</th>
-                            <th>Remark</th>
+                            <th scope="col">Zone</th>
+                            <th scope="col">Duty On</th>
+                            <th scope="col">Entered Ward Boundary</th>
+                            <th scope="col">Duty Off</th>
+                            <th scope="col">Vehicle</th>
+                            <th scope="col">Vehicle Reg. No.</th>
+                            <th scope="col">Driver</th>
+                            <th scope="col">Helper</th>
+                            <th scope="col">Second Helper</th>
+                            <th scope="col">Trip/Bins</th>
+                            <th scope="col">Total Working Hrs</th>
+                            <th scope="col">Ward Halt Duration</th>
+                            <th scope="col">Work Percentage</th>
+                            <th scope="col">Actual Work Percentage</th>
+                            <th scope="col">Run KM</th>
+                            <th scope="col">Zone Run KM</th>
+                            <th scope="col">Remark</th>
                         </tr>
                     </thead>
                     <tbody>

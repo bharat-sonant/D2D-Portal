@@ -38,6 +38,10 @@ const toDisplayFormat = (row) => ({
     ward_halt_duration:     row.haltDuration      ?? null,
 });
 
+// "08:00:00" → "08:00" | "08:00" → "08:00" | null → null
+// Supabase time type fetch pe seconds append karta hai, Firebase nahi karta
+const normTime = (t) => (t ? String(t).slice(0, 5) : null);
+
 // Session-level cache — avoids re-fetching Supabase on date switch
 // Invalidated when sync runs so fresh data is always shown after sync
 const reportCache = new Map(); // key: "city|date"
@@ -62,9 +66,9 @@ export const syncFromFirebase = async (city, date) => {
         if (!row.zone) return false;
         const saved = savedMap[row.zone];
         if (!saved) return true;
-        return saved.duty_on                !== (row.dutyOn               ?? null) ||
-               saved.duty_off              !== (row.dutyOff              ?? null) ||
-               saved.entered_ward_boundary !== (row.enteredWardBoundary  ?? null) ||
+        return normTime(saved.duty_on)                !== normTime(row.dutyOn               ?? null) ||
+               normTime(saved.duty_off)              !== normTime(row.dutyOff              ?? null) ||
+               normTime(saved.entered_ward_boundary) !== normTime(row.enteredWardBoundary  ?? null) ||
                saved.vehicle               !== (row.vehicle              ?? null) ||
                saved.driver                !== (row.driver               ?? null) ||
                saved.helper                !== (row.helper               ?? null) ||
@@ -88,9 +92,9 @@ export const syncFromFirebase = async (city, date) => {
         changedRows.forEach(row => {
             const saved = savedMap[row.zone];
             const diff  = {};
-            if (saved?.duty_on                !== (row.dutyOn               ?? null)) diff.duty_on                = { old: saved?.duty_on,                new: row.dutyOn };
-            if (saved?.duty_off              !== (row.dutyOff              ?? null)) diff.duty_off              = { old: saved?.duty_off,               new: row.dutyOff };
-            if (saved?.entered_ward_boundary !== (row.enteredWardBoundary  ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary,  new: row.enteredWardBoundary };
+            if (normTime(saved?.duty_on)                !== normTime(row.dutyOn               ?? null)) diff.duty_on                = { old: saved?.duty_on,               new: row.dutyOn };
+            if (normTime(saved?.duty_off)              !== normTime(row.dutyOff              ?? null)) diff.duty_off              = { old: saved?.duty_off,              new: row.dutyOff };
+            if (normTime(saved?.entered_ward_boundary) !== normTime(row.enteredWardBoundary  ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary, new: row.enteredWardBoundary };
             if (saved?.vehicle               !== (row.vehicle              ?? null)) diff.vehicle               = { old: saved?.vehicle,                new: row.vehicle };
             if (saved?.driver                !== (row.driver               ?? null)) diff.driver                = { old: saved?.driver,                 new: row.driver };
             if (saved?.helper                !== (row.helper               ?? null)) diff.helper                = { old: saved?.helper,                 new: row.helper };
