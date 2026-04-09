@@ -477,26 +477,51 @@ const FuelReport = () => {
                     ExternalAPI:        "External API",
                     SupabaseStorage:    "Supabase Storage",
                   };
-                  return SOURCE_ORDER.filter((src) => bySource[src]).map((src) => (
-                    <div key={src} className={styles.drawerSrcGroup}>
-                      <div className={`${styles.drawerSrcHeader} ${styles[`src${src}`]}`}>
-                        {SOURCE_LABELS[src]}
+                  // FirebaseRealtimeDB + ExternalAPI — combined single row
+                  const COLLAPSED_SOURCES = new Set(["FirebaseRealtimeDB", "ExternalAPI"]);
+
+                  return SOURCE_ORDER.filter((src) => bySource[src]).map((src) => {
+                    if (COLLAPSED_SOURCES.has(src)) {
+                      const totals = Object.values(bySource[src]).reduce(
+                        (acc, { calls, bytes }) => ({ calls: acc.calls + calls, bytes: acc.bytes + bytes }),
+                        { calls: 0, bytes: 0 }
+                      );
+                      const key      = `${src}:__all__`;
+                      const isActive = activeService === key;
+                      return (
+                        <div key={src} className={styles.drawerSrcGroup}>
+                          <div className={`${styles.drawerSrcHeader} ${styles[`src${src}`]}`}>
+                            {SOURCE_LABELS[src]}
+                          </div>
+                          <div className={`${styles.drawerSvcRow} ${isActive ? styles.drawerSvcActive : ""}`} onClick={() => setActiveService(isActive ? null : key)}>
+                            <span className={styles.drawerSvcName}>{SOURCE_LABELS[src]}</span>
+                            <span className={styles.drawerSvcBytes}>{formatBytes(totals.bytes)}</span>
+                            <span className={styles.drawerSvcCalls}>{totals.calls}</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={src} className={styles.drawerSrcGroup}>
+                        <div className={`${styles.drawerSrcHeader} ${styles[`src${src}`]}`}>
+                          {SOURCE_LABELS[src]}
+                        </div>
+                        {Object.entries(bySource[src])
+                          .sort(([, a], [, b]) => b.calls - a.calls)
+                          .map(([svc, { calls, bytes }]) => {
+                            const key      = `${src}:${svc}`;
+                            const isActive = activeService === key;
+                            return (
+                              <div key={key} className={`${styles.drawerSvcRow} ${isActive ? styles.drawerSvcActive : ""}`} onClick={() => setActiveService(isActive ? null : key)}>
+                                <span className={styles.drawerSvcName}>{svc}</span>
+                                <span className={styles.drawerSvcBytes}>{formatBytes(bytes)}</span>
+                                <span className={styles.drawerSvcCalls}>{calls}</span>
+                              </div>
+                            );
+                          })}
                       </div>
-                      {Object.entries(bySource[src])
-                        .sort(([, a], [, b]) => b.calls - a.calls)
-                        .map(([svc, { calls, bytes }]) => {
-                          const key      = `${src}:${svc}`;
-                          const isActive = activeService === key;
-                          return (
-                            <div key={key} className={`${styles.drawerSvcRow} ${isActive ? styles.drawerSvcActive : ""}`} onClick={() => setActiveService(isActive ? null : key)}>
-                              <span className={styles.drawerSvcName}>{svc}</span>
-                              <span className={styles.drawerSvcBytes}>{formatBytes(bytes)}</span>
-                              <span className={styles.drawerSvcCalls}>{calls}</span>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  ));
+                    );
+                  });
                 })()}
               </div>
 
@@ -516,7 +541,12 @@ const FuelReport = () => {
                   </div>
                   {(() => {
                     const filtered = activeService
-                      ? (() => { const [src, svc] = activeService.split(":"); return usageLogs.filter((l) => l.source === src && l.service === svc); })()
+                      ? (() => {
+                          const [src, svc] = activeService.split(":");
+                          return svc === "__all__"
+                            ? usageLogs.filter((l) => l.source === src)
+                            : usageLogs.filter((l) => l.source === src && l.service === svc);
+                        })()
                       : usageLogs;
                     const byDate = {};
                     filtered.forEach(({ date, calls, totalBytes }) => {
