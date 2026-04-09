@@ -766,14 +766,29 @@
 }
 .drawerEmpty { text-align: center; color: #94a3b8; padding: 32px; font-size: 13px; }
 
+/* ── Source Groups ── */
+.drawerSrcGroup { display: flex; flex-direction: column; margin-bottom: 4px; }
+
+.drawerSrcHeader {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 18px 5px;
+  border-left: 3px solid transparent;
+}
+
+/* Source colors */
+.srcSupabaseTable      { background: #f0fdf4; color: #15803d; border-left-color: #16a34a; }
+.srcFirebaseRealtimeDB { background: #fff7ed; color: #c2410c; border-left-color: #ea580c; }
+.srcExternalAPI        { background: #faf5ff; color: #7e22ce; border-left-color: #9333ea; }
+.srcSupabaseStorage    { background: #eff6ff; color: #1d4ed8; border-left-color: #3b82f6; }
+
 .drawerSvcRow {
   display: flex; align-items: center;
-  padding: 12px 18px; cursor: pointer;
+  padding: 9px 18px 9px 28px; cursor: pointer;
   border-left: 3px solid transparent;
   transition: background 0.12s;
   gap: 12px;
 }
-.drawerSvcRow:hover { background: #f0fdf4; }
+.drawerSvcRow:hover { background: #f8fafc; }
 .drawerSvcActive    { background: #f0fdf4; border-left-color: #16a34a; }
 .drawerSvcName      { font-size: 13px; color: #1e293b; flex: 1; }
 .drawerSvcBytes     { font-size: 12px; color: #64748b; }
@@ -972,3 +987,72 @@
   color: #166534;
 }
 .modalTotal strong { font-size: 15px; }
+
+
+/* ── Sync Button ── */
+.statPillSyncing { opacity: 0.7; cursor: not-allowed; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spinIcon { animation: spin 0.8s linear infinite; }
+
+/* ── Sync Progress Overlay ── */
+.syncOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.syncCard {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 32px 40px;
+  min-width: 340px;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+.syncCardIcon {
+  font-size: 36px;
+  color: #4ade80;
+  animation: spin 0.8s linear infinite;
+}
+.syncCardTitle {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #dcfce7;
+}
+.syncCardMsg {
+  font-size: 13px;
+  color: #94a3b8;
+  min-height: 18px;
+  max-width: 280px;
+  line-height: 1.4;
+}
+.syncBarTrack {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.syncBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.syncPercent {
+  font-size: 13px;
+  color: #4ade80;
+  font-weight: 600;
+}
+

@@ -6,18 +6,18 @@ const GPS_TABLE     = "VehicleGPSCache";
 const LOG_TABLE     = "ApiUsageLogs";
 
 // ── Usage Logger → Supabase atomic increment via RPC (fire-and-forget) ────────
-const logUsage = (city, _year, _month, service, source, bytes) => {
-  const now  = new Date();
-  const date = now.toISOString().slice(0, 10);                          // YYYY-MM-DD
-  const year = String(now.getFullYear());                               // actual current year
-  const month = now.toLocaleString("en-US", { month: "long" });        // actual current month
+export const logUsage = (city, _year, _month, service, source, bytes) => {
+  const now   = new Date();
+  const date  = now.toISOString().slice(0, 10);
+  const year  = String(now.getFullYear());
+  const month = now.toLocaleString("en-US", { month: "long" });
   supabase.rpc("increment_api_usage", {
     p_city: city, p_year: year, p_month: month, p_date: date,
     p_service: service, p_source: source, p_bytes: bytes,
   }).then(({ error }) => { if (error) console.warn("Usage log failed:", error.message); });
 };
 
-// ── Read usage logs from Supabase (already aggregated per row) ───────────────
+// ── Read usage logs ───────────────────────────────────────────────────────────
 export const getUsageLogs = async (city, year, month, filterDate = null) => {
   let query = supabase
     .from(LOG_TABLE)
@@ -26,12 +26,9 @@ export const getUsageLogs = async (city, year, month, filterDate = null) => {
     .eq("year", year)
     .eq("month", month)
     .order("date", { ascending: false });
-
   if (filterDate) query = query.eq("date", filterDate);
-
   const { data, error } = await query;
   if (error || !data?.length) return [];
-
   return data.map((r) => ({
     date:       r.date,
     service:    r.service,
@@ -46,12 +43,13 @@ export const getUsageLogs = async (city, year, month, filterDate = null) => {
 export const getSummaryCache = async (city, year, month) => {
   const { data, error } = await supabase
     .from(SUMMARY_TABLE)
-    .select("*")
+    .select("total_qty, total_amount, total_km")
     .eq("city", city)
     .eq("year", year)
     .eq("month", month)
     .maybeSingle();
   if (error || !data) return null;
+  logUsage(city, year, month, "MonthSummary", "SupabaseTable", new Blob([JSON.stringify(data)]).size);
   return data;
 };
 
@@ -64,69 +62,32 @@ export const saveSummaryCache = async (city, year, month, { total_qty, total_amo
 
 // ── Fuel Entries ──────────────────────────────────────────────────────────────
 
-export const getFuelCache = async (city, year, month) => {
-  const { data, error } = await supabase
-    .from(FUEL_TABLE)
-    .select("*")
-    .eq("city", city)
-    .eq("year", year)
-    .eq("month", month);
-  if (error || !data?.length) return null;
-  return data;
-};
-
-// Returns only distinct vehicle names — lightweight query for vehicles list
-export const getVehicleListData = async (city, year, month) => {
+// Distinct vehicle list — sirf vehicle column, lightweight query
+export const getVehicleList = async (city, year, month) => {
   const { data, error } = await supabase
     .from(FUEL_TABLE)
     .select("vehicle")
     .eq("city", city)
     .eq("year", year)
     .eq("month", month);
-  if (error || !data?.length) return null;
-  logUsage(city, year, month, "getVehicleListData", "Supabase", new Blob([JSON.stringify(data)]).size);
+  if (error || !data?.length) return [];
+  logUsage(city, year, month, "FuelEntries", "SupabaseTable", new Blob([JSON.stringify(data)]).size);
   return [...new Set(data.map((r) => r.vehicle).filter(Boolean))].sort();
 };
 
-// Returns fuel entries for a specific vehicle only
-export const getFuelDataByVehicle = async (city, year, month, vehicle) => {
+// Fuel entries for one vehicle only — filtered query
+export const getFuelByVehicle = async (city, year, month, vehicle) => {
   const { data, error } = await supabase
     .from(FUEL_TABLE)
-    .select("*")
+    .select("vehicle, date, meter_reading, fuel_type, fuel_vehicle, petrol_pump, pay_method, remark, quantity, amount")
     .eq("city", city)
     .eq("year", year)
     .eq("month", month)
-    .eq("vehicle", vehicle);
-  if (error || !data?.length) return null;
-  logUsage(city, year, month, "getFuelDataByVehicle", "Supabase", new Blob([JSON.stringify(data)]).size);
-  return data;
-};
-
-export const saveFuelCache = async (city, year, month, entries) => {
-  const rows = entries.map((e) => ({
-    city, year, month,
-    vehicle:       e.vehicle       || "",
-    date:          e.date          || "",
-    meter_reading: e.meterReading  || "",
-    fuel_type:     e.fuelType      || "",
-    fuel_vehicle:  e.fuelVehicle   || "",
-    petrol_pump:   e.petrolPump    || "",
-    pay_method:    e.payMethod     || "",
-    remark:        e.remark        || "",
-    quantity:      e.quantity      || 0,
-    amount:        e.amount        || 0,
-  }));
-
-  // Insert in 500-row chunks to avoid request size limits
-  for (let i = 0; i < rows.length; i += 500) {
-    const { error } = await supabase.from(FUEL_TABLE).insert(rows.slice(i, i + 500));
-    if (error) console.warn("Fuel cache save failed:", error.message);
-  }
-};
-
-// Map Supabase rows → app shape
-export const mapFuelRows = (rows) =>
-  rows.map((r) => ({
+    .eq("vehicle", vehicle)
+    .order("date", { ascending: true });
+  if (error || !data?.length) return [];
+  logUsage(city, year, month, "FuelEntries", "SupabaseTable", new Blob([JSON.stringify(data)]).size);
+  return data.map((r) => ({
     vehicle:      r.vehicle       || "",
     date:         r.date          || "",
     meterReading: r.meter_reading || "",
@@ -139,108 +100,155 @@ export const mapFuelRows = (rows) =>
     amount:       Number(r.amount)   || 0,
     orderBy:      new Date(r.date).getTime(),
   }));
+};
 
-// ── GPS Routes ────────────────────────────────────────────────────────────────
+// Delete city/year/month, then bulk insert new entries
+export const saveFuelEntries = async (city, year, month, entries) => {
+  const { error: delErr } = await supabase
+    .from(FUEL_TABLE)
+    .delete()
+    .eq("city", city)
+    .eq("year", year)
+    .eq("month", month);
+  if (delErr) console.warn("Fuel delete failed:", delErr.message);
+  if (!entries.length) return;
+  const rows = entries.map((e) => ({
+    city, year, month,
+    vehicle:       e.vehicle      || "",
+    date:          e.date         || "",
+    meter_reading: e.meterReading || "",
+    fuel_type:     e.fuelType     || "",
+    fuel_vehicle:  e.fuelVehicle  || "",
+    petrol_pump:   e.petrolPump   || "",
+    pay_method:    e.payMethod    || "",
+    remark:        e.remark       || "",
+    quantity:      Number(e.quantity) || 0,
+    amount:        Number(e.amount)   || 0,
+  }));
+  for (let i = 0; i < rows.length; i += 500) {
+    const { error } = await supabase.from(FUEL_TABLE).insert(rows.slice(i, i + 500));
+    if (error) console.warn("Fuel insert failed:", error.message);
+  }
+};
 
-// Silent version — used by autoMigrate (no usage log)
-export const checkGPSCache = async (city, year, month, vehicle) => {
+// ── GPS Route Data ────────────────────────────────────────────────────────────
+
+// GPS entries for one vehicle only — filtered query
+export const getGPSByVehicle = async (city, year, month, vehicle) => {
   const { data, error } = await supabase
     .from(GPS_TABLE)
-    .select("id")
+    .select("date, ward, name, driver, duty_in_time, duty_out_time, work_percentage, portal_km, gps_km, meter_reading_distance, distance")
     .eq("city", city)
     .eq("year", year)
     .eq("month", month)
     .eq("vehicle", vehicle)
-    .limit(1);
-  if (error || !data?.length) return null;
-  return true;
+    .order("date", { ascending: true });
+  if (error || !data?.length) return [];
+  logUsage(city, year, month, "GPSRouteData", "SupabaseTable", new Blob([JSON.stringify(data)]).size);
+  return data.map((r) => ({
+    date:                 r.date                   || "",
+    ward:                 r.ward                   || "",
+    name:                 r.name                   || "",
+    driver:               r.driver                 || "",
+    dutyInTime:           r.duty_in_time           || "",
+    dutyOutTime:          r.duty_out_time          || "",
+    workPercentage:       r.work_percentage        ?? "",
+    portalKm:             r.portal_km              ?? "",
+    gps_km:               r.gps_km                ?? "",
+    meterReadingDistance: r.meter_reading_distance ?? "",
+    distance:             r.distance ? `${parseFloat(r.distance).toFixed(3)} KM` : "0.000 KM",
+    orderBy:              new Date(r.date).getTime(),
+  }));
 };
 
-// Normal version — used on vehicle click (logs usage)
-export const getGPSData = async (city, year, month, vehicle) => {
-  const { data, error } = await supabase
+// Batch update enriched GPS fields — fire-and-forget after vehicle click enrichment
+export const updateGPSEnrichedData = (city, year, month, vehicle, enrichedRows) => {
+  enrichedRows.forEach((r) => {
+    supabase.from(GPS_TABLE)
+      .update({
+        duty_in_time:           r.dutyInTime           || "",
+        duty_out_time:          r.dutyOutTime          || "",
+        work_percentage:        String(r.workPercentage ?? ""),
+        portal_km:              String(r.portalKm       ?? ""),
+        distance:               String(parseFloat(r.distance) || 0),
+        meter_reading_distance: String(r.meterReadingDistance ?? ""),
+      })
+      .eq("city", city).eq("year", year).eq("month", month)
+      .eq("vehicle", vehicle).eq("date", r.date).eq("ward", r.ward)
+      .then(({ error }) => { if (error) console.warn("GPS enrich update failed:", error.message); });
+  });
+};
+
+// Update gps_km for specific rows after Wevois fetch — fire-and-forget
+export const updateGPSKm = (city, year, month, vehicle, updates) => {
+  // updates = [{ date, ward, gps_km }]
+  updates.forEach(({ date, ward, gps_km }) => {
+    supabase
+      .from(GPS_TABLE)
+      .update({ gps_km: String(gps_km) })
+      .eq("city", city)
+      .eq("year", year)
+      .eq("month", month)
+      .eq("vehicle", vehicle)
+      .eq("date", date)
+      .eq("ward", ward)
+      .then(({ error }) => { if (error) console.warn("GPS KM update failed:", error.message); });
+  });
+};
+
+// Delete city/year/month/vehicle GPS rows, then bulk insert
+// Existing gps_km values preserve hoti hain — Wevois data lost nahi hota
+export const saveGPSEntries = async (city, year, month, vehicle, trackRows) => {
+  if (!trackRows.length) return;
+
+  // Step 1: Existing gps_km values fetch karo (jo Wevois se pehle save hue the)
+  const { data: existing } = await supabase
     .from(GPS_TABLE)
-    .select("*")
+    .select("date, ward, gps_km")
+    .eq("city", city)
+    .eq("year", year)
+    .eq("month", month)
+    .eq("vehicle", vehicle)
+    .neq("gps_km", "");
+  const existingKmMap = {};
+  (existing || []).forEach((r) => { existingKmMap[`${r.date}|${r.ward}`] = r.gps_km; });
+
+  // Step 2: Delete + Insert fresh rows (gps_km = "")
+  const { error: delErr } = await supabase
+    .from(GPS_TABLE)
+    .delete()
     .eq("city", city)
     .eq("year", year)
     .eq("month", month)
     .eq("vehicle", vehicle);
-  if (error || !data?.length) return null;
-  logUsage(city, year, month, "getGPSData", "Supabase", new Blob([JSON.stringify(data)]).size);
-  return data;
-};
+  if (delErr) console.warn("GPS delete failed:", delErr.message);
 
-export const saveGPSCache = async (city, year, month, vehicle, trackList) => {
-  const rows = trackList.map((t) => ({
+  const rows = trackRows.map((r) => ({
     city, year, month, vehicle,
-    date:                   t.date                          || "",
-    ward:                   t.ward                          || "",
-    name:                   t.name                          || "",
-    driver:                 t.driver                        || "",
-    duty_in_time:           t.dutyInTime                    || "",
-    duty_out_time:          t.dutyOutTime                   || "",
-    work_percentage:        String(t.workPercentage  ?? ""),
-    portal_km:              String(t.portalKm        ?? ""),
-    gps_km:                 String(t.gps_km          ?? ""),
-    meter_reading_distance: String(t.meterReadingDistance ?? ""),
-    distance:               t.distance                      || "",
+    date:                   r.date                || "",
+    ward:                   r.ward                || "",
+    name:                   r.name                || "",
+    driver:                 r.driver              || "",
+    duty_in_time:           r.dutyInTime          || "",
+    duty_out_time:          r.dutyOutTime         || "",
+    work_percentage:        String(r.workPercentage        ?? ""),
+    portal_km:              String(r.portalKm              ?? ""),
+    gps_km:                 "",
+    meter_reading_distance: String(r.meterReadingDistance  ?? ""),
+    distance:               String(r.distance              || "0"),
   }));
-
   for (let i = 0; i < rows.length; i += 500) {
     const { error } = await supabase.from(GPS_TABLE).insert(rows.slice(i, i + 500));
-    if (error) console.warn("GPS cache save failed:", error.message);
-  }
-};
-
-// ── Bulk GPS save for multiple vehicles (parallel chunk insert) ───────────────
-export const saveGPSCacheMultiple = async (city, year, month, vehicleTrackPairs) => {
-  const allRows = vehicleTrackPairs.flatMap(({ vehicle, trackList }) =>
-    trackList.map((t) => ({
-      city, year, month, vehicle,
-      date:                   t.date                          || "",
-      ward:                   t.ward                          || "",
-      name:                   t.name                          || "",
-      driver:                 t.driver                        || "",
-      duty_in_time:           t.dutyInTime                    || "",
-      duty_out_time:          t.dutyOutTime                   || "",
-      work_percentage:        String(t.workPercentage  ?? ""),
-      portal_km:              String(t.portalKm        ?? ""),
-      gps_km:                 String(t.gps_km          ?? ""),
-      meter_reading_distance: String(t.meterReadingDistance ?? ""),
-      distance:               t.distance                      || "",
-    }))
-  );
-
-  const CHUNK = 500;
-  const chunks = [];
-  for (let i = 0; i < allRows.length; i += CHUNK) {
-    chunks.push(allRows.slice(i, i + CHUNK));
+    if (error) console.warn("GPS insert failed:", error.message);
   }
 
-  // Insert all chunks in parallel
-  const results = await Promise.all(
-    chunks.map((chunk) => supabase.from(GPS_TABLE).insert(chunk))
-  );
-  results.forEach((r) => {
-    if (r.error) console.warn("GPS bulk insert failed:", r.error.message);
+  // Step 3: Pehle se saved gps_km restore karo (fire-and-forget)
+  Object.entries(existingKmMap).forEach(([key, gps_km]) => {
+    const [date, ward] = key.split("|");
+    supabase.from(GPS_TABLE)
+      .update({ gps_km })
+      .eq("city", city).eq("year", year).eq("month", month)
+      .eq("vehicle", vehicle).eq("date", date).eq("ward", ward)
+      .then(({ error }) => { if (error) console.warn("GPS KM restore failed:", error.message); });
   });
 };
-
-// Map Supabase rows → app shape
-export const mapGPSRows = (rows) =>
-  rows
-    .map((r) => ({
-      date:                 r.date                   || "",
-      ward:                 r.ward                   || "",
-      name:                 r.name                   || "",
-      driver:               r.driver                 || "",
-      dutyInTime:           r.duty_in_time           || "",
-      dutyOutTime:          r.duty_out_time          || "",
-      workPercentage:       r.work_percentage        ?? "",
-      portalKm:             r.portal_km              ?? "",
-      gps_km:               r.gps_km                ?? "",
-      meterReadingDistance: r.meter_reading_distance ?? "",
-      distance:             r.distance               || "0.000 KM",
-      orderBy:              new Date(r.date).getTime(),
-    }))
-    .sort((a, b) => a.orderBy - b.orderBy);

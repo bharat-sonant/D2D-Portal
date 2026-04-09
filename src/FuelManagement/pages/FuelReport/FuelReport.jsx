@@ -1,43 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./FuelReport.module.css";
 import { FiTruck, FiDroplet, FiMapPin, FiSearch } from "react-icons/fi";
-import { MdLocalGasStation, MdSpeed, MdCloudDownload } from "react-icons/md";
+import { MdLocalGasStation, MdSpeed, MdCloudDownload, MdSync } from "react-icons/md";
+import { updateFuelJSON, fetchWevoisGPSKm, enrichVehicleGPSData } from "../../services/fuelUpdateService";
 import { useParams } from "react-router-dom";
 import { getCityFirebaseConfigAsync } from "../../../configurations/cityDBConfig";
-import { connectFirebase, getStorageInstance, waitForFirebaseReady } from "../../../firebase/firebaseService";
-import { ref, getDownloadURL } from "firebase/storage";
-import {
-  getSummaryCache,      saveSummaryCache,
-  getFuelCache,         saveFuelCache,       mapFuelRows,
-  getVehicleListData,  getFuelDataByVehicle,
-  getGPSData, checkGPSCache, saveGPSCache,  mapGPSRows,
-  saveGPSCacheMultiple, getUsageLogs,
-} from "../../services/fuelCacheService";
+import { connectFirebase } from "../../../firebase/firebaseService";
+import { getUsageLogs, getSummaryCache, getVehicleList, getFuelByVehicle, getGPSByVehicle, updateGPSKm, updateGPSEnrichedData } from "../../services/fuelCacheService";
 
 const toTitleCase = (value = "") =>
-  String(value)
-    .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  String(value).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
 const MONTH_NAMES = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December",
 ];
 
-// ── Helper: fetch JSON from Firebase Storage ──────────────────────────────────
-const fetchStorageJSON = async (cityName, storagePath) => {
-  await waitForFirebaseReady();
-  const storage = getStorageInstance();
-  if (!storage) throw new Error("Firebase Storage not ready");
-  const fileRef = ref(storage, `${cityName}/VehicleFuelJSONData/${storagePath}`);
-  const url = await getDownloadURL(fileRef);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
-  return { data: JSON.parse(text), bytes: new Blob([text]).size };
-};
-
-// "2026-04-01" → "1 Apr"
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
@@ -51,39 +30,11 @@ const formatBytes = (bytes) => {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 };
 
-// Parse GPS trackData object (Firebase format) → trackList array
-const parseTrackData = (trackData) => {
-  const trackList = [];
-  let distTotal = 0;
-  Object.keys(trackData).forEach((date) => {
-    const dayList = trackData[date];
-    if (!Array.isArray(dayList)) return;
-    dayList.forEach((item) => {
-      distTotal += Number(item.distance) || 0;
-      trackList.push({
-        date,
-        ward:                 item.ward                 || "",
-        name:                 item.name                 || "",
-        driver:               item.driver               || "",
-        dutyInTime:           item.dutyInTime           || "",
-        dutyOutTime:          item.dutyOutTime          || "",
-        workPercentage:       item.workPercentage       ?? "",
-        portalKm:             item.portalKm             ?? "",
-        gps_km:               item.gps_km               ?? "",
-        meterReadingDistance: item.meterReadingDistance ?? "",
-        distance:             (Number(item.distance) || 0).toFixed(3) + " KM",
-        orderBy:              new Date(date).getTime(),
-      });
-    });
-  });
-  trackList.sort((a, b) => a.orderBy - b.orderBy);
-  return { trackList, distTotal };
-};
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const FuelReport = () => {
   const { city } = useParams();
-  const cityName = toTitleCase(city || "");
+  const cityName  = toTitleCase(city || "");
 
   const now = new Date();
   const [year, setYear]   = useState(String(now.getFullYear()));
@@ -93,8 +44,7 @@ const FuelReport = () => {
   const [activeVehicle, setActiveVehicle] = useState(null);
   const [search, setSearch]               = useState("");
 
-  const [summary, setSummary] = useState({ quantity: 0, amount: 0, runningKm: 0 });
-  const [allFuelEntries, setAllFuelEntries]   = useState([]);
+  const [summary, setSummary]             = useState({ quantity: 0, amount: 0, runningKm: 0 });
   const [vehicleFuelList, setVehicleFuelList] = useState([]);
   const [fuelTotals, setFuelTotals]           = useState({ qty: 0, amount: 0 });
 
@@ -103,168 +53,81 @@ const FuelReport = () => {
 
   const [loading, setLoading]               = useState(false);
   const [vehicleLoading, setVehicleLoading] = useState(false);
-  const [dataBytes, setDataBytes]           = useState(0);
-  const [showDataModal, setShowDataModal]   = useState(false);
-  const [usageLogs, setUsageLogs]           = useState([]);
-  const [usageLoading, setUsageLoading]     = useState(false);
-  const [uFilterYear, setUFilterYear]       = useState(String(new Date().getFullYear()));
-  const [uFilterMonth, setUFilterMonth]     = useState(MONTH_NAMES[new Date().getMonth()]);
-  const [uFilterDate, setUFilterDate]       = useState("");
-  const [activeService, setActiveService]   = useState(null);
+  const [syncing, setSyncing]               = useState(false);
+
+  const [syncMessage, setSyncMessage] = useState("");
+  const [syncPercent, setSyncPercent] = useState(0);
+
+  const [showDataModal, setShowDataModal] = useState(false);
+  const [usageLogs, setUsageLogs]         = useState([]);
+  const [usageLoading, setUsageLoading]   = useState(false);
+  const [uFilterYear, setUFilterYear]     = useState(String(now.getFullYear()));
+  const [uFilterMonth, setUFilterMonth]   = useState(MONTH_NAMES[now.getMonth()]);
+  const [uFilterDate, setUFilterDate]     = useState("");
+  const [activeService, setActiveService] = useState(null);
 
   // ── Init Firebase ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (!city) return;
-    const init = async () => {
-      try {
-        const config = await getCityFirebaseConfigAsync(cityName);
-        connectFirebase(config, cityName);
-      } catch (err) {
-        console.error("Firebase init error:", err);
-      }
-    };
-    init();
+    getCityFirebaseConfigAsync(cityName)
+      .then((config) => connectFirebase(config, cityName))
+      .catch((err)  => console.error("Firebase init error:", err));
   }, [city, cityName]);
 
-  // ── Fetch month data — Supabase first, Firebase fallback ──────────────────
+  // ── Fetch month data — Supabase Tables se ────────────────────────────────
   const fetchMonthData = useCallback(async () => {
     if (!cityName) return;
     setLoading(true);
-    setDataBytes(0);
     setActiveVehicle(null);
     setVehicleFuelList([]);
     setVehicleTrackList([]);
     setFuelTotals({ qty: 0, amount: 0 });
     setTotalDistance("0.000 KM");
 
-    let totalBytes = 0;
+    const [summaryData, vehicleListData] = await Promise.all([
+      getSummaryCache(cityName, year, month),
+      getVehicleList(cityName, year, month),
+    ]);
 
-    // ── 1. Month Summary ──────────────────────────────────────
-    const summaryCache = await getSummaryCache(cityName, year, month);
-    if (summaryCache) {
-      console.log("[MonthSummary] data get from Supabase");
-      setSummary({
-        quantity:   summaryCache.total_qty    || 0,
-        amount:     summaryCache.total_amount || 0,
-        runningKm:  summaryCache.total_km     || 0,
-      });
-      totalBytes += new Blob([JSON.stringify(summaryCache)]).size;
-    } else {
-      try {
-        const { data: sd, bytes: sb } = await fetchStorageJSON(cityName, `${year}/${month}/MonthSummary.json`);
-        console.log("[MonthSummary] data get from Firebase");
-        totalBytes += sb;
-        const s = {
-          quantity:  Number(sd.qty)      || 0,
-          amount:    Number(sd.amount)   || 0,
-          runningKm: Number(sd.totalKM)  || 0,
-        };
-        setSummary(s);
-        saveSummaryCache(cityName, year, month, { total_qty: s.quantity, total_amount: s.amount, total_km: s.runningKm });
-      } catch (err) {
-        console.warn("MonthSummary fetch failed:", err.message);
-        setSummary({ quantity: 0, amount: 0, runningKm: 0 });
-      }
-    }
+    setSummary(summaryData ? {
+      quantity:  Number(summaryData.total_qty)    || 0,
+      amount:    Number(summaryData.total_amount) || 0,
+      runningKm: Number(summaryData.total_km)     || 0,
+    } : { quantity: 0, amount: 0, runningKm: 0 });
 
-    // ── 2. Vehicles List ──────────────────────────────────────
-    const vehicleList = await getVehicleListData(cityName, year, month);
-    if (vehicleList) {
-      console.log("[VehicleList] data get from Supabase");
-      setAllFuelEntries([]);
-      setVehicles(vehicleList);
-      totalBytes += new Blob([JSON.stringify(vehicleList)]).size;
-    } else {
-      try {
-        const { data: fuelData, bytes: fb } = await fetchStorageJSON(cityName, `${year}/${month}/VehicleFuel.json`);
-        console.log("[VehicleList] data get from Firebase");
-        totalBytes += fb;
-        const list = Array.isArray(fuelData) ? fuelData : [];
-        const parsed = list.map((r) => ({
-          vehicle:      r.vehicle      || "",
-          date:         r.date         || "",
-          meterReading: r.meterReading || "",
-          fuelType:     r.fuelType     || "",
-          fuelVehicle:  r.fuelVehicle  || "",
-          petrolPump:   r.petrolPump   || "",
-          payMethod:    r.payMethod    || "",
-          remark:       r.remark       || "",
-          quantity:     Number(r.quantity) || 0,
-          amount:       Number(r.amount)   || 0,
-          orderBy:      new Date(r.date).getTime(),
-        }));
-        setAllFuelEntries(parsed);
-        setVehicles([...new Set(parsed.map((e) => e.vehicle).filter(Boolean))].sort());
-        await saveFuelCache(cityName, year, month, parsed);
-        // Data ab Supabase me save ho gaya — log karo
-        await getVehicleListData(cityName, year, month);
-      } catch (err) {
-        console.warn("VehicleFuel fetch failed:", err.message);
-        setAllFuelEntries([]);
-        setVehicles([]);
-      }
-    }
-
-    setDataBytes(totalBytes);
+    setVehicles(vehicleListData);
     setLoading(false);
   }, [cityName, year, month]);
 
   useEffect(() => { fetchMonthData(); }, [fetchMonthData]);
 
-  // ── Auto background GPS migration — runs silently after vehicles list loads ──
-  useEffect(() => {
-    if (!vehicles.length || !cityName) return;
+  // ── Manual Sync ───────────────────────────────────────────────────────────
+  // Full sync — Fuel + GPS/KM sab complete hone ke baad UI show hoga
+  // Progress overlay se user ko pata rehta hai kya ho raha hai
+  const handleSyncData = useCallback(async () => {
+    if (syncing) return;
+    setSyncing(true);
+    setSyncMessage("Sync shuru ho rahi hai...");
+    setSyncPercent(0);
+    try {
+      await updateFuelJSON(cityName, year, month, ({ message, percent }) => {
+        setSyncMessage(message);
+        setSyncPercent(percent ?? 0);
+      });
+      setSyncMessage("Data load ho raha hai...");
+      setSyncPercent(100);
+      await fetchMonthData();
+    } catch (err) {
+      console.error("[SyncData] Error:", err);
+      setSyncMessage("Sync fail hua. Console check karein.");
+    } finally {
+      setSyncing(false);
+      setSyncMessage("");
+      setSyncPercent(0);
+    }
+  }, [cityName, year, month, syncing, fetchMonthData]);
 
-    let cancelled = false;
-
-    const autoMigrate = async () => {
-      try {
-        await waitForFirebaseReady();
-        if (cancelled) return;
-
-        // Phase 1: Check all caches in parallel
-        const cacheChecks = await Promise.all(
-          vehicles.map((v) => checkGPSCache(cityName, year, month, v))
-        );
-        if (cancelled) return;
-
-        const toFetch = vehicles.filter((_, i) => !cacheChecks[i]);
-        if (!toFetch.length) return;
-
-        // Phase 2: Fetch all uncached from Firebase in parallel
-        const fetchResults = await Promise.allSettled(
-          toFetch.map((v) =>
-            fetchStorageJSON(cityName, `${year}/${month}/VehicleWardKM/${v}.json`)
-          )
-        );
-        if (cancelled) return;
-
-        // Phase 3: Collect valid results
-        const pairs = [];
-        fetchResults.forEach((result, i) => {
-          if (result.status === "fulfilled") {
-            const { data: trackData } = result.value;
-            const { trackList } = parseTrackData(trackData);
-            if (trackList.length) pairs.push({ vehicle: toFetch[i], trackList });
-          }
-        });
-
-        // Phase 4: Bulk insert to Supabase in parallel chunks
-        if (pairs.length) {
-          await saveGPSCacheMultiple(cityName, year, month, pairs);
-          console.info(`[GPS AutoMigrate] ${pairs.length} vehicles saved to Supabase`);
-        }
-      } catch (err) {
-        console.warn("[GPS AutoMigrate] Error:", err.message);
-      }
-    };
-
-    autoMigrate();
-
-    return () => { cancelled = true; };
-  }, [cityName, year, month, vehicles]);
-
-  // ── Vehicle click — Supabase first, Firebase fallback ────────────────────
+  // ── Vehicle click — Fuel + GPS parallel table queries ─────────────────────
   const handleVehicleClick = useCallback(async (vehicle) => {
     setActiveVehicle(vehicle);
     setVehicleTrackList([]);
@@ -272,47 +135,62 @@ const FuelReport = () => {
     setTotalDistance("0.000 KM");
     setVehicleLoading(true);
 
-    // Fuel entries — Supabase first, fallback to in-memory (Firebase path)
-    const fuelByVehicle = await getFuelDataByVehicle(cityName, year, month, vehicle);
-    if (fuelByVehicle) console.log(`[FuelEntries — ${vehicle}] data get from Supabase`);
-    else console.log(`[FuelEntries — ${vehicle}] data get from Firebase (memory)`);
-    const fuelList = fuelByVehicle
-      ? mapFuelRows(fuelByVehicle).sort((a, b) => a.orderBy - b.orderBy)
-      : allFuelEntries.filter((e) => e.vehicle === vehicle).sort((a, b) => a.orderBy - b.orderBy);
-    setVehicleFuelList(fuelList);
+    // Fuel + GPS parallel — dono table se ek saath
+    const [fuelData, gpsData] = await Promise.all([
+      getFuelByVehicle(cityName, year, month, vehicle),
+      getGPSByVehicle(cityName, year, month, vehicle),
+    ]);
+
+    setVehicleFuelList(fuelData);
     setFuelTotals({
-      qty:    fuelList.reduce((s, e) => s + e.quantity, 0),
-      amount: fuelList.reduce((s, e) => s + e.amount,   0),
+      qty:    fuelData.reduce((s, e) => s + e.quantity, 0),
+      amount: fuelData.reduce((s, e) => s + e.amount,   0),
     });
 
-    // Try Supabase cache first
-    const gpsCache = await getGPSData(cityName, year, month, vehicle);
-    if (gpsCache) {
-      console.log(`[GPSRoute — ${vehicle}] data get from Supabase`);
-      const trackList = mapGPSRows(gpsCache);
-      const distTotal = trackList.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
-      setVehicleTrackList(trackList);
-      setTotalDistance(distTotal.toFixed(3) + " KM");
+    if (gpsData.length === 0) {
+      setVehicleTrackList([]);
+      setTotalDistance("0.000 KM");
       setVehicleLoading(false);
       return;
     }
 
-    // Fallback: Firebase
-    try {
-      await waitForFirebaseReady();
-      const { data: trackData } = await fetchStorageJSON(
-        cityName, `${year}/${month}/VehicleWardKM/${vehicle}.json`
-      );
-      console.log(`[GPSRoute — ${vehicle}] data get from Firebase`);
-      const { trackList, distTotal } = parseTrackData(trackData);
-      setVehicleTrackList(trackList);
-      setTotalDistance(distTotal.toFixed(3) + " KM");
-      saveGPSCache(cityName, year, month, vehicle, trackList);
-    } catch (err) {
-      console.warn("VehicleWardKM fetch failed:", err.message);
+    // Sirf unenriched rows — distance="0.000 KM" wali (aaj ki date chod ke)
+    let trackList = [...gpsData];
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const unenriched = trackList.filter((r) => r.distance === "0.000 KM" && r.dutyInTime === "" && r.date !== todayStr);
+    if (unenriched.length > 0) {
+      const enriched = await enrichVehicleGPSData(cityName, year, month, vehicle, unenriched);
+      // Enriched rows ko trackList mein merge karo
+      enriched.forEach((er) => {
+        const idx = trackList.findIndex((r) => r.date === er.date && r.ward === er.ward);
+        if (idx !== -1) trackList[idx] = er;
+      });
+      // Table mein save — fire-and-forget
+      updateGPSEnrichedData(cityName, year, month, vehicle, enriched);
     }
+
+    // GPS KM — Wevois se parallel (gps_km="" wali rows fill karo)
+    const gpsNeeded = trackList.filter((r) => r.gps_km === "" && r.dutyInTime);
+    if (gpsNeeded.length > 0) {
+      const updates = [];
+      await Promise.all(
+        gpsNeeded.map(async (row) => {
+          const km  = await fetchWevoisGPSKm(row.dutyInTime, row.dutyOutTime, vehicle, row.date);
+          const idx = trackList.findIndex((r) => r.date === row.date && r.ward === row.ward);
+          if (idx !== -1) {
+            trackList[idx] = { ...trackList[idx], gps_km: km };
+            updates.push({ date: row.date, ward: row.ward, gps_km: km });
+          }
+        })
+      );
+      if (updates.length > 0) updateGPSKm(cityName, year, month, vehicle, updates);
+    }
+
+    const totalKM = trackList.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+    setVehicleTrackList([...trackList]);
+    setTotalDistance(totalKM.toFixed(3) + " KM");
     setVehicleLoading(false);
-  }, [cityName, year, month, allFuelEntries]);
+  }, [cityName, year, month]);
 
   const filteredVehicles = vehicles.filter((v) =>
     v.toLowerCase().includes(search.toLowerCase())
@@ -327,11 +205,9 @@ const FuelReport = () => {
   };
 
   const handleOpenDataModal = () => {
-    const y = String(new Date().getFullYear());
-    const m = MONTH_NAMES[new Date().getMonth()];
-    setUFilterYear(y);
-    setUFilterMonth(m);
-    setUFilterDate("");
+    const y = String(now.getFullYear());
+    const m = MONTH_NAMES[now.getMonth()];
+    setUFilterYear(y); setUFilterMonth(m); setUFilterDate("");
     setActiveService(null);
     setShowDataModal(true);
     fetchUsageLogs(y, m, "");
@@ -382,6 +258,16 @@ const FuelReport = () => {
             <MdCloudDownload className={styles.pillIcon} />
             <div>
               <span>Data Loaded</span>
+            </div>
+          </div>
+          <div
+            className={`${styles.statPill} ${styles.statPillClickable} ${syncing ? styles.statPillSyncing : ""}`}
+            onClick={handleSyncData}
+            title="Sync Data"
+          >
+            <MdSync className={`${styles.pillIcon} ${syncing ? styles.spinIcon : ""}`} />
+            <div>
+              <span>{syncing ? "Syncing..." : "Sync Data"}</span>
             </div>
           </div>
         </div>
@@ -537,12 +423,26 @@ const FuelReport = () => {
 
       </div>
 
+      {/* ══════ SYNC PROGRESS OVERLAY ══════ */}
+      {syncing && (
+        <div className={styles.syncOverlay}>
+          <div className={styles.syncCard}>
+            <MdSync className={styles.syncCardIcon} />
+            <div className={styles.syncCardTitle}>Syncing Data…</div>
+            <div className={styles.syncCardMsg}>{syncMessage}</div>
+            <div className={styles.syncBarTrack}>
+              <div className={styles.syncBarFill} style={{ width: `${syncPercent}%` }} />
+            </div>
+            <div className={styles.syncPercent}>{syncPercent}%</div>
+          </div>
+        </div>
+      )}
+
       {/* ══════ USAGE HISTORY DRAWER ══════ */}
       {showDataModal && (
         <div className={styles.drawerOverlay} onClick={() => setShowDataModal(false)}>
           <div className={styles.drawer} onClick={(e) => e.stopPropagation()}>
 
-            {/* ── Header ── */}
             <div className={styles.drawerHeader}>
               <div className={styles.drawerHeaderLeft}>
                 <MdCloudDownload className={styles.drawerHeaderIcon} />
@@ -554,71 +454,70 @@ const FuelReport = () => {
               <button className={styles.drawerClose} onClick={() => setShowDataModal(false)}>✕</button>
             </div>
 
-            {/* ── 2 Column Body ── */}
             <div className={styles.drawerBody}>
 
-              {/* ── Col 2: Service List (clickable) ── */}
+              {/* ── Left: Services grouped by Source ── */}
               <div className={styles.drawerCol2}>
                 {usageLoading ? (
                   <p className={styles.drawerEmpty}>Loading…</p>
                 ) : usageLogs.length === 0 ? (
                   <p className={styles.drawerEmpty}>No data found.</p>
-                ) : (
-                  [...new Set(usageLogs.map((l) => l.service))]
-                    .map((svc) => {
-                      const svcLogs = usageLogs.filter((l) => l.service === svc);
-                      return {
-                        svc,
-                        calls: svcLogs.reduce((s, l) => s + l.calls, 0),
-                        bytes: svcLogs.reduce((s, l) => s + l.totalBytes, 0),
-                      };
-                    })
-                    .sort((a, b) => b.calls - a.calls)
-                    .map(({ svc, calls, bytes }) => {
-                      const isActive = activeService === svc;
-                      return (
-                        <div
-                          key={svc}
-                          className={`${styles.drawerSvcRow} ${isActive ? styles.drawerSvcActive : ""}`}
-                          onClick={() => setActiveService(isActive ? null : svc)}
-                        >
-                          <span className={styles.drawerSvcName}>{svc}</span>
-                          <span className={styles.drawerSvcBytes}>{formatBytes(bytes)}</span>
-                          <span className={styles.drawerSvcCalls}>{calls}</span>
-                        </div>
-                      );
-                    })
-                )}
+                ) : (() => {
+                  // Group by source → service
+                  const bySource = {};
+                  usageLogs.forEach(({ source, service, calls, totalBytes }) => {
+                    if (!bySource[source]) bySource[source] = {};
+                    if (!bySource[source][service]) bySource[source][service] = { calls: 0, bytes: 0 };
+                    bySource[source][service].calls += calls;
+                    bySource[source][service].bytes += totalBytes;
+                  });
+                  const SOURCE_ORDER  = ["SupabaseTable", "FirebaseRealtimeDB", "ExternalAPI", "SupabaseStorage"];
+                  const SOURCE_LABELS = {
+                    SupabaseTable:      "Supabase Table",
+                    FirebaseRealtimeDB: "Firebase DB",
+                    ExternalAPI:        "External API",
+                    SupabaseStorage:    "Supabase Storage",
+                  };
+                  return SOURCE_ORDER.filter((src) => bySource[src]).map((src) => (
+                    <div key={src} className={styles.drawerSrcGroup}>
+                      <div className={`${styles.drawerSrcHeader} ${styles[`src${src}`]}`}>
+                        {SOURCE_LABELS[src]}
+                      </div>
+                      {Object.entries(bySource[src])
+                        .sort(([, a], [, b]) => b.calls - a.calls)
+                        .map(([svc, { calls, bytes }]) => {
+                          const key      = `${src}:${svc}`;
+                          const isActive = activeService === key;
+                          return (
+                            <div key={key} className={`${styles.drawerSvcRow} ${isActive ? styles.drawerSvcActive : ""}`} onClick={() => setActiveService(isActive ? null : key)}>
+                              <span className={styles.drawerSvcName}>{svc}</span>
+                              <span className={styles.drawerSvcBytes}>{formatBytes(bytes)}</span>
+                              <span className={styles.drawerSvcCalls}>{calls}</span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  ));
+                })()}
               </div>
 
-              {/* ── Col 3: Date breakdown ── */}
+              {/* ── Right: Year/Month filter + Date breakdown ── */}
               <div className={styles.drawerCol3}>
                 <div className={styles.drawerCol3Header}>
-                  <select
-                    className={styles.usageSelect}
-                    value={uFilterYear}
-                    onChange={(e) => { setUFilterYear(e.target.value); fetchUsageLogs(e.target.value, uFilterMonth, uFilterDate); }}
-                  >
-                    {[now.getFullYear() - 2, now.getFullYear() - 1, now.getFullYear()].map((y) => (
-                      <option key={y}>{y}</option>
-                    ))}
+                  <select className={styles.usageSelect} value={uFilterYear} onChange={(e) => { setUFilterYear(e.target.value); fetchUsageLogs(e.target.value, uFilterMonth, uFilterDate); }}>
+                    {[now.getFullYear() - 2, now.getFullYear() - 1, now.getFullYear()].map((y) => <option key={y}>{y}</option>)}
                   </select>
-                  <select
-                    className={styles.usageSelect}
-                    value={uFilterMonth}
-                    onChange={(e) => { setUFilterMonth(e.target.value); fetchUsageLogs(uFilterYear, e.target.value, uFilterDate); }}
-                  >
+                  <select className={styles.usageSelect} value={uFilterMonth} onChange={(e) => { setUFilterMonth(e.target.value); fetchUsageLogs(uFilterYear, e.target.value, uFilterDate); }}>
                     {MONTH_NAMES.map((m) => <option key={m}>{m}</option>)}
                   </select>
                 </div>
-
                 <div className={styles.drawerDateList}>
                   <div className={styles.drawerDateHeader}>
-                    <span>DATE</span><span style={{textAlign:"center"}}>COUNTS</span><span style={{textAlign:"right", paddingRight:4}}>SIZE</span>
+                    <span>DATE</span><span style={{ textAlign: "center" }}>COUNTS</span><span style={{ textAlign: "right", paddingRight: 4 }}>SIZE</span>
                   </div>
                   {(() => {
                     const filtered = activeService
-                      ? usageLogs.filter((l) => l.service === activeService)
+                      ? (() => { const [src, svc] = activeService.split(":"); return usageLogs.filter((l) => l.source === src && l.service === svc); })()
                       : usageLogs;
                     const byDate = {};
                     filtered.forEach(({ date, calls, totalBytes }) => {
@@ -638,7 +537,6 @@ const FuelReport = () => {
                   })()}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
