@@ -133,6 +133,18 @@ export const saveFuelEntries = async (city, year, month, entries) => {
 
 // ── GPS Route Data ────────────────────────────────────────────────────────────
 
+// Total running KM — VehicleGPSCache se sab enriched distances ka sum
+export const getTotalRunningKm = async (city, year, month) => {
+  const { data, error } = await supabase
+    .from(GPS_TABLE)
+    .select("distance")
+    .eq("city", city)
+    .eq("year", year)
+    .eq("month", month);
+  if (error || !data?.length) return 0;
+  return data.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+};
+
 // GPS entries for one vehicle only — filtered query
 export const getGPSByVehicle = async (city, year, month, vehicle) => {
   const { data, error } = await supabase
@@ -163,7 +175,7 @@ export const getGPSByVehicle = async (city, year, month, vehicle) => {
 
 // Batch update enriched GPS fields — fire-and-forget after vehicle click enrichment
 export const updateGPSEnrichedData = (city, year, month, vehicle, enrichedRows) => {
-  enrichedRows.forEach((r) => {
+  enrichedRows.forEach((r) =>{
     supabase.from(GPS_TABLE)
       .update({
         duty_in_time:           r.dutyInTime           || "",

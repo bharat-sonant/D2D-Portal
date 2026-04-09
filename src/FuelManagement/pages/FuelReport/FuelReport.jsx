@@ -84,17 +84,16 @@ const FuelReport = () => {
     setFuelTotals({ qty: 0, amount: 0 });
     setTotalDistance("0.000 KM");
 
-    const [summaryData, vehicleListData] = await Promise.all([
-      getSummaryCache(cityName, year, month),
-      getVehicleList(cityName, year, month),
-    ]);
+    // Dono parallel start — jo pehle aaye woh pehle set ho
+    getSummaryCache(cityName, year, month).then((summaryData) => {
+      setSummary(summaryData ? {
+        quantity:  Number(summaryData.total_qty)    || 0,
+        amount:    Number(summaryData.total_amount) || 0,
+        runningKm: Number(summaryData.total_km)     || 0,
+      } : { quantity: 0, amount: 0, runningKm: 0 });
+    });
 
-    setSummary(summaryData ? {
-      quantity:  Number(summaryData.total_qty)    || 0,
-      amount:    Number(summaryData.total_amount) || 0,
-      runningKm: Number(summaryData.total_km)     || 0,
-    } : { quantity: 0, amount: 0, runningKm: 0 });
-
+    const vehicleListData = await getVehicleList(cityName, year, month);
     setVehicles(vehicleListData);
     setLoading(false);
   }, [cityName, year, month]);
@@ -154,10 +153,12 @@ const FuelReport = () => {
       return;
     }
 
-    // Sirf unenriched rows — distance="0.000 KM" wali (aaj ki date chod ke)
+    // Sirf unenriched rows — dutyInTime="" wali (aaj ki date chod ke)
+    // distance sync mein fill ho chuki hai, "0.000 KM" check nahi karna
+
     let trackList = [...gpsData];
     const todayStr = new Date().toISOString().slice(0, 10);
-    const unenriched = trackList.filter((r) => r.distance === "0.000 KM" && r.dutyInTime === "" && r.date !== todayStr);
+    const unenriched = trackList.filter((r) => r.dutyInTime === "" && r.date !== todayStr);
     if (unenriched.length > 0) {
       const enriched = await enrichVehicleGPSData(cityName, year, month, vehicle, unenriched);
       // Enriched rows ko trackList mein merge karo
@@ -216,7 +217,6 @@ const FuelReport = () => {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className={styles.page}>
-
       {/* ══════ TOP BAR ══════ */}
       <div className={styles.topBar}>
         <div className={styles.filters}>
@@ -275,7 +275,6 @@ const FuelReport = () => {
 
       {/* ══════ BODY ══════ */}
       <div className={styles.body}>
-
         {/* ── Vehicle List ── */}
         <div className={styles.rightPanel}>
           {loading && <div className={styles.panelLoader}><span className={styles.loaderSpinner} /></div>}

@@ -65,16 +65,17 @@ const distanceInMeters = (lat1, lon1, lat2, lon2) => {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-// ── Time range check ──────────────────────────────────────────────────────────
+// ── Time range check (overnight safe) ────────────────────────────────────────
 const isTimeInRange = (time, dutyIn, dutyOut) => {
   if (!dutyIn || !dutyOut || !time) return false;
   const [hr, min]       = time.split(":").map(Number);
   const [inHr, inMin]   = dutyIn.split(":").map(Number);
   const [outHr, outMin] = dutyOut.split(":").map(Number);
-  return (
-    (hr > inHr  || (hr === inHr  && min >= inMin)) &&
-    (hr < outHr || (hr === outHr && min <= outMin))
-  );
+  const afterStart = (hr > inHr  || (hr === inHr  && min >= inMin));
+  const beforeEnd  = (hr < outHr || (hr === outHr && min <= outMin));
+  // Overnight shift: endTime < startTime (e.g. 22:00 → 02:00)
+  const isOvernight = inHr > outHr || (inHr === outHr && inMin > outMin);
+  return isOvernight ? (afterStart || beforeEnd) : (afterStart && beforeEnd);
 };
 
 // ── Concurrency limiter ───────────────────────────────────────────────────────
@@ -358,27 +359,41 @@ const processOneVehicle = async (vehicle, items, cityName, year, monthName) => {
   const sorted   = [...items].sort((a, b) => a.orderBy - b.orderBy);
   const today    = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-  // Aaj ka date GPS mein include nahi — din abhi complete nahi hua
   const filtered = sorted.filter((i) => i.date !== todayStr);
+  if (!filtered.length) return 0;
 
-  // Basic rows — sirf structure save karo, enrichment vehicle click pe hoga
-  const gpsRows = filtered.map((item) => ({
-    date:                 item.date,
-    ward:                 item.zone,
-    driver:               item.empId,
-    name:                 item.name,
-    dutyInTime:           "",   // vehicle click pe WasteCollectionInfo se
-    dutyOutTime:          "",   // vehicle click pe WasteCollectionInfo se
-    workPercentage:       "",   // vehicle click pe WasteCollectionInfo se
-    portalKm:             "",   // vehicle click pe LocationHistory se
-    gps_km:               "",   // vehicle click pe Wevois se
-    meterReadingDistance: 0,    // vehicle click pe calculate hoga
-    distance:             "0",  // vehicle click pe LocationHistory se
+  // DustbinData — BinLifting meterReadingDistance ke liye (sirf un dates ke liye)
+  const hasBinLifting = filtered.some((i) => i.zone.includes("BinLifting"));
+  const dustbinMaps   = {};
+  if (hasBinLifting) {
+    const blDates = [...new Set(filtered.filter((i) => i.zone.includes("BinLifting")).map((i) => i.date))];
+    await Promise.all(blDates.map(async (date) => {
+      dustbinMaps[date] = await getDustbinMeterReadingMap(year, monthName, date);
+    }));
+  }
+
+  // LocationHistory se distance — parallel (dutyTimes vehicle click pe aayenge)
+  const gpsRows = await Promise.all(filtered.map(async (item) => {
+    const distance = await getLocationDistance(item.zone, vehicle, year, monthName, item.date, item.startTime, item.endTime);
+    return {
+      date:                 item.date,
+      ward:                 item.zone,
+      driver:               item.empId,
+      name:                 item.name,
+      dutyInTime:           "",
+      dutyOutTime:          "",
+      workPercentage:       "",
+      portalKm:             "",
+      gps_km:               "",
+      meterReadingDistance: item.zone.includes("BinLifting") ? (dustbinMaps[item.date]?.[vehicle] || 0) : 0,
+      distance:             distance.toFixed(3),
+    };
   }));
 
   await saveGPSEntries(cityName, year, monthName, vehicle, gpsRows);
-  console.log(`[Sync] ${vehicle} — ${gpsRows.length} GPS rows saved (basic)`);
-  return 0;
+  const vehicleKM = gpsRows.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+  console.log(`[Sync] ${vehicle} — ${vehicleKM.toFixed(3)} KM`);
+  return vehicleKM;
 };
 
 const processVehicles = async (cityName, year, monthName, workDetailList, onVehicleProgress) => {
@@ -397,37 +412,6 @@ const processVehicles = async (cityName, year, monthName, workDetailList, onVehi
   return { totalKM: kms.reduce((s, k) => s + k, 0) };
 };
 
-// ── DailyWorkDetail from Supabase Storage (for enrichment) ───────────────────
-const getDailyWorkDetailFromStorage = async (cityName, year, monthName, date) => {
-  const bucketName = String(cityName).toLowerCase().trim();
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .download(`DailyWorkDetail/${year}/${monthName}/${date}.json`);
-  if (error || !data) return null;
-  try { return JSON.parse(await data.text()); } catch { return null; }
-};
-
-// Extract vehicle's startTime/endTime for a specific ward from DailyWorkDetail
-const extractTaskTimes = (workDetail, vehicle, ward) => {
-  if (!workDetail) return { startTime: "", endTime: "" };
-  for (const empId of Object.keys(workDetail)) {
-    const empData = workDetail[empId];
-    for (let k = 1; k <= 5; k++) {
-      const task = empData?.[`task${k}`];
-      if (task && task.vehicle === vehicle && task.task === ward && task["in-out"]) {
-        const keys = Object.keys(task["in-out"]);
-        let startTime = "", endTime = "";
-        for (const t of keys) { if (task["in-out"][t] === "In") startTime = t.slice(0, 5); }
-        for (let i = keys.length - 1; i >= 0; i--) {
-          if (task["in-out"][keys[i]] === "Out") { endTime = keys[i].slice(0, 5); break; }
-        }
-        return { startTime, endTime };
-      }
-    }
-  }
-  return { startTime: "", endTime: "" };
-};
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Vehicle click pe on-demand enrichment
 // LocationHistory + WasteCollectionInfo + DustbinData — sirf is vehicle ke liye
@@ -439,40 +423,19 @@ export const enrichVehicleGPSData = async (cityName, year, monthName, vehicle, g
 
   const uniqueDates = [...new Set(gpsRows.map((r) => r.date))];
 
-  // DailyWorkDetail Storage se (fast) — startTime/endTime ke liye
-  const workDetailMap = {};
-  await Promise.all(uniqueDates.map(async (date) => {
-    workDetailMap[date] = await getDailyWorkDetailFromStorage(cityName, year, monthName, date);
-  }));
-
-  // BinLifting dates ke liye DustbinData
-  const hasBinLifting = gpsRows.some((r) => r.ward.includes("BinLifting"));
-  const dustbinMaps   = {};
-  if (hasBinLifting) {
-    const blDates = [...new Set(gpsRows.filter((r) => r.ward.includes("BinLifting")).map((r) => r.date))];
-    await Promise.all(blDates.map(async (date) => {
-      dustbinMaps[date] = await getDustbinMeterReadingMap(year, monthName, date);
-    }));
-  }
-
-  // Har row enrich karo — parallel
+  // WasteCollectionInfo + portalKm (LocationHistory) — parallel
+  // distance already sync mein save ho chuki hai — dobara calculate nahi
   const enriched = await Promise.all(gpsRows.map(async (row) => {
-    const { startTime, endTime } = extractTaskTimes(workDetailMap[row.date], vehicle, row.ward);
-    const [details, distance] = await Promise.all([
-      getTrackAdditionalDetails(row.ward, row.driver, year, monthName, row.date),
-      getLocationDistance(row.ward, vehicle, year, monthName, row.date, startTime, endTime),
-    ]);
+    const details  = await getTrackAdditionalDetails(row.ward, row.driver, year, monthName, row.date);
     const portalKm = await getPortalKm(row.ward, details.dutyInTime, details.dutyOutTime, vehicle, year, monthName, row.date);
     return {
       ...row,
-      dutyInTime:           details.dutyInTime,
-      dutyOutTime:          details.dutyOutTime,
-      workPercentage:       details.workPercentage,
-      portalKm:             String(portalKm),
-      distance:             distance.toFixed(3),
-      meterReadingDistance: row.ward.includes("BinLifting") ? (dustbinMaps[row.date]?.[vehicle] || 0) : 0,
-      _dutyOnReadings:      row.ward.includes("BinLifting") ? [] : (details.dutyOnReadings  || []),
-      _dutyOutReadings:     row.ward.includes("BinLifting") ? [] : (details.dutyOutReadings || []),
+      dutyInTime:      details.dutyInTime,
+      dutyOutTime:     details.dutyOutTime,
+      workPercentage:  details.workPercentage,
+      portalKm:        String(portalKm),
+      _dutyOnReadings:  row.ward.includes("BinLifting") ? [] : (details.dutyOnReadings  || []),
+      _dutyOutReadings: row.ward.includes("BinLifting") ? [] : (details.dutyOutReadings || []),
     };
   }));
 
@@ -487,11 +450,10 @@ export const enrichVehicleGPSData = async (cityName, year, monthName, vehicle, g
     dayRows.forEach((r) => { r.meterReadingDistance = Number((totalDist / swipes).toFixed(3)); });
   });
 
-  // Temp fields hata ke display format return karo
   enriched.forEach((r) => {
     delete r._dutyOnReadings;
     delete r._dutyOutReadings;
-    r.distance = `${parseFloat(r.distance).toFixed(3)} KM`;
+    // distance format: getGPSByVehicle se "X.XXX KM" aaya, keep as is
   });
 
   return enriched;
