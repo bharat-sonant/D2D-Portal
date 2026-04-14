@@ -1,9 +1,10 @@
 import { supabase } from "../../createClient";
 
-const SUMMARY_TABLE = "VehicleMonthSummaryCache";
-const FUEL_TABLE    = "VehicleFuelCache";
-const GPS_TABLE     = "VehicleGPSCache";
-const LOG_TABLE     = "ApiUsageLogs";
+const SUMMARY_TABLE     = "VehicleMonthSummaryCache";
+const FUEL_TABLE        = "VehicleFuelCache";
+const GPS_TABLE         = "VehicleGPSCache";
+const LOG_TABLE         = "ApiUsageLogs";
+const SYNC_STATUS_TABLE = "MonthSyncStatus";
 
 // ── Usage Logger → Supabase atomic increment via RPC (fire-and-forget) ────────
 export const logUsage = (city, _year, _month, service, source, bytes) => {
@@ -36,6 +37,26 @@ export const getUsageLogs = async (city, year, month, filterDate = null) => {
     calls:      r.calls,
     totalBytes: r.total_bytes,
   }));
+};
+
+// ── Month Sync Status ─────────────────────────────────────────────────────────
+// Tracks last_synced_date per city/year/month
+// Next sync sirf last_synced_date se aage ke dates Firebase se laata hai
+
+export const getMonthSyncStatus = async (city, year, month) => {
+  const { data } = await supabase
+    .from(SYNC_STATUS_TABLE)
+    .select("last_synced_date")
+    .eq("city", city).eq("year", year).eq("month", month)
+    .maybeSingle();
+  return data?.last_synced_date || null;   // "2026-04-10" ya null
+};
+
+export const setMonthSyncStatus = async (city, year, month, lastSyncedDate) => {
+  const { error } = await supabase
+    .from(SYNC_STATUS_TABLE)
+    .upsert({ city, year, month, last_synced_date: lastSyncedDate }, { onConflict: "city,year,month" });
+  if (error) console.warn("SyncStatus save failed:", error.message);
 };
 
 // ── Month Summary ─────────────────────────────────────────────────────────────
@@ -143,6 +164,28 @@ export const getTotalRunningKm = async (city, year, month) => {
     .eq("month", month);
   if (error || !data?.length) return 0;
   return data.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+};
+
+// Sync ke liye — vehicle ki existing GPS rows raw format mein (all fields)
+export const getGPSCachedRows = async (city, year, month, vehicle) => {
+  const { data, error } = await supabase
+    .from(GPS_TABLE)
+    .select("date, ward, name, driver, duty_in_time, duty_out_time, work_percentage, portal_km, gps_km, meter_reading_distance, distance")
+    .eq("city", city).eq("year", year).eq("month", month).eq("vehicle", vehicle);
+  if (error || !data?.length) return [];
+  return data.map((r) => ({
+    date:                 r.date                   || "",
+    ward:                 r.ward                   || "",
+    name:                 r.name                   || "",
+    driver:               r.driver                 || "",
+    dutyInTime:           r.duty_in_time           || "",
+    dutyOutTime:          r.duty_out_time          || "",
+    workPercentage:       r.work_percentage        ?? "",
+    portalKm:             r.portal_km              ?? "",
+    gps_km:               r.gps_km                || "",
+    meterReadingDistance: r.meter_reading_distance ?? 0,
+    distance:             r.distance              || "0",
+  }));
 };
 
 // GPS entries for one vehicle only — filtered query
@@ -264,3 +307,4 @@ export const saveGPSEntries = async (city, year, month, vehicle, trackRows) => {
       .then(({ error }) => { if (error) console.warn("GPS KM restore failed:", error.message); });
   });
 };
+

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./FuelReport.module.css";
 import { FiTruck, FiDroplet, FiMapPin, FiSearch } from "react-icons/fi";
 import { MdLocalGasStation, MdSpeed, MdCloudDownload, MdSync } from "react-icons/md";
@@ -58,7 +58,7 @@ const FuelReport = () => {
   const [syncMessage, setSyncMessage] = useState("");
   const [syncPercent, setSyncPercent] = useState(0);
 
-  const [showDataModal, setShowDataModal] = useState(false);
+  const [showDataModal, setShowDataModal]     = useState(false);
   const [usageLogs, setUsageLogs]         = useState([]);
   const [usageLoading, setUsageLoading]   = useState(false);
   const [uFilterYear, setUFilterYear]     = useState(String(now.getFullYear()));
@@ -158,7 +158,8 @@ const FuelReport = () => {
 
     let trackList = [...gpsData];
     const todayStr = new Date().toISOString().slice(0, 10);
-    const unenriched = trackList.filter((r) => r.dutyInTime === "" && r.date !== todayStr);
+    // Aaj ki rows hamesha re-enrich — baaki sirf jo unenriched hain
+    const unenriched = trackList.filter((r) => r.date === todayStr || r.dutyInTime === "");
     if (unenriched.length > 0) {
       const enriched = await enrichVehicleGPSData(cityName, year, month, vehicle, unenriched);
       // Enriched rows ko trackList mein merge karo
@@ -247,6 +248,7 @@ const FuelReport = () => {
               <span>Amount</span>
             </div>
           </div>
+          {/* Running KM — temporarily hidden
           <div className={styles.statPill}>
             <MdSpeed className={styles.pillIcon} />
             <div>
@@ -254,6 +256,7 @@ const FuelReport = () => {
               <span>Running KM</span>
             </div>
           </div>
+          */}
           <div className={`${styles.statPill} ${styles.statPillClickable}`} onClick={handleOpenDataModal}>
             <MdCloudDownload className={styles.pillIcon} />
             <div>
@@ -477,7 +480,7 @@ const FuelReport = () => {
                     ExternalAPI:        "External API",
                     SupabaseStorage:    "Supabase Storage",
                   };
-                  // FirebaseRealtimeDB + ExternalAPI — combined single row
+                  // FirebaseRealtimeDB + ExternalAPI — ek combined row
                   const COLLAPSED_SOURCES = new Set(["FirebaseRealtimeDB", "ExternalAPI"]);
 
                   return SOURCE_ORDER.filter((src) => bySource[src]).map((src) => {

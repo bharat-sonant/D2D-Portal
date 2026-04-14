@@ -13,7 +13,7 @@
 
 import { getData } from "../../services/dbServices";
 import { supabase } from "../../createClient";
-import { logUsage, saveSummaryCache, saveFuelEntries, saveGPSEntries } from "./fuelCacheService";
+import { logUsage, saveSummaryCache, getSummaryCache, saveFuelEntries, saveGPSEntries, getGPSCachedRows, getTotalRunningKm, getMonthSyncStatus, setMonthSyncStatus } from "./fuelCacheService";
 
 // ── Active city — sync/enrich start pe set hota hai ──────────────────────────
 let _activeCity = "";
@@ -123,20 +123,26 @@ const getEmployeeData = async (empId) => {
   return result;
 };
 const prefetchEmployees = (empIds) =>
-  Promise.all([...new Set(empIds)].map(getEmployeeData));
+  runWithConcurrency([...new Set(empIds)], getEmployeeData, 10);
 
 // ── In-memory cache — sync ke dauran duplicate Firebase reads hata ────────────
 const locationCache    = {};
 const wasteInfoCache   = {};
 
 const getLocationRaw = async (zone, vehicle, year, monthName, date) => {
-  const key = `${zone}|${vehicle}|${year}|${monthName}|${date}`;
+  // BinLifting path mein vehicle hota hai — isliye key mein bhi vehicle
+  // Normal zones ka path vehicle-independent hai — key mein vehicle nahi
+  const key = zone.includes("BinLifting")
+    ? `${zone}|${vehicle}|${year}|${monthName}|${date}`
+    : `${zone}|${year}|${monthName}|${date}`;
   if (locationCache[key] !== undefined) return locationCache[key];
   const path = zone.includes("BinLifting")
     ? `LocationHistory/BinLifting/${vehicle}/${year}/${monthName}/${date}`
     : `LocationHistory/${zone}/${year}/${monthName}/${date}`;
-  locationCache[key] = await loggedGetData(path);
-  return locationCache[key];
+  const data = await loggedGetData(path);
+  // Null cache nahi karo — agar Firebase fail kiya toh retry allow karo
+  if (data !== null) locationCache[key] = data;
+  return data;
 };
 
 // ── LocationHistory se distance ───────────────────────────────────────────────
@@ -267,8 +273,9 @@ const saveDieselEntriesJSON = async (cityName, year, monthName) => {
   });
   fuelList.sort((a, b) => a.orderBy - b.orderBy);
   await saveFuelEntries(cityName, year, monthName, fuelList);
-  console.log(`[Sync] VehicleFuelCache — ${fuelList.length} entries saved`);
-  return { totalAmount, totalQty };
+  const vehicleCount = new Set(fuelList.map((e) => e.vehicle).filter(Boolean)).size;
+  console.log(`[Sync] VehicleFuelCache — ${fuelList.length} entries, ${vehicleCount} vehicles saved`);
+  return { totalAmount, totalQty, vehicleCount };
 };
 
 // ── DailyWorkDetail single date fetch — Firebase → Supabase Storage cache ────
@@ -296,17 +303,18 @@ const fetchDailyWorkDetail = async (cityName, year, monthName, date, todayStr) =
 // ─────────────────────────────────────────────────────────────────────────────
 // Step 2: DailyWorkDetail — PARALLEL fetch + PARALLEL employee lookup
 // ─────────────────────────────────────────────────────────────────────────────
-const buildWorkDetailList = async (cityName, year, monthName, month, onProgress) => {
+const buildWorkDetailList = async (cityName, year, monthName, month, syncFromDate, onProgress) => {
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === Number(year) && today.getMonth() + 1 === Number(month);
   const lastDay = isCurrentMonth ? today.getDate() : new Date(Number(year), Number(month), 0).getDate();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
 
+  // Sirf syncFromDate se aage ke dates Firebase se fetch karo
   const dates = Array.from({ length: lastDay }, (_, i) =>
     `${year}-${month}-${String(i + 1).padStart(2, "0")}`
-  );
+  ).filter((d) => d >= syncFromDate);
 
-  onProgress && onProgress(0, lastDay, "Sab din parallel fetch ho rahe hain...");
+  onProgress && onProgress(0, dates.length, "Sab din parallel fetch ho rahe hain...");
 
   // ── Supabase cache → Firebase fallback — sab dates parallel ──────────────
   const dayDataResults = await Promise.all(
@@ -344,7 +352,7 @@ const buildWorkDetailList = async (cityName, year, monthName, month, onProgress)
         workDetailList.push({ date, vehicle, zone, name: emp.name, empId, startTime, endTime, orderBy: new Date(date).getTime(), distance: 0 });
       }
     });
-    onProgress && onProgress(idx + 1, lastDay, date);
+    onProgress && onProgress(idx + 1, dates.length, date);
   });
 
   console.log(`[Sync] workDetailList — ${workDetailList.length} items`);
@@ -352,64 +360,50 @@ const buildWorkDetailList = async (cityName, year, monthName, month, onProgress)
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Step 3: Vehicles — SYNC mein poora data Firebase se lao + Supabase mein save
-// Vehicle click pe sirf Supabase se read hoga — Firebase = 0 calls
+// Step 3: Vehicles — Smart cache sync
+// Today + Yesterday → hamesha Firebase se fresh
+// Baaki dates → Supabase mein hain toh wahi se, nahi hain toh Firebase se
 // ─────────────────────────────────────────────────────────────────────────────
-const processOneVehicle = async (vehicle, items, cityName, year, monthName) => {
-  const sorted   = [...items].sort((a, b) => a.orderBy - b.orderBy);
-  const today    = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-  const filtered = sorted.filter((i) => i.date !== todayStr);
-  if (!filtered.length) return 0;
+const processOneVehicle = async (vehicle, items, cityName, year, monthName, syncFromDate) => {
+  const sorted = [...items].sort((a, b) => a.orderBy - b.orderBy);
 
-  // DustbinData — BinLifting meterReadingDistance ke liye (sirf un dates ke liye)
-  const hasBinLifting = filtered.some((i) => i.zone.includes("BinLifting"));
-  const dustbinMaps   = {};
-  if (hasBinLifting) {
-    const blDates = [...new Set(filtered.filter((i) => i.zone.includes("BinLifting")).map((i) => i.date))];
-    await Promise.all(blDates.map(async (date) => {
-      dustbinMaps[date] = await getDustbinMeterReadingMap(year, monthName, date);
-    }));
-  }
+  // syncFromDate se pehle ki dates Supabase se as-is lo — Firebase call nahi
+  const existingRows = await getGPSCachedRows(cityName, year, monthName, vehicle);
+  const cachedRows   = existingRows.filter((r) => r.date < syncFromDate);
 
-  // LocationHistory se distance — parallel (dutyTimes vehicle click pe aayenge)
-  const gpsRows = await Promise.all(filtered.map(async (item) => {
-    const distance = await getLocationDistance(item.zone, vehicle, year, monthName, item.date, item.startTime, item.endTime);
-    return {
-      date:                 item.date,
-      ward:                 item.zone,
-      driver:               item.empId,
-      name:                 item.name,
-      dutyInTime:           "",
-      dutyOutTime:          "",
-      workPercentage:       "",
-      portalKm:             "",
-      gps_km:               "",
-      meterReadingDistance: item.zone.includes("BinLifting") ? (dustbinMaps[item.date]?.[vehicle] || 0) : 0,
-      distance:             distance.toFixed(3),
-    };
+  if (!sorted.length && !cachedRows.length) return;
+
+  // Sync mein sirf basic route rows save karo
+  // Distance, Portal KM, GPS KM — vehicle click par enrichVehicleGPSData se aayenge
+  const freshRows = sorted.map((item) => ({
+    date:                 item.date,
+    ward:                 item.zone,
+    driver:               item.empId,
+    name:                 item.name,
+    dutyInTime:           "",
+    dutyOutTime:          "",
+    workPercentage:       "",
+    portalKm:             "",
+    gps_km:               "",
+    meterReadingDistance: 0,
+    distance:             "0",
   }));
 
-  await saveGPSEntries(cityName, year, monthName, vehicle, gpsRows);
-  const vehicleKM = gpsRows.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
-  console.log(`[Sync] ${vehicle} — ${vehicleKM.toFixed(3)} KM`);
-  return vehicleKM;
+  const allRows = [...freshRows, ...cachedRows];
+  await saveGPSEntries(cityName, year, monthName, vehicle, allRows);
+  console.log(`[Sync] ${vehicle} — fresh: ${freshRows.length} rows, cached: ${cachedRows.length} rows`);
 };
 
-const processVehicles = async (cityName, year, monthName, workDetailList, onVehicleProgress) => {
+const processVehicles = async (cityName, year, monthName, workDetailList, syncFromDate, onVehicleProgress) => {
   const vehicles = [...new Set(workDetailList.map((w) => w.vehicle))];
   let done = 0;
-
-  // Vehicles 4-4 parallel mein process karo
-  const kms = await runWithConcurrency(vehicles, async (vehicle) => {
+  // Sequential — ek vehicle poora complete hone ke baad agli (Angular ki tarah)
+  for (const vehicle of vehicles) {
     const items = workDetailList.filter((w) => w.vehicle === vehicle);
-    const km    = await processOneVehicle(vehicle, items, cityName, year, monthName);
+    await processOneVehicle(vehicle, items, cityName, year, monthName, syncFromDate);
     done++;
     onVehicleProgress && onVehicleProgress(done, vehicles.length, vehicle);
-    return km;
-  }, 4);
-
-  return { totalKM: kms.reduce((s, k) => s + k, 0) };
+  }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -424,12 +418,22 @@ export const enrichVehicleGPSData = async (cityName, year, monthName, vehicle, g
   const uniqueDates = [...new Set(gpsRows.map((r) => r.date))];
 
   // WasteCollectionInfo + portalKm (LocationHistory) — parallel
-  // distance already sync mein save ho chuki hai — dobara calculate nahi
+  // Agar sync mein distance = 0 raha (in-out missing tha) toh WasteCollectionInfo
+  // duty times se recalculate karo — locationCache already populate hoga getPortalKm se
   const enriched = await Promise.all(gpsRows.map(async (row) => {
     const details  = await getTrackAdditionalDetails(row.ward, row.driver, year, monthName, row.date);
     const portalKm = await getPortalKm(row.ward, details.dutyInTime, details.dutyOutTime, vehicle, year, monthName, row.date);
+
+    const existingDist = parseFloat(row.distance) || 0;
+    let finalDistance = row.distance;
+    if (existingDist === 0 && details.dutyInTime) {
+      const recalc = await getLocationDistance(row.ward, vehicle, year, monthName, row.date, details.dutyInTime, details.dutyOutTime);
+      if (recalc > 0) finalDistance = recalc.toFixed(3) + " KM";
+    }
+
     return {
       ...row,
+      distance:        finalDistance,
       dutyInTime:      details.dutyInTime,
       dutyOutTime:     details.dutyOutTime,
       workPercentage:  details.workPercentage,
@@ -463,7 +467,6 @@ export const enrichVehicleGPSData = async (cityName, year, monthName, vehicle, g
 // Main Export
 // ─────────────────────────────────────────────────────────────────────────────
 export const updateFuelJSON = async (cityName, year, monthName, onProgress = () => {}) => {
-  // Reset in-memory caches
   _activeCity = cityName;
   Object.keys(empCache).forEach((k) => delete empCache[k]);
   Object.keys(locationCache).forEach((k) => delete locationCache[k]);
@@ -473,24 +476,59 @@ export const updateFuelJSON = async (cityName, year, monthName, onProgress = () 
   if (monthIndex === -1) throw new Error(`Invalid month: ${monthName}`);
   const month = String(monthIndex + 1).padStart(2, "0");
 
-  // Sync run count — ek sync = ek count
+  const today    = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+
+  // Last sync date fetch karo — agar pehle sync hua hai toh wahi se shuru karo
+  const lastSyncedDate = await getMonthSyncStatus(cityName, year, monthName);
+  // syncFromDate: agar pehle sync hua → us date se, warna month ke pehle din se
+  const syncFromDate   = lastSyncedDate || `${year}-${month}-01`;
+
+  // Month ka last day
+  const lastDayOfMonth = String(new Date(Number(year), monthIndex + 1, 0).getDate()).padStart(2, "0");
+  const lastDayStr     = `${year}-${month}-${lastDayOfMonth}`;
+
+  // Agar syncFromDate month ke last day se aage hai → poora month already synced
+  // Koi bhi Firebase call nahi — seedha Supabase se return karo
+  if (lastSyncedDate && syncFromDate > lastDayStr) {
+    const [totalKM, cached] = await Promise.all([
+      getTotalRunningKm(cityName, year, monthName),
+      getSummaryCache(cityName, year, monthName),
+    ]);
+    onProgress({
+      stage: "done",
+      message: `${monthName} ${year} already synced on ${lastSyncedDate}. Supabase se data aa raha hai.`,
+      percent: 100,
+    });
+    return {
+      totalKM: totalKM.toFixed(3),
+      qty:     cached ? String(cached.total_qty)    : "0.00",
+      amount:  cached ? String(cached.total_amount) : "0.00",
+    };
+  }
+
+  onProgress({
+    stage: "start",
+    message: lastSyncedDate
+      ? `Last sync: ${lastSyncedDate}. Sirf ${lastSyncedDate} ke baad ke dates Firebase se aayenge.`
+      : "Pehla sync — sab dates Firebase se aayenge.",
+    percent: 2,
+  });
+
   logUsage(cityName, null, null, "SyncRun", "Manual", 0);
 
-  // Ensure bucket exists for DailyWorkDetail + EmployeeCache Storage
   const bucketName = String(cityName).toLowerCase().trim();
   ensuredBuckets.clear();
   await ensureBucket(bucketName);
-
-  // Employee cache — Storage se load (Firebase calls bachao)
   await loadEmployeeCache(cityName);
 
-  // Step 1 — Fuel entries → VehicleFuelCache table
+  // Step 1 — Fuel entries (poora month ek saath — 1 Firebase call)
   onProgress({ stage: "fuel", message: "Saving fuel entries...", percent: 5 });
-  const { totalAmount, totalQty } = await saveDieselEntriesJSON(cityName, year, monthName);
+  const { totalAmount, totalQty, vehicleCount } = await saveDieselEntriesJSON(cityName, year, monthName);
 
-  // Step 2 — Work detail list (Supabase DailyWorkDetail cache → Firebase fallback)
-  onProgress({ stage: "workdetail", message: "Fetching daily work records...", percent: 15 });
-  const workDetailList = await buildWorkDetailList(cityName, year, monthName, month, (day, total) => {
+  // Step 2 — Work detail list (sirf syncFromDate ke baad ke dates)
+  onProgress({ stage: "workdetail", message: `Fetching work records from ${syncFromDate}...`, percent: 15 });
+  const workDetailList = await buildWorkDetailList(cityName, year, monthName, month, syncFromDate, (day, total) => {
     const pct = 15 + Math.round((day / total) * 30);
     onProgress({ stage: "workdetail", message: `Processing day ${day} of ${total}...`, percent: pct });
   });
@@ -499,30 +537,33 @@ export const updateFuelJSON = async (cityName, year, monthName, onProgress = () 
     await saveSummaryCache(cityName, year, monthName, {
       total_qty: Number(totalQty.toFixed(2)), total_amount: Number(totalAmount.toFixed(2)), total_km: 0,
     });
-    onProgress({ stage: "done", message: "No driver records found. Fuel data saved.", percent: 100 });
+    await setMonthSyncStatus(cityName, year, monthName, todayStr);
+    onProgress({ stage: "done", message: "No new driver records. Fuel data updated.", percent: 100 });
     return { totalKM: "0.000", qty: totalQty.toFixed(2), amount: totalAmount.toFixed(2) };
   }
 
-  // Step 3 — Vehicles (4 parallel) → VehicleGPSCache table
+  // Step 3 — Vehicles → VehicleGPSCache (GPS Route Data table ke liye)
   onProgress({ stage: "vehicles", message: "Calculating vehicle distances...", percent: 45 });
-  const { totalKM } = await processVehicles(
-    cityName, year, monthName, workDetailList,
+  await processVehicles(
+    cityName, year, monthName, workDetailList, syncFromDate,
     (done, total, vehicle) => {
-      const pct = 45 + Math.round((done / total) * 50);
-      onProgress({ stage: "vehicles", message: `Vehicle ${done} of ${total} — ${vehicle}`, percent: pct });
+      const pct = 45 + Math.round((done / total) * 45);
+      onProgress({ stage: "vehicles", message: `Vehicle ${done} of ${vehicleCount} — ${vehicle}`, percent: pct });
     }
   );
 
-  // Step 4 — MonthSummary → VehicleMonthSummaryCache table
+  // Step 4 — Summary save karo (total_km = 0 — topbar hidden hai)
   await saveSummaryCache(cityName, year, monthName, {
     total_qty:    Number(totalQty.toFixed(2)),
     total_amount: Number(totalAmount.toFixed(2)),
-    total_km:     Number(totalKM.toFixed(3)),
+    total_km:     0,
   });
 
-  // Employee cache — Storage mein save (fire-and-forget)
   saveEmployeeCache(cityName);
 
-  onProgress({ stage: "done", message: "Sync complete. All data saved to tables.", percent: 100 });
-  return { totalKM: totalKM.toFixed(3), qty: totalQty.toFixed(2), amount: totalAmount.toFixed(2) };
+  // Sync complete — last_synced_date = aaj update karo
+  await setMonthSyncStatus(cityName, year, monthName, todayStr);
+
+  onProgress({ stage: "done", message: "Sync complete. All data saved.", percent: 100 });
+  return { totalKM: "0.000", qty: totalQty.toFixed(2), amount: totalAmount.toFixed(2) };
 };
