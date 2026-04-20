@@ -13,7 +13,7 @@
 
 import { getData } from "../../services/dbServices";
 import { supabase } from "../../createClient";
-import { logUsage, saveSummaryCache, getSummaryCache, saveFuelEntries, saveGPSEntries, getGPSCachedRows, getTotalRunningKm, getMonthSyncStatus, setMonthSyncStatus } from "./fuelCacheService";
+import { logUsage, saveSummaryCache, getSummaryCache, saveFuelEntries, saveGPSEntries, getGPSCachedRows, getTotalRunningKm, getMonthSyncStatus, setMonthSyncStatus, updateSummaryTotalKm } from "./fuelCacheService";
 
 // ── Active city — sync/enrich start pe set hota hai ──────────────────────────
 let _activeCity = "";
@@ -231,20 +231,6 @@ const getTrackAdditionalDetails = async (ward, driver, year, monthName, date) =>
   };
 };
 
-// ── BinLifting dustbin meter map ──────────────────────────────────────────────
-const getDustbinMeterReadingMap = async (year, monthName, date) => {
-  const data = await loggedGetData(`DustbinData/DustbinAssignment/${year}/${monthName}/${date}`);
-  const map  = {};
-  if (!data) return map;
-  Object.values(data).forEach((plan) => {
-    if (!plan.vehicle || !plan.dutyOnMeterReading || !plan.dutyOutMeterReading) return;
-    const on  = String(plan.dutyOnMeterReading).split(",").map(Number);
-    const out = String(plan.dutyOutMeterReading).split(",").map(Number);
-    const f = on[0] || 0, l = out[out.length - 1] || 0;
-    map[plan.vehicle] = f && l ? l - f : 0;
-  });
-  return map;
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Step 1: DieselEntriesData → VehicleFuelCache table
@@ -373,37 +359,46 @@ const processOneVehicle = async (vehicle, items, cityName, year, monthName, sync
 
   if (!sorted.length && !cachedRows.length) return;
 
-  // Sync mein sirf basic route rows save karo
-  // Distance, Portal KM, GPS KM — vehicle click par enrichVehicleGPSData se aayenge
-  const freshRows = sorted.map((item) => ({
-    date:                 item.date,
-    ward:                 item.zone,
-    driver:               item.empId,
-    name:                 item.name,
-    dutyInTime:           "",
-    dutyOutTime:          "",
-    workPercentage:       "",
-    portalKm:             "",
-    gps_km:               "",
-    meterReadingDistance: 0,
-    distance:             "0",
+  // LocationHistory se distance calculate karo (Firebase live)
+  const freshRows = await Promise.all(sorted.map(async (item) => {
+    const distance = await getLocationDistance(
+      item.zone, vehicle, year, monthName, item.date, item.startTime, item.endTime
+    );
+    return {
+      date:                 item.date,
+      ward:                 item.zone,
+      driver:               item.empId,
+      name:                 item.name,
+      dutyInTime:           "",
+      dutyOutTime:          "",
+      workPercentage:       "",
+      portalKm:             "",
+      gps_km:               "",
+      meterReadingDistance: 0,
+      distance:             String(distance),
+    };
   }));
+
+  const vehicleKM = freshRows.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+  console.log(`[Sync] ${vehicle} — ${vehicleKM.toFixed(3)} KM | rows: ${freshRows.length}`);
 
   const allRows = [...freshRows, ...cachedRows];
   await saveGPSEntries(cityName, year, monthName, vehicle, allRows);
-  console.log(`[Sync] ${vehicle} — fresh: ${freshRows.length} rows, cached: ${cachedRows.length} rows`);
+  return vehicleKM;
 };
 
 const processVehicles = async (cityName, year, monthName, workDetailList, syncFromDate, onVehicleProgress) => {
   const vehicles = [...new Set(workDetailList.map((w) => w.vehicle))];
   let done = 0;
-  // Sequential — ek vehicle poora complete hone ke baad agli (Angular ki tarah)
+  let totalKM = 0;
   for (const vehicle of vehicles) {
     const items = workDetailList.filter((w) => w.vehicle === vehicle);
-    await processOneVehicle(vehicle, items, cityName, year, monthName, syncFromDate);
+    const km = await processOneVehicle(vehicle, items, cityName, year, monthName, syncFromDate);
+    totalKM += (km || 0);
     done++;
     onVehicleProgress && onVehicleProgress(done, vehicles.length, vehicle);
   }
+  return { totalKM };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -461,6 +456,229 @@ export const enrichVehicleGPSData = async (cityName, year, monthName, vehicle, g
   });
 
   return enriched;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Debug: ek vehicle ka date-wise running KM console mein dikhao
+// ─────────────────────────────────────────────────────────────────────────────
+export const debugVehicleRunningKm = async (cityName, year, monthName, vehicle) => {
+  console.log(`\n========== [DEBUG] ${vehicle} | ${cityName} | ${monthName} ${year} ==========`);
+
+  const monthIndex = MONTH_NAMES.indexOf(monthName);
+  if (monthIndex === -1) { console.warn(`[DEBUG] Invalid monthName: ${monthName}`); return; }
+  const month = String(monthIndex + 1).padStart(2, "0");
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === Number(year) && today.getMonth() + 1 === monthIndex + 1;
+  const lastDay = isCurrentMonth ? today.getDate() : new Date(Number(year), monthIndex + 1, 0).getDate();
+  const dates = Array.from({ length: lastDay }, (_, i) =>
+    `${year}-${month}-${String(i + 1).padStart(2, "0")}`
+  );
+
+  Object.keys(locationCache).forEach((k) => delete locationCache[k]);
+  Object.keys(wasteInfoCache).forEach((k) => delete wasteInfoCache[k]);
+
+  let totalKm = 0;
+  const dateResults = [];
+
+  for (const date of dates) {
+    const workData = await getData(`DailyWorkDetail/${year}/${monthName}/${date}`);
+    if (!workData) continue;
+
+    // ward → { driver, startTime, endTime } from DailyWorkDetail task in-out
+    const wardInfoMap = {};
+    Object.keys(workData).forEach((empId) => {
+      for (let k = 1; k <= 5; k++) {
+        const task = workData[empId]?.[`task${k}`];
+        if (task && task.vehicle === vehicle && task.task && !wardInfoMap[task.task]) {
+          let startTime = "", endTime = "";
+          if (task["in-out"]) {
+            const keys = Object.keys(task["in-out"]);
+            for (const t of keys) { if (task["in-out"][t] === "In") startTime = t.slice(0, 5); }
+            for (let i = keys.length - 1; i >= 0; i--) {
+              if (task["in-out"][keys[i]] === "Out") { endTime = keys[i].slice(0, 5); break; }
+            }
+          }
+          wardInfoMap[task.task] = { driver: empId, startTime, endTime };
+        }
+      }
+    });
+    if (!Object.keys(wardInfoMap).length) continue;
+
+    let dateKm = 0;
+    for (const [ward, info] of Object.entries(wardInfoMap)) {
+      // WasteCollectionInfo se duty times lo (primary source)
+      const details = await getTrackAdditionalDetails(ward, info.driver, year, monthName, date);
+      // Fallback: WasteCollectionInfo empty ho (aaj ki date) toh DailyWorkDetail ke times use karo
+      const dutyIn  = details.dutyInTime  || info.startTime;
+      const dutyOut = details.dutyOutTime || info.endTime || "23:59";
+      const km = await getPortalKm(ward, dutyIn, dutyOut, vehicle, year, monthName, date);
+      dateKm += Number(km) || 0;
+    }
+
+    totalKm += dateKm;
+    dateResults.push({ date, wards: Object.keys(wardInfoMap).join(", "), km: dateKm.toFixed(3) });
+  }
+
+  if (!dateResults.length) {
+    console.warn(`[DEBUG] ${vehicle} kisi bhi date pe DailyWorkDetail mein nahi mila`);
+  } else {
+    console.table(dateResults);
+  }
+
+  console.log(`[DEBUG] ✅ TOTAL Running KM for ${vehicle}: ${totalKm.toFixed(3)} KM`);
+  console.log(`===================================================================================\n`);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Debug: saare vehicles ka running KM console mein dikhao
+// ─────────────────────────────────────────────────────────────────────────────
+export const debugAllVehiclesRunningKm = async (cityName, year, monthName) => {
+  console.log(`\n========== [DEBUG] All Vehicles Running KM | ${cityName} | ${monthName} ${year} ==========`);
+
+  const monthIndex = MONTH_NAMES.indexOf(monthName);
+  if (monthIndex === -1) { console.warn(`[DEBUG] Invalid monthName: ${monthName}`); return; }
+  const month = String(monthIndex + 1).padStart(2, "0");
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === Number(year) && today.getMonth() === monthIndex;
+
+  // Previous month — Supabase mein already hai toh Firebase call nahi
+  if (!isCurrentMonth) {
+    const existing = await getSummaryCache(cityName, year, monthName);
+    if (existing?.total_km && Number(existing.total_km) > 0) {
+      console.log(`[DEBUG] ✅ Supabase se mila (Firebase call nahi): ${existing.total_km} KM`);
+      console.log(`===================================================================================\n`);
+      return Number(existing.total_km);
+    }
+  }
+
+  const lastDay = isCurrentMonth ? today.getDate() : new Date(Number(year), monthIndex + 1, 0).getDate();
+  const dates = Array.from({ length: lastDay }, (_, i) =>
+    `${year}-${month}-${String(i + 1).padStart(2, "0")}`
+  );
+
+  Object.keys(locationCache).forEach((k) => delete locationCache[k]);
+  Object.keys(wasteInfoCache).forEach((k) => delete wasteInfoCache[k]);
+
+  console.log(`[DEBUG] ${dates.length} dates parallel fetch ho rahe hain...`);
+
+  // Step 1: Saari dates ka DailyWorkDetail parallel fetch
+  const dayDataArr = await Promise.all(
+    dates.map((date) => getData(`DailyWorkDetail/${year}/${monthName}/${date}`))
+  );
+
+  // Step 2: vehicle → [{date, ward, driver, startTime, endTime}] map build karo
+  const vehicleEntries = {};
+  dates.forEach((date, i) => {
+    const workData = dayDataArr[i];
+    if (!workData) return;
+    Object.keys(workData).forEach((empId) => {
+      for (let k = 1; k <= 5; k++) {
+        const task = workData[empId]?.[`task${k}`];
+        if (!task || !task.vehicle || task.vehicle === "NotApplicable" || !task.task) continue;
+        const v = task.vehicle;
+        if (!vehicleEntries[v]) vehicleEntries[v] = [];
+        // Ward already added for this date? skip
+        const already = vehicleEntries[v].some((e) => e.date === date && e.ward === task.task);
+        if (already) continue;
+        let startTime = "", endTime = "";
+        if (task["in-out"]) {
+          const keys = Object.keys(task["in-out"]);
+          for (const t of keys) { if (task["in-out"][t] === "In") startTime = t.slice(0, 5); }
+          for (let j = keys.length - 1; j >= 0; j--) {
+            if (task["in-out"][keys[j]] === "Out") { endTime = keys[j].slice(0, 5); break; }
+          }
+        }
+        vehicleEntries[v].push({ date, ward: task.task, driver: empId, startTime, endTime });
+      }
+    });
+  });
+
+  const vehicles = Object.keys(vehicleEntries);
+  console.log(`[DEBUG] ${vehicles.length} vehicles mili — Portal KM style calculate ho raha hai...\n`);
+
+  // Step 3: Har vehicle ke entries parallel process karo
+  const vehicleKm = {};
+  await Promise.all(
+    vehicles.map(async (vehicle) => {
+      const entries = vehicleEntries[vehicle];
+      const kms = await Promise.all(
+        entries.map(async ({ date, ward, driver, startTime, endTime }) => {
+          const details  = await getTrackAdditionalDetails(ward, driver, year, monthName, date);
+          const dutyIn   = details.dutyInTime  || startTime;
+          const dutyOut  = details.dutyOutTime || endTime || "23:59";
+          const km = await getPortalKm(ward, dutyIn, dutyOut, vehicle, year, monthName, date);
+          return Number(km) || 0;
+        })
+      );
+      vehicleKm[vehicle] = kms.reduce((s, k) => s + k, 0);
+    })
+  );
+
+  // Step 4: Results
+  const results = Object.entries(vehicleKm)
+    .map(([vehicle, km]) => ({ vehicle, km: km.toFixed(3) }))
+    .sort((a, b) => Number(b.km) - Number(a.km));
+
+  let done = 0;
+  results.forEach(({ vehicle, km }) => {
+    done++;
+    console.log(`[DEBUG] (${done}/${vehicles.length}) ${vehicle} — ${km} KM`);
+  });
+
+  const grandTotal = Object.values(vehicleKm).reduce((s, k) => s + k, 0);
+  console.log("\n---------- Vehicle-wise Summary ----------");
+  console.table(results);
+  console.log(`\n[DEBUG] ✅ GRAND TOTAL | ${monthName} ${year}: ${grandTotal.toFixed(3)} KM`);
+  console.log(`===================================================================================\n`);
+
+  // Supabase mein save karo — next time Firebase call nahi hogi
+  await updateSummaryTotalKm(cityName, year, monthName, Number(grandTotal.toFixed(3)));
+  console.log(`[DEBUG] ✅ Supabase mein save ho gaya: total_km = ${grandTotal.toFixed(3)}`);
+
+  return Number(grandTotal.toFixed(3));
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Background Running KM — sync ke baad silently calculate karo
+// getData direct use (no loggedGetData) → DB service page mein count nahi
+// ─────────────────────────────────────────────────────────────────────────────
+export const calcTotalRunningKmBackground = async (cityName, year, monthName, vehicles) => {
+  if (!vehicles?.length) return;
+
+  const calcOneVehicle = async (vehicle) => {
+    const rows = await getGPSCachedRows(cityName, year, monthName, vehicle);
+    if (!rows.length) return { vehicle, meters: 0 };
+
+    const distances = await Promise.all(rows.map(async (row) => {
+      const path = row.ward.includes("BinLifting")
+        ? `LocationHistory/BinLifting/${vehicle}/${year}/${monthName}/${row.date}/TotalCoveredDistance`
+        : `LocationHistory/${row.ward}/${year}/${monthName}/${row.date}/TotalCoveredDistance`;
+      const dist = await getData(path);
+      return Number(dist) || 0;
+    }));
+
+    const meters = distances.reduce((s, d) => s + d, 0);
+    return { vehicle, meters };
+  };
+
+  const results = await runWithConcurrency(vehicles, calcOneVehicle, 20);
+
+  const grandTotal = results.reduce((s, r) => s + r.meters, 0);
+
+  const totalKm = grandTotal / 1000;
+
+  console.log(`\n===== Firebase Running KM | ${cityName} | ${monthName} ${year} =====`);
+  console.table(
+    results
+      .sort((a, b) => b.meters - a.meters)
+      .map((r) => ({ vehicle: r.vehicle, km: (r.meters / 1000).toFixed(3) }))
+  );
+  console.log(`TOTAL: ${totalKm.toFixed(3)} KM`);
+  console.log(`=======================================================\n`);
+
+  return totalKm;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -544,7 +762,7 @@ export const updateFuelJSON = async (cityName, year, monthName, onProgress = () 
 
   // Step 3 — Vehicles → VehicleGPSCache (GPS Route Data table ke liye)
   onProgress({ stage: "vehicles", message: "Calculating vehicle distances...", percent: 45 });
-  await processVehicles(
+  const { totalKM } = await processVehicles(
     cityName, year, monthName, workDetailList, syncFromDate,
     (done, total, vehicle) => {
       const pct = 45 + Math.round((done / total) * 45);
@@ -552,11 +770,11 @@ export const updateFuelJSON = async (cityName, year, monthName, onProgress = () 
     }
   );
 
-  // Step 4 — Summary save karo (total_km = 0 — topbar hidden hai)
+  // Step 4 — Summary save karo
   await saveSummaryCache(cityName, year, monthName, {
     total_qty:    Number(totalQty.toFixed(2)),
     total_amount: Number(totalAmount.toFixed(2)),
-    total_km:     0,
+    total_km:     Number(totalKM.toFixed(3)),
   });
 
   saveEmployeeCache(cityName);

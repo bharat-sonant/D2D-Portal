@@ -81,6 +81,14 @@ export const saveSummaryCache = async (city, year, month, { total_qty, total_amo
   if (error) console.warn("Summary cache save failed:", error.message);
 };
 
+export const updateSummaryTotalKm = async (city, year, month, total_km) => {
+  const { error } = await supabase
+    .from(SUMMARY_TABLE)
+    .update({ total_km })
+    .eq("city", city).eq("year", year).eq("month", month);
+  if (error) console.warn("Summary total_km update failed:", error.message);
+};
+
 // ── Fuel Entries ──────────────────────────────────────────────────────────────
 
 // Distinct vehicle list — sirf vehicle column, lightweight query
@@ -154,16 +162,33 @@ export const saveFuelEntries = async (city, year, month, entries) => {
 
 // ── GPS Route Data ────────────────────────────────────────────────────────────
 
-// Total running KM — VehicleGPSCache se sab enriched distances ka sum
+// Total running KM — VehicleGPSCache se sab distances ka sum
 export const getTotalRunningKm = async (city, year, month) => {
   const { data, error } = await supabase
     .from(GPS_TABLE)
-    .select("distance")
+    .select("vehicle, distance")
     .eq("city", city)
     .eq("year", year)
     .eq("month", month);
   if (error || !data?.length) return 0;
-  return data.reduce((s, r) => s + (parseFloat(r.distance) || 0), 0);
+
+  const byVehicle = {};
+  data.forEach((r) => {
+    byVehicle[r.vehicle] = (byVehicle[r.vehicle] || 0) + (parseFloat(r.distance) || 0);
+  });
+
+  const total = Object.values(byVehicle).reduce((s, v) => s + v, 0);
+
+  console.log(`\n===== Running KM | ${city} | ${month} ${year} =====`);
+  console.table(
+    Object.entries(byVehicle)
+      .sort(([, a], [, b]) => b - a)
+      .map(([vehicle, km]) => ({ vehicle, km: km.toFixed(3) }))
+  );
+  console.log(`TOTAL: ${total.toFixed(3)} KM`);
+  console.log(`=====================================\n`);
+
+  return total;
 };
 
 // Sync ke liye — vehicle ki existing GPS rows raw format mein (all fields)

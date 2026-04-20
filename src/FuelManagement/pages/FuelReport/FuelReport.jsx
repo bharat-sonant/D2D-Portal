@@ -2,14 +2,61 @@ import { useEffect, useState, useCallback } from "react";
 import styles from "./FuelReport.module.css";
 import { FiTruck, FiDroplet, FiMapPin, FiSearch } from "react-icons/fi";
 import { MdLocalGasStation, MdSpeed, MdCloudDownload, MdSync } from "react-icons/md";
-import { updateFuelJSON, fetchWevoisGPSKm, enrichVehicleGPSData } from "../../services/fuelUpdateService";
+import { updateFuelJSON, fetchWevoisGPSKm, enrichVehicleGPSData, calcTotalRunningKmBackground, debugAllVehiclesRunningKm, debugVehicleRunningKm } from "../../services/fuelUpdateService";
 import { useParams } from "react-router-dom";
 import { getCityFirebaseConfigAsync } from "../../../configurations/cityDBConfig";
 import { connectFirebase } from "../../../firebase/firebaseService";
-import { getUsageLogs, getSummaryCache, getVehicleList, getFuelByVehicle, getGPSByVehicle, updateGPSKm, updateGPSEnrichedData } from "../../services/fuelCacheService";
+import { getUsageLogs, getSummaryCache, saveSummaryCache, getVehicleList, getFuelByVehicle, getGPSByVehicle, updateGPSKm, updateGPSEnrichedData, getTotalRunningKm } from "../../services/fuelCacheService";
+
 
 const toTitleCase = (value = "") =>
   String(value).toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+
+// ── Odometer digit wheel ──────────────────────────────────────────────────────
+const OdometerDigit = ({ digit, delay }) => (
+  <span className={styles.odomCell}>
+    <span
+      className={styles.odomReel}
+      style={{ transform: `translateY(-${digit * 10}%)`, transitionDelay: `${delay}ms` }}
+    >
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+        <span key={n} className={styles.odomNum}>{n}</span>
+      ))}
+    </span>
+  </span>
+);
+
+// ── Odometer — bike jaise digits roll karte hain ─────────────────────────────
+const Odometer = ({ value }) => {
+  const [live, setLive] = useState(0);
+
+  useEffect(() => {
+    setLive(0);
+    const t = setTimeout(() => setLive(value), 80);
+    return () => clearTimeout(t);
+  }, [value]);
+
+  const fixed      = live.toFixed(3);
+  const [iStr, fStr] = fixed.split(".");
+  const intDigits  = iStr.padStart(6, "0").split("");
+  const fracDigits = fStr.split("");
+
+  return (
+    <div className={styles.odometer}>
+      {intDigits.map((d, i) => (
+        <OdometerDigit
+          key={i}
+          digit={Number(d)}
+          delay={(intDigits.length - 1 - i) * 50}
+        />
+      ))}
+      <span className={styles.odomDot}>.</span>
+      {fracDigits.map((d, i) => (
+        <OdometerDigit key={`f${i}`} digit={Number(d)} delay={i * 25} />
+      ))}
+    </div>
+  );
+};
 
 const MONTH_NAMES = [
   "January","February","March","April","May","June",
@@ -84,18 +131,21 @@ const FuelReport = () => {
     setFuelTotals({ qty: 0, amount: 0 });
     setTotalDistance("0.000 KM");
 
-    // Dono parallel start — jo pehle aaye woh pehle set ho
-    getSummaryCache(cityName, year, month).then((summaryData) => {
-      setSummary(summaryData ? {
-        quantity:  Number(summaryData.total_qty)    || 0,
-        amount:    Number(summaryData.total_amount) || 0,
-        runningKm: Number(summaryData.total_km)     || 0,
-      } : { quantity: 0, amount: 0, runningKm: 0 });
+    // Dono parallel
+    const [summaryData, vehicleListData] = await Promise.all([
+      getSummaryCache(cityName, year, month),
+      getVehicleList(cityName, year, month),
+    ]);
+
+    setSummary({
+      quantity:  summaryData ? Number(summaryData.total_qty)    || 0 : 0,
+      amount:    summaryData ? Number(summaryData.total_amount) || 0 : 0,
+      runningKm: summaryData ? Number(summaryData.total_km)     || 0 : 0,
     });
 
-    const vehicleListData = await getVehicleList(cityName, year, month);
     setVehicles(vehicleListData);
     setLoading(false);
+    return vehicleListData;
   }, [cityName, year, month]);
 
   useEffect(() => { fetchMonthData(); }, [fetchMonthData]);
@@ -116,6 +166,12 @@ const FuelReport = () => {
       setSyncMessage("Data load ho raha hai...");
       setSyncPercent(100);
       await fetchMonthData();
+      // Background — Portal KM calculate karo, Supabase save karo, top bar update karo
+      debugAllVehiclesRunningKm(cityName, year, month).then((totalKm) => {
+        if (totalKm != null) {
+          setSummary((prev) => ({ ...prev, runningKm: totalKm }));
+        }
+      });
     } catch (err) {
       console.error("[SyncData] Error:", err);
       setSyncMessage("Sync fail hua. Console check karein.");
@@ -248,7 +304,6 @@ const FuelReport = () => {
               <span>Amount</span>
             </div>
           </div>
-          {/* Running KM — temporarily hidden
           <div className={styles.statPill}>
             <MdSpeed className={styles.pillIcon} />
             <div>
@@ -256,7 +311,6 @@ const FuelReport = () => {
               <span>Running KM</span>
             </div>
           </div>
-          */}
           <div className={`${styles.statPill} ${styles.statPillClickable}`} onClick={handleOpenDataModal}>
             <MdCloudDownload className={styles.pillIcon} />
             <div>
