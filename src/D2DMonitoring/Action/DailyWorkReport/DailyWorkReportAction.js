@@ -19,23 +19,23 @@ const withRetry = async (fn, attempts = 3, delayMs = 1000) => {
 // Firebase camelCase → Supabase snake_case display format
 // ward_halt_duration: future field — not yet computed, kept as null placeholder
 const toDisplayFormat = (row) => ({
-    zone:                   row.zone                  ?? null,
-    duty_on:                row.dutyOn                ?? null,
-    entered_ward_boundary:  row.enteredWardBoundary   ?? null,
-    duty_off:               row.dutyOff               ?? null,
-    vehicle:                row.vehicle               ?? null,
-    driver:                 row.driver                ?? null,
-    helper:                 row.helper                ?? null,
-    second_helper:          row.secondHelper          ?? null,
-    vehicle_reg_no:         row.vehicleRegNo          ?? null,
-    trip_bins:              row.tripBins              ?? null,
-    total_working_hrs:      row.totalWorkingHrs       ?? null,
-    run_km:                 row.runKm                 ?? null,
-    remark:                 row.remark                ?? null,
-    actual_work_percentage: row.actualWorkPercentage  ?? null,
-    work_percentage:        row.workPercentage        ?? null,
-    zone_run_km:            row.zoneRunKm             ?? null,
-    ward_halt_duration:     row.haltDuration      ?? null,
+    zone: row.zone ?? null,
+    duty_on: row.dutyOn ?? null,
+    entered_ward_boundary: row.enteredWardBoundary ?? null,
+    duty_off: row.dutyOff ?? null,
+    vehicle: row.vehicle ?? null,
+    driver: row.driver ?? null,
+    helper: row.helper ?? null,
+    second_helper: row.secondHelper ?? null,
+    vehicle_reg_no: row.vehicleRegNo ?? null,
+    trip_bins: row.tripBins ?? null,
+    total_working_hrs: row.totalWorkingHrs ?? null,
+    run_km: row.runKm ?? null,
+    remark: row.remark ?? null,
+    actual_work_percentage: row.actualWorkPercentage ?? null,
+    work_percentage: row.workPercentage ?? null,
+    zone_run_km: row.zoneRunKm ?? null,
+    ward_halt_duration: row.haltDuration ?? null,
 });
 
 // "08:00:00" → "08:00" | "08:00" → "08:00" | null → null
@@ -61,27 +61,27 @@ export const syncFromFirebase = async (city, date) => {
         withRetry(() => getReportFromSupabase(city, date)),
     ]);
 
-    const savedMap    = Object.fromEntries(savedRows.map(r => [r.zone, r]));
+    const savedMap = Object.fromEntries(savedRows.map(r => [r.zone, r]));
     const changedRows = freshRows.filter(row => {
         if (!row.zone) return false;
         const saved = savedMap[row.zone];
         if (!saved) return true;
-        return normTime(saved.duty_on)                !== normTime(row.dutyOn               ?? null) ||
-               normTime(saved.duty_off)              !== normTime(row.dutyOff              ?? null) ||
-               normTime(saved.entered_ward_boundary) !== normTime(row.enteredWardBoundary  ?? null) ||
-               saved.vehicle               !== (row.vehicle              ?? null) ||
-               saved.driver                !== (row.driver               ?? null) ||
-               saved.helper                !== (row.helper               ?? null) ||
-               saved.second_helper         !== (row.secondHelper         ?? null) ||
-               saved.vehicle_reg_no        !== (row.vehicleRegNo         ?? null) ||
-               saved.trip_bins             !== (row.tripBins             ?? null) ||
-               saved.total_working_hrs    !== (row.totalWorkingHrs      ?? null) ||
-               saved.run_km              !== (row.runKm                ?? null) ||
-               saved.remark                !== (row.remark               ?? null) ||
-               saved.actual_work_percentage !== (row.actualWorkPercentage ?? null) ||
-               saved.work_percentage       !== (row.workPercentage        ?? null) ||
-               saved.zone_run_km           !== (row.zoneRunKm             ?? null) ||
-               saved.ward_halt_duration    !== (row.haltDuration          ?? null);
+        return normTime(saved.duty_on) !== normTime(row.dutyOn ?? null) ||
+            normTime(saved.duty_off) !== normTime(row.dutyOff ?? null) ||
+            normTime(saved.entered_ward_boundary) !== normTime(row.enteredWardBoundary ?? null) ||
+            saved.vehicle !== (row.vehicle ?? null) ||
+            saved.driver !== (row.driver ?? null) ||
+            saved.helper !== (row.helper ?? null) ||
+            saved.second_helper !== (row.secondHelper ?? null) ||
+            saved.vehicle_reg_no !== (row.vehicleRegNo ?? null) ||
+            saved.trip_bins !== (row.tripBins ?? null) ||
+            saved.total_working_hrs !== (row.totalWorkingHrs ?? null) ||
+            saved.run_km !== (row.runKm ?? null) ||
+            saved.remark !== (row.remark ?? null) ||
+            saved.actual_work_percentage !== (row.actualWorkPercentage ?? null) ||
+            saved.work_percentage !== (row.workPercentage ?? null) ||
+            saved.zone_run_km !== (row.zoneRunKm ?? null) ||
+            saved.ward_halt_duration !== (row.haltDuration ?? null);
     });
 
     let result;
@@ -91,23 +91,23 @@ export const syncFromFirebase = async (city, date) => {
         console.group(`[DWR Sync] ${changedRows.length} rows changed | ~${sizeKB} KB`);
         changedRows.forEach(row => {
             const saved = savedMap[row.zone];
-            const diff  = {};
-            if (normTime(saved?.duty_on)                !== normTime(row.dutyOn               ?? null)) diff.duty_on                = { old: saved?.duty_on,               new: row.dutyOn };
-            if (normTime(saved?.duty_off)              !== normTime(row.dutyOff              ?? null)) diff.duty_off              = { old: saved?.duty_off,              new: row.dutyOff };
-            if (normTime(saved?.entered_ward_boundary) !== normTime(row.enteredWardBoundary  ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary, new: row.enteredWardBoundary };
-            if (saved?.vehicle               !== (row.vehicle              ?? null)) diff.vehicle               = { old: saved?.vehicle,                new: row.vehicle };
-            if (saved?.driver                !== (row.driver               ?? null)) diff.driver                = { old: saved?.driver,                 new: row.driver };
-            if (saved?.helper                !== (row.helper               ?? null)) diff.helper                = { old: saved?.helper,                 new: row.helper };
-            if (saved?.second_helper         !== (row.secondHelper         ?? null)) diff.second_helper         = { old: saved?.second_helper,          new: row.secondHelper };
-            if (saved?.vehicle_reg_no        !== (row.vehicleRegNo         ?? null)) diff.vehicle_reg_no        = { old: saved?.vehicle_reg_no,          new: row.vehicleRegNo };
-            if (saved?.trip_bins             !== (row.tripBins             ?? null)) diff.trip_bins             = { old: saved?.trip_bins,               new: row.tripBins };
-            if (saved?.total_working_hrs    !== (row.totalWorkingHrs      ?? null)) diff.total_working_hrs    = { old: saved?.total_working_hrs,        new: row.totalWorkingHrs };
-            if (saved?.run_km              !== (row.runKm                ?? null)) diff.run_km              = { old: saved?.run_km,                   new: row.runKm };
-            if (saved?.remark                !== (row.remark               ?? null)) diff.remark                = { old: saved?.remark,                 new: row.remark };
+            const diff = {};
+            if (normTime(saved?.duty_on) !== normTime(row.dutyOn ?? null)) diff.duty_on = { old: saved?.duty_on, new: row.dutyOn };
+            if (normTime(saved?.duty_off) !== normTime(row.dutyOff ?? null)) diff.duty_off = { old: saved?.duty_off, new: row.dutyOff };
+            if (normTime(saved?.entered_ward_boundary) !== normTime(row.enteredWardBoundary ?? null)) diff.entered_ward_boundary = { old: saved?.entered_ward_boundary, new: row.enteredWardBoundary };
+            if (saved?.vehicle !== (row.vehicle ?? null)) diff.vehicle = { old: saved?.vehicle, new: row.vehicle };
+            if (saved?.driver !== (row.driver ?? null)) diff.driver = { old: saved?.driver, new: row.driver };
+            if (saved?.helper !== (row.helper ?? null)) diff.helper = { old: saved?.helper, new: row.helper };
+            if (saved?.second_helper !== (row.secondHelper ?? null)) diff.second_helper = { old: saved?.second_helper, new: row.secondHelper };
+            if (saved?.vehicle_reg_no !== (row.vehicleRegNo ?? null)) diff.vehicle_reg_no = { old: saved?.vehicle_reg_no, new: row.vehicleRegNo };
+            if (saved?.trip_bins !== (row.tripBins ?? null)) diff.trip_bins = { old: saved?.trip_bins, new: row.tripBins };
+            if (saved?.total_working_hrs !== (row.totalWorkingHrs ?? null)) diff.total_working_hrs = { old: saved?.total_working_hrs, new: row.totalWorkingHrs };
+            if (saved?.run_km !== (row.runKm ?? null)) diff.run_km = { old: saved?.run_km, new: row.runKm };
+            if (saved?.remark !== (row.remark ?? null)) diff.remark = { old: saved?.remark, new: row.remark };
             if (saved?.actual_work_percentage !== (row.actualWorkPercentage ?? null)) diff.actual_work_percentage = { old: saved?.actual_work_percentage, new: row.actualWorkPercentage };
-            if (saved?.work_percentage       !== (row.workPercentage        ?? null)) diff.work_percentage       = { old: saved?.work_percentage,        new: row.workPercentage };
-            if (saved?.zone_run_km           !== (row.zoneRunKm             ?? null)) diff.zone_run_km           = { old: saved?.zone_run_km,             new: row.zoneRunKm };
-            if (saved?.ward_halt_duration    !== (row.haltDuration          ?? null)) diff.ward_halt_duration    = { old: saved?.ward_halt_duration,      new: row.haltDuration };
+            if (saved?.work_percentage !== (row.workPercentage ?? null)) diff.work_percentage = { old: saved?.work_percentage, new: row.workPercentage };
+            if (saved?.zone_run_km !== (row.zoneRunKm ?? null)) diff.zone_run_km = { old: saved?.zone_run_km, new: row.zoneRunKm };
+            if (saved?.ward_halt_duration !== (row.haltDuration ?? null)) diff.ward_halt_duration = { old: saved?.ward_halt_duration, new: row.haltDuration };
             console.log(`  Zone: ${row.zone}`, diff);
         });
         console.groupEnd();

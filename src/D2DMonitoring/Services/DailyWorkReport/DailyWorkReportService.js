@@ -12,6 +12,31 @@ const getSummaryPath = (wardId, date) => {
     return `WasteCollectionInfo/${wardId}/${year}/${month}/${date}/Summary`;
 };
 
+export const scanDailyWorkTasks = async (date) => {
+    try {
+        const [year, monthNum] = date.split('-');
+        const month = MONTHS[Number(monthNum) - 1];
+        const path = `DailyWorkDetail/${year}/${month}/${date}`;
+        const data = await db.getData(path);
+        if (data) {
+            for (const [id, userNode] of Object.entries(data)) {
+                if (typeof userNode === 'object' && userNode !== null) {
+                    for (const [key, val] of Object.entries(userNode)) {
+                        if (key.startsWith('task') && val && val.task !== undefined && val.binLiftingPlanId) {
+                            const isNum = !isNaN(val.task) && String(val.task).trim() !== '';
+                            if (!isNum) {
+                                console.log("hello Task", val.task);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Error scanning daily work tasks:", err);
+    }
+};
+
 const getWorkerDetailsPath = (wardId, date) => {
     const [year, monthNum] = date.split('-');
     const month = MONTHS[Number(monthNum) - 1];
@@ -213,6 +238,9 @@ export const fetchReportData = async (wards, date, onRow) => {
     console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 5}`);
     const t0 = performance.now();
 
+    // Call the requested scan function in the background
+    scanDailyWorkTasks(date);
+
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
@@ -230,6 +258,7 @@ export const fetchReportData = async (wards, date, onRow) => {
                 const runKm        = calculateRunKm(locationData);
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
                 const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration);
+                
                 if (onRow && hasRowData(row)) onRow(row);
                 return row;
             } catch {
