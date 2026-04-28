@@ -24,22 +24,144 @@ const getDustbinAssignmentPath = (date) => {
     return `DustbinData/DustbinAssignment/${year}/${month}/${date}`;
 };
 
+const getDustbinPickingPlanHistoryPath = (date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `DustbinData/DustbinPickingPlanHistory/${year}/${month}/${date}`;
+};
+
+const getDustbinPickingPlansPath = (date) => `DustbinData/DustbinPickingPlans/${date}`;
+const getDustbinPickHistoryPath = (date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `DustbinData/DustbinPickHistory/${year}/${month}/${date}`;
+};
+
+const employeeNameCache = new Map();
+
+const fetchEmployeeName = async (employeeId) => {
+    if (!employeeId) return null;
+
+    const normalizedId = String(employeeId).trim();
+    if (!normalizedId) return null;
+
+    if (employeeNameCache.has(normalizedId)) {
+        return employeeNameCache.get(normalizedId);
+    }
+
+    try {
+        const name = await db.getData(`Employees/${normalizedId}/GeneralDetails/name`);
+        const normalizedName = name ? String(name).trim() : null;
+        employeeNameCache.set(normalizedId, normalizedName);
+        return normalizedName;
+    } catch {
+        employeeNameCache.set(normalizedId, null);
+        return null;
+    }
+};
+
+const formatEmployeeDisplay = (employeeId, employeeName) => {
+    if (!employeeId) return null;
+    return employeeName ? `${employeeName} (${employeeId})` : employeeId;
+};
+
+const getAssignedDustbinCount = (planData) => {
+    const bins = String(planData?.bins || '').split(',').map(bin => bin.trim()).filter(Boolean);
+    if (bins.length) return bins.length;
+    const value = planData?.totalDustbin ?? planData?.assignedDustbin ?? planData?.assignedDustbins ?? null;
+    return value != null && !Number.isNaN(Number(value)) ? Number(value) : null;
+};
+
+const buildPickedDustbinList = (pickHistoryData) => {
+    const pickedDustbinList = [];
+    Object.entries(pickHistoryData || {}).forEach(([dustbinId, planData]) => {
+        Object.keys(planData || {}).forEach((planId) => {
+            pickedDustbinList.push({ dustbin: String(dustbinId).trim(), planId: String(planId).trim() });
+        });
+    });
+    return pickedDustbinList;
+};
+
+const getPickedDustbinCount = (planData, pickedDustbinList, planId) => {
+    const bins = String(planData?.bins || '').split(',').map(bin => bin.trim()).filter(Boolean);
+    if (!bins.length) return 0;
+
+    let pickedDustbinCount = 0;
+    bins.forEach((dustbinId) => {
+        const detail = pickedDustbinList.find(item =>
+            item.dustbin === String(dustbinId).trim() && item.planId === String(planId).trim()
+        );
+        if (detail) pickedDustbinCount += 1;
+    });
+    return pickedDustbinCount;
+};
+
+const formatBinLiftingTripBins = (tripCount, pickedDustbinCount, assignedDustbinCount) => {
+    if (tripCount == null && pickedDustbinCount == null && assignedDustbinCount == null) return null;
+
+    const tripPart = Number(tripCount) > 0 ? String(tripCount) : "";
+    const hasPickedPart = pickedDustbinCount != null && !Number.isNaN(Number(pickedDustbinCount));
+    const hasAssignedPart = assignedDustbinCount != null && !Number.isNaN(Number(assignedDustbinCount));
+    const pickedPart = hasPickedPart ? String(pickedDustbinCount) : "";
+    const assignedPart = hasAssignedPart ? String(assignedDustbinCount) : "";
+
+    let binsPart = "";
+    if (hasPickedPart && hasAssignedPart) binsPart = `${pickedPart}/${assignedPart}`;
+    else if (pickedPart) binsPart = pickedPart;
+    else if (assignedPart) binsPart = assignedPart;
+
+    if (tripPart && binsPart) return `${tripPart} - ${binsPart}`;
+    if (tripPart) return tripPart;
+    if (binsPart) return binsPart;
+    return null;
+};
+
+const calculateBinLiftingWorkPercentage = (pickedDustbinCount, assignedDustbinCount) => {
+    if (!pickedDustbinCount || !assignedDustbinCount) return null;
+    return Math.round((pickedDustbinCount * 100) / assignedDustbinCount);
+};
+
 export const scanDailyWorkTasks = async (date) => {
     try {
-        const [data, assignmentData] = await Promise.all([
+        const [data, assignmentData, completedPlansData, pendingPlansData, pickedDustbinHistoryData] = await Promise.all([
             db.getData(getDailyWorkDetailPath(date)),
             db.getData(getDustbinAssignmentPath(date)),
+            db.getData(getDustbinPickingPlanHistoryPath(date)),
+            db.getData(getDustbinPickingPlansPath(date)),
+            db.getData(getDustbinPickHistoryPath(date)),
         ]);
-        const binLiftingTasks = [];
+        const binLiftingTaskMap = new Map();
         const assignmentMap = Object.values(assignmentData || {}).reduce((acc, item) => {
             if (item?.planId) acc[item.planId] = item;
             return acc;
         }, {});
+        const pickedDustbinList = buildPickedDustbinList(pickedDustbinHistoryData);
+        const planMetaMap = {
+            ...Object.entries(pendingPlansData || {}).reduce((acc, [planId, item]) => {
+                const normalizedPlanId = String(planId);
+                const assignedDustbinCount = getAssignedDustbinCount(item);
+                acc[planId] = {
+                    assignedDustbinCount,
+                    pickedDustbinCount: getPickedDustbinCount(item, pickedDustbinList, normalizedPlanId),
+                };
+                return acc;
+            }, {}),
+            ...Object.entries(completedPlansData || {}).reduce((acc, [planId, item]) => {
+                const normalizedPlanId = String(planId);
+                const assignedDustbinCount = getAssignedDustbinCount(item);
+                acc[planId] = {
+                    assignedDustbinCount,
+                    pickedDustbinCount: getPickedDustbinCount(item, pickedDustbinList, normalizedPlanId),
+                };
+                return acc;
+            }, {}),
+        };
         if (data) {
             for (const [id, userNode] of Object.entries(data)) {
                 if (typeof userNode === 'object' && userNode !== null) {
                     for (const [key, val] of Object.entries(userNode)) {
                         if (key.startsWith('task') && val && val.task !== undefined && val.binLiftingPlanId) {
+                            const planId = String(val.binLiftingPlanId);
                             const isNum = !isNaN(val.task) && String(val.task).trim() !== '';
                             if (!isNum) {
                                 console.log("hello Task", val.task);
@@ -61,8 +183,10 @@ export const scanDailyWorkTasks = async (date) => {
 
                                 const vehicle = val.vehicle ? String(val.vehicle) : null;
                                 const vehicleRegNo = await fetchVehicleRegNo(vehicle);
-                                const assignment = assignmentMap[val.binLiftingPlanId] || {};
-                                binLiftingTasks.push({
+                                const assignment = assignmentMap[planId] || {};
+                                const planMeta = planMetaMap[planId] || {};
+                                binLiftingTaskMap.set(planId, {
+                                    planId,
                                     zone: String(val.task),
                                     dutyOn,
                                     dutyOff,
@@ -71,6 +195,13 @@ export const scanDailyWorkTasks = async (date) => {
                                     driver: assignment.driver ? String(assignment.driver) : null,
                                     helper: assignment.helper ? String(assignment.helper) : null,
                                     secondHelper: assignment.secondHelper ? String(assignment.secondHelper) : null,
+                                    tripBins: 0,
+                                    tripBinsDisplay: null,
+                                    totalWorkingHrs: calcWorkingHrs(dutyOn, dutyOff, date),
+                                    workPercentage: calculateBinLiftingWorkPercentage(
+                                        planMeta.pickedDustbinCount,
+                                        planMeta.assignedDustbinCount
+                                    ),
                                 });
                             }
                         }
@@ -78,7 +209,43 @@ export const scanDailyWorkTasks = async (date) => {
                 }
             }
         }
-        return binLiftingTasks;
+
+        const binLiftingTasks = await Promise.all(
+            [...binLiftingTaskMap.values()].map(async (task) => {
+                const tripData = await db.getData(getWardTripsPath(task.planId, date));
+                const tripCount = tripData ? Object.keys(tripData).length : 0;
+                const planMeta = planMetaMap[task.planId] || {};
+                return {
+                    ...task,
+                    tripBins: tripCount,
+                    tripBinsDisplay: formatBinLiftingTripBins(
+                        tripCount,
+                        planMeta.pickedDustbinCount,
+                        planMeta.assignedDustbinCount
+                    ),
+                    workPercentage: calculateBinLiftingWorkPercentage(
+                        planMeta.pickedDustbinCount,
+                        planMeta.assignedDustbinCount
+                    ),
+                };
+            })
+        );
+
+        const employeeIds = [...new Set(
+            binLiftingTasks.flatMap(task => [task.driver, task.helper, task.secondHelper].filter(Boolean))
+        )];
+
+        const employeeEntries = await Promise.all(
+            employeeIds.map(async (employeeId) => [employeeId, await fetchEmployeeName(employeeId)])
+        );
+        const employeeNameMap = new Map(employeeEntries);
+
+        return binLiftingTasks.map(task => ({
+            ...task,
+            driver: formatEmployeeDisplay(task.driver, employeeNameMap.get(task.driver)),
+            helper: formatEmployeeDisplay(task.helper, employeeNameMap.get(task.helper)),
+            secondHelper: formatEmployeeDisplay(task.secondHelper, employeeNameMap.get(task.secondHelper)),
+        }));
     } catch (err) {
         console.error("Error scanning daily work tasks:", err);
         return [];
@@ -210,9 +377,10 @@ const timeToMinutes = (t) => {
     return parts[0] * 60 + (parts[1] || 0);
 };
 
-const calcWorkingHrs = (dutyOn, dutyOff) => {
+const calcWorkingHrs = (dutyOn, dutyOff, date = null) => {
     const start = timeToMinutes(dutyOn);
-    const end   = timeToMinutes(dutyOff);
+    const effectiveDutyOff = dutyOff || (date === TODAY() ? new Date().toTimeString().slice(0, 5) : null);
+    const end   = timeToMinutes(effectiveDutyOff);
     if (start === null || end === null || end <= start) return null;
     return Number(((end - start) / 60).toFixed(2));
 };
@@ -296,7 +464,7 @@ const fetchVehicleRegNo = async (vehicleStr) => {
     return valid.length ? valid.join(', ') : null;
 };
 
-const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null, dutyTimes = null) => {
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null, dutyTimes = null, date = null) => {
     const dutyOn  = dutyTimes?.dutyIn ?? normalizeShortTime(summary?.dutyInTime);
     const dutyOff = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
     return {
@@ -305,7 +473,7 @@ const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tri
     dutyOn,
     enteredWardBoundary:  normalizeTime(summary?.wardReachedOn, "first"),
     dutyOff,
-    totalWorkingHrs:      calcWorkingHrs(dutyOn, dutyOff),
+    totalWorkingHrs:      calcWorkingHrs(dutyOn, dutyOff, date),
     vehicle:              workerDetails?.vehicle               ?? null,
     vehicleRegNo,
     tripBins,
@@ -351,12 +519,12 @@ export const fetchReportData = async (wards, date, onRow) => {
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
                 const runKm        = calculateRunKm(locationData);
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
-                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, dutyTimes);
+                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, dutyTimes, date);
                 
                 if (onRow && hasRowData(row)) onRow(row);
                 return row;
             } catch {
-                return buildRow(id, name, null, null);
+                return buildRow(id, name, null, null, null, null, null, null, null, date);
             }
         })
     );

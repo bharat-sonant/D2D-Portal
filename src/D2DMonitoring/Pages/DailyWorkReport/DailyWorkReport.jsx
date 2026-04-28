@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import { images } from "../../../assets/css/imagePath";
 import styles from "./DailyWorkReport.module.css";
 import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
@@ -174,6 +176,42 @@ const DailyWorkReport = () => {
         }
     };
 
+    const handleExportExcel = () => {
+        if (!displayData.length) {
+            toast.info("No data available to export.");
+            return;
+        }
+
+        const exportRows = displayData.map((row) => ({
+            Zone: row.display_zone || row.zone
+                ? row.is_bin_lifting_task
+                    ? (row.display_zone || row.zone)
+                    : `Zone ${row.display_zone || row.zone}`
+                : "-",
+            "Duty On": fmtTime(row.duty_on),
+            "Entered Ward Boundary": fmtTime(row.entered_ward_boundary),
+            "Duty Off": fmtTime(row.duty_off),
+            Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "-",
+            "Vehicle Reg. No.": row.vehicle_reg_no || "-",
+            Driver: row.driver || "-",
+            Helper: row.helper || "-",
+            "Second Helper": row.second_helper || "-",
+            "Trip/Bins": row.trip_bins_display ?? row.trip_bins ?? "-",
+            "Total Working Hrs": fmtHours(row.total_working_hrs),
+            "Ward Halt Duration": fmtHours(row.ward_halt_duration),
+            "Work Percentage": row.work_percentage ?? row.actual_work_percentage ?? "-",
+            "Actual Work Percentage": row.actual_work_percentage ?? "-",
+            "Run KM": fmtDist(row.run_km),
+            "Zone Run KM": fmtDist(row.zone_run_km),
+            Remark: row.remark || "-",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportRows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Daily Work Report");
+        XLSX.writeFile(workbook, `Daily_Work_Report_${city || "city"}_${selectedDate}.xlsx`);
+    };
+
     return (
         <div className={styles.pageWrapper}>
 
@@ -222,6 +260,20 @@ const DailyWorkReport = () => {
                             onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
                         />
                     </div>
+
+                    <button
+                        type="button"
+                        className={styles.exportBtn}
+                        onClick={handleExportExcel}
+                        aria-label="Export table in Excel"
+                    >
+                        <img
+                            src={images.iconExcel}
+                            className={styles.iconExcel}
+                            alt="Export to Excel"
+                        />
+                        <span>Export Excel</span>
+                    </button>
                 </div>
             </div>
 
@@ -292,10 +344,10 @@ const DailyWorkReport = () => {
                             displayData.map((row, i) => (
                                 <tr key={row.id ?? i}>
                                     <td>
-                                        {row.zone
+                                        {row.display_zone || row.zone
                                             ? row.is_bin_lifting_task
-                                                ? row.zone
-                                                : `Zone ${row.zone}`
+                                                ? (row.display_zone || row.zone)
+                                                : `Zone ${row.display_zone || row.zone}`
                                             : "-"}
                                     </td>
                                     <td>{fmtTime(row.duty_on)}</td>
@@ -311,7 +363,7 @@ const DailyWorkReport = () => {
                                     <td>{row.driver                    || "-"}</td>
                                     <td>{row.helper                    || "-"}</td>
                                     <td>{row.second_helper             || "-"}</td>
-                                    <td>{row.trip_bins                 ?? "-"}</td>
+                                    <td>{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
                                     <td>{fmtHours(row.total_working_hrs)}</td>
                                     <td>{fmtHours(row.ward_halt_duration)}</td>
                                     <td>{row.work_percentage ?? row.actual_work_percentage ?? "-"}</td>
