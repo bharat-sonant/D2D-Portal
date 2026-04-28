@@ -43,6 +43,7 @@ const fmtDist = (v) => {
 // Pure functions — component ke bahar taaki har render pe recreate na ho
 const filterEmpty = (rows) =>
     rows.filter(row =>
+        row.is_bin_lifting_task ||
         row.duty_on || row.duty_off || row.entered_ward_boundary ||
         row.vehicle || row.driver || row.helper ||
         row.remark || row.actual_work_percentage != null || row.work_percentage != null
@@ -50,6 +51,11 @@ const filterEmpty = (rows) =>
 
 const sortByZone = (rows) =>
     [...rows].sort((a, b) => {
+        if (a.is_bin_lifting_task && b.is_bin_lifting_task) {
+            return (a.bin_lifting_order ?? 0) - (b.bin_lifting_order ?? 0);
+        }
+        if (a.is_bin_lifting_task) return 1;
+        if (b.is_bin_lifting_task) return -1;
         const aNum = parseInt(a.zone);
         const bNum = parseInt(b.zone);
         const aIsNum = !isNaN(aNum);
@@ -285,7 +291,13 @@ const DailyWorkReport = () => {
                         ) : (
                             displayData.map((row, i) => (
                                 <tr key={row.id ?? i}>
-                                    <td>{row.zone ? `Zone ${row.zone}` : "-"}</td>
+                                    <td>
+                                        {row.zone
+                                            ? row.is_bin_lifting_task
+                                                ? row.zone
+                                                : `Zone ${row.zone}`
+                                            : "-"}
+                                    </td>
                                     <td>{fmtTime(row.duty_on)}</td>
                                     <td>{fmtTime(row.entered_ward_boundary)}</td>
                                     <td>{fmtTime(row.duty_off)}</td>

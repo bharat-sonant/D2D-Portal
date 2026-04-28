@@ -12,12 +12,29 @@ const getSummaryPath = (wardId, date) => {
     return `WasteCollectionInfo/${wardId}/${year}/${month}/${date}/Summary`;
 };
 
+const getDailyWorkDetailPath = (date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `DailyWorkDetail/${year}/${month}/${date}`;
+};
+
+const getDustbinAssignmentPath = (date) => {
+    const [year, monthNum] = date.split('-');
+    const month = MONTHS[Number(monthNum) - 1];
+    return `DustbinData/DustbinAssignment/${year}/${month}/${date}`;
+};
+
 export const scanDailyWorkTasks = async (date) => {
     try {
-        const [year, monthNum] = date.split('-');
-        const month = MONTHS[Number(monthNum) - 1];
-        const path = `DailyWorkDetail/${year}/${month}/${date}`;
-        const data = await db.getData(path);
+        const [data, assignmentData] = await Promise.all([
+            db.getData(getDailyWorkDetailPath(date)),
+            db.getData(getDustbinAssignmentPath(date)),
+        ]);
+        const binLiftingTasks = [];
+        const assignmentMap = Object.values(assignmentData || {}).reduce((acc, item) => {
+            if (item?.planId) acc[item.planId] = item;
+            return acc;
+        }, {});
         if (data) {
             for (const [id, userNode] of Object.entries(data)) {
                 if (typeof userNode === 'object' && userNode !== null) {
@@ -26,14 +43,45 @@ export const scanDailyWorkTasks = async (date) => {
                             const isNum = !isNaN(val.task) && String(val.task).trim() !== '';
                             if (!isNum) {
                                 console.log("hello Task", val.task);
+                                const inOutEntries = Object.entries(val["in-out"] || {});
+                                let dutyOn = null;
+                                let dutyOff = null;
+
+                                inOutEntries.forEach(([time, type]) => {
+                                    if (type === "In" && !dutyOn) dutyOn = String(time).slice(0, 5);
+                                });
+
+                                for (let i = inOutEntries.length - 1; i >= 0; i--) {
+                                    const [time, type] = inOutEntries[i];
+                                    if (type === "Out") {
+                                        dutyOff = String(time).slice(0, 5);
+                                        break;
+                                    }
+                                }
+
+                                const vehicle = val.vehicle ? String(val.vehicle) : null;
+                                const vehicleRegNo = await fetchVehicleRegNo(vehicle);
+                                const assignment = assignmentMap[val.binLiftingPlanId] || {};
+                                binLiftingTasks.push({
+                                    zone: String(val.task),
+                                    dutyOn,
+                                    dutyOff,
+                                    vehicle,
+                                    vehicleRegNo,
+                                    driver: assignment.driver ? String(assignment.driver) : null,
+                                    helper: assignment.helper ? String(assignment.helper) : null,
+                                    secondHelper: assignment.secondHelper ? String(assignment.secondHelper) : null,
+                                });
                             }
                         }
                     }
                 }
             }
         }
+        return binLiftingTasks;
     } catch (err) {
         console.error("Error scanning daily work tasks:", err);
+        return [];
     }
 };
 
@@ -178,10 +226,56 @@ const normalizeTime = (value, mode = "first") => {
     return mode === "last" ? arr[arr.length - 1] : arr[0];
 };
 
+const normalizeShortTime = (value) => {
+    const t = normalizeTime(value);
+    return t ? String(t).slice(0, 5) : null;
+};
+
+const buildDailyWorkDetailTimeMap = (dailyWorkDetailData) => {
+    const zoneTimeMap = new Map();
+    if (!dailyWorkDetailData || typeof dailyWorkDetailData !== 'object') return zoneTimeMap;
+
+    Object.values(dailyWorkDetailData).forEach((userNode) => {
+        if (!userNode || typeof userNode !== 'object') return;
+
+        Object.entries(userNode).forEach(([key, task]) => {
+            if (!key.startsWith('task') || !task?.task || !task['in-out']) return;
+
+            const zone = String(task.task).trim();
+            if (!zone) return;
+
+            const inOutEntries = Object.entries(task['in-out']);
+            if (!inOutEntries.length) return;
+
+            let dutyIn = null;
+            let dutyOut = null;
+
+            inOutEntries.forEach(([time, type]) => {
+                if (type === 'In' && !dutyIn) dutyIn = String(time).slice(0, 5);
+            });
+
+            for (let i = inOutEntries.length - 1; i >= 0; i--) {
+                const [time, type] = inOutEntries[i];
+                if (type === 'Out') {
+                    dutyOut = String(time).slice(0, 5);
+                    break;
+                }
+            }
+
+            const existing = zoneTimeMap.get(zone);
+            zoneTimeMap.set(zone, {
+                dutyIn: existing?.dutyIn || dutyIn,
+                dutyOut: dutyOut || existing?.dutyOut || null,
+            });
+        });
+    });
+
+    return zoneTimeMap;
+};
+
 
 // Session-level cache — vehicle reg numbers don't change, no need to re-fetch
 const vehicleRegNoCache = new Map();
-
 const fetchVehicleRegNo = async (vehicleStr) => {
     if (!vehicleStr) return null;
     const ids = [...new Set(vehicleStr.split(',').map(v => v.trim()).filter(Boolean))];
@@ -202,9 +296,9 @@ const fetchVehicleRegNo = async (vehicleStr) => {
     return valid.length ? valid.join(', ') : null;
 };
 
-const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null) => {
-    const dutyOn  = normalizeTime(summary?.dutyInTime,  "first");
-    const dutyOff = normalizeTime(summary?.dutyOutTime, "last");
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null, dutyTimes = null) => {
+    const dutyOn  = dutyTimes?.dutyIn ?? normalizeShortTime(summary?.dutyInTime);
+    const dutyOff = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
     return {
     wardId,
     zone,
@@ -237,9 +331,8 @@ const hasRowData = (r) =>
 export const fetchReportData = async (wards, date, onRow) => {
     console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 5}`);
     const t0 = performance.now();
-
-    // Call the requested scan function in the background
-    scanDailyWorkTasks(date);
+    const dailyWorkDetailData = await db.getData(getDailyWorkDetailPath(date));
+    const dailyWorkDetailTimeMap = buildDailyWorkDetailTimeMap(dailyWorkDetailData);
 
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
@@ -251,13 +344,14 @@ export const fetchReportData = async (wards, date, onRow) => {
                     db.getData(getLocationHistoryPath(id, date)),
                     db.getData(getHaltInfoPath(id, date)),
                 ]);
-                const dutyOn       = normalizeTime(summary?.dutyInTime,  "first");
-                const dutyOff      = normalizeTime(summary?.dutyOutTime, "last");
+                const dutyTimes    = dailyWorkDetailTimeMap.get(String(name).trim()) || dailyWorkDetailTimeMap.get(String(id).trim()) || null;
+                const dutyOn       = dutyTimes?.dutyIn ?? normalizeShortTime(summary?.dutyInTime);
+                const dutyOff      = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
                 const runKm        = calculateRunKm(locationData);
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
-                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration);
+                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, dutyTimes);
                 
                 if (onRow && hasRowData(row)) onRow(row);
                 return row;

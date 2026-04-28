@@ -1,5 +1,5 @@
 import { getWardListAction } from '../D2DMonitoring/Monitoring/WardListAction';
-import { fetchReportData } from '../../Services/DailyWorkReport/DailyWorkReportService';
+import { fetchReportData, scanDailyWorkTasks } from '../../Services/DailyWorkReport/DailyWorkReportService';
 import { saveReportToSupabase, getReportFromSupabase } from '../../Services/DailyWorkReportSupabase/DailyWorkReportSupabaseService';
 
 // Network flaky ho toh 3 attempts, har attempt ke baad wait badhta hai (1s, 2s)
@@ -38,6 +38,19 @@ const toDisplayFormat = (row) => ({
     ward_halt_duration: row.haltDuration ?? null,
 });
 
+const toBinLiftingDisplayRow = (task, index) => ({
+    zone: task?.zone ?? null,
+    duty_on: task?.dutyOn ?? null,
+    duty_off: task?.dutyOff ?? null,
+    vehicle: task?.vehicle ?? null,
+    vehicle_reg_no: task?.vehicleRegNo ?? null,
+    driver: task?.driver ?? null,
+    helper: task?.helper ?? null,
+    second_helper: task?.secondHelper ?? null,
+    is_bin_lifting_task: true,
+    bin_lifting_order: index,
+});
+
 // "08:00:00" → "08:00" | "08:00" → "08:00" | null → null
 // Supabase time type fetch pe seconds append karta hai, Firebase nahi karta
 const normTime = (t) => (t ? String(t).slice(0, 5) : null);
@@ -56,9 +69,10 @@ export const syncFromFirebase = async (city, date) => {
 
     // Har case mein Firebase aur Supabase parallel fetch — sync hamesha latest Firebase data check karta hai
     // Past date ho ya today — user ne Sync dabaya matlab woh fresh data chahta hai
-    const [freshRows, savedRows] = await Promise.all([
+    const [freshRows, savedRows, binLiftingTasks] = await Promise.all([
         withRetry(() => fetchReportData(wards, date)),
         withRetry(() => getReportFromSupabase(city, date)),
+        withRetry(() => scanDailyWorkTasks(date)),
     ]);
 
     const savedMap = Object.fromEntries(savedRows.map(r => [r.zone, r]));
@@ -132,6 +146,13 @@ export const syncFromFirebase = async (city, date) => {
     } else {
         console.log(`[DWR Sync] No changes detected`);
         result = savedRows;
+    }
+
+    if (binLiftingTasks.length) {
+        result = [
+            ...result,
+            ...binLiftingTasks.map((task, index) => toBinLiftingDisplayRow(task, index)),
+        ];
     }
 
     reportCache.set(cacheKey, result);
