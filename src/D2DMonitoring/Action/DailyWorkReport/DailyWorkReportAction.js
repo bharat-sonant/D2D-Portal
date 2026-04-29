@@ -79,6 +79,18 @@ const toBinLiftingDisplayRow = (task, index) => ({
 const buildBinLiftingRows = (tasks = []) =>
     tasks.map((task, index) => toBinLiftingDisplayRow(task, index));
 
+const fetchCombinedFirebaseRows = async (wards, date, onRow) => {
+    const [freshRows, binLiftingTasks] = await Promise.all([
+        fetchReportData(wards, date, onRow),
+        scanDailyWorkTasks(date),
+    ]);
+
+    return {
+        freshRows,
+        binLiftingRows: buildBinLiftingRows(binLiftingTasks),
+    };
+};
+
 const mergeLatestBinLiftingRows = (rows, binLiftingTasks) => {
     const nextBinRows = buildBinLiftingRows(binLiftingTasks);
     if (!nextBinRows.length) return dedupeRows(rows);
@@ -143,15 +155,13 @@ export const syncFromFirebase = async (city, date) => {
     const t0 = performance.now();
     const cacheKey = `${city}|${date}`;
 
-    const [freshRows, savedRowsRaw, binLiftingTasks] = await Promise.all([
-        withRetry(() => fetchReportData(wards, date)),
+    const [{ freshRows, binLiftingRows }, savedRowsRaw] = await Promise.all([
+        withRetry(() => fetchCombinedFirebaseRows(wards, date)),
         withRetry(() => getReportFromSupabase(city, date)),
-        withRetry(() => scanDailyWorkTasks(date)),
     ]);
 
     const savedRows = hydrateStoredRows(savedRowsRaw);
     const savedMap = Object.fromEntries(savedRows.map(r => [r.zone, r]));
-    const binLiftingRows = buildBinLiftingRows(binLiftingTasks);
 
     const changedWardRows = freshRows.filter(row => row.zone && (!savedMap[row.zone] || !rowsEqual(savedMap[row.zone], row)));
     const changedBinRows = binLiftingRows.filter(row => row.zone && (!savedMap[row.zone] || !rowsEqual(savedMap[row.zone], row)));
@@ -221,7 +231,10 @@ export const loadReportData = async (city, date, onHit) => {
 
     const inMemory = reportCache.get(cacheKey);
     if (inMemory?.length) {
-        const binLiftingTasks = await withRetry(() => scanDailyWorkTasks(date));
+        const [, binLiftingTasks] = await Promise.all([
+            Promise.resolve(inMemory),
+            withRetry(() => scanDailyWorkTasks(date)),
+        ]);
         const merged = mergeLatestBinLiftingRows(inMemory, binLiftingTasks);
         console.log(`[DWR Load] Memory hit: ${merged.length} rows | 0ms`);
         reportCache.set(cacheKey, merged);
@@ -229,9 +242,12 @@ export const loadReportData = async (city, date, onHit) => {
         return merged;
     }
 
-    const cached = hydrateStoredRows(await withRetry(() => getReportFromSupabase(city, date)));
+    const [cachedRaw, binLiftingTasks] = await Promise.all([
+        withRetry(() => getReportFromSupabase(city, date)),
+        withRetry(() => scanDailyWorkTasks(date)),
+    ]);
+    const cached = hydrateStoredRows(cachedRaw);
     if (cached?.length) {
-        const binLiftingTasks = await withRetry(() => scanDailyWorkTasks(date));
         const merged = mergeLatestBinLiftingRows(cached, binLiftingTasks);
         if (binLiftingTasks.length) {
             const existingMap = Object.fromEntries(cached.filter(r => r.id && r.zone).map(r => [r.zone, r]));
@@ -251,11 +267,7 @@ export const loadReportData = async (city, date, onHit) => {
         onHit?.([...progressive]);
     };
 
-    const [fresh, binLiftingTasks] = await Promise.all([
-        withRetry(() => fetchReportData(wards, date, onRow)),
-        withRetry(() => scanDailyWorkTasks(date)),
-    ]);
-    const binLiftingRows = buildBinLiftingRows(binLiftingTasks);
+    const { freshRows: fresh, binLiftingRows } = await withRetry(() => fetchCombinedFirebaseRows(wards, date, onRow));
 
     try {
         await withRetry(() => saveReportToSupabase(city, date, [...fresh, ...binLiftingRows], {}));
@@ -266,6 +278,7 @@ export const loadReportData = async (city, date, onHit) => {
 
     const result = dedupeRows([...fresh.map(toDisplayFormat), ...binLiftingRows]);
     reportCache.set(cacheKey, result);
+    onHit?.(result);
     console.log(`[DWR Load] Firebase fetch done | ${(performance.now() - t0).toFixed(0)}ms`);
     return result;
 };
