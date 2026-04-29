@@ -8,43 +8,64 @@ import styles from "./DailyWorkReport.module.css";
 import { loadReportData, syncFromFirebase } from "../../Action/DailyWorkReport/DailyWorkReportAction";
 import WevoisLoader from "../../../components/Common/Loader/WevoisLoader";
 
-const getToday      = () => dayjs().format("YYYY-MM-DD");
-const buildLast7Days = () => Array.from({ length: 7 }, (_, i) => {
+const getToday = () => dayjs().format("YYYY-MM-DD");
+
+const buildDateWindow = () => Array.from({ length: 7 }, (_, i) => {
     const d = dayjs().subtract(i, "day");
     return {
         label: i === 0 ? "Today" : d.format("DD MMM"),
-        day:   d.format("ddd"),
+        day: d.format("ddd"),
         value: d.format("YYYY-MM-DD"),
     };
 });
 
-// "11:42:00" → "11:42" | already "11:42" → "11:42" | null/undefined → "-"
 const fmtTime = (t) => {
     if (!t) return "-";
-    const parts = String(t).split(':');
+    const parts = String(t).split(":");
     return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : String(t);
 };
 
-// 4.7 → "4h 42min" | 0.72 → "43min" | 4.0 → "4h" | null → "-"
 const fmtHours = (v) => {
     if (v == null) return "-";
-    const hrs  = Math.floor(v);
+    const hrs = Math.floor(v);
     const mins = Math.round((v - hrs) * 60);
-    if (hrs === 0) return `${mins}min`;
+    if (hrs === 0) return `${mins}m`;
     if (mins === 0) return `${hrs}h`;
-    return `${hrs}h ${String(mins).padStart(2, '0')}min`;
+    return `${hrs}h ${String(mins).padStart(2, "0")}m`;
 };
 
-// 15.57 → "15.57 km" | 0.35 → "350 m" | 0.001 → "1 m" | null → "-"
 const fmtDist = (v) => {
     if (v == null) return "-";
     if (v < 1) return `${Math.round(v * 1000)} m`;
     return `${Number(v.toFixed(2))} km`;
 };
 
-// Pure functions — component ke bahar taaki har render pe recreate na ho
+const fmtPercent = (v) => {
+    if (v == null || v === "") return "-";
+    return `${v}%`;
+};
+
+const getHourTone = (v) => {
+    if (v == null) return "neutral";
+    if (v >= 4) return "success";
+    if (v >= 2) return "info";
+    return "warning";
+};
+
+const getPercentTone = (v) => {
+    if (v == null) return "neutral";
+    if (v >= 80) return "success";
+    if (v >= 50) return "info";
+    return "violet";
+};
+
+const getDistanceTone = (v) => {
+    if (v == null) return "neutral";
+    return v >= 5 ? "success" : "violet";
+};
+
 const filterEmpty = (rows) =>
-    rows.filter(row =>
+    rows.filter((row) =>
         row.is_bin_lifting_task ||
         row.duty_on || row.duty_off || row.entered_ward_boundary ||
         row.vehicle || row.driver || row.helper ||
@@ -68,54 +89,176 @@ const sortByZone = (rows) =>
         return (a.zone || "").localeCompare(b.zone || "");
     });
 
-const DailyWorkReport = () => {
-    const { city }                          = useParams();
-    const [today,        setToday]          = useState(getToday);
-    const [last7Days,    setLast7Days]      = useState(buildLast7Days);
-    const [selectedDate, setSelectedDate]   = useState(getToday);
-    const [data,         setData]           = useState([]);
-    const [loading,      setLoading]        = useState(false);
-    const [syncing,      setSyncing]        = useState(false);
-    const [lastSynced,   setLastSynced]     = useState(null); // Date object
-    const [syncAge,      setSyncAge]        = useState("");   // "X min ago" string
-    const dateInputRef                      = useRef(null);
-    const loadIdRef                         = useRef(0);
+const Icon = ({ name, className }) => {
+    const common = {
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: "1.9",
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        className,
+        "aria-hidden": true,
+    };
 
-    // Fix 2: Midnight pe today + last7Days + selectedDate update
+    switch (name) {
+        case "report":
+            return (
+                <svg {...common}>
+                    <rect x="5" y="3.5" width="14" height="17" rx="2.5" />
+                    <path d="M9 8h6M9 12h6M9 16h4" />
+                </svg>
+            );
+        case "calendar":
+            return (
+                <svg {...common}>
+                    <rect x="3" y="4.5" width="18" height="16" rx="2.5" />
+                    <path d="M8 2.5v4M16 2.5v4M3 9.5h18" />
+                </svg>
+            );
+        case "sync":
+            return (
+                <svg {...common}>
+                    <path d="M21 12a8.7 8.7 0 0 0-14.85-6.15L3 9" />
+                    <path d="M3 4v5h5" />
+                    <path d="M3 12a8.7 8.7 0 0 0 14.85 6.15L21 15" />
+                    <path d="M16 15h5v5" />
+                </svg>
+            );
+        case "zone":
+            return (
+                <svg {...common}>
+                    <path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" />
+                    <circle cx="12" cy="10" r="2.2" />
+                </svg>
+            );
+        case "clock":
+            return (
+                <svg {...common}>
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="M12 7.8v4.6l3 1.8" />
+                </svg>
+            );
+        case "vehicle":
+            return (
+                <svg {...common}>
+                    <path d="M3 14V9.5A2.5 2.5 0 0 1 5.5 7H15l3 3v4" />
+                    <path d="M5 14h14" />
+                    <circle cx="7" cy="16.5" r="1.5" />
+                    <circle cx="17" cy="16.5" r="1.5" />
+                </svg>
+            );
+        case "id":
+            return (
+                <svg {...common}>
+                    <rect x="4" y="5" width="16" height="14" rx="2.5" />
+                    <path d="M8 10h5M8 14h3M15.5 10.5h.01M15.5 14.5h.01" />
+                </svg>
+            );
+        case "user":
+            return (
+                <svg {...common}>
+                    <circle cx="12" cy="8" r="3.2" />
+                    <path d="M5.5 18a6.5 6.5 0 0 1 13 0" />
+                </svg>
+            );
+        case "trips":
+            return (
+                <svg {...common}>
+                    <path d="M12 3 5 7v10l7 4 7-4V7l-7-4Z" />
+                    <path d="m5 7 7 4 7-4M12 11v10" />
+                </svg>
+            );
+        case "chart":
+            return (
+                <svg {...common}>
+                    <path d="M4 18V6M4 18h16" />
+                    <path d="m8 14 3-3 3 2 4-5" />
+                </svg>
+            );
+        case "road":
+            return (
+                <svg {...common}>
+                    <path d="M8 3 5 21M16 3l3 18M12 3v4M12 11v4M12 19v2" />
+                </svg>
+            );
+        case "remark":
+            return (
+                <svg {...common}>
+                    <path d="M7 18.5 3.5 20l1.5-3.5V6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7A2.5 2.5 0 0 1 16.5 16H9l-2 2.5Z" />
+                </svg>
+            );
+        default:
+            return null;
+    }
+};
+
+const headerColumns = [
+    { key: "zone", label: "Zone", icon: "zone" },
+    { key: "dutyOn", label: "Start Time", icon: "clock" },
+    { key: "wardEntry", label: "Ward Entry", icon: "clock" },
+    { key: "dutyOff", label: "End Time", icon: "clock" },
+    { key: "vehicle", label: "Vehicle", icon: "vehicle" },
+    { key: "regNo", label: "Reg. No.", icon: "id" },
+    { key: "driver", label: "Driver", icon: "user" },
+    { key: "helper1", label: "Helper 1", icon: "user" },
+    { key: "helper2", label: "Helper 2", icon: "user" },
+    { key: "trips", label: "Trips/Bins", icon: "trips" },
+    { key: "workHrs", label: "Work Hrs", icon: "clock" },
+    { key: "haltTime", label: "Halt Time", icon: "clock" },
+    { key: "workPercent", label: "Work %", icon: "chart" },
+    { key: "actualPercent", label: "Actual %", icon: "chart" },
+    { key: "runKm", label: "Run (KM)", icon: "road" },
+    { key: "zoneKm", label: "Zone (KM)", icon: "road" },
+    { key: "remarks", label: "Remarks", icon: "remark" },
+];
+
+const DailyWorkReport = () => {
+    const { city } = useParams();
+    const [today, setToday] = useState(getToday);
+    const [selectedDate, setSelectedDate] = useState(getToday);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [syncing, setSyncing] = useState(false);
+    const [lastSynced, setLastSynced] = useState(null);
+    const [syncAge, setSyncAge] = useState("");
+    const dateInputRef = useRef(null);
+    const loadIdRef = useRef(0);
+
     useEffect(() => {
-        const now  = new Date();
+        const now = new Date();
         const next = new Date();
         next.setHours(24, 0, 0, 0);
         const timer = setTimeout(() => {
             const newToday = getToday();
             setToday(newToday);
-            setLast7Days(buildLast7Days());
-            // Agar user aaj ka date dekh raha tha toh naye today pe le jao
-            setSelectedDate(prev => {
-                const yesterday = dayjs(newToday).subtract(1, 'day').format('YYYY-MM-DD');
+            setSelectedDate((prev) => {
+                const yesterday = dayjs(newToday).subtract(1, "day").format("YYYY-MM-DD");
                 return prev === yesterday ? newToday : prev;
             });
         }, next - now);
         return () => clearTimeout(timer);
     }, []);
 
-    // Sort + filter + vehicle_list — data change hone par ek baar compute hota hai, har render pe nahi
     const displayData = useMemo(
-        () => sortByZone(filterEmpty(data)).map(row => ({
+        () => sortByZone(filterEmpty(data)).map((row) => ({
             ...row,
             _vehicleList: row.vehicle
-                ? [...new Set(row.vehicle.split(',').map(v => v.trim()).filter(Boolean))]
+                ? [...new Set(row.vehicle.split(",").map((v) => v.trim()).filter(Boolean))]
                 : [],
         })),
         [data]
     );
 
-    // Sync age — har minute update hota hai jab lastSynced set ho
+    const dateWindow = useMemo(() => buildDateWindow(), [today]);
+    const isSelectedDateInWindow = dateWindow.some((d) => d.value === selectedDate);
+    const titleDate = dayjs(selectedDate).format("DD MMMM YYYY");
+
     useEffect(() => {
         if (!lastSynced) return;
         const calc = () => {
             const mins = Math.floor((Date.now() - lastSynced) / 60000);
-            if (mins < 1)  return setSyncAge("just now");
+            if (mins < 1) return setSyncAge("just now");
             if (mins < 60) return setSyncAge(`${mins} min ago`);
             const hrs = Math.floor(mins / 60);
             return setSyncAge(`${hrs}h ago`);
@@ -133,7 +276,7 @@ const DailyWorkReport = () => {
             setData(updated);
             setLastSynced(Date.now());
         } catch {
-            toast.error("Sync failed — data could not be saved. Please try again.");
+            toast.error("Sync failed - data could not be saved. Please try again.");
         } finally {
             setSyncing(false);
         }
@@ -142,7 +285,6 @@ const DailyWorkReport = () => {
     useEffect(() => {
         if (!city) return;
 
-        // Fix 1: har date change pe naya loadId — stale load ka result ignore hoga
         const loadId = ++loadIdRef.current;
 
         const load = async () => {
@@ -151,12 +293,12 @@ const DailyWorkReport = () => {
             try {
                 let hitFromCache = false;
                 const updated = await loadReportData(city, selectedDate, (cached) => {
-                    if (loadId !== loadIdRef.current) return; // stale load, ignore
+                    if (loadId !== loadIdRef.current) return;
                     hitFromCache = true;
                     setData(cached);
                     setLoading(false);
                 });
-                if (loadId !== loadIdRef.current) return; // stale load, ignore
+                if (loadId !== loadIdRef.current) return;
                 if (!hitFromCache) setData(updated);
             } catch {
                 if (loadId !== loadIdRef.current) return;
@@ -189,21 +331,21 @@ const DailyWorkReport = () => {
                     : `Zone ${row.display_zone || row.zone}`
                 : "-",
             "Duty On": fmtTime(row.duty_on),
-            "Entered Ward Boundary": fmtTime(row.entered_ward_boundary),
+            "Ward Entry": fmtTime(row.entered_ward_boundary),
             "Duty Off": fmtTime(row.duty_off),
             Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "-",
-            "Vehicle Reg. No.": row.vehicle_reg_no || "-",
+            "Reg. No.": row.vehicle_reg_no || "-",
             Driver: row.driver || "-",
-            Helper: row.helper || "-",
-            "Second Helper": row.second_helper || "-",
-            "Trip/Bins": row.trip_bins_display ?? row.trip_bins ?? "-",
-            "Total Working Hrs": fmtHours(row.total_working_hrs),
-            "Ward Halt Duration": fmtHours(row.ward_halt_duration),
-            "Work Percentage": row.work_percentage ?? row.actual_work_percentage ?? "-",
-            "Actual Work Percentage": row.actual_work_percentage ?? "-",
-            "Run KM": fmtDist(row.run_km),
-            "Zone Run KM": fmtDist(row.zone_run_km),
-            Remark: row.remark || "-",
+            "Helper 1": row.helper || "-",
+            "Helper 2": row.second_helper || "-",
+            "Trips/Bins": row.trip_bins_display ?? row.trip_bins ?? "-",
+            "Work Hrs": fmtHours(row.total_working_hrs),
+            "Halt Time": fmtHours(row.ward_halt_duration),
+            "Work %": fmtPercent(row.work_percentage ?? row.actual_work_percentage),
+            "Actual %": fmtPercent(row.actual_work_percentage),
+            "Run (KM)": fmtDist(row.run_km),
+            "Zone (KM)": fmtDist(row.zone_run_km),
+            Remarks: row.remark || "-",
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(exportRows);
@@ -214,170 +356,189 @@ const DailyWorkReport = () => {
 
     return (
         <div className={styles.pageWrapper}>
+            <div className={styles.layout}>
+                <div className={styles.heroCard}>
+                    <div className={styles.heroIdentity}>
+                        <div className={styles.heroIconWrap}>
+                            <Icon name="report" className={styles.heroIcon} />
+                        </div>
+                        <div className={styles.heroText}>
+                            <h2 className={styles.pageTitle}>Daily Work Report</h2>
+                            <div className={styles.heroSubtitle}>
+                                <Icon name="calendar" className={styles.subtitleIcon} />
+                                <span>{selectedDate === today ? `Today, ${titleDate}` : titleDate}</span>
+                                {loading && <span className={styles.tableDateBadge}>Loading...</span>}
+                            </div>
+                        </div>
+                    </div>
 
-            {/* ── Header ── */}
-            <div className={styles.header}>
-                <h2 className={styles.pageTitle}>Daily Work Report</h2>
+                    <div className={styles.heroTimeline}>
+                        <div className={styles.dateTabs}>
+                            {dateWindow.map((d) => (
+                                <button
+                                    key={d.value}
+                                    type="button"
+                                    aria-pressed={selectedDate === d.value}
+                                    aria-label={`Select date ${d.label}`}
+                                    className={`${styles.dateTab} ${selectedDate === d.value ? styles.dateTabActive : ""}`}
+                                    onClick={() => setSelectedDate(d.value)}
+                                >
+                                    <span className={styles.dateTabDay}>{d.day}</span>
+                                    <span className={styles.dateTabLabel}>{selectedDate === d.value && d.value === today ? "Today" : d.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
-                <div className={styles.dateControls}>
-                    <div className={styles.dateTabs}>
-                        {last7Days.map((d) => (
+                    <div className={styles.heroActions}>
+                        <label
+                            className={`${styles.actionBtn} ${styles.datePickerWrapper} ${!isSelectedDateInWindow ? styles.datePickerActive : ""}`}
+                            onClick={openDatePicker}
+                        >
+                            <Icon name="calendar" className={styles.actionIcon} />
+                            <span className={styles.datePickerLabel}>
+                                {!isSelectedDateInWindow ? dayjs(selectedDate).format("DD MMM YYYY") : "Pick Date"}
+                            </span>
+                            <input
+                                ref={dateInputRef}
+                                type="date"
+                                aria-label="Select custom date"
+                                className={styles.datePickerInput}
+                                value={selectedDate}
+                                max={today}
+                                onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
+                            />
+                        </label>
+
+                        <div className={styles.actionGroup}>
                             <button
-                                key={d.value}
                                 type="button"
-                                aria-pressed={selectedDate === d.value}
-                                aria-label={`Select date ${d.label}`}
-                                className={`${styles.dateTab} ${selectedDate === d.value ? styles.dateTabActive : ""}`}
-                                onClick={() => setSelectedDate(d.value)}
+                                className={`${styles.actionBtn} ${styles.exportBtn}`}
+                                onClick={handleExportExcel}
+                                aria-label="Export table in Excel"
                             >
-                                <span className={styles.dateTabDay}>{d.day}</span>
-                                <span className={styles.dateTabLabel}>{d.label}</span>
+                                <img
+                                    src={images.iconExcel}
+                                    className={styles.iconExcel}
+                                    alt="Export to Excel"
+                                />
+                                <span>Export Excel</span>
                             </button>
-                        ))}
+
+                            <button
+                                className={`${styles.actionBtn} ${styles.syncBtn}`}
+                                onClick={handleSync}
+                                disabled={syncing}
+                                aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
+                            >
+                                <Icon name="sync" className={`${styles.actionIcon} ${syncing ? styles.spinning : ""}`} />
+                                <span>{syncing ? "Syncing..." : "Sync"}</span>
+                                {lastSynced && !syncing ? <small>{syncAge}</small> : null}
+                            </button>
+                        </div>
                     </div>
-
-                    <div className={styles.datePickerDivider} />
-
-                    <div
-                        className={`${styles.datePickerWrapper} ${!last7Days.find(d => d.value === selectedDate) ? styles.datePickerActive : ""}`}
-                        onClick={openDatePicker}
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
-                        <span className={styles.datePickerLabel}>
-                            {!last7Days.find(d => d.value === selectedDate)
-                                ? dayjs(selectedDate).format("DD MMM YYYY")
-                                : "Pick Date"}
-                        </span>
-                        <input
-                            ref={dateInputRef}
-                            type="date"
-                            aria-label="Select custom date"
-                            className={styles.datePickerInput}
-                            value={selectedDate}
-                            max={today}
-                            onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-                        />
-                    </div>
-
-                    <button
-                        type="button"
-                        className={styles.exportBtn}
-                        onClick={handleExportExcel}
-                        aria-label="Export table in Excel"
-                    >
-                        <img
-                            src={images.iconExcel}
-                            className={styles.iconExcel}
-                            alt="Export to Excel"
-                        />
-                        <span>Export Excel</span>
-                    </button>
                 </div>
-            </div>
 
-            {/* ── Table ── */}
-            <div className={styles.tableContainer}>
-                <div className={styles.tableDateBar}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    <span>
-                        {selectedDate === today
-                            ? "Today — " + dayjs(selectedDate).format("DD MMMM YYYY")
-                            : dayjs(selectedDate).format("DD MMMM YYYY")}
-                    </span>
-                    {loading && <span className={styles.tableDateBadge}>Loading...</span>}
-                    <button
-                        className={styles.syncBtn}
-                        onClick={handleSync}
-                        disabled={syncing}
-                        aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
-                    >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={syncing ? styles.spinning : ""}>
-                            <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-                        </svg>
-                        {syncing ? "Syncing..." : lastSynced ? `Synced ${syncAge}` : "Sync"}
-                    </button>
-                </div>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th scope="col">Zone</th>
-                            <th scope="col">Duty On</th>
-                            <th scope="col">Entered Ward Boundary</th>
-                            <th scope="col">Duty Off</th>
-                            <th scope="col">Vehicle</th>
-                            <th scope="col">Vehicle Reg. No.</th>
-                            <th scope="col">Driver</th>
-                            <th scope="col">Helper</th>
-                            <th scope="col">Second Helper</th>
-                            <th scope="col">Trip/Bins</th>
-                            <th scope="col">Total Working Hrs</th>
-                            <th scope="col">Ward Halt Duration</th>
-                            <th scope="col">Work Percentage</th>
-                            <th scope="col">Actual Work Percentage</th>
-                            <th scope="col">Run KM</th>
-                            <th scope="col">Zone Run KM</th>
-                            <th scope="col">Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
+                <div className={styles.tableShell}>
+                    <table className={styles.table}>
+                        <thead>
                             <tr>
-                                <td colSpan={17} className={styles.loaderCell}>
-                                    <WevoisLoader />
-                                </td>
+                                {headerColumns.map((column) => (
+                                    <th key={column.key} scope="col">
+                                        <div className={styles.headerCell}>
+                                            <Icon name={column.icon} className={styles.headerIcon} />
+                                            <span>{column.label}</span>
+                                        </div>
+                                    </th>
+                                ))}
                             </tr>
-                        ) : displayData.length === 0 ? (
-                            <tr>
-                                <td colSpan={17}>
-                                    <div className={styles.emptyState}>
-                                        <div className={styles.emptyStateTitle}>No data found for this date</div>
-                                        <div className={styles.emptyStateHint}>Press <strong>Sync</strong> to fetch latest data from Firebase</div>
-                                    </div>
-                                </td>
-                            </tr>
-                        ) : (
-                            displayData.map((row, i) => (
-                                <tr key={row.id ?? i}>
-                                    <td>
-                                        {row.display_zone || row.zone
-                                            ? row.is_bin_lifting_task
-                                                ? (row.display_zone || row.zone)
-                                                : `Zone ${row.display_zone || row.zone}`
-                                            : "-"}
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={17} className={styles.loaderCell}>
+                                        <WevoisLoader />
                                     </td>
-                                    <td>{fmtTime(row.duty_on)}</td>
-                                    <td>{fmtTime(row.entered_ward_boundary)}</td>
-                                    <td>{fmtTime(row.duty_off)}</td>
-                                    <td>{row._vehicleList.length > 0
-                                        ? row._vehicleList.map((v, i, arr) => (
-                                            <span key={i}><span className={styles.vehicleChip}>{v}</span>{i < arr.length - 1 ? ', ' : ''}</span>
-                                        ))
-                                        : "-"}
-                                    </td>
-                                    <td>{row.vehicle_reg_no            || "-"}</td>
-                                    <td>{row.driver                    || "-"}</td>
-                                    <td>{row.helper                    || "-"}</td>
-                                    <td>{row.second_helper             || "-"}</td>
-                                    <td>{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
-                                    <td>{fmtHours(row.total_working_hrs)}</td>
-                                    <td>{fmtHours(row.ward_halt_duration)}</td>
-                                    <td>{row.work_percentage ?? row.actual_work_percentage ?? "-"}</td>
-                                    <td>{row.actual_work_percentage    ?? "-"}</td>
-                                    <td>{fmtDist(row.run_km)}</td>
-                                    <td>{fmtDist(row.zone_run_km)}</td>
-                                    <td>{row.remark                    || "-"}</td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            ) : displayData.length === 0 ? (
+                                <tr>
+                                    <td colSpan={17}>
+                                        <div className={styles.emptyState}>
+                                            <div className={styles.emptyStateTitle}>No data found for this date</div>
+                                            <div className={styles.emptyStateHint}>Press <strong>Sync</strong> to fetch latest data from Firebase</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                displayData.map((row, i) => {
+                                    const zoneLabel = row.display_zone || row.zone
+                                        ? row.is_bin_lifting_task
+                                            ? (row.display_zone || row.zone)
+                                            : `Zone ${row.display_zone || row.zone}`
+                                        : "-";
+                                    const workPercent = row.work_percentage ?? row.actual_work_percentage;
 
+                                    return (
+                                        <tr key={row.id ?? i}>
+                                            <td className={styles.zoneCell} data-label="Zone">
+                                                <span className={styles.zoneText}>{zoneLabel}</span>
+                                            </td>
+                                            <td data-label="Start Time">{fmtTime(row.duty_on)}</td>
+                                            <td data-label="Ward Entry">{fmtTime(row.entered_ward_boundary)}</td>
+                                            <td data-label="End Time">{fmtTime(row.duty_off)}</td>
+                                            <td data-label="Vehicle">
+                                                <div className={styles.vehicleStack}>
+                                                    {row._vehicleList.length > 0
+                                                        ? row._vehicleList.map((v, idx) => (
+                                                            <span key={`${v}-${idx}`} className={styles.vehicleChip}>{v}</span>
+                                                        ))
+                                                        : "-"}
+                                                </div>
+                                            </td>
+                                            <td data-label="Reg. No.">{row.vehicle_reg_no || "-"}</td>
+                                            <td data-label="Driver">{row.driver || "-"}</td>
+                                            <td data-label="Helper 1">{row.helper || "-"}</td>
+                                            <td data-label="Helper 2">{row.second_helper || "-"}</td>
+                                            <td data-label="Trips/Bins">{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
+                                            <td data-label="Work Hrs">
+                                                <span className={`${styles.metricPill} ${styles[getHourTone(row.total_working_hrs)]}`}>
+                                                    {fmtHours(row.total_working_hrs)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Halt Time">
+                                                <span className={`${styles.metricPill} ${styles[row.ward_halt_duration != null ? "warningSoft" : "neutral"]}`}>
+                                                    {fmtHours(row.ward_halt_duration)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Work %">
+                                                <span className={`${styles.metricPill} ${styles[getPercentTone(workPercent)]}`}>
+                                                    {fmtPercent(workPercent)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Actual %">
+                                                <span className={`${styles.metricPill} ${styles[getPercentTone(row.actual_work_percentage)]}`}>
+                                                    {fmtPercent(row.actual_work_percentage)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Run (KM)">
+                                                <span className={`${styles.metricPill} ${styles[getDistanceTone(row.run_km)]}`}>
+                                                    {fmtDist(row.run_km)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Zone (KM)">
+                                                <span className={`${styles.metricPill} ${styles.violet}`}>
+                                                    {fmtDist(row.zone_run_km)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Remarks">{row.remark || "-"}</td>
+                                        </tr>
+                                    );
+                                })
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };
