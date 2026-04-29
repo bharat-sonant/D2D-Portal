@@ -62,7 +62,22 @@ const fetchEmployeeName = async (employeeId) => {
 
 const formatEmployeeDisplay = (employeeId, employeeName) => {
     if (!employeeId) return null;
-    return employeeName ? `${employeeName} (${employeeId})` : employeeId;
+    if (!employeeName) return employeeId;
+
+    const normalizedId = String(employeeId).trim();
+    const normalizedName = String(employeeName).trim();
+
+    if (!normalizedName) return normalizedId;
+    if (normalizedName === normalizedId) return normalizedId;
+    if (
+        normalizedName.includes(`(${normalizedId})`) ||
+        normalizedName.endsWith(`-${normalizedId}`) ||
+        normalizedName.endsWith(` ${normalizedId}`)
+    ) {
+        return normalizedName;
+    }
+
+    return `${normalizedName} (${normalizedId})`;
 };
 
 const getAssignedDustbinCount = (planData) => {
@@ -117,7 +132,7 @@ const formatBinLiftingTripBins = (tripCount, pickedDustbinCount, assignedDustbin
 };
 
 const calculateBinLiftingWorkPercentage = (pickedDustbinCount, assignedDustbinCount) => {
-    if (!pickedDustbinCount || !assignedDustbinCount) return null;
+    if (pickedDustbinCount == null || assignedDustbinCount == null || Number(assignedDustbinCount) <= 0) return null;
     return Math.round((pickedDustbinCount * 100) / assignedDustbinCount);
 };
 
@@ -479,9 +494,9 @@ const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tri
     tripBins,
     runKm,
     haltDuration,
-    driver:               workerDetails?.driverName            ?? null,
-    helper:               workerDetails?.helperName            ?? null,
-    secondHelper:         workerDetails?.secondHelperName      ?? null,
+    driver:               formatEmployeeDisplay(workerDetails?.driver, workerDetails?.driverName),
+    helper:               formatEmployeeDisplay(workerDetails?.helper, workerDetails?.helperName),
+    secondHelper:         formatEmployeeDisplay(workerDetails?.secondHelper, workerDetails?.secondHelperName),
     remark:               summary?.workPercentageRemark                           ?? null,
     actualWorkPercentage: summary?.workPercentage       != null ? Math.round(Number(summary.workPercentage))        : null,
     workPercentage:       summary?.updatedWorkPercentage != null ? Math.round(Number(summary.updatedWorkPercentage)) : null,

@@ -27,8 +27,9 @@ const fmtTime = (t) => {
 
 const fmtHours = (v) => {
     if (v == null) return "-";
-    const hrs = Math.floor(v);
-    const mins = Math.round((v - hrs) * 60);
+    const totalMinutes = Math.round(Number(v) * 60);
+    const hrs = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
     if (hrs === 0) return `${mins}m`;
     if (mins === 0) return `${hrs}h`;
     return `${hrs}h ${String(mins).padStart(2, "0")}m`;
@@ -37,12 +38,81 @@ const fmtHours = (v) => {
 const fmtDist = (v) => {
     if (v == null) return "-";
     if (v < 1) return `${Math.round(v * 1000)} m`;
-    return `${Number(v.toFixed(2))} km`;
+    const rounded = Number(v);
+    const decimals = String(rounded).split(".")[1] || "";
+    const precision = decimals.length >= 3 ? 3 : decimals.length;
+    return `${rounded.toFixed(precision)} km`;
 };
 
 const fmtPercent = (v) => {
     if (v == null || v === "") return "-";
     return `${v}%`;
+};
+
+const splitTopLevelComma = (value) => {
+    const parts = [];
+    let current = "";
+    let depth = 0;
+
+    for (const char of value) {
+        if (char === "(") depth += 1;
+        if (char === ")" && depth > 0) depth -= 1;
+
+        if (char === "," && depth === 0) {
+            if (current.trim()) parts.push(current.trim());
+            current = "";
+            continue;
+        }
+
+        current += char;
+    }
+
+    if (current.trim()) parts.push(current.trim());
+    return parts;
+};
+
+const fmtEmployeeDisplay = (value) => {
+    if (!value) return "-";
+
+    const normalized = String(value).trim().replace(/\s+/g, " ");
+    const repeatedParenMatch = normalized.match(/^(.*)\s\(([^()]+)\)\s\(\2\)$/);
+    const baseValue = repeatedParenMatch
+        ? `${repeatedParenMatch[1]} (${repeatedParenMatch[2]})`
+        : normalized;
+
+    const tokens = splitTopLevelComma(baseValue).map((token) => {
+        const match = token.match(/^(.*?)(?:\s*\(([^()]+)\))?$/);
+        const name = match?.[1]?.trim() || token.trim();
+        const ids = match?.[2]
+            ? [...new Set(match[2].split(",").map((item) => item.trim()).filter(Boolean))]
+            : [];
+
+        return {
+            key: name.toLowerCase(),
+            name,
+            ids,
+            display: ids.length ? `${name} (${ids.join(", ")})` : name,
+        };
+    });
+
+    const deduped = new Map();
+    tokens.forEach((token) => {
+        const existing = deduped.get(token.key);
+        if (!existing) {
+            deduped.set(token.key, token);
+            return;
+        }
+
+        const mergedIds = [...new Set([...existing.ids, ...token.ids])];
+        deduped.set(token.key, {
+            ...token,
+            ids: mergedIds,
+            display: mergedIds.length ? `${token.name} (${mergedIds.join(", ")})` : token.name,
+        });
+    });
+
+    const finalValue = [...deduped.values()].map((token) => token.display).join(", ");
+    return finalValue || "-";
 };
 
 const getHourTone = (v) => {
@@ -224,6 +294,7 @@ const DailyWorkReport = () => {
     const [syncAge, setSyncAge] = useState("");
     const dateInputRef = useRef(null);
     const loadIdRef = useRef(0);
+    const syncIdRef = useRef(0);
 
     useEffect(() => {
         const now = new Date();
@@ -270,15 +341,19 @@ const DailyWorkReport = () => {
 
     const handleSync = async () => {
         if (syncing || !city) return;
+        const syncId = ++syncIdRef.current;
+        const syncDate = selectedDate;
         setSyncing(true);
         try {
-            const updated = await syncFromFirebase(city, selectedDate);
+            const updated = await syncFromFirebase(city, syncDate);
+            if (syncId !== syncIdRef.current || syncDate !== selectedDate) return;
             setData(updated);
             setLastSynced(Date.now());
         } catch {
+            if (syncId !== syncIdRef.current) return;
             toast.error("Sync failed - data could not be saved. Please try again.");
         } finally {
-            setSyncing(false);
+            if (syncId === syncIdRef.current) setSyncing(false);
         }
     };
 
@@ -496,9 +571,9 @@ const DailyWorkReport = () => {
                                                 </div>
                                             </td>
                                             <td data-label="Reg. No.">{row.vehicle_reg_no || "-"}</td>
-                                            <td data-label="Driver">{row.driver || "-"}</td>
-                                            <td data-label="Helper 1">{row.helper || "-"}</td>
-                                            <td data-label="Helper 2">{row.second_helper || "-"}</td>
+                                            <td data-label="Driver">{fmtEmployeeDisplay(row.driver)}</td>
+                                            <td data-label="Helper 1">{fmtEmployeeDisplay(row.helper)}</td>
+                                            <td data-label="Helper 2">{fmtEmployeeDisplay(row.second_helper)}</td>
                                             <td data-label="Trips/Bins">{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
                                             <td data-label="Work Hrs">
                                                 <span className={`${styles.metricPill} ${styles[getHourTone(row.total_working_hrs)]}`}>
