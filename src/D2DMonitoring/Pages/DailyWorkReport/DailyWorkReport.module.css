@@ -267,10 +267,7 @@
 }
 
 .table {
-  width: max-content;
   min-width: 100%;
-  max-width: 1600px;
-  min-width: 1280px;
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
