@@ -359,32 +359,74 @@ const calculateHaltTime = (haltData, dutyOn, dutyOff, date, minHaltTime = 0) => 
     return Number((totalMinutes / 60).toFixed(2));
 };
 
-const calculateRunKm = (locationData) => {
+const calculateRunKm = (locationData, date, startTime, endTime) => {
     if (!locationData) return null;
 
-    // Step 1: Reverse karo
-    const reversed = [...Object.keys(locationData)].reverse();
-
-    // Step 2: Dedup — "10:05-1" aur "10:05-2" same base time hai, ek rakho
-    const deduped = [];
-    for (let i = 0; i < reversed.length; i++) {
-        const base     = reversed[i].split('-')[0];
-        const nextBase = reversed[i + 1]?.split('-')[0];
-        deduped.push(reversed[i]);
-        if (base === nextBase) i++;
+    let distance = 0;
+    
+    if (!endTime || endTime == "") {
+        const todayStr = [
+            new Date().getFullYear(),
+            String(new Date().getMonth() + 1).padStart(2, '0'),
+            String(new Date().getDate()).padStart(2, '0')
+        ].join('-');
+        
+        if (date === todayStr) {
+            endTime = new Date().toTimeString().slice(0, 5);
+        }
     }
 
-    // Step 3: Chronological order wapas
-    const keys = deduped.reverse();
+    let dutyInDateTime = new Date(date + " " + startTime);
+    let dutyOutDateTime = new Date(date + " " + endTime);
 
-    // Step 4: Saare distances sum karo
-    let totalMeters = 0;
-    for (const key of keys) {
-        const dist = locationData[key]?.['distance-in-meter'];
-        if (dist != null) totalMeters += Number(dist);
+    let keyArray = Object.keys(locationData);
+    if (keyArray.length > 0) {
+        if (localStorage.getItem("userType") == "2") {
+            for (let i = 0; i < keyArray.length; i++) {
+                let time = keyArray[i];
+                if (locationData[time]["distance-in-meter"] != null || locationData[time]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(date + " " + time);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        let coveredDistance = locationData[time]["distance-in-meter"];
+                        distance = (Number(distance) + Number(coveredDistance));
+                    }
+                }
+            }
+        } else {
+            let newArray = keyArray.reverse();
+            let keyArrayNew = [];
+            for (let i = 0; i < newArray.length - 1; i++) {
+                let index = newArray[i];
+                let nextIndex = newArray[i + 1];
+                let time = index.toString().split('-')[0];
+                let nextTime = nextIndex.toString().split('-')[0];
+                if (time == nextTime) {
+                    keyArrayNew.push(index);
+                    i++;
+                } else {
+                    keyArrayNew.push(index);
+                }
+            }
+            if (newArray.length > 0 && !keyArrayNew.includes(newArray[newArray.length - 1])) {
+                 keyArrayNew.push(newArray[newArray.length - 1]);
+            }
+            
+            keyArray = keyArrayNew.reverse();
+            for (let i = 0; i < keyArray.length; i++) {
+                let time = keyArray[i];
+                let time1 = keyArray[i].split("-")[0];
+                if (locationData[time]["distance-in-meter"] != null || locationData[time]["distance-in-meter"] != undefined) {
+                    let routeDateTime = new Date(date + " " + time1);
+                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
+                        let coveredDistance = locationData[time]["distance-in-meter"];
+                        distance = (Number(distance) + Number(coveredDistance));
+                    }
+                }
+            }
+        }
     }
 
-    return totalMeters > 0 ? Number((totalMeters / 1000).toFixed(3)) : null;
+    return distance > 0 ? Number((distance / 1000).toFixed(3)) : null;
 };
 
 
@@ -534,7 +576,7 @@ export const fetchReportData = async (wards, date, onRow) => {
                 const dutyOff      = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
-                const runKm        = calculateRunKm(locationData);
+                const runKm        = calculateRunKm(locationData, date, dutyOn, dutyOff);
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
                 const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, dutyTimes, date);
                 

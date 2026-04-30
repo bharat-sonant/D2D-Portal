@@ -44,7 +44,7 @@
 .heroCard {
   display: grid;
   gap: 12px;
-  padding: 12px 18px;
+  padding: 3px 18px;
 }
 
 .toolbarRow {

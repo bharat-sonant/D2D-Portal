@@ -485,7 +485,15 @@ const DailyWorkReport = () => {
                                     className={styles.datePickerInput}
                                     value={selectedDate}
                                     max={today}
-                                    onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val) {
+                                            const year = parseInt(val.split('-')[0], 10);
+                                            if (year >= 2000 && year <= 2100) {
+                                                setSelectedDate(val);
+                                            }
+                                        }
+                                    }}
                                 />
                             </label>
                         </div>
