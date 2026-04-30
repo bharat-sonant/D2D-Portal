@@ -306,12 +306,11 @@ const TODAY = () => new Date().toISOString().split('T')[0];
 const calculateHaltTime = (haltData, dutyOn, dutyOff, date, minHaltTime = 0) => {
     if (!haltData || !dutyOn) return null;
 
-    const isToday   = date === TODAY();
+    const isToday = date === TODAY();
     const dutyStart = parseTimeToDate(dutyOn, date);
-    const dutyEnd   = dutyOff ? parseTimeToDate(dutyOff, date) : null;
+    const dutyEnd = dutyOff ? parseTimeToDate(dutyOff, date) : parseTimeToDate("00:00", date);
 
     if (!dutyStart) return null;
-    if (!isToday && !dutyEnd) return null;
 
     let totalMinutes = 0;
 
@@ -327,27 +326,30 @@ const calculateHaltTime = (haltData, dutyOn, dutyOff, date, minHaltTime = 0) => 
 
         if (isToday) {
             if (haltStart < dutyStart) continue;
-        } else {
-            if (haltStart < dutyStart || haltStart > dutyEnd) continue;
+            const duration = Number(halt?.duration || 0);
+            if (duration > minHaltTime) totalMinutes += duration;
+            continue;
         }
 
-        // Rule 4: duration — endTime se dutyOut cross ho toh adjust karo
-        let duration = Number(halt?.duration);
-        if (!duration || duration <= 0) continue;
+        if (!dutyOff || !dutyEnd) continue;
+        if (haltStart < dutyStart || haltStart > dutyEnd) continue;
 
-        if (halt.endTime && dutyEnd) {
+        // Rule 4: duration — endTime se dutyOut cross ho toh adjust karo
+        let duration = Number(halt?.duration || 0);
+
+        if (halt?.endTime != null) {
             const haltEnd = parseTimeToDate(halt.endTime, date);
-            if (haltEnd && haltEnd > dutyEnd) {
-                const adjustedMin = (dutyEnd - haltStart) / 60000;
-                if (adjustedMin <= 0) continue;
-                duration = adjustedMin;
+            if (haltEnd && dutyEnd > haltEnd) {
+                duration = (haltEnd - haltStart) / 60000;
+            } else {
+                duration = 0;
             }
+        } else {
+            duration = 0;
         }
 
         // Rule 5: minimum halt filter — 8 min ya usse zyada ho tabhi count karo
-        if (duration < minHaltTime) continue;
-
-        totalMinutes += duration;
+        if (duration > minHaltTime) totalMinutes += duration;
     }
 
     if (totalMinutes === 0) return null;

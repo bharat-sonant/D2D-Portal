@@ -115,6 +115,13 @@ const fmtEmployeeDisplay = (value) => {
     return finalValue || "-";
 };
 
+const hasMultipleValues = (value) => {
+    if (!value) return false;
+    const normalized = String(value).trim();
+    if (!normalized || normalized === "-") return false;
+    return splitTopLevelComma(normalized).length > 1;
+};
+
 const getHourTone = (v) => {
     if (v == null) return "neutral";
     if (v >= 4) return "success";
@@ -432,84 +439,84 @@ const DailyWorkReport = () => {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.layout}>
+                <div className={styles.pageHeadingBar}>
+                    <h1 className={styles.pageHeading}>Daily Work Report</h1>
+                </div>
+
                 <div className={styles.heroCard}>
-                    <div className={styles.heroIdentity}>
-                        <div className={styles.heroIconWrap}>
-                            <Icon name="report" className={styles.heroIcon} />
-                        </div>
-                        <div className={styles.heroText}>
-                            <h2 className={styles.pageTitle}>Daily Work Report</h2>
-                            <div className={styles.heroSubtitle}>
+                    <div className={styles.toolbarRow}>
+                        <div className={styles.toolbarLeft}>
+                            <div className={styles.currentDateBlock}>
                                 <Icon name="calendar" className={styles.subtitleIcon} />
                                 <span>{selectedDate === today ? `Today, ${titleDate}` : titleDate}</span>
                                 {loading && <span className={styles.tableDateBadge}>Loading...</span>}
                             </div>
-                        </div>
-                    </div>
 
-                    <div className={styles.heroTimeline}>
-                        <div className={styles.dateTabs}>
-                            {dateWindow.map((d) => (
-                                <button
-                                    key={d.value}
-                                    type="button"
-                                    aria-pressed={selectedDate === d.value}
-                                    aria-label={`Select date ${d.label}`}
-                                    className={`${styles.dateTab} ${selectedDate === d.value ? styles.dateTabActive : ""}`}
-                                    onClick={() => setSelectedDate(d.value)}
-                                >
-                                    <span className={styles.dateTabDay}>{d.day}</span>
-                                    <span className={styles.dateTabLabel}>{selectedDate === d.value && d.value === today ? "Today" : d.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                            <div className={styles.heroTimeline}>
+                                <div className={styles.dateTabs}>
+                                    {dateWindow.map((d) => (
+                                        <button
+                                            key={d.value}
+                                            type="button"
+                                            aria-pressed={selectedDate === d.value}
+                                            aria-label={`Select date ${d.label}`}
+                                            className={`${styles.dateTab} ${selectedDate === d.value ? styles.dateTabActive : ""}`}
+                                            onClick={() => setSelectedDate(d.value)}
+                                        >
+                                            <span className={styles.dateTabDay}>{d.day}</span>
+                                            <span className={styles.dateTabLabel}>{selectedDate === d.value && d.value === today ? "Today" : d.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
 
-                    <div className={styles.heroActions}>
-                        <label
-                            className={`${styles.actionBtn} ${styles.datePickerWrapper} ${!isSelectedDateInWindow ? styles.datePickerActive : ""}`}
-                            onClick={openDatePicker}
-                        >
-                            <Icon name="calendar" className={styles.actionIcon} />
-                            <span className={styles.datePickerLabel}>
-                                {!isSelectedDateInWindow ? dayjs(selectedDate).format("DD MMM YYYY") : "Pick Date"}
-                            </span>
-                            <input
-                                ref={dateInputRef}
-                                type="date"
-                                aria-label="Select custom date"
-                                className={styles.datePickerInput}
-                                value={selectedDate}
-                                max={today}
-                                onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-                            />
-                        </label>
-
-                        <div className={styles.actionGroup}>
-                            <button
-                                type="button"
-                                className={`${styles.actionBtn} ${styles.exportBtn}`}
-                                onClick={handleExportExcel}
-                                aria-label="Export table in Excel"
+                            <label
+                                className={`${styles.actionBtn} ${styles.datePickerWrapper} ${!isSelectedDateInWindow ? styles.datePickerActive : ""}`}
+                                onClick={openDatePicker}
                             >
-                                <img
-                                    src={images.iconExcel}
-                                    className={styles.iconExcel}
-                                    alt="Export to Excel"
+                                <Icon name="calendar" className={styles.actionIcon} />
+                                <span className={styles.datePickerLabel}>
+                                    {!isSelectedDateInWindow ? dayjs(selectedDate).format("DD MMM YYYY") : "Pick Date"}
+                                </span>
+                                <input
+                                    ref={dateInputRef}
+                                    type="date"
+                                    aria-label="Select custom date"
+                                    className={styles.datePickerInput}
+                                    value={selectedDate}
+                                    max={today}
+                                    onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
                                 />
-                                <span>Export Excel</span>
-                            </button>
+                            </label>
+                        </div>
 
-                            <button
-                                className={`${styles.actionBtn} ${styles.syncBtn}`}
-                                onClick={handleSync}
-                                disabled={syncing}
-                                aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
-                            >
-                                <Icon name="sync" className={`${styles.actionIcon} ${syncing ? styles.spinning : ""}`} />
-                                <span>{syncing ? "Syncing..." : "Sync"}</span>
-                                {lastSynced && !syncing ? <small>{syncAge}</small> : null}
-                            </button>
+                        <div className={styles.heroActions}>
+                            <div className={styles.actionGroup}>
+                                <button
+                                    type="button"
+                                    className={`${styles.actionBtn} ${styles.exportBtn}`}
+                                    onClick={handleExportExcel}
+                                    aria-label="Export table in Excel"
+                                >
+                                    <img
+                                        src={images.iconExcel}
+                                        className={styles.iconExcel}
+                                        alt="Export to Excel"
+                                    />
+                                    <span>Export Excel</span>
+                                </button>
+
+                                <button
+                                    className={`${styles.actionBtn} ${styles.syncBtn}`}
+                                    onClick={handleSync}
+                                    disabled={syncing}
+                                    aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
+                                >
+                                    <Icon name="sync" className={`${styles.actionIcon} ${syncing ? styles.spinning : ""}`} />
+                                    <span>{syncing ? "Syncing..." : "Sync"}</span>
+                                    {lastSynced && !syncing ? <small>{syncAge}</small> : null}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -562,49 +569,37 @@ const DailyWorkReport = () => {
                                             <td data-label="Ward Entry">{fmtTime(row.entered_ward_boundary)}</td>
                                             <td data-label="End Time">{fmtTime(row.duty_off)}</td>
                                             <td data-label="Vehicle">
-                                                <div className={styles.vehicleStack}>
-                                                    {row._vehicleList.length > 0
-                                                        ? row._vehicleList.map((v, idx) => (
-                                                            <span key={`${v}-${idx}`} className={styles.vehicleChip}>{v}</span>
-                                                        ))
-                                                        : "-"}
-                                                </div>
+                                                <span className={`${styles.compactCellText} ${row._vehicleList.length > 1 ? styles.doubleLineText : styles.singleLineText}`}>
+                                                    {row._vehicleList.length > 0 ? row._vehicleList.join(", ") : "-"}
+                                                </span>
                                             </td>
-                                            <td data-label="Reg. No.">{row.vehicle_reg_no || "-"}</td>
-                                            <td data-label="Driver">{fmtEmployeeDisplay(row.driver)}</td>
-                                            <td data-label="Helper 1">{fmtEmployeeDisplay(row.helper)}</td>
-                                            <td data-label="Helper 2">{fmtEmployeeDisplay(row.second_helper)}</td>
+                                            <td data-label="Reg. No.">
+                                                <span className={`${styles.compactCellText} ${hasMultipleValues(row.vehicle_reg_no) ? styles.doubleLineText : styles.singleLineText}`}>
+                                                    {row.vehicle_reg_no || "-"}
+                                                </span>
+                                            </td>
+                                            <td data-label="Driver">
+                                                <span className={`${styles.compactCellText} ${hasMultipleValues(fmtEmployeeDisplay(row.driver)) ? styles.doubleLineText : styles.singleLineText}`}>
+                                                    {fmtEmployeeDisplay(row.driver)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Helper 1">
+                                                <span className={`${styles.compactCellText} ${hasMultipleValues(fmtEmployeeDisplay(row.helper)) ? styles.doubleLineText : styles.singleLineText}`}>
+                                                    {fmtEmployeeDisplay(row.helper)}
+                                                </span>
+                                            </td>
+                                            <td data-label="Helper 2">
+                                                <span className={`${styles.compactCellText} ${hasMultipleValues(fmtEmployeeDisplay(row.second_helper)) ? styles.doubleLineText : styles.singleLineText}`}>
+                                                    {fmtEmployeeDisplay(row.second_helper)}
+                                                </span>
+                                            </td>
                                             <td data-label="Trips/Bins">{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
-                                            <td data-label="Work Hrs">
-                                                <span className={`${styles.metricPill} ${styles[getHourTone(row.total_working_hrs)]}`}>
-                                                    {fmtHours(row.total_working_hrs)}
-                                                </span>
-                                            </td>
-                                            <td data-label="Halt Time">
-                                                <span className={`${styles.metricPill} ${styles[row.ward_halt_duration != null ? "warningSoft" : "neutral"]}`}>
-                                                    {fmtHours(row.ward_halt_duration)}
-                                                </span>
-                                            </td>
-                                            <td data-label="Work %">
-                                                <span className={`${styles.metricPill} ${styles[getPercentTone(workPercent)]}`}>
-                                                    {fmtPercent(workPercent)}
-                                                </span>
-                                            </td>
-                                            <td data-label="Actual %">
-                                                <span className={`${styles.metricPill} ${styles[getPercentTone(row.actual_work_percentage)]}`}>
-                                                    {fmtPercent(row.actual_work_percentage)}
-                                                </span>
-                                            </td>
-                                            <td data-label="Run (KM)">
-                                                <span className={`${styles.metricPill} ${styles[getDistanceTone(row.run_km)]}`}>
-                                                    {fmtDist(row.run_km)}
-                                                </span>
-                                            </td>
-                                            <td data-label="Zone (KM)">
-                                                <span className={`${styles.metricPill} ${styles.violet}`}>
-                                                    {fmtDist(row.zone_run_km)}
-                                                </span>
-                                            </td>
+                                            <td data-label="Work Hrs">{fmtHours(row.total_working_hrs)}</td>
+                                            <td data-label="Halt Time">{fmtHours(row.ward_halt_duration)}</td>
+                                            <td data-label="Work %">{fmtPercent(workPercent)}</td>
+                                            <td data-label="Actual %">{fmtPercent(row.actual_work_percentage)}</td>
+                                            <td data-label="Run (KM)">{fmtDist(row.run_km)}</td>
+                                            <td data-label="Zone (KM)">{fmtDist(row.zone_run_km)}</td>
                                             <td data-label="Remarks">{row.remark || "-"}</td>
                                         </tr>
                                     );
