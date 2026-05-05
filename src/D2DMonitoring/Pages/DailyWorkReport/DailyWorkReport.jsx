@@ -22,7 +22,12 @@ const buildDateWindow = () => Array.from({ length: 7 }, (_, i) => {
 const fmtTime = (t) => {
     if (!t) return "-";
     const parts = String(t).split(":");
-    return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : String(t);
+    if (parts.length < 2) return String(t);
+    const hr = parseInt(parts[0], 10);
+    if (isNaN(hr)) return String(t);
+    const period = hr >= 12 ? "PM" : "AM";
+    const hr12 = hr % 12 || 12;
+    return `${String(hr12).padStart(2, "0")}:${parts[1]} ${period}`;
 };
 
 const fmtHours = (v) => {
