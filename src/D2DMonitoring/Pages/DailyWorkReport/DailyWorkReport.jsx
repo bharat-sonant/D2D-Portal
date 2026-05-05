@@ -335,7 +335,6 @@ const DailyWorkReport = () => {
 
     const dateWindow = useMemo(() => buildDateWindow(), [today]);
     const isSelectedDateInWindow = dateWindow.some((d) => d.value === selectedDate);
-    const titleDate = dayjs(selectedDate).format("DD MMMM YYYY");
 
     useEffect(() => {
         if (!lastSynced) return;
@@ -451,12 +450,6 @@ const DailyWorkReport = () => {
                 <div className={styles.heroCard}>
                     <div className={styles.toolbarRow}>
                         <div className={styles.toolbarLeft}>
-                            <div className={styles.currentDateBlock}>
-                                <Icon name="calendar" className={styles.subtitleIcon} />
-                                <span>{selectedDate === today ? `Today, ${titleDate}` : titleDate}</span>
-                                {loading && <span className={styles.tableDateBadge}>Loading...</span>}
-                            </div>
-
                             <div className={styles.heroTimeline}>
                                 <div className={styles.dateTabs}>
                                     {dateWindow.map((d) => (

@@ -359,76 +359,61 @@ const calculateHaltTime = (haltData, dutyOn, dutyOff, date, minHaltTime = 0) => 
     return Number((totalMinutes / 60).toFixed(2));
 };
 
-const calculateRunKm = (locationData, date, startTime, endTime) => {
-    if (!locationData) return null;
-
-    let distance = 0;
-    
-    if (!endTime || endTime == "") {
-        const todayStr = [
-            new Date().getFullYear(),
-            String(new Date().getMonth() + 1).padStart(2, '0'),
-            String(new Date().getDate()).padStart(2, '0')
-        ].join('-');
-        
-        if (date === todayStr) {
-            endTime = new Date().toTimeString().slice(0, 5);
-        }
+const calculateRunKm = (
+  locationData,
+  date,
+  startTime,
+  endTime
+) => {
+  console.log("locationData", locationData);
+ 
+  if (!locationData) return null;
+ 
+  let distance = 0;
+ 
+  // If endTime empty and date is today → set current time
+  if (!endTime || endTime === "") {
+    const today = new Date();
+    const todayStr = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0"),
+    ].join("-");
+ 
+    if (date === todayStr) {
+      endTime = today.toTimeString().slice(0, 5);
     }
-
-    let dutyInDateTime = new Date(date + " " + startTime);
-    let dutyOutDateTime = new Date(date + " " + endTime);
-
-    let keyArray = Object.keys(locationData);
-    if (keyArray.length > 0) {
-        if (localStorage.getItem("userType") == "2") {
-            for (let i = 0; i < keyArray.length; i++) {
-                let time = keyArray[i];
-                if (locationData[time]["distance-in-meter"] != null || locationData[time]["distance-in-meter"] != undefined) {
-                    let routeDateTime = new Date(date + " " + time);
-                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                        let coveredDistance = locationData[time]["distance-in-meter"];
-                        distance = (Number(distance) + Number(coveredDistance));
-                    }
-                }
-            }
-        } else {
-            let newArray = keyArray.reverse();
-            let keyArrayNew = [];
-            for (let i = 0; i < newArray.length - 1; i++) {
-                let index = newArray[i];
-                let nextIndex = newArray[i + 1];
-                let time = index.toString().split('-')[0];
-                let nextTime = nextIndex.toString().split('-')[0];
-                if (time == nextTime) {
-                    keyArrayNew.push(index);
-                    i++;
-                } else {
-                    keyArrayNew.push(index);
-                }
-            }
-            if (newArray.length > 0 && !keyArrayNew.includes(newArray[newArray.length - 1])) {
-                 keyArrayNew.push(newArray[newArray.length - 1]);
-            }
-            
-            keyArray = keyArrayNew.reverse();
-            for (let i = 0; i < keyArray.length; i++) {
-                let time = keyArray[i];
-                let time1 = keyArray[i].split("-")[0];
-                if (locationData[time]["distance-in-meter"] != null || locationData[time]["distance-in-meter"] != undefined) {
-                    let routeDateTime = new Date(date + " " + time1);
-                    if (routeDateTime >= dutyInDateTime && routeDateTime <= dutyOutDateTime) {
-                        let coveredDistance = locationData[time]["distance-in-meter"];
-                        distance = (Number(distance) + Number(coveredDistance));
-                    }
-                }
-            }
-        }
+  }
+ 
+  let dutyInDateTime = new Date(date + " " + startTime);
+  let dutyOutDateTime = new Date(date + " " + endTime);
+ 
+  let keyArray = Object.keys(locationData);
+ 
+  for (let i = 0; i < keyArray.length; i++) {
+    let time = keyArray[i];
+ 
+    if (locationData[time]["distance-in-meter"] != null) {
+      let routeDateTime = new Date(date + " " + time);
+ 
+      if (
+        routeDateTime >= dutyInDateTime &&
+        routeDateTime <= dutyOutDateTime
+      ) {
+        distance += Number(
+          locationData[time]["distance-in-meter"]
+        );
+      }
     }
-
-    return distance > 0 ? Number((distance / 1000).toFixed(3)) : null;
+  }
+ 
+  let totalKm =
+    distance > 0
+      ? Number((distance / 1000).toFixed(3))
+      : null;
+ 
+  return totalKm;
 };
-
 
 const timeToMinutes = (t) => {
     if (!t) return null;
@@ -453,51 +438,9 @@ const normalizeTime = (value, mode = "first") => {
     return mode === "last" ? arr[arr.length - 1] : arr[0];
 };
 
-const normalizeShortTime = (value) => {
-    const t = normalizeTime(value);
+const normalizeShortTime = (value, mode = "first") => {
+    const t = normalizeTime(value, mode);
     return t ? String(t).slice(0, 5) : null;
-};
-
-const buildDailyWorkDetailTimeMap = (dailyWorkDetailData) => {
-    const zoneTimeMap = new Map();
-    if (!dailyWorkDetailData || typeof dailyWorkDetailData !== 'object') return zoneTimeMap;
-
-    Object.values(dailyWorkDetailData).forEach((userNode) => {
-        if (!userNode || typeof userNode !== 'object') return;
-
-        Object.entries(userNode).forEach(([key, task]) => {
-            if (!key.startsWith('task') || !task?.task || !task['in-out']) return;
-
-            const zone = String(task.task).trim();
-            if (!zone) return;
-
-            const inOutEntries = Object.entries(task['in-out']);
-            if (!inOutEntries.length) return;
-
-            let dutyIn = null;
-            let dutyOut = null;
-
-            inOutEntries.forEach(([time, type]) => {
-                if (type === 'In' && !dutyIn) dutyIn = String(time).slice(0, 5);
-            });
-
-            for (let i = inOutEntries.length - 1; i >= 0; i--) {
-                const [time, type] = inOutEntries[i];
-                if (type === 'Out') {
-                    dutyOut = String(time).slice(0, 5);
-                    break;
-                }
-            }
-
-            const existing = zoneTimeMap.get(zone);
-            zoneTimeMap.set(zone, {
-                dutyIn: existing?.dutyIn || dutyIn,
-                dutyOut: dutyOut || existing?.dutyOut || null,
-            });
-        });
-    });
-
-    return zoneTimeMap;
 };
 
 
@@ -523,9 +466,10 @@ const fetchVehicleRegNo = async (vehicleStr) => {
     return valid.length ? valid.join(', ') : null;
 };
 
-const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null, dutyTimes = null, date = null) => {
-    const dutyOn  = dutyTimes?.dutyIn ?? normalizeShortTime(summary?.dutyInTime);
-    const dutyOff = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
+const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tripBins = null, runKm = null, haltDuration = null, date = null) => {
+    const dutyOn  = normalizeShortTime(summary?.dutyInTime, "first");
+    const dutyOff = normalizeShortTime(summary?.dutyOutTime, "last")
+        ?? (date && date !== TODAY() ? normalizeShortTime(summary?.lastLineCompletedOn) : null);
     return {
     wardId,
     zone,
@@ -558,8 +502,6 @@ const hasRowData = (r) =>
 export const fetchReportData = async (wards, date, onRow) => {
     console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 5}`);
     const t0 = performance.now();
-    const dailyWorkDetailData = await db.getData(getDailyWorkDetailPath(date));
-    const dailyWorkDetailTimeMap = buildDailyWorkDetailTimeMap(dailyWorkDetailData);
 
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
@@ -571,19 +513,19 @@ export const fetchReportData = async (wards, date, onRow) => {
                     db.getData(getLocationHistoryPath(id, date)),
                     db.getData(getHaltInfoPath(id, date)),
                 ]);
-                const dutyTimes    = dailyWorkDetailTimeMap.get(String(name).trim()) || dailyWorkDetailTimeMap.get(String(id).trim()) || null;
-                const dutyOn       = dutyTimes?.dutyIn ?? normalizeShortTime(summary?.dutyInTime);
-                const dutyOff      = dutyTimes?.dutyOut ?? normalizeShortTime(summary?.dutyOutTime);
+                const dutyOn       = normalizeShortTime(summary?.dutyInTime, "first");
+                const dutyOff      = normalizeShortTime(summary?.dutyOutTime, "last")
+                    ?? (date !== TODAY() ? normalizeShortTime(summary?.lastLineCompletedOn) : null);
                 const vehicleRegNo = await fetchVehicleRegNo(workerDetails?.vehicle);
                 const tripBins     = tripsData ? Object.keys(tripsData).length : null;
                 const runKm        = calculateRunKm(locationData, date, dutyOn, dutyOff);
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
-                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, dutyTimes, date);
-                
+                const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, date);
+
                 if (onRow && hasRowData(row)) onRow(row);
                 return row;
             } catch {
-                return buildRow(id, name, null, null, null, null, null, null, null, date);
+                return buildRow(id, name, null, null, null, null, null, null, date);
             }
         })
     );
