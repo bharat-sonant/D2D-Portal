@@ -157,7 +157,7 @@ const filterEmpty = (rows) =>
 const sortByZone = (rows) =>
     [...rows].sort((a, b) => {
         if (a.is_bin_lifting_task && b.is_bin_lifting_task) {
-            return (a.bin_lifting_order ?? 0) - (b.bin_lifting_order ?? 0);
+            return (a.display_zone || a.zone || "").localeCompare(b.display_zone || b.zone || "", undefined, { numeric: true });
         }
         if (a.is_bin_lifting_task) return 1;
         if (b.is_bin_lifting_task) return -1;
