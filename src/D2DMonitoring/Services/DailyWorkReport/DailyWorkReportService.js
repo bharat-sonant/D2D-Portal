@@ -60,7 +60,7 @@ const fetchEmployeeName = async (employeeId) => {
     }
 };
 
-const formatEmployeeDisplay = (employeeId, employeeName) => {
+const formatSingleEmployeeDisplay = (employeeId, employeeName) => {
     if (!employeeId) return null;
     if (!employeeName) return employeeId;
 
@@ -78,6 +78,25 @@ const formatEmployeeDisplay = (employeeId, employeeName) => {
     }
 
     return `${normalizedName} (${normalizedId})`;
+};
+
+const formatEmployeeDisplay = (employeeId, employeeName) => {
+    if (!employeeId) return null;
+
+    const ids = String(employeeId).split(',').map(s => s.trim()).filter(Boolean);
+    const names = employeeName != null
+        ? String(employeeName).split(',').map(s => s.trim())
+        : [];
+
+    if (ids.length <= 1) {
+        return formatSingleEmployeeDisplay(employeeId, employeeName);
+    }
+
+    const parts = ids
+        .map((id, i) => formatSingleEmployeeDisplay(id, names[i]))
+        .filter(Boolean);
+
+    return parts.length ? parts.join(', ') : null;
 };
 
 const getAssignedDustbinCount = (planData) => {
