@@ -54,6 +54,4 @@ export const saveReportToSupabase = async (city, date, rows, existingMap = null)
         console.error(`[DWR Supabase] ${failed.length} rows failed to save`, failed.map(f => f.reason));
         throw new Error(`${failed.length} row(s) failed to save in Supabase`);
     }
-
-    console.log(`[DWR Supabase] Saved ${rows.length} rows | city=${city} | date=${date}`);
 };

@@ -179,7 +179,6 @@ export const scanDailyWorkTasks = async (date) => {
                             const planId = String(val.binLiftingPlanId);
                             const isNum = !isNaN(val.task) && String(val.task).trim() !== '';
                             if (!isNum) {
-                                console.log("hello Task", val.task);
                                 const inOutEntries = Object.entries(val["in-out"] || {});
                                 let dutyOn = null;
                                 let dutyOff = null;
@@ -365,8 +364,6 @@ const calculateRunKm = (
   startTime,
   endTime
 ) => {
-  console.log("locationData", locationData);
- 
   if (!locationData) return null;
  
   let distance = 0;
@@ -500,9 +497,6 @@ const hasRowData = (r) =>
 // 5 reads per ward: Summary + WorkerDetails + WardTrips + LocationHistory + HaltInfo (all parallel)
 // onRow: optional — called as each ward's data arrives (for progressive rendering on first load)
 export const fetchReportData = async (wards, date, onRow) => {
-    console.log(`[DWR Firebase] date=${date} | wards=${wards.length} | Firebase reads=${wards.length * 5}`);
-    const t0 = performance.now();
-
     const rows = await Promise.all(
         wards.map(async ({ id, name }) => {
             try {
@@ -531,9 +525,6 @@ export const fetchReportData = async (wards, date, onRow) => {
     );
 
     const withData = rows.filter(hasRowData);
-
-    const sizeKB = (new TextEncoder().encode(JSON.stringify(withData)).length / 1024).toFixed(1);
-    console.log(`[DWR Firebase] Done in ${(performance.now() - t0).toFixed(0)}ms | zones with data=${withData.length}/${rows.length} | ~${sizeKB} KB`);
 
     return withData;
 };
