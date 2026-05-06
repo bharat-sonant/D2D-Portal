@@ -268,7 +268,7 @@
 }
 
 .table {
-  min-width: 100%;
+  min-width: calc(100% + 380px);
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
@@ -407,6 +407,18 @@
 .table thead th:nth-child(15) .headerCell,
 .table thead th:nth-child(16) .headerCell {
   justify-content: flex-end;
+}
+
+.table thead th:nth-child(1),
+.table tbody td:nth-child(1) {
+  width: 8%;
+  min-width: 100px;
+}
+
+.table thead th:nth-child(17),
+.table tbody td:nth-child(17) {
+  width: 20%;
+  min-width: 280px;
 }
 
 .zoneCell {

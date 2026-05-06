@@ -8,11 +8,11 @@ export const getDepartments = () => {
             if (response.success) {
                 resolve(common.setResponse('success', 'Department data fetched successfully.', response.data));
             } else {
-                resolve(common.setResponse('success', 'Department data fetched successfully.', response.message));
+                resolve(common.setResponse('fail', response.message || 'Failed to fetch departments.', []));
             };
         } catch (error) {
             console.error("Error fetching departments:", error);
-            resolve(common.setResponse('success', 'Department data fetched successfully.', error.message));
+            resolve(common.setResponse('fail', error.message, []));
         };
     });
 };
