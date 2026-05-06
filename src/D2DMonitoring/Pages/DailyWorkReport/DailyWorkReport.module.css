@@ -452,6 +452,17 @@
   height: 320px;
   text-align: center;
   vertical-align: middle;
+  padding: 0;
+}
+
+.loaderInner {
+  position: sticky;
+  left: 0;
+  width: 100%;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .emptyState {

@@ -545,7 +545,9 @@ const DailyWorkReport = () => {
                             {loading ? (
                                 <tr>
                                     <td colSpan={17} className={styles.loaderCell}>
-                                        <WevoisLoader />
+                                        <div className={styles.loaderInner}>
+                                            <WevoisLoader />
+                                        </div>
                                     </td>
                                 </tr>
                             ) : displayData.length === 0 ? (
