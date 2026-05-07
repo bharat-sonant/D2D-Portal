@@ -171,6 +171,24 @@ const sortByZone = (rows) =>
         return (a.zone || "").localeCompare(b.zone || "");
     });
 
+const pickSortablePercent = (row) => {
+    const primary = row.actual_work_percentage;
+    if (primary != null && primary !== "") return primary;
+    const fallback = row.work_percentage;
+    if (fallback != null && fallback !== "") return fallback;
+    return null;
+};
+
+const sortByActualPercent = (rows, direction) =>
+    [...rows].sort((a, b) => {
+        const aVal = pickSortablePercent(a);
+        const bVal = pickSortablePercent(b);
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
+        return direction === "asc" ? Number(aVal) - Number(bVal) : Number(bVal) - Number(aVal);
+    });
+
 const Icon = ({ name, className }) => {
     const common = {
         viewBox: "0 0 24 24",
@@ -270,6 +288,30 @@ const Icon = ({ name, className }) => {
                     <path d="M7 18.5 3.5 20l1.5-3.5V6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7A2.5 2.5 0 0 1 16.5 16H9l-2 2.5Z" />
                 </svg>
             );
+        case "sort":
+            return (
+                <svg {...common}>
+                    <path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4" />
+                </svg>
+            );
+        case "chevron":
+            return (
+                <svg {...common}>
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            );
+        case "arrowUp":
+            return (
+                <svg {...common}>
+                    <path d="M12 19V5M5 12l7-7 7 7" />
+                </svg>
+            );
+        case "arrowDown":
+            return (
+                <svg {...common}>
+                    <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+            );
         default:
             return null;
     }
@@ -304,9 +346,12 @@ const DailyWorkReport = () => {
     const [syncing, setSyncing] = useState(false);
     const [lastSynced, setLastSynced] = useState(null);
     const [syncAge, setSyncAge] = useState("");
+    const [sortOption, setSortOption] = useState(null);
+    const [sortMenuOpen, setSortMenuOpen] = useState(false);
     const dateInputRef = useRef(null);
     const loadIdRef = useRef(0);
     const syncIdRef = useRef(0);
+    const sortMenuRef = useRef(null);
 
     useEffect(() => {
         const now = new Date();
@@ -323,15 +368,36 @@ const DailyWorkReport = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const displayData = useMemo(
-        () => sortByZone(filterEmpty(data)).map((row) => ({
+    const displayData = useMemo(() => {
+        const filtered = filterEmpty(data);
+        const sorted = sortOption
+            ? sortByActualPercent(filtered, sortOption)
+            : sortByZone(filtered);
+        return sorted.map((row) => ({
             ...row,
             _vehicleList: row.vehicle
                 ? [...new Set(row.vehicle.split(",").map((v) => v.trim()).filter(Boolean))]
                 : [],
-        })),
-        [data]
-    );
+        }));
+    }, [data, sortOption]);
+
+    useEffect(() => {
+        if (!sortMenuOpen) return;
+        const handleClick = (e) => {
+            if (sortMenuRef.current && !sortMenuRef.current.contains(e.target)) {
+                setSortMenuOpen(false);
+            }
+        };
+        const handleKey = (e) => {
+            if (e.key === "Escape") setSortMenuOpen(false);
+        };
+        document.addEventListener("mousedown", handleClick);
+        document.addEventListener("keydown", handleKey);
+        return () => {
+            document.removeEventListener("mousedown", handleClick);
+            document.removeEventListener("keydown", handleKey);
+        };
+    }, [sortMenuOpen]);
 
     const dateWindow = useMemo(() => buildDateWindow(), [today]);
     const isSelectedDateInWindow = dateWindow.some((d) => d.value === selectedDate);
@@ -498,6 +564,54 @@ const DailyWorkReport = () => {
 
                         <div className={styles.heroActions}>
                             <div className={styles.actionGroup}>
+                                <div className={styles.sortMenuWrapper} ref={sortMenuRef}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.actionBtn} ${styles.sortBtn} ${sortOption ? styles.sortBtnActive : ""}`}
+                                        onClick={() => setSortMenuOpen((open) => !open)}
+                                        aria-haspopup="menu"
+                                        aria-expanded={sortMenuOpen}
+                                        aria-label="Sort by Actual Work %"
+                                    >
+                                        <Icon name="sort" className={styles.actionIcon} />
+                                        <span>Sort by</span>
+                                        <Icon
+                                            name="chevron"
+                                            className={`${styles.chevronIcon} ${sortMenuOpen ? styles.chevronOpen : ""}`}
+                                        />
+                                    </button>
+                                    {sortMenuOpen ? (
+                                        <div className={styles.sortMenu} role="menu">
+                                            <button
+                                                type="button"
+                                                role="menuitemradio"
+                                                aria-checked={sortOption === "asc"}
+                                                className={`${styles.sortMenuItem} ${sortOption === "asc" ? styles.sortMenuItemActive : ""}`}
+                                                onClick={() => {
+                                                    setSortOption("asc");
+                                                    setSortMenuOpen(false);
+                                                }}
+                                            >
+                                                <Icon name="arrowUp" className={`${styles.sortArrowIcon} ${styles.sortArrowAsc}`} />
+                                                <span>Actual Work % (Low → High)</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                role="menuitemradio"
+                                                aria-checked={sortOption === "desc"}
+                                                className={`${styles.sortMenuItem} ${sortOption === "desc" ? styles.sortMenuItemActive : ""}`}
+                                                onClick={() => {
+                                                    setSortOption("desc");
+                                                    setSortMenuOpen(false);
+                                                }}
+                                            >
+                                                <Icon name="arrowDown" className={`${styles.sortArrowIcon} ${styles.sortArrowDesc}`} />
+                                                <span>Actual Work % (High → Low)</span>
+                                            </button>
+                                        </div>
+                                    ) : null}
+                                </div>
+
                                 <button
                                     type="button"
                                     className={`${styles.actionBtn} ${styles.exportBtn}`}

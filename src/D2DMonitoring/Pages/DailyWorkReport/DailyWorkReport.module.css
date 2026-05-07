@@ -255,6 +255,106 @@
   filter: brightness(0) saturate(100%) invert(100%);
 }
 
+.sortMenuWrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.sortBtn {
+  background: #118a19;
+  border: 1px solid #118a19;
+  color: #fff;
+}
+
+.sortBtn:hover:not(:disabled) {
+  box-shadow: 0 12px 24px rgba(17, 138, 25, 0.18);
+}
+
+.sortBtnActive {
+  background: #0f7a17;
+  border-color: #0f7a17;
+  color: #fff;
+}
+
+.sortBtnActive:hover:not(:disabled) {
+  box-shadow: 0 12px 24px rgba(17, 138, 25, 0.22);
+}
+
+.chevronIcon {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.18s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.sortMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  min-width: 240px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #e1e7f3;
+  border-radius: 12px;
+  box-shadow:
+    0 18px 36px rgba(33, 65, 124, 0.14),
+    0 4px 12px rgba(33, 65, 124, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sortMenuItem {
+  appearance: none;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #20365f;
+  font-family: var(--fontGraphikMedium);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortMenuItem:hover {
+  background: rgba(17, 138, 25, 0.08);
+  color: #118a19;
+}
+
+.sortMenuItemActive {
+  background: rgba(17, 138, 25, 0.12);
+  color: #118a19;
+  font-family: var(--fontGraphikSemibold);
+}
+
+.sortMenuItemActive:hover {
+  background: rgba(17, 138, 25, 0.18);
+  color: #118a19;
+}
+
+.sortArrowIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.sortArrowAsc {
+  color: #118a19;
+}
+
+.sortArrowDesc {
+  color: #118a19;
+}
+
 .tableShell {
   width: 100%;
   position: relative;
@@ -585,6 +685,21 @@
   .actionGroup .actionBtn {
     flex: 1 1 0;
     width: auto;
+    min-width: 0;
+  }
+
+  .actionGroup .sortMenuWrapper {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .sortMenuWrapper .sortBtn {
+    width: 100%;
+  }
+
+  .sortMenu {
+    right: 0;
+    left: 0;
     min-width: 0;
   }
 
