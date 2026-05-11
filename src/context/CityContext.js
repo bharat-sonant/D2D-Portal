@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+ import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getCityFirebaseConfig } from "../configurations/cityDBConfig";
 import { connectFirebase } from "../firebase/firebaseService";
@@ -78,16 +78,23 @@ export const CityProvider = ({ children }) => {
     // Agar city CityDetails mein nahi mili toh getCityFirebaseConfig fallback karta hai
     if (monitoringCity) {
       // Monitoring URL city — sirf Firebase connect karo, localStorage touch mat karo
+
       getMonitoringFirebaseConfig(monitoringCity, false).then((firebaseConfig) => {
+        console.log(`[CityConnect] city="${monitoringCity}" (from URL) → config:`, firebaseConfig);
         if (firebaseConfig?.databaseURL) {
           connectFirebase(firebaseConfig, monitoringCity);
+        } else {
+          console.warn(`[CityConnect] No databaseURL found for "${monitoringCity}" — Firebase NOT connected`);
         }
       });
     } else {
       // User ki default city — Firebase connect karo + storage info save karo
       getMonitoringFirebaseConfig(city, true).then((firebaseConfig) => {
+        console.log(`[CityConnect] city="${city}" (default) → config:`, firebaseConfig);
         if (firebaseConfig?.databaseURL) {
           connectFirebase(firebaseConfig, city);
+        } else {
+          console.warn(`[CityConnect] No databaseURL found for "${city}" — Firebase NOT connected`);
         }
       });
     }

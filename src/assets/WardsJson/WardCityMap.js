@@ -11,6 +11,7 @@ import DevTest from "./DevTest.json";
 import Ecogram from "./Ecogram.json";
 import Etmadpur from "./Etmadpur.json";
 import Hisar from "./Hisar.json";
+import Itarsi from "./Itarsi.json";
 import IITKharagpur from "./IIT-Kharagpur.json";
 import IITRoorkee from "./IIT-Roorkee.json";
 import JaipurBWG from "./Jaipur-BWG.json";
@@ -75,6 +76,7 @@ const WardCityMap = {
     "ecogram": Ecogram,
     "etmadpur": Etmadpur,
     "hisar": Hisar,
+    "itarsi": Itarsi,
     "iit-kharagpur": IITKharagpur,
     "iit-roorkee": IITRoorkee,
     "jaipur-bwg": JaipurBWG,
