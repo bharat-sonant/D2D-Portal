@@ -25,9 +25,7 @@ const fmtTime = (t) => {
     if (parts.length < 2) return String(t);
     const hr = parseInt(parts[0], 10);
     if (isNaN(hr)) return String(t);
-    const period = hr >= 12 ? "PM" : "AM";
-    const hr12 = hr % 12 || 12;
-    return `${String(hr12).padStart(2, "0")}:${parts[1]} ${period}`;
+    return `${String(hr).padStart(2, "0")}:${parts[1]}`;
 };
 
 const fmtHours = (v) => {
@@ -401,6 +399,8 @@ const DailyWorkReport = () => {
 
     const dateWindow = useMemo(() => buildDateWindow(), [today]);
     const isSelectedDateInWindow = dateWindow.some((d) => d.value === selectedDate);
+    const yesterday = useMemo(() => dayjs(today).subtract(1, "day").format("YYYY-MM-DD"), [today]);
+    const canSync = selectedDate === today || selectedDate === yesterday;
 
     useEffect(() => {
         if (!lastSynced) return;
@@ -561,16 +561,18 @@ const DailyWorkReport = () => {
                                 />
                             </label>
 
-                            <button
-                                className={`${styles.actionBtn} ${styles.syncBtn}`}
-                                onClick={handleSync}
-                                disabled={syncing}
-                                aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
-                            >
-                                <Icon name="sync" className={`${styles.actionIcon} ${styles.syncIcon} ${syncing ? styles.spinning : ""}`} />
-                                <span>{syncing ? "Syncing..." : "Sync"}</span>
-                                {lastSynced && !syncing ? <small>{syncAge}</small> : null}
-                            </button>
+                            {canSync ? (
+                                <button
+                                    className={`${styles.actionBtn} ${styles.syncBtn}`}
+                                    onClick={handleSync}
+                                    disabled={syncing}
+                                    aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
+                                >
+                                    <Icon name="sync" className={`${styles.actionIcon} ${styles.syncIcon} ${syncing ? styles.spinning : ""}`} />
+                                    <span>{syncing ? "Syncing..." : "Sync"}</span>
+                                    {lastSynced && !syncing ? <small>{syncAge}</small> : null}
+                                </button>
+                            ) : null}
                         </div>
 
                         <div className={styles.heroActions}>
