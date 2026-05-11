@@ -496,7 +496,7 @@ const DailyWorkReport = () => {
         const worksheet = XLSX.utils.json_to_sheet(exportRows);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Daily Work Report");
-        XLSX.writeFile(workbook, `Daily_Work_Report_${city || "city"}_${selectedDate}.xlsx`);
+        XLSX.writeFile(workbook, `Daily_Work_Report_${city || "city"}_${dayjs(selectedDate).format("DD-MMM-YYYY")}.xlsx`);
     };
 
     return (
