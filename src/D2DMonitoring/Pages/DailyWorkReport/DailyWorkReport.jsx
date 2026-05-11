@@ -483,7 +483,7 @@ const DailyWorkReport = () => {
             Driver: blankIfDash(fmtEmployeeDisplay(row.driver)),
             "Helper 1": blankIfDash(fmtEmployeeDisplay(row.helper)),
             "Helper 2": blankIfDash(fmtEmployeeDisplay(row.second_helper)),
-            "Trips/Bins": row.trip_bins_display ?? row.trip_bins ?? "",
+            "Trips/Bins": row.trip_bins ?? "",
             "Work Hrs": blankIfDash(fmtHours(row.total_working_hrs)),
             "Halt Time": blankIfDash(fmtHours(row.ward_halt_duration)),
             "Work %": blankIfDash(fmtPercent(row.work_percentage ?? row.actual_work_percentage)),
@@ -710,7 +710,7 @@ const DailyWorkReport = () => {
                                                     {fmtEmployeeDisplay(row.second_helper)}
                                                 </span>
                                             </td>
-                                            <td data-label="Trips/Bins">{row.trip_bins_display ?? row.trip_bins ?? "-"}</td>
+                                            <td data-label="Trips/Bins">{row.trip_bins ?? "-"}</td>
                                             <td data-label="Work Hrs">{fmtHours(row.total_working_hrs)}</td>
                                             <td data-label="Halt Time">{fmtHours(row.ward_halt_duration)}</td>
                                             <td data-label="Work %">{fmtPercent(workPercent)}</td>

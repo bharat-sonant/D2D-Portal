@@ -5,6 +5,13 @@ export const getReportFromSupabase = async (city, date) => {
     return res?.data || [];
 };
 
+const resolveTripBinsText = (row) => {
+    const display = row.tripBinsDisplay ?? row.trip_bins_display;
+    if (display != null && display !== '') return String(display);
+    const count = row.tripBins ?? row.trip_bins;
+    return count != null ? String(count) : null;
+};
+
 const buildPayload = (city, date, row) => ({
     city,
     date,
@@ -17,7 +24,7 @@ const buildPayload = (city, date, row) => ({
     helper:                row.helper               ?? null,
     second_helper:         row.secondHelper         ?? row.second_helper ?? null,
     vehicle_reg_no:        row.vehicleRegNo         ?? row.vehicle_reg_no ?? null,
-    trip_bins:             row.tripBins             ?? row.trip_bins ?? null,
+    trip_bins:             resolveTripBinsText(row),
     total_working_hrs:     row.totalWorkingHrs      ?? row.total_working_hrs ?? null,
     run_km:                row.runKm                ?? row.run_km ?? null,
     remark:                row.remark               ?? null,

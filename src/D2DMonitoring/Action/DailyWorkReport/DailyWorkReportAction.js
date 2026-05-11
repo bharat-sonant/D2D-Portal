@@ -33,11 +33,17 @@ const withRetry = async (fn, attempts = 3, delayMs = 1000) => {
 
 // Firebase camelCase â†’ Supabase snake_case display format
 // ward_halt_duration: future field â€” not yet computed, kept as null placeholder
+const resolveTripBinsText = (row) => {
+    const display = row.tripBinsDisplay ?? row.trip_bins_display;
+    if (display != null && display !== '') return String(display);
+    const count = row.tripBins ?? row.trip_bins;
+    return count != null ? String(count) : null;
+};
+
 const toDisplayFormat = (row) => ({
     id: row.id ?? null,
     zone: row.zone ?? null,
     display_zone: row.displayZone ?? row.display_zone ?? null,
-    trip_bins_display: row.tripBinsDisplay ?? row.trip_bins_display ?? null,
     duty_on: row.dutyOn ?? row.duty_on ?? null,
     entered_ward_boundary: row.enteredWardBoundary ?? row.entered_ward_boundary ?? null,
     duty_off: row.dutyOff ?? row.duty_off ?? null,
@@ -46,7 +52,7 @@ const toDisplayFormat = (row) => ({
     helper: row.helper ?? null,
     second_helper: row.secondHelper ?? row.second_helper ?? null,
     vehicle_reg_no: row.vehicleRegNo ?? row.vehicle_reg_no ?? null,
-    trip_bins: row.tripBins ?? row.trip_bins ?? null,
+    trip_bins: resolveTripBinsText(row),
     total_working_hrs: row.totalWorkingHrs ?? row.total_working_hrs ?? null,
     run_km: row.runKm ?? row.run_km ?? null,
     remark: row.remark ?? null,
@@ -61,7 +67,6 @@ const toDisplayFormat = (row) => ({
 const toBinLiftingDisplayRow = (task, index) => ({
     zone: encodeBinLiftingZone(task, index),
     display_zone: task?.zone ?? null,
-    trip_bins_display: task?.tripBinsDisplay ?? null,
     duty_on: task?.dutyOn ?? null,
     duty_off: task?.dutyOff ?? null,
     vehicle: task?.vehicle ?? null,
@@ -69,7 +74,7 @@ const toBinLiftingDisplayRow = (task, index) => ({
     driver: task?.driver ?? null,
     helper: task?.helper ?? null,
     second_helper: task?.secondHelper ?? null,
-    trip_bins: task?.tripBins ?? null,
+    trip_bins: resolveTripBinsText(task),
     total_working_hrs: task?.totalWorkingHrs ?? null,
     work_percentage: task?.workPercentage ?? null,
     is_bin_lifting_task: true,
@@ -102,7 +107,7 @@ const dedupeRows = (rows) => {
     const map = new Map();
     rows.forEach((row) => {
         const key = row.is_bin_lifting_task
-            ? `bin:${row.display_zone ?? row.zone}|${row.duty_on ?? ''}|${row.duty_off ?? ''}|${row.vehicle ?? ''}|${row.driver ?? ''}|${row.helper ?? ''}|${row.second_helper ?? ''}|${row.trip_bins_display ?? row.trip_bins ?? ''}`
+            ? `bin:${row.display_zone ?? row.zone}|${row.duty_on ?? ''}|${row.duty_off ?? ''}|${row.vehicle ?? ''}|${row.driver ?? ''}|${row.helper ?? ''}|${row.second_helper ?? ''}|${row.trip_bins ?? ''}`
             : `zone:${row.zone ?? ''}`;
         map.set(key, row);
     });
@@ -134,7 +139,7 @@ const rowsEqual = (saved, row) =>
     saved?.helper === (row.helper ?? null) &&
     saved?.second_helper === (row.secondHelper ?? row.second_helper ?? null) &&
     saved?.vehicle_reg_no === (row.vehicleRegNo ?? row.vehicle_reg_no ?? null) &&
-    saved?.trip_bins === (row.tripBins ?? row.trip_bins ?? null) &&
+    saved?.trip_bins === resolveTripBinsText(row) &&
     saved?.total_working_hrs === (row.totalWorkingHrs ?? row.total_working_hrs ?? null) &&
     saved?.run_km === (row.runKm ?? row.run_km ?? null) &&
     saved?.remark === (row.remark ?? null) &&
