@@ -560,6 +560,17 @@ const DailyWorkReport = () => {
                                     }}
                                 />
                             </label>
+
+                            <button
+                                className={`${styles.actionBtn} ${styles.syncBtn}`}
+                                onClick={handleSync}
+                                disabled={syncing}
+                                aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
+                            >
+                                <Icon name="sync" className={`${styles.actionIcon} ${styles.syncIcon} ${syncing ? styles.spinning : ""}`} />
+                                <span>{syncing ? "Syncing..." : "Sync"}</span>
+                                {lastSynced && !syncing ? <small>{syncAge}</small> : null}
+                            </button>
                         </div>
 
                         <div className={styles.heroActions}>
@@ -624,17 +635,6 @@ const DailyWorkReport = () => {
                                         alt="Export to Excel"
                                     />
                                     <span>Export Excel</span>
-                                </button>
-
-                                <button
-                                    className={`${styles.actionBtn} ${styles.syncBtn}`}
-                                    onClick={handleSync}
-                                    disabled={syncing}
-                                    aria-label={syncing ? "Syncing data" : "Sync data from Firebase"}
-                                >
-                                    <Icon name="sync" className={`${styles.actionIcon} ${syncing ? styles.spinning : ""}`} />
-                                    <span>{syncing ? "Syncing..." : "Sync"}</span>
-                                    {lastSynced && !syncing ? <small>{syncAge}</small> : null}
                                 </button>
                             </div>
                         </div>

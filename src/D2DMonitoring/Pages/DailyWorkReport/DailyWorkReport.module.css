@@ -235,6 +235,11 @@
   border: 1px solid #118a19;
   background: #118a19;
   color: #fff;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  gap: 6px;
 }
 
 .syncBtn:disabled {
@@ -243,9 +248,14 @@
 }
 
 .syncBtn small {
-  font-size: 10px;
+  font-size: 9px;
   color: rgba(255, 255, 255, 0.82);
   font-family: var(--fontGraphikMedium);
+}
+
+.syncIcon {
+  width: 14px;
+  height: 14px;
 }
 
 .iconExcel {
