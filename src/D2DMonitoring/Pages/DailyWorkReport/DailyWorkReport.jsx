@@ -144,14 +144,6 @@ const getDistanceTone = (v) => {
     return v >= 5 ? "success" : "violet";
 };
 
-const filterEmpty = (rows) =>
-    rows.filter((row) =>
-        row.is_bin_lifting_task ||
-        row.duty_on || row.duty_off || row.entered_ward_boundary ||
-        row.vehicle || row.driver || row.helper ||
-        row.remark || row.actual_work_percentage != null || row.work_percentage != null
-    );
-
 const sortByZone = (rows) =>
     [...rows].sort((a, b) => {
         if (a.is_bin_lifting_task && b.is_bin_lifting_task) {
@@ -367,10 +359,9 @@ const DailyWorkReport = () => {
     }, []);
 
     const displayData = useMemo(() => {
-        const filtered = filterEmpty(data);
         const sorted = sortOption
-            ? sortByActualPercent(filtered, sortOption)
-            : sortByZone(filtered);
+            ? sortByActualPercent(data, sortOption)
+            : sortByZone(data);
         return sorted.map((row) => ({
             ...row,
             _vehicleList: row.vehicle
@@ -476,28 +467,30 @@ const DailyWorkReport = () => {
             return;
         }
 
+        const blankIfDash = (value) => (value === "-" || value == null ? "" : value);
+
         const exportRows = displayData.map((row) => ({
             Zone: row.display_zone || row.zone
                 ? row.is_bin_lifting_task
                     ? (row.display_zone || row.zone)
                     : `Zone ${row.display_zone || row.zone}`
-                : "-",
-            "Duty On": fmtTime(row.duty_on),
-            "Ward Entry": fmtTime(row.entered_ward_boundary),
-            "Duty Off": fmtTime(row.duty_off),
-            Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "-",
-            "Reg. No.": row.vehicle_reg_no || "-",
-            Driver: row.driver || "-",
-            "Helper 1": row.helper || "-",
-            "Helper 2": row.second_helper || "-",
-            "Trips/Bins": row.trip_bins_display ?? row.trip_bins ?? "-",
-            "Work Hrs": fmtHours(row.total_working_hrs),
-            "Halt Time": fmtHours(row.ward_halt_duration),
-            "Work %": fmtPercent(row.work_percentage ?? row.actual_work_percentage),
-            "Actual %": fmtPercent(row.actual_work_percentage),
-            "Run (KM)": fmtDist(row.run_km),
-            "Zone (KM)": fmtDist(row.zone_run_km),
-            Remarks: row.remark || "-",
+                : "",
+            "Duty On": blankIfDash(fmtTime(row.duty_on)),
+            "Ward Entry": blankIfDash(fmtTime(row.entered_ward_boundary)),
+            "Duty Off": blankIfDash(fmtTime(row.duty_off)),
+            Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "",
+            "Reg. No.": row.vehicle_reg_no || "",
+            Driver: blankIfDash(fmtEmployeeDisplay(row.driver)),
+            "Helper 1": blankIfDash(fmtEmployeeDisplay(row.helper)),
+            "Helper 2": blankIfDash(fmtEmployeeDisplay(row.second_helper)),
+            "Trips/Bins": row.trip_bins_display ?? row.trip_bins ?? "",
+            "Work Hrs": blankIfDash(fmtHours(row.total_working_hrs)),
+            "Halt Time": blankIfDash(fmtHours(row.ward_halt_duration)),
+            "Work %": blankIfDash(fmtPercent(row.work_percentage ?? row.actual_work_percentage)),
+            "Actual %": blankIfDash(fmtPercent(row.actual_work_percentage)),
+            "Run (KM)": blankIfDash(fmtDist(row.run_km)),
+            "Zone (KM)": blankIfDash(fmtDist(row.zone_run_km)),
+            Remarks: row.remark || "",
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(exportRows);

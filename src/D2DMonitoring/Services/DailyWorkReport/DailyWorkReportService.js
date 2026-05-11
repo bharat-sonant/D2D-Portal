@@ -508,11 +508,6 @@ const buildRow = (wardId, zone, summary, workerDetails, vehicleRegNo = null, tri
     };
 };
 
-const hasRowData = (r) =>
-    r.dutyOn || r.dutyOff || r.enteredWardBoundary ||
-    r.vehicle || r.driver || r.helper ||
-    r.remark || r.actualWorkPercentage != null || r.workPercentage != null;
-
 // 5 reads per ward: Summary + WorkerDetails + WardTrips + LocationHistory + HaltInfo (all parallel)
 // onRow: optional — called as each ward's data arrives (for progressive rendering on first load)
 export const fetchReportData = async (wards, date, onRow) => {
@@ -535,7 +530,7 @@ export const fetchReportData = async (wards, date, onRow) => {
                 const haltDuration = calculateHaltTime(haltData, dutyOn, dutyOff, date, 8);
                 const row = buildRow(id, name, summary, workerDetails, vehicleRegNo, tripBins, runKm, haltDuration, date);
 
-                if (onRow && hasRowData(row)) onRow(row);
+                if (onRow) onRow(row);
                 return row;
             } catch {
                 return buildRow(id, name, null, null, null, null, null, null, date);
@@ -543,7 +538,5 @@ export const fetchReportData = async (wards, date, onRow) => {
         })
     );
 
-    const withData = rows.filter(hasRowData);
-
-    return withData;
+    return rows;
 };
