@@ -35,6 +35,7 @@ import Kuchaman from "./Kuchaman.json";
 import Losal from "./Losal.json";
 import MapusaGoa from "./Mapusa-Goa.json";
 import Nainwa from "./Nainwa.json";
+import Nawa from "./Nawa.json";
 import Noida from "./Noida.json";
 import Nokha from "./Nokha.json";
 import Pali from "./Pali.json";
@@ -100,6 +101,7 @@ const WardCityMap = {
     "losal": Losal,
     "mapusa-goa": MapusaGoa,
     "nainwa": Nainwa,
+    "nawa": Nawa,
     "noida": Noida,
     "nokha": Nokha,
     "pali": Pali,
