@@ -378,8 +378,9 @@
 }
 
 .table {
-  min-width: calc(100% + 380px);
-  table-layout: fixed;
+  width: 100%;
+  min-width: max-content;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -451,22 +452,20 @@
 }
 
 .singleLineText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: normal;
-  overflow-wrap: normal;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .doubleLineText {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block;
+  overflow: visible;
   line-height: 1.35;
   white-space: normal;
   word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .table tbody td:last-child {
@@ -521,13 +520,56 @@
 
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1) {
-  width: 10%;
-  min-width: 100px;
+  min-width: 110px;
+}
+
+.table thead th:nth-child(2),
+.table tbody td:nth-child(2),
+.table thead th:nth-child(3),
+.table tbody td:nth-child(3),
+.table thead th:nth-child(4),
+.table tbody td:nth-child(4) {
+  min-width: 95px;
+}
+
+.table thead th:nth-child(5),
+.table tbody td:nth-child(5),
+.table thead th:nth-child(6),
+.table tbody td:nth-child(6) {
+  min-width: 140px;
+}
+
+.table thead th:nth-child(7),
+.table tbody td:nth-child(7),
+.table thead th:nth-child(8),
+.table tbody td:nth-child(8),
+.table thead th:nth-child(9),
+.table tbody td:nth-child(9) {
+  min-width: 160px;
+}
+
+.table thead th:nth-child(10),
+.table tbody td:nth-child(10),
+.table thead th:nth-child(11),
+.table tbody td:nth-child(11),
+.table thead th:nth-child(12),
+.table tbody td:nth-child(12) {
+  min-width: 95px;
+}
+
+.table thead th:nth-child(13),
+.table tbody td:nth-child(13),
+.table thead th:nth-child(14),
+.table tbody td:nth-child(14),
+.table thead th:nth-child(15),
+.table tbody td:nth-child(15),
+.table thead th:nth-child(16),
+.table tbody td:nth-child(16) {
+  min-width: 90px;
 }
 
 .table thead th:nth-child(17),
 .table tbody td:nth-child(17) {
-  width: 15%;
   min-width: 280px;
 }
 
