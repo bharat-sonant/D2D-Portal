@@ -469,29 +469,64 @@ const DailyWorkReport = () => {
 
         const blankIfDash = (value) => (value === "-" || value == null ? "" : value);
 
-        const exportRows = displayData.map((row) => ({
-            Zone: row.display_zone || row.zone
-                ? row.is_bin_lifting_task
-                    ? (row.display_zone || row.zone)
-                    : `Zone ${row.display_zone || row.zone}`
-                : "",
-            "Duty On": blankIfDash(fmtTime(row.duty_on)),
-            "Ward Entry": blankIfDash(fmtTime(row.entered_ward_boundary)),
-            "Duty Off": blankIfDash(fmtTime(row.duty_off)),
-            Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "",
-            "Reg. No.": row.vehicle_reg_no || "",
-            Driver: blankIfDash(fmtEmployeeDisplay(row.driver)),
-            "Helper 1": blankIfDash(fmtEmployeeDisplay(row.helper)),
-            "Helper 2": blankIfDash(fmtEmployeeDisplay(row.second_helper)),
-            "Trips/Bins": row.trip_bins ?? "",
-            "Work Hrs": blankIfDash(fmtHours(row.total_working_hrs)),
-            "Halt Time": blankIfDash(fmtHours(row.ward_halt_duration)),
-            "Work %": blankIfDash(fmtPercent(row.work_percentage ?? row.actual_work_percentage)),
-            "Actual %": blankIfDash(fmtPercent(row.actual_work_percentage)),
-            "Run (KM)": blankIfDash(fmtDist(row.run_km)),
-            "Zone (KM)": blankIfDash(fmtDist(row.zone_run_km)),
-            Remarks: row.remark || "",
-        }));
+        // Parses "2 - 27/27" → { trips: "2", picked: "27", assigned: "27" }
+        // Also handles "5" (trips only), "12/15" (bins only), or null
+        const parseTripsBins = (value) => {
+            if (value == null || value === "") return { trips: "", picked: "", assigned: "" };
+            const str = String(value).trim();
+            let trips = "";
+            let picked = "";
+            let assigned = "";
+
+            if (str.includes(" - ")) {
+                const [tripPart, binPart] = str.split(" - ");
+                trips = tripPart.trim();
+                if (binPart && binPart.includes("/")) {
+                    const [p, a] = binPart.split("/");
+                    picked = (p || "").trim();
+                    assigned = (a || "").trim();
+                } else if (binPart) {
+                    picked = binPart.trim();
+                }
+            } else if (str.includes("/")) {
+                const [p, a] = str.split("/");
+                picked = (p || "").trim();
+                assigned = (a || "").trim();
+            } else {
+                trips = str;
+            }
+
+            return { trips, picked, assigned };
+        };
+
+        const exportRows = displayData.map((row) => {
+            const { trips, picked, assigned } = parseTripsBins(row.trip_bins);
+            return {
+                Zone: row.display_zone || row.zone
+                    ? row.is_bin_lifting_task
+                        ? (row.display_zone || row.zone)
+                        : `Zone ${row.display_zone || row.zone}`
+                    : "",
+                "Duty On": blankIfDash(fmtTime(row.duty_on)),
+                "Ward Entry": blankIfDash(fmtTime(row.entered_ward_boundary)),
+                "Duty Off": blankIfDash(fmtTime(row.duty_off)),
+                Vehicle: row._vehicleList.length ? row._vehicleList.join(", ") : "",
+                "Reg. No.": row.vehicle_reg_no || "",
+                Driver: blankIfDash(fmtEmployeeDisplay(row.driver)),
+                "Helper 1": blankIfDash(fmtEmployeeDisplay(row.helper)),
+                "Helper 2": blankIfDash(fmtEmployeeDisplay(row.second_helper)),
+                "Trips": trips,
+                "Picked Dustbin": picked,
+                "Assigned Dustbin": assigned,
+                "Work Hrs": blankIfDash(fmtHours(row.total_working_hrs)),
+                "Halt Time": blankIfDash(fmtHours(row.ward_halt_duration)),
+                "Work %": blankIfDash(fmtPercent(row.work_percentage ?? row.actual_work_percentage)),
+                "Actual %": blankIfDash(fmtPercent(row.actual_work_percentage)),
+                "Run (KM)": blankIfDash(fmtDist(row.run_km)),
+                "Zone (KM)": blankIfDash(fmtDist(row.zone_run_km)),
+                Remarks: row.remark || "",
+            };
+        });
 
         const worksheet = XLSX.utils.json_to_sheet(exportRows);
         const workbook = XLSX.utils.book_new();
