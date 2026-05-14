@@ -391,7 +391,8 @@ const DailyWorkReport = () => {
     const dateWindow = useMemo(() => buildDateWindow(), [today]);
     const isSelectedDateInWindow = dateWindow.some((d) => d.value === selectedDate);
     const yesterday = useMemo(() => dayjs(today).subtract(1, "day").format("YYYY-MM-DD"), [today]);
-    const canSync = selectedDate === today || selectedDate === yesterday;
+    // const canSync = selectedDate === today || selectedDate === yesterday;
+    const canSync = true;
 
     useEffect(() => {
         if (!lastSynced) return;
