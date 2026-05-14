@@ -375,6 +375,32 @@
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: auto;
+  scrollbar-color: #3b82f6 #eef3fb;
+}
+
+.tableShell::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.tableShell::-webkit-scrollbar-track {
+  background: #eef3fb;
+  border-radius: 8px;
+}
+
+.tableShell::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 8px;
+  border: 2px solid #eef3fb;
+}
+
+.tableShell::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+.tableShell::-webkit-scrollbar-corner {
+  background: #eef3fb;
 }
 
 .table {
